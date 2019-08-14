@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+
 package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
@@ -50,6 +52,10 @@ class KotlinMppPlugin : Plugin<Project> {
 			}
 
 			sourceSets {
+				all {
+					languageSettings.progressiveMode = true
+				}
+
 				@Suppress("UNUSED_VARIABLE")
 				val commonMain by getting {
 					dependencies {
@@ -57,7 +63,7 @@ class KotlinMppPlugin : Plugin<Project> {
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 					}
 				}
-				@Suppress("UNUSED_VARIABLE")
+
 				val commonTest by getting {
 					dependencies {
 						implementation(kotlin("test-common"))
@@ -65,25 +71,29 @@ class KotlinMppPlugin : Plugin<Project> {
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 					}
 				}
-				jvm().compilations["main"].defaultSourceSet {
+
+				val jvmMain by getting {
 					dependencies {
 						implementation(kotlin("stdlib-jdk8"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 					}
 				}
-				jvm().compilations["test"].defaultSourceSet {
+
+				val jvmTest by getting {
 					dependencies {
 						implementation(kotlin("test"))
 						implementation(kotlin("test-junit"))
 					}
 				}
-				js().compilations["main"].defaultSourceSet {
+
+				val jsMain by getting {
 					dependencies {
 						implementation(kotlin("stdlib-js"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 					}
 				}
-				js().compilations["test"].defaultSourceSet {
+
+				val jsTest by getting {
 					dependencies {
 						implementation(kotlin("test-js"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")

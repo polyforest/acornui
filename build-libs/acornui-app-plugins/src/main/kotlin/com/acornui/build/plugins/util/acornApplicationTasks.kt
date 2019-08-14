@@ -15,176 +15,178 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 import java.io.File
 
-fun Project.applicationResourceTasks(platforms: Iterable<String>, compilations: Iterable<String>) {
-    createBitmapFontGeneratorConfig()
+fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {
+	createBitmapFontGeneratorConfig()
 
-    platforms.forEach { platform ->
-        val platformCapitalized = platform.capitalize()
-        compilations.forEach { compilationName ->
-            val compilationNameCapitalized = compilationName.capitalize()
-            val nameOrEmpty = if (compilationName == "main") "" else compilationNameCapitalized
+	targets.forEach { target ->
+		val platformCapitalized = target.capitalize()
+		compilations.forEach { compilationName ->
+			val compilationNameCapitalized = compilationName.capitalize()
+			val nameOrEmpty = if (compilationName == "main") "" else compilationNameCapitalized
 
-            val projectDependencies: List<Project> by lazy {
-                val configNames = listOf(
-                    "$platform${compilationNameCapitalized}Implementation",
-                    "common${compilationNameCapitalized}Implementation"
-                )
-                // Get all dependent projects, including this one. (This allows for the potential of having multiple app
-                // projects per build.
-                val configs = configNames.map { project.configurations[it] }
-                val projects = mutableListOf(project)
-                configs.forEach {
-                    it.allDependencies.filterIsInstance<ProjectDependency>().forEach { p ->
-                        projects.add(p.dependencyProject)
-                    }
-                }
-                projects
-            }
+			val unprocessedResourcesAllMain = project.buildDir.resolve("unprocessedResources/$target/all$compilationNameCapitalized")
+			val processedResourcesAllMain = project.buildDir.resolve("processedResources/$target/all$compilationNameCapitalized")
 
+			val combineAcornResources =
+					project.tasks.register<Sync>("${target}CombineAcornResources") {
+						into(unprocessedResourcesAllMain)
+						projectDependencies(target, compilationName).forEach { dependency ->
+							val unconfiguredDepError = "Target platform \"$target\" was not found for ${dependency.displayName}. Ensure that this dependency applies the plugin \"com.acornui.module\"."
+							val kotlinTarget: KotlinTarget = dependency.kotlinExt.targets.named(target).orNull
+									?: error(unconfiguredDepError)
+							val compilation = (kotlinTarget.compilations.named(compilationName).orNull
+									?: error(unconfiguredDepError)) as AbstractKotlinCompilationToRunnableFiles<*>
+							compilation.allKotlinSourceSets.forEach {
+								from(it.resources.srcDirs)
+							}
+							compilation.runtimeDependencyFiles.forEach { file ->
+                                if (file.exists())
+                                    from(project.zipTree(file).matching {
+                                        include("assets/**")
+                                    })
+							}
+						}
+					}
 
-            val unprocessedResourcesAllMain = project.buildDir.resolve("unprocessedResources/$platform/all$compilationNameCapitalized")
-            val processedResourcesAllMain = project.buildDir.resolve("processedResources/$platform/all$compilationNameCapitalized")
+			val processAcornResources =
+					project.tasks.register<AcornUiResourceProcessorTask>("${target}ProcessAcornResources") {
 
-            val combineAcornResources =
-                project.tasks.register<Sync>("${platform}CombineAcornResources") {
-                    into(unprocessedResourcesAllMain)
-                    projectDependencies.forEach { dependency ->
-                        val unconfiguredDepError = "Target platform \"$platform\" was not found for ${dependency.displayName}. Ensure that this dependency applies the plugin \"com.acornui.module\"."
-                        val targetPlatform = dependency.kotlinExt.targets.named(platform).orNull ?: error(unconfiguredDepError)
-                        val compilation = (targetPlatform.compilations.named(compilationName).orNull ?: error(unconfiguredDepError)) as AbstractKotlinCompilationToRunnableFiles<*>
-                        compilation.allKotlinSourceSets.forEach {
-                            from(it.resources.srcDirs)
-                        }
-                        compilation.runtimeDependencyFiles.forEach { file ->
-                            from(project.zipTree(file).matching {
-                                include("assets/**")
-                            })
-                        }
-                    }
-                }
+						dependsOn(combineAcornResources)
+						from(unprocessedResourcesAllMain)
+						into(processedResourcesAllMain)
 
-            val processAcornResources =
-                project.tasks.register<AcornUiResourceProcessorTask>("${platform}ProcessAcornResources") {
+						finalizedBy("${target}WriteResourcesManifest")
+					}
 
-                    dependsOn(combineAcornResources)
-                    from(unprocessedResourcesAllMain)
-                    into(processedResourcesAllMain)
+			val writeManifest = tasks.register("${target}WriteResourcesManifest") {
+				dependsOn(processAcornResources)
+				onlyIfDidWork(processAcornResources)
+				doLast {
+					val assetsDir = processedResourcesAllMain.resolve("assets")
+					if (assetsDir.exists()) {
+						val manifest = ManifestUtil.createManifest(assetsDir, processedResourcesAllMain)
+						assetsDir.resolve("files.json").writeText(
+								jsonStringify(
+										FilesManifest.serializer(),
+										manifest
+								)
+						)
+					}
+				}
+			}
 
-                    finalizedBy("${platform}WriteResourcesManifest")
-                }
+			val processResources = tasks.named<ProcessResources>("$target${nameOrEmpty}ProcessResources") {
+				dependsOn(processAcornResources, writeManifest)
+				exclude("*")
+			}
 
-            val writeManifest = tasks.register("${platform}WriteResourcesManifest") {
-                dependsOn(processAcornResources)
-                onlyIfDidWork(processAcornResources)
-                doLast {
-                    val assetsDir = processedResourcesAllMain.resolve("assets")
-                    if (assetsDir.exists()) {
-                        val manifest = ManifestUtil.createManifest(assetsDir, processedResourcesAllMain)
-                        assetsDir.resolve("files.json").writeText(
-                            jsonStringify(
-                                FilesManifest.serializer(),
-                                manifest
-                            )
-                        )
-                    }
-                }
-            }
+			val assemblePlatform = tasks.register("${target}Assemble") {
+				group = "build"
+				dependsOn(processResources, "compileKotlin$platformCapitalized")
+			}
 
-            val processResources = tasks.named<ProcessResources>("$platform${nameOrEmpty}ProcessResources") {
-                dependsOn(processAcornResources, writeManifest)
-                exclude("*")
-            }
-
-            val assemblePlatform = tasks.register("${platform}Assemble") {
-                group = "build"
-                dependsOn(processResources, "compileKotlin$platformCapitalized")
-            }
-
-            tasks.named("assemble") {
-                dependsOn(assemblePlatform)
-            }
-        }
-    }
+			tasks.named("assemble") {
+				dependsOn(assemblePlatform)
+			}
+		}
+	}
 }
 
 private fun Sync.addCombinedJsResources(project: Project) {
-    val combinedResourcesDir = project.acornui.appResources.resolve("js/allMain")
-    from(combinedResourcesDir) {
-        filesMatching(replaceVersionStrPatterns) {
-            filter { line ->
-                replaceVersionWithModTime(line, combinedResourcesDir)
-            }
-        }
-    }
+	val combinedResourcesDir = project.acornui.appResources.resolve("js/allMain")
+	from(combinedResourcesDir) {
+		filesMatching(replaceVersionStrPatterns) {
+			filter { line ->
+				replaceVersionWithModTime(line, combinedResourcesDir)
+			}
+		}
+	}
+}
+
+private fun Project.projectDependencies(target: String, compilationName: String): List<Project> {
+	val compilationNameCapitalized = compilationName.capitalize()
+	val configNames = listOf(
+			"$target${compilationNameCapitalized}Implementation",
+			"common${compilationNameCapitalized}Implementation"
+	)
+	val configs = configNames.map { project.configurations[it] }
+	val projects = mutableListOf(project)
+	configs.forEach {
+		it.allDependencies.filterIsInstance<ProjectDependency>().forEach { p ->
+			projects.add(p.dependencyProject)
+		}
+	}
+	return projects
 }
 
 fun Project.appAssetsWebTasks() {
 
-    val assembleJs = tasks.named("jsAssemble")
+	val assembleJs = tasks.named("jsAssemble")
 
-    // Register the assembleWeb task that builds the www directory.
+	// Register the assembleWeb task that builds the www directory.
 
-    val webAssemble = tasks.register<Sync>("webAssemble") {
-        dependsOn(assembleJs)
-        group = "build"
+	val webAssemble = tasks.register<Sync>("webAssemble") {
+		dependsOn(assembleJs)
+		group = "build"
 
-        into(acornui.www)
+		into(acornui.www)
 
-        from(kotlinMppRuntimeDependencies(project, "js")) {
-            include("*.js", "*.js.map")
-            into(acornui.jsLibPath)
-        }
+		from(kotlinMppRuntimeDependencies(project, "js")) {
+			include("*.js", "*.js.map")
+			into(acornui.jsLibPath)
+		}
 
-        addCombinedJsResources(project)
+		addCombinedJsResources(project)
 
-        doLast {
-            File(acornui.www.resolve(acornui.jsLibPath), "files.js").writeText(
-                "var manifest = " + File(
-                    acornui.www,
-                    "assets/files.json"
-                ).readText()
-            )
-        }
-    }
+		doLast {
+			File(acornui.www.resolve(acornui.jsLibPath), "files.js").writeText(
+					"var manifest = " + File(
+							acornui.www,
+							"assets/files.json"
+					).readText()
+			)
+		}
+	}
 
-    val webProdAssemble = tasks.register<Sync>("webProdAssemble") {
-        dependsOn(assembleJs)
-        group = "build"
+	val webProdAssemble = tasks.register<Sync>("webProdAssemble") {
+		dependsOn(assembleJs)
+		group = "build"
 
-        into(acornui.wwwProd)
-        addCombinedJsResources(project)
+		into(acornui.wwwProd)
+		addCombinedJsResources(project)
 
-        finalizedBy("jsDce", "jsOptimize")
+		finalizedBy("jsDce", "jsOptimize")
 
-        doLast {
-            File(
-                acornui.wwwProd.resolve(acornui.jsLibPath),
-                "files.js"
-            ).writeText("var manifest = " + File(acornui.wwwProd, "assets/files.json").readText())
-        }
-    }
+		doLast {
+			File(
+					acornui.wwwProd.resolve(acornui.jsLibPath),
+					"files.js"
+			).writeText("var manifest = " + File(acornui.wwwProd, "assets/files.json").readText())
+		}
+	}
 
-    tasks.named("assemble") {
-        dependsOn(webAssemble, webProdAssemble)
-    }
+	tasks.named("assemble") {
+		dependsOn(webAssemble, webProdAssemble)
+	}
 
-    val jsDce = tasks.register<DceTask>("jsDce") {
-        val prodLibDir = acornui.wwwProd.resolve(acornui.jsLibPath)
-        source.from(kotlinMppRuntimeDependencies(project, "js"))
-        outputDir.set(prodLibDir)
+	val jsDce = tasks.register<DceTask>("jsDce") {
+		val prodLibDir = acornui.wwwProd.resolve(acornui.jsLibPath)
+		source.from(kotlinMppRuntimeDependencies(project, "js"))
+		outputDir.set(prodLibDir)
 
-        doLast {
-            project.delete(fileTree(prodLibDir).include("*.map"))
-        }
-    }
+		doLast {
+			project.delete(fileTree(prodLibDir).include("*.map"))
+		}
+	}
 
-    tasks.register<KotlinJsMonkeyPatcherTask>("jsOptimize") {
-        shouldRunAfter(jsDce)
-        sourceDir.set(acornui.wwwProd.resolve(acornui.jsLibPath))
-    }
+	tasks.register<KotlinJsMonkeyPatcherTask>("jsOptimize") {
+		shouldRunAfter(jsDce)
+		sourceDir.set(acornui.wwwProd.resolve(acornui.jsLibPath))
+	}
 
 }
 
@@ -196,21 +198,21 @@ fun Project.appAssetsWebTasks() {
  * the relative file's modified timestamp.
  */
 var replaceVersionStrPatterns = listOf(
-    "asp",
-    "aspx",
-    "cshtml",
-    "cfm",
-    "go",
-    "jsp",
-    "jspx",
-    "php",
-    "php3",
-    "php4",
-    "phtml",
-    "html",
-    "htm",
-    "rhtml",
-    "css"
+		"asp",
+		"aspx",
+		"cshtml",
+		"cfm",
+		"go",
+		"jsp",
+		"jspx",
+		"php",
+		"php3",
+		"php4",
+		"phtml",
+		"html",
+		"htm",
+		"rhtml",
+		"css"
 ).map { "*.$it" }
 
 private val versionMatch = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
@@ -222,26 +224,26 @@ private val versionMatch = Regex("""([\w./\\]+)(\?[\w=&]*)(%VERSION%)""")
  * foo/bar.ext must be a local file.
  */
 fun replaceVersionWithModTime(src: String, root: File): String {
-    return versionMatch.replace(src) { match ->
-        val path = match.groups[1]!!.value
-        val relativeFile = root.resolve(path)
-        if (relativeFile.exists()) path + match.groups[2]!!.value + relativeFile.lastModified()
-        else path + match.groups[2]!!.value + System.currentTimeMillis()
-    }
+	return versionMatch.replace(src) { match ->
+		val path = match.groups[1]!!.value
+		val relativeFile = root.resolve(path)
+		if (relativeFile.exists()) path + match.groups[2]!!.value + relativeFile.lastModified()
+		else path + match.groups[2]!!.value + System.currentTimeMillis()
+	}
 }
 
 /**
  * Returns a file collection of all runtime dependencies.
  */
 fun kotlinMppRuntimeDependencies(project: Project, platform: String, compilationName: String = "main") =
-    project.files().apply {
-        builtBy("$platform${compilationName.capitalize()}Classes")
-        val main =
-            project.kotlinExt.targets[platform].compilations[compilationName] as AbstractKotlinCompilationToRunnableFiles<*>
-        main.output.classesDirs.forEach { folder ->
-            from(project.fileTree(folder))
-        }
-        main.runtimeDependencyFiles.forEach { file ->
-            from(project.zipTree(file))
-        }
-    }
+		project.files().apply {
+			builtBy("$platform${compilationName.capitalize()}Classes")
+			val main =
+					project.kotlinExt.targets[platform].compilations[compilationName] as AbstractKotlinCompilationToRunnableFiles<*>
+			main.output.classesDirs.forEach { folder ->
+				from(project.fileTree(folder))
+			}
+			main.runtimeDependencyFiles.forEach { file ->
+				from(project.zipTree(file))
+			}
+		}

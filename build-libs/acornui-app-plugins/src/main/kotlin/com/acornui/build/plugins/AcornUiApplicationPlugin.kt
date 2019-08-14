@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
 package com.acornui.build.plugins
 
@@ -23,7 +23,7 @@ import java.io.File
 @Suppress("unused")
 open class AcornUiApplicationPlugin : Plugin<Project> {
 
-	internal val platforms = listOf("js", "jvm")
+	internal val targets = listOf("js", "jvm")
 
 	override fun apply(project: Project) {
 		project.pluginManager.apply("org.gradle.idea")
@@ -36,7 +36,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		}
 		project.extensions.configure(multiPlatformConfig(project))
 
-		project.applicationResourceTasks(platforms, listOf("main"))
+		project.applicationResourceTasks(targets, listOf("main"))
 		project.appAssetsWebTasks()
 		project.runJvmTask()
 		project.uberJarTask()
@@ -63,7 +63,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 				languageSettings.progressiveMode = true
 			}
 
-			@Suppress("UNUSED_VARIABLE")
 			val commonMain by getting {
 				dependencies {
 					implementation("com.acornui:acornui-core")
@@ -71,7 +70,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 				}
 			}
 
-			jvm().compilations["main"].defaultSourceSet {
+			val jvmMain by getting {
 				dependencies {
 					implementation("com.acornui:acornui-lwjgl-backend")
 
@@ -94,7 +93,8 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					}
 				}
 			}
-			js().compilations["main"].defaultSourceSet {
+
+			val jsMain by getting {
 				dependencies {
 					implementation("com.acornui:acornui-webgl-backend")
 				}
@@ -106,7 +106,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 private fun Project.runJvmTask() {
 	val jvmArgs: String? by extra
 	tasks.register<JavaExec>("runJvm") {
-		dependsOn("jvmAssemble")
+		dependsOn("jvmProcessResources", "jvmMainClasses")
 		group = "application"
 		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
 		val compilation =

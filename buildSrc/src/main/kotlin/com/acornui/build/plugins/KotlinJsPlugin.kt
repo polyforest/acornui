@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
 package com.acornui.build.plugins
 
@@ -40,20 +40,25 @@ class KotlinJsPlugin : Plugin<Project> {
 			}
 
 			sourceSets {
-				@Suppress("UNUSED_VARIABLE")
+				all {
+					languageSettings.progressiveMode = true
+				}
+
 				val commonMain by getting {
 					dependencies {
 						implementation(kotlin("stdlib-common"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 					}
 				}
-				js().compilations["main"].defaultSourceSet {
+
+				val jsMain by getting {
 					dependencies {
 						implementation(kotlin("stdlib-js"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 					}
 				}
-				js().compilations["test"].defaultSourceSet {
+
+				val jsTest by getting {
 					dependencies {
 						implementation(kotlin("test-js"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
