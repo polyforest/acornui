@@ -106,7 +106,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 private fun Project.runJvmTask() {
 	val jvmArgs: String? by extra
 	tasks.register<JavaExec>("runJvm") {
-		dependsOn("jvmProcessResources", "jvmMainClasses")
+		dependsOn("jvmAssemble")
 		group = "application"
 		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
 		val compilation =
