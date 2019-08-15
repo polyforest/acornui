@@ -16,14 +16,12 @@
 
 package com.acornui.time
 
-import com.acornui._assert
+import com.acornui.*
 import com.acornui.collection.ActiveList
 import com.acornui.collection.iterate
-import com.acornui.*
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.time.time
 
 /**
  * The time driver is responsible for invoking [UpdatableChild.update] on anything that changes over time, like
