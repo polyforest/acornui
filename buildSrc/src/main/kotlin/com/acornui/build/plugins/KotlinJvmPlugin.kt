@@ -39,7 +39,7 @@ class KotlinJvmPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("stdlib-common"))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
 				}
 

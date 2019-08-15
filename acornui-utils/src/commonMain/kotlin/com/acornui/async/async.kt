@@ -23,6 +23,7 @@ import com.acornui.collection.*
 import com.acornui.Disposable
 import com.acornui.error.getStack
 import kotlin.coroutines.*
+import kotlinx.coroutines.*
 import kotlin.jvm.JvmName
 
 /**
@@ -44,7 +45,7 @@ private fun refreshActiveCoroutinesStr() {
 }
 
 /**
- * Launches a new coroutine on this same thread.
+ * Launches a new coroutine on the UI thread.
  */
 fun launch(block: suspend () -> Unit) {
 	block.startCoroutine(BasicContinuation2Impl())
