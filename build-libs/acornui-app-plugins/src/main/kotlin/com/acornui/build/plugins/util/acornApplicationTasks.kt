@@ -9,7 +9,7 @@ import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.jsonStringify
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.*
 import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
@@ -34,21 +34,36 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 			val combineAcornResources =
 					project.tasks.register<Sync>("${target}CombineAcornResources") {
 						into(unprocessedResourcesAllMain)
-						projectDependencies(target, compilationName).forEach { dependency ->
-							val unconfiguredDepError = "Target platform \"$target\" was not found for ${dependency.displayName}. Ensure that this dependency applies the plugin \"com.acornui.module\"."
-							val kotlinTarget: KotlinTarget = dependency.kotlinExt.targets.named(target).orNull
-									?: error(unconfiguredDepError)
-							val compilation = (kotlinTarget.compilations.named(compilationName).orNull
-									?: error(unconfiguredDepError)) as AbstractKotlinCompilationToRunnableFiles<*>
-							compilation.allKotlinSourceSets.forEach {
-								from(it.resources.srcDirs)
+
+						description = """
+							Combines all resources from dependent project source sets and the `assets` directory from 
+							dependent jar artifacts into build/unprocessedResources/$target/all$compilationNameCapitalized.
+							In order to improve iteration speed, this does not depend on the `jar` task. Any runtime 
+							dependency that is within the build directory of an included project is swapped for that 
+							projects' source resources.
+						""".trimIndent()
+
+						val compilation = project.getRunnableCompilation(target, compilationName)
+						from({
+							compilation.runtimeDependencyFiles.filter { file ->
+								file.name.endsWith("jar")
+							}.map { file ->
+								val fromProject = rootProject.allprojects.find { file.startsWith(it.buildDir) }
+								if (fromProject == null) {
+									project.zipTree(file).matching {
+										include("assets/**")
+									}
+								} else {
+									val c = fromProject.getRunnableCompilation(target, compilationName)
+									c.allKotlinSourceSets.map {
+										it.resources.srcDirs
+									}
+								}
 							}
-							compilation.runtimeDependencyFiles.forEach { file ->
-                                if (file.exists())
-                                    from(project.zipTree(file).matching {
-                                        include("assets/**")
-                                    })
-							}
+						})
+
+						compilation.allKotlinSourceSets.forEach {
+							from(it.resources.srcDirs)
 						}
 					}
 
@@ -96,6 +111,14 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 	}
 }
 
+private fun Project.getRunnableCompilation(target: String, compilationName: String): AbstractKotlinCompilationToRunnableFiles<*> {
+	val unconfiguredDepError = "Target platform \"$target\" was not found for $displayName. Ensure that this dependency applies a kotlin multiplatform plugin."
+	val kotlinTarget: KotlinTarget = project.kotlinExt.targets.named(target).orNull
+			?: error(unconfiguredDepError)
+	return (kotlinTarget.compilations.named(compilationName).orNull
+			?: error(unconfiguredDepError)) as AbstractKotlinCompilationToRunnableFiles<*>
+}
+
 private fun Sync.addCombinedJsResources(project: Project) {
 	val combinedResourcesDir = project.acornui.appResources.resolve("js/allMain")
 	from(combinedResourcesDir) {
@@ -108,19 +131,9 @@ private fun Sync.addCombinedJsResources(project: Project) {
 }
 
 private fun Project.projectDependencies(target: String, compilationName: String): List<Project> {
-	val compilationNameCapitalized = compilationName.capitalize()
-	val configNames = listOf(
-			"$target${compilationNameCapitalized}Implementation",
-			"common${compilationNameCapitalized}Implementation"
-	)
-	val configs = configNames.map { project.configurations[it] }
-	val projects = mutableListOf(project)
-	configs.forEach {
-		it.allDependencies.filterIsInstance<ProjectDependency>().forEach { p ->
-			projects.add(p.dependencyProject)
-		}
-	}
-	return projects
+	val compilation = getRunnableCompilation(target, compilationName)
+	val config = project.configurations[compilation.implementationConfigurationName]
+	return config.allDependencies.filterIsInstance<ProjectDependency>().map { it.dependencyProject }
 }
 
 fun Project.appAssetsWebTasks() {
