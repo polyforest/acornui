@@ -47,7 +47,7 @@ private fun refreshActiveCoroutinesStr() {
  * Launches a new coroutine on this same thread.
  */
 fun launch(block: suspend () -> Unit) {
-	block.startCoroutine(BasicContinuationImpl())
+	block.startCoroutine(BasicContinuation2Impl())
 }
 
 typealias Work<R> = suspend () -> R
@@ -55,7 +55,7 @@ typealias Work<R> = suspend () -> R
 /**
  * A suspension point with no result.
  */
-class BasicContinuationImpl(
+private class BasicContinuation2Impl(
 		override val context: CoroutineContext = EmptyCoroutineContext
 ) : Continuation<Unit> {
 

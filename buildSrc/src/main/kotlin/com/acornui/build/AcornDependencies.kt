@@ -12,7 +12,8 @@ object AcornDependencies {
 
 			"kotlinLanguageVersion" to "1.3",
 			"kotlinJvmTarget" to "1.8",
-			"kotlinSerializationVersion" to "0.11.1"
+			"kotlinSerializationVersion" to "0.11.1",
+			"kotlinCoroutinesVersion" to "1.3.0-RC2"
 	)
 
 	fun addVersionProperties(extra: ExtraPropertiesExtension) {

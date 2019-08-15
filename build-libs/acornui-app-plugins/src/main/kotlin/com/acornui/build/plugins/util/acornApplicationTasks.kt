@@ -111,7 +111,7 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 	}
 }
 
-private fun Project.getRunnableCompilation(target: String, compilationName: String): AbstractKotlinCompilationToRunnableFiles<*> {
+fun Project.getRunnableCompilation(target: String, compilationName: String): AbstractKotlinCompilationToRunnableFiles<*> {
 	val unconfiguredDepError = "Target platform \"$target\" was not found for $displayName. Ensure that this dependency applies a kotlin multiplatform plugin."
 	val kotlinTarget: KotlinTarget = project.kotlinExt.targets.named(target).orNull
 			?: error(unconfiguredDepError)
@@ -128,12 +128,6 @@ private fun Sync.addCombinedJsResources(project: Project) {
 			}
 		}
 	}
-}
-
-private fun Project.projectDependencies(target: String, compilationName: String): List<Project> {
-	val compilation = getRunnableCompilation(target, compilationName)
-	val config = project.configurations[compilation.implementationConfigurationName]
-	return config.allDependencies.filterIsInstance<ProjectDependency>().map { it.dependencyProject }
 }
 
 fun Project.appAssetsWebTasks() {

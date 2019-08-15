@@ -5,6 +5,7 @@ package com.acornui.build.plugins
 import com.acornui.toCamelCase
 import com.acornui.build.plugins.util.appAssetsWebTasks
 import com.acornui.build.plugins.util.applicationResourceTasks
+import com.acornui.build.plugins.util.getRunnableCompilation
 import com.acornui.build.plugins.util.kotlinExt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -106,17 +107,19 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 private fun Project.runJvmTask() {
 	val jvmArgs: String? by extra
 	tasks.register<JavaExec>("runJvm") {
-		dependsOn("jvmAssemble")
+		dependsOn("jvmProcessAcornResources", "jvmMainClasses")
 		group = "application"
-		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
-		val compilation =
-				jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
+		val compilation = getRunnableCompilation("jvm", "main")
 
-		val classes = files(
-				compilation.runtimeDependencyFiles,
-				compilation.output.allOutputs
-		)
-		classpath = classes
+		val files = files()
+		files.from(compilation.output.allOutputs)
+		val classesOrFiles = compilation.runtimeDependencyFiles.forEach { file ->
+			val fromProject = if (file.name.endsWith("jar")) rootProject.allprojects.find { file.startsWith(it.buildDir) } else null
+			val classesOrFile = fromProject?.getRunnableCompilation("jvm", "main")?.output?.classesDirs ?: file
+			files.from(classesOrFile)
+		}
+		logger.lifecycle("classpath: " + files.joinToString())
+		classpath = files
 		workingDir = acornui.appResources.resolve("jvm/allMain")
 		main =
 				"${rootProject.group}.${rootProject.name}.jvm.${rootProject.name.toCamelCase().capitalize()}JvmKt"
