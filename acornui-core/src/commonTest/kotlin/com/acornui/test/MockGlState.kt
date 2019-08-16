@@ -1,7 +1,9 @@
 package com.acornui.test
 
 import com.acornui.gl.core.*
-import com.acornui.graphic.*
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.TextureRo
+import com.acornui.graphic.rgbData
 import com.acornui.math.*
 
 object MockGlState : GlState {

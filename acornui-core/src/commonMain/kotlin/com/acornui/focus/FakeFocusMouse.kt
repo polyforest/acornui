@@ -16,17 +16,17 @@
 
 package com.acornui.focus
 
+import com.acornui.Disposable
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.parentWalk
 import com.acornui.component.stage
-import com.acornui.Disposable
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.input.*
 import com.acornui.input.interaction.*
-import com.acornui.time.time
+import com.acornui.time.nowMs
 
 /**
  * Dispatches mouse events when using SPACE or ENTER key presses on the focused element.
@@ -76,7 +76,7 @@ class FakeFocusMouse(
 		fakeMouseEvent.isFabricated = true
 		fakeMouseEvent.type = type
 		fakeMouseEvent.button = WhichButton.LEFT
-		fakeMouseEvent.timestamp = time.nowMs()
+		fakeMouseEvent.timestamp = nowMs()
 		interactivity.dispatch(target, fakeMouseEvent)
 	}
 

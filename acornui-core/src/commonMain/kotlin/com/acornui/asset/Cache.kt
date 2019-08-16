@@ -16,14 +16,13 @@
 
 package com.acornui.asset
 
-import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.Disposable
 import com.acornui.DisposedException
+import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.time.TimeDriver
 import com.acornui.time.tick
 
 
@@ -68,7 +67,7 @@ interface Cache : Disposable {
 
 	companion object : DKey<Cache> {
 		override fun factory(injector: Injector): Cache? {
-			return CacheImpl(injector.inject(TimeDriver))
+			return CacheImpl()
 		}
 	}
 }
@@ -78,8 +77,6 @@ interface Cache : Disposable {
  * in the future.
  */
 class CacheImpl(
-		timeDriver: TimeDriver,
-
 		/**
 		 * The number of frames before an unreferenced cache item is removed and destroyed.
 		 */
@@ -94,7 +91,7 @@ class CacheImpl(
 	private var timerPending = checkInterval
 
 	init {
-		tick(timeDriver) {
+		tick {
 			if (--timerPending <= 0) {
 				timerPending = checkInterval
 				deathPoolIterator.clear()

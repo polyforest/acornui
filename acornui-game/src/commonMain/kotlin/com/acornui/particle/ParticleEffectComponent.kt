@@ -16,22 +16,22 @@
 
 package com.acornui.particle
 
+import com.acornui.Disposable
+import com.acornui.Updatable
+import com.acornui.asset.*
 import com.acornui.async.Deferred
 import com.acornui.async.async
 import com.acornui.component.InteractivityMode
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
-import com.acornui.Disposable
-import com.acornui.Updatable
-import com.acornui.asset.*
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.TextureAtlasDataSerializer
 import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.time.onTick
-import com.acornui.gl.core.GlState
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -142,9 +142,9 @@ class LoadedParticleEffect(
 		}
 	}
 
-	override fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 		for (i in 0..emitterInstances.lastIndex) {
-			emitterInstances[i].update(tickTime)
+			emitterInstances[i].update(dT)
 		}
 	}
 

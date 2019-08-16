@@ -16,19 +16,19 @@
 
 package com.acornui.input.interaction
 
-import com.acornui.recycle.Clearable
+import com.acornui.Disposable
+import com.acornui.Lifecycle
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
-import com.acornui.Disposable
-import com.acornui.Lifecycle
 import com.acornui.input.*
-import com.acornui.time.callLater
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2.Companion.manhattanDst
 import com.acornui.math.Vector2Ro
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.time.callLater
 
 interface PinchPointsRo {
 	val first: Vector2Ro
@@ -288,7 +288,7 @@ class PinchAttachment(
 			}
 			dispatchPinchEvent(PinchInteraction.PINCH_END, _pinchEnd)
 
-			target.callLater { stage.click(isCapture = true).remove(::clickBlocker) }
+			callLater { stage.click(isCapture = true).remove(::clickBlocker) }
 		}
 	}
 

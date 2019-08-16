@@ -3,7 +3,10 @@ package com.acornui.test
 import com.acornui.component.RenderContextRo
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMaxRo
+import com.acornui.math.RectangleRo
 
 object MockRenderContext : RenderContextRo {
 

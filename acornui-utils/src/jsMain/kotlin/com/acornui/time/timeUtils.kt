@@ -16,27 +16,12 @@
 
 package com.acornui.time
 
-/**
- * @author nbilyk
- */
-private class TimeProviderImpl : TimeProvider {
+private val startTime: Long = nowMs()
 
-	private val startTime: Long
-
-	init {
-		startTime = nowMs()
-	}
-
-	override fun nowMs(): Long {
-		return (js("Date.now()") as Double).toLong()
-	}
-
-	override fun nanoElapsed(): Long {
-		return ((js("performance.now()") as Number).toLong() - startTime) * 1_000_000L
-	}
+actual fun nowMs(): Long {
+	return (js("Date.now()") as Double).toLong()
 }
 
-/**
- * A global abstracted time provider.
- */
-actual val time: TimeProvider = TimeProviderImpl()
+actual fun nanoElapsed(): Long {
+	return ((js("performance.now()") as Number).toLong() - startTime) * 1_000_000L
+}

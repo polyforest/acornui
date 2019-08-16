@@ -18,20 +18,20 @@
 
 package com.acornui.component.scroll
 
+import com.acornui.Disposable
 import com.acornui.collection.poll
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.Disposable
+import com.acornui.config
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
-import com.acornui.tickTime
-import com.acornui.time.tick
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
-import com.acornui.time.time
+import com.acornui.time.nowMs
+import com.acornui.time.tick
 
 /**
  * A toss scroller lets you grab a target component, and update [ScrollModelRo] objects by dragging it.
@@ -48,7 +48,7 @@ class TossScroller(
 		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
 ) : Disposable {
 
-	private val tickTime = target.tickTime
+	private val tickTime = target.config.frameTime
 
 	private val _tossStart = StoppableSignalImpl<DragInteraction>()
 
@@ -131,7 +131,7 @@ class TossScroller(
 
 	private fun pushHistory() {
 		historyPoints.add(Vector2.obtain().set(position.x, position.y))
-		historyTimes.add(time.nowMs())
+		historyTimes.add(nowMs())
 		if (historyPoints.size > MAX_HISTORY) {
 			Vector2.free(historyPoints.poll())
 			historyTimes.poll()
@@ -140,7 +140,7 @@ class TossScroller(
 
 	private fun startEnterFrame() {
 		if (_timer == null) {
-			_timer = target.tick {
+			_timer = tick {
 				if (dragAttachment.isDragging) {
 					// History is also added in an enter frame instead of the drag handler so that if the user stops dragging, the history reflects that.
 					pushHistory()

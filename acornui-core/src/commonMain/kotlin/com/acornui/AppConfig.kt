@@ -19,14 +19,15 @@ package com.acornui
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.time.TimeDriver
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import kotlinx.serialization.Serializable
 
 /**
  * Application configuration common across back-end types.
  * @author nbilyk
  */
+@Serializable
 data class AppConfig(
 
 		/**
@@ -38,14 +39,6 @@ data class AppConfig(
 		 * The target number of frames per second.
 		 */
 		val frameRate: Int = 50,
-
-		/**
-		 * The configuration for the [com.acornui.time.TimeDriver] dependency.
-		 */
-		val timeDriverConfig: TimeDriverConfig = TimeDriverConfig(
-				tickTime = 1f / frameRate.toFloat(),
-				maxTicksPerUpdate = 30
-		),
 
 		/**
 		 * The location of the files.json file created by the AcornUI assets task.
@@ -80,6 +73,7 @@ data class AppConfig(
 
 }
 
+@Serializable
 data class WindowConfig(
 
 		val title: String = "",
@@ -106,6 +100,7 @@ data class WindowConfig(
 	}
 }
 
+@Serializable
 data class InputConfig(
 
 		/**
@@ -118,6 +113,7 @@ data class InputConfig(
 		val jsCaptureAllKeyboardInput: Boolean = true
 )
 
+@Serializable
 data class GlConfig(
 
 		/**
@@ -147,25 +143,6 @@ data class GlConfig(
 		val vSync: Boolean = true
 )
 
-data class TimeDriverConfig(
-
-		/**
-		 * The number of seconds between each [com.acornui.time.TimeDriver] tick.
-		 * The time driver is updated every frame by the application, and the default time driver implementation
-		 * supports having a separated time tick from the framerate. This means that subscribers can rely on a fixed
-		 * update interval, which is important for things such as physics-based animations.
-		 *
-		 * The default matches the framerate, but games may for example wish to divide this by 5 in order to have 5
-		 * ticks per frame.
-		 */
-		val tickTime: Float,
-
-		/**
-		 * The maximum number of ticks per time driver update.
-		 */
-		val maxTicksPerUpdate: Int
-)
-
 /**
  * A convenient way to get the scoped AppConfig.
  */
@@ -176,12 +153,4 @@ val Scoped.config: AppConfig
  * The number of seconds between each time driver tick.
  */
 val Scoped.tickTime: Float
-	get() = inject(TimeDriver).config.tickTime
-
-//enum class Browser {
-//	NONE,
-//	IE,
-//	FX,
-//	CH,
-//	SF
-//}
+	get() = config.frameTime

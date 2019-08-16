@@ -128,8 +128,9 @@ interface Updatable {
 
 	/**
 	 * Updates this object.
+	 * @param dT The number of seconds since the last update. This will be at most [AppConfig.frameTime].
 	 */
-	fun update(tickTime: Float)
+	fun update(dT: Float)
 }
 
 interface UpdatableChild : Updatable, ChildRo {

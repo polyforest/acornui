@@ -18,7 +18,10 @@ package com.acornui.recycle
 
 import com.acornui.assertionsEnabled
 import com.acornui.test.assertUnorderedListEquals
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class IndexedRecycleListTest {
 

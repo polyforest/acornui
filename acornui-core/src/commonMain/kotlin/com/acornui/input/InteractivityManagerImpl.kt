@@ -30,7 +30,7 @@ import com.acornui.input.interaction.*
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
-import com.acornui.time.time
+import com.acornui.time.nowMs
 
 
 // TODO: possibly add a re-validation when the HIERARCHY has been invalidated. (use case: when an element has moved out from underneath the mouse)
@@ -180,7 +180,7 @@ open class InteractivityManagerImpl(
 		mouse.canvasX = mouseInput.canvasX
 		mouse.canvasY = mouseInput.canvasY
 		mouse.button = WhichButton.UNKNOWN
-		mouse.timestamp = time.nowMs()
+		mouse.timestamp = nowMs()
 
 		if (previousOverTarget != null) {
 			mouse.relatedTarget = target

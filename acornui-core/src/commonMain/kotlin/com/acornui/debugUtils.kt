@@ -21,11 +21,10 @@ import com.acornui.math.Vector3
 import com.acornui.math.maxOf4
 import com.acornui.math.minOf4
 import com.acornui.time.callLater
-import kotlin.jvm.JvmName
 
 
 fun debugWhyCantSee(target: UiComponent) {
-	target.callLater({canSee(target)})
+	callLater { canSee(target) }
 }
 
 private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {

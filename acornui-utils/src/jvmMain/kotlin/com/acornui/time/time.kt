@@ -16,23 +16,10 @@
 
 package com.acornui.time
 
-/**
- * @author nbilyk
- */
-private class TimeProviderImpl: TimeProvider {
-
-	private var _startTime = (Date().time - msElapsed())
-
-	override fun nowMs(): Long {
-		return _startTime + msElapsed()
-	}
-
-	override fun nanoElapsed(): Long {
-		return System.nanoTime()
-	}
+actual fun nowMs(): Long {
+	return System.currentTimeMillis()
 }
 
-/**
- * A global abstracted time provider.
- */
-actual val time: TimeProvider = TimeProviderImpl()
+actual fun nanoElapsed(): Long {
+	return System.nanoTime()
+}

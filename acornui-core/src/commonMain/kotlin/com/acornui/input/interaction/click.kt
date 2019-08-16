@@ -22,9 +22,9 @@ import com.acornui.di.inject
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
 import com.acornui.input.WhichButton
-import com.acornui.time.callLater
 import com.acornui.signal.StoppableSignal
-import com.acornui.time.time
+import com.acornui.time.callLater
+import com.acornui.time.nowMs
 
 interface ClickInteractionRo : MouseInteractionRo {
 
@@ -90,7 +90,7 @@ fun UiComponentRo.dispatchClick() {
 	fakeClickEvent.type = ClickInteractionRo.LEFT_CLICK
 	fakeClickEvent.target = this
 	fakeClickEvent.button = WhichButton.LEFT
-	fakeClickEvent.timestamp = time.nowMs()
+	fakeClickEvent.timestamp = nowMs()
 	fakeClickEvent.count = 1
 	inject(InteractivityManager).dispatch(this, fakeClickEvent)
 }

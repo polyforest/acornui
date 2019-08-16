@@ -16,6 +16,7 @@
 
 package com.acornui.tween
 
+import com.acornui.component.ComponentInit
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
 
@@ -58,6 +59,14 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 		this.loopAfter = loop
 		startTime = -delay - 0.0000001f // Subtract a small amount so time handlers at 0f time get invoked.
 		jumpTo(startTime)
+	}
+
+	operator fun Tween.unaryPlus() {
+		add(this)
+	}
+
+	operator fun Tween.unaryMinus() {
+		remove(this)
 	}
 
 	fun add(tween: Tween, offset: Float = 0f) = add(_children.size, tween, offset)
@@ -117,6 +126,8 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 	}
 }
 
-fun timelineTween(ease: Interpolation = Easing.linear, delay: Float = 0f, loop: Boolean = false): TimelineTween {
-	return TimelineTween(ease, delay, loop)
+fun timelineTween(ease: Interpolation = Easing.linear, delay: Float = 0f, loop: Boolean = false, inner: ComponentInit<TimelineTween> = {}): TimelineTween {
+	val t = TimelineTween(ease, delay, loop)
+	t.inner()
+	return t
 }

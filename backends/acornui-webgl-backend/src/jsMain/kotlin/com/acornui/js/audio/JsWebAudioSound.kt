@@ -19,7 +19,7 @@ package com.acornui.js.audio
 import com.acornui.audio.AudioManager
 import com.acornui.audio.Sound
 import com.acornui.math.MathUtils
-import com.acornui.time.time
+import com.acornui.time.nowS
 import org.khronos.webgl.ArrayBuffer
 
 class JsWebAudioSound(
@@ -70,7 +70,7 @@ class JsWebAudioSound(
 	}
 
 	private fun complete() {
-		_stopTime = time.nowS()
+		_stopTime = nowS()
 		_isPlaying = false
 		onCompleted?.invoke()
 		onCompleted = null
@@ -98,7 +98,7 @@ class JsWebAudioSound(
 
 	override fun start() {
 		audioBufferSourceNode.start(context.currentTime)
-		_startTime = time.nowS()
+		_startTime = nowS()
 	}
 
 	override fun stop() {
@@ -110,7 +110,7 @@ class JsWebAudioSound(
 			if (!_isPlaying)
 				return (_stopTime - _startTime).toFloat()
 			else
-				return (time.nowS() - _startTime).toFloat()
+				return (nowS() - _startTime).toFloat()
 		}
 
 	override fun update() {

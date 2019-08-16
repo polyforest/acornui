@@ -4,6 +4,6 @@ import com.acornui.UpdatableChildBase
 
 object MockUpdatableChild : UpdatableChildBase() {
 
-	override fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 	}
 }

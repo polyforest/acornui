@@ -19,15 +19,12 @@ package com.acornui.time
 import com.acornui.Disposable
 import com.acornui.UpdatableChild
 import com.acornui.UpdatableChildBase
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 
 interface CallbackWrapper : Disposable {
 	operator fun invoke()
 }
 
 internal class LimitedCallback(
-		val timeDriver: TimeDriver,
 		val duration: Float,
 		val callback: () -> Unit
 ) : UpdatableChildBase(), UpdatableChild, CallbackWrapper {
@@ -36,8 +33,8 @@ internal class LimitedCallback(
 	private var pendingInvoke = false
 	private var isInvoking = false
 
-	override fun update(tickTime: Float) {
-		currentTime += tickTime
+	override fun update(dT: Float) {
+		currentTime += dT
 		if (currentTime > duration) {
 			currentTime = 0f
 			if (pendingInvoke) {
@@ -54,7 +51,7 @@ internal class LimitedCallback(
 	override operator fun invoke() {
 		if (isInvoking) return
 		if (parent == null) {
-			timeDriver.addChild(this)
+			FrameDriver.addChild(this)
 			callback()
 		} else {
 			pendingInvoke = true
@@ -72,12 +69,11 @@ internal class LimitedCallback(
  * is invoked while this timed lock is in place, the callback will be invoked at the end of the lock.
  * Note that calls to the wrapper from within the callback will be ignored.
  */
-fun Scoped.limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
-	return LimitedCallback(inject(TimeDriver), duration, callback)
+fun limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
+	return LimitedCallback(duration, callback)
 }
 
 internal class DelayedCallback(
-		val timeDriver: TimeDriver,
 		val duration: Float,
 		val callback: () -> Unit
 ) : UpdatableChildBase(), UpdatableChild, CallbackWrapper {
@@ -86,8 +82,8 @@ internal class DelayedCallback(
 
 	private var isInvoking = false
 
-	override fun update(tickTime: Float) {
-		currentTime += tickTime
+	override fun update(dT: Float) {
+		currentTime += dT
 		if (currentTime > duration) {
 			currentTime = 0f
 			remove()
@@ -100,7 +96,7 @@ internal class DelayedCallback(
 	override operator fun invoke() {
 		if (isInvoking) return
 		if (parent == null) {
-			timeDriver.addChild(this)
+			FrameDriver.addChild(this)
 		} else {
 			currentTime = 0f
 		}
@@ -121,6 +117,6 @@ internal class DelayedCallback(
  * @param duration The number of seconds before the [callback] is invoked.
  * @param callback The function to call after [duration] seconds.
  */
-fun Scoped.delayedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
-	return DelayedCallback(inject(TimeDriver), duration, callback)
+fun delayedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
+	return DelayedCallback(duration, callback)
 }

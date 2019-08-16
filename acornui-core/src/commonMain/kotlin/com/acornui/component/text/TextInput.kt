@@ -18,28 +18,30 @@
 
 package com.acornui.component.text
 
+import com.acornui.Disposable
 import com.acornui.async.resultOrNull
-import com.acornui.recycle.Clearable
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
-import com.acornui.Disposable
 import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.input.*
-import com.acornui.input.interaction.*
+import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.math.*
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.invokeCommand
+import com.acornui.recycle.Clearable
 import com.acornui.repeat2
-import com.acornui.selection.*
+import com.acornui.selection.SelectableComponent
+import com.acornui.selection.SelectionManager
+import com.acornui.selection.SelectionRange
+import com.acornui.signal.Signal
 import com.acornui.tickTime
 import com.acornui.time.tick
-import com.acornui.math.*
-import com.acornui.signal.Signal
 
 interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 

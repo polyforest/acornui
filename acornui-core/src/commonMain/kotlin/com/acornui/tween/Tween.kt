@@ -16,17 +16,15 @@
 
 package com.acornui.tween
 
-import com.acornui.recycle.ObjectPool
 import com.acornui.Disposable
 import com.acornui.UpdatableChildBase
-import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.time.TimeDriver
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
 import com.acornui.math.MathUtils
+import com.acornui.recycle.ObjectPool
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.time.FrameDriver
 
 /**
  * A Tween is an object representing an interpolation over time.
@@ -301,8 +299,8 @@ class TweenDriver private constructor() : UpdatableChildBase(), Disposable {
 			_tween?.completed?.add(tweenCompletedHandler)
 		}
 
-	override fun update(tickTime: Float) {
-		tween?.update(tickTime)
+	override fun update(dT: Float) {
+		tween?.update(dT)
 	}
 
 	override fun dispose() {
@@ -324,18 +322,29 @@ class TweenDriver private constructor() : UpdatableChildBase(), Disposable {
 /**
  * Creates a tween driver and updates the tween forward until completion.
  */
-fun <T : Tween> Scoped.driveTween(tween: T): T {
+@Deprecated("use tween.start", ReplaceWith("tween.start()"))
+fun <T : Tween> driveTween(tween: T): T {
 	val driver = TweenDriver.obtain(tween)
-	inject(TimeDriver).addChild(driver)
+	FrameDriver.addChild(driver)
 	return tween
 }
 
 /**
  * Creates a tween driver and updates the tween forward until completion.
  */
-fun <T : Tween> T.drive(timeDriver: TimeDriver): T {
+@Deprecated("Use tween.start", ReplaceWith("this.start()"))
+fun <T : Tween> T.drive(any: Any): T {
 	val driver = TweenDriver.obtain(this)
-	timeDriver.addChild(driver)
+	FrameDriver.addChild(driver)
+	return this
+}
+
+/**
+ * Obtains a tween driver and updates the tween forward until completion.
+ */
+fun <T : Tween> T.start(): T {
+	val driver = TweenDriver.obtain(this)
+	FrameDriver.addChild(driver)
 	return this
 }
 

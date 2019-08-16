@@ -24,7 +24,7 @@ import com.acornui.input.Ascii
 import com.acornui.input.KeyInput
 import com.acornui.input.interaction.*
 import com.acornui.signal.Signal1
-import com.acornui.time.time
+import com.acornui.time.nowMs
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWCharCallback
 import org.lwjgl.glfw.GLFWKeyCallback
@@ -139,7 +139,7 @@ class LwjglKeyInput(private val window: Long) : KeyInput {
 			keyEvent.metaKey = mods and GLFW.GLFW_MOD_SUPER > 0
 			keyEvent.shiftKey = mods and GLFW.GLFW_MOD_SHIFT > 0
 
-			keyEvent.timestamp = time.nowMs()
+			keyEvent.timestamp = nowMs()
 			when (action) {
 				GLFW.GLFW_PRESS -> {
 					downMap[keyEvent.keyCode][keyEvent.location] = true

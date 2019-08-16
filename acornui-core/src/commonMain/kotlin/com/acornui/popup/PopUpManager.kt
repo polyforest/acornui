@@ -16,7 +16,6 @@
 
 package com.acornui.popup
 
-import com.acornui.recycle.Clearable
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
@@ -26,19 +25,20 @@ import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
+import com.acornui.graphic.Color
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
-import com.acornui.input.interaction.clickHandledForAFrame
 import com.acornui.input.interaction.click
+import com.acornui.input.interaction.clickHandledForAFrame
 import com.acornui.input.keyDown
 import com.acornui.isAncestorOf
-import com.acornui.tween.Tween
-import com.acornui.tween.drive
-import com.acornui.tween.tweenAlpha
-import com.acornui.graphic.Color
 import com.acornui.math.Easing
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Cancel
 import com.acornui.signal.addOnce
+import com.acornui.tween.Tween
+import com.acornui.tween.start
+import com.acornui.tween.tweenAlpha
 
 interface PopUpManager : Clearable {
 
@@ -207,13 +207,13 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 				modalFillContainer.clickHandledForAFrame()
 				modalFillContainer.visible = true
 				modalFillContainer.alpha = 0f
-				tween = modalFillContainer.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).drive(timeDriver)
+				tween = modalFillContainer.tweenAlpha(s.modalEaseInDuration, s.modalEaseIn, 1f).start()
 				tween!!.completed.addOnce {
 					tween = null
 				}
 			} else {
 				tween?.complete()
-				tween = modalFillContainer.tweenAlpha(s.modalEaseOutDuration, s.modalEaseOut, 0f).drive(timeDriver)
+				tween = modalFillContainer.tweenAlpha(s.modalEaseOutDuration, s.modalEaseOut, 0f).start()
 				tween!!.completed.addOnce {
 					modalFillContainer.visible = false
 					tween = null

@@ -20,10 +20,6 @@ import com.acornui.Disposable
 import com.acornui.Updatable
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
-import com.acornui.mvc.Command
-import com.acornui.mvc.CommandType
-import com.acornui.mvc.commander
-import com.acornui.mvc.invokeCommand
 import com.acornui.ecs.Entity
 import com.acornui.ecs.componentList
 import com.acornui.geom.CollisionInfo
@@ -32,6 +28,10 @@ import com.acornui.geom.Polygon2
 import com.acornui.math.Matrix3
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.mvc.Command
+import com.acornui.mvc.CommandType
+import com.acornui.mvc.commander
+import com.acornui.mvc.invokeCommand
 
 class PhysicsController(
 		override val injector: Injector,
@@ -45,7 +45,7 @@ class PhysicsController(
 		componentList(entities, cmd, physicsVos, Physics)
 	}
 
-	override fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 		for (i in 0..physicsVos.lastIndex) {
 			val p = physicsVos[i]
 			p.position.add(p.velocity.x, p.velocity.y, 0f)
