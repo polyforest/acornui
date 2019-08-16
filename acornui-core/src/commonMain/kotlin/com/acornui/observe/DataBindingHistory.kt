@@ -1,20 +1,19 @@
 package com.acornui.observe
 
+import com.acornui.Disposable
 import com.acornui.collection.Filter
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentRo
-import com.acornui.Disposable
 import com.acornui.di.own
+import com.acornui.function.as2
 import com.acornui.input.interaction.UndoInteractionRo
 import com.acornui.input.interaction.redo
 import com.acornui.input.interaction.undo
-import com.acornui.time.delayedCallback
-import com.acornui.function.as2
-import com.acornui.observe.DataBinding
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal0
+import com.acornui.time.delayedCallback
 
 class DataBindingHistory<T>(
 		private val host: UiComponentRo,
@@ -47,7 +46,7 @@ class DataBindingHistory<T>(
 
 	private var isDispatching = false
 
-	private val delayedPush = host.delayedCallback(0.7f, ::pushState)
+	private val delayedPush = delayedCallback(0.7f, ::pushState)
 
 	/**
 	 * Only values that pass this filter will be added to the history.

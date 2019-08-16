@@ -20,7 +20,7 @@ import com.acornui.di.Injector
 import com.acornui.input.WhichButton
 import com.acornui.input.interaction.ClickDispatcher
 import com.acornui.input.interaction.ClickInteractionRo
-import com.acornui.time.time
+import com.acornui.time.nowMs
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -62,7 +62,7 @@ class JsClickDispatcher(
 
 		val canvasX = jsEvent.pageX.toFloat() - rootElement.offsetLeft.toFloat()
 		val canvasY = jsEvent.pageY.toFloat() - rootElement.offsetTop.toFloat()
-		release(WhichButton.LEFT, canvasX, canvasY, time.nowMs(), true)
+		release(WhichButton.LEFT, canvasX, canvasY, nowMs(), true)
 		clickEvent.button = WhichButton.RIGHT
 		clickEvent.type = ClickInteractionRo.RIGHT_CLICK
 		if (fireClickEvent()) {

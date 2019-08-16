@@ -16,16 +16,16 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.Disposable
 import com.acornui.di.inject
 import com.acornui.input.*
-import com.acornui.time.time
+import com.acornui.time.nowMs
 import com.acornui.time.timer
 
 class DownRepeat(
@@ -50,7 +50,7 @@ class DownRepeat(
 		MOUSE_DOWN_REPEAT.canvasX = m.canvasX
 		MOUSE_DOWN_REPEAT.canvasY = m.canvasY
 		MOUSE_DOWN_REPEAT.button = WhichButton.LEFT
-		MOUSE_DOWN_REPEAT.timestamp = time.nowMs()
+		MOUSE_DOWN_REPEAT.timestamp = nowMs()
 		MOUSE_DOWN_REPEAT.localize(target)
 		interactivity.dispatch(target, MOUSE_DOWN_REPEAT, useCapture = false, useBubble = false)
 	}
@@ -59,7 +59,7 @@ class DownRepeat(
 		event: MouseInteractionRo ->
 		if (event !== MOUSE_DOWN_REPEAT) {
 			repeatTimer?.dispose()
-			repeatTimer = target.timer(style.repeatInterval, -1, style.repeatDelay, repeatWaitHandler)
+			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, repeatWaitHandler)
 			stage.mouseUp().add(rawMouseUpHandler, true)
 		}
 	}

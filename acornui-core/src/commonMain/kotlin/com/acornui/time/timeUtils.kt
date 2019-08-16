@@ -16,16 +16,14 @@
 
 package com.acornui.time
 
-import com.acornui.time.time
-
 
 /**
  * Measures the amount of time (in milliseconds) a block of code takes to execute.
  */
 inline fun measure(inner:() -> Unit) {
-	val start = time.nanoElapsed()
+	val start = nanoElapsed()
 	inner()
-	val end = time.nanoElapsed()
+	val end = nanoElapsed()
 	println("Time: ${(end - start) / 1000000.0}")
 }
 
@@ -39,9 +37,9 @@ private var _measuredIterations: Int = 0
  */
 fun averagedMeasure(inner:() -> Unit) {
 	_measuredIterations++
-	val start = time.nanoElapsed()
+	val start = nanoElapsed()
 	inner()
-	val end = time.nanoElapsed()
+	val end = nanoElapsed()
 	_measuredTotalTime += end - start
 }
 

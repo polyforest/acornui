@@ -16,28 +16,28 @@
 
 package com.acornui.component
 
+import com.acornui.AppConfig
+import com.acornui.Disposable
 import com.acornui.collection.ActiveList
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.layout.algorithm.canvasLayoutData
 import com.acornui.component.layout.setSize
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
-import com.acornui.AppConfig
-import com.acornui.Disposable
 import com.acornui.di.*
+import com.acornui.function.as1
 import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
 import com.acornui.input.mouseDown
 import com.acornui.input.touchStart
-import com.acornui.popup.PopUpInfo
-import com.acornui.popup.PopUpManager
-import com.acornui.time.tick
-import com.acornui.function.as1
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
+import com.acornui.popup.PopUpInfo
+import com.acornui.popup.PopUpManager
 import com.acornui.signal.bind
+import com.acornui.time.tick
 
 class TooltipAttachment(val target: UiComponentRo) : Disposable {
 
@@ -59,7 +59,7 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 		hideCountdown = hideDelay
 		isOver = true
 		if (timerHandle == null) {
-			timerHandle = target.tick {
+			timerHandle = tick {
 				if (isOver) {
 					showCountdown -= dT
 					if (showCountdown <= 0f) {

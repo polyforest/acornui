@@ -17,7 +17,7 @@
 package com.acornui
 
 import com.acornui.string.toRadix
-import com.acornui.time.time
+import com.acornui.time.nowMs
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -27,7 +27,7 @@ object UidUtil {
 	 * Returns a unique id.
 	 */
 	fun createUid(): String {
-		return abs(time.nowMs().toInt()).toRadix(36) + (Random.nextDouble() * Int.MAX_VALUE).toInt().toRadix(36)
+		return abs(nowMs().toInt()).toRadix(36) + (Random.nextDouble() * Int.MAX_VALUE).toInt().toRadix(36)
 	}
 
 }

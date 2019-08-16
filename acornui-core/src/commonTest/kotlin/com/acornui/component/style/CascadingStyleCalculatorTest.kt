@@ -16,7 +16,8 @@
 
 package com.acornui.component.style
 
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CascadingStyleCalculatorTest {
 

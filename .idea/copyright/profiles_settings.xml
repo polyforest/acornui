@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <settings default="">
+    <module2copyright>
+      <element module="Spine" copyright="EsotericSoftware" />
+      <element module="All" copyright="Apache 2" />
+    </module2copyright>
+  </settings>
+</component>

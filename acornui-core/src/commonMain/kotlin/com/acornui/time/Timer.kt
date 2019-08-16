@@ -16,12 +16,11 @@
 
 package com.acornui.time
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.Disposable
 import com.acornui.UpdatableChildBase
 import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -37,8 +36,8 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 	var currentRepetition: Int = 0
 	var callback: () -> Unit = NOOP
 
-	override fun update(tickTime: Float) {
-		currentTime += tickTime
+	override fun update(dT: Float) {
+		currentTime += dT
 		while (currentTime > duration) {
 			currentTime -= duration
 			currentRepetition++
@@ -78,21 +77,17 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 
 		private val pool = ClearableObjectPool { Timer() }
 
-		internal fun obtain(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
+		internal fun obtain(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
 			val timer = pool.obtain()
 			timer.isActive = true
 			timer.currentTime = -delay
 			timer.duration = duration
 			timer.callback = callback
 			timer.repetitions = repetitions
-			timeDriver.addChild(timer)
+			FrameDriver.addChild(timer)
 			return timer
 		}
 	}
-}
-
-fun Scoped.timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
-	return timer(inject(TimeDriver), duration, repetitions, delay, callback)
 }
 
 /**
@@ -102,22 +97,21 @@ fun Scoped.timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callb
 suspend fun Scoped.delay(
 		duration: Float
 ) = suspendCoroutine<Unit> { cont ->
-	timer(inject(TimeDriver), duration, 1, 0f) {
+	timer(duration, 1, 0f) {
 		cont.resume(Unit)
 	}
 }
 
 
 /**
- * @param timeDriver The time driver to add the Timer instance to.
  * @param duration The number of seconds between repetitions.
  * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
  * until disposal.
  * @param callback The function to call after every repetition.
  */
-fun timer(timeDriver: TimeDriver, duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
+fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
-	return Timer.obtain(timeDriver, duration, repetitions, delay, callback)
+	return Timer.obtain(duration, repetitions, delay, callback)
 }
 
 /**
@@ -148,7 +142,7 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 	 */
 	var callback: () -> Unit = NOOP
 
-	override fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 		++currentFrame
 		if (currentFrame >= startFrame)
 			callback()
@@ -177,65 +171,33 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 
 		private val pool = ClearableObjectPool { Tick() }
 
-		internal fun obtain(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 			val e = pool.obtain()
 			e.callback = callback
 			e.repetitions = repetitions
 			e.startFrame = startFrame
 			e.isActive = true
-			timeDriver.addChild(e)
+			FrameDriver.addChild(e)
 			return e
 		}
 	}
 }
 
-fun Scoped.callLater(callback: () -> Unit): Disposable {
-	return tick(repetitions = 1, startFrame = 1, callback = callback)
+fun callLater(startFrame: Int = 1, callback: () -> Unit): Disposable {
+	return tick(1, startFrame, callback)
 }
-
-fun callLater(timeDriver: TimeDriver, startFrame: Int = 1, callback: () -> Unit): Disposable {
-	return tick(timeDriver, 1, startFrame, callback)
-}
-
-@Deprecated("Use tick", ReplaceWith("this.tick(repetitions, callback)"))
-fun Scoped.enterFrame(repetitions: Int = -1, callback: () -> Unit): Disposable = tick(repetitions, 1, callback)
-
-@Deprecated("Use tick", ReplaceWith("this.tick(repetitions, startFrame, callback)"))
-fun Scoped.enterFrame(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
-		tick(repetitions, startFrame, callback)
-
-@Deprecated("Use tick", ReplaceWith("tick(timeDriver, repetitions, callback)"))
-fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = tick(timeDriver, repetitions, callback)
-
-@Deprecated("Use tick", ReplaceWith("tick(timeDriver, repetitions, startFrame, callback)"))
-fun enterFrame(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
-		tick(timeDriver, repetitions, startFrame, callback)
-
-
 
 //-----------------------------------------------
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
  */
-fun Scoped.tick(repetitions: Int = -1, callback: () -> Unit): Disposable =
-		tick(inject(TimeDriver), repetitions, 1, callback)
+fun tick(repetitions: Int = -1, callback: () -> Unit): Disposable = tick(repetitions, 1, callback)
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
  */
-fun Scoped.tick(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable =
-		tick(inject(TimeDriver), repetitions, startFrame, callback)
-
-/**
- * Invokes [callback] on every time driver tick until disposed.
- */
-fun tick(timeDriver: TimeDriver, repetitions: Int = -1, callback: () -> Unit): Disposable = tick(timeDriver, repetitions, 1, callback)
-
-/**
- * Invokes [callback] on every time driver tick until disposed.
- */
-fun tick(timeDriver: TimeDriver, repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+fun tick(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
-	return Tick.obtain(timeDriver, repetitions, startFrame, callback)
+	return Tick.obtain(repetitions, startFrame, callback)
 }

@@ -16,25 +16,22 @@
 
 package com.acornui.time
 
-import com.acornui.component.UiComponentRo
 import com.acornui.Disposable
 import com.acornui.LifecycleRo
 import com.acornui.UpdatableChildBase
-import com.acornui.di.inject
+import com.acornui.component.UiComponentRo
 
 private class OnTick(
 		private val component: UiComponentRo,
 		private val callback: (tickTime: Float) -> Unit
 ) : UpdatableChildBase(), Disposable {
 
-	private val timeDriver = component.inject(TimeDriver)
-
 	private val componentActivatedHandler: (LifecycleRo) -> Unit = {
-		timeDriver.addChild(this)
+		FrameDriver.addChild(this)
 	}
 
 	private val componentDeactivatedHandler: (LifecycleRo) -> Unit = {
-		timeDriver.removeChild(this)
+		FrameDriver.removeChild(this)
 	}
 
 	private val componentDisposedHandler: (LifecycleRo) -> Unit = {
@@ -47,12 +44,12 @@ private class OnTick(
 		component.disposed.add(componentDisposedHandler)
 
 		if (component.isActive) {
-			timeDriver.addChild(this)
+			FrameDriver.addChild(this)
 		}
 	}
 
-	override fun update(tickTime: Float) {
-		callback(tickTime)
+	override fun update(dT: Float) {
+		callback(dT)
 	}
 
 	override fun dispose() {

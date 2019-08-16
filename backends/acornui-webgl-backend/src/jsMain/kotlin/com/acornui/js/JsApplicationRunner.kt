@@ -22,8 +22,9 @@ import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.graphic.Window
-import com.acornui.time.TimeDriver
 import com.acornui.logging.Log
+import com.acornui.time.FrameDriver
+import com.acornui.time.nowMs
 import kotlin.browser.window
 
 interface JsApplicationRunner {
@@ -38,8 +39,8 @@ class JsApplicationRunnerImpl(
 		override val injector: Injector
 ) : JsApplicationRunner, Scoped {
 
+	private var lastFrameMs: Long = 0L
 	private val stage = inject(Stage)
-	private val timeDriver = inject(TimeDriver)
 	private val appWindow = inject(Window)
 
 	private var isRunning: Boolean = false
@@ -56,12 +57,15 @@ class JsApplicationRunnerImpl(
 		Log.info("Application#startIndex")
 		isRunning = true
 		stage.activate()
-		timeDriver.activate()
+		lastFrameMs = nowMs()
 		tickFrameId = window.requestAnimationFrame(tick)
 	}
 
 	private fun tick() {
-		timeDriver.update()
+		val now = nowMs()
+		val dT = (lastFrameMs - now) / 1000f
+		lastFrameMs = now
+		FrameDriver.update(dT)
 		if (appWindow.shouldRender(true)) {
 			stage.update()
 			appWindow.renderBegin()

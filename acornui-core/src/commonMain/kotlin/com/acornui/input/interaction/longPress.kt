@@ -16,9 +16,9 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.Disposable
 import com.acornui.input.interaction.LongPressAttachment.Companion.DEFAULT_LONG_PRESS_TIME
 import com.acornui.input.touchEnd
 import com.acornui.input.touchMove
@@ -59,7 +59,7 @@ private class LongPressAttachment(
 		val t = event.touches.firstOrNull() ?: return
 		startCanvasX = t.canvasX
 		startCanvasY = t.canvasY
-		timerRef = target.timer(longPressTime, callback = ::timerHandler)
+		timerRef = timer(longPressTime, callback = ::timerHandler)
 	}
 
 	private fun touchMoveHandler(event: TouchInteractionRo) {

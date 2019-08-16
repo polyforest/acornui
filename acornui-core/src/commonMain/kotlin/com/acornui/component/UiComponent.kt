@@ -18,26 +18,24 @@
 
 package com.acornui.component
 
-import com.acornui.assertionsEnabled
+import com.acornui.*
+import com.acornui.asset.AssetManager
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.*
 import com.acornui.component.style.*
-import com.acornui.*
-import com.acornui.asset.AssetManager
 import com.acornui.di.*
 import com.acornui.focus.*
+import com.acornui.function.as1
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.CameraRo
+import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
 import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
 import com.acornui.input.MouseState
-import com.acornui.time.TimeDriver
-import com.acornui.function.as1
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
@@ -294,7 +292,6 @@ open class UiComponentImpl(
 
 	protected val assets by AssetManager
 	protected val interactivity by InteractivityManager
-	protected val timeDriver by TimeDriver
 	protected val gl by Gl20
 	protected val glState by GlState
 	protected val stage by Stage

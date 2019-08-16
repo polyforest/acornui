@@ -16,21 +16,20 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
+import com.acornui.LifecycleRo
 import com.acornui.component.UiComponentRo
 import com.acornui.component.canvasToLocal
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
-import com.acornui.Disposable
-import com.acornui.LifecycleRo
 import com.acornui.di.inject
 import com.acornui.input.*
-import com.acornui.time.TimeDriver
-import com.acornui.time.callLater
-import com.acornui.time.tick
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.time.callLater
+import com.acornui.time.tick
 
 /**
  * A behavior for a touch down, touch move, then touch up on a target UiComponent.
@@ -46,7 +45,6 @@ class DragAttachment(
 
 	private val stage = target.stage
 	private val mouse = target.inject(MouseState)
-	private val timeDriver = target.inject(TimeDriver)
 
 	private var watchingMouse = false
 	private var watchingTouch = false
@@ -111,7 +109,7 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(timeDriver, -1, ::enterFrameHandler)
+			_enterFrame = tick(-1, ::enterFrameHandler)
 			stage.mouseMove().add(::stageMouseMoveHandler)
 			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
@@ -206,7 +204,7 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(timeDriver, -1, ::enterFrameHandler)
+			_enterFrame = tick(-1, ::enterFrameHandler)
 			stage.touchMove().add(::stageTouchMoveHandler)
 			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {
@@ -263,7 +261,7 @@ class DragAttachment(
 			}
 			dispatchDragEvent(DragInteraction.DRAG_END, _dragEnd)
 
-			target.callLater { stage.click(isCapture = true).remove(clickBlocker) }
+			callLater { stage.click(isCapture = true).remove(clickBlocker) }
 		}
 	}
 

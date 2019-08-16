@@ -1,12 +1,5 @@
 package com.acornui.component
 
-import com.acornui.graphic.Color
-import com.acornui.serialization.jsonParse
-import com.acornui.serialization.jsonStringify
-import kotlin.test.Ignore
-import kotlin.test.Test
-import kotlin.test.assertEquals
-
 class BoxStyleTest {
 
 //	@Test

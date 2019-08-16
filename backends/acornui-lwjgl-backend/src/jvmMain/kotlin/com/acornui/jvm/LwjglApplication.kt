@@ -18,23 +18,25 @@
 
 package com.acornui.jvm
 
-import com.acornui.async.launch
-import com.acornui.component.*
-import com.acornui.component.text.BitmapFontRegistry
-import com.acornui.AppConfig
-import com.acornui.ApplicationBase
-import com.acornui.Version
+import com.acornui.*
 import com.acornui.asset.AssetManager
 import com.acornui.asset.AssetManagerImpl
 import com.acornui.asset.AssetType
 import com.acornui.asset.LoaderFactory
+import com.acornui.async.launch
 import com.acornui.audio.AudioManager
+import com.acornui.component.*
+import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.cursor.CursorManager
-import com.acornui.debug
 import com.acornui.di.*
+import com.acornui.error.stack
+import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
+import com.acornui.gl.core.GlStateImpl
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.input.interaction.ContextMenuManager
@@ -42,16 +44,6 @@ import com.acornui.input.interaction.JvmClickDispatcher
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
-import com.acornui.persistence.Persistence
-import com.acornui.selection.SelectionManager
-import com.acornui.selection.SelectionManagerImpl
-import com.acornui.time.TimeDriver
-import com.acornui.time.TimeDriverImpl
-import com.acornui.error.stack
-import com.acornui.file.FileIoManager
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.GlStateImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
@@ -70,13 +62,16 @@ import com.acornui.jvm.loader.JvmBinaryLoader
 import com.acornui.jvm.loader.JvmTextLoader
 import com.acornui.jvm.persistence.LwjglPersistence
 import com.acornui.logging.Log
+import com.acornui.persistence.Persistence
+import com.acornui.selection.SelectionManager
+import com.acornui.selection.SelectionManagerImpl
 import com.acornui.serialization.jsonParse
-import com.acornui.time.time
-import com.acornui.uncaughtExceptionHandler
+import com.acornui.time.FrameDriver
+import com.acornui.time.nowMs
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
-import java.io.File
-import java.io.FileNotFoundException
+import kotlin.collections.HashMap
+import kotlin.collections.set
 import org.lwjgl.Version as LwjglVersion
 
 /**
@@ -183,10 +178,9 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	private val audioManagerTask by task(AudioManager) {
-		val timeDriver = get(TimeDriver)
 		// TODO: optional dependency task
 		val audioManager = OpenAlAudioManager()
-		timeDriver.addChild(audioManager)
+		FrameDriver.addChild(audioManager)
 		OpenAlSoundLoader.registerDefaultDecoders()
 
 		// Audio
@@ -220,10 +214,6 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val interactivityTask by task(InteractivityManager) {
 		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
-	}
-
-	protected open val timeDriverTask by task(TimeDriver) {
-		TimeDriverImpl(config().timeDriverConfig)
 	}
 
 	protected open val cursorManagerTask by task(CursorManager) {
@@ -279,40 +269,38 @@ class JvmApplicationRunner(
 ) : Scoped {
 
 	private val window = inject(Window)
-	private val timeDriver = inject(TimeDriver)
 	private val stage = inject(Stage)
-	private val frameTime = inject(AppConfig).frameTime
 
 	private val refreshCallback = object : GLFWWindowRefreshCallback() {
 		override fun invoke(windowId: Long) {
 			window.requestRender()
-			tick()
+			tick(0f)
 		}
 	}
 
 	init {
 		Log.info("Application#startIndex")
 		stage.activate()
-		timeDriver.activate()
 
 		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
-		var timeMs = time.nowMs()
-		val frameTimeMs = frameTime * 1000f
+		var lastFrameMs = nowMs()
+		val frameTimeMs = 1000 / inject(AppConfig).frameRate
 		while (!window.isCloseRequested()) {
 			// Poll for window events. Input callbacks will be invoked at this time.
-			tick()
-			val dT = time.nowMs() - timeMs
-			val sleepTime = maxOf(0L, (frameTimeMs - dT).toLong())
+			val now = nowMs()
+			val dT = (lastFrameMs - now) / 1000f
+			lastFrameMs = now
+			tick(dT)
+			val sleepTime = lastFrameMs + frameTimeMs - nowMs()
 			if (sleepTime > 0) Thread.sleep(sleepTime)
-			timeMs += dT + sleepTime
 			GLFW.glfwPollEvents()
 		}
 		GLFW.glfwSetWindowRefreshCallback(windowId, null)
 	}
 
-	private fun tick() {
-		timeDriver.update()
+	private fun tick(dT: Float) {
+		FrameDriver.update(dT)
 		if (window.shouldRender(true)) {
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {

@@ -16,13 +16,13 @@
 
 package com.acornui.audio
 
+import com.acornui.Disposable
+import com.acornui.UpdatableChild
+import com.acornui.UpdatableChildBase
 import com.acornui.collection.ActiveList
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.Disposable
-import com.acornui.UpdatableChild
-import com.acornui.UpdatableChildBase
 import com.acornui.di.DKey
 
 
@@ -149,7 +149,7 @@ open class AudioManagerImpl(final override val simultaneousSounds: Int = 8) : Up
 			}
 		}
 
-	override fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 		activeMusics.iterate {
 			it.update()
 			true

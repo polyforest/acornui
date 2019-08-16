@@ -16,10 +16,6 @@
 
 package com.acornui.js
 
-import com.acornui.async.PendingDisposablesRegistry
-import com.acornui.async.launch
-import com.acornui.component.HtmlComponent
-import com.acornui.component.stage
 import com.acornui.AppConfig
 import com.acornui.ApplicationBase
 import com.acornui.Version
@@ -27,8 +23,12 @@ import com.acornui.asset.AssetManager
 import com.acornui.asset.AssetManagerImpl
 import com.acornui.asset.AssetType
 import com.acornui.asset.LoaderFactory
+import com.acornui.async.PendingDisposablesRegistry
+import com.acornui.async.launch
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
+import com.acornui.component.HtmlComponent
+import com.acornui.component.stage
 import com.acornui.cursor.CursorManager
 import com.acornui.di.*
 import com.acornui.focus.FocusManager
@@ -38,11 +38,6 @@ import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
-import com.acornui.persistence.Persistence
-import com.acornui.selection.SelectionManager
-import com.acornui.selection.SelectionManagerImpl
-import com.acornui.time.TimeDriver
-import com.acornui.time.TimeDriverImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.js.audio.JsAudioElementMusicLoader
 import com.acornui.js.audio.JsAudioElementSoundLoader
@@ -56,6 +51,9 @@ import com.acornui.js.loader.JsBinaryLoader
 import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistence.JsPersistence
 import com.acornui.logging.Log
+import com.acornui.persistence.Persistence
+import com.acornui.selection.SelectionManager
+import com.acornui.selection.SelectionManagerImpl
 import com.acornui.serialization.jsonParse
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.DocumentReadyState
@@ -162,10 +160,6 @@ abstract class JsApplicationBase : ApplicationBase() {
 			{ path: String, _: Int -> JsAudioElementSoundLoader(path, audioManager) }
 		}
 		loaders[AssetType.MUSIC] = { path: String, _: Int -> JsAudioElementMusicLoader(path, audioManager) }
-	}
-
-	protected open val timeDriverTask by task(TimeDriver) {
-		TimeDriverImpl(config().timeDriverConfig)
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {

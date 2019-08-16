@@ -16,18 +16,17 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
-import com.acornui.Disposable
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.input.*
-import com.acornui.time.TimeDriver
 import com.acornui.time.timer
 
 
@@ -42,7 +41,6 @@ abstract class ClickDispatcher(
 ) : Scoped, Disposable {
 
 	protected val stage = inject(Stage)
-	private val timeDriver = inject(TimeDriver)
 	private val interactivityManager = inject(InteractivityManager)
 
 	var multiClickSpeed: Int = 400
@@ -116,7 +114,7 @@ abstract class ClickDispatcher(
 		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp, true)
 		preventMouse = true
 		preventMouseTimer?.dispose()
-		preventMouseTimer = timer(timeDriver, 2.5f, 1) {
+		preventMouseTimer = timer(2.5f, 1) {
 			preventMouse = false
 			preventMouseTimer = null
 		}

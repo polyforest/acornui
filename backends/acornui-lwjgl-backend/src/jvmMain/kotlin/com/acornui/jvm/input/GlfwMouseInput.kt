@@ -23,7 +23,7 @@ import com.acornui.input.interaction.*
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.emptySignal
-import com.acornui.time.time
+import com.acornui.time.nowMs
 import org.lwjgl.glfw.*
 
 /**
@@ -82,7 +82,7 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 			mouseEvent.canvasX = _canvasX
 			mouseEvent.canvasY = _canvasY
 			mouseEvent.button = getWhichButton(button)
-			mouseEvent.timestamp = time.nowMs()
+			mouseEvent.timestamp = nowMs()
 			if (mouseEvent.button != WhichButton.UNKNOWN) {
 				when (action) {
 					GLFW.GLFW_PRESS -> {
@@ -108,7 +108,7 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 			mouseEvent.canvasX = _canvasX
 			mouseEvent.canvasY = _canvasY
 			mouseEvent.button = WhichButton.UNKNOWN
-			mouseEvent.timestamp = time.nowMs()
+			mouseEvent.timestamp = nowMs()
 			_mouseMove.dispatch(mouseEvent)
 		}
 	}
@@ -128,7 +128,7 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 			wheelEvent.canvasX = _canvasX
 			wheelEvent.canvasY = _canvasY
 			wheelEvent.button = WhichButton.UNKNOWN
-			wheelEvent.timestamp = time.nowMs()
+			wheelEvent.timestamp = nowMs()
 			wheelEvent.deltaX = scrollSpeed * -xoffset.toFloat()
 			wheelEvent.deltaY = scrollSpeed * -yoffset.toFloat()
 			_mouseWheel.dispatch(wheelEvent)

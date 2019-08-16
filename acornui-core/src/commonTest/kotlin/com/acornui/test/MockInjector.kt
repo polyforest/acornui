@@ -30,7 +30,6 @@ import com.acornui.input.InteractivityManager
 import com.acornui.input.KeyState
 import com.acornui.input.MouseState
 import com.acornui.io.file.Files
-import com.acornui.time.TimeDriver
 
 object MockInjector {
 
@@ -43,7 +42,6 @@ object MockInjector {
 
 	fun create(): Injector {
 		return InjectorImpl(null, listOf(
-				TimeDriver to MockTimeDriver,
 				Window to MockWindow,
 				MouseState to MockMouseState,
 				KeyState to MockKeyState,

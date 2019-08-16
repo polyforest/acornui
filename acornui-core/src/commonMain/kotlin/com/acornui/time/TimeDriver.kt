@@ -16,76 +16,25 @@
 
 package com.acornui.time
 
-import com.acornui._assert
+import com.acornui.*
 import com.acornui.collection.ActiveList
 import com.acornui.collection.iterate
-import com.acornui.*
-import com.acornui.di.DKey
 import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.time.time
-
-/**
- * The time driver is responsible for invoking [UpdatableChild.update] on anything that changes over time, like
- * animations, physics, etc.
- *
- * @author nbilyk
- */
-interface TimeDriver : Parent<UpdatableChild> {
-
-	/**
-	 * The configuration provided to this time driver.
-	 */
-	val config: TimeDriverConfig
-
-	fun activate()
-
-	fun update()
-
-	companion object : DKey<TimeDriver>
-}
+import com.acornui.recycle.Clearable
 
 /**
  * @author nbilyk
  */
-open class TimeDriverImpl(
+object FrameDriver : Parent<UpdatableChild>, Updatable, Clearable {
 
-		final override val config: TimeDriverConfig
-) : TimeDriver, Disposable {
+	override val parent: Parent<out ChildRo>? = null
 
-	override var parent: Parent<out ChildRo>? = null
 	private val _children = ActiveList<UpdatableChild>()
 	private val childIterator = _children.concurrentIterator()
 
-	/**
-	 * The next time to do a step.
-	 */
-	private var nextTick: Double = 0.0
-
-	private val tickTime: Float = config.tickTime
-	private val maxTicksPerUpdate: Int = config.maxTicksPerUpdate
-
-	override fun activate() {
-		nextTick = time.nowS()
-	}
-
-	override fun update() {
-		var loops = 0
-		val now = time.nowS()
-		while (now > nextTick) {
-			nextTick += tickTime
-			tick(tickTime)
-			if (++loops > maxTicksPerUpdate) {
-				// If we're too far behind, break and reset.
-				nextTick = time.nowS() + tickTime
-				break
-			}
-		}
-	}
-
-	protected open fun tick(tickTime: Float) {
+	override fun update(dT: Float) {
 		childIterator.iterate {
-			it.update(tickTime)
+			it.update(dT)
 			true
 		}
 	}
@@ -105,11 +54,7 @@ open class TimeDriverImpl(
 		val n = _children.size
 		_assert(index <= n, "index is out of bounds.")
 		_assert(child.parent == null, "Remove the child before adding it again.")
-		if (index == n) {
-			_children.add(child)
-		} else {
-			_children.add(index, child)
-		}
+		_children.add(index, child)
 		child.parent = this
 		return child
 	}
@@ -125,7 +70,7 @@ open class TimeDriverImpl(
 		return child
 	}
 
-	override fun dispose() {
+	override fun clear() {
 		_children.clear()
 	}
 }
@@ -134,12 +79,12 @@ open class TimeDriverImpl(
  * Invokes the callback on every frame. This is similar to [onTick] except the receiver isn't watched for activation
  * or disposal.
  */
-fun Scoped.drive(update: (tickTime: Float) -> Unit): UpdatableChild {
+fun Scoped.drive(update: (dT: Float) -> Unit): UpdatableChild {
 	val child = object : UpdatableChildBase() {
-		override fun update(tickTime: Float) {
-			update(tickTime)
+		override fun update(dT: Float) {
+			update(dT)
 		}
 	}
-	inject(TimeDriver).addChild(child)
+	FrameDriver.addChild(child)
 	return child
 }
