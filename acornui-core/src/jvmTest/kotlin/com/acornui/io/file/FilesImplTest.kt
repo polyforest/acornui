@@ -8,7 +8,7 @@ import kotlin.test.assertNotNull
 
 class FilesImplTest {
 
-	@Ignore("KT-24463")
+//	@Ignore("KT-24463")
 	@Test
 	fun getDir() {
 		val manifest = ManifestUtil.createManifest(File("src/jvmTest/resources"))

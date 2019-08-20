@@ -35,10 +35,10 @@ object ManifestUtil {
 		if (!root.exists()) throw IllegalArgumentException("root does not exist ${root.absolutePath}")
 		if (!root.isDirectory) throw IllegalArgumentException("root is not a directory")
 
-		val fileEntries: MutableList<ManifestEntry> = ArrayList()
+		val fileEntries = ArrayList<ManifestEntry>()
 		for (file in directory.walkTopDown()) {
 			if (!file.isDirectory) {
-				val relativePath = file.toRelativeString(root.absoluteFile)
+				val relativePath = file.absoluteFile.toRelativeString(root.absoluteFile)
 				val contentType = Files.probeContentType(file.toPath())
 				fileEntries.add(ManifestEntry(relativePath.replace2('\\', '/'), file.lastModified(), file.length(), contentType))
 			}
