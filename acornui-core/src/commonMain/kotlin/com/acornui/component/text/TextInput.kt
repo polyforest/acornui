@@ -19,7 +19,7 @@
 package com.acornui.component.text
 
 import com.acornui.Disposable
-import com.acornui.async.resultOrNull
+import com.acornui.async.getCompletedOrNull
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
@@ -29,6 +29,7 @@ import com.acornui.component.style.Styleable
 import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
+import com.acornui.function.as1
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.math.*
@@ -205,7 +206,7 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
 			editableText.validate(ValidationFlags.STYLES)
-			val font = charStyle.getFont()?.resultOrNull()
+			val font = charStyle.getFont()?.getCompletedOrNull()
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
@@ -399,7 +400,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private fun startScrollWatch(event: Any) {
 		mousePosition(startMouse)
 		_frameWatch?.dispose()
-		_frameWatch = tick(-1, ::scrollWatcher)
+		_frameWatch = tick(-1, ::scrollWatcher.as1)
 		stage.mouseUp().add(::endScrollWatch)
 		stage.touchEnd().add(::endScrollWatch)
 	}
@@ -451,7 +452,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		val rows = rows
 		val h = if (explicitHeight == null && rows != null) {
 			val font = charStyle.getFont()
-			val fontData = font?.resultOrNull()?.data
+			val fontData = font?.getCompletedOrNull()?.data
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			textInputStyle.padding.expandHeight(lineHeight * rows)
 		} else {

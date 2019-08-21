@@ -16,34 +16,13 @@
 
 package com.acornui.graphic
 
-import com.acornui.action.Decorator
-import com.acornui.async.Deferred
-import com.acornui.asset.AssetType
 import com.acornui.asset.CachedGroup
-import com.acornui.asset.loadAndCache
+import com.acornui.asset.cacheAsync
+import com.acornui.asset.loadTexture
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.io.file.Files
-
-class AtlasPageDecorator(val page: AtlasPageData) : Decorator<Texture, Texture> {
-	override fun decorate(target: Texture): Texture {
-		target.pixelFormat = page.pixelFormat
-		target.filterMin = page.filterMin
-		target.filterMag = page.filterMag
-		target.hasWhitePixel = page.hasWhitePixel
-		return target
-	}
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		return hashCode() == other?.hashCode()
-	}
-
-	private val _hashCode: Int = page.hashCode()
-	override fun hashCode(): Int {
-		return _hashCode
-	}
-}
+import kotlinx.coroutines.Deferred
 
 fun Scoped.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
 	val files = inject(Files)
@@ -51,5 +30,7 @@ fun Scoped.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: 
 	val textureFile = atlasFile.siblingFile(page.texturePath)
 			?: throw Exception("File not found: ${page.texturePath} relative to: ${atlasFile.parent?.path}")
 
-	return loadAndCache(textureFile.path, AssetType.TEXTURE, AtlasPageDecorator(page), group)
+	return group.cacheAsync(textureFile.path) {
+		page.configure(loadTexture(textureFile.path))
+	}
 }

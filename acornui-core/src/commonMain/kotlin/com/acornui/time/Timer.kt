@@ -126,6 +126,7 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 	var startFrame = 1
 
 	var isActive = false
+		private set
 
 	/**
 	 * The number of times to invoke the callback.
@@ -140,12 +141,12 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 	/**
 	 * The callback to invoke, starting at [startFrame] and continues for [repetitions].
 	 */
-	var callback: () -> Unit = NOOP
+	private var callback: Disposable.() -> Unit = NOOP
 
 	override fun update(dT: Float) {
 		++currentFrame
 		if (currentFrame >= startFrame)
-			callback()
+			this.callback()
 		if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
 			dispose()
 		}
@@ -167,11 +168,11 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 
 	companion object {
 
-		private val NOOP = {}
+		private val NOOP: Disposable.() -> Unit = {}
 
 		private val pool = ClearableObjectPool { Tick() }
 
-		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
 			val e = pool.obtain()
 			e.callback = callback
 			e.repetitions = repetitions
@@ -183,7 +184,7 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 	}
 }
 
-fun callLater(startFrame: Int = 1, callback: () -> Unit): Disposable {
+fun callLater(startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
 	return tick(1, startFrame, callback)
 }
 
@@ -192,12 +193,12 @@ fun callLater(startFrame: Int = 1, callback: () -> Unit): Disposable {
 /**
  * Invokes [callback] on every time driver tick until disposed.
  */
-fun tick(repetitions: Int = -1, callback: () -> Unit): Disposable = tick(repetitions, 1, callback)
+fun tick(repetitions: Int = -1, callback: Disposable.() -> Unit): Disposable = tick(repetitions, 1, callback)
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
  */
-fun tick(repetitions: Int = -1, startFrame: Int = 1, callback: () -> Unit): Disposable {
+fun tick(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
 	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
 	return Tick.obtain(repetitions, startFrame, callback)
 }

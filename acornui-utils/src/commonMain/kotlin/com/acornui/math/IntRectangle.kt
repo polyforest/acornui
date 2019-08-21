@@ -18,11 +18,16 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.serialization.*
+import kotlinx.serialization.*
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.IntSerializer
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * The read-only interface to [IntRectangle].
  */
+@Serializable(with = IntRectangleSerializer::class)
 interface IntRectangleRo {
 
 	val x: Int
@@ -81,6 +86,7 @@ interface IntRectangleRo {
 /**
  * An x,y,width,height set of integers.
  */
+@Serializable(with = IntRectangleSerializer::class)
 class IntRectangle(
 		override var x: Int = 0,
 		override var y: Int = 0,
@@ -302,24 +308,25 @@ class IntRectangle(
 
 		val EMPTY: IntRectangleRo = IntRectangle()
 	}
-
 }
 
-object IntRectangleSerializer : To<IntRectangleRo>, From<IntRectangle> {
+@Serializer(forClass = IntRectangle::class)
+object IntRectangleSerializer : KSerializer<IntRectangle> {
 
-	override fun IntRectangleRo.write(writer: Writer) {
-		writer.int("x", x)
-		writer.int("y", y)
-		writer.int("width", width)
-		writer.int("height", height)
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("IntRectangle")
+
+	override fun serialize(encoder: Encoder, obj: IntRectangle) {
+		encoder.encodeSerializableValue(ArrayListSerializer(IntSerializer), listOf(obj.x, obj.y, obj.width, obj.height))
 	}
 
-	override fun read(reader: Reader): IntRectangle {
+	override fun deserialize(decoder: Decoder): IntRectangle {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(IntSerializer))
 		return IntRectangle(
-				x = reader.int("x")!!,
-				y = reader.int("y")!!,
-				width = reader.int("width")!!,
-				height = reader.int("height")!!
+				x = values[0],
+				y = values[1],
+				width = values[2],
+				height = values[3]
 		)
 	}
 }

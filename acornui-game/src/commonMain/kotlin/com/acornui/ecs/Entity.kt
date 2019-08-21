@@ -16,11 +16,9 @@
 
 package com.acornui.ecs
 
+import com.acornui.UidUtil
 import com.acornui._assert
 import com.acornui.assertionsEnabled
-import com.acornui.UidUtil
-import com.acornui.logging.Log
-import com.acornui.serialization.*
 
 
 /**
@@ -142,42 +140,6 @@ class Entity(
 		}
 	}
 
-}
-
-
-class EntitySerializer(componentTypes: Array<SerializableComponentType<*>>) : To<Entity>, From<Entity> {
-
-	private val componentSerializer = ComponentSerializer(componentTypes)
-
-	override fun Entity.write(writer: Writer) {
-		writer.string("id", id)
-		val w = writer.property("components")
-		w.array(true) {
-			// Only serialize serializable components.
-			for (v in components.values) {
-				if (v.type is SerializableComponentType) {
-					it.element().obj(true) {
-						componentSerializer.write2(v, it)
-					}
-				}
-			}
-		}
-	}
-
-	override fun read(reader: Reader): Entity {
-		val e = Entity(reader.string("id")!!)
-		val c = reader.array2("components", componentSerializer)
-		if (c != null) {
-			e.addComponents(*c)
-			for (entry in e.components) {
-				if (entry.value.type == UnknownComponent) {
-					// Attempt to recover from unknown components.
-					Log.warn("Unknown or old component type: ${(entry.value as UnknownComponent).originalType}")
-				}
-			}
-		}
-		return e
-	}
 }
 
 fun entity(init: Entity.() -> Unit = {}): Entity {

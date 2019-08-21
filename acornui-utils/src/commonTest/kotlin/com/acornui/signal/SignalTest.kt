@@ -28,7 +28,6 @@ import kotlin.test.fail
 class SignalTest {
 	
 	@BeforeTest fun setup() {
-		println("Patching Kotlin...")
 		kotlinBugFixes()
 	} 
 

@@ -16,12 +16,12 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.resultOrNull
 import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.Disposable
+import com.acornui.async.getCompletedOrNull
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.gl.core.GlState
@@ -156,7 +156,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 
 	private val font: BitmapFont?
-		get() = _charElementStyle.font?.resultOrNull()
+		get() = _charElementStyle.font?.getCompletedOrNull()
 
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f) / scaleY

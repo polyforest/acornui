@@ -23,6 +23,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
 class KotlinJvmPlugin : Plugin<Project> {
@@ -35,6 +36,10 @@ class KotlinJvmPlugin : Plugin<Project> {
 		val kotlinLanguageVersion: String by target.extra
 		val kotlinSerializationVersion: String by target.extra
 		val kotlinCoroutinesVersion: String by target.extra
+
+		target.tasks.withType<KotlinCompile>().all {
+			kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
+		}
 
 		target.extensions.configure<KotlinMultiplatformExtension> {
 			jvm {

@@ -15,33 +15,33 @@ class CacheImplTest {
 
 	@Test fun testSet() {
 		val cache = CacheImpl()
-		val key = object : CacheKey<String> {}
+		val key = "key"
 		cache[key] = "Test"
-		assertEquals("Test", cache[key])
+		assertEquals<String?>("Test", cache[key])
 	}
 
 	@Test fun testGc() {
 		val cache = CacheImpl(gcFrames = 10)
-		val key = object : CacheKey<String> {}
+		val key = "key"
 		cache[key] = "Test"
 
 		// Ensure keys with a reference are not discarded.
 		cache.refInc(key)
 		for (i in 0..20) FrameDriver.update(0f)
-		assertEquals("Test", cache[key])
+		assertEquals<String?>("Test", cache[key])
 
 		// Ensure keys without a reference are discarded, but only after at least gcFrames.
 		cache.refDec(key)
 		FrameDriver.update(0f)
 		FrameDriver.update(0f)
-		assertEquals("Test", cache[key])
+		assertEquals<String?>("Test", cache[key])
 		for (i in 0..20) FrameDriver.update(0f)
-		assertEquals(null, cache[key])
+		assertEquals<String?>(null, cache[key])
 	}
 
 	@Test fun testGc2() {
 		val cache = CacheImpl(gcFrames = 10)
-		val key = object : CacheKey<String> {}
+		val key = "key"
 		cache[key] = "Test"
 
 		// Ensure keys with no references are not immediately discarded.
@@ -50,10 +50,10 @@ class CacheImplTest {
 		FrameDriver.update(0f)
 		FrameDriver.update(0f)
 		FrameDriver.update(0f)
-		assertEquals("Test", cache[key])
+		assertEquals<String?>("Test", cache[key])
 		cache.refInc(key)
 		for (i in 0..20) FrameDriver.update(0f)
-		assertEquals("Test", cache[key])
+		assertEquals<String?>("Test", cache[key])
 
 	}
 }

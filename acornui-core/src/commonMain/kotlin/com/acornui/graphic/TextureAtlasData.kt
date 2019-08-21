@@ -18,22 +18,21 @@
 
 package com.acornui.graphic
 
-import com.acornui.async.Deferred
-import com.acornui.async.async
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCacheJson
+import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.di.Scoped
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.math.IntRectangleRo
-import com.acornui.math.IntRectangleSerializer
-import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * @author nbilyk
  */
+@Serializable
 data class TextureAtlasData(
 		val pages: List<AtlasPageData>
 ) {
@@ -62,23 +61,10 @@ data class TextureAtlasData(
 	}
 }
 
-object TextureAtlasDataSerializer : To<TextureAtlasData>, From<TextureAtlasData> {
-
-	override fun read(reader: Reader): TextureAtlasData {
-		return TextureAtlasData(
-				pages = reader.arrayList("pages", AtlasPageSerializer)!!
-		)
-	}
-
-	override fun TextureAtlasData.write(writer: Writer) {
-		writer.array("pages", pages, AtlasPageSerializer)
-	}
-}
-
 /**
  * Represents a single texture atlas page.
  */
-@Suppress("ArrayInDataClass") // Lazy
+@Serializable
 data class AtlasPageData(
 
 		/**
@@ -126,38 +112,18 @@ data class AtlasPageData(
 	}
 }
 
-object AtlasPageSerializer : To<AtlasPageData>, From<AtlasPageData> {
-
-	override fun read(reader: Reader): AtlasPageData {
-		return AtlasPageData(
-				texturePath = reader.string("texturePath")!!,
-				width = reader.int("width")!!,
-				height = reader.int("height")!!,
-				pixelFormat = TexturePixelFormat.valueOf(reader.string("pixelFormat") ?: TexturePixelFormat.RGBA.name),
-				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
-				filterMin = TextureMinFilter.valueOf(reader.string("filterMin") ?: TextureMinFilter.LINEAR.name),
-				filterMag = TextureMagFilter.valueOf(reader.string("filterMag") ?: TextureMagFilter.LINEAR.name),
-				regions = reader.arrayList("regions", AtlasRegionDataSerializer)!!,
-				hasWhitePixel = reader.bool("hasWhitePixel") ?: false
-		)
-	}
-
-	override fun AtlasPageData.write(writer: Writer) {
-		writer.string("texturePath", texturePath)
-		writer.int("width", width)
-		writer.int("height", height)
-		writer.string("pixelFormat", pixelFormat.name)
-		writer.bool("premultipliedAlpha", premultipliedAlpha)
-		writer.string("filterMin", filterMin.name)
-		writer.string("filterMag", filterMag.name)
-		writer.array("regions", regions, AtlasRegionDataSerializer)
-		writer.bool("hasWhitePixel", hasWhitePixel)
-	}
+fun AtlasPageData.configure(target: Texture): Texture {
+	target.pixelFormat = pixelFormat
+	target.filterMin = filterMin
+	target.filterMag = filterMag
+	target.hasWhitePixel = hasWhitePixel
+	return target
 }
 
 /**
  * A model representing a region within an atlas page.
  */
+@Serializable
 data class AtlasRegionData(
 
 		/**
@@ -191,6 +157,7 @@ data class AtlasRegionData(
 	/**
 	 * The original width of the image, before whitespace was stripped.
 	 */
+	@Transient
 	val originalWidth: Int
 		get() {
 			return if (isRotated)
@@ -202,6 +169,7 @@ data class AtlasRegionData(
 	/**
 	 * The original width of the image, before whitespace was stripped.
 	 */
+	@Transient
 	val originalHeight: Int
 		get() {
 			return if (isRotated)
@@ -213,44 +181,25 @@ data class AtlasRegionData(
 	/**
 	 * The packed width of the image, after whitespace was stripped.
 	 */
+	@Transient
 	val packedWidth: Int
 		get() = if (isRotated) bounds.height else bounds.width
 
 	/**
 	 * The packed height of the image, after whitespace was stripped.
 	 */
+	@Transient
 	val packedHeight: Int
 		get() = if (isRotated) bounds.width else bounds.height
 }
 
-object AtlasRegionDataSerializer : To<AtlasRegionData>, From<AtlasRegionData> {
-
-	override fun read(reader: Reader): AtlasRegionData {
-		return AtlasRegionData(
-				name = reader.string("name") ?: "",
-				isRotated = reader.bool("isRotated") ?: false,
-				bounds = reader.obj("bounds", IntRectangleSerializer)!!,
-				splits = reader.floatArray("splits")?.toList(),
-				padding = reader.intArray("padding")?.toList() ?: listOf(0, 0, 0, 0)
-		)
-	}
-
-	override fun AtlasRegionData.write(writer: Writer) {
-		writer.string("name", name)
-		writer.bool("isRotated", isRotated)
-		writer.obj("bounds", bounds, IntRectangleSerializer)
-		if (splits != null) writer.floatArray("splits", splits.toFloatArray())
-		writer.intArray("padding", padding.toIntArray())
-	}
-}
-
 data class LoadedAtlasRegion(val texture: Texture, val region: AtlasRegionData)
 
-fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAtlasRegion> =
-		async {
-			val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
-			val (page, region) = atlasData.findRegion(regionName)
-					?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
-			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-			LoadedAtlasRegion(texture, region)
-		}
+suspend fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAtlasRegion {
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+	val (page, region) = atlasData.findRegion(regionName)
+			?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
+	val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+	return LoadedAtlasRegion(texture, region)
+}
+

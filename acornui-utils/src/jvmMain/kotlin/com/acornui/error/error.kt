@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:JvmName("ErrorJvmKt")
+@file:JvmName("ErrorJvmUtils")
 package com.acornui.error
 
 import java.io.PrintWriter

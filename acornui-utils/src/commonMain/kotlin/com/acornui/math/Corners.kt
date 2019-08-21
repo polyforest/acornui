@@ -17,7 +17,6 @@
 package com.acornui.math
 
 import com.acornui.recycle.Clearable
-import com.acornui.serialization.*
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.*
 import kotlinx.serialization.internal.ListLikeDescriptor
@@ -235,26 +234,5 @@ class Corners() : CornersRo, Clearable {
 
 	override fun toString(): String {
 		return "Corners(topLeft=$topLeft, topRight=$topRight, bottomRight=$bottomRight, bottomLeft=$bottomLeft)"
-	}
-}
-
-
-@Deprecated("use kotlinx serialization")
-object CornersSerializer : To<CornersRo>, From<Corners> {
-	override fun read(reader: Reader): Corners {
-		val c = Corners(
-				topLeft = reader.vector2("topLeft")!!,
-				topRight = reader.vector2("topRight")!!,
-				bottomRight = reader.vector2("bottomRight")!!,
-				bottomLeft = reader.vector2("bottomLeft")!!
-		)
-		return c
-	}
-
-	override fun CornersRo.write(writer: Writer) {
-		writer.vector2("topLeft", topLeft)
-		writer.vector2("topRight", topRight)
-		writer.vector2("bottomRight", bottomRight)
-		writer.vector2("bottomLeft", bottomLeft)
 	}
 }

@@ -18,11 +18,13 @@ package com.acornui.di
 
 import com.acornui.async.*
 import com.acornui.Disposable
+import com.acornui.assertionsEnabled
 import com.acornui.logging.Log
+import kotlinx.coroutines.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class Bootstrap(val defaultTaskTimeout: Float = 10f) : Disposable {
+class Bootstrap(private val defaultTaskTimeout: Float = 10f) : Disposable {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 
@@ -41,26 +43,49 @@ class Bootstrap(val defaultTaskTimeout: Float = 10f) : Disposable {
 		return d.await() as T
 	}
 
+	suspend fun <T : Any> getOptional(key: DKey<T>): T? {
+		val d = _map[key] ?: return null
+		@Suppress("UNCHECKED_CAST")
+		return d.await() as T
+	}
+
 	/**
 	 * Sets a dependency directly without creating a task.
 	 */
 	fun <T : Any> set(dKey: DKey<T>, value: T) {
-		dependenciesList.add(dKey to value)
+		addDependency(dKey, value)
 		var p: DKey<*>? = dKey
 		while (p != null) {
 			if (_map.containsKey(p))
 				throw Exception("value already set for key $p")
-			_map[p] = NonDeferred(value)
+			_map[p] = globalAsync { value }
 			p = p.extends
 		}
 	}
 
+	private fun <T : Any> addDependency(dKey: DKey<T>, value: T) {
+		val pair = dKey to value
+		if (assertionsEnabled && dependenciesList.any { existingDependency ->
+					var p: DKey<*>? = dKey
+					while (p != null) {
+						if (existingDependency.key == p)
+							return@any true
+						p = p.extends
+					}
+					return@any false
+				})
+			throw Exception("Dependency for $dKey is already set.")
+
+		dependenciesList.add(pair)
+	}
+
 	suspend fun awaitAll() {
-		_map.awaitAll()
+
+		_map.values.awaitAll()
 	}
 
 	override fun dispose() {
-		launch {
+		globalLaunch {
 			// Waits for all of the dependencies to be calculated before attempting to dispose.
 			awaitAll()
 			// Dispose the dependencies in the reverse order they were added:
@@ -70,75 +95,52 @@ class Bootstrap(val defaultTaskTimeout: Float = 10f) : Disposable {
 		}
 	}
 
-	fun <T : Any> task(dKey: DKey<T>, timeout: Float = defaultTaskTimeout, work: Work<T>) = BootTaskProperty(this, dKey, timeout, work)
-	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Float = defaultTaskTimeout, work: Work<T>) {
-		val t = BootTask(name, dKey, timeout, work)
+	fun <R, T : Any> task(dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
+
+	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
 		var p: DKey<*>? = dKey
+		val deferred = GlobalScope.async(Dispatchers.Unconfined, CoroutineStart.LAZY) {
+			try {
+				withTimeout((timeout * 1000f).toLong()) {
+					val dependency = work()
+					addDependency(dKey, dependency)
+					dependency
+				}
+			} catch (e: Throwable) {
+				if (isOptional) {
+					Log.info("Optional task failed: $name")
+				} else {
+					Log.error("Task failed: $name $e")
+					throw e
+				}
+			}
+		}
 		while (p != null) {
 			if (_map.containsKey(p))
 				throw Exception("value already set for key $p")
-			_map[p] = t
+			_map[p] = deferred
 			p = p.extends
 		}
 	}
 
-	class BootTaskProperty<T : Any>(
+	class BootTaskProperty<S, T : Any>(
 			private val bootstrap: Bootstrap,
 			private val dKey: DKey<T>,
 			private val timeout: Float,
+			private val isOptional: Boolean,
 			private val work: Work<T>
-	) : ReadOnlyProperty<Any, Work<T>> {
+	) : ReadOnlyProperty<S, Work<T>> {
 
 		operator fun provideDelegate(
-				thisRef: Any,
+				thisRef: S,
 				prop: KProperty<*>
-		): ReadOnlyProperty<Any, Work<T>> {
-			bootstrap.task(prop.name, dKey, timeout, work)
+		): ReadOnlyProperty<S, Work<T>> {
+			bootstrap.task(prop.name, dKey, timeout, isOptional, work)
 			return this
 		}
 
-		override fun getValue(thisRef: Any, property: KProperty<*>): Work<T> {
+		override fun getValue(thisRef: S, property: KProperty<*>): Work<T> {
 			return work
-		}
-	}
-
-	private inner class BootTask<T : Any>(
-			val name: String,
-			private val dKey: DKey<T>,
-			private val timeout: Float,
-			private val work: Work<T>
-	) : Promise<T>() {
-
-		var isInvoked = false
-			private set
-
-		operator fun invoke() {
-			if (isInvoked) return
-			isInvoked = true
-			launch {
-				try {
-					val dependency = work()
-					dependenciesList.add(dKey to dependency)
-					success(dependency)
-				} catch (e: Throwable) {
-					Log.error("Task failed: $name $e")
-					fail(e)
-					throw e
-				}
-			}
-			if (timeout > 0f) {
-				launch {
-					delay(timeout)
-					if (isPending) {
-						Log.warn("Task $name is taking longer than expected.")
-					}
-				}
-			}
-		}
-
-		override suspend fun await(): T {
-			invoke()
-			return super.await()
 		}
 	}
 }

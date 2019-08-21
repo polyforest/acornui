@@ -52,9 +52,9 @@ interface UrlParams {
 	}
 }
 
-fun UrlParamsImpl(queryString: String): UrlParamsImpl {
+fun String.toUrlParams(): UrlParamsImpl {
 	val p = UrlParamsImpl()
-	val split = queryString.split("&")
+	val split = split("&")
 	for (entry in split) {
 		val i = entry.indexOf("=")
 		if (i != -1)
@@ -138,7 +138,7 @@ fun String.appendOrUpdateParam(paramName: String, paramValue: String): String {
 	val qIndex = indexOf("?")
 	if (qIndex == -1) return "$this?$paramName=${encodeUriComponent2(paramValue)}"
 	val queryStr = substring(qIndex + 1)
-	val query = UrlParamsImpl(queryStr)
+	val query = queryStr.toUrlParams()
 	query.set(paramName, paramValue)
 	return "${substring(0, qIndex)}?${query.toQueryString()}"
 }

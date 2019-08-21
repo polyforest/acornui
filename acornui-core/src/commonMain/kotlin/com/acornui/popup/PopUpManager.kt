@@ -387,15 +387,15 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyl
 	}
 }
 
-fun <T : UiComponent> Owned.addPopUp(popUpInfo: PopUpInfo<T>): T {
+fun <T : UiComponent> Scoped.addPopUp(popUpInfo: PopUpInfo<T>): T {
 	inject(PopUpManager).addPopUp(popUpInfo)
 	return popUpInfo.child
 }
 
-fun Owned.removePopUp(popUpInfo: PopUpInfo<*>) {
+fun Scoped.removePopUp(popUpInfo: PopUpInfo<*>) {
 	inject(PopUpManager).removePopUp(popUpInfo)
 }
 
-fun Owned.removePopUp(popUpInfoChild: UiComponent) {
+fun Scoped.removePopUp(popUpInfoChild: UiComponent) {
 	inject(PopUpManager).removePopUp(popUpInfoChild)
 }

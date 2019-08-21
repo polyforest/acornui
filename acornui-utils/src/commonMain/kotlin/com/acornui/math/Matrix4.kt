@@ -17,6 +17,8 @@
 package com.acornui.math
 
 import com.acornui.collection.FloatList
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.math.tan
@@ -159,8 +161,10 @@ class Matrix4() : Matrix4Ro {
 		set(values)
 	}
 
+	@Transient
 	private var _mode: MatrixMode = MatrixMode.IDENTITY
 
+	@Transient
 	override val mode: MatrixMode
 		get() = _mode
 

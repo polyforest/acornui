@@ -16,6 +16,10 @@
 
 package com.acornui.math
 
+import com.acornui.serialization.binaryDump
+import com.acornui.serialization.binaryParse
+import com.acornui.serialization.jsonParse
+import com.acornui.serialization.jsonStringify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -29,7 +33,7 @@ class RayTest {
 	@Test fun mul() {
 	}
 
-	@Test fun intersects() {
+	@Test fun intersectsRay() {
 		run {
 
 			val r1 = Ray(Vector3(5f, 5f, 4f), Vector3(5f, 5f, 2f))
@@ -91,5 +95,15 @@ class RayTest {
 			val out = Vector3()
 			assertFalse(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
 		}
+	}
+
+	@Test fun serialize() {
+		val v = Ray(Vector3(1f, 2f, 3f), Vector3(4f, 5f, 6f))
+		val str = jsonStringify(Ray.serializer(), v)
+		assertEquals("""{"origin":[1.0,2.0,3.0],"direction":[4.0,5.0,6.0]}""", str)
+		assertEquals(v, jsonParse(Ray.serializer(), str))
+
+		val bin = binaryDump(Ray.serializer(), v)
+		assertEquals(v, binaryParse(Ray.serializer(), bin))
 	}
 }

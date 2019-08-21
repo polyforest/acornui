@@ -50,33 +50,6 @@ open class BoxStyle : StyleBase() {
 	companion object : StyleType<BoxStyle>
 }
 
-object BoxStyleSerializer : To<BoxStyle>, From<BoxStyle> {
-
-	override fun BoxStyle.write(writer: Writer) {
-		writer.styleProperty(this, ::linearGradient)?.obj(linearGradient, LinearGradientSerializer)
-		writer.styleProperty(this, ::backgroundColor)?.color(backgroundColor)
-		writer.styleProperty(this, ::borderColors)?.obj(borderColors, BorderColorsSerializer)
-		writer.styleProperty(this, ::borderThicknesses)?.obj(borderThicknesses, PadSerializer)
-		writer.styleProperty(this, ::borderRadii)?.obj(borderRadii, CornersSerializer)
-		writer.styleProperty(this, ::margin)?.obj(margin, PadSerializer)
-	}
-
-	override fun read(reader: Reader): BoxStyle {
-		val boxStyle = BoxStyle()
-		read(reader, boxStyle)
-		return boxStyle
-	}
-
-	fun read(reader: Reader, boxStyle: BoxStyle) {
-		reader.contains(boxStyle::linearGradient.name) { boxStyle.linearGradient = it.obj(LinearGradientSerializer) }
-		reader.contains(boxStyle::backgroundColor.name) { boxStyle.backgroundColor = it.color()!! }
-		reader.contains(boxStyle::borderColors.name) { boxStyle.borderColors = it.obj(BorderColorsSerializer)!! }
-		reader.contains(boxStyle::borderThicknesses.name) { boxStyle.borderThicknesses = it.obj(PadSerializer)!! }
-		reader.contains(boxStyle::borderRadii.name) { boxStyle.borderRadii = it.obj(CornersSerializer)!! }
-		reader.contains(boxStyle::margin.name) { boxStyle.margin = it.obj(PadSerializer)!! }
-	}
-}
-
 fun boxStyle(init: BoxStyle.() -> Unit): BoxStyle {
 	val b = BoxStyle()
 	b.init()

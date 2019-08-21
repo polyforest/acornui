@@ -18,10 +18,10 @@ package com.acornui.component
 
 import com.acornui.async.then
 import com.acornui.Renderable
-import com.acornui.asset.AssetType
 import com.acornui.asset.CachedGroup
+import com.acornui.asset.cacheAsync
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCache
+import com.acornui.asset.loadTexture
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
@@ -54,7 +54,7 @@ class NinePatchComponent(owner: Owned) : RenderableComponent<Renderable>(owner) 
 			cached?.dispose()
 			cached = cachedGroup()
 			if (value != null) {
-				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
+				cached!!.cacheAsync(value) { loadTexture(value) }.then {
 					_setTexture(it)
 				}
 			} else {

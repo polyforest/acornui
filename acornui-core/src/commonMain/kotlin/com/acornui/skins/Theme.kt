@@ -22,7 +22,6 @@ import com.acornui.graphic.ColorRo
 import com.acornui.graphic.color
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import com.acornui.math.PadSerializer
 import com.acornui.serialization.*
 import kotlinx.serialization.Serializable
 
@@ -101,98 +100,6 @@ data class Theme(
 
 		val atlasPath: String = "assets/uiskin/uiskin.json"
 )
-
-@Deprecated("Use kotlinx serialization")
-object ThemeSerializer : To<Theme>, From<Theme> {
-
-	override fun read(reader: Reader): Theme {
-		return Theme(
-				bgColor = reader.color("bgColor")!!,
-				borderRadius = reader.float("borderRadius")!!,
-				buttonPad = reader.obj("buttonPad", PadSerializer)!!,
-				controlBarBgColor = reader.color("controlBarBgColor")!!,
-				errorColor = reader.color("errorColor")!!,
-				evenRowBgColor = reader.color("evenRowBgColor")!!,
-				fill = reader.color("fill")!!,
-				fillDisabled = reader.color("fillDisabled")!!,
-				fillDown = reader.color("fillDown")!!,
-				fillOver = reader.color("fillOver")!!,
-				fillShine = reader.color("fillShine")!!,
-				fillToggled = reader.color("fillToggled")!!,
-				fillToggledDown = reader.color("fillToggledDown")!!,
-				fillToggledOver = reader.color("fillToggledOver")!!,
-				fillToggledShine = reader.color("fillToggledShine")!!,
-				focusHighlightColor = reader.color("focusHighlightColor")!!,
-				formLabelColor = reader.color("formLabelColor")!!,
-				selectableText = reader.bool("selectableText") ?: false,
-				headingColor = reader.color("headingColor")!!,
-				highlightedEvenRowBgColor = reader.color("highlightedEvenRowBgColor")!!,
-				highlightedOddRowBgColor = reader.color("highlightedOddRowBgColor")!!,
-				iconButtonGap = reader.float("iconButtonGap")!!,
-				iconColor = reader.color("iconColor")!!,
-				infoColor = reader.color("infoColor")!!,
-				inputFill = reader.color("inputFill")!!,
-				oddRowBgColor = reader.color("oddRowBgColor")!!,
-				panelBgColor = reader.color("panelBgColor")!!,
-				stroke = reader.color("stroke")!!,
-				strokeDisabled = reader.color("strokeDisabled")!!,
-				strokeDown = reader.color("strokeDown")!!,
-				strokeOver = reader.color("strokeOver")!!,
-				strokeThickness = reader.float("strokeThickness")!!,
-				strokeToggled = reader.color("strokeToggled")!!,
-				strokeToggledDown = reader.color("strokeToggledDown")!!,
-				strokeToggledOver = reader.color("strokeToggledOver")!!,
-				textColor = reader.color("textColor")!!,
-				textDisabledColor = reader.color("textDisabledColor")!!,
-				toggledEvenRowBgColor = reader.color("toggledEvenRowBgColor")!!,
-				toggledOddRowBgColor = reader.color("toggledOddRowBgColor")!!,
-				warningColor = reader.color("warningColor")!!
-		)
-	}
-
-	override fun Theme.write(writer: Writer) {
-		writer.color("bgColor", bgColor)
-		writer.float("borderRadius", borderRadius)
-		writer.obj("buttonPad", buttonPad, PadSerializer)
-		writer.color("controlBarBgColor", controlBarBgColor)
-		writer.color("errorColor", errorColor)
-		writer.color("evenRowBgColor", evenRowBgColor)
-		writer.color("fill", fill)
-		writer.color("fillDisabled", fillDisabled)
-		writer.color("fillDown", fillDown)
-		writer.color("fillOver", fillOver)
-		writer.color("fillShine", fillShine)
-		writer.color("fillToggled", fillToggled)
-		writer.color("fillToggledDown", fillToggledDown)
-		writer.color("fillToggledOver", fillToggledOver)
-		writer.color("fillToggledShine", fillToggledShine)
-		writer.color("focusHighlightColor", focusHighlightColor)
-		writer.color("formLabelColor", formLabelColor)
-		writer.bool("selectableText", selectableText)
-		writer.color("headingColor", headingColor)
-		writer.color("highlightedEvenRowBgColor", highlightedEvenRowBgColor)
-		writer.color("highlightedOddRowBgColor", highlightedOddRowBgColor)
-		writer.float("iconButtonGap", iconButtonGap)
-		writer.color("iconColor", iconColor)
-		writer.color("infoColor", infoColor)
-		writer.color("inputFill", inputFill)
-		writer.color("oddRowBgColor", oddRowBgColor)
-		writer.color("panelBgColor", panelBgColor)
-		writer.color("stroke", stroke)
-		writer.color("strokeDisabled", strokeDisabled)
-		writer.color("strokeDown", strokeDown)
-		writer.color("strokeOver", strokeOver)
-		writer.float("strokeThickness", strokeThickness)
-		writer.color("strokeToggled", strokeToggled)
-		writer.color("strokeToggledDown", strokeToggledDown)
-		writer.color("strokeToggledOver", strokeToggledOver)
-		writer.color("textColor", textColor)
-		writer.color("textDisabledColor", textDisabledColor)
-		writer.color("toggledEvenRowBgColor", toggledEvenRowBgColor)
-		writer.color("toggledOddRowBgColor", toggledOddRowBgColor)
-		writer.color("warningColor", warningColor)
-	}
-}
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {

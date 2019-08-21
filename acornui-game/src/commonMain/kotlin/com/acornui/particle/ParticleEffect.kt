@@ -20,9 +20,10 @@ import com.acornui.UidUtil
 import com.acornui.Version
 import com.acornui.graphic.BlendMode
 import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 
 data class ParticleEffect(
-
+		
 		val emitters: List<ParticleEmitter>
 ) {
 	fun createInstance(maxParticlesScale: Float): ParticleEffectInstance {

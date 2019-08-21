@@ -19,7 +19,6 @@ package com.acornui.component
 import com.acornui.component.style.*
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.serialization.*
 
 class Rule(owned: Owned, private val isVertical: Boolean) : ElementContainerImpl<UiComponent>(owned) {
 
@@ -60,23 +59,6 @@ class RuleStyle : BoxStyle() {
 
 	companion object : StyleType<RuleStyle> {
 		override val extends: StyleType<*>? = BoxStyle
-	}
-}
-
-object RuleStyleSerializer : To<RuleStyle>, From<RuleStyle> {
-
-	override fun RuleStyle.write(writer: Writer) {
-		BoxStyleSerializer.apply {
-			write(writer)
-		}
-		writer.styleProperty(this, ::thickness)?.float(thickness)
-	}
-
-	override fun read(reader: Reader): RuleStyle {
-		val ruleStyle = RuleStyle()
-		BoxStyleSerializer.read(reader, ruleStyle)
-		reader.contains(ruleStyle::thickness.name) { ruleStyle.thickness = it.float()!! }
-		return ruleStyle
 	}
 }
 

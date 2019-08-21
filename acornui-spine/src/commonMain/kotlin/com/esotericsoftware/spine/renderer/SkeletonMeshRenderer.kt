@@ -66,12 +66,10 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				vertices = attachment.updateWorldVertices(slot)
 				triangles = quadTriangles
 				texture = loadedSkin.getTexture(attachment.page)
-
 			} else if (attachment is MeshAttachment) {
 				vertices = attachment.updateWorldVertices(slot)
 				triangles = attachment.data.triangles
 				texture = loadedSkin.getTexture(attachment.page)
-
 			} else if (attachment is WeightedMeshAttachment) {
 				vertices = attachment.updateWorldVertices(slot)
 				triangles = attachment.data.triangles
@@ -94,7 +92,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				rootBone.rotation = oldRotation + bone.worldRotationX
 				attachmentSkeleton.updateWorldTransform()
 
-				SkeletonMeshRenderer.draw(loadedSkeleton, attachmentSkeleton, glState, concatenatedColorTint)
+				draw(loadedSkeleton, attachmentSkeleton, glState, concatenatedColorTint)
 
 				attachmentSkeleton.setPosition(0f, 0f)
 				rootBone.scaleX = oldScaleX

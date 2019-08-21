@@ -16,12 +16,13 @@
 
 package com.acornui
 
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetType
+import com.acornui.asset.Loaders
+import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
-import com.acornui.async.launch
+import com.acornui.async.globalLaunch
 import com.acornui.di.*
+import com.acornui.io.*
 import com.acornui.io.file.Files
 import com.acornui.logging.Log
 
@@ -46,6 +47,7 @@ abstract class ApplicationBase : Disposable {
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
+	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
 
 	protected suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
 
@@ -53,24 +55,31 @@ abstract class ApplicationBase : Disposable {
 		bootstrap.awaitAll()
 	}
 
-	abstract val assetManagerTask: suspend () -> AssetManager
 	abstract val filesTask: suspend () -> Files
 
 	protected open val versionTask by task(Version) {
 		// Copy the app config and set the build number.
 		val buildFile = get(Files).getFile("assets/build.txt")
 		val version = if (buildFile == null) Version(0, 0, 0) else {
-			val buildTimestamp = get(AssetManager).load(buildFile.path, AssetType.TEXT).await()
+			val buildTimestamp = get(Loaders.textLoader).load(buildFile.path)
 			Version.fromStr(buildTimestamp)
 		}
 		version
 	}
 
-	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, work: Work<T>) = bootstrap.task(dKey, timeout, work)
+	protected open val textLoader by task(Loaders.textLoader) {
+		TextLoader()
+	}
+
+	protected open val binaryLoader by task(Loaders.binaryLoader) {
+		BinaryLoader()
+	}
+
+	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 
 	override fun dispose() {
 		Log.info("Application disposing")
-		launch {
+		globalLaunch {
 			awaitAll()
 			PendingDisposablesRegistry.dispose()
 			bootstrap.dispose()

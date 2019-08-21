@@ -24,7 +24,6 @@ import com.acornui.component.ElementContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.text.collection.JoinedList
 import com.acornui.di.Owned
 import com.acornui.selection.SelectionRange
 
@@ -34,7 +33,7 @@ interface TextNodeContainer : TextNode, TextNodeContainerRo
 abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementContainerImpl<T>(owner), TextNodeContainer {
 
 	private val _lines = ArrayList<LineInfo>()
-	private val _textElements = JoinedList(_elements) { it.textElements }
+	private val _textElements = ArrayList<TextElementRo>()
 
 	/**
 	 * A list of all the text elements within the text nodes.
@@ -55,7 +54,7 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 		}
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
+		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
 		validation.addNode(LINES, dependencies = ValidationFlags.LAYOUT, onValidate = ::updateLines)
 	}
 
@@ -85,6 +84,13 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 			validate(LINES)
 			return _lines
 		}
+
+	private fun updateTextElements() {
+		_textElements.clear()
+		_elements.forEach2 {
+			_textElements.addAll(it.textElements)
+		}
+	}
 
 	protected open fun updateLines() {
 		// Create line info objects with attributes relative to this container.

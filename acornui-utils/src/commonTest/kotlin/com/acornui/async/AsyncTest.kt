@@ -25,9 +25,9 @@ class AsyncTest {
 
 	@Test fun testAsync() {
 
-		launch {
-			val a = async { 3 }
-			val b = async { 4 }
+		globalLaunch {
+			val a = globalAsync { 3 }
+			val b = globalAsync { 4 }
 
 			assertEquals(7, a.await() + b.await())
 		}
@@ -37,8 +37,8 @@ class AsyncTest {
 
 	@Test fun testAsyncMultiple() {
 		var launched = false
-		launch {
-			val a = async { t++; 3 }
+		globalLaunch {
+			val a = globalAsync { t++; 3 }
 			assertEquals(9, a.await() + a.await() + a.await())
 			assertEquals(1, t)
 			launched = true

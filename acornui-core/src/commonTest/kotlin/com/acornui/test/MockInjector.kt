@@ -16,12 +16,9 @@
 
 package com.acornui.test
 
-import com.acornui.asset.AssetManager
+import com.acornui.asset.Loaders
 import com.acornui.component.RenderContextRo
-import com.acornui.di.Injector
-import com.acornui.di.InjectorImpl
-import com.acornui.di.Owned
-import com.acornui.di.OwnedImpl
+import com.acornui.di.*
 import com.acornui.focus.FocusManager
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
@@ -29,6 +26,8 @@ import com.acornui.graphic.Window
 import com.acornui.input.InteractivityManager
 import com.acornui.input.KeyState
 import com.acornui.input.MouseState
+import com.acornui.io.ReadByteBuffer
+import com.acornui.io.byteBuffer
 import com.acornui.io.file.Files
 
 object MockInjector {
@@ -41,12 +40,17 @@ object MockInjector {
 	}
 
 	fun create(): Injector {
-		return InjectorImpl(null, listOf(
+		return InjectorImpl(null, listOf<DependencyPair<*>>(
 				Window to MockWindow,
 				MouseState to MockMouseState,
 				KeyState to MockKeyState,
 				Files to MockFiles,
-				AssetManager to MockAssetManager,
+				Loaders.binaryLoader to MockLoader(byteBuffer(1)),
+				Loaders.musicLoader to MockLoader(MockMusic),
+				Loaders.rgbDataLoader to MockLoader(MockTexture.rgbData),
+				Loaders.soundLoader to MockLoader(MockSoundFactory),
+				Loaders.textLoader to MockLoader(""),
+				Loaders.textureLoader to MockLoader(MockTexture),
 				InteractivityManager to MockInteractivityManager,
 				RenderContextRo to MockRenderContext,
 				FocusManager to MockFocusManager,

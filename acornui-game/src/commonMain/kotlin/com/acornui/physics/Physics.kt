@@ -16,14 +16,10 @@
 
 package com.acornui.physics
 import com.acornui.ecs.ComponentBase
-import com.acornui.ecs.SerializableComponentType
+import com.acornui.ecs.ComponentType
 import com.acornui.geom.Polygon2
-import com.acornui.geom.Polygon2Serializer
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
-import com.acornui.math.vector2
-import com.acornui.math.vector3
-import com.acornui.serialization.*
 
 class Physics : ComponentBase() {
 
@@ -64,42 +60,7 @@ class Physics : ComponentBase() {
 
 	override val type = Physics
 
-	companion object : SerializableComponentType<Physics> {
-
-		override val name: String = "Physics"
-
-		override fun read(reader: Reader): Physics {
-			val o = Physics()
-			o.acceleration.set(reader.vector2("acceleration")!!)
-			o.position.set(reader.vector3("position")!!)
-			o.rotation = reader.float("rotation")!!
-			o.rotationalVelocity = reader.float("rotationalVelocity")!!
-			o.rotationalDampening = reader.float("rotationalDampening")!!
-			o.velocity.set(reader.vector2("velocity")!!)
-			o.maxVelocity = reader.float("maxVelocity")!!
-			o.dampening = reader.float("dampening")!!
-			o.radius = reader.float("radius")!!
-			o.collisionZ = reader.float("collisionZ")!!
-			o.canCollide = reader.bool("canCollide")!!
-			o.mass = reader.float("mass")!!
-			return o
-		}
-
-		override fun Physics.write(writer: Writer) {
-			writer.vector2("acceleration", acceleration)
-			writer.vector3("position", position)
-			writer.float("rotation", rotation)
-			writer.float("rotationalVelocity", rotationalVelocity)
-			writer.float("rotationalDampening", rotationalDampening)
-			writer.vector2("velocity", velocity)
-			writer.float("maxVelocity", maxVelocity)
-			writer.float("dampening", dampening)
-			writer.float("radius", radius)
-			writer.float("collisionZ", collisionZ)
-			writer.bool("canCollide", canCollide)
-			writer.float("mass", mass)
-		}
-	}
+	companion object : ComponentType<Physics>
 }
 
 class Perimeter(
@@ -108,18 +69,5 @@ class Perimeter(
 
 	override val type = Perimeter
 
-	companion object : SerializableComponentType<Perimeter> {
-		override val name: String = "Perimeter"
-
-		override fun read(reader: Reader): Perimeter {
-			val o = Perimeter(
-					perimeter = reader.obj("perimeter", Polygon2Serializer)!!
-			)
-			return o
-		}
-
-		override fun Perimeter.write(writer: Writer) {
-			writer.obj("perimeter", perimeter, Polygon2Serializer)
-		}
-	}
+	companion object : ComponentType<Perimeter>
 }

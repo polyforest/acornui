@@ -18,8 +18,10 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.serialization.*
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -42,6 +44,7 @@ import kotlin.random.Random
 /**
  * A read-only view into Vector3
  */
+@Serializable(with = Vector3Serializer::class)
 interface Vector3Ro {
 
 	/**
@@ -144,7 +147,7 @@ interface Vector3Ro {
  * Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author badlogicgames@gmail.com
  */
-@Serializable
+@Serializable(with = Vector3Serializer::class)
 class Vector3 (
 
 		/**
@@ -724,27 +727,22 @@ class Vector3 (
 
 }
 
-object Vector3Serializer : From<Vector3?>, To<Vector3Ro?> {
+@Serializer(forClass = Vector3::class)
+object Vector3Serializer : KSerializer<Vector3> {
 
-	override fun read(reader: Reader): Vector3? {
-		return reader.vector3()
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Vector3")
+
+	override fun serialize(encoder: Encoder, obj: Vector3) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.x, obj.y, obj.z))
 	}
 
-	override fun Vector3Ro?.write(writer: Writer) {
-		writer.vector3(this)
+	override fun deserialize(decoder: Decoder): Vector3 {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Vector3(
+				x = values[0],
+				y = values[1],
+				z = values[2]
+		)
 	}
 }
-
-fun Writer.vector3(v: Vector3Ro?) {
-	if (v == null) writeNull()
-	else floatArray(floatArrayOf(v.x, v.y, v.z))
-}
-
-fun Writer.vector3(name: String, v: Vector3Ro) = property(name).vector3(v)
-
-fun Reader.vector3(): Vector3? {
-	val f = floatArray() ?: return null
-	return Vector3(f[0], f[1], f[2])
-}
-
-fun Reader.vector3(name: String): Vector3? = get(name)?.vector3()

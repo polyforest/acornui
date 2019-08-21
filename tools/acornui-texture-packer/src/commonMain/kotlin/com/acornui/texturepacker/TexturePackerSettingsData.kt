@@ -142,6 +142,7 @@ data class PackerAlgorithmSettingsData(
 
 )
 
+@Deprecated("use kotlinx serialization")
 object TexturePackerSettingsSerializer : To<TexturePackerSettingsData>, From<TexturePackerSettingsData> {
 
 	override fun read(reader: Reader): TexturePackerSettingsData {
@@ -179,6 +180,7 @@ object TexturePackerSettingsSerializer : To<TexturePackerSettingsData>, From<Tex
 
 }
 
+@Deprecated("Use kotlinx serialization")
 object PackerAlgorithmSettingsDataSerializer : To<PackerAlgorithmSettingsData>, From<PackerAlgorithmSettingsData> {
 	override fun read(reader: Reader): PackerAlgorithmSettingsData {
 		return PackerAlgorithmSettingsData(

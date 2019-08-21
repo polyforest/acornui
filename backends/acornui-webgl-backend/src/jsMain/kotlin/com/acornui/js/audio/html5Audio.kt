@@ -16,8 +16,8 @@
 
 package com.acornui.js.audio
 
-import com.acornui.async.Deferred
-import com.acornui.async.Promise
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import org.khronos.webgl.ArrayBuffer
 import org.w3c.dom.HTMLMediaElement
 import org.w3c.dom.events.EventTarget
@@ -53,12 +53,12 @@ external class AudioContext : EventTarget {
 }
 
 fun AudioContext.decodeAudioData(audioData: ArrayBuffer): Deferred<ArrayBuffer> {
-	return object : Promise<ArrayBuffer>() {
-		init {
-			// The Audio Context handles creating source buffers from raw binary
-			decodeAudioData(audioData, ::success)
-		}
+	val c = CompletableDeferred<ArrayBuffer>()
+	// The Audio Context handles creating source buffers from raw binary
+	decodeAudioData(audioData) {
+		c.complete(it)
 	}
+	return c
 }
 
 external class AudioDestinationNode : AudioNode {

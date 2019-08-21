@@ -16,7 +16,7 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.Deferred
+import kotlinx.coroutines.Deferred
 import com.acornui.collection.addAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign

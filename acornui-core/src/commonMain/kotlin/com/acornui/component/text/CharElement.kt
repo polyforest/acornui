@@ -16,8 +16,8 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.Deferred
-import com.acornui.async.resultOrNull
+import com.acornui.async.getCompletedOrNull
+import kotlinx.coroutines.Deferred
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.graphic.BlendMode
@@ -49,7 +49,7 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	val glyph: Glyph?
 		get() {
-			return style?.font?.resultOrNull()?.getGlyphSafe(char)
+			return style?.font?.getCompletedOrNull()?.getGlyphSafe(char)
 		}
 
 	override var x = 0f

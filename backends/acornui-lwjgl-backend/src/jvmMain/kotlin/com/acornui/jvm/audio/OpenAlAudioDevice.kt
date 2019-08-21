@@ -47,7 +47,7 @@ class OpenAlAudioDevice(
 	var position: Float = 0f
 		get() {
 			if (sourceId == -1) return 0f
-			return position + alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)
+			return field + alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)
 		}
 
 	private val secondsPerBuffer: Float

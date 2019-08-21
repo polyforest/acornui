@@ -23,6 +23,7 @@ import com.acornui.component.canvasToLocal
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.di.inject
+import com.acornui.function.as1
 import com.acornui.input.*
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
@@ -109,7 +110,7 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(-1, ::enterFrameHandler)
+			_enterFrame = tick(-1, ::enterFrameHandler.as1)
 			stage.mouseMove().add(::stageMouseMoveHandler)
 			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
@@ -204,7 +205,7 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(-1, ::enterFrameHandler)
+			_enterFrame = tick(-1, ::enterFrameHandler.as1)
 			stage.touchMove().add(::stageTouchMoveHandler)
 			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {

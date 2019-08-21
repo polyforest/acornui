@@ -16,13 +16,13 @@
 
 package com.acornui.component
 
+import com.acornui.asset.cacheAsync
+import com.acornui.asset.cachedGroup
+import com.acornui.asset.loadTexture
 import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.asset.AssetType
-import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCache
 import com.acornui.di.Owned
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
@@ -52,9 +52,12 @@ fun Owned.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image {
 	return object : Image(this@iconImage) {
 		init {
 			element = textureC {
-				loadAndCache(imagePath, AssetType.TEXTURE, cachedGroup()).then {
-					it.filterMag = TextureMagFilter.LINEAR
-					it.filterMin = TextureMinFilter.LINEAR
+				cachedGroup().cacheAsync(imagePath) {
+					loadTexture(imagePath).apply {
+						filterMag = TextureMagFilter.LINEAR
+						filterMin = TextureMinFilter.LINEAR
+					}
+				} then {
 					texture = it
 				} catch(TextureComponent.errorHandler)
 			}

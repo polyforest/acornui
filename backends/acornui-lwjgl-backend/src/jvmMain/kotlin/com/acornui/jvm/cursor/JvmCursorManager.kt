@@ -16,18 +16,19 @@
 
 package com.acornui.jvm.cursor
 
-import com.acornui.async.then
 import com.acornui.LifecycleBase
-import com.acornui.asset.*
+import com.acornui.async.globalLaunch
 import com.acornui.cursor.Cursor
 import com.acornui.cursor.CursorManagerBase
 import com.acornui.cursor.StandardCursors
-import com.acornui.graphic.Texture
+import com.acornui.graphic.RgbData
 import com.acornui.io.JvmBufferUtil
+import com.acornui.jvm.opengl.loadRgbData
+import com.acornui.io.UrlRequestData
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 
-class JvmCursorManager(assets: AssetManager, private val window: Long) : CursorManagerBase() {
+class JvmCursorManager(private val window: Long) : CursorManagerBase() {
 
 	val cursorsPath = "assets/uiskin/cursors/"
 
@@ -40,18 +41,18 @@ class JvmCursorManager(assets: AssetManager, private val window: Long) : CursorM
 			HAND = JvmStandardCursor(window, GLFW.GLFW_HAND_CURSOR)
 			RESIZE_EW = JvmStandardCursor(window, GLFW.GLFW_HRESIZE_CURSOR)
 			RESIZE_NS = JvmStandardCursor(window, GLFW.GLFW_VRESIZE_CURSOR)
-			ALIAS = JvmTextureCursor(assets, window, cursorsPath + "Alias.png", 2, 2)
-			ALL_SCROLL = JvmTextureCursor(assets, window, cursorsPath + "AllScroll.png", 12, 12)
-			CELL = JvmTextureCursor(assets, window, cursorsPath + "Cell.png", 12, 12)
-			COPY = JvmTextureCursor(assets, window, cursorsPath + "Copy.png", 2, 2)
-			HELP = JvmTextureCursor(assets, window, cursorsPath + "Help.png", 2, 2)
-			MOVE = JvmTextureCursor(assets, window, cursorsPath + "Move.png", 12, 12)
+			ALIAS = JvmTextureCursor(window, cursorsPath + "Alias.png", 2, 2)
+			ALL_SCROLL = JvmTextureCursor(window, cursorsPath + "AllScroll.png", 12, 12)
+			CELL = JvmTextureCursor(window, cursorsPath + "Cell.png", 12, 12)
+			COPY = JvmTextureCursor(window, cursorsPath + "Copy.png", 2, 2)
+			HELP = JvmTextureCursor(window, cursorsPath + "Help.png", 2, 2)
+			MOVE = JvmTextureCursor(window, cursorsPath + "Move.png", 12, 12)
 			NONE = HiddenCursor(window)
-			NOT_ALLOWED = JvmTextureCursor(assets, window, cursorsPath + "NotAllowed.png", 12, 12)
-			POINTER_WAIT = JvmTextureCursor(assets, window, cursorsPath + "PointerWait.png", 1, 3)
-			RESIZE_NE = JvmTextureCursor(assets, window, cursorsPath + "ResizeNE.png", 13, 13)
-			RESIZE_SE = JvmTextureCursor(assets, window, cursorsPath + "ResizeSE.png", 13, 13)
-			WAIT = JvmTextureCursor(assets, window, cursorsPath + "Wait.png", 6, 2)
+			NOT_ALLOWED = JvmTextureCursor(window, cursorsPath + "NotAllowed.png", 12, 12)
+			POINTER_WAIT = JvmTextureCursor(window, cursorsPath + "PointerWait.png", 1, 3)
+			RESIZE_NE = JvmTextureCursor(window, cursorsPath + "ResizeNE.png", 13, 13)
+			RESIZE_SE = JvmTextureCursor(window, cursorsPath + "ResizeSE.png", 13, 13)
+			WAIT = JvmTextureCursor(window, cursorsPath + "Wait.png", 6, 2)
 		}
 	}
 }
@@ -60,7 +61,6 @@ class JvmCursorManager(assets: AssetManager, private val window: Long) : CursorM
  * Loads a texture atlas and pulls out the cursor region, sending the pixels to the OS.
  */
 class JvmTextureCursor(
-		assets: AssetManager,
 		private val window: Long,
 		texturePath: String,
 		val hotX: Int,
@@ -70,20 +70,16 @@ class JvmTextureCursor(
 	private var cursor: Long = -1L
 
 	init {
-		assets.load(texturePath, AssetType.TEXTURE).then {
-			setTexture(it)
+		globalLaunch {
+			setTexture(loadRgbData(UrlRequestData(texturePath)))
 		}
 	}
 
-	private fun setTexture(texture: Texture) {
+	private fun setTexture(rgbData: RgbData) {
 		val i = GLFWImage.create()
-		i.width(texture.widthPixels)
-		i.height(texture.heightPixels)
-		i.pixels(JvmBufferUtil.wrap(texture.rgbData.bytes))
-//		i.width = texture.width()
-//		i.height = texture.height()
-//		i.setPixels(JvmBufferUtil.wrap(texture.rgbData().bytes))
-
+		i.width(rgbData.width)
+		i.height(rgbData.height)
+		i.pixels(JvmBufferUtil.wrap(rgbData.bytes))
 		if (cursor != -1L) {
 			GLFW.glfwDestroyCursor(cursor)
 		}

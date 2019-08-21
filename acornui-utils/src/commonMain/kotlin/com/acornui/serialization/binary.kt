@@ -27,9 +27,9 @@ import kotlinx.serialization.cbor.Cbor
  * @author nbilyk
  */
 @Deprecated("use kotlinx serialization")
-private object BinarySerializer : Serializer<NativeReadByteBuffer> {
+private object BinarySerializer : Serializer<ReadByteBuffer> {
 
-	override fun read(data: NativeReadByteBuffer): Reader {
+	override fun read(data: ReadByteBuffer): Reader {
 		data.rewind()
 		readMarker(data)
 		return BinaryReader(data, readPropertyIndex(data))
@@ -370,12 +370,12 @@ object BinaryType {
 }
 
 @Deprecated("use kotlinx serialization")
-fun <T> binaryParse(binary: NativeReadByteBuffer, factory: From<T>): T {
+fun <T> binaryParse(binary: ReadByteBuffer, factory: From<T>): T {
 	return BinarySerializer.read(binary, factory)
 }
 
 @Deprecated("use kotlinx serialization")
-fun <T> toBinary(value: T, factory: To<T>): NativeReadByteBuffer {
+fun <T> toBinary(value: T, factory: To<T>): ReadByteBuffer {
 	return BinarySerializer.write(value, factory)
 }
 

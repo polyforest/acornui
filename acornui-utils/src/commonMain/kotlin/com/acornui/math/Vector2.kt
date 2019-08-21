@@ -16,16 +16,19 @@
 
 package com.acornui.math
 
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.Clearable
-import com.acornui.serialization.*
-import kotlinx.serialization.Serializable
+import com.acornui.recycle.ClearableObjectPool
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.*
 import kotlin.random.Random
 
 /**
  * A read-only view into a Vector2
  */
+@Serializable(with = Vector2Serializer::class)
 interface Vector2Ro {
 
 	val x: Float
@@ -130,7 +133,7 @@ interface Vector2Ro {
  * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com
  */
-@Serializable
+@Serializable(with = Vector2Serializer::class)
 class Vector2(
 
 		/**
@@ -549,27 +552,22 @@ class Vector2(
 
 }
 
-object Vector2Serializer : From<Vector2?>, To<Vector2Ro?> {
 
-	override fun read(reader: Reader): Vector2? {
-		return reader.vector2()
+@Serializer(forClass = Vector2::class)
+object Vector2Serializer : KSerializer<Vector2> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Vector2")
+
+	override fun serialize(encoder: Encoder, obj: Vector2) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.x, obj.y))
 	}
 
-	override fun Vector2Ro?.write(writer: Writer) {
-		writer.vector2(this)
+	override fun deserialize(decoder: Decoder): Vector2 {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Vector2(
+				x = values[0],
+				y = values[1]
+		)
 	}
 }
-
-fun Writer.vector2(v: Vector2Ro?) {
-	if (v == null) writeNull()
-	else floatArray(floatArrayOf(v.x, v.y))
-}
-
-fun Writer.vector2(name: String, v: Vector2Ro) = property(name).vector2(v)
-
-fun Reader.vector2(): Vector2? {
-	val f = floatArray() ?: return null
-	return Vector2(f[0], f[1])
-}
-
-fun Reader.vector2(name: String): Vector2? = get(name)?.vector2()

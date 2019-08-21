@@ -19,12 +19,10 @@ package com.acornui.js
 import com.acornui.AppConfig
 import com.acornui.ApplicationBase
 import com.acornui.Version
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetManagerImpl
-import com.acornui.asset.AssetType
-import com.acornui.asset.LoaderFactory
+import com.acornui.asset.Loaders
+import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
-import com.acornui.async.launch
+import com.acornui.async.globalLaunch
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
 import com.acornui.component.HtmlComponent
@@ -39,16 +37,10 @@ import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
-import com.acornui.js.audio.JsAudioElementMusicLoader
-import com.acornui.js.audio.JsAudioElementSoundLoader
-import com.acornui.js.audio.JsWebAudioSoundLoader
-import com.acornui.js.audio.audioContextSupported
 import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
-import com.acornui.js.loader.JsBinaryLoader
-import com.acornui.js.loader.JsTextLoader
 import com.acornui.js.persistence.JsPersistence
 import com.acornui.logging.Log
 import com.acornui.persistence.Persistence
@@ -93,7 +85,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
-		launch {
+		globalLaunch {
 			contentLoad()
 			awaitAll()
 
@@ -135,31 +127,13 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override val filesTask by task(Files) {
 		val path = config().rootPath + config().assetsManifestPath
-		val manifest = jsonParse(FilesManifest.serializer(), JsTextLoader(path).await())
+		val manifest = jsonParse(FilesManifest.serializer(), get(Loaders.textLoader).load(path))
 		FilesImpl(manifest)
-	}
-
-	override val assetManagerTask by task(AssetManager) {
-		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		addAssetLoaders(loaders)
-		AssetManagerImpl(config().rootPath, get(Files), loaders, appendVersion = true)
 	}
 
 	protected open val audioManagerTask by task(AudioManager) {
 		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
 		AudioManagerImpl()
-	}
-
-	protected open suspend fun addAssetLoaders(loaders: MutableMap<AssetType<*>, LoaderFactory<*>>) {
-		val audioManager = get(AudioManager)
-		loaders[AssetType.TEXT] = { path: String, estimatedBytesTotal: Int -> JsTextLoader(path, estimatedBytesTotal) }
-		loaders[AssetType.BINARY] = { path: String, estimatedBytesTotal: Int -> JsBinaryLoader(path, estimatedBytesTotal) }
-		loaders[AssetType.SOUND] = if (audioContextSupported) {
-			{ path: String, _: Int -> JsWebAudioSoundLoader(path, audioManager) }
-		} else {
-			{ path: String, _: Int -> JsAudioElementSoundLoader(path, audioManager) }
-		}
-		loaders[AssetType.MUSIC] = { path: String, _: Int -> JsAudioElementMusicLoader(path, audioManager) }
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {
@@ -200,7 +174,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override fun dispose() {
 		super.dispose()
-		launch {
+		globalLaunch {
 			awaitAll()
 			frameDriver?.stop()
 		}

@@ -22,13 +22,12 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.text.collection.JoinedList
 import com.acornui.di.Owned
-import com.acornui.selection.SelectionRange
-import com.acornui.setCamera
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.Vector3
+import com.acornui.selection.SelectionRange
+import com.acornui.setCamera
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -44,7 +43,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private val _lines = ArrayList<LineInfo>()
 	private val _elements = ArrayList<TextSpanElement>()
 
-	private val _textElements = JoinedList(_elements) { it.elements }
+	private val _textElements = ArrayList<TextElement>()
 
 	/**
 	 * A list of all the text elements within the child spans.
@@ -69,7 +68,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	override var allowClipping: Boolean by validationProp(true, VERTICES)
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = _textElements::dirty)
+		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
 		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateVertices)
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
@@ -305,6 +304,13 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 			part.x += line.x
 			part.y = line.y + yOffset
+		}
+	}
+
+	private fun updateTextElements() {
+		_textElements.clear()
+		_elements.forEach2 {
+			_textElements.addAll(it.elements)
 		}
 	}
 

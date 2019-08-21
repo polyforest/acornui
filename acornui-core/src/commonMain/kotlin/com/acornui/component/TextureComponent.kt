@@ -16,12 +16,9 @@
 
 package com.acornui.component
 
+import com.acornui.asset.*
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.asset.AssetType
-import com.acornui.asset.CachedGroup
-import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCache
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
@@ -78,12 +75,13 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 			if (_path == value) return
 			cached?.dispose()
 			cached = cachedGroup()
+			_setTexture(null)
 			if (value != null) {
-				loadAndCache(value, AssetType.TEXTURE, cached!!).then {
+				cached!!.cacheAsync(value) {
+					loadTexture(value)
+				}.then {
 					_setTexture(it)
 				} catch(errorHandler)
-			} else {
-				_setTexture(null)
 			}
 		}
 

@@ -193,7 +193,7 @@ class TooltipManagerImpl(override val injector: Injector) : TooltipManager, Scop
 			if (field != value) {
 				field = value
 				if (value) {
-					enterFrameHandle = tick(callback = ::frameHandler)
+					enterFrameHandle = tick(callback = ::frameHandler.as1)
 				} else {
 					enterFrameHandle?.dispose()
 					enterFrameHandle = null

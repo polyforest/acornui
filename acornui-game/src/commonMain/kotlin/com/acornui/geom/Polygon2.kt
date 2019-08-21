@@ -421,20 +421,6 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 
 }
 
-object Polygon2Serializer : To<Polygon2Ro>, From<Polygon2> {
-
-	override fun Polygon2Ro.write(writer: Writer) {
-		writer.floatArray("vertices", vertices.toFloatArray())
-	}
-
-	override fun read(reader: Reader): Polygon2 {
-		val vertices = reader.floatArray("vertices")!!
-		val p = Polygon2(vertices.size)
-		p.vertices.addAll2(vertices.toList())
-		return p
-	}
-}
-
 fun basicPolygon(sides: Int = 3, radius: Float = 100f): Polygon2 {
 	if (sides < 3) throw Exception("Needs at least 3 sides")
 	val rot = PI2 / sides.toFloat()

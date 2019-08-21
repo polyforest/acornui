@@ -19,7 +19,6 @@
 package com.acornui.component
 
 import com.acornui.*
-import com.acornui.asset.AssetManager
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.layout.*
@@ -290,7 +289,6 @@ open class UiComponentImpl(
 	protected val mouse by MouseState
 	protected val mouseState by MouseState
 
-	protected val assets by AssetManager
 	protected val interactivity by InteractivityManager
 	protected val gl by Gl20
 	protected val glState by GlState

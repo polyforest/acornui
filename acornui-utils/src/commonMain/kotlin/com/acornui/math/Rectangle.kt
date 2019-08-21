@@ -20,11 +20,15 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.serialization.*
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A read-only interface to [Rectangle]
  */
+@Serializable(with = RectangleSerializer::class)
 interface RectangleRo {
 	val x: Float
 	val y: Float
@@ -102,8 +106,8 @@ interface RectangleRo {
 	 */
 	fun canContain(width: Float, height: Float): Boolean
 
-	fun area(): Float
-	fun perimeter(): Float
+	val area: Float
+	val perimeter: Float
 
 	fun copy(x: Float = this.x, y: Float = this.y, width: Float = this.width, height: Float = this.height): Rectangle {
 		return Rectangle(x, y, width, height)
@@ -123,6 +127,7 @@ interface RectangleRo {
 	}
 }
 
+@Serializable(with = RectangleSerializer::class)
 class Rectangle(
 		override var x: Float = 0f,
 		override var y: Float = 0f,
@@ -428,13 +433,11 @@ class Rectangle(
 		return this.width >= width && this.height >= height
 	}
 
-	override fun area(): Float {
-		return this.width * this.height
-	}
+	override val area: Float
+		get() = this.width * this.height
 
-	override fun perimeter(): Float {
-		return 2 * (this.width + this.height)
-	}
+	override val perimeter: Float
+		get() = 2 * (this.width + this.height)
 
 	fun inflate(left: Float, top: Float, right: Float, bottom: Float) {
 		x -= left
@@ -512,21 +515,23 @@ class Rectangle(
 	}
 }
 
-object RectangleSerializer : To<RectangleRo>, From<Rectangle> {
+@Serializer(forClass = Rectangle::class)
+object RectangleSerializer : KSerializer<Rectangle> {
 
-	override fun RectangleRo.write(writer: Writer) {
-		writer.float("x", x)
-		writer.float("y", y)
-		writer.float("width", width)
-		writer.float("height", height)
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Rectangle")
+
+	override fun serialize(encoder: Encoder, obj: Rectangle) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.x, obj.y, obj.width, obj.height))
 	}
 
-	override fun read(reader: Reader): Rectangle {
+	override fun deserialize(decoder: Decoder): Rectangle {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
 		return Rectangle(
-				x = reader.float("x")!!,
-				y = reader.float("y")!!,
-				width = reader.float("width")!!,
-				height = reader.float("height")!!
+				x = values[0],
+				y = values[1],
+				width = values[2],
+				height = values[3]
 		)
 	}
 }

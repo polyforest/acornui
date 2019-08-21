@@ -19,24 +19,30 @@ package com.acornui.asset
 import com.acornui.Disposable
 import com.acornui.DisposedException
 import com.acornui.collection.MutableListIteratorImpl
+import com.acornui.collection.stringMapOf
 import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import com.acornui.recycle.Clearable
 import com.acornui.time.tick
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlin.coroutines.CoroutineContext
 
+interface Cache : Clearable {
 
-interface Cache : Disposable {
-
-	fun containsKey(key: CacheKey<*>): Boolean
+	fun containsKey(key: String): Boolean
 
 	/**
 	 * Retrieves the cache value for the given key.
 	 * When cache items are retrieved, [refInc] should be used to indicate that it's in use.
 	 */
-	operator fun <T : Any> get(key: CacheKey<T>): T?
+	operator fun <T : Any> get(key: String): T?
 
-	operator fun <T : Any> set(key: CacheKey<T>, value: T)
+	operator fun <T : Any> set(key: String, value: T)
 
 	/**
 	 * Retrieves the cache value for the given key if it exists. Otherwise, constructs a new value via the [factory]
@@ -44,7 +50,7 @@ interface Cache : Disposable {
 	 * @param key The key to use for the cache index.
 	 * @return Returns the cached value.
 	 */
-	fun <T : Any> getOr(key: CacheKey<T>, factory: () -> T): T {
+	fun <T : Any> cache(key: String, factory: () -> T): T {
 		if (containsKey(key)) return get(key)!!
 		val value = factory()
 		set(key, value)
@@ -55,7 +61,7 @@ interface Cache : Disposable {
 	 * Decrements the use count for the cache value with the given key.
 	 * If the use count reaches zero, the cache value will be removed and if it's [Disposable], disposed.
 	 */
-	fun refDec(key: CacheKey<*>)
+	fun refDec(key: String)
 
 	/**
 	 * Increments the reference count for the cache value. This should be paired with [refDec]
@@ -63,9 +69,10 @@ interface Cache : Disposable {
 	 *
 	 * @see containsKey
 	 */
-	fun refInc(key: CacheKey<*>)
+	fun refInc(key: String)
 
 	companion object : DKey<Cache> {
+
 		override fun factory(injector: Injector): Cache? {
 			return CacheImpl()
 		}
@@ -73,18 +80,19 @@ interface Cache : Disposable {
 }
 
 /**
- * A key-value store that keeps track of references. When references reach zero, the cached asset will be disposed
- * in the future.
+ * A key-value store that keeps track of references. When references reach zero, and stay at zero for a certain number
+ * of frames, the cached asset will be disposed.
  */
-class CacheImpl(
+open class CacheImpl(
+
 		/**
 		 * The number of frames before an unreferenced cache item is removed and destroyed.
 		 */
 		private val gcFrames: Int = 500) : Cache {
 
-	private val cache = HashMap<CacheKey<*>, CacheValue>()
+	private val cache = stringMapOf<CacheValue>()
 
-	private val deathPool = ArrayList<CacheKey<*>>()
+	private val deathPool = ArrayList<String>()
 	private val deathPoolIterator = MutableListIteratorImpl(deathPool)
 
 	private val checkInterval = maxOf(1, gcFrames / 5)
@@ -109,16 +117,16 @@ class CacheImpl(
 		}
 	}
 
-	override fun containsKey(key: CacheKey<*>): Boolean {
+	override fun containsKey(key: String): Boolean {
 		return cache.containsKey(key)
 	}
 
-	override fun <T : Any> get(key: CacheKey<T>): T? {
+	override fun <T : Any> get(key: String): T? {
 		@Suppress("UNCHECKED_CAST")
 		return cache[key]?.value as T?
 	}
 
-	override fun <T : Any> set(key: CacheKey<T>, value: T) {
+	override fun <T : Any> set(key: String, value: T) {
 		(cache[key]?.value as? Disposable)?.dispose()
 		val cacheValue = CacheValue(value, gcFrames)
 		cache[key] = cacheValue
@@ -126,7 +134,7 @@ class CacheImpl(
 		deathPool.add(key)
 	}
 
-	override fun refDec(key: CacheKey<*>) {
+	override fun refDec(key: String) {
 		if (cache.containsKey(key)) {
 			val cacheValue = cache[key]!!
 			if (cacheValue.refCount <= 0)
@@ -137,7 +145,7 @@ class CacheImpl(
 		}
 	}
 
-	override fun refInc(key: CacheKey<*>) {
+	override fun refInc(key: String) {
 		val cacheValue = cache[key] ?: throw Exception("The key $key is not in the cache.")
 		if (cacheValue.refCount == 0) {
 			// Revive from the death pool.
@@ -149,17 +157,13 @@ class CacheImpl(
 		cacheValue.refCount++
 	}
 
-	override fun dispose() {
+	override fun clear() {
 		for (cacheValue in cache.values) {
 			(cacheValue.value as? Disposable)?.dispose()
 		}
 		cache.clear()
 	}
-
 }
-
-@Suppress("unused")
-interface CacheKey<T>
 
 private class CacheValue(
 		var value: Any,
@@ -178,7 +182,29 @@ interface CachedGroup : Disposable {
 	/**
 	 * Adds a key to be tracked.
 	 */
-	fun add(key: CacheKey<*>)
+	fun add(key: String)
+
+}
+
+fun <T : Any> CachedGroup.cache(key: String, factory: () -> T): T {
+	val r = cache.cache(key, factory)
+	add(key)
+	return r
+}
+
+/**
+ * Gets if exists or creates a deferred value for this group's [CachedGroup.cache].
+ * Using the [GlobalScope] and provided [context], creates a [Deferred] object as the cache value for
+ * the given [key].
+ */
+fun <T : Any> CachedGroup.cacheAsync(key: String, context: CoroutineContext = Dispatchers.Default, factory: suspend () -> T): Deferred<T> {
+	val r = cache.cache(key) {
+		GlobalScope.async(context) {
+			factory()
+		}
+	}
+	add(key)
+	return r
 }
 
 /**
@@ -190,9 +216,9 @@ class CachedGroupImpl(
 
 	private var isDisposed = false
 
-	private val keys = ArrayList<CacheKey<*>>()
+	private val keys = ArrayList<String>()
 
-	override fun add(key: CacheKey<*>) {
+	override fun add(key: String) {
 		if (isDisposed) {
 			// This group has been disposed, immediately refDec the key.
 			cache.refInc(key)
@@ -214,8 +240,9 @@ class CachedGroupImpl(
 }
 
 /**
- * Constructs a new [CachedGroup] object with the current scope's [Cache] manager.
+ * Constructs a new [CachedGroup] object which will increment or decrement a list of keys with the
+ * given [cache].
  */
-fun Scoped.cachedGroup(): CachedGroup {
-	return CachedGroupImpl(inject(Cache))
+fun Scoped.cachedGroup(cache: Cache = inject(Cache)): CachedGroup {
+	return CachedGroupImpl(cache)
 }

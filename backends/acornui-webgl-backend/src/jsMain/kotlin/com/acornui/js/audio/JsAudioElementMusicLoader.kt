@@ -16,48 +16,18 @@
 
 package com.acornui.js.audio
 
-import com.acornui.async.Deferred
-import com.acornui.asset.AssetLoader
-import com.acornui.asset.AssetType
 import com.acornui.audio.AudioManager
 import com.acornui.audio.Music
+import com.acornui.io.UrlRequestData
 import org.w3c.dom.HTMLAudioElement
 import kotlin.browser.document
-
-/**
- * An asset loader for js AudioContext sounds.
- * @author nbilyk
- */
-class JsAudioElementMusicLoader(
-		override val path: String,
-		audioManager: AudioManager
-) : AssetLoader<Music> {
-
-	override val type: AssetType<Music> = AssetType.MUSIC
-
-	override val secondsLoaded: Float
-		get() = 0f
-
-	override val secondsTotal: Float
-		get() = 0f
-
-	private val music = JsAudioElementMusic(audioManager, Audio(path))
-
-	override val status: Deferred.Status = Deferred.Status.SUCCESSFUL
-	override val result: Music = music
-	override val error: Throwable
-		get() {
-			throw Exception("status is not FAILED")
-		}
-
-	override suspend fun await(): Music = music
-
-	override fun cancel() {
-	}
-}
 
 fun Audio(source: String): HTMLAudioElement {
 	val audio = document.createElement("AUDIO") as HTMLAudioElement
 	audio.src = source
 	return audio
+}
+
+fun loadMusic(audioManager: AudioManager, urlRequestData: UrlRequestData): Music {
+	return JsAudioElementMusic(audioManager, Audio(urlRequestData.toUrlStr()))
 }

@@ -16,16 +16,10 @@
 
 package com.acornui.graphic
 
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetType
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCacheJson
+import com.acornui.asset.loadAndCacheJsonAsync
+import com.acornui.asset.loadTexture
 import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.graphic.RgbData
-import com.acornui.graphic.Texture
-import com.acornui.graphic.TextureAtlasDataSerializer
-import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.MathUtils.mod
@@ -105,13 +99,13 @@ object ExtrudeUtil {
  * This currently only works on the jvm backend (Texture.rgbData support), and these data points should be saved.
  */
 suspend fun Scoped.calculatePerimeter(path: String, alphaThreshold: Float = 0.1f): List<Int> {
-	val texture = inject(AssetManager).load(path, AssetType.TEXTURE).await()
+	val texture = loadTexture(path)
 	return ExtrudeUtil.calculatePerimeter(texture, IntRectangle(0, 0, texture.widthPixels, texture.heightPixels), alphaThreshold)
 }
 
 suspend fun Scoped.calculatePerimeter(atlasPath: String, regionName: String, alphaThreshold: Float = 0.1f): List<Int> {
 	val group = cachedGroup()
-	val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
 	val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 	return ExtrudeUtil.calculatePerimeter(texture, region.bounds, alphaThreshold)

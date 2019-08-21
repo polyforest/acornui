@@ -17,13 +17,16 @@
 package com.acornui.math
 
 import com.acornui.recycle.Clearable
-import com.acornui.serialization.*
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.ceil
 
 /**
  * A read-only interface to [Pad]
  */
+@Serializable(with = PadSerializer::class)
 interface PadRo {
 	val top: Float
 	val right: Float
@@ -85,7 +88,7 @@ interface PadRo {
  *
  * @author nbilyk
  */
-@Serializable
+@Serializable(with = PadSerializer::class)
 class Pad(
 		override var top: Float,
 		override var right: Float,
@@ -191,22 +194,23 @@ class Pad(
 	}
 }
 
-object PadSerializer : To<PadRo>, From<Pad> {
+@Serializer(forClass = Pad::class)
+object PadSerializer : KSerializer<Pad> {
 
-	override fun PadRo.write(writer: Writer) {
-		writer.float("left", left)
-		writer.float("top", top)
-		writer.float("right", right)
-		writer.float("bottom", bottom)
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Pad")
+
+	override fun serialize(encoder: Encoder, obj: Pad) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.top, obj.right, obj.bottom, obj.left))
 	}
 
-	override fun read(reader: Reader): Pad {
-		val p = Pad(
-				top = reader.float("top")!!,
-				right = reader.float("right")!!,
-				bottom = reader.float("bottom")!!,
-				left = reader.float("left")!!
+	override fun deserialize(decoder: Decoder): Pad {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Pad(
+				top = values[0],
+				right = values[1],
+				bottom = values[2],
+				left = values[3]
 		)
-		return p
 	}
 }

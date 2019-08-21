@@ -16,7 +16,7 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.resultOrNull
+import com.acornui.async.getCompletedOrNull
 import com.acornui.async.then
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
@@ -235,7 +235,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
 			val font = charStyle.getFont()
-			val fontData = font?.resultOrNull()?.data
+			val fontData = font?.getCompletedOrNull()?.data
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			out.height = padding.expandHeight2(lineHeight)

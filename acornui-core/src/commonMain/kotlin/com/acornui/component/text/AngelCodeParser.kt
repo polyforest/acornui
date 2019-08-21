@@ -16,7 +16,7 @@
 
 package com.acornui.component.text
 
-import com.acornui.action.Decorator
+import com.acornui.io.Decorator
 import com.acornui.component.text.GlyphData.Companion.EMPTY_CHAR
 import com.acornui.component.text.GlyphData.Companion.UNKNOWN_CHAR
 import com.acornui.math.IntRectangle
@@ -30,7 +30,7 @@ import kotlin.math.abs
  *
  * @author nbilyk
  */
-object AngelCodeParser : Decorator<String, BitmapFontData> {
+object AngelCodeParser {
 
 	fun parse(str: String): BitmapFontData {
 		val parser = StringReader(str)
@@ -217,6 +217,4 @@ object AngelCodeParser : Decorator<String, BitmapFontData> {
 		parser.white()
 		return true
 	}
-
-	override fun decorate(target: String): BitmapFontData = parse(target)
 }

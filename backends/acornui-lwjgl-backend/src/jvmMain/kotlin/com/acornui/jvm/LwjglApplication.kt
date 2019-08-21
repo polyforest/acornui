@@ -19,11 +19,10 @@
 package com.acornui.jvm
 
 import com.acornui.*
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetManagerImpl
-import com.acornui.asset.AssetType
-import com.acornui.asset.LoaderFactory
-import com.acornui.async.launch
+import com.acornui.asset.Loaders
+import com.acornui.asset.load
+import com.acornui.async.globalLaunch
+import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.*
 import com.acornui.component.text.BitmapFontRegistry
@@ -37,29 +36,31 @@ import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
+import com.acornui.graphic.RgbData
+import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.JvmClickDispatcher
 import com.acornui.input.interaction.UndoDispatcher
+import com.acornui.io.*
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.jvm.audio.NoAudioException
 import com.acornui.jvm.audio.OpenAlAudioManager
-import com.acornui.jvm.audio.OpenAlMusicLoader
-import com.acornui.jvm.audio.OpenAlSoundLoader
+import com.acornui.jvm.audio.registerDefaultMusicDecoders
+import com.acornui.jvm.audio.registerDefaultSoundDecoders
 import com.acornui.jvm.cursor.JvmCursorManager
 import com.acornui.jvm.files.JvmFileIoManager
-import com.acornui.jvm.graphic.GlfwWindowImpl
-import com.acornui.jvm.graphic.JvmGl20Debug
-import com.acornui.jvm.graphic.JvmTextureLoader
-import com.acornui.jvm.graphic.LwjglGl20
+import com.acornui.jvm.glfw.GlfwWindowImpl
 import com.acornui.jvm.input.GlfwMouseInput
 import com.acornui.jvm.input.JvmClipboard
 import com.acornui.jvm.input.LwjglKeyInput
-import com.acornui.jvm.loader.JvmBinaryLoader
-import com.acornui.jvm.loader.JvmTextLoader
+import com.acornui.jvm.opengl.JvmGl20Debug
+import com.acornui.jvm.opengl.LwjglGl20
+import com.acornui.jvm.opengl.loadRgbData
+import com.acornui.jvm.opengl.loadTexture
 import com.acornui.jvm.persistence.LwjglPersistence
 import com.acornui.logging.Log
 import com.acornui.persistence.Persistence
@@ -70,8 +71,6 @@ import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
-import kotlin.collections.HashMap
-import kotlin.collections.set
 import org.lwjgl.Version as LwjglVersion
 
 /**
@@ -89,6 +88,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	init {
+		uiThread = Thread.currentThread()
 		Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
 			uncaughtExceptionHandler(exception)
 		}
@@ -101,7 +101,7 @@ open class LwjglApplication : ApplicationBase() {
 		set(AppConfig, appConfig)
 
 		var injector: Injector? = null
-		launch {
+		globalLaunch {
 			awaitAll()
 			injector = createInjector()
 		}
@@ -171,53 +171,30 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	override val filesTask by task(Files) {
-		val textLoader = JvmTextLoader(config().rootPath + config().assetsManifestPath, Charsets.UTF_8)
-		val manifestJson = textLoader.await()
+		val manifestJson = get(Loaders.textLoader).load(config().rootPath + config().assetsManifestPath)
 		val manifest = jsonParse(FilesManifest.serializer(), manifestJson)
 		FilesImpl(manifest)
 	}
 
 	private val audioManagerTask by task(AudioManager) {
-		// TODO: optional dependency task
 		val audioManager = OpenAlAudioManager()
-		FrameDriver.addChild(audioManager)
-		OpenAlSoundLoader.registerDefaultDecoders()
-
 		// Audio
 		try {
-			OpenAlMusicLoader.registerDefaultDecoders()
+			registerDefaultMusicDecoders()
+			registerDefaultSoundDecoders()
+			FrameDriver.addChild(audioManager)
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}
 		audioManager
 	}
-
-	override val assetManagerTask by task(AssetManager) {
-		val gl20 = get(Gl20)
-		val glState = get(GlState)
-		val audioManager = get(AudioManager) as OpenAlAudioManager
-
-		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetType.TEXTURE] = { path, _ -> JvmTextureLoader(path, gl20, glState) }
-		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8) }
-		loaders[AssetType.BINARY] = { path, _ -> JvmBinaryLoader(path) }
-
-		// Audio
-		try {
-			loaders[AssetType.SOUND] = { path, _ -> OpenAlSoundLoader(path, audioManager) }
-			loaders[AssetType.MUSIC] = { path, _ -> OpenAlMusicLoader(path, audioManager) }
-		} catch (e: NoAudioException) {
-			Log.warn("No Audio device found.")
-		}
-		AssetManagerImpl(config().rootPath, get(Files), loaders)
-	}
-
+	
 	protected open val interactivityTask by task(InteractivityManager) {
 		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
 	}
 
 	protected open val cursorManagerTask by task(CursorManager) {
-		JvmCursorManager(get(AssetManager), getWindowId())
+		JvmCursorManager(getWindowId())
 	}
 
 	protected open val selectionManagerTask by task(SelectionManager) {
@@ -248,6 +225,31 @@ open class LwjglApplication : ApplicationBase() {
 				get(InteractivityManager),
 				getWindowId()
 		)
+	}
+
+	protected open val textureLoader by task(Loaders.textureLoader) {
+		val gl = get(Gl20)
+		val glState = get(GlState)
+
+		object : Loader<Texture> {
+			override val defaultInitialTimeEstimate: Float
+				get() = Bandwidth.downBpsInv * 100_000
+
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): Texture {
+				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
+			}
+		}
+	}
+
+	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
+		object : Loader<RgbData> {
+			override val defaultInitialTimeEstimate: Float
+				get() = Bandwidth.downBpsInv * 100_000
+
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): RgbData {
+				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
+			}
+		}
 	}
 
 	protected open fun Owned.initializeSpecialInteractivity() {
@@ -289,7 +291,7 @@ class JvmApplicationRunner(
 		while (!window.isCloseRequested()) {
 			// Poll for window events. Input callbacks will be invoked at this time.
 			val now = nowMs()
-			val dT = (lastFrameMs - now) / 1000f
+			val dT = (now - lastFrameMs) / 1000f
 			lastFrameMs = now
 			tick(dT)
 			val sleepTime = lastFrameMs + frameTimeMs - nowMs()

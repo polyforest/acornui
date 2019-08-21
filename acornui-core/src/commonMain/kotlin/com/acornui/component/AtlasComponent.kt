@@ -18,16 +18,16 @@
 
 package com.acornui.component
 
-import com.acornui.async.Deferred
+import kotlinx.coroutines.Deferred
 import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
+import com.acornui.async.globalAsync
 import com.acornui.di.Owned
 import com.acornui.di.notDisposed
 import com.acornui.graphic.*
 import com.acornui.logging.Log
-import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
 
 /**
@@ -58,7 +58,7 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	fun setRegion(atlasPath: String, regionName: String, warnOnNotFound: Boolean = true): Deferred<LoadedAtlasRegion> {
 		clear()
 		this.group = cachedGroup()
-		return loadAndCacheAtlasRegion(atlasPath, regionName, group!!) then notDisposed {
+		return globalAsync { loadAndCacheAtlasRegion(atlasPath, regionName, group!!) } then notDisposed {
 			loadedRegion ->
 			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
 		} catch {
@@ -93,10 +93,6 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	override fun onDeactivated() {
 		super.onDeactivated()
 		texture?.refDec()
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		super.updateLayout(explicitWidth, explicitHeight, out)
 	}
 
 	override fun clear() {

@@ -16,7 +16,7 @@
 
 package com.acornui.skins
 
-import com.acornui.async.async
+import com.acornui.async.globalAsync
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -184,7 +184,7 @@ open class BasicUiSkin(
 	protected open fun textFontStyle() {
 		val files = inject(Files)
 		BitmapFontRegistry.fontResolver = { request ->
-			async {
+			globalAsync {
 				val fontFile = FontPathResolver.getPath(files, request) ?: throw Exception("Font not found: $request")
 				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
 			}

@@ -63,7 +63,7 @@ class JsApplicationRunnerImpl(
 
 	private fun tick() {
 		val now = nowMs()
-		val dT = (lastFrameMs - now) / 1000f
+		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
 		FrameDriver.update(dT)
 		if (appWindow.shouldRender(true)) {

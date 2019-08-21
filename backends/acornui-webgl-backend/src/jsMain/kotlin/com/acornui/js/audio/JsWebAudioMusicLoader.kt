@@ -16,54 +16,18 @@
 
 package com.acornui.js.audio
 
-import com.acornui.async.Deferred
-import com.acornui.asset.AssetLoader
-import com.acornui.asset.AssetType
 import com.acornui.audio.AudioManager
 import com.acornui.audio.Music
+import com.acornui.io.UrlRequestData
 
 /**
  * An asset loader for js AudioContext sounds.
  * Does not work in IE.
- *
- * @author nbilyk
  */
-class JsWebAudioMusicLoader(
-		override val path: String,
-		private val audioManager: AudioManager
-) : AssetLoader<Music> {
-
-	override val type: AssetType<Music> = AssetType.MUSIC
-
-
-	override val secondsLoaded: Float
-		get() = 0f
-
-	override val secondsTotal: Float
-		get() = 0f
-
+fun loadAudioMusic(audioManager: AudioManager, requestData: UrlRequestData): Music {
+	if (!audioContextSupported) throw Exception("Audio not supported in this browser.")
+	val path = requestData.toUrlStr()
 	val element = Audio(path)
-
-	init {
-		element.load()
-	}
-
-	override val status: Deferred.Status
-		get() = Deferred.Status.SUCCESSFUL
-
-	override val result: Music by lazy {
-		if (!audioContextSupported) throw Exception("Audio not supported in this browser.")
-		JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
-	}
-
-	override val error: Throwable
-		get() {
-			throw Exception("status is not FAILED")
-		}
-
-	override suspend fun await(): Music = result
-
-	override fun cancel() {
-	}
+	element.load()
+	return JsWebAudioMusic(audioManager, JsAudioContext.instance, element)
 }
-

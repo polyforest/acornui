@@ -16,14 +16,11 @@
 
 package com.acornui.js.audio
 
-import com.acornui.async.Deferred
-import com.acornui.async.async
-import com.acornui.asset.AssetLoader
-import com.acornui.asset.AssetType
 import com.acornui.audio.AudioManager
 import com.acornui.audio.SoundFactory
-import com.acornui.request.JsArrayBufferRequest
-import com.acornui.request.UrlRequestData
+import com.acornui.io.ProgressReporter
+import com.acornui.io.UrlRequestData
+import com.acornui.io.loadArrayBuffer
 
 /**
  * An asset loader for js AudioContext sounds.
@@ -31,44 +28,12 @@ import com.acornui.request.UrlRequestData
  *
  * @author nbilyk
  */
-class JsWebAudioSoundLoader(
-		override val path: String = "",
-		private val audioManager: AudioManager
-) : AssetLoader<SoundFactory> {
-
-	override val type: AssetType<SoundFactory> = AssetType.SOUND
-
-
-	private val fileLoader = JsArrayBufferRequest(requestData = UrlRequestData(url = path))
-
-	override val secondsLoaded: Float
-		get() = fileLoader.secondsLoaded
-
-	override val secondsTotal: Float
-		get() = fileLoader.secondsTotal
-
-	private var work: Deferred<JsWebAudioSoundFactory>
-
-	init {
-		if (!audioContextSupported) {
-			throw Exception("Audio not supported in this browser.")
-		}
-		work = async {
-			val context = JsAudioContext.instance
-			val decodedData = context.decodeAudioData(fileLoader.await())
-			JsWebAudioSoundFactory(audioManager, context, decodedData.await())
-		}
+suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): SoundFactory {
+	if (!audioContextSupported) {
+		throw Exception("Audio not supported in this browser.")
 	}
-
-	override val status: Deferred.Status
-		get() = work.status
-	override val result: SoundFactory
-		get() = work.result
-	override val error: Throwable
-		get() = work.error
-
-	override suspend fun await(): SoundFactory = work.await()
-
-	override fun cancel() = fileLoader.cancel()
+	val audioData = loadArrayBuffer(urlRequestData, progressReporter, initialTimeEstimate)
+	val context = JsAudioContext.instance
+	val decodedData = context.decodeAudioData(audioData)
+	return JsWebAudioSoundFactory(audioManager, context, decodedData.await())
 }
-

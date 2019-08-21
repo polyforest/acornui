@@ -16,54 +16,40 @@
 
 package com.acornui.js.audio
 
-import com.acornui.async.Promise
-import com.acornui.asset.AssetLoader
-import com.acornui.asset.AssetType
 import com.acornui.audio.AudioManager
 import com.acornui.audio.SoundFactory
+import com.acornui.io.UrlRequestData
+import kotlinx.coroutines.CompletableDeferred
+import org.w3c.dom.Audio
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
+
+fun Audio.unload() {
+	pause()
+	src = ""
+	load()
+}
 
 /**
  * An asset loader for js Audio element sounds.
  * Works in IE.
- * @author nbilyk
  */
-class JsAudioElementSoundLoader(
-		override val path: String,
-		private val audioManager: AudioManager
-) : Promise<SoundFactory>(), AssetLoader<SoundFactory> {
+fun loadAudioElement(audioManager: AudioManager, urlRequestData: UrlRequestData) {
+	val path = urlRequestData.toUrlStr()
+	val c = CompletableDeferred<JsAudioElementSoundFactory>()
+	val element = Audio(path)
 
-	override val type: AssetType<SoundFactory> = AssetType.SOUND
-
-	override val secondsLoaded: Float
-		get() = 0f
-
-	override val secondsTotal: Float
-		get() = 0f
-
-
-	private val element = Audio(path)
-
-	init {
-		element.addEventListener("loadeddata", {
-			event: Event ->
-			val e = event.currentTarget as HTMLAudioElement
-			// Load just enough of the asset to get its duration.
-			if (e.readyState >= 1) {
-				// METADATA
-				// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
-				val duration = e.duration
-				val asset = JsAudioElementSoundFactory(audioManager, path, duration.toFloat())
-				success(asset)
-				cancel() // Unload the element now that we have the duration.
-			}
-		})
-	}
-
-	override fun cancel() {
-		element.pause()
-		element.src = ""
-		element.load()
-	}
+	element.addEventListener("loadeddata", {
+		event: Event ->
+		val e = event.currentTarget as HTMLAudioElement
+		// Load just enough of the asset to get its duration.
+		if (e.readyState >= 1) {
+			// METADATA
+			// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
+			val duration = e.duration
+			val asset = JsAudioElementSoundFactory(audioManager, path, duration.toFloat())
+			c.complete(asset)
+			element.unload() // Unload the element now that we have the duration.
+		}
+	})
 }

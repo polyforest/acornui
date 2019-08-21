@@ -20,18 +20,20 @@ package com.acornui.jvm
 
 import com.acornui.AppConfig
 import com.acornui.ApplicationBase
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetManagerImpl
-import com.acornui.asset.AssetType
-import com.acornui.asset.LoaderFactory
-import com.acornui.async.launch
+import com.acornui.asset.Loaders
+import com.acornui.async.globalLaunch
+import com.acornui.async.uiThread
 import com.acornui.di.OwnedImpl
 import com.acornui.di.Scoped
+import com.acornui.graphic.RgbData
+import com.acornui.io.Bandwidth
+import com.acornui.io.Loader
+import com.acornui.io.ProgressReporter
+import com.acornui.io.UrlRequestData
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.ManifestUtil
-import com.acornui.jvm.graphic.JvmRgbDataLoader
-import com.acornui.jvm.loader.JvmTextLoader
+import com.acornui.jvm.opengl.loadRgbData
 import java.io.File
 
 /**
@@ -43,10 +45,14 @@ open class JvmHeadlessApplication(
 		private val assetsRoot: String = "./"
 ) : ApplicationBase() {
 
+	init {
+		uiThread = Thread.currentThread()
+	}
+
 	fun start(appConfig: AppConfig = AppConfig(),
 			  onReady: Scoped.() -> Unit = {}) {
 		set(AppConfig, appConfig)
-		launch {
+		globalLaunch {
 			awaitAll()
 			val injector = createInjector()
 			OwnedImpl(injector).onReady()
@@ -58,10 +64,15 @@ open class JvmHeadlessApplication(
 		FilesImpl(manifest)
 	}
 
-	override val assetManagerTask by task(AssetManager) {
-		val loaders = HashMap<AssetType<*>, LoaderFactory<*>>()
-		loaders[AssetType.TEXT] = { path, _ -> JvmTextLoader(path, Charsets.UTF_8) }
-		loaders[AssetType.RGB_DATA] = { path, _ -> JvmRgbDataLoader(path) }
-		AssetManagerImpl("", get(Files), loaders)
+	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
+		object : Loader<RgbData> {
+			override val defaultInitialTimeEstimate: Float
+				get() = Bandwidth.downBpsInv * 100_000
+
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): RgbData {
+				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
+			}
+		}
 	}
+
 }

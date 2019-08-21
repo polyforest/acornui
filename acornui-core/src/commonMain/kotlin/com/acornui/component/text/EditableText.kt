@@ -16,8 +16,8 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.async
-import com.acornui.async.resultOrNull
+import com.acornui.async.globalAsync
+import com.acornui.async.getCompletedOrNull
 import com.acornui.async.then
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
@@ -170,7 +170,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val glyphs = host.charStyle.getFont()?.resultOrNull()?.glyphs
+				val glyphs = host.charStyle.getFont()?.getCompletedOrNull()?.glyphs
 				if (glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
@@ -182,11 +182,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.clipboardPaste().add {
 			if (editable && !it.defaultPrevented()) {
 				it.handled = true
-				async {
+				globalAsync {
 					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
 				} then notDisposed { str ->
 					if (str != null) {
-						val glyphs = host.charStyle.getFont()?.resultOrNull()?.glyphs
+						val glyphs = host.charStyle.getFont()?.getCompletedOrNull()?.glyphs
 						replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
 						currentGroup = CommandGroup()
 						_input.dispatch()

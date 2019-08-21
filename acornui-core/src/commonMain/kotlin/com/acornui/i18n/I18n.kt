@@ -16,13 +16,13 @@
 
 package com.acornui.i18n
 
-import com.acornui.action.Decorator
-import com.acornui.async.then
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
 import com.acornui.Disposable
 import com.acornui.asset.*
+import com.acornui.async.globalLaunch
+import com.acornui.async.then
 import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
@@ -30,7 +30,6 @@ import com.acornui.di.inject
 import com.acornui.io.file.Files
 import com.acornui.removeBackslashes
 import com.acornui.replace2
-import com.acornui.i18n.Locale
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal1
 import com.acornui.signal.bind
@@ -244,8 +243,8 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 	val i18n = inject(I18n)
 	for (locale in locales) {
 		val path2 = path.replace2("{locale}", locale.value).replace2("{bundleName}", bundleName)
-		load(path2, AssetType.TEXT).then {
-			i18n.setBundleValues(locale, bundleName, PropertiesDecorator.decorate(it))
+		globalLaunch {
+			i18n.setBundleValues(locale, bundleName, PropertiesParser.parse(loadText(path2)))
 		}
 	}
 	return i18n.getBundle(locales, bundleName)
@@ -263,7 +262,9 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 
 		// Only try to load the locale if we know it to exist.
 		if (files.getFile(path2) != null) {
-			loadAndCache(path2, AssetType.TEXT, PropertiesDecorator, cachedGroup).then {
+			cachedGroup.cacheAsync(path2) {
+				PropertiesParser.parse(loadText(path2))
+			}.then {
 				i18n.setBundleValues(locale, bundleName, it)
 			}
 			break
@@ -278,9 +279,9 @@ private fun Locale.toPathStrings(): List<String> {
 	return listOf(value, value.replace("-", "_"))
 }
 
-object PropertiesDecorator : Decorator<String, Map<String, String>> {
+object PropertiesParser {
 
-	override fun decorate(target: String): Map<String, String> {
+	fun parse(target: String): Map<String, String> {
 		val map = stringMapOf<String>()
 		val parser = StringReader(target)
 		while (parser.hasNext) {

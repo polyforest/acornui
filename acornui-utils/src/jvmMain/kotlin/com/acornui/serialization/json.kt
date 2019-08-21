@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:JvmName("JsonSerializerKt")
+@file:JvmName("JsonSerializerUtils")
 
 package com.acornui.serialization
 

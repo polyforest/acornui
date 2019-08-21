@@ -18,7 +18,6 @@ package com.acornui.pathfinding
 
 import com.acornui.collection.BinaryHeap
 import com.acornui.collection.BinaryHeapNode
-import com.acornui.math.MathUtils
 import kotlin.math.abs
 
 open class AStar(
@@ -36,8 +35,8 @@ open class AStar(
 	protected var targetY: Int = 0
 
 	init {
-		open = BinaryHeap<PathNode>(width * 4, false)
-		nodes = arrayOfNulls<PathNode>(width * height)
+		open = BinaryHeap(width * 4, false)
+		nodes = arrayOfNulls(width * height)
 	}
 
 	/**

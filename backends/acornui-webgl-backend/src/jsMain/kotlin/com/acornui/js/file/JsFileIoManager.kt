@@ -16,15 +16,14 @@
 
 package com.acornui.js.file
 
-import com.acornui.async.Promise
-import com.acornui.async.launch
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
+import com.acornui.io.JsByteBuffer
 import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
 import com.acornui.js.html.hide
-import com.acornui.io.JsByteBuffer
+import kotlinx.coroutines.CompletableDeferred
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.dom.HTMLAnchorElement
@@ -156,35 +155,27 @@ class JsFileReader(val file: DomFile) : FileReader {
 	private val reader = JsFileApiReader()
 
 	override suspend fun readAsString(): String {
-		return object : Promise<String>() {
-			init {
-				launch {
-					reader.onload = { _: Event ->
-						success(reader.result as String)
-					}
-					reader.onerror = { _: Event ->
-						fail(Exception(reader.error.toString()))
-					}
-					reader.readAsText(file)
-				}
-			}
-		}.await()
+		val c = CompletableDeferred<String>()
+		reader.onload = { _: Event ->
+			c.complete(reader.result as String)
+		}
+		reader.onerror = { _: Event ->
+			c.completeExceptionally(Exception(reader.error.toString()))
+		}
+		reader.readAsText(file)
+		return c.await()
 	}
 
 	override suspend fun readAsBinary(): NativeReadByteBuffer {
-		return object : Promise<NativeReadByteBuffer>() {
-			init {
-				launch {
-					reader.onload = { _: Event ->
-						val byteBuffer = JsByteBuffer(Uint8Array(reader.result as ArrayBuffer))
-						success(byteBuffer)
-					}
-					reader.onerror = { _: Event ->
-						fail(Exception(reader.error.toString()))
-					}
-					reader.readAsArrayBuffer(file)
-				}
-			}
-		}.await()
+		val c = CompletableDeferred<NativeReadByteBuffer>()
+		reader.onload = { _: Event ->
+			val byteBuffer = JsByteBuffer(Uint8Array(reader.result as ArrayBuffer))
+			c.complete(byteBuffer)
+		}
+		reader.onerror = { _: Event ->
+			c.completeExceptionally(Exception(reader.error.toString()))
+		}
+		reader.readAsArrayBuffer(file)
+		return c.await()
 	}
 }

@@ -16,30 +16,29 @@
 
 package com.acornui.texturepacker
 
+import com.acornui.asset.load
+import com.acornui.async.globalAsync
 import com.acornui.collection.ArrayIterator
 import com.acornui.collection.ArrayList
-import com.acornui.asset.AssetManager
-import com.acornui.asset.AssetType
 import com.acornui.graphic.AtlasPageData
 import com.acornui.graphic.AtlasRegionData
 import com.acornui.graphic.RgbData
 import com.acornui.io.file.Directory
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.graphic.Color
+import com.acornui.io.Loader
 import com.acornui.math.IntRectangle
-import com.acornui.serialization.Serializer
+import com.acornui.serialization.parseJson
+import kotlinx.coroutines.Deferred
 
 /**
  * @author nbilyk
  */
-class AcornTexturePacker(
-		private val assets: AssetManager,
-		private val json: Serializer<String>) {
+class AcornTexturePacker(private val textLoader: Loader<String>, private val rgbDataLoader: Loader<RgbData>) {
 
 	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json", quiet: Boolean = false): PackedTextureData {
 		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
-		val settingsJson = assets.load(settingsFile.path, AssetType.TEXT).await()
-		val settings = json.read(settingsJson, TexturePackerSettingsSerializer)
+		val settings = parseJson(textLoader.load(settingsFile.path), TexturePackerSettingsSerializer)
 		return pack(root, settings, quiet)
 	}
 
@@ -92,12 +91,12 @@ class AcornTexturePacker(
 			fileEntry ->
 			if (fileEntry.hasExtension("png") || fileEntry.hasExtension("jpg")) {
 				val metadataFile = fileEntry.siblingFile(fileEntry.nameNoExtension + IMAGE_METADATA_EXTENSION)
-				val rgbLoader = assets.load(fileEntry.path, AssetType.RGB_DATA)
+				val rgbLoader: Deferred<RgbData> = globalAsync { rgbDataLoader.load(fileEntry.path) }
 
 				// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
 				val metadata: ImageMetadata = if (metadataFile != null) {
-					val metadataJson = assets.load(metadataFile.path, AssetType.TEXT).await()
-					json.read(metadataJson, ImageMetadataSerializer)
+					val metadataJson = textLoader.load(metadataFile.path)
+					parseJson(metadataJson, ImageMetadataSerializer)
 				} else ImageMetadata()
 
 				var rgbData = rgbLoader.await()

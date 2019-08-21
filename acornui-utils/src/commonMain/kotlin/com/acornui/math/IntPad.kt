@@ -17,11 +17,15 @@
 package com.acornui.math
 
 import com.acornui.recycle.Clearable
-import com.acornui.serialization.*
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.IntSerializer
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A read-only interface to [IntPad]
  */
+@Serializable(with = IntPadSerializer::class)
 interface IntPadRo {
 	val top: Int
 	val right: Int
@@ -83,6 +87,7 @@ interface IntPadRo {
  *
  * @author nbilyk
  */
+@Serializable(with = IntPadSerializer::class)
 class IntPad(
 		override var top: Int,
 		override var right: Int,
@@ -151,22 +156,23 @@ class IntPad(
 	}
 }
 
-object IntPadSerializer : To<IntPadRo>, From<IntPad> {
+@Serializer(forClass = IntPad::class)
+object IntPadSerializer : KSerializer<IntPad> {
 
-	override fun IntPadRo.write(writer: Writer) {
-		writer.int("left", left)
-		writer.int("top", top)
-		writer.int("right", right)
-		writer.int("bottom", bottom)
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("IntPad")
+
+	override fun serialize(encoder: Encoder, obj: IntPad) {
+		encoder.encodeSerializableValue(ArrayListSerializer(IntSerializer), listOf(obj.top, obj.right, obj.bottom, obj.left))
 	}
 
-	override fun read(reader: Reader): IntPad {
-		val p = IntPad(
-				top = reader.int("top")!!,
-				right = reader.int("right")!!,
-				bottom = reader.int("bottom")!!,
-				left = reader.int("left")!!
+	override fun deserialize(decoder: Decoder): IntPad {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(IntSerializer))
+		return IntPad(
+				top = values[0],
+				right = values[1],
+				bottom = values[2],
+				left = values[3]
 		)
-		return p
 	}
 }

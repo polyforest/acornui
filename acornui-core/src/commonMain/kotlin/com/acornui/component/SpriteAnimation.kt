@@ -16,15 +16,14 @@
 
 package com.acornui.component
 
-import com.acornui.async.Deferred
-import com.acornui.async.async
+import com.acornui.async.globalAsync
 import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.AppConfig
 import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCacheJson
+import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -34,6 +33,7 @@ import com.acornui.time.onTick
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.Deferred
 
 
 class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
@@ -177,8 +177,8 @@ data class LoadedAnimation(
 
 fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAnimation> {
 	val glState = inject(GlState)
-	return async {
-		val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+	return globalAsync {
+		val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 		val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
 		for (page in atlasData.pages) {
 			for (region in page.regions) {

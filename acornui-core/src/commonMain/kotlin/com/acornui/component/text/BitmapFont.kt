@@ -16,25 +16,25 @@
 
 package com.acornui.component.text
 
-import com.acornui.action.Decorator
-import com.acornui.async.Deferred
-import com.acornui.async.catch
-import com.acornui.async.then
 import com.acornui.Disposable
 import com.acornui.asset.*
+import com.acornui.async.UI
+import com.acornui.async.catch
+import com.acornui.async.then
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.graphic.AtlasPageDecorator
-import com.acornui.graphic.Texture
-import com.acornui.graphic.TextureAtlasDataSerializer
-import com.acornui.io.file.Files
-import com.acornui.isWhitespace2
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
+import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureAtlasData
+import com.acornui.graphic.configure
+import com.acornui.io.file.Files
+import com.acornui.isWhitespace2
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.*
 
 /**
  * @author nbilyk
@@ -157,21 +157,25 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cached
 suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	val files = inject(Files)
 	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
-	val bitmapFontData = loadAndCache(fontPath, AssetType.TEXT, AngelCodeParser, group).await()
+	val bitmapFontData = group.cacheAsync(fontPath) {
+		AngelCodeParser.parse(loadText(fontPath))
+	}.await()
 
 	val n = bitmapFontData.pages.size
-	val pageTextures = ArrayList<Deferred<Texture>>()
+	val pageTextureLoaders = ArrayList<Deferred<Texture>>()
 	for (i in 0..n - 1) {
 		val page = bitmapFontData.pages[i]
 		val imageFile = dir.getFile(page.imagePath)
 				?: throw Exception("Font image file not found: ${page.imagePath}")
-		pageTextures.add(loadAndCache(imageFile.path, AssetType.TEXTURE, FontTextureDecorator, group))
+		pageTextureLoaders.add(group.cacheAsync(imageFile.path) {
+			configureFontTexture(loadTexture(imageFile.path))
+		})
 	}
 	// Finished loading the font and all its textures.
 	val glyphs = HashMap<Char, Glyph>()
 	// Calculate the uv coordinates for each glyph.
 	for (glyphData in bitmapFontData.glyphs.values) {
-		val texture = pageTextures[glyphData.page].await()
+		val texture = pageTextureLoaders[glyphData.page].await()
 		glyphs[glyphData.char] = Glyph(
 				data = glyphData,
 				offsetX = glyphData.offsetX,
@@ -186,12 +190,20 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 		)
 	}
 
+	val pageTextures = pageTextureLoaders.awaitAll()
+	val refIncJob = GlobalScope.launch(Dispatchers.UI) {
+		pageTextures.forEach {
+			it.refInc()
+		}
+	}
+
 	val font = BitmapFont(
 			bitmapFontData,
-			pages = pageTextures.map { it.await() },
+			pages = pageTextures,
 			premultipliedAlpha = false,
 			glyphs = glyphs
 	)
+	refIncJob.join()
 	Log.info("Font loaded $fontPath")
 	return font
 }
@@ -200,15 +212,19 @@ suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: 
 	val files = inject(Files)
 	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
 
-	val bitmapFontData = loadAndCache(fontKey, AssetType.TEXT, AngelCodeParser, group).await()
-	val atlasData = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group).await()
+	val bitmapFontData = group.cacheAsync(fontKey) {
+		AngelCodeParser.parse(loadText(fontKey))
+	}.await()
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val atlasPageTextures = ArrayList<Deferred<Texture>>()
 
 	for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
 		val atlasPageData = atlasData.pages[atlasPageIndex]
 		val textureEntry = atlasFile.siblingFile(atlasPageData.texturePath)
 				?: throw Exception("File not found: ${atlasPageData.texturePath} relative to: $atlasPath")
-		atlasPageTextures.add(loadAndCache(textureEntry.path, AssetType.TEXTURE, AtlasPageDecorator(atlasPageData), group))
+		atlasPageTextures.add(group.cacheAsync(textureEntry.path) {
+			atlasPageData.configure(loadTexture(textureEntry.path))
+		})
 	}
 
 	// Finished loading the font and all its textures.
@@ -384,11 +400,9 @@ object BitmapFontRegistry : Clearable, Disposable {
 
 }
 
-private object FontTextureDecorator : Decorator<Texture, Texture> {
-	override fun decorate(target: Texture): Texture {
-		target.filterMin = TextureMinFilter.LINEAR_MIPMAP_LINEAR
-		target.filterMag = TextureMagFilter.LINEAR
-		target.hasWhitePixel = false
-		return target
-	}
+private fun configureFontTexture(target: Texture): Texture {
+	target.filterMin = TextureMinFilter.LINEAR_MIPMAP_LINEAR
+	target.filterMag = TextureMagFilter.LINEAR
+	target.hasWhitePixel = false
+	return target
 }

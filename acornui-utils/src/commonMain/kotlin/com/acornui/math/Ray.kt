@@ -26,9 +26,12 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.notCloseTo
 import com.acornui.math.MathUtils.FLOAT_ROUNDING_ERROR
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
 import kotlin.math.sqrt
 
+@Serializable(with = RaySerializer::class)
 interface RayRo {
 
 	val origin: Vector3Ro
@@ -60,9 +63,6 @@ interface RayRo {
 	 */
 	fun intersectsRay(ray: RayRo, out: Vector3? = null): Boolean
 
-	@Deprecated("use intersectsRay", ReplaceWith("intersectsRay(ray, out)"))
-	fun intersects(ray: RayRo, out: Vector3? = null): Boolean = intersectsRay(ray, out)
-
 	/**
 	 * Intersects a [Ray] and a [Plane]. The intersection point is stored in [out] in the case an intersection is
 	 * present.
@@ -71,9 +71,6 @@ interface RayRo {
 	 * @return True if an intersection is present.
 	 */
 	fun intersectsPlane(plane: PlaneRo, out: Vector3?): Boolean
-
-	@Deprecated("use intersectsPlane", ReplaceWith("intersectsPlane(plane, out)"))
-	fun intersects(plane: PlaneRo, out: Vector3?): Boolean = intersectsPlane(plane, out)
 
 	/**
 	 * Intersect a [Ray] and a triangle, returning the intersection point in intersection.
@@ -85,16 +82,15 @@ interface RayRo {
 	 */
 	fun intersectsTriangle(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean
 
-	@Deprecated("use intersectsTriangle", ReplaceWith("intersectsTriangle(v1, v2, v3, out)"))
-	fun intersects(v1: Vector3Ro, v2: Vector3Ro, v3: Vector3Ro, out: Vector3? = null): Boolean = intersectsTriangle(v1, v2, v3, out)
-
-	/** Intersects a [Ray] and a sphere, returning the intersection point in intersection.
+	/**
+	 * Intersects a [Ray] and a sphere, returning the intersection point in intersection.
+	 * The direction component must be normalized before calling this method
 	 *
-	 * @param ray The ray, the direction component must be normalized before calling this method
 	 * @param center The center of the sphere
 	 * @param radius The radius of the sphere
 	 * @param intersection The intersection point (optional, can be null)
 	 * @return Whether an intersection is present.
+	 * @see Ray.update
 	 */
 	fun intersectSphere(center: Vector3Ro, radius: Float, intersection: Vector3? = null): Boolean
 
@@ -112,7 +108,7 @@ interface RayRo {
  * @author badlogicgames@gmail.com
  */
 @Serializable
-class Ray(
+data class Ray(
 		override val origin: Vector3 = Vector3(),
 		override val direction: Vector3 = Vector3()
 ) : Clearable, RayRo {
@@ -355,6 +351,7 @@ class Ray(
 	}
 }
 
+@Serializable(with = Ray2Serializer::class)
 interface Ray2Ro {
 	val origin: Vector2Ro
 	val direction: Vector2Ro
@@ -369,6 +366,7 @@ interface Ray2Ro {
 /**
  * A 2d ray.
  */
+@Serializable
 class Ray2(
 		override val origin: Vector2 = Vector2(),
 		override val direction: Vector2 = Vector2()
@@ -446,3 +444,9 @@ class Ray2(
 
 	}
 }
+
+@Serializer(forClass = Ray::class)
+object RaySerializer : KSerializer<Ray> by Ray.serializer()
+
+@Serializer(forClass = Ray2::class)
+object Ray2Serializer : KSerializer<Ray2> by Ray2.serializer()

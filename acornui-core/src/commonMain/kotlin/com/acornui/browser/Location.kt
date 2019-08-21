@@ -67,7 +67,7 @@ interface Location {
 	 */
 	val search: String
 	val searchParams: UrlParams
-		get() = UrlParamsImpl(if (search.isEmpty()) "" else search.substring(1))
+		get() = (if (search.isEmpty()) "" else search.substring(1)).toUrlParams()
 
 	/**
 	 * Containing a '#' followed by the fragment identifier of the URL.

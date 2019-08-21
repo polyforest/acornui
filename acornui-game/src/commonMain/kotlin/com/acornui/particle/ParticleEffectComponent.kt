@@ -18,9 +18,8 @@ package com.acornui.particle
 
 import com.acornui.Disposable
 import com.acornui.Updatable
+import com.acornui.async.globalAsync
 import com.acornui.asset.*
-import com.acornui.async.Deferred
-import com.acornui.async.async
 import com.acornui.component.InteractivityMode
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
@@ -29,9 +28,12 @@ import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.gl.core.GlState
-import com.acornui.graphic.TextureAtlasDataSerializer
+import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
+import com.acornui.serialization.binaryParse
+import com.acornui.serialization.parseJson
 import com.acornui.time.onTick
+import kotlinx.coroutines.Deferred
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -61,7 +63,7 @@ class ParticleEffectComponent(
 	 * @param disposeOld If true, the old effect will be disposed and cached files decremented.
 	 * @return Returns a deferred loaded particle effect in order to handle the wait.
 	 */
-	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true, maxParticlesScale: Float = 1f): Deferred<LoadedParticleEffect> = async {
+	fun load(pDataPath: String, atlasPath: String, disposeOld: Boolean = true, maxParticlesScale: Float = 1f): Deferred<LoadedParticleEffect> = globalAsync {
 		val oldEffect = _effect
 		effect = loadParticleEffect(pDataPath, atlasPath, maxParticlesScale = maxParticlesScale)
 		if (disposeOld)
@@ -162,18 +164,19 @@ class LoadedParticleEffect(
 typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
 
 suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
-	loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group) // Start the atlas loading and parsing in parallel.
+	@Suppress("DeferredResultUnused")
+	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
 		// Binary
-		loadBinary(pDataPath, ParticleEffectSerializer).await()
+		binaryParse(loadBinary(pDataPath), ParticleEffectSerializer)
 	} else {
-		loadJson(pDataPath, ParticleEffectSerializer).await()
+		parseJson(loadText(pDataPath), ParticleEffectSerializer)
 	}
 	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
 }
 
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
-	val atlasDataPromise = loadAndCacheJson(atlasPath, TextureAtlasDataSerializer, group)
+	val atlasDataPromise = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group)
 	val atlasData = atlasDataPromise.await()
 	val glState = inject(GlState)
 
