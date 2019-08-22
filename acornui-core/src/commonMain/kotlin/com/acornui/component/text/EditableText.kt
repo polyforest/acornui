@@ -304,6 +304,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.UP -> cursorUp(event)
 			Ascii.DOWN -> cursorDown(event)
 			Ascii.BACKSPACE -> {
+				event.preventDefault() // Otherwise backspace causes browser BACK in IE.
 				event.handled = true
 				backspace(event)
 				_input.dispatch()
