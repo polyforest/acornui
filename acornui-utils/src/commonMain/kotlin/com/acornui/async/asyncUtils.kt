@@ -19,6 +19,7 @@
 package com.acornui.async
 
 import com.acornui.Disposable
+import com.acornui.recycle.Clearable
 import kotlinx.coroutines.*
 import kotlin.collections.set
 
@@ -39,31 +40,33 @@ fun <R> globalAsync(block: suspend CoroutineScope.() -> R): Deferred<R> {
 
 typealias Work<R> = suspend () -> R
 
-object PendingDisposablesRegistry {
+object PendingDisposablesRegistry : Clearable {
 
-	private val allPending = HashMap<Disposable, Unit>()
+	private val allDisposables = HashMap<Disposable, Unit>()
 	private var isDisposing = false
 
 	fun <T : Disposable> register(disposable: T): T {
-		if (isDisposing) throw IllegalStateException("Cannot addBinding a disposable to the registry on dispose.")
-		allPending[disposable] = Unit
+		if (isDisposing) throw IllegalStateException("Cannot register a disposable instance with PendingDisposablesRegistry on dispose.")
+		allDisposables[disposable] = Unit
 		return disposable
 	}
 
 	fun unregister(disposable: Disposable) {
 		if (isDisposing) return
-		allPending.remove(disposable)
+		allDisposables.remove(disposable)
 	}
 
 	/**
-	 * Cancels all currently active continuations.
+	 * Disposes all pending disposables.
 	 */
-	fun dispose() {
+	override fun clear() {
 		if (isDisposing) return
 		isDisposing = true
-		for (disposable in allPending.keys) {
+		for (disposable in allDisposables.keys) {
 			disposable.dispose()
 		}
+		allDisposables.clear()
+		isDisposing = false
 	}
 }
 

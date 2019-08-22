@@ -83,14 +83,14 @@ class InjectorImpl(
 			d = parent?.injectOptional(key)
 			if (d == null && parent == null) {
 				if (constructing.contains(key))
-					throw Exception("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
+					throw CyclicDependencyException("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
 				constructing.add(key)
 				d = key.factory(this)
 				constructing.remove(key)
 				if (d != null) {
-					// If the dependency key's factory method produces an instance, set it on the root injector.
 					if (d is Disposable)
 						PendingDisposablesRegistry.register(d)
+					// Set the instance on the root injector.
 					set(key, d)
 				}
 			}
@@ -161,3 +161,5 @@ private class LazyDependency<T : Any>(private val key: DKey<T>) : ReadOnlyProper
 		return value as T
 	}
 }
+
+class CyclicDependencyException(message: String) : Exception(message)

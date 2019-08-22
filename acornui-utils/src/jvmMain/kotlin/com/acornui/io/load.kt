@@ -50,7 +50,7 @@ suspend fun <T> load(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Float,
-		process: (inputStream: InputStream) -> T
+		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
 	// TODO: cookies, cancellation and progress
 
@@ -98,7 +98,7 @@ private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
 		con.setRequestProperty("Authorization", basicAuth)
 	}
 	con.requestMethod = requestData.method
-	con.connectTimeout = requestData.timeout.toInt()
+	con.connectTimeout = (requestData.timeout * 1000f).toInt()
 	for ((key, value) in requestData.headers) {
 		con.setRequestProperty(key, value)
 	}

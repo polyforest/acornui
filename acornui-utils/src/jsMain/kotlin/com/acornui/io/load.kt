@@ -31,62 +31,62 @@ suspend fun <T> load(
 		initialTimeEstimate: Float,
 		process: (httpRequest: XMLHttpRequest) -> T
 
-) : T {
+): T {
 	// TODO: progressReporter
 	val httpRequest = XMLHttpRequest()
-		val c = CompletableDeferred<T>()
-		httpRequest.onprogress = {
-			event ->
-//			_bytesLoaded = event.loaded
+	val c = CompletableDeferred<T>()
+	httpRequest.onprogress = { event ->
+		//			_bytesLoaded = event.loaded
 //			_bytesTotal = event.total
-			Unit
-		}
+		Unit
+	}
 
-		val async = true
-		val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
-			requestData.url + "?" + requestData.variables!!.toQueryString() else requestData.url
+	val async = true
+	val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
+		requestData.url + "?" + requestData.variables!!.toQueryString() else requestData.url
 
-		httpRequest.onreadystatechange = {
-			if (httpRequest.readyState == XMLHttpRequest.DONE) {
-				httpRequest.onreadystatechange = null
-				if (httpRequest.status == 200.toShort() || httpRequest.status == 304.toShort()) {
-					val result = process(httpRequest)
-					c.complete(result)
-				} else {
-					c.completeExceptionally(ResponseException(httpRequest.status, url + " " + httpRequest.statusText, httpRequest.response?.toString() ?: ""))
-				}
+	httpRequest.onreadystatechange = {
+		if (httpRequest.readyState == XMLHttpRequest.DONE) {
+			httpRequest.onreadystatechange = null
+			if (httpRequest.status == 200.toShort() || httpRequest.status == 304.toShort()) {
+				val result = process(httpRequest)
+				c.complete(result)
+			} else {
+				c.completeExceptionally(ResponseException(httpRequest.status, url + " " + httpRequest.statusText, httpRequest.response?.toString()
+						?: ""))
 			}
 		}
+	}
 
-		httpRequest.open(requestData.method, url, async, requestData.user, requestData.password)
-		httpRequest.responseType = responseType
-		httpRequest.timeout = (requestData.timeout * 1000).toInt()
-		for ((key, value) in requestData.headers) {
-			httpRequest.setRequestHeader(key, value)
-		}
-		if (requestData.method == UrlRequestMethod.GET) {
-			httpRequest.send()
-		} else {
-			when {
-				requestData.variables != null -> {
-					val data = requestData.variables!!.toQueryString()
-					httpRequest.send(data)
-				}
-				requestData.formData != null -> {
-					val formData = FormData()
-					for (item in requestData.formData.items) {
-						when (item) {
-							is ByteArrayFormItem -> formData.append(item.name, Blob(arrayOf(item.value.native)))
-							is StringFormItem -> formData.append(item.name, item.value)
-							else -> Log.warn("Unknown form item type $item")
-						}
+	httpRequest.open(requestData.method, url, async, requestData.user, requestData.password)
+	httpRequest.responseType = responseType
+	httpRequest.timeout = (requestData.timeout * 1000f).toInt()
+	for ((key, value) in requestData.headers) {
+		httpRequest.setRequestHeader(key, value)
+	}
+	if (requestData.method == UrlRequestMethod.GET) {
+		httpRequest.send()
+	} else {
+		when {
+			requestData.variables != null -> {
+				val data = requestData.variables!!.toQueryString()
+				httpRequest.send(data)
+			}
+			requestData.formData != null -> {
+				val formData = FormData()
+				for (item in requestData.formData.items) {
+					when (item) {
+						is ByteArrayFormItem -> formData.append(item.name, Blob(arrayOf(item.value.native)))
+						is StringFormItem -> formData.append(item.name, item.value)
+						else -> Log.warn("Unknown form item type $item")
 					}
-					httpRequest.send(formData)
 				}
-				requestData.body != null -> httpRequest.send(requestData.body!!)
-				else -> httpRequest.send()
+				httpRequest.send(formData)
 			}
+			requestData.body != null -> httpRequest.send(requestData.body!!)
+			else -> httpRequest.send()
 		}
+	}
 	return c.await()
 }
 

@@ -19,6 +19,8 @@ package com.acornui.graphic
 import com.acornui.Disposable
 import com.acornui.browser.Location
 import com.acornui.di.DKey
+import com.acornui.di.Scoped
+import com.acornui.di.inject
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
@@ -137,8 +139,9 @@ interface Window : Disposable {
 
 	/**
 	 * Requests that this window close.
+	 * If [force] is false, then a [closeRequested] signal will be dispatched, giving opportunity to cancel the close.
 	 */
-	fun requestClose()
+	fun requestClose(force: Boolean = false)
 
 	/**
 	 * Displays a native alert with a message.
@@ -215,4 +218,12 @@ data class PopUpSpecs(
 		if (width != null) strs.add("width=$width")
 		return strs.joinToString(",")
 	}
+}
+
+/**
+ * Requests that the application terminate.
+ * @see Window.requestClose
+ */
+fun Scoped.exit() {
+	inject(Window).requestClose()
 }

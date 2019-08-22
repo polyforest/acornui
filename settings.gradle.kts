@@ -22,7 +22,8 @@ val kotlinVersion: String by extra
 
 rootProject.name = "acornui"
 
-include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend", "acornui-test-utils")
+include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
+include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
 include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 include("build-libs:acornui-app-plugins")
 include("skins:basic")

@@ -19,7 +19,7 @@ package com.acornui.component.layout.algorithm
 import com.acornui.component.layout.Spacer
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.test.MockInjector
+import com.acornui.mock.MockInjector
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

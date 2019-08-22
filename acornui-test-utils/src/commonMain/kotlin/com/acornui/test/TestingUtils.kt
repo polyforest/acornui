@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.test
 
 import com.acornui.collection.toList
 import com.acornui.closeTo
 import com.acornui.math.*
+import com.acornui.time.nanoElapsed
 import kotlin.test.Test
 import kotlin.math.abs
 
@@ -34,11 +37,11 @@ fun assertListEquals(expected: BooleanArray, actual: BooleanArray) {
 }
 
 fun assertListEquals(expected: DoubleArray, actual: DoubleArray, margin: Double = 0.0001) {
-	assertListEquals(expected.iterator(), actual.iterator(), { a, b -> a.closeTo(b, margin) })
+	assertListEquals(expected.iterator(), actual.iterator()) { a, b -> a.closeTo(b, margin) }
 }
 
 fun assertListEquals(expected: FloatArray, actual: FloatArray, margin: Float = 0.0001f) {
-	assertListEquals(expected.iterator(), actual.iterator(), { a, b -> a.closeTo(b, margin) })
+	assertListEquals(expected.iterator(), actual.iterator()) { a, b -> a.closeTo(b, margin) }
 }
 
 fun assertListEquals(expected: CharArray, actual: CharArray) {
@@ -220,24 +223,20 @@ fun assertClose(expected: Vector2Ro, actual: Vector2Ro, margin: Float = 0.0001f)
 }
 
 /**
- * Commented out due to no common nanoTime replacement...
- * See https://github.com/polyforest/acornui/issues/121
+ * Returns the median amount of time each call took, in milliseconds.
  */
-///**
-// * Returns the median amount of time each call took, in milliseconds.
-// */
-//fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
-//	val results = ArrayList<Float>(testCount)
-//	for (i in 0..testCount + warmCount - 1) {
-//		val startTime = System.nanoTime()
-//		for (j in 0..iterations - 1) {
-//			call()
-//		}
-//		if (i < warmCount) continue
-//		val endTime = System.nanoTime()
-//		val elapsed = (endTime - startTime) / 1e6.toFloat()
-//		results.add(elapsed / iterations.toFloat())
-//	}
-//	results.sort()
-//	return results[results.size / 2]
-//}
+fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
+	val results = ArrayList<Float>(testCount)
+	for (i in 0..testCount + warmCount - 1) {
+		val startTime = nanoElapsed()
+		for (j in 0..iterations - 1) {
+			call()
+		}
+		if (i < warmCount) continue
+		val endTime = nanoElapsed()
+		val elapsed = (endTime - startTime) / 1e6.toFloat()
+		results.add(elapsed / iterations.toFloat())
+	}
+	results.sort()
+	return results[results.size / 2]
+}

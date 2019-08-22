@@ -22,7 +22,6 @@ import com.acornui.collection.stringMapOf
 import com.acornui.di.DKey
 import com.acornui.replace2
 import com.acornui.split2
-import com.acornui.io.file.FilesManifest
 
 
 interface Files {
@@ -43,6 +42,9 @@ class FilesImpl(manifest: FilesManifest) : Files {
 
 	private val map = stringMapOf<FileEntry>()
 
+	val allFiles: Map<String, FileEntry>
+		get() = map
+
 	private val rootDir = Directory("", null, HashMap(), HashMap())
 
 	init {
@@ -57,7 +59,7 @@ class FilesImpl(manifest: FilesManifest) : Files {
 				if (dir == null) {
 					val newPath = if (p == rootDir) part else p.path + "/" + part
 					dir = Directory(newPath, p, HashMap(), HashMap())
-					(p.directories as MutableMap).put(part, dir)
+					(p.directories as MutableMap)[part] = dir
 				}
 				p = dir
 			}
@@ -70,19 +72,24 @@ class FilesImpl(manifest: FilesManifest) : Files {
 	}
 
 	override fun getFile(path: String): FileEntry? {
-		return map[path.replace2('\\', '/')]
+		return map[path.normalizePath()]
 	}
 
 	override fun getDir(path: String): Directory? {
-		if (path == "") return rootDir
+		val nPath = path.normalizePath()
+		if (nPath.isBlank() || nPath == ".") return rootDir
 		var p: Directory? = rootDir
-		val pathSplit = path.replace2('\\', '/').split2('/')
+		val pathSplit = nPath.split2('/')
 		for (part in pathSplit) {
 			if (p == null) return null
 			if (part.isNotEmpty())
 				p = p.getDir(part)
 		}
 		return p
+	}
+
+	private fun String.normalizePath(): String {
+		return replace2('\\', '/').removePrefix("./").removePrefix("/")
 	}
 }
 

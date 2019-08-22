@@ -34,7 +34,6 @@ object ManifestUtil {
 		if (!directory.exists() || !directory.isDirectory) throw IllegalArgumentException("directory does not exist ${directory.absolutePath}")
 		if (!root.exists()) throw IllegalArgumentException("root does not exist ${root.absolutePath}")
 		if (!root.isDirectory) throw IllegalArgumentException("root is not a directory")
-
 		val fileEntries = ArrayList<ManifestEntry>()
 		for (file in directory.walkTopDown()) {
 			if (!file.isDirectory) {

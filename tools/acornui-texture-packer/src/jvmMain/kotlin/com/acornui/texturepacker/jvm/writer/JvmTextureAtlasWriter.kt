@@ -17,13 +17,11 @@
 package com.acornui.texturepacker.jvm.writer
 
 import com.acornui.collection.ArrayList
+import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.replaceTokens
-import com.acornui.gl.core.TexturePixelFormat
-import com.acornui.serialization.json
 import com.acornui.serialization.jsonStringify
-import com.acornui.serialization.write
 import com.acornui.texturepacker.PackedTextureData
 import java.awt.image.*
 import java.io.File

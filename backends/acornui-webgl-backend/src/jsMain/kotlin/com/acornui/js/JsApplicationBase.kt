@@ -83,16 +83,14 @@ abstract class JsApplicationBase : ApplicationBase() {
 		})
 	}
 
-	fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
 		globalLaunch {
 			contentLoad()
-			awaitAll()
-
 			val owner = OwnedImpl(createInjector())
 			PendingDisposablesRegistry.register(owner)
 			initializeSpecialInteractivity(owner)
-			owner.stage.onReady()
+			owner.onReady()
 
 			frameDriver = initializeFrameDriver(owner.injector)
 			frameDriver!!.start()

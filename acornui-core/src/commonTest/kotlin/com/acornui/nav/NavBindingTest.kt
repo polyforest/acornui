@@ -16,6 +16,7 @@ class NavBindingTest {
 
 	@Test fun pathStr() {
 		val b = NavBindingImpl(mockBindable(0), "")
+
 		b.navigate("../test/foo/bar")
 		val p = navMan.path()
 		assertEquals(3, p.size)

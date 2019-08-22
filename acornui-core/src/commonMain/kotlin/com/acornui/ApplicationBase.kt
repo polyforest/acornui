@@ -29,27 +29,29 @@ import com.acornui.logging.Log
 /**
  * Utilities for boot tasks in an application.
  */
-abstract class ApplicationBase : Disposable {
+abstract class ApplicationBase {
 
 	/**
 	 * The number of seconds before logs are created for any remaining boot tasks.
 	 */
 	var timeout = 10f
 
-	suspend fun config() = get(AppConfig)
+	protected suspend fun config() = get(AppConfig)
 
-	private val bootstrap = Bootstrap()
+	protected val bootstrap = Bootstrap()
 
 	init {
 		kotlinBugFixes()
 	}
+
+	abstract fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit = {})
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
 
-	protected suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
+	protected open suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
 
 	protected suspend fun awaitAll() {
 		bootstrap.awaitAll()
@@ -77,13 +79,13 @@ abstract class ApplicationBase : Disposable {
 
 	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 
-	override fun dispose() {
-		Log.info("Application disposing")
+	protected open fun dispose() {
+		Log.debug("Application disposing")
 		globalLaunch {
 			awaitAll()
-			PendingDisposablesRegistry.dispose()
+			PendingDisposablesRegistry.clear()
 			bootstrap.dispose()
-			Log.info("Application disposed")
+			Log.debug("Application disposed")
 		}
 	}
 
