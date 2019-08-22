@@ -16,72 +16,50 @@
 
 package com.acornui.time
 
-import com.acornui.*
-import com.acornui.collection.ActiveList
-import com.acornui.collection.forEach2
-import com.acornui.collection.iterate
-import com.acornui.di.Scoped
+import com.acornui.Updatable
 import com.acornui.recycle.Clearable
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal1
 
 /**
  * @author nbilyk
  */
-object FrameDriver : Parent<UpdatableChild>, Updatable, Clearable {
+object FrameDriver : Signal<FrameCallback>, Clearable {
 
-	override val parent: Parent<out ChildRo>? = null
-	private val _children = ArrayList<UpdatableChild>()
+	private val signal = Signal1<Float>()
 
-	override fun update(dT: Float) {
-		for (i in 0.._children.lastIndex)
-			if (i < _children.size)
-				_children[i].update(dT)
-	}
+	override val isDispatching: Boolean
+		get() = signal.isDispatching
 
-	//-----------------------------------------------
-	// Parent
-	//-----------------------------------------------
+	override fun isNotEmpty(): Boolean = signal.isNotEmpty()
+	override fun isEmpty(): Boolean = signal.isNotEmpty()
+	override fun add(handler: FrameCallback, isOnce: Boolean) = signal.add(handler, isOnce)
+	override fun remove(handler: FrameCallback) = signal.remove(handler)
+	override fun contains(handler: FrameCallback): Boolean = signal.contains(handler)
+	override fun addBinding(callback: () -> Unit) = signal.addBinding(callback)
+	override fun removeBinding(callback: () -> Unit) = signal.removeBinding(callback)
 
-	override val children: List<UpdatableChild> = _children
+	fun dispatch(dT: Float) = signal.dispatch(dT)
+	override fun clear() = signal.clear()
+}
 
-	/**
-	 * Adds the specified child to this container.
-	 * @param index The index of where to insert the child. By default this is the end of the list.
-	 */
-	override fun <S : UpdatableChild> addChild(index: Int, child: S): S {
-		val n = _children.size
-		_assert(index <= n, "index is out of bounds.")
-		_assert(child.parent == null, "Remove the child before adding it again.")
-		_children.add(index, child)
-		child.parent = this
-		return child
-	}
+typealias FrameCallback = (dT: Float) -> Unit
 
-	/**
-	 * Removes a child at the given index from this container.
-	 * @return Returns true if a child was removed, or false if the index was out of range.
-	 */
-	override fun removeChild(index: Int): UpdatableChild {
-		val c = _children
-		val child = c.removeAt(index)
-		child.parent = null
-		return child
-	}
-
-	override fun clear() {
-		_children.clear()
-	}
+/**
+ * Removes this instance's [Updatable.update] from the frame driver.
+ */
+fun <T : Updatable> T.stop() : T {
+	FrameDriver.remove(::update)
+	return this
 }
 
 /**
- * Invokes the callback on every frame. This is similar to [onTick] except the receiver isn't watched for activation
- * or disposal.
+ * Adds this instance's [Updatable.update] to the frame driver.
  */
-fun Scoped.drive(update: (dT: Float) -> Unit): UpdatableChild {
-	val child = object : UpdatableChildBase() {
-		override fun update(dT: Float) {
-			update(dT)
-		}
-	}
-	FrameDriver.addChild(child)
-	return child
+fun <T : Updatable> T.start() : T {
+	FrameDriver.add(::update)
+	return this
 }
+
+val Updatable.isDriven: Boolean
+	get() = FrameDriver.contains(::update)

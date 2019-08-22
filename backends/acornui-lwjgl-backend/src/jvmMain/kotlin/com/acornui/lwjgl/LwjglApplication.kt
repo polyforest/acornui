@@ -66,6 +66,7 @@ import com.acornui.lwjgl.persistence.LwjglPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.serialization.jsonParse
 import com.acornui.time.FrameDriver
+import com.acornui.time.start
 import kotlinx.coroutines.runBlocking
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
@@ -163,7 +164,7 @@ open class LwjglApplication : ApplicationBase() {
 		try {
 			registerDefaultMusicDecoders()
 			registerDefaultSoundDecoders()
-			FrameDriver.addChild(audioManager)
+			audioManager.start()
 		} catch (e: NoAudioException) {
 			Log.warn("No Audio device found.")
 		}

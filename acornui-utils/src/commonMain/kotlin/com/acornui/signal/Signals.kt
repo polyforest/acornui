@@ -18,6 +18,8 @@ package com.acornui.signal
 
 import com.acornui.Disposable
 import com.acornui.function.*
+import com.acornui.recycle.Clearable
+import kotlin.jvm.Synchronized
 
 interface Signal<in T : Any> : Bindable {
 
@@ -78,7 +80,7 @@ fun <T : Any> Signal<T>.addOnce(handler: T) {
  *
  * @author nbilyk
  */
-abstract class SignalBase<T : Any> : Signal<T>, Disposable {
+abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 
 	protected val handlers = arrayListOf<T>()
 	protected val isOnces = arrayListOf<Boolean>()
@@ -102,6 +104,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 	 * @param handler The callback that will be invoked when dispatch() is called on the signal.
 	 * @param isOnce A flag, where if true, will cause the handler to be removed immediately after the next dispatch.
 	 */
+	@Synchronized
 	override fun add(handler: T, isOnce: Boolean) {
 		handlers.add(handler)
 		isOnces.add(isOnce)
@@ -112,6 +115,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 	 *
 	 * If this signal is currently dispatching, the handler will be removed after the dispatch has finished.
 	 */
+	@Synchronized
 	override fun remove(handler: T) {
 		val index = handlers.indexOf(handler)
 		if (index != -1) {
@@ -146,6 +150,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 	/**
 	 * Calls executor on each handler in this signal.
 	 */
+	@Synchronized
 	protected inline fun dispatch(executor: (T) -> Unit) {
 		if (cursor != -1)
 			throw Exception("This signal is currently dispatching.")
@@ -195,7 +200,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Disposable {
 		}
 	}
 
-	fun clear() {
+	override fun clear() {
 		handlers.clear()
 		isOnces.clear()
 	}

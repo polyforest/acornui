@@ -17,17 +17,14 @@
 package com.acornui.time
 
 import com.acornui.Disposable
-import com.acornui.UpdatableChildBase
-import com.acornui.di.Scoped
+import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * @author nbilyk
  */
-internal class Timer private constructor() : UpdatableChildBase(), Clearable, Disposable {
+internal class Timer private constructor() : Updatable, Clearable, Disposable {
 
 	var isActive = false
 	var duration: Float = 0f
@@ -67,7 +64,7 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 	override fun dispose() {
 		if (!isActive) return
 		isActive = false
-		remove()
+		stop()
 		pool.free(this)
 	}
 
@@ -84,24 +81,11 @@ internal class Timer private constructor() : UpdatableChildBase(), Clearable, Di
 			timer.duration = duration
 			timer.callback = callback
 			timer.repetitions = repetitions
-			FrameDriver.addChild(timer)
+			timer.start()
 			return timer
 		}
 	}
 }
-
-/**
- * Suspends the coroutine for [duration] seconds.
- */
-@Deprecated("Use com.acornui.async.delay", ReplaceWith("com.acornui.async.delay(duration)"))
-suspend fun Scoped.delay(
-		duration: Float
-) = suspendCoroutine<Unit> { cont ->
-	timer(duration, 1, 0f) {
-		cont.resume(Unit)
-	}
-}
-
 
 /**
  * @param duration The number of seconds between repetitions.
@@ -117,7 +101,7 @@ fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: ()
 /**
  * @author nbilyk
  */
-internal class Tick private constructor() : UpdatableChildBase(), Clearable, Disposable {
+internal class Tick private constructor() : Updatable, Clearable, Disposable {
 
 	/**
 	 * How many frames before the callback begins to be invoked.
@@ -162,7 +146,7 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 	override fun dispose() {
 		if (!isActive) return
 		isActive = false
-		remove()
+		stop()
 		pool.free(this)
 	}
 
@@ -178,7 +162,7 @@ internal class Tick private constructor() : UpdatableChildBase(), Clearable, Dis
 			e.repetitions = repetitions
 			e.startFrame = startFrame
 			e.isActive = true
-			FrameDriver.addChild(e)
+			e.start()
 			return e
 		}
 	}

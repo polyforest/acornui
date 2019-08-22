@@ -57,7 +57,7 @@ open class JvmApplicationRunner(
 	}
 
 	protected fun tick(dT: Float) {
-		FrameDriver.update(dT)
+		FrameDriver.dispatch(dT)
 		if (window.shouldRender(true)) {
 			stage.update()
 			if (window.width > 0f && window.height > 0f) {

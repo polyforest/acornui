@@ -36,8 +36,8 @@ import com.acornui.math.Easing
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Cancel
 import com.acornui.signal.addOnce
+import com.acornui.time.start
 import com.acornui.tween.Tween
-import com.acornui.tween.start
 import com.acornui.tween.tweenAlpha
 
 interface PopUpManager : Clearable {

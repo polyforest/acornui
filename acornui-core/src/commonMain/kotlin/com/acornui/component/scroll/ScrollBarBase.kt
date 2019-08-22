@@ -25,11 +25,11 @@ import com.acornui.di.own
 import com.acornui.input.interaction.*
 import com.acornui.input.mouseDown
 import com.acornui.input.mouseOver
-import com.acornui.tween.driveTween
 import com.acornui.tween.killTween
 import com.acornui.tween.tweenAlpha
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
+import com.acornui.time.start
 import kotlin.properties.Delegates
 
 abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
@@ -107,7 +107,7 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 		val thumb = thumb ?: return
 		killTween(thumb, "alpha", finish = false)
 		thumb.alpha = 1f
-		driveTween(thumb.tweenAlpha(style.alphaDuration, Easing.pow2Out, style.inactiveAlpha, 0.5f))
+		thumb.tweenAlpha(style.alphaDuration, Easing.pow2Out, style.inactiveAlpha, 0.5f).start()
 	}
 
 	private fun decrementPressHandler(event: MouseInteractionRo) {

@@ -17,19 +17,19 @@
 package com.acornui.tween
 
 import com.acornui.Disposable
-import com.acornui.UpdatableChildBase
+import com.acornui.Updatable
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
 import com.acornui.math.MathUtils
-import com.acornui.recycle.ObjectPool
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.time.FrameDriver
+import com.acornui.time.stop
 
 /**
  * A Tween is an object representing an interpolation over time.
  */
-interface Tween {
+interface Tween : Updatable, Disposable {
 
 	/**
 	 * Dispatched when the play head has scrubbed past a boundary, either 0f or [duration]. If looping is enabled, this
@@ -111,12 +111,12 @@ interface Tween {
 	var paused: Boolean
 
 	/**
-	 * Steps forward [tickTime] seconds.
-	 * @param tickTime The number of seconds to progress. This may be negative.
+	 * Steps forward [dT] seconds.
+	 * @param dT The number of seconds to progress. This may be negative.
 	 */
-	fun update(tickTime: Float) {
+	override fun update(dT: Float) {
 		if (!paused)
-			currentTime += tickTime
+			currentTime += dT
 	}
 
 	/**
@@ -139,6 +139,9 @@ interface Tween {
 	 * Marks this tween as completed. This will leave this tween's progress as it is.
 	 *
 	 * Use [finish] to first set this tween's progress to 100% and stop.
+	 *
+	 * If this tween is being driven by the [FrameDriver], it will be stopped.
+	 * @see [Updatable.stop]
 	 */
 	fun complete()
 
@@ -160,7 +163,7 @@ interface Tween {
 		 * This prevents a stutter on the first used animation at the cost of startup time.
 		 */
 		fun prepare() {
-			TweenRegistry; Easing; TweenDriver; CallbackTween
+			TweenRegistry; Easing; CallbackTween
 		}
 	}
 
@@ -235,8 +238,14 @@ abstract class TweenBase : Tween {
 
 	override fun complete() {
 		_completed.dispatch(this)
+
+		// If this tween is being driven, remove it from the frame driver.
+		stop()
 	}
 
+	override fun dispose() {
+		_completed.dispose()
+	}
 }
 
 /**
@@ -244,9 +253,8 @@ abstract class TweenBase : Tween {
  * Use [tween] to obtain a new Tween instance.
  * Pooled tweens are recycled on completion. (See [completed] signal)
  */
-class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolean, tween: (previousAlpha: Float, currentAlpha: Float) -> Unit) : TweenBase() {
+class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolean, private val tween: (previousAlpha: Float, currentAlpha: Float) -> Unit) : TweenBase() {
 
-	private var tween: ((previousAlpha: Float, currentAlpha: Float) -> Unit)? = null
 	private var previousAlpha = 0f
 
 	override val duration = if (duration <= 0f) 0.0000001f else duration
@@ -254,7 +262,6 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 
 	init {
 		this.ease = ease
-		this.tween = tween
 		this.loopAfter = loop
 		startTime = -delay - 0.0000001f // Subtract a small amount so time handlers at 0f time get invoked.
 		jumpTo(startTime)
@@ -262,89 +269,24 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 
 	override fun updateToTime(lastTime: Float, newTime: Float, apparentLastTime: Float, apparentNewTime: Float, jump: Boolean) {
 		val currentAlpha = ease(apparentNewTime * durationInv)
-		tween!!(previousAlpha, currentAlpha)
+		tween(previousAlpha, currentAlpha)
 		previousAlpha = currentAlpha
 	}
-
-	/**
-	 * Removes this Tween from the time driver, and recycles this instance. This will leave this tween's progress
-	 * as it is.
-	 *
-	 * After a tween has been stopped, all references to this instance should be forgotten; it will be recycled.
-	 *
-	 * Use [finish] to first set this tween's progress to 100% and stop.
-	 */
-	override fun complete() {
-		_completed.dispatch(this)
-	}
-}
-
-/**
- * A tween driver will update a single tween, then remove and recycle itself when the tween is completed.
- */
-class TweenDriver private constructor() : UpdatableChildBase(), Disposable {
-
-	private var _tween: Tween? = null
-
-	private val tweenCompletedHandler = {
-		t: Tween ->
-		remove()
-	}
-
-	var tween: Tween?
-		get() = _tween
-		set(value) {
-			_tween?.completed?.remove(tweenCompletedHandler)
-			_tween = value
-			_tween?.completed?.add(tweenCompletedHandler)
-		}
-
-	override fun update(dT: Float) {
-		tween?.update(dT)
-	}
-
-	override fun dispose() {
-		if (tween == null) return
-		tween = null
-		pool.free(this)
-	}
-
-	companion object {
-		private val pool = ObjectPool { TweenDriver() }
-		fun obtain(tween: Tween): TweenDriver {
-			val driver = pool.obtain()
-			driver.tween = tween
-			return driver
-		}
-	}
 }
 
 /**
  * Creates a tween driver and updates the tween forward until completion.
  */
-@Deprecated("use tween.start", ReplaceWith("tween.start()"))
+@Deprecated("use tween.start", ReplaceWith("tween.drive()"), DeprecationLevel.ERROR)
 fun <T : Tween> driveTween(tween: T): T {
-	val driver = TweenDriver.obtain(tween)
-	FrameDriver.addChild(driver)
 	return tween
-}
-
-/**
- * Creates a tween driver and updates the tween forward until completion.
- */
-@Deprecated("Use tween.start", ReplaceWith("this.start()"))
-fun <T : Tween> T.drive(any: Any): T {
-	val driver = TweenDriver.obtain(this)
-	FrameDriver.addChild(driver)
-	return this
 }
 
 /**
  * Obtains a tween driver and updates the tween forward until completion.
  */
-fun <T : Tween> T.start(): T {
-	val driver = TweenDriver.obtain(this)
-	FrameDriver.addChild(driver)
+@Deprecated("use tween.start", ReplaceWith("this.start()"), DeprecationLevel.ERROR)
+fun <T : Tween> T.drive(): T {
 	return this
 }
 

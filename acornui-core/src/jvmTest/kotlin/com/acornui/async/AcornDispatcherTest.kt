@@ -41,7 +41,7 @@ class AcornDispatcherTest {
 			}
 		}
 		while (!ranUiLaunch) {
-			FrameDriver.update(0f)
+			FrameDriver.dispatch(0f)
 			delay(10)
 		}
 		assertNotEquals(uiThread, asyncThread)

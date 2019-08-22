@@ -10,7 +10,7 @@ class CacheImplTest {
 
 	@BeforeTest
 	fun setup() {
-		FrameDriver.clearChildren()
+		FrameDriver.clear()
 	}
 
 	@Test fun testSet() {
@@ -27,15 +27,15 @@ class CacheImplTest {
 
 		// Ensure keys with a reference are not discarded.
 		cache.refInc(key)
-		for (i in 0..20) FrameDriver.update(0f)
+		for (i in 0..20) FrameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 
 		// Ensure keys without a reference are discarded, but only after at least gcFrames.
 		cache.refDec(key)
-		FrameDriver.update(0f)
-		FrameDriver.update(0f)
+		FrameDriver.dispatch(0f)
+		FrameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
-		for (i in 0..20) FrameDriver.update(0f)
+		for (i in 0..20) FrameDriver.dispatch(0f)
 		assertEquals<String?>(null, cache[key])
 	}
 
@@ -47,12 +47,12 @@ class CacheImplTest {
 		// Ensure keys with no references are not immediately discarded.
 		cache.refInc(key)
 		cache.refDec(key)
-		FrameDriver.update(0f)
-		FrameDriver.update(0f)
-		FrameDriver.update(0f)
+		FrameDriver.dispatch(0f)
+		FrameDriver.dispatch(0f)
+		FrameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 		cache.refInc(key)
-		for (i in 0..20) FrameDriver.update(0f)
+		for (i in 0..20) FrameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 
 	}

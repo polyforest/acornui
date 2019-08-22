@@ -6,11 +6,10 @@ import com.acornui.di.*
 import com.acornui.input.interaction.*
 import com.acornui.observe.dataBinding
 import com.acornui.tween.TweenRegistry
-import com.acornui.tween.driveTween
 import com.acornui.tween.tween
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
-import com.acornui.component.stage as stageDep
+import com.acornui.time.start
 
 class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(injector)), SoftKeyboardManager {
 
@@ -76,7 +75,7 @@ class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(inje
 					val t = tween(0.3f * delta, Easing.pow2Out) { previousAlpha, currentAlpha ->
 						showPercent = currentAlpha * delta + fromP
 					}
-					driveTween(t)
+					t.start()
 					TweenRegistry.register(this, "showPercent", t)
 				} else {
 					val t = tween(0.3f * fromP, Easing.pow2Out, delay = 0.1f) { previousAlpha, currentAlpha ->
@@ -85,7 +84,7 @@ class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(inje
 					t.completed.add {
 						visible = false
 					}
-					driveTween(t)
+					t.start()
 					TweenRegistry.register(this, "showPercent", t)
 				}
 			}

@@ -27,11 +27,11 @@ private class OnTick(
 ) : UpdatableChildBase(), Disposable {
 
 	private val componentActivatedHandler: (LifecycleRo) -> Unit = {
-		FrameDriver.addChild(this)
+		start()
 	}
 
 	private val componentDeactivatedHandler: (LifecycleRo) -> Unit = {
-		FrameDriver.removeChild(this)
+		stop()
 	}
 
 	private val componentDisposedHandler: (LifecycleRo) -> Unit = {
@@ -44,7 +44,7 @@ private class OnTick(
 		component.disposed.add(componentDisposedHandler)
 
 		if (component.isActive) {
-			FrameDriver.addChild(this)
+			start()
 		}
 	}
 

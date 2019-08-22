@@ -65,7 +65,7 @@ class JsApplicationRunnerImpl(
 		val now = nowMs()
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
-		FrameDriver.update(dT)
+		FrameDriver.dispatch(dT)
 		if (appWindow.shouldRender(true)) {
 			stage.update()
 			appWindow.renderBegin()
