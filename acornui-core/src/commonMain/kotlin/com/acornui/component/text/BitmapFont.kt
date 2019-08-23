@@ -163,7 +163,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 
 	val n = bitmapFontData.pages.size
 	val pageTextureLoaders = ArrayList<Deferred<Texture>>()
-	for (i in 0..n - 1) {
+	for (i in 0 until n) {
 		val page = bitmapFontData.pages[i]
 		val imageFile = dir.getFile(page.imagePath)
 				?: throw Exception("Font image file not found: ${page.imagePath}")

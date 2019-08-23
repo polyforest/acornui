@@ -53,7 +53,6 @@ suspend fun <T> load(
 		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
 	// TODO: cookies, cancellation and progress
-
 	val urlStr = requestData.toUrlStr()
 	val url = urlStr.toUrl()
 
