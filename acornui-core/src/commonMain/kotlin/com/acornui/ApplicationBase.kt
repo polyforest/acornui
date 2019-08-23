@@ -39,7 +39,8 @@ abstract class ApplicationBase {
 
 	protected suspend fun config() = get(AppConfig)
 
-	protected val applicationScope = CoroutineScope(GlobalScope.coroutineContext)
+	private val supervisor = SupervisorJob()
+	protected val applicationScope = CoroutineScope(GlobalScope.coroutineContext + supervisor)
 	protected val bootstrap = Bootstrap(applicationScope)
 
 	init {
