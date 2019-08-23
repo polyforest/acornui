@@ -23,24 +23,9 @@ import com.acornui.recycle.Clearable
 import kotlinx.coroutines.*
 import kotlin.collections.set
 
-/**
- * Launches a new coroutine in the Global Scope on the main thread.
- */
-fun globalLaunch(block: suspend CoroutineScope.() -> Unit) {
-	GlobalScope.launch(Dispatchers.Unconfined, block = block)
-}
-
-/**
- * Creates a coroutine and returns its future result as an implementation of [Deferred] in the global scope on the
- * main thread.
- */
-fun <R> globalAsync(block: suspend CoroutineScope.() -> R): Deferred<R> {
-	return GlobalScope.async(Dispatchers.Unconfined, block = block)
-}
-
 typealias Work<R> = suspend () -> R
 
-object PendingDisposablesRegistry : Clearable {
+object PendingDisposablesRegistry {
 
 	private val allDisposables = HashMap<Disposable, Unit>()
 	private var isDisposing = false
@@ -59,7 +44,7 @@ object PendingDisposablesRegistry : Clearable {
 	/**
 	 * Disposes all pending disposables.
 	 */
-	override fun clear() {
+	fun disposeAll() {
 		if (isDisposing) return
 		isDisposing = true
 		for (disposable in allDisposables.keys) {

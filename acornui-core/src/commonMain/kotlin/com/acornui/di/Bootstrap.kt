@@ -24,7 +24,10 @@ import kotlinx.coroutines.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class Bootstrap(private val defaultTaskTimeout: Float = 10f) : Disposable {
+class Bootstrap(
+		private val scope: CoroutineScope = GlobalScope,
+		private val defaultTaskTimeout: Float = 10f
+) : Disposable {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 
@@ -58,7 +61,7 @@ class Bootstrap(private val defaultTaskTimeout: Float = 10f) : Disposable {
 		while (p != null) {
 			if (_map.containsKey(p))
 				throw Exception("value already set for key $p")
-			_map[p] = globalAsync { value }
+			_map[p] = scope.async { value }
 			p = p.extends
 		}
 	}
@@ -80,18 +83,12 @@ class Bootstrap(private val defaultTaskTimeout: Float = 10f) : Disposable {
 	}
 
 	suspend fun awaitAll() {
-
 		_map.values.awaitAll()
 	}
 
 	override fun dispose() {
-		globalLaunch {
-			// Waits for all of the dependencies to be calculated before attempting to dispose.
-			awaitAll()
-			// Dispose the dependencies in the reverse order they were added:
-			for (i in dependenciesList.lastIndex downTo 0) {
-				(dependenciesList[i].value as? Disposable)?.dispose()
-			}
+		for (i in dependenciesList.lastIndex downTo 0) {
+			(dependenciesList[i].value as? Disposable)?.dispose()
 		}
 	}
 

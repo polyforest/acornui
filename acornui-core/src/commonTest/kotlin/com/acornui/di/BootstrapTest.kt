@@ -29,7 +29,7 @@ class BootstrapTest {
 	@Test fun get() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(1f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task1 by bootstrap.task(key1) {
 			delay(0.1f)
 			"dependency 1"
@@ -45,7 +45,7 @@ class BootstrapTest {
 	@Test fun getOrderDoesntMatter() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(1f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
@@ -60,7 +60,7 @@ class BootstrapTest {
 	@Test fun dependenciesList() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(1f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
@@ -77,7 +77,7 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(1f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task1 by bootstrap.task(key2) {
 			delay(0.1f)
 			"Extended key"
@@ -94,7 +94,7 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(0.5f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
 		val task1 by bootstrap.task(key2) {
 			delay(1f) // Will cause a timeout
 			"Extended key"
@@ -111,7 +111,7 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(0.5f)
+		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
 		val task1 by bootstrap.task(key2, isOptional = true) {
 			delay(1f) // Will cause a timeout
 			"Extended key"

@@ -306,7 +306,7 @@ interface Stoppable {
 
 /**
  * A utility class to use as a parameter within a Signal that indicates that the behavior of signal should be
- * canceled. Typically, a signal that can be canceled should be named as a gerund. Such as, changing, invalidating, etc.
+ * canceled. Typically, a signal that can be cancelled should be named as a gerund. Such as, changing, invalidating, etc.
  */
 open class Cancel {
 

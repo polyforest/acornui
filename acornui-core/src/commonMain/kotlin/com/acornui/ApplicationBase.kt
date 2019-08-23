@@ -20,11 +20,12 @@ import com.acornui.asset.Loaders
 import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
-import com.acornui.async.globalLaunch
+import com.acornui.async.applicationScopeKey
 import com.acornui.di.*
 import com.acornui.io.*
 import com.acornui.io.file.Files
 import com.acornui.logging.Log
+import kotlinx.coroutines.*
 
 /**
  * Utilities for boot tasks in an application.
@@ -38,9 +39,11 @@ abstract class ApplicationBase {
 
 	protected suspend fun config() = get(AppConfig)
 
-	protected val bootstrap = Bootstrap()
+	protected val applicationScope = CoroutineScope(GlobalScope.coroutineContext)
+	protected val bootstrap = Bootstrap(applicationScope)
 
 	init {
+		bootstrap.set(applicationScopeKey, applicationScope)
 		kotlinBugFixes()
 	}
 
@@ -81,12 +84,9 @@ abstract class ApplicationBase {
 
 	protected open fun dispose() {
 		Log.debug("Application disposing")
-		globalLaunch {
-			awaitAll()
-			PendingDisposablesRegistry.clear()
-			bootstrap.dispose()
-			Log.debug("Application disposed")
-		}
+		applicationScope.cancel("Application exiting")
+		PendingDisposablesRegistry.disposeAll()
+		bootstrap.dispose()
 	}
 
 	companion object {

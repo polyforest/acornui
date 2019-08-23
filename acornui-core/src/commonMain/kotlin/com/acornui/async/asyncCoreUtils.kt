@@ -17,9 +17,38 @@
 package com.acornui.async
 
 import com.acornui.collection.Tuple4
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.acornui.di.DKey
+import com.acornui.di.Scoped
+import com.acornui.di.dKey
+import com.acornui.di.inject
+import kotlinx.coroutines.*
+
+/**
+ * @see applicationScope
+ */
+val applicationScopeKey: DKey<CoroutineScope> = dKey()
+
+/**
+ * The coroutine scope for this application.
+ * All jobs started in this scope will be cancelled on application close.
+ */
+val Scoped.applicationScope: CoroutineScope
+	get() = inject(applicationScopeKey)
+
+/**
+ * Launches a new coroutine in the Acorn Global Scope with A coroutine dispatcher that is not confined to any specific thread.
+ */
+fun Scoped.globalLaunch(block: suspend CoroutineScope.() -> Unit) {
+	applicationScope.launch(Dispatchers.Unconfined, block = block)
+}
+
+/**
+ * Creates a coroutine and returns its future result as an implementation of [Deferred] in the global scope on the
+ * main thread.
+ */
+fun <R> Scoped.globalAsync(block: suspend CoroutineScope.() -> R): Deferred<R> {
+	return applicationScope.async(Dispatchers.Unconfined, block = block)
+}
 
 
 /**
@@ -27,7 +56,14 @@ import kotlinx.coroutines.launch
  * failure.
  */
 infix fun <T> Deferred<T>.then(callback: (result: T) -> Unit): Deferred<T> {
-	globalLaunch {
+//	invokeOnCompletion { error ->
+//		if (error == null) {
+//			launch(Dispatchers.UI) {
+//				callback(result as T)
+//			}
+//		}
+//	}
+	GlobalScope.launch(Dispatchers.Unconfined) {
 		var successful = false
 		var result: T? = null
 		try {
@@ -65,7 +101,7 @@ infix fun <A, B, C, D> Deferred<Tuple4<A, B, C, D>>.then(callback: (result: A, B
  * Invokes a callback when this deferred object has failed to produce a result.
  */
 infix fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit): Deferred<T> {
-	globalLaunch {
+	GlobalScope.launch(Dispatchers.Unconfined) {
 		try {
 			await()
 		} catch (t: Throwable) {
@@ -81,7 +117,7 @@ infix fun <T> Deferred<T>.catch(callback: (Throwable) -> Unit): Deferred<T> {
  * Invokes a callback when the deferred value has been either been computed successfully or failed.
  */
 infix fun <T> Deferred<T>.finally(callback: (result: T?) -> Unit): Deferred<T> {
-	globalLaunch {
+	GlobalScope.launch(Dispatchers.Unconfined) {
 		var result: T? = null
 		try {
 			result = await()

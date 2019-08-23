@@ -218,8 +218,6 @@ class GlfwWindowImpl(
 				if (cancel.canceled) {
 					glfwSetWindowShouldClose(windowId, false)
 				}
-			} else {
-				glfwSetWindowShouldClose(windowId, false)
 			}
 		}
 	}

@@ -21,6 +21,7 @@ package com.acornui.lwjgl
 import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.asset.load
+import com.acornui.async.delay
 import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
@@ -67,7 +68,7 @@ import com.acornui.persistence.Persistence
 import com.acornui.serialization.jsonParse
 import com.acornui.time.FrameDriver
 import com.acornui.time.start
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import org.lwjgl.Version as LwjglVersion
@@ -176,7 +177,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val cursorManagerTask by task(CursorManager) {
-		JvmCursorManager(getWindowId())
+		JvmCursorManager(getWindowId(), GlobalScope) // TODO: Acorn scope
 	}
 
 	protected open val persistenceTask by task(Persistence) {

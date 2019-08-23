@@ -21,7 +21,7 @@ import com.acornui.math.Interpolation
 import com.acornui.signal.addOnce
 
 /**
- * A registry of tweens by their target and property so that tweens can be canceled and overwritten.
+ * A registry of tweens by their target and property so that tweens can be cancelled and overwritten.
  */
 object TweenRegistry {
 

@@ -53,7 +53,7 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	 * @param atlasPath The atlas json file.
 	 * @param regionName The name of the region within the atlas.
 	 *
-	 * This load can be canceled using [clear].
+	 * This load can be cancelled using [clear].
 	 */
 	fun setRegion(atlasPath: String, regionName: String, warnOnNotFound: Boolean = true): Deferred<LoadedAtlasRegion> {
 		clear()
