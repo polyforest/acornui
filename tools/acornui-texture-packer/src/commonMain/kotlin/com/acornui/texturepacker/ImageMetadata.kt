@@ -16,15 +16,14 @@
 
 package com.acornui.texturepacker
 
-import com.acornui.serialization.From
-import com.acornui.serialization.Reader
-import com.acornui.serialization.floatArray
+import kotlinx.serialization.Serializable
 
 /**
  * Represents metadata for a source image before packing.
  * Allows data to be set that affects cropping, scaling, 9-slices, and padding.
  * @author nbilyk
  */
+@Serializable
 data class ImageMetadata(
 
 		/**
@@ -33,11 +32,3 @@ data class ImageMetadata(
 		val splits: List<Float>? = null
 
 )
-
-object ImageMetadataSerializer : From<ImageMetadata> {
-	override fun read(reader: Reader): ImageMetadata {
-		return ImageMetadata(
-				splits = reader.floatArray("splits")?.toList()
-		)
-	}
-}

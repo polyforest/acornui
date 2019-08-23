@@ -1,10 +1,7 @@
 package com.acornui.build.plugins.util
 
 import com.acornui.build.plugins.acornui
-import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
-import com.acornui.build.plugins.tasks.DceTask
-import com.acornui.build.plugins.tasks.KotlinJsMonkeyPatcherTask
-import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
+import com.acornui.build.plugins.tasks.*
 import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.jsonStringify
@@ -21,6 +18,7 @@ import java.io.File
 
 fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {
 	createBitmapFontGeneratorConfig()
+	createPackTexturesConfig()
 
 	targets.forEach { target ->
 		val platformCapitalized = target.capitalize()

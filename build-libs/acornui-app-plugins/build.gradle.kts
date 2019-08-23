@@ -35,7 +35,6 @@ dependencies {
 	implementation("com.acornui:acornui-utils:$version")
 	implementation("com.acornui:acornui-core:$version")
 	implementation("com.acornui:acornui-lwjgl-backend:$version")
-	implementation("com.acornui:acornui-texture-packer:$version")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 
 	testImplementation(kotlin("test"))

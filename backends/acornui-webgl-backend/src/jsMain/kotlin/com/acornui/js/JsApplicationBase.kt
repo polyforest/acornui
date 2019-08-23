@@ -48,6 +48,9 @@ import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionManagerImpl
 import com.acornui.serialization.jsonParse
 import com.acornui.uncaughtExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
@@ -85,7 +88,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
-		globalLaunch {
+		GlobalScope.launch(Dispatchers.Unconfined) {
 			contentLoad()
 			val owner = OwnedImpl(createInjector())
 			PendingDisposablesRegistry.register(owner)
@@ -172,10 +175,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 	override fun dispose() {
 		super.dispose()
-		globalLaunch {
-			awaitAll()
-			frameDriver?.stop()
-		}
+		frameDriver?.stop()
 	}
 
 	companion object {

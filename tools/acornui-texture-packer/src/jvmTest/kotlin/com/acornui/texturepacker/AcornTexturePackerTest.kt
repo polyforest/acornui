@@ -25,7 +25,7 @@
 //import com.acornui.gl.core.TexturePixelType
 //import com.acornui.io.file.Files
 //import com.acornui.jvm.JvmHeadlessApplication
-//import com.acornui.texturepacker.jvm.writer.JvmTextureAtlasWriter
+//import com.acornui.texturepacker.writer.JvmTextureAtlasWriter
 //import kotlin.test.Test
 //import java.io.File
 //import kotlin.test.assertEquals

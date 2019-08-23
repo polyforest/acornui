@@ -5,7 +5,6 @@ package com.acornui.build.plugins
 import com.acornui.toCamelCase
 import com.acornui.build.plugins.util.appAssetsWebTasks
 import com.acornui.build.plugins.util.applicationResourceTasks
-import com.acornui.build.plugins.util.getRunnableCompilation
 import com.acornui.build.plugins.util.kotlinExt
 import org.gradle.api.Plugin
 import org.gradle.api.Project

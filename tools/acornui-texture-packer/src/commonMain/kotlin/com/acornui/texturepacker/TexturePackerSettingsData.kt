@@ -20,11 +20,12 @@ import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.gl.core.TexturePixelType
-import com.acornui.serialization.*
+import kotlinx.serialization.Serializable
 
 /**
  * @author nbilyk
  */
+@Serializable
 data class TexturePackerSettingsData(
 
 		/**
@@ -94,6 +95,7 @@ enum class TexturePackAlgorithm {
 	GREEDY
 }
 
+@Serializable
 data class PackerAlgorithmSettingsData(
 
 		/**
@@ -141,69 +143,3 @@ data class PackerAlgorithmSettingsData(
 
 
 )
-
-@Deprecated("use kotlinx serialization")
-object TexturePackerSettingsSerializer : To<TexturePackerSettingsData>, From<TexturePackerSettingsData> {
-
-	override fun read(reader: Reader): TexturePackerSettingsData {
-		return TexturePackerSettingsData(
-				alphaThreshold = reader.float("alphaThreshold") ?: 0f,
-				filterMag = TextureMagFilter.valueOf(reader.string("filterMag") ?: TextureMagFilter.NEAREST.name),
-				filterMin = TextureMinFilter.valueOf(reader.string("filterMin") ?: TextureMinFilter.NEAREST.name),
-				pixelType = TexturePixelType.valueOf(reader.string("pixelType") ?: TexturePixelType.UNSIGNED_BYTE.name),
-				pixelFormat = TexturePixelFormat.valueOf(reader.string("pixelFormat") ?: TexturePixelFormat.RGBA.name),
-				compressionExtension = reader.string("compressionExtension") ?: "png",
-				compressionQuality = reader.float("compressionQuality") ?: 0.9f,
-				maxDirectoryDepth = reader.int("maxDirectoryDepth") ?: 10,
-				packAlgorithm = TexturePackAlgorithm.valueOf(reader.string("packAlgorithm") ?: TexturePackAlgorithm.BEST.name),
-				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
-				stripWhitespace = reader.bool("stripWhitespace") ?: true,
-				algorithmSettings = reader.obj("algorithmSettings", PackerAlgorithmSettingsDataSerializer)!!
-		)
-	}
-
-	override fun TexturePackerSettingsData.write(writer: Writer) {
-		writer.float("alphaThreshold", alphaThreshold)
-		writer.string("filterMag", filterMag.name)
-		writer.string("filterMin", filterMin.name)
-		writer.string("pixelType", pixelType.name)
-		writer.string("pixelFormat", pixelFormat.name)
-		writer.string("compressionExtension", compressionExtension)
-		writer.float("compressionQuality", compressionQuality)
-		writer.int("maxDirectoryDepth", maxDirectoryDepth)
-		writer.string("packAlgorithm", packAlgorithm.name)
-		writer.bool("premultipliedAlpha", premultipliedAlpha)
-		writer.bool("stripWhitespace", stripWhitespace)
-		writer.obj("algorithmSettings", algorithmSettings, PackerAlgorithmSettingsDataSerializer)
-	}
-
-
-}
-
-@Deprecated("Use kotlinx serialization")
-object PackerAlgorithmSettingsDataSerializer : To<PackerAlgorithmSettingsData>, From<PackerAlgorithmSettingsData> {
-	override fun read(reader: Reader): PackerAlgorithmSettingsData {
-		return PackerAlgorithmSettingsData(
-				allowRotation = reader.bool("allowRotation") ?: true,
-				paddingX = reader.int("paddingX") ?: 2,
-				paddingY = reader.int("paddingY") ?: 2,
-				edgePadding = reader.bool("edgePadding") ?: true,
-				pageMaxHeight = reader.int("pageMaxHeight") ?: 1024,
-				pageMaxWidth = reader.int("pageMaxWidth") ?: 1024,
-				powerOfTwo = reader.bool("powerOfTwo") ?: true,
-				addWhitePixel = reader.bool("addWhitePixel") ?: true
-		)
-	}
-
-
-	override fun PackerAlgorithmSettingsData.write(writer: Writer) {
-		writer.bool("allowRotation", allowRotation)
-		writer.int("paddingX", paddingX)
-		writer.int("paddingY", paddingY)
-		writer.bool("edgePadding", edgePadding)
-		writer.int("pageMaxHeight", pageMaxHeight)
-		writer.int("pageMaxWidth", pageMaxWidth)
-		writer.bool("powerOfTwo", powerOfTwo)
-		writer.bool("addWhitePixel", addWhitePixel)
-	}
-}
