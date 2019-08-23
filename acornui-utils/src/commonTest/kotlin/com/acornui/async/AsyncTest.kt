@@ -16,6 +16,9 @@
 
 package com.acornui.async
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -25,9 +28,9 @@ class AsyncTest {
 
 	@Test fun testAsync() {
 
-		globalLaunch {
-			val a = globalAsync { 3 }
-			val b = globalAsync { 4 }
+		GlobalScope.launch {
+			val a = async { 3 }
+			val b = async { 4 }
 
 			assertEquals(7, a.await() + b.await())
 		}
@@ -37,8 +40,8 @@ class AsyncTest {
 
 	@Test fun testAsyncMultiple() {
 		var launched = false
-		globalLaunch {
-			val a = globalAsync { t++; 3 }
+		GlobalScope.launch {
+			val a = async { t++; 3 }
 			assertEquals(9, a.await() + a.await() + a.await())
 			assertEquals(1, t)
 			launched = true
