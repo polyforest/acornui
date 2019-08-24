@@ -16,6 +16,7 @@
     "paddingY": 2,
     "pageMaxHeight": 1024,
     "pageMaxWidth": 1024,
-    "powerOfTwo": true
+    "powerOfTwo": true,
+    "addWhitePixel": true
   }
 }
