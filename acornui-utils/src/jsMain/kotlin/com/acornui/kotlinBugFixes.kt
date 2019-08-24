@@ -21,33 +21,6 @@ if (Function.prototype.uncachedBind === undefined) {
 		receiver.__bindingCache[this] = newBind;
 		return newBind;
 	};
-	
-	Kotlin.uncachedIsType = Kotlin.isType;
-	Kotlin.isType = function(object, klass) {
-		if (klass === Object) {
-		  switch (typeof object) {
-			case 'string':
-			case 'number':
-			case 'boolean':
-			case 'function':
-			  return true;
-			default:return object instanceof Object;
-		  }
-		}
-		if (object == null || klass == null || (typeof object !== 'object' && typeof object !== 'function')) {
-		  return false;
-		}
-		if (typeof klass === 'function' && object instanceof klass) {
-		  return true;
-		}
-	
-		if (!object.__typeCache) object.__typeCache = {};
-		var existing = object.__typeCache[klass];
-		if (existing !== undefined) return existing;
-		var typeCheck = Kotlin.uncachedIsType.apply(this, arguments);
-		object.__typeCache[klass] = typeCheck;
-		return typeCheck;
-	};				
 }
 """)
 }
