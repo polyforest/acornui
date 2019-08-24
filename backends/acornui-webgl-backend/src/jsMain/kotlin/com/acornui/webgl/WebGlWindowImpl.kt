@@ -25,6 +25,7 @@ import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.js.delete
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
@@ -105,16 +106,16 @@ class WebGlWindowImpl(
 		clearColor = config.backgroundColor
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		document.addEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
-
-		window.addEventListener("beforeunload", {
-			event ->
-			event as BeforeUnloadEvent
+		val oBU = window.onbeforeunload
+		window.onbeforeunload = { event ->
+			oBU?.invoke(event)
 			_closeRequested.dispatch(cancel.reset())
 			if (cancel.canceled) {
 				event.preventDefault()
 				event.returnValue = ""
 			}
-		})
+			undefined // Necessary for ie11 not to alert user.
+		}
 	}
 
 	private fun scaleChangedHandler() {

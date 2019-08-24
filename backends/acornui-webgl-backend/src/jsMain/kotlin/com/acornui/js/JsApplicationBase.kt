@@ -22,11 +22,9 @@ import com.acornui.Version
 import com.acornui.asset.Loaders
 import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
-import com.acornui.async.globalLaunch
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
 import com.acornui.component.HtmlComponent
-import com.acornui.component.stage
 import com.acornui.cursor.CursorManager
 import com.acornui.di.*
 import com.acornui.focus.FocusManager
@@ -81,9 +79,12 @@ abstract class JsApplicationBase : ApplicationBase() {
 		if (::memberRefTest != ::memberRefTest)
 			Log.error("[SEVERE] Member reference equality fix isn't working.")
 
-		window.addEventListener("unload", { event ->
+		val oBU = window.onbeforeunload
+		window.onbeforeunload = {
+			oBU?.invoke(it)
 			dispose()
-		})
+			undefined // Necessary for ie11 not to alert user.
+		}
 	}
 
 	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
@@ -183,3 +184,5 @@ abstract class JsApplicationBase : ApplicationBase() {
 	}
 
 }
+
+external fun delete(p: dynamic): Boolean
