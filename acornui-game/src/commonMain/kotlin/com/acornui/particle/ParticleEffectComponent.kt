@@ -176,8 +176,7 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 }
 
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
-	val atlasDataPromise = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group)
-	val atlasData = atlasDataPromise.await()
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val glState = inject(GlState)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
