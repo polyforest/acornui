@@ -42,6 +42,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	var quality by bindable(BlurQuality.NORMAL)
 
 	private val gl by Gl20
+	private val window by Window
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
@@ -51,8 +52,8 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val _drawPadding = Pad()
 	override val drawPadding: PadRo
 		get() {
-			val hPad = ceil(blurX * 4f * quality.passes)
-			val vPad = ceil(blurY * 4f * quality.passes)
+			val hPad = ceil(blurX * quality.passes)
+			val vPad = ceil(blurY * quality.passes)
 			return _drawPadding.set(top = vPad, right = hPad, bottom = vPad, left = hPad)
 		}
 
@@ -105,12 +106,12 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			for (i in 1..passes) {
 				val p = i.toFloat() / passes.toFloat()
 				blurFramebufferA.begin()
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p)
+				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p * 0.25f / window.scaleY)
 				glState.batch.putIdtQuad()
 				blurFramebufferA.end()
 				blurFramebufferB.begin()
 				glState.setTexture(blurFramebufferA.texture)
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p, 0f)
+				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p * 0.25f / window.scaleX, 0f)
 				glState.batch.putIdtQuad()
 				blurFramebufferB.end()
 				glState.setTexture(blurFramebufferB.texture)
