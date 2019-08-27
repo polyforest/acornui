@@ -19,6 +19,7 @@ package com.acornui.observe
 import com.acornui.Disposable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
+import kotlin.jvm.Synchronized
 
 interface DataBindingRo<out T> {
 
@@ -78,14 +79,10 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 	override var value: T
 		get() = _value
 		set(value) {
-			if (_changed.isDispatching) return
-			val old = _value
-			if (old == value) return
-			if (_changed.isDispatching) return
-			_value = value
-			_changed.dispatch(old, value)
+			setValueInternal(value)
 		}
 
+	@Synchronized
 	override fun change(callback: (T) -> T): Boolean {
 		if (_changed.isDispatching) return false
 		val old = _value
@@ -94,6 +91,16 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		_value = newValue
 		_changed.dispatch(old, newValue)
 		return true
+	}
+
+	@Synchronized
+	private fun setValueInternal(value: T) {
+		if (_changed.isDispatching) return
+		val old = _value
+		if (old == value) return
+		if (_changed.isDispatching) return
+		_value = value
+		_changed.dispatch(old, value)
 	}
 
 	override fun dispose() {
