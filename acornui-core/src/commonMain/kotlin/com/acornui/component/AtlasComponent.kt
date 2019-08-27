@@ -18,17 +18,16 @@
 
 package com.acornui.component
 
-import kotlinx.coroutines.Deferred
-import com.acornui.async.catch
-import com.acornui.async.then
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import com.acornui.async.globalAsync
+import com.acornui.async.async
+import com.acornui.async.catch
+import com.acornui.async.then
 import com.acornui.di.Owned
-import com.acornui.di.notDisposed
 import com.acornui.graphic.*
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.Deferred
 
 /**
  * A UiComponent that draws a region from a texture atlas.
@@ -58,7 +57,9 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	fun setRegion(atlasPath: String, regionName: String, warnOnNotFound: Boolean = true): Deferred<LoadedAtlasRegion> {
 		clear()
 		this.group = cachedGroup()
-		return globalAsync { loadAndCacheAtlasRegion(atlasPath, regionName, group!!) } then notDisposed {
+		return async {
+			loadAndCacheAtlasRegion(atlasPath, regionName, group!!)
+		} then {
 			loadedRegion ->
 			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
 		} catch {

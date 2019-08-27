@@ -24,6 +24,7 @@ import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
+import com.acornui.async.async
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -100,11 +101,10 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 
 	private var group: CachedGroup? = null
 
-	fun setRegion(atlasPath: String, regionName: String) : Deferred<LoadedAnimation> {
+	fun setRegion(atlasPath: String, regionName: String): Deferred<LoadedAnimation> {
 		clear()
 		group = cachedGroup()
-		return loadSpriteAnimation(atlasPath, regionName) then notDisposed {
-			loadedAnimation ->
+		return async { loadSpriteAnimation(atlasPath, regionName, group!!) } then { loadedAnimation ->
 			setAnimation(loadedAnimation)
 		}
 	}
@@ -175,33 +175,31 @@ data class LoadedAnimation(
 	}
 }
 
-fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): Deferred<LoadedAnimation> {
+suspend fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAnimation {
 	val glState = inject(GlState)
-	return globalAsync {
-		val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
-		val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
-		for (page in atlasData.pages) {
-			for (region in page.regions) {
-				val index = region.name.calculateFrameIndex(regionName)
-				if (index >= 0) {
-					regions.fill(index + 1) { null }
-					regions[index] = region to page
-				}
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+	val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
+	for (page in atlasData.pages) {
+		for (region in page.regions) {
+			val index = region.name.calculateFrameIndex(regionName)
+			if (index >= 0) {
+				regions.fill(index + 1) { null }
+				regions[index] = region to page
 			}
 		}
-
-		val textures = ArrayList<Texture>()
-		val frames = ArrayList<Atlas>()
-		for (i in 0..regions.lastIndex) {
-			val (region, page) = regions[i] ?: continue
-			val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-			if (!textures.contains(texture)) textures.add(texture)
-			val atlas = Atlas(glState)
-			atlas.setRegionAndTexture(texture, region)
-			frames.add(atlas)
-		}
-		LoadedAnimation(textures, frames)
 	}
+
+	val textures = ArrayList<Texture>()
+	val frames = ArrayList<Atlas>()
+	for (i in 0..regions.lastIndex) {
+		val (region, page) = regions[i] ?: continue
+		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+		if (!textures.contains(texture)) textures.add(texture)
+		val atlas = Atlas(glState)
+		atlas.setRegionAndTexture(texture, region)
+		frames.add(atlas)
+	}
+	return LoadedAnimation(textures, frames)
 }
 
 /**
