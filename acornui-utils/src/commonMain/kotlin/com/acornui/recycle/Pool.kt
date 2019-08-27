@@ -19,6 +19,7 @@ package com.acornui.recycle
 import com.acornui.collection.forEach2
 import com.acornui.collection.pop
 import com.acornui.Disposable
+import kotlin.jvm.Synchronized
 
 
 interface Pool<T> {
@@ -78,6 +79,7 @@ open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, privat
 	 * Takes an object from the pool if there is one, or constructs a new object from the factory provided
 	 * to this Pool's constructor.
 	 * */
+	@Synchronized
 	override fun obtain(): T {
 		return if (freeObjects.isEmpty()) {
 			create()
@@ -89,11 +91,13 @@ open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, privat
 	/**
 	 * Returns an object back to the pool.
 	 */
+	@Synchronized
 	override fun free(obj: T) {
 		if (freeObjects.size >= capacity) return
 		freeObjects.add(obj)
 	}
 
+	@Synchronized
 	override fun forEach(callback: (T)->Unit) {
 		for (i in 0..freeObjects.lastIndex) {
 			callback(freeObjects[i])
