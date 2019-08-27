@@ -87,11 +87,11 @@ data class Theme(
 		val evenRowBgColor: ColorRo = Color(0xffffffff),
 		val oddRowBgColor: ColorRo = Color(0xe1e2e3ff),
 
-		val highlightedEvenRowBgColor: ColorRo = Color(0xfeffd2ff),
-		val highlightedOddRowBgColor: ColorRo = Color(0xfeffd2ff),
+		val highlightedEvenRowBgColor: ColorRo = Color(0xefefc3ff),
+		val highlightedOddRowBgColor: ColorRo = Color(0xdbdbb3ff),
 
-		val toggledEvenRowBgColor: ColorRo = Color(0xfcfd7cff),
-		val toggledOddRowBgColor: ColorRo = Color(0xfcfd7cff),
+		val toggledEvenRowBgColor: ColorRo = Color(0xf3f3b5ff),
+		val toggledOddRowBgColor: ColorRo = Color(0xeff0a9ff),
 
 		val buttonPad: PadRo = Pad(4f),
 		val iconButtonGap: Float = 2f,
