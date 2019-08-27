@@ -52,10 +52,10 @@ internal class LimitedCallback(
 	override operator fun invoke() {
 		if (isInvoking) return
 		if (isDriven) {
+			pendingInvoke = true
+		} else {
 			start()
 			callback()
-		} else {
-			pendingInvoke = true
 		}
 	}
 

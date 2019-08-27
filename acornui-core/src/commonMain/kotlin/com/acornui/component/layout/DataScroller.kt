@@ -425,7 +425,7 @@ class DataScrollerStyle : StyleBase() {
 	/**
 	 * The background for each row.
 	 */
-	var rowBackground by prop<Owned.() -> RowBackground>({ rowBackground() })
+	var rowBackground by prop<Owned.() -> RowBackground> { rowBackground() }
 
 	companion object : StyleType<DataScrollerStyle>
 }
