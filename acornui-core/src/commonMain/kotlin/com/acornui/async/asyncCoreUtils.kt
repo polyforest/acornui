@@ -38,8 +38,8 @@ val Scoped.applicationScope: CoroutineScope
 /**
  * Launches a new coroutine in the Acorn Global Scope with A coroutine dispatcher that is not confined to any specific thread.
  */
-fun Scoped.globalLaunch(block: suspend CoroutineScope.() -> Unit) {
-	applicationScope.launch(Dispatchers.Unconfined, block = block)
+fun Scoped.globalLaunch(block: suspend CoroutineScope.() -> Unit): Job {
+	return applicationScope.launch(Dispatchers.Unconfined, block = block)
 }
 
 /**

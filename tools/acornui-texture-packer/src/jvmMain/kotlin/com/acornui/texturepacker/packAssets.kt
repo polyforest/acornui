@@ -17,14 +17,13 @@
 package com.acornui.texturepacker
 
 import com.acornui.asset.Loaders
+import com.acornui.async.exitOnCompletion
+import com.acornui.async.globalLaunch
 import com.acornui.di.inject
 import com.acornui.graphic.exit
 import com.acornui.headless.JvmHeadlessApplication
 import com.acornui.io.file.Files
 import com.acornui.texturepacker.writer.writeAtlas
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -42,10 +41,9 @@ fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String) {
 				?: error("Could not resolve directory from manifest. \n\tRelative path: $rel\n\tsrcDir: ${srcDir.absolutePath}")
 
 		val atlasName = srcDir.name.removeSuffix(unpackedSuffix)
-		GlobalScope.launch(Dispatchers.Unconfined) {
+		globalLaunch {
 			val packedData = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader)).pack(dirEntry, quiet = true)
 			writeAtlas("$atlasName.json", "$atlasName{0}", packedData, destDir)
-			exit()
-		}
+		}.exitOnCompletion()
 	}
 }
