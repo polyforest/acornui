@@ -17,8 +17,6 @@
 package com.acornui.behavior
 
 import com.acornui.recycle.Clearable
-import com.acornui.collection.arrayListObtain
-import com.acornui.collection.arrayListPool
 import com.acornui.Disposable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -45,19 +43,15 @@ interface SelectionRo<E : Any> {
 	 * @param out The list to fill with the selected items.
 	 * @return Returns the [out] list.
 	 */
-	fun getSelectedItems(ordered: Boolean, out: MutableList<E>): MutableList<E>
-
-	/**
-	 * Populates the [out] list with the selected items (unordered).
-	 * @param out The list to fill with the selected items.
-	 * @return Returns the [out] list.
-	 * @see getSelectedItems
-	 */
-	fun getSelectedItems(out: MutableList<E>): MutableList<E> = getSelectedItems(false, out)
+	fun getSelectedItems(ordered: Boolean = false, out: MutableList<E> = ArrayList()): MutableList<E>
 
 	val isEmpty: Boolean
 	val isNotEmpty: Boolean
 	val selectedItemsCount: Int
+
+	/**
+	 * Returns true if the given item is selected.
+	 */
 	fun getItemIsSelected(item: E): Boolean
 }
 
@@ -215,9 +209,45 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	}
 }
 
-fun <E : Any> Selection<E>.deselectNotContaining(list: List<E>) {
-	val tmp = arrayListObtain<E>()
-	val current = getSelectedItems(false, tmp)
-	setSelectedItems(current.intersect(list).toList())
-	arrayListPool.free(tmp)
+/**
+ * Sets the selection to the intersection of the current selection and the provided selection.
+ * @see MutableCollection.retainAll
+ */
+fun <E : Any> Selection<E>.retainAll(list: List<E>) {
+	setSelectedItems(getSelectedItems(false).intersect(list).toList())
+}
+
+/**
+ * Adds all of the specified elements to the current selection.
+ * @see MutableCollection.addAll
+ */
+fun <E : Any> Selection<E>.addAll(elements: Collection<E>) {
+	val selected = getSelectedItems(false)
+	selected.addAll(elements)
+	setSelectedItems(selected)
+}
+
+/**
+ * Removes all of the specified elements from the current selection.
+ * @see MutableCollection.removeAll
+ */
+fun <E : Any> Selection<E>.removeAll(elements: Collection<E>) {
+	val selected = getSelectedItems(false)
+	selected.removeAll(elements)
+	setSelectedItems(selected)
+}
+
+/**
+ * Toggles the selection status of the given element.
+ */
+fun <E : Any> Selection<E>.toggleSelected(element: E) {
+	setItemIsSelected(element, !getItemIsSelected(element))
+}
+
+fun <E : Any> Selection<E>.setItemIsSelected(element: E, value: Boolean) {
+	if (value) {
+		addAll(listOf(element))
+	} else {
+		removeAll(listOf(element))
+	}
 }

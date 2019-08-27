@@ -25,7 +25,7 @@ import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.style.Style
 import com.acornui.behavior.Selection
 import com.acornui.behavior.SelectionBase
-import com.acornui.behavior.deselectNotContaining
+import com.acornui.behavior.retainAll
 import com.acornui.recycle.IndexedPool
 import com.acornui.di.Owned
 import com.acornui.di.own
@@ -458,7 +458,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 	private var data: List<E?> = emptyList()
 
 	fun data(value: List<E?>) {
-		deselectNotContaining(value.filterNotNull())
+		retainAll(value.filterNotNull())
 		data = value
 	}
 

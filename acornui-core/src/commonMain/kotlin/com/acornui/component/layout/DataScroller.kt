@@ -25,7 +25,8 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.behavior.Selection
 import com.acornui.behavior.SelectionBase
-import com.acornui.behavior.deselectNotContaining
+import com.acornui.behavior.retainAll
+import com.acornui.behavior.toggleSelected
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.recycle.IndexedPool
@@ -136,6 +137,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	//---------------------------------------------------
 
 	var selectable: Boolean = true
+
+	/**
+	 * If true, multiple items may be selected.
+	 *
+	 * In multiple selection mode, clicking item renderers toggles their selection.
+	 * In single selection mode, clicking an item renderer sets selection to that item.
+	 */
+	var selectMultiple: Boolean = false
+
 	var highlightable: Boolean = true
 
 	private var background: UiComponent? = null
@@ -182,7 +192,11 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				val e = getElementUnderPosition(mousePosition(_mousePosition))
 				if (e != null) {
 					it.handled = true
-					_selection.setSelectedItemsUser(listOf(e))
+					if (selectMultiple) {
+						_selection.toggleSelected(e)
+					} else {
+						_selection.setSelectedItemsUser(listOf(e))
+					}
 				}
 			}
 		}
@@ -426,7 +440,7 @@ private class DataScrollerSelection<E : Any>(
 
 	fun data(value: List<E?>?) {
 		val newData = value ?: emptyList()
-		deselectNotContaining(newData.filterNotNull())
+		retainAll(newData.filterNotNull())
 		data = newData
 	}
 
@@ -455,7 +469,7 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 
 	fun data(value: List<E?>?) {
 		val newData = value ?: emptyList()
-		deselectNotContaining(newData.filterNotNull())
+		retainAll(newData.filterNotNull())
 		data = newData
 	}
 
