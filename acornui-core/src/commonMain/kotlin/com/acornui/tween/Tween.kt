@@ -159,6 +159,11 @@ interface Tween : Updatable, Disposable {
 	companion object {
 
 		/**
+		 * If set to false, all tweens will [finish] on their first update.
+		 */
+		var animationsEnabled = true
+
+		/**
 		 * Initializes the otherwise lazy-loaded classes so that they are ready the instant they are needed.
 		 * This prevents a stutter on the first used animation at the cost of startup time.
 		 */
@@ -195,6 +200,11 @@ abstract class TweenBase : Tween {
 		}
 
 	override fun setCurrentTime(newTime: Float, jump: Boolean) {
+		if (!Tween.animationsEnabled) {
+			updateToTime(startTime, duration, startTime, duration, true)
+			complete()
+			return
+		}
 		val lastTime = _currentTime
 		if (lastTime == newTime) return
 		_currentTime = newTime
