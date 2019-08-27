@@ -47,7 +47,7 @@ class FakeFocusMouse(
 			val target = getTarget(event)
 			if (target != null) {
 				val isRepeat = event.isRepeat && downKey == event.keyCode && target.downRepeatEnabled()
-				if ((downKey == null || isRepeat) && event.keyCode == Ascii.SPACE || event.isEnterOrReturn) {
+				if ((downKey == null || isRepeat) && !event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)) {
 					event.handled = true
 					downKey = event.keyCode
 					downElement = target

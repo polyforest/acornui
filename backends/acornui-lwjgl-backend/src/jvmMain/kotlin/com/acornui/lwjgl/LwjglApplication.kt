@@ -21,7 +21,6 @@ package com.acornui.lwjgl
 import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.asset.load
-import com.acornui.async.delay
 import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
@@ -66,9 +65,9 @@ import com.acornui.lwjgl.opengl.loadTexture
 import com.acornui.lwjgl.persistence.LwjglPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.serialization.jsonParse
-import com.acornui.time.FrameDriver
 import com.acornui.time.start
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import org.lwjgl.Version as LwjglVersion

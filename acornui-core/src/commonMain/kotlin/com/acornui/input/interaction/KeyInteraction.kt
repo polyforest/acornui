@@ -80,6 +80,13 @@ interface KeyInteractionRo : InteractionEventRo {
 }
 
 /**
+ * Returns true if [KeyInteractionRo.altKey], [KeyInteractionRo.ctrlKey], [KeyInteractionRo.metaKey], or
+ * [KeyInteractionRo.shiftKey] is true.
+ */
+val KeyInteractionRo.hasAnyModifier: Boolean
+	get() = altKey || ctrlKey || metaKey || shiftKey
+
+			/**
  * An event representing an interaction with the keyboard.
  * @author nbilyk
  */
