@@ -136,6 +136,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 					main = "com.acornui.texturepacker.PackAssetsKt"
 					args = listOf(it.sourceDir.absolutePath, it.destinationDir.parentFile.absolutePath, suffix)
 					classpath = packTexturesClasspath
+					maxHeapSize = "3g"
 					execute()
 				}
 
