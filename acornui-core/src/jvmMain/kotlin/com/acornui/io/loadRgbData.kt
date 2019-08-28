@@ -20,25 +20,42 @@ import com.acornui.async.UI
 import com.acornui.graphic.RgbData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.io.ByteArrayInputStream
+import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
 
 suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Float = Bandwidth.downBpsInv * 100_000): RgbData {
 	return load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
-		createImageData(inputStream)
-				?: throw Exception("Could not load image at path \"${requestData.toUrlStr()}\"")
+		try {
+			createImageData(inputStream)
+		} catch (e: Throwable) {
+			throw Exception("Could not load image at path \"${requestData.toUrlStr()}\"", e)
+		}
 	}
 }
 
 /**
  * Creates the RgbData for the given input stream.
  *
- * Due to https://bugs.openjdk.java.net/browse/JDK-8058973, this will be executed on the main thread.
+ * Due to https://bugs.openjdk.java.net/browse/JDK-8058973,
  */
-suspend fun createImageData(input: InputStream): RgbData? = withContext(Dispatchers.UI) {
-	val image = ImageIO.read(input)
-	input.close()
-	if (image == null) return@withContext null
+suspend fun createImageData(inputStream: InputStream): RgbData = withContext(Dispatchers.IO) {
+	val byteArrayInputStream = ByteArrayInputStream(inputStream.use {
+		it.readAllBytes2()
+	})
+
+	val image: BufferedImage = try {
+		ImageIO.read(byteArrayInputStream)
+	} catch (e: Throwable) {
+		@Suppress("BlockingMethodInNonBlockingContext")
+		withContext(Dispatchers.UI) {
+			byteArrayInputStream.reset()
+			ImageIO.read(byteArrayInputStream)
+		}
+	} finally {
+		byteArrayInputStream.close()
+	}
 
 	val width = image.width
 	val height = image.height
