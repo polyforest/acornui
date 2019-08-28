@@ -21,6 +21,7 @@ import com.acornui.Disposable
 import com.acornui.assertionsEnabled
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
+import kotlin.jvm.Synchronized
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -55,6 +56,7 @@ class Bootstrap(
 	/**
 	 * Sets a dependency directly without creating a task.
 	 */
+	@Synchronized
 	fun <T : Any> set(dKey: DKey<T>, value: T) {
 		addDependency(dKey, value)
 		var p: DKey<*>? = dKey
@@ -66,6 +68,7 @@ class Bootstrap(
 		}
 	}
 
+	@Synchronized
 	private fun <T : Any> addDependency(dKey: DKey<T>, value: T) {
 		val pair = dKey to value
 		if (assertionsEnabled && dependenciesList.any { existingDependency ->
