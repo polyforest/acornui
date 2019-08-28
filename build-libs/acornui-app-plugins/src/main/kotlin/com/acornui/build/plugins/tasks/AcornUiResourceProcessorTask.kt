@@ -160,6 +160,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 					main = "com.acornui.font.ProcessFontsKt"
 					args = listOf(it.sourceDir.absolutePath, it.destinationDir.absolutePath)
 					classpath = project.configurations.getByName("bitmapFontGenerator")
+					maxHeapSize = "3g"
 					execute()
 				}
 			} else {
