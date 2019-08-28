@@ -29,7 +29,7 @@ import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 
-class IconButton(
+open class IconButton(
 		owner: Owned
 ) : ButtonImpl(owner), SingleElementContainer<UiComponent> {
 

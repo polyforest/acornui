@@ -267,7 +267,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private fun updateHighlight() {
 		val e = getElementUnderPosition(mousePosition(_mousePosition))
-		_highlighted.setSelectedItemsUser(if (e == null) emptyList() else listOf(e))
+		_highlighted.setSelectedItems(if (e == null) emptyList() else listOf(e), isUserInteraction = true)
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {
@@ -452,8 +452,8 @@ private class DataScrollerSelection<E : Any>(
 	}
 
 	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
-		listA.selection.setSelectedItems(newSelection)
-		listB.selection.setSelectedItems(newSelection)
+		listA.selection.setSelectedItems(newSelection, isUserInteraction = true)
+		listB.selection.setSelectedItems(newSelection, isUserInteraction = true)
 		for (e in oldSelection - newSelection) {
 			rowMap[e]?.toggled = false
 		}

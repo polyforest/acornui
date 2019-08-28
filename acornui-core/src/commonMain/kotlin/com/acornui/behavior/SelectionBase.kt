@@ -16,7 +16,6 @@
 
 package com.acornui.behavior
 
-import com.acornui.recycle.Clearable
 import com.acornui.Disposable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -55,7 +54,7 @@ interface SelectionRo<E : Any> {
 	fun getItemIsSelected(item: E): Boolean
 }
 
-interface Selection<E : Any> : SelectionRo<E>, Clearable {
+interface Selection<E : Any> : SelectionRo<E> {
 
 	/**
 	 * Dispatched when an item's selection status is about to change via user input. This provides an opportunity to
@@ -72,21 +71,24 @@ interface Selection<E : Any> : SelectionRo<E>, Clearable {
 	override var selectedItem: E?
 
 	/**
-	 * Sets the selected items.
-	 * Note: setting this does not invoke a [changing] or [changed] signal.
-	 * @see setSelectedItemsUser
-	 */
-	fun setSelectedItems(items: List<E>)
-
-	/**
 	 * Sets the selected items and invokes [changing] and [changed] signals.
 	 */
-	fun setSelectedItemsUser(items: List<E>)
+	@Deprecated("", ReplaceWith("setSelectedItems(items, true)"))
+	fun setSelectedItemsUser(items: List<E>) = setSelectedItems(items, true)
+
+	fun setSelectedItems(items: List<E>, isUserInteraction: Boolean = false)
 
 	/**
-	 * Selects all items. Does not dispatch signals.
+	 * Clears current selection.
+	 * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
 	 */
-	fun selectAll()
+	fun clear(isUserInteraction: Boolean = false)
+
+	/**
+	 * Selects all items.
+	 * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
+	 */
+	fun selectAll(isUserInteraction: Boolean = false)
 
 }
 
@@ -150,7 +152,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	override var selectedItem: E?
 		get() = _selectedMap.keys.firstOrNull()
 		set(value) {
-			setSelectedItems(if (value == null) emptyList() else listOf(value))
+			setSelectedItems(if (value == null) emptyList() else listOf(value), isUserInteraction = false)
 		}
 
 	override val isEmpty: Boolean
@@ -166,41 +168,39 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		return _selectedMap[item] ?: false
 	}
 
-	override fun setSelectedItems(items: List<E>) {
+	override fun setSelectedItems(items: List<E>, isUserInteraction: Boolean) {
+		if (isUserInteraction) {
+			val previousSelection = _selectedMap.keys.toList()
+			if (changing.isNotEmpty()) {
+				_changing.dispatch(previousSelection, items, cancel.reset())
+				if (cancel.canceled) return
+			}
+			setSelectedItemsInternal(items)
+			_changed.dispatch(previousSelection, items)
+		} else {
+			setSelectedItemsInternal(items)
+		}
+	}
+
+	private fun setSelectedItemsInternal(items: List<E>) {
 		val oldSelection = _selectedMap.keys.toList()
 		_selectedMap.clear()
 		_selectedMap.putAll(items.map { it to true })
 		onSelectionChanged(oldSelection, items)
 	}
 
-	/**
-	 * The user has changed the selection. This will invoke the [changing] and if not canceled, [changed] signals.
-	 *
-	 * This is not no-oped; calling [setSelectedItemsUser] with the currently selected items will still result
-	 * in a [changed] event.
-	 */
-	override fun setSelectedItemsUser(items: List<E>) {
-		val previousSelection = _selectedMap.keys.toList()
-		if (changing.isNotEmpty()) {
-			_changing.dispatch(previousSelection, items, cancel.reset())
-			if (cancel.canceled) return
-		}
-		setSelectedItems(items)
-		_changed.dispatch(previousSelection, items)
-	}
-
 	protected abstract fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>)
 
-	override fun clear() {
-		setSelectedItems(emptyList())
+	override fun clear(isUserInteraction: Boolean) {
+		setSelectedItems(emptyList(), isUserInteraction)
 	}
 
-	override fun selectAll() {
+	override fun selectAll(isUserInteraction: Boolean) {
 		val newSelection = ArrayList<E>()
 		walkSelectableItems {
 			newSelection.add(it)
 		}
-		setSelectedItems(newSelection)
+		setSelectedItems(newSelection, isUserInteraction)
 	}
 
 	override fun dispose() {
@@ -212,42 +212,45 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 /**
  * Sets the selection to the intersection of the current selection and the provided selection.
  * @see MutableCollection.retainAll
+ * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
-fun <E : Any> Selection<E>.retainAll(list: List<E>) {
-	setSelectedItems(getSelectedItems(false).intersect(list).toList())
+fun <E : Any> Selection<E>.retainAll(list: List<E>, isUserInteraction: Boolean = true) {
+	setSelectedItems(getSelectedItems(false).intersect(list).toList(), isUserInteraction)
 }
 
 /**
  * Adds all of the specified elements to the current selection.
  * @see MutableCollection.addAll
+ * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
-fun <E : Any> Selection<E>.addAll(elements: Collection<E>) {
+fun <E : Any> Selection<E>.addAll(elements: Collection<E>, isUserInteraction: Boolean = true) {
 	val selected = getSelectedItems(false)
 	selected.addAll(elements)
-	setSelectedItems(selected)
+	setSelectedItems(selected, isUserInteraction)
 }
 
 /**
  * Removes all of the specified elements from the current selection.
  * @see MutableCollection.removeAll
+ * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
-fun <E : Any> Selection<E>.removeAll(elements: Collection<E>) {
+fun <E : Any> Selection<E>.removeAll(elements: Collection<E>, isUserInteraction: Boolean = true) {
 	val selected = getSelectedItems(false)
 	selected.removeAll(elements)
-	setSelectedItems(selected)
+	setSelectedItems(selected, isUserInteraction)
 }
 
 /**
  * Toggles the selection status of the given element.
  */
-fun <E : Any> Selection<E>.toggleSelected(element: E) {
-	setItemIsSelected(element, !getItemIsSelected(element))
+fun <E : Any> Selection<E>.toggleSelected(element: E, isUserInteraction: Boolean = true) {
+	setItemIsSelected(element, !getItemIsSelected(element), isUserInteraction)
 }
 
-fun <E : Any> Selection<E>.setItemIsSelected(element: E, value: Boolean) {
+fun <E : Any> Selection<E>.setItemIsSelected(element: E, value: Boolean, isUserInteraction: Boolean = true) {
 	if (value) {
-		addAll(listOf(element))
+		addAll(listOf(element), isUserInteraction)
 	} else {
-		removeAll(listOf(element))
+		removeAll(listOf(element), isUserInteraction)
 	}
 }

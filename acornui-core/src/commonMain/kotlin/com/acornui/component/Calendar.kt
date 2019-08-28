@@ -171,7 +171,7 @@ open class Calendar(
 			@Suppress("UNCHECKED_CAST")
 			val cell = e.currentTarget as CalendarItemRenderer
 			e.handled = true
-			selection.setSelectedItemsUser(listOf(cell.data!!))
+			selection.setSelectedItems(listOf(cell.data!!), isUserInteraction = true)
 		}
 	}
 
