@@ -72,11 +72,11 @@ class GlfwWindowImpl(
 			requestRender()
 		}
 
-	override var width: Float = 0f
-		private set
+	override val width: Float
+		get() = framebufferWidth / scaleX
 
-	override var height: Float = 0f
-		private set
+	override val height: Float
+		get() = framebufferHeight / scaleY
 
 	override var framebufferWidth: Int = 0
 		private set
@@ -105,12 +105,12 @@ class GlfwWindowImpl(
 		// Configure our window
 		glfwDefaultWindowHints() // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
-		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE)
 
 		if (glConfig.antialias)
 			glfwWindowHint(GLFW_SAMPLES, 4)
 
 		//glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL11.GL_TRUE)
 		glfwWindowHint(GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
 
 		val primaryMonitor = glfwGetPrimaryMonitor()
@@ -121,9 +121,10 @@ class GlfwWindowImpl(
 		glfwGetMonitorContentScale(primaryMonitor, windowScaleXArr, windowScaleYArr)
 		val wSX = windowScaleXArr[0]
 		val wSY = windowScaleYArr[0]
+		Log.info("Window scale: $wSX")
 
 		// Create the window
-		windowId = glfwCreateWindow((windowConfig.initialWidth * wSX).toInt(), (windowConfig.initialHeight * wSY).toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
+		windowId = glfwCreateWindow((windowConfig.initialWidth).toInt(), (windowConfig.initialHeight).toInt(), windowConfig.title, MemoryUtil.NULL, MemoryUtil.NULL)
 		if (windowId == MemoryUtil.NULL)
 			throw Exception("Failed to create the GLFW window")
 
@@ -133,6 +134,7 @@ class GlfwWindowImpl(
 		glfwGetFramebufferSize(windowId, framebufferW, framebufferH)
 		framebufferWidth = framebufferW[0]
 		framebufferHeight = framebufferH[0]
+		Log.info("Framebuffer size $framebufferWidth $framebufferHeight")
 
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(windowId)
@@ -172,13 +174,7 @@ class GlfwWindowImpl(
 		glfwGetWindowContentScale(windowId, scaleXArr, scaleYArr)
 		scaleX = scaleXArr[0]
 		scaleY = scaleYArr[0]
-
-		// Get the window size
-		val windowW = IntArray(1)
-		val windowH = IntArray(1)
-		glfwGetWindowSize(windowId, windowW, windowH)
-		width = windowW[0] / scaleX
-		height = windowH[0] / scaleY
+		Log.info("Window content scale: $scaleX")
 
 		// Make the window visible
 		glfwShowWindow(windowId)
@@ -201,7 +197,7 @@ class GlfwWindowImpl(
 		}
 
 		glfwSetWindowSizeCallback(windowId) { _, width, height ->
-			updateSize(width / scaleX, height / scaleY)
+			updateSize(width.toFloat(), height.toFloat())
 		}
 
 		glfwSetWindowContentScaleCallback(windowId) { _, scaleX, scaleY ->
@@ -226,6 +222,7 @@ class GlfwWindowImpl(
 		this.scaleX = scaleX
 		this.scaleY = scaleY
 		_scaleChanged.dispatch(scaleX, scaleY)
+		_sizeChanged.dispatch(width, height)
 	}
 
 	override var isVisible: Boolean by Delegates.observable(true) { prop, old, new ->
@@ -243,8 +240,6 @@ class GlfwWindowImpl(
 	}
 
 	private fun updateSize(width: Float, height: Float) {
-		this.width = width
-		this.height = height
 		requestRender()
 		_sizeChanged.dispatch(width, height)
 	}
