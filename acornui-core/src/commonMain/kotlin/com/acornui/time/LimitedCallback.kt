@@ -18,8 +18,6 @@ package com.acornui.time
 
 import com.acornui.Disposable
 import com.acornui.Updatable
-import com.acornui.UpdatableChild
-import com.acornui.UpdatableChildBase
 
 interface CallbackWrapper : Disposable {
 	operator fun invoke()
@@ -77,7 +75,7 @@ fun limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
 internal class DelayedCallback(
 		val duration: Float,
 		val callback: () -> Unit
-) : UpdatableChildBase(), UpdatableChild, CallbackWrapper {
+) : Updatable, CallbackWrapper {
 
 	private var currentTime: Float = 0f
 
@@ -87,7 +85,7 @@ internal class DelayedCallback(
 		currentTime += dT
 		if (currentTime > duration) {
 			currentTime = 0f
-			remove()
+			stop()
 			isInvoking = true
 			callback()
 			isInvoking = false
@@ -96,7 +94,7 @@ internal class DelayedCallback(
 
 	override operator fun invoke() {
 		if (isInvoking) return
-		if (parent == null) {
+		if (!isDriven) {
 			start()
 		} else {
 			currentTime = 0f
@@ -104,7 +102,7 @@ internal class DelayedCallback(
 	}
 
 	override fun dispose() {
-		remove()
+		stop()
 	}
 }
 
