@@ -17,8 +17,10 @@
 package com.acornui.headless
 
 import com.acornui.asset.Loaders
+import com.acornui.async.delay
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
+import com.acornui.di.dKey
 import com.acornui.di.inject
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.exit
@@ -31,9 +33,8 @@ import com.acornui.io.file.FilesImpl
 import com.acornui.mock.MockGl20
 import com.acornui.mock.MockKeyInput
 import com.acornui.mock.MockMouseInput
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlin.test.*
 
 class JvmHeadlessApplicationTest {
 
@@ -49,4 +50,30 @@ class JvmHeadlessApplicationTest {
 			exit()
 		}
 	}
+
+	@Test fun failedApplicationShouldntStall() {
+		assertFailsWith(ExpectedException::class) {
+			object : JvmHeadlessApplication("src/jvmTest/resources") {
+				val failedTask by task(dKey()) {
+					throw ExpectedException("Should fail")
+				}
+			}.start {
+				fail("Application should not start")
+			}
+		}
+	}
+
+	@Test fun taskTimeout() {
+		assertFailsWith(TimeoutCancellationException::class) {
+			object : JvmHeadlessApplication("src/jvmTest/resources") {
+				val failedTask by task(dKey(), timeout = 1f) {
+					delay(20f)
+				}
+			}.start {
+				fail("Application should not start")
+			}
+		}
+	}
 }
+
+private class ExpectedException(message: String) : Exception(message)

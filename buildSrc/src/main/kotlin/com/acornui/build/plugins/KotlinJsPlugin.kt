@@ -86,6 +86,8 @@ class KotlinJsPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test"))
 						implementation(kotlin("test-js"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}
 				}
 			}

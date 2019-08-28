@@ -23,7 +23,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
@@ -92,6 +91,9 @@ class KotlinMppPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test-common"))
 						implementation(kotlin("test-annotations-common"))
+
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
 				}
 
@@ -107,6 +109,8 @@ class KotlinMppPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test"))
 						implementation(kotlin("test-junit"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 					}
 				}
 
@@ -121,6 +125,8 @@ class KotlinMppPlugin : Plugin<Project> {
 				val jsTest by getting {
 					dependencies {
 						implementation(kotlin("test-js"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}
 				}
 			}

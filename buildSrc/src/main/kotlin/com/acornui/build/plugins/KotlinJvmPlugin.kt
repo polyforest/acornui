@@ -76,6 +76,8 @@ class KotlinJvmPlugin : Plugin<Project> {
 					dependencies {
 						implementation(kotlin("test"))
 						implementation(kotlin("test-junit"))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 					}
 				}
 			}
