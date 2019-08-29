@@ -31,6 +31,7 @@ class KotlinJsPlugin : Plugin<Project> {
 		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		target.pluginManager.apply("kotlinx-serialization")
 
+		val kotlinVersion: String by target.extra
 		val kotlinLanguageVersion: String by target.extra
 		val kotlinSerializationVersion: String by target.extra
 		val kotlinCoroutinesVersion: String by target.extra
@@ -68,7 +69,7 @@ class KotlinJsPlugin : Plugin<Project> {
 
 				val commonMain by getting {
 					dependencies {
-						implementation(kotlin("stdlib-common"))
+						implementation(kotlin("stdlib-common", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
@@ -76,7 +77,7 @@ class KotlinJsPlugin : Plugin<Project> {
 
 				val jsMain by getting {
 					dependencies {
-						implementation(kotlin("stdlib-js"))
+						implementation(kotlin("stdlib-js", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}
@@ -84,8 +85,8 @@ class KotlinJsPlugin : Plugin<Project> {
 
 				val jsTest by getting {
 					dependencies {
-						implementation(kotlin("test"))
-						implementation(kotlin("test-js"))
+						implementation(kotlin("test", version = kotlinVersion))
+						implementation(kotlin("test-js", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}

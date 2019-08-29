@@ -35,6 +35,8 @@ import com.acornui.mock.MockKeyInput
 import com.acornui.mock.MockMouseInput
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.test.*
+import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 class JvmHeadlessApplicationTest {
 
@@ -67,7 +69,7 @@ class JvmHeadlessApplicationTest {
 		assertFailsWith(TimeoutCancellationException::class) {
 			object : JvmHeadlessApplication("src/jvmTest/resources") {
 				val failedTask by task(dKey(), timeout = 1f) {
-					delay(20f)
+					delay(20.seconds)
 				}
 			}.start {
 				fail("Application should not start")

@@ -22,6 +22,8 @@ import com.acornui.Disposable
 import com.acornui.recycle.Clearable
 import kotlinx.coroutines.*
 import kotlin.collections.set
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 typealias Work<R> = suspend () -> R
 
@@ -82,9 +84,18 @@ suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
  * Acorn conventions use seconds, not milliseconds.
  * @see kotlinx.coroutines.delay
  */
+@Deprecated("Use Duration", ReplaceWith("delay(timeSeconds.toDouble().seconds)", "kotlin.time.seconds"))
 suspend fun delay(timeSeconds: Float) {
 	delay((timeSeconds * 1000f).toLong())
 }
+
+/**
+ * @see kotlinx.coroutines.delay
+ */
+suspend fun delay(time: Duration) {
+	delay(time.inMilliseconds.toLong())
+}
+
 
 /**
  * Acorn conventions use seconds, not milliseconds.

@@ -32,6 +32,7 @@ class KotlinMppPlugin : Plugin<Project> {
 		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		target.pluginManager.apply("kotlinx-serialization")
 
+		val kotlinVersion: String by target.extra
 		val kotlinJvmTarget: String by target.extra
 		val kotlinLanguageVersion: String by target.extra
 		val kotlinSerializationVersion: String by target.extra
@@ -42,6 +43,12 @@ class KotlinMppPlugin : Plugin<Project> {
 		}
 
 		target.extensions.configure<KotlinMultiplatformExtension> {
+			sourceSets {
+				all {
+					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
+					languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+				}
+			}
 			js {
 //				browser {}
 				compilations.all {
@@ -81,7 +88,7 @@ class KotlinMppPlugin : Plugin<Project> {
 				@Suppress("UNUSED_VARIABLE")
 				val commonMain by getting {
 					dependencies {
-						implementation(kotlin("stdlib-common"))
+						implementation(kotlin("stdlib-common", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
@@ -89,8 +96,8 @@ class KotlinMppPlugin : Plugin<Project> {
 
 				val commonTest by getting {
 					dependencies {
-						implementation(kotlin("test-common"))
-						implementation(kotlin("test-annotations-common"))
+						implementation(kotlin("test-common", version = kotlinVersion))
+						implementation(kotlin("test-annotations-common", version = kotlinVersion))
 
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
@@ -99,7 +106,7 @@ class KotlinMppPlugin : Plugin<Project> {
 
 				val jvmMain by getting {
 					dependencies {
-						implementation(kotlin("stdlib-jdk8"))
+						implementation(kotlin("stdlib-jdk8", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 					}
@@ -107,8 +114,8 @@ class KotlinMppPlugin : Plugin<Project> {
 
 				val jvmTest by getting {
 					dependencies {
-						implementation(kotlin("test"))
-						implementation(kotlin("test-junit"))
+						implementation(kotlin("test", version = kotlinVersion))
+						implementation(kotlin("test-junit", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 					}
@@ -116,7 +123,7 @@ class KotlinMppPlugin : Plugin<Project> {
 
 				val jsMain by getting {
 					dependencies {
-						implementation(kotlin("stdlib-js"))
+						implementation(kotlin("stdlib-js", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}
@@ -124,7 +131,7 @@ class KotlinMppPlugin : Plugin<Project> {
 
 				val jsTest by getting {
 					dependencies {
-						implementation(kotlin("test-js"))
+						implementation(kotlin("test-js", version = kotlinVersion))
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 					}

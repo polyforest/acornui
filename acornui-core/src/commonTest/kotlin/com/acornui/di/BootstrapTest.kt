@@ -23,6 +23,8 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 class BootstrapTest {
 
@@ -31,11 +33,11 @@ class BootstrapTest {
 		val key2 = dKey<String>()
 		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task1 by bootstrap.task(key1) {
-			delay(0.1f)
+			delay(0.1.seconds)
 			"dependency 1"
 		}
 		val task2 by bootstrap.task(key2) {
-			delay(0.1f)
+			delay(0.1.seconds)
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
 		bootstrap.awaitAll()
@@ -50,7 +52,7 @@ class BootstrapTest {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
 		val task1 by bootstrap.task(key1) {
-			delay(0.1f)
+			delay(0.1.seconds)
 			"dependency 1"
 		}
 		bootstrap.awaitAll()
@@ -65,7 +67,7 @@ class BootstrapTest {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
 		val task1 by bootstrap.task(key1) {
-			delay(0.1f)
+			delay(0.1.seconds)
 			"dependency 1"
 		}
 		val dependencyList = bootstrap.dependenciesList()
@@ -79,7 +81,7 @@ class BootstrapTest {
 		}
 		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
 		val task1 by bootstrap.task(key2) {
-			delay(0.1f)
+			delay(0.1.seconds)
 			"Extended key"
 		}
 		bootstrap.awaitAll()
@@ -96,7 +98,7 @@ class BootstrapTest {
 		}
 		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
 		val task1 by bootstrap.task(key2) {
-			delay(1f) // Will cause a timeout
+			delay(1.seconds) // Will cause a timeout
 			"Extended key"
 		}
 		assertFailsWith(TimeoutCancellationException::class) {
@@ -113,7 +115,7 @@ class BootstrapTest {
 		}
 		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
 		val task1 by bootstrap.task(key2, isOptional = true) {
-			delay(1f) // Will cause a timeout
+			delay(1.seconds) // Will cause a timeout
 			"Extended key"
 		}
 		assertEquals(emptyList(), bootstrap.dependenciesList())

@@ -18,8 +18,6 @@ import com.acornui.build.AcornDependencies
 
 AcornDependencies.addVersionProperties(extra)
 
-val kotlinVersion: String by extra
-
 rootProject.name = "acornui"
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
