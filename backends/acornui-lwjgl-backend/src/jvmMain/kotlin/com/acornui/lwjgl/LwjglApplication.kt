@@ -70,6 +70,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.runBlocking
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
+import kotlin.system.exitProcess
 import org.lwjgl.Version as LwjglVersion
 
 /**
@@ -87,6 +88,10 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	init {
+		if (macFirstThreadRestart()) {
+			println("Restarting JVM with -XstartOnFirstThread")
+			exitProcess(0)
+		}
 		uiThread = Thread.currentThread()
 		Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
 			uncaughtExceptionHandler(exception)
