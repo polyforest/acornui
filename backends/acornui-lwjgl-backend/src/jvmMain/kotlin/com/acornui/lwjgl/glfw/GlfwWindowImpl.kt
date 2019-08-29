@@ -78,6 +78,18 @@ class GlfwWindowImpl(
 	override val height: Float
 		get() = framebufferHeight / scaleY
 
+	// GLFW window size may be removed in 3.2.3 - There are inconsistencies between platforms when dealing with HDPI.
+	// https://github.com/glfw/glfw/issues/677
+
+	private val _glfwWindowSizeChanged = Signal2<Int, Int>()
+	val glfwWindowSizeChanged = _scaleChanged.asRo()
+
+	var glfwWindowWidth: Int = 0
+		private set
+
+	var glfwWindowHeight: Int = 0
+		private set
+
 	override var framebufferWidth: Int = 0
 		private set
 
@@ -109,7 +121,6 @@ class GlfwWindowImpl(
 		if (glConfig.antialias)
 			glfwWindowHint(GLFW_SAMPLES, 4)
 
-		//glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE) // the window will stay hidden after creation
 		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL11.GL_TRUE)
 		glfwWindowHint(GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
 
@@ -197,8 +208,15 @@ class GlfwWindowImpl(
 		}
 
 		glfwSetWindowSizeCallback(windowId) { _, width, height ->
-			updateSize(width.toFloat(), height.toFloat())
+			glfwWindowWidth = width
+			glfwWindowHeight = height
+			_glfwWindowSizeChanged.dispatch(width, height)
 		}
+		val windowW = IntArray(1)
+		val windowH = IntArray(1)
+		glfwGetWindowSize(windowId, windowW, windowH)
+		glfwWindowWidth = windowW[0]
+		glfwWindowHeight = windowH[0]
 
 		glfwSetWindowContentScaleCallback(windowId) { _, scaleX, scaleY ->
 			updateScale(scaleX, scaleY)
@@ -235,19 +253,15 @@ class GlfwWindowImpl(
 
 	override fun setSize(width: Float, height: Float) {
 		if (this.width == width && this.height == height) return // no-op
-		glfwSetWindowSize(windowId, ceil(width * scaleX).toInt(), ceil(height * scaleY).toInt())
+		glfwSetWindowSize(windowId, ceil(width).toInt(), ceil(height).toInt())
 		// TODO: Test if this kicks off callbacks for new sizes
 	}
 
-	private fun updateSize(width: Float, height: Float) {
+	private fun updateFramebuffer(framebufferWidth: Int, framebufferHeight: Int) {
+		this.framebufferWidth = framebufferWidth
+		this.framebufferHeight = framebufferHeight
 		requestRender()
 		_sizeChanged.dispatch(width, height)
-	}
-
-	private fun updateFramebuffer(width: Int, height: Int) {
-		this.framebufferWidth = width
-		this.framebufferHeight = height
-		requestRender()
 	}
 
 	override var continuousRendering: Boolean = false
@@ -334,6 +348,7 @@ class GlfwWindowImpl(
 		_closeRequested.dispose()
 		_isActiveChanged.dispose()
 		_sizeChanged.dispose()
+		_glfwWindowSizeChanged.dispose()
 		_scaleChanged.dispose()
 		_isVisibleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)

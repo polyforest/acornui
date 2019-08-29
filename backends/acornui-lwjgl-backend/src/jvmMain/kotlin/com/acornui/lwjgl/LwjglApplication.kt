@@ -58,7 +58,7 @@ import com.acornui.lwjgl.files.JvmFileIoManager
 import com.acornui.lwjgl.glfw.GlfwWindowImpl
 import com.acornui.lwjgl.input.GlfwMouseInput
 import com.acornui.lwjgl.input.JvmClipboard
-import com.acornui.lwjgl.input.LwjglKeyInput
+import com.acornui.lwjgl.input.GlfwKeyInput
 import com.acornui.lwjgl.opengl.JvmGl20Debug
 import com.acornui.lwjgl.opengl.LwjglGl20
 import com.acornui.lwjgl.opengl.loadTexture
@@ -120,7 +120,7 @@ open class LwjglApplication : ApplicationBase() {
 	/**
 	 * Sets the [Window] dependency.
 	 */
-	protected open val windowTask by task(Window) {
+	private val windowTask by task(Window) {
 		val config = config()
 		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), debug)
 		_windowId = window.windowId
@@ -150,11 +150,11 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val mouseInputTask by task(MouseInput) {
-		GlfwMouseInput(getWindowId(), get(Window))
+		GlfwMouseInput(getWindowId(), get(Window) as GlfwWindowImpl)
 	}
 
 	protected open val keyInputTask by task(KeyInput) {
-		LwjglKeyInput(getWindowId())
+		GlfwKeyInput(getWindowId())
 	}
 
 	override val filesTask by task(Files) {

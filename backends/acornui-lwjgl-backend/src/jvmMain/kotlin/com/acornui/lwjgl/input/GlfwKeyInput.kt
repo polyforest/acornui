@@ -33,7 +33,7 @@ import org.lwjgl.glfw.GLFWKeyCallback
 /**
  * @author nbilyk
  */
-class LwjglKeyInput(private val window: Long) : KeyInput {
+class GlfwKeyInput(private val window: Long) : KeyInput {
 
 	private val _keyDown = Signal1<KeyInteractionRo>()
 	override val keyDown = _keyDown.asRo()

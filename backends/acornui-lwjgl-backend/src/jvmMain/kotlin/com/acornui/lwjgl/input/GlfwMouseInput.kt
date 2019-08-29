@@ -16,10 +16,13 @@
 
 package com.acornui.lwjgl.input
 
+import com.acornui.function.as2
+import com.acornui.function.as3
 import com.acornui.graphic.Window
 import com.acornui.input.MouseInput
 import com.acornui.input.WhichButton
 import com.acornui.input.interaction.*
+import com.acornui.lwjgl.glfw.GlfwWindowImpl
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.emptySignal
@@ -29,7 +32,7 @@ import org.lwjgl.glfw.*
 /**
  * @author nbilyk
  */
-class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInput {
+class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : MouseInput {
 
 	// TODO: Touch input for lwjgl?
 
@@ -76,6 +79,10 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 	override val overCanvas: Boolean
 		get() = _overCanvas
 
+	// May no longer be needed in lwjgl 3.2.3 - glfw has platform inconsistencies for hdpi scaling.
+	private var glfwXToPoints: Float = 1f
+	private var glfwYToPoints: Float = 1f
+
 	private val mouseButtonCallback: GLFWMouseButtonCallback = object : GLFWMouseButtonCallback() {
 		override fun invoke(window: Long, button: Int, action: Int, mods: Int) {
 			mouseEvent.clear()
@@ -101,8 +108,8 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 	private val cursorPosCallback: GLFWCursorPosCallback = object : GLFWCursorPosCallback() {
 		override fun invoke(windowId: Long, xpos: Double, ypos: Double) {
 			if (mouseMove.isDispatching) return
-			_canvasX = (xpos / window.scaleX).toFloat()
-			_canvasY = (ypos / window.scaleY).toFloat()
+			_canvasX = (xpos * glfwXToPoints).toFloat()
+			_canvasY = (ypos * glfwYToPoints).toFloat()
 
 			mouseEvent.clear()
 			mouseEvent.canvasX = _canvasX
@@ -140,6 +147,15 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 		GLFW.glfwSetCursorPosCallback(windowId, cursorPosCallback)
 		GLFW.glfwSetCursorEnterCallback(windowId, cursorEnterCallback)
 		GLFW.glfwSetScrollCallback(windowId, mouseWheelCallback)
+		window.scaleChanged.add(::updatePxToPt.as2)
+		window.sizeChanged.add(::updatePxToPt.as2)
+		window.glfwWindowSizeChanged.add(::updatePxToPt.as2)
+		updatePxToPt()
+	}
+
+	private fun updatePxToPt() {
+		glfwXToPoints = window.width / window.glfwWindowWidth
+		glfwYToPoints = window.height / window.glfwWindowHeight
 	}
 
 	override fun mouseIsDown(button: WhichButton): Boolean {
@@ -147,6 +163,9 @@ class GlfwMouseInput(private val windowId: Long, val window: Window) : MouseInpu
 	}
 
 	override fun dispose() {
+		window.scaleChanged.remove(::updatePxToPt.as2)
+		window.sizeChanged.remove(::updatePxToPt.as2)
+		window.glfwWindowSizeChanged.remove(::updatePxToPt.as2)
 		GLFW.glfwSetMouseButtonCallback(windowId, null)
 		GLFW.glfwSetCursorPosCallback(windowId, null)
 		GLFW.glfwSetCursorEnterCallback(windowId, null)
