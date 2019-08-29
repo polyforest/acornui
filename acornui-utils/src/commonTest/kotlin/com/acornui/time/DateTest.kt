@@ -3,13 +3,19 @@ package com.acornui.time
 import com.acornui.serialization.jsonParse
 import com.acornui.serialization.jsonStringify
 import kotlinx.serialization.Serializable
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DateTest {
 
-	@Test fun parseDateTest() {
+	@Test fun toIsoString() {
+		val d = utcDate(2019, 2, 3, 4, 5, 6, 7)
+		assertEquals("2019-02-03T04:05:06.007Z", d.toIsoString())
+	}
 
+	@Ignore
+	@Test fun serializeIso() {
 		val d = utcDate(2019, 2, 3, 4, 5, 6, 7)
 		val json = jsonStringify(Date.serializer(), d)
 		assertEquals("\"2019-02-03T04:05:06.007Z\"", json)

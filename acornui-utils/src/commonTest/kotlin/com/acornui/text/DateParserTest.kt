@@ -7,6 +7,7 @@ import com.acornui.time.utcDate
 import com.acornui.time.utcTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class DateParserTest {
 
@@ -217,5 +218,7 @@ class DateParserTest {
 			val t = date((27513254 * i).toLong())
 			assertEquals(t, parser.parse(t.toIsoString()))
 		}
+
+		assertEquals(utcDate(fullYear = 2019, month = 2, dayOfMonth = 3, hour = 4, minute = 5, second = 6, milli = 7), parser.parse("2019-02-03T04:05:06.007Z"))
 	}
 }

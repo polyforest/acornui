@@ -354,6 +354,7 @@ fun date(time: Long): Date {
  */
 fun date(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
 	val date = Date()
+	date.time = 0
 	date.fullYear = fullYear
 	date.month = month
 	date.dayOfMonth = dayOfMonth
@@ -376,6 +377,7 @@ fun date(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: 
  */
 fun utcDate(fullYear: Int, month: Int, dayOfMonth: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, milli: Int = 0): Date {
 	val date = Date()
+	date.time = 0
 	date.utcFullYear = fullYear
 	date.utcMonth = month
 	date.utcDayOfMonth = dayOfMonth
