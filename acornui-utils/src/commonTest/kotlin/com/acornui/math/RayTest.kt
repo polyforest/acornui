@@ -25,6 +25,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+// Note: JS will stringify 1.0f as "1" and JVM is "1.0"
+
 /**
  * @author nbilyk
  */
@@ -98,12 +100,15 @@ class RayTest {
 	}
 
 	@Test fun serialize() {
-		val v = Ray(Vector3(1f, 2f, 3f), Vector3(4f, 5f, 6f))
-		val str = jsonStringify(Ray.serializer(), v)
-		assertEquals("""{"origin":[1.0,2.0,3.0],"direction":[4.0,5.0,6.0]}""", str)
-		assertEquals(v, jsonParse(Ray.serializer(), str))
+		val ray = Ray(Vector3(1.1f, 2.1f, 3.1f), Vector3(4.1f, 5.1f, 6.1f))
+		val str = jsonStringify(Ray.serializer(), ray)
+		val ray2 = jsonParse(Ray.serializer(), str)
+		assertTrue(ray.origin.closeTo(ray2.origin))
+		assertTrue(ray.direction.closeTo(ray2.direction))
 
-		val bin = binaryDump(Ray.serializer(), v)
-		assertEquals(v, binaryParse(Ray.serializer(), bin))
+		val bin = binaryDump(Ray.serializer(), ray)
+		val ray3 = binaryParse(Ray.serializer(), bin)
+		assertTrue(ray.origin.closeTo(ray3.origin))
+		assertTrue(ray.direction.closeTo(ray3.direction))
 	}
 }

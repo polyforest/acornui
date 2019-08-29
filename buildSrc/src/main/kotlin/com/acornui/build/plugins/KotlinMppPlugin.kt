@@ -50,7 +50,7 @@ class KotlinMppPlugin : Plugin<Project> {
 				}
 			}
 			js {
-//				browser {}
+				browser {}
 				compilations.all {
 					kotlinOptions {
 						moduleKind = "amd"
@@ -139,10 +139,10 @@ class KotlinMppPlugin : Plugin<Project> {
 			}
 		}
 
-		target.afterEvaluate {
-			tasks.withType(Test::class.java).configureEach {
-				jvmArgs("-ea")
-			}
-		}
+//		target.afterEvaluate {
+//			tasks.withType(Test::class.java).configureEach {
+//				jvmArgs("-ea")
+//			}
+//		}
 	}
 }

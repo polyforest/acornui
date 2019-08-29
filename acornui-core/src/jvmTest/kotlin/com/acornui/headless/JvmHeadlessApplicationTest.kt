@@ -35,7 +35,6 @@ import com.acornui.mock.MockKeyInput
 import com.acornui.mock.MockMouseInput
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.test.*
-import kotlin.time.milliseconds
 import kotlin.time.seconds
 
 class JvmHeadlessApplicationTest {

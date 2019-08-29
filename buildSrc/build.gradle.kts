@@ -29,7 +29,7 @@ kotlinDslPluginOptions {
     experimentalWarning.set(false)
 }
 
-val kotlinVersion: String = "1.3.31"
+val kotlinVersion: String = "1.3.50"
 dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
     implementation(kotlin("serialization", version = kotlinVersion))
@@ -45,8 +45,8 @@ gradlePlugin {
         }
         create("kotlinJvm") {
             id = "com.acornui.kotlin-jvm"
-            displayName = "Kotlin jvm configuration for Acorn UI"
             implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
+            displayName = "Kotlin jvm configuration for Acorn UI"
             description = "Configures an Acorn UI library project for Kotlin jvm."
         }
         create("kotlinJs") {

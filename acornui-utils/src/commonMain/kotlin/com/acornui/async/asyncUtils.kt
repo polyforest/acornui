@@ -19,11 +19,9 @@
 package com.acornui.async
 
 import com.acornui.Disposable
-import com.acornui.recycle.Clearable
 import kotlinx.coroutines.*
 import kotlin.collections.set
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 typealias Work<R> = suspend () -> R
 
@@ -98,13 +96,11 @@ suspend fun delay(time: Duration) {
 
 
 /**
- * Acorn conventions use seconds, not milliseconds.
  * @see kotlinx.coroutines.withTimeout
  */
-suspend fun <T> withTimeout(timeSeconds: Float, block: suspend CoroutineScope.() -> T): T = withTimeout((timeSeconds * 1000f).toLong(), block)
+suspend fun <T> withTimeout(time: Duration, block: suspend CoroutineScope.() -> T): T = withTimeout(time.inMilliseconds.toLong(), block)
 
 /**
- * Acorn conventions use seconds, not milliseconds.
  * @see kotlinx.coroutines.withTimeoutOrNull
  */
-suspend fun <T> withTimeoutOrNull(timeSeconds: Float, block: suspend CoroutineScope.() -> T): T? = withTimeoutOrNull((timeSeconds * 1000f).toLong(), block)
+suspend fun <T> withTimeoutOrNull(time: Duration, block: suspend CoroutineScope.() -> T): T? = withTimeoutOrNull(time.inMilliseconds.toLong(), block)

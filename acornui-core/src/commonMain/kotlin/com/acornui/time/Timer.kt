@@ -94,7 +94,7 @@ internal class Timer private constructor() : Updatable, Clearable, Disposable {
  * @param callback The function to call after every repetition.
  */
 fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
-	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
+	require(repetitions != 0) { "repetitions argument may not be zero." }
 	return Timer.obtain(duration, repetitions, delay, callback)
 }
 

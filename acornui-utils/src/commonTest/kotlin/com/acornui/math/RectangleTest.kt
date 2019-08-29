@@ -25,10 +25,10 @@ import kotlin.test.assertEquals
 class RectangleTest {
 	@Test
 	fun serialize() {
-		val v = Foo(Rectangle(1f, 2f, 3f, 4f))
+		val v = Foo(Rectangle(1.1f, 2.1f, 3.1f, 4.1f))
 		val str = jsonStringify(Foo.serializer(), v)
-		assertEquals("""{"rect":[1.0,2.0,3.0,4.0]}""", str)
-		assertEquals(v, jsonParse(Foo.serializer(), """{"rect":[1.0,2.0,3.0,4.0]}"""))
+		assertEquals("""{"rect":[1.1,2.1,3.1,4.1]}""", str)
+		assertEquals(v, jsonParse(Foo.serializer(), """{"rect":[1.1,2.1,3.1,4.1]}"""))
 	}
 
 	@Test
