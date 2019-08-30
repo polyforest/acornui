@@ -434,25 +434,6 @@ data class Color(
 		return this
 	}
 
-	/**
-	 * Packs the color components into a 32-bit integer with the format ARGB and then converts it to a float.
-	 * Note that no range checking is performed for higher performance.
-	 * @return the packed color as a float
-	 */
-	fun argbFloatBits(): Float = argbFloatBits(r, g, b, a)
-
-	/**
-	 * Sets the Color components using the specified float value in the format ARGB8888.
-	 */
-	fun fromArgbFloatBits(float: Float): Color {
-		val int = float.toRawBits()
-		a = (int and -16777216 ushr 24) / 254f
-		r = (int and 0x00ff0000 ushr 16) / 255f
-		g = (int and 0x0000ff00 ushr 8) / 255f
-		b = (int and 0x000000ff) / 255f
-		return this
-	}
-
 	companion object {
 		val CLEAR: ColorRo = Color(0f, 0f, 0f, 0f)
 		val WHITE: ColorRo = Color(1f, 1f, 1f, 1f)
@@ -520,7 +501,7 @@ data class Color(
 		 */
 		fun fromCssStr(value: String): Color {
 			val i = value.indexOf("(")
-			if (i == -1) return Color.BLACK.copy()
+			if (i == -1) return BLACK.copy()
 			val sub = value.substring(i + 1, value.length - 1)
 			val split = sub.split(',')
 			val r = split[0].trim().toFloat() / 255f
@@ -558,11 +539,6 @@ data class Color(
 		fun rgba8888(color: ColorRo): Int {
 			clamped.set(color).clamp()
 			return ((clamped.r * 255).toInt() shl 24) or ((clamped.g * 255).toInt() shl 16) or ((clamped.b * 255).toInt() shl 8) or (clamped.a * 255).toInt()
-		}
-
-		fun argbFloatBits(r: Float, g: Float, b: Float, a: Float): Float {
-			val color = ((255f * a).toInt() shl 24) or ((255f * r).toInt() shl 16) or ((255f * g).toInt() shl 8) or ((255f * b).toInt())
-			return Float.fromBits(color and floatBitsMask)
 		}
 
 		private val nameColorMap = hashMapOf(

@@ -129,7 +129,7 @@ class VertexAttributesAdapter(
 		for (i in 0..minOf(fromAttribs.lastIndex, toAttribs.lastIndex)) {
 			if (fromAttribs[i] == toAttribs[i]) {
 				bufferStartIndex++
-				bufferStartComponentIndex += fromAttribs[i].numComponents
+				bufferStartComponentIndex += fromAttribs[i].numFloats
 			}
 			else break
 		}
@@ -151,8 +151,8 @@ class VertexAttributesAdapter(
 			for (i in bufferStartIndex..vertexAttributes.attributes.lastIndex) {
 				val attribute = vertexAttributes.attributes[i]
 				val fromOffset = from.getOffsetByUsage(attribute.usage)
-				val fromSize = from.getAttributeByUsage(attribute.usage)!!.numComponents
-				for (j in 0..attribute.numComponents - 1) {
+				val fromSize = from.getAttributeByUsage(attribute.usage)!!.numFloats
+				for (j in 0 until attribute.numFloats) {
 					if (fromOffset == null || j >= fromSize) {
 						feed.putVertexComponent(0f)
 					} else {
@@ -163,6 +163,9 @@ class VertexAttributesAdapter(
 			componentIndex = 0
 		}
 	}
+
+	private val VertexAttribute.numFloats: Int
+		get() = size shr 2
 }
 
 /**
@@ -231,7 +234,8 @@ data class VertexAttribute(
 	val size: Int
 
 	init {
-		if (numComponents < 1 || numComponents > 4) throw IllegalArgumentException("numComponents must be between 1 and 4")
+		require(numComponents >= 1) { "numComponents must be at least 1" }
+		require(numComponents <= 4) { "numComponents must be at most 4" }
 		componentSize = when (type) {
 			Gl20.FLOAT, Gl20.INT, Gl20.UNSIGNED_INT -> 4
 			Gl20.SHORT, Gl20.UNSIGNED_SHORT -> 2

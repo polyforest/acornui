@@ -101,22 +101,6 @@ class ColorTest {
 		val json2 = jsonStringify(ColorWrapper.serializer(), cW)
 		assertEquals(cW, jsonParse(ColorWrapper.serializer(), json2))
 	}
-
-	@Test fun argbFloatBits() {
-		run {
-			val c = Color(0x4c669933)
-			val floatBits = c.argbFloatBits()
-			val d = Color().fromArgbFloatBits(floatBits)
-			assertTrue(c.closeTo(d, 0.01f)) // Doesn't need to be precise, especially the alpha.
-		}
-
-		run {
-			val c = Color(0xffffffff)
-			val floatBits = c.argbFloatBits()
-			val d = Color().fromArgbFloatBits(floatBits)
-			assertTrue(c.closeTo(d, 0.01f))
-		}
-	}
 }
 
 @Serializable
