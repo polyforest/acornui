@@ -23,7 +23,7 @@ import com.acornui.test.assertListEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.assertNotSame
 
 /**
  * @author nbilyk
@@ -188,7 +188,7 @@ class Matrix3Test {
 	fun copy() {
 		val copy = m1.copy()
 		assertListEquals(m1.values, copy.values)
-		assertFalse(m1.values === copy.values)
+		assertNotSame(m1.values, copy.values)
 	}
 
 	@Test
@@ -199,10 +199,4 @@ class Matrix3Test {
 		val json2 = jsonStringify(Matrix3.serializer(), m2)
 		assertEquals(m2, jsonParse(Matrix3.serializer(), json2))
 	}
-
-}
-
-
-private fun <E> List<E>.printF() {
-	println(joinToString("f, ") + "f")
 }

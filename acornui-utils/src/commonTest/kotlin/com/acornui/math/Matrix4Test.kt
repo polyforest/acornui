@@ -224,19 +224,19 @@ class Matrix4Test {
 		val quat = Quaternion(0.2f, 0.6f, 0.1f, 0.7f)
 		m1.rotate(quat)
 		println(m1.values)
-		assertListEquals(listOf(-7.96f, -70.76f, -46.58f, 1.48f, 23.2f, 61.6f, 54.1f, 40.4f, 3.72f, 20.92f, 15.56f, 9.64f, 11f, 25f, 41f, 43f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(-7.96f, -70.76f, -46.58f, 1.48f, 23.2f, 61.6f, 54.1f, 40.4f, 3.72f, 20.92f, 15.56f, 9.64f, 11f, 25f, 41f, 43f), m1.values) { a, b -> a.closeTo(b) }
 	}
 
 	@Test
 	fun rotate1() {
 		m1.rotate(Vector3(0.2f, 0.65f, 0.33f), Vector3(-0.4f, 2.5f, 33f))
-		assertListEquals(listOf(3f, 5f, 6f, 13f, 17f, 23f, 27f, 35f, 19f, 101f, 73f, 19f, 11f, 25f, 41f, 43f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(3f, 5f, 6f, 13f, 17f, 23f, 27f, 35f, 19f, 101f, 73f, 19f, 11f, 25f, 41f, 43f), m1.values) { a, b -> a.closeTo(b) }
 	}
 
 	@Test
 	fun rotate2() {
 		m1.rotate(3f, -23f, 1f, 3.23f)
-		assertListEquals(listOf(-8.74778f, -18.490776f, -18.35281f, -23.043419f, 13.780127f, 11.134449f, 17.438988f, 28.59626f, -19.81375f, -101.43531f, -73.84483f, -20.155771f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values, { a, b -> a.closeTo(b) })
+		assertListEquals(listOf(-8.74778f, -18.490776f, -18.35281f, -23.043419f, 13.780127f, 11.134449f, 17.438988f, 28.59626f, -19.81375f, -101.43531f, -73.84483f, -20.155771f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values) { a, b -> a.closeTo(b) }
 	}
 
 	@Test
@@ -314,8 +314,4 @@ class Matrix4Test {
 		assertEquals(m4, jsonParse(Matrix4.serializer(), json4))
 	}
 
-}
-
-private fun <E> List<E>.printF() {
-	println(joinToString("f, ") + "f")
 }

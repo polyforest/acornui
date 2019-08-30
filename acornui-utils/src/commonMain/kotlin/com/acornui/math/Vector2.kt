@@ -552,7 +552,6 @@ class Vector2(
 
 }
 
-
 @Serializer(forClass = Vector2::class)
 object Vector2Serializer : KSerializer<Vector2> {
 
