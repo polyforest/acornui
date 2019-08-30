@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ReplaceRangeToWithUntil")
+
 package com.acornui.component.text
 
 import com.acornui.collection.*
@@ -384,16 +386,26 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			if (lineEnd <= lineStart)
 				return
 			glState.setCamera(renderContext)
+
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].render(clip, transform, tint)
+					textElements[j].renderBackground(clip, transform, tint)
+				}
+			}
+			for (i in lineStart..lineEnd - 1) {
+				val line = _lines[i]
+				for (j in line.startIndex..line.endIndex - 1) {
+					textElements[j].renderForeground(clip, transform, tint)
 				}
 			}
 		} else {
 			glState.setCamera(renderContext)
 			for (i in 0..textElements.lastIndex) {
-				textElements[i].render(clip, transform, tint)
+				textElements[i].renderBackground(clip, transform, tint)
+			}
+			for (i in 0..textElements.lastIndex) {
+				textElements[i].renderForeground(clip, transform, tint)
 			}
 		}
 	}

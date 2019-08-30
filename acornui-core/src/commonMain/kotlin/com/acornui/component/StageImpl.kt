@@ -137,6 +137,4 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		glState.batch.flush()
 	}
 
-
-
 }

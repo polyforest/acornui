@@ -144,7 +144,16 @@ interface TextElement : TextElementRo, Disposable {
 	 */
 	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
-	fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+	/**
+	 * Renders the background, such as the selection color, underline, strikethrough, etc.
+	 * Background and foreground rendering is separated to reduce the number of draw calls.
+	 */
+	fun renderBackground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+
+	/**
+	 * Renders the foreground, such as the glyph.
+	 */
+	fun renderForeground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
 
 }
 

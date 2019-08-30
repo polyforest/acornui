@@ -209,10 +209,9 @@ class CharElement private constructor() : TextElement, Clearable {
 		}
 	}
 
-	override fun render(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+	override fun renderBackground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
 		if (!visible || tint.a <= 0f) return
 		val style = style ?: return
-		val glyph = glyph ?: return
 		val glState = glState
 		val batch = glState.batch
 		val colorTmp = colorTmp
@@ -234,9 +233,8 @@ class CharElement private constructor() : TextElement, Clearable {
 			batch.putQuadIndices()
 		}
 
-		colorTmp.set(fontColor).mul(tint)
-
 		if (style.underlined || style.strikeThrough) {
+			colorTmp.set(fontColor).mul(tint)
 			batch.begin()
 			glState.setTexture(glState.whitePixel)
 			glState.blendMode(BlendMode.NORMAL, false)
@@ -251,6 +249,17 @@ class CharElement private constructor() : TextElement, Clearable {
 			batch.putVertex(transform.prj(tmpVec.set(lineVertices[3])), normalWorld, colorTmp, 0f, 0f)
 			batch.putQuadIndices()
 		}
+
+	}
+
+	override fun renderForeground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo) {
+		if (!visible || tint.a <= 0f) return
+		val glyph = glyph ?: return
+		val glState = glState
+		val batch = glState.batch
+		val colorTmp = colorTmp
+		colorTmp.set(fontColor).mul(tint)
+		transform.rot(normalWorld.set(Vector3.NEG_Z)).nor()
 
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f) return // Nothing to draw
 		batch.begin()
