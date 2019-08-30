@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ColorTest {
 
@@ -100,41 +101,24 @@ class ColorTest {
 		val json2 = jsonStringify(ColorWrapper.serializer(), cW)
 		assertEquals(cW, jsonParse(ColorWrapper.serializer(), json2))
 	}
+
+	@Test fun argbFloatBits() {
+		run {
+			val c = Color(0x4c669933)
+			val floatBits = c.argbFloatBits()
+			val d = Color().fromArgbFloatBits(floatBits)
+			assertTrue(c.closeTo(d, 0.01f)) // Doesn't need to be precise, especially the alpha.
+		}
+
+		run {
+			val c = Color(0xffffffff)
+			val floatBits = c.argbFloatBits()
+			val d = Color().fromArgbFloatBits(floatBits)
+			assertTrue(c.closeTo(d, 0.01f))
+		}
+	}
 }
 
 @Serializable
 private data class ColorWrapper(val c: ColorRo)
 
-class HSLTest {
-	@Test fun toRgb() {
-		assertEquals(Color.BLACK, Hsl(0f, 0f, 0f).toRgb(Color()))
-		assertEquals(Color.WHITE, Hsl(0f, 0f, 1f).toRgb(Color()))
-		assertEquals(Color.RED, Hsl(0f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.GREEN, Hsl(120f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.BLUE, Hsl(240f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.YELLOW, Hsl(60f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.CYAN, Hsl(180f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.MAGENTA, Hsl(300f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.LIGHT_GRAY, Hsl(0f, 0f, 0.75f).toRgb(Color()))
-		assertEquals(Color.GRAY, Hsl(0f, 0f, 0.5f).toRgb(Color()))
-		assertEquals(Color.MAROON, Hsl(0f, 1f, 0.25f).toRgb(Color()))
-		assertEquals(Color.OLIVE, Hsl(60f, 1f, 0.25f).toRgb(Color()))
-	}
-}
-
-class HSVTest {
-	@Test fun toRgb() {
-		assertEquals(Color.BLACK, Hsv(0f, 0f, 0f).toRgb(Color()))
-		assertEquals(Color.WHITE, Hsv(0f, 0f, 1f).toRgb(Color()))
-		assertEquals(Color.RED, Hsv(0f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.GREEN, Hsv(120f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.BLUE, Hsv(240f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.YELLOW, Hsv(60f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.CYAN, Hsv(180f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.MAGENTA, Hsv(300f, 1f, 1f).toRgb(Color()))
-		assertEquals(Color.LIGHT_GRAY, Hsv(0f, 0f, 0.75f).toRgb(Color()))
-		assertEquals(Color.GRAY, Hsv(0f, 0f, 0.5f).toRgb(Color()))
-		assertEquals(Color.MAROON, Hsv(0f, 1f, 0.5f).toRgb(Color()))
-		assertEquals(Color.OLIVE, Hsv(60f, 1f, 0.5f).toRgb(Color()))
-	}
-}

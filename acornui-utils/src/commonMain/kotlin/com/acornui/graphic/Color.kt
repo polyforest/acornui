@@ -18,10 +18,10 @@
 
 package com.acornui.graphic
 
-import com.acornui.recycle.Clearable
 import com.acornui.closeTo
 import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.math.MathUtils.clamp
+import com.acornui.recycle.Clearable
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
@@ -434,6 +434,25 @@ data class Color(
 		return this
 	}
 
+	/**
+	 * Packs the color components into a 32-bit integer with the format ARGB and then converts it to a float.
+	 * Note that no range checking is performed for higher performance.
+	 * @return the packed color as a float
+	 */
+	fun argbFloatBits(): Float = argbFloatBits(r, g, b, a)
+
+	/**
+	 * Sets the Color components using the specified float value in the format ARGB8888.
+	 */
+	fun fromArgbFloatBits(float: Float): Color {
+		val int = float.toRawBits()
+		a = (int and -16777216 ushr 24) / 254f
+		r = (int and 0x00ff0000 ushr 16) / 255f
+		g = (int and 0x0000ff00 ushr 8) / 255f
+		b = (int and 0x000000ff) / 255f
+		return this
+	}
+
 	companion object {
 		val CLEAR: ColorRo = Color(0f, 0f, 0f, 0f)
 		val WHITE: ColorRo = Color(1f, 1f, 1f, 1f)
@@ -459,6 +478,11 @@ data class Color(
 		val MAROON: ColorRo = Color(0.5f, 0f, 0f, 1f)
 		val TEAL: ColorRo = Color(0f, 0.5f, 0.5f, 1f)
 		val NAVY: ColorRo = Color(0f, 0f, 0.5f, 1f)
+
+		/**
+		 * Mask to prevent color from converting to NaN range.
+		 */
+		private const val floatBitsMask = 0xfeffffff.toInt()
 
 		private val clamped = Color()
 
@@ -536,6 +560,11 @@ data class Color(
 			return ((clamped.r * 255).toInt() shl 24) or ((clamped.g * 255).toInt() shl 16) or ((clamped.b * 255).toInt() shl 8) or (clamped.a * 255).toInt()
 		}
 
+		fun argbFloatBits(r: Float, g: Float, b: Float, a: Float): Float {
+			val color = ((255f * a).toInt() shl 24) or ((255f * r).toInt() shl 16) or ((255f * g).toInt() shl 8) or ((255f * b).toInt())
+			return Float.fromBits(color and floatBitsMask)
+		}
+
 		private val nameColorMap = hashMapOf(
 				"clear" to CLEAR,
 				"white" to WHITE,
@@ -599,189 +628,6 @@ val ColorRo.luminancePerceived: Float
 	get() {
 		return r * 0.299f + g * 0.587f + b * 0.114f
 	}
-
-/**
- * A read-only representation of an Hsl value.
- */
-interface HslRo {
-	val h: Float
-	val s: Float
-	val l: Float
-	val a: Float
-
-	fun copy(): Hsl {
-		return Hsl().set(this)
-	}
-}
-
-/**
- * Hue saturation lightness
- */
-class Hsl(
-		override var h: Float = 0f,
-		override var s: Float = 0f,
-		override var l: Float = 0f,
-		override var a: Float = 1f
-) : HslRo, Clearable {
-
-	fun toRgb(out: Color): Color {
-		out.a = a
-		val c = (1f - abs(2f * l - 1f)) * s
-		val x = c * (1f - abs((h / 60f) % 2f - 1f))
-		val m = l - c / 2f
-		if (h < 60f) {
-			out.r = c + m
-			out.g = x + m
-			out.b = 0f + m
-		} else if (h < 120f) {
-			out.r = x + m
-			out.g = c + m
-			out.b = 0f + m
-		} else if (h < 180f) {
-			out.r = 0f + m
-			out.g = c + m
-			out.b = x + m
-		} else if (h < 240f) {
-			out.r = 0f + m
-			out.g = x + m
-			out.b = c + m
-		} else if (h < 300f) {
-			out.r = x + m
-			out.g = 0f + m
-			out.b = c + m
-		} else {
-			out.r = c + m
-			out.g = 0f + m
-			out.b = x + m
-		}
-		return out
-	}
-
-	override fun clear() {
-		h = 0f
-		s = 0f
-		l = 0f
-		a = 0f
-	}
-
-	fun set(other: HslRo): Hsl {
-		h = other.h
-		s = other.s
-		l = other.l
-		a = other.a
-		return this
-	}
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is HslRo) return false
-		if (h != other.h) return false
-		if (s != other.s) return false
-		if (l != other.l) return false
-		if (a != other.a) return false
-
-		return true
-	}
-
-	override fun hashCode(): Int {
-		var result = h.hashCode()
-		result = 31 * result + s.hashCode()
-		result = 31 * result + l.hashCode()
-		result = 31 * result + a.hashCode()
-		return result
-	}
-
-}
-
-interface HsvRo {
-	val h: Float
-	val s: Float
-	val v: Float
-	val a: Float
-
-	fun copy(): Hsv {
-		return Hsv().set(this)
-	}
-
-	fun toRgb(out: Color = Color()): Color {
-		out.a = a
-		val c = v * s
-		val x = c * (1f - abs((h / 60f) % 2f - 1f))
-		val m = v - c
-		if (h < 60f) {
-			out.r = c + m
-			out.g = x + m
-			out.b = 0f + m
-		} else if (h < 120f) {
-			out.r = x + m
-			out.g = c + m
-			out.b = 0f + m
-		} else if (h < 180f) {
-			out.r = 0f + m
-			out.g = c + m
-			out.b = x + m
-		} else if (h < 240f) {
-			out.r = 0f + m
-			out.g = x + m
-			out.b = c + m
-		} else if (h < 300f) {
-			out.r = x + m
-			out.g = 0f + m
-			out.b = c + m
-		} else {
-			out.r = c + m
-			out.g = 0f + m
-			out.b = x + m
-		}
-		return out
-	}
-}
-
-/**
- * Hue saturation value
- */
-class Hsv(
-		override var h: Float = 0f,
-		override var s: Float = 0f,
-		override var v: Float = 0f,
-		override var a: Float = 1f
-) : HsvRo, Clearable {
-
-	override fun clear() {
-		h = 0f
-		s = 0f
-		v = 0f
-		a = 0f
-	}
-
-	fun set(other: HsvRo): Hsv {
-		h = other.h
-		s = other.s
-		v = other.v
-		a = other.a
-		return this
-	}
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is HsvRo) return false
-
-		if (h != other.h) return false
-		if (s != other.s) return false
-		if (v != other.v) return false
-		if (a != other.a) return false
-
-		return true
-	}
-
-	override fun hashCode(): Int {
-		var result = h.hashCode()
-		result = 31 * result + s.hashCode()
-		result = 31 * result + v.hashCode()
-		result = 31 * result + a.hashCode()
-		return result
-	}
-}
 
 fun Writer.color(color: ColorRo) {
 	string("#" + color.toRgbaString())
