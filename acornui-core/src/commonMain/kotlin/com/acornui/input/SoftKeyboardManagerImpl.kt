@@ -1,31 +1,68 @@
 package com.acornui.input
 
+import com.acornui.Disposable
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.flow
-import com.acornui.di.*
+import com.acornui.component.style.StyleTag
+import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.di.own
+import com.acornui.di.owns
 import com.acornui.input.interaction.*
-import com.acornui.observe.dataBinding
-import com.acornui.tween.TweenRegistry
-import com.acornui.tween.tween
+import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
+import com.acornui.observe.Observable
+import com.acornui.observe.dataBinding
+import com.acornui.signal.Signal1
+import com.acornui.signal.bind
 import com.acornui.time.start
+import com.acornui.time.stop
+import com.acornui.tween.Tween
+import com.acornui.tween.tween
 
-class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(injector)), SoftKeyboardManager {
+class SoftKeyboardManagerImpl : SoftKeyboardManager, Disposable, Observable {
 
-	override val view: UiComponent = this
+	override fun createView(owner: Owned): UiComponent = SoftKeyboardContainer(owner, this)
+
+	private val _changed = Signal1<SoftKeyboardManager>()
+	override val changed = _changed.asRo()
+
+	override var keyboardType: String? = null
+		private set
+
+	override val isShowing: Boolean
+		get() = keyboardType != null
+
+	override fun show(type: String) {
+		if (keyboardType == type) return
+		keyboardType = type
+		_changed.dispatch(this)
+	}
+
+	override fun hide() {
+		if (keyboardType == null) return
+		keyboardType = null
+		_changed.dispatch(this)
+	}
+
+	override fun dispose() {
+		hide()
+		_changed.dispose()
+	}
+}
+
+private class SoftKeyboardContainer(owner: Owned, private val manager: SoftKeyboardManager) : ContainerImpl(owner) {
 
 	private val softKeyboard = addChild(SoftKeyboardView(this))
-	private var hasKeyboard = false
-
 	private var showPercent by validationProp(0f, ValidationFlags.LAYOUT)
 
 	init {
+		Log.info("Soft keyboard created")
 		visible = false
 		inject(KeyInput).keyDown.add {
-			// If there is a real keyboard, ditch the soft keyboard.
-//			hasKeyboard = true
-//			show = false
+			// On typing, hide the soft keyboard
+			show = false
 		}
 
 		// Prevent focus to the stage when the soft keyboard is used.
@@ -38,6 +75,16 @@ class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(inje
 			it.preventDefault()
 		}
 		focusManager.focusedChanged.add(::focusChangedHandler)
+
+		own(manager.bind {
+			val type = manager.keyboardType
+			if (type != null) {
+				softKeyboard.data.value = type
+				show = true
+			} else {
+				show = false
+			}
+		})
 	}
 
 	private var closeOnNextClick: Boolean = false
@@ -62,47 +109,36 @@ class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(inje
 		if (closeOnNextClick) show = false
 	}
 
+	private var showPercentTween: Tween? = null
+
 	private var show = false
 		set(value) {
 			closeOnNextClick = false
 			if (field != value) {
 				field = value
-				TweenRegistry.kill(this, "showPercent", false)
+				showPercentTween?.stop()
 				val fromP = showPercent
 				if (value) {
 					visible = true
 					val delta = (1f - fromP)
-					val t = tween(0.3f * delta, Easing.pow2Out) { previousAlpha, currentAlpha ->
+					showPercentTween = tween(0.3f * delta, Easing.pow2Out) { _, currentAlpha ->
 						showPercent = currentAlpha * delta + fromP
-					}
-					t.start()
-					TweenRegistry.register(this, "showPercent", t)
+					}.start()
 				} else {
-					val t = tween(0.3f * fromP, Easing.pow2Out, delay = 0.1f) { previousAlpha, currentAlpha ->
+					showPercentTween = tween(0.3f * fromP, Easing.pow2Out, delay = 0.1f) { _, currentAlpha ->
 						showPercent = fromP - currentAlpha * fromP
-					}
-					t.completed.add {
-						visible = false
-					}
-					t.start()
-					TweenRegistry.register(this, "showPercent", t)
+					}.apply {
+						completed.add {
+							visible = false
+						}
+					}.start()
 				}
 			}
 		}
 
-	override fun show(type: String) {
-		show = !hasKeyboard
-		softKeyboard.data.value = type
-	}
-
-	override fun hide() {
-		show = false
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
 		softKeyboard.setSize(explicitWidth, explicitHeight)
-		//softKeyboard.setPosition(0f, softKeyboard.height * (1f - showPercent))
 		out.set(softKeyboard.width, softKeyboard.height * showPercent)
 	}
 
@@ -113,7 +149,7 @@ class SoftKeyboardManagerImpl(injector: Injector) : ContainerImpl(OwnedImpl(inje
 	}
 }
 
-class SoftKeyboardView(owner: Owned) : LayoutContainer<StackLayoutStyle, StackLayoutData>(owner, StackLayout()) {
+class SoftKeyboardView(owner: Owned) : Panel(owner) {
 
 	val data = dataBinding(SoftKeyboardType.DEFAULT)
 	val capsLock = dataBinding(false)
@@ -121,15 +157,14 @@ class SoftKeyboardView(owner: Owned) : LayoutContainer<StackLayoutStyle, StackLa
 	private val keyEvent = KeyInteraction()
 
 	init {
-		+panel {
-
-			+flow {
-				for (i in 'A'.toByte() .. 'Z'.toByte()) {
-					+charButton(listOf(i.toChar()))
-				}
-			} layout { widthPercent = 1f }
-
+		styleTags.add(Companion)
+			
+		+flow {
+			for (i in 'A'.toByte()..'Z'.toByte()) {
+				+charButton(listOf(i.toChar()))
+			}
 		} layout { widthPercent = 1f }
+
 	}
 
 	private fun charButton(chars: List<Char>, init: ComponentInit<CharButton> = {}): CharButton {
@@ -139,6 +174,8 @@ class SoftKeyboardView(owner: Owned) : LayoutContainer<StackLayoutStyle, StackLa
 		return c
 
 	}
+	
+	companion object : StyleTag
 }
 
 private class CharButton(owner: Owned) : ButtonImpl(owner) {
@@ -162,7 +199,9 @@ private class CharButton(owner: Owned) : ButtonImpl(owner) {
 			println("Click.")
 			data.firstOrNull()?.let {
 				charEvent.char = it
-				interactivity.dispatch(focusManager.focused ?: stage, charEvent)
+				val target = focusManager.focused
+				if (target != null)
+					interactivity.dispatch(target, charEvent)
 			}
 		}
 	}

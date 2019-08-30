@@ -17,21 +17,22 @@
 package com.acornui.input
 
 import com.acornui.component.UiComponent
-import com.acornui.di.DKey
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.*
+import com.acornui.observe.Observable
 
-interface SoftKeyboardManager {
+interface SoftKeyboardManager : Observable {
 
-	val view: UiComponent
+	fun createView(owner: Owned): UiComponent
 
+	val isShowing: Boolean
+	val keyboardType: String?
+	
 	fun show(type: String = SoftKeyboardType.DEFAULT)
 	fun hide()
 
 	companion object : DKey<SoftKeyboardManager> {
 		override fun factory(injector: Injector): SoftKeyboardManager? {
-			return SoftKeyboardManagerImpl(injector)
+			return SoftKeyboardManagerImpl()
 		}
 	}
 }

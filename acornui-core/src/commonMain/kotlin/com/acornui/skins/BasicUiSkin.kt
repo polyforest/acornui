@@ -46,6 +46,7 @@ import com.acornui.filter.FilteredContainer
 import com.acornui.filter.dropShadowFilter
 import com.acornui.filter.filtered
 import com.acornui.graphic.Color
+import com.acornui.input.SoftKeyboardView
 import com.acornui.math.*
 
 open class BasicUiSkin(
@@ -92,6 +93,7 @@ open class BasicUiSkin(
 		tooltipStyle()
 		imageButtonStyle()
 		formStyle()
+		softKeyboardStyle()
 
 		WindowScalingAttachment.attach(target)
 	}
@@ -809,6 +811,20 @@ open class BasicUiSkin(
 			horizontalGap = 10f
 		}
 		target.addStyleRule(formStyle, FormContainer)
+	}
+
+	protected open fun softKeyboardStyle() {
+		val panelStyle = PanelStyle().apply {
+			background = {
+				rect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(0f)
+					style.borderThicknesses = Pad(theme.strokeThickness)
+				}
+			}
+		}
+		target.addStyleRule(panelStyle, SoftKeyboardView)
 	}
 
 	/**

@@ -23,6 +23,7 @@ import com.acornui.di.Injector
 import com.acornui.di.OwnedImpl
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
+import com.acornui.function.as1
 import com.acornui.input.SoftKeyboardManager
 import com.acornui.popup.PopUpManager
 import com.acornui.function.as2
@@ -39,7 +40,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override var showWaitingForSkinMessage = true
 
 	private val popUpManagerView = inject(PopUpManager).view
-	private val softKeyboardManagerView = inject(SoftKeyboardManager).view
+	private val softKeyboardManager by SoftKeyboardManager
+	private var softKeyboardView: UiComponent? = null
 
 	private var skinCheckTimer: Disposable? = null
 
@@ -51,11 +53,11 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		focusManager.init(this)
 
 		addChild(popUpManagerView)
-		addChild(softKeyboardManagerView)
 
 		watch(style) {
 			window.clearColor = it.bgColor
 		}
+		softKeyboardManager.changed.add(::invalidateLayout.as1)
 	}
 
 	private fun skinCheck() {
@@ -117,9 +119,13 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = window.width
 		val h = window.height
-		val softKeyboardH: Float = if (softKeyboardManagerView.shouldLayout) {
-			softKeyboardManagerView.setSize(w, null)
-			softKeyboardManagerView.height
+		val softKeyboardH: Float = if (softKeyboardManager.isShowing) {
+			if (softKeyboardView == null) 
+				softKeyboardView = addChild(softKeyboardManager.createView(this))
+			val keyboardView = softKeyboardView!!
+			keyboardView.setSize(w, null)
+			keyboardView.setPosition(0f, h - keyboardView.height)
+			keyboardView.height
 		} else 0f
 
 		elementsToLayout.forEach2 {
@@ -127,7 +133,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			it.setSize(w, h - softKeyboardH)
 		}
 		popUpManagerView.setSize(w, h - softKeyboardH)
-		softKeyboardManagerView.setPosition(0f, h - softKeyboardH)
 		out.set(w, h)
 	}
 
@@ -137,4 +142,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		glState.batch.flush()
 	}
 
+	override fun dispose() {
+		super.dispose()
+		softKeyboardManager.changed.remove(::invalidateLayout.as1)
+	}
 }
