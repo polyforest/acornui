@@ -17,6 +17,8 @@
 package com.acornui.math
 
 import com.acornui.closeTo
+import com.acornui.serialization.jsonParse
+import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
 import com.acornui.test.assertListEquals
 import kotlin.test.*
@@ -297,6 +299,20 @@ class Matrix4Test {
 		assertEquals(tra, inv)
 	}
 
+	@Test
+	fun serialize() {
+		val json1 = jsonStringify(Matrix4.serializer(), m1)
+		assertEquals(m1, jsonParse(Matrix4.serializer(), json1))
+
+		val json2 = jsonStringify(Matrix4.serializer(), m2)
+		assertEquals(m2, jsonParse(Matrix4.serializer(), json2))
+
+		val json3 = jsonStringify(Matrix4.serializer(), m3)
+		assertEquals(m3, jsonParse(Matrix4.serializer(), json3))
+
+		val json4 = jsonStringify(Matrix4.serializer(), m4)
+		assertEquals(m4, jsonParse(Matrix4.serializer(), json4))
+	}
 
 }
 

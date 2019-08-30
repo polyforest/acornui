@@ -17,12 +17,15 @@
 package com.acornui.math
 
 import com.acornui.collection.FloatList
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.math.tan
 
+@Serializable(with = Matrix4Serializer::class)
 interface Matrix4Ro {
 
 	val mode: MatrixMode
@@ -142,6 +145,7 @@ interface Matrix4Ro {
  *
  * @author badlogicgames@gmail.com
  */
+@Serializable(with = Matrix4Serializer::class)
 class Matrix4() : Matrix4Ro {
 
 	private val _values: FloatList = FloatList(floatArrayOf(
@@ -150,14 +154,13 @@ class Matrix4() : Matrix4Ro {
 			0f, 0f, 1f, 0f,
 			0f, 0f, 0f, 1f))
 
-	override val values: List<Float>
-		get() = _values
+	override val values: List<Float> = _values
 
 	constructor(values: FloatArray) : this() {
 		set(values)
 	}
 
-	constructor(values: FloatList) : this() {
+	constructor(values: List<Float>) : this() {
 		set(values)
 	}
 
@@ -1570,4 +1573,20 @@ enum class MatrixMode {
 private fun maxOf(modeA: MatrixMode, modeB: MatrixMode): MatrixMode {
 	return if (modeA.ordinal > modeB.ordinal) modeA
 	else modeB
+}
+
+@Serializer(forClass = Matrix4::class)
+object Matrix4Serializer : KSerializer<Matrix4> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Matrix4")
+
+	override fun serialize(encoder: Encoder, obj: Matrix4) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values)
+	}
+
+	override fun deserialize(decoder: Decoder): Matrix4 {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Matrix4(values)
+	}
 }

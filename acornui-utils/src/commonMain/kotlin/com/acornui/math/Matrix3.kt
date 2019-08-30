@@ -17,11 +17,16 @@
 package com.acornui.math
 
 import com.acornui.collection.FloatList
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+@Serializable(with = Matrix3Serializer::class)
 interface Matrix3Ro {
 
 	val values: List<Float>
@@ -42,7 +47,7 @@ interface Matrix3Ro {
 	 * same list.
 	 */
 	fun copy(): Matrix3 {
-		return Matrix3(FloatList(values.toFloatArray()))
+		return Matrix3(values.toFloatArray())
 	}
 }
 
@@ -52,31 +57,41 @@ interface Matrix3Ro {
  *
  * @author mzechner
  */
-class Matrix3(
+@Serializable(with = Matrix3Serializer::class)
+class Matrix3() : Matrix3Ro {
 
-		override val values: FloatList = FloatList(floatArrayOf(
-				1f, 0f, 0f,
-				0f, 1f, 0f,
-				0f, 0f, 1f))
-) : Matrix3Ro {
-
+	private val _values = FloatList(floatArrayOf(
+		1f, 0f, 0f,
+		0f, 1f, 0f,
+		0f, 0f, 1f))
+	
+	override val values: List<Float> = _values
+	
 	constructor (m00:Float, m10:Float, m20:Float, m01:Float, m11:Float, m21:Float, m02:Float, m12:Float, m22:Float) : this(floatArrayOf(m00, m10, m20, m01, m11, m21, m02, m12, m22))
-	constructor(values: FloatArray) : this(FloatList(values))
+	
+	constructor(values: FloatArray) : this() {
+		set(values)
+	}
+	
+	constructor(values: List<Float>) : this() {
+		set(values)
+	}
+
 
 	/**
 	 * Sets this matrix to the identity matrix
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun idt(): Matrix3 {
-		values[M00] = 1f
-		values[M10] = 0f
-		values[M20] = 0f
-		values[M01] = 0f
-		values[M11] = 1f
-		values[M21] = 0f
-		values[M02] = 0f
-		values[M12] = 0f
-		values[M22] = 1f
+		_values[M00] = 1f
+		_values[M10] = 0f
+		_values[M20] = 0f
+		_values[M01] = 0f
+		_values[M11] = 1f
+		_values[M21] = 0f
+		_values[M02] = 0f
+		_values[M12] = 0f
+		_values[M22] = 1f
 		return this
 	}
 
@@ -90,7 +105,7 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining operations together.
 	 */
 	fun mul(matrix: Matrix3Ro): Matrix3 {
-		mul(values, matrix.values)
+		mul(_values, matrix.values)
 		return this
 	}
 
@@ -108,33 +123,33 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun mulLeft(m: Matrix3Ro): Matrix3 {
-		val v00 = m.values[M00] * values[M00] + m.values[M01] * values[M10] + m.values[M02] * values[M20]
-		val v01 = m.values[M00] * values[M01] + m.values[M01] * values[M11] + m.values[M02] * values[M21]
-		val v02 = m.values[M00] * values[M02] + m.values[M01] * values[M12] + m.values[M02] * values[M22]
+		val v00 = m.values[M00] * _values[M00] + m.values[M01] * _values[M10] + m.values[M02] * _values[M20]
+		val v01 = m.values[M00] * _values[M01] + m.values[M01] * _values[M11] + m.values[M02] * _values[M21]
+		val v02 = m.values[M00] * _values[M02] + m.values[M01] * _values[M12] + m.values[M02] * _values[M22]
 
-		val v10 = m.values[M10] * values[M00] + m.values[M11] * values[M10] + m.values[M12] * values[M20]
-		val v11 = m.values[M10] * values[M01] + m.values[M11] * values[M11] + m.values[M12] * values[M21]
-		val v12 = m.values[M10] * values[M02] + m.values[M11] * values[M12] + m.values[M12] * values[M22]
+		val v10 = m.values[M10] * _values[M00] + m.values[M11] * _values[M10] + m.values[M12] * _values[M20]
+		val v11 = m.values[M10] * _values[M01] + m.values[M11] * _values[M11] + m.values[M12] * _values[M21]
+		val v12 = m.values[M10] * _values[M02] + m.values[M11] * _values[M12] + m.values[M12] * _values[M22]
 
-		val v20 = m.values[M20] * values[M00] + m.values[M21] * values[M10] + m.values[M22] * values[M20]
-		val v21 = m.values[M20] * values[M01] + m.values[M21] * values[M11] + m.values[M22] * values[M21]
-		val v22 = m.values[M20] * values[M02] + m.values[M21] * values[M12] + m.values[M22] * values[M22]
+		val v20 = m.values[M20] * _values[M00] + m.values[M21] * _values[M10] + m.values[M22] * _values[M20]
+		val v21 = m.values[M20] * _values[M01] + m.values[M21] * _values[M11] + m.values[M22] * _values[M21]
+		val v22 = m.values[M20] * _values[M02] + m.values[M21] * _values[M12] + m.values[M22] * _values[M22]
 
-		values[M00] = v00
-		values[M10] = v10
-		values[M20] = v20
-		values[M01] = v01
-		values[M11] = v11
-		values[M21] = v21
-		values[M02] = v02
-		values[M12] = v12
-		values[M22] = v22
+		_values[M00] = v00
+		_values[M10] = v10
+		_values[M20] = v20
+		_values[M01] = v01
+		_values[M11] = v11
+		_values[M21] = v21
+		_values[M02] = v02
+		_values[M12] = v12
+		_values[M22] = v22
 
 		return this
 	}
 
 	fun prj(vec: Vector2): Vector2 {
-		val mat = values
+		val mat = _values
 		val x = (vec.x * mat[M00] + vec.y * mat[M01] + mat[M02])
 		val y = (vec.x * mat[M10] + vec.y * mat[M11] + mat[M12])
 		vec.x = x
@@ -143,14 +158,14 @@ class Matrix3(
 	}
 
 	override fun toString(): String {
-		return "[" + values[M00] + "|" + values[M01] + "|" + values[M02] + "]\n" + "[" + values[M10] + "|" + values[M11] + "|" + values[M12] + "]\n" + "[" + values[M20] + "|" + values[M21] + "|" + values[M22] + "]"
+		return "[" + _values[M00] + "|" + _values[M01] + "|" + _values[M02] + "]\n" + "[" + _values[M10] + "|" + _values[M11] + "|" + _values[M12] + "]\n" + "[" + _values[M20] + "|" + _values[M21] + "|" + _values[M22] + "]"
 	}
 
 	/**
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
-		return values[M00] * values[M11] * values[M22] + values[M01] * values[M12] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] - values[M02] * values[M11] * values[M20]
+		return _values[M00] * _values[M11] * _values[M22] + _values[M01] * _values[M12] * _values[M20] + _values[M02] * _values[M10] * _values[M21] - _values[M00] * _values[M12] * _values[M21] - _values[M01] * _values[M10] * _values[M22] - _values[M02] * _values[M11] * _values[M20]
 	}
 
 	/**
@@ -164,25 +179,25 @@ class Matrix3(
 
 		val invDet = 1f / det
 
-		tmp[M00] = values[M11] * values[M22] - values[M21] * values[M12]
-		tmp[M10] = values[M20] * values[M12] - values[M10] * values[M22]
-		tmp[M20] = values[M10] * values[M21] - values[M20] * values[M11]
-		tmp[M01] = values[M21] * values[M02] - values[M01] * values[M22]
-		tmp[M11] = values[M00] * values[M22] - values[M20] * values[M02]
-		tmp[M21] = values[M20] * values[M01] - values[M00] * values[M21]
-		tmp[M02] = values[M01] * values[M12] - values[M11] * values[M02]
-		tmp[M12] = values[M10] * values[M02] - values[M00] * values[M12]
-		tmp[M22] = values[M00] * values[M11] - values[M10] * values[M01]
+		tmp[M00] = _values[M11] * _values[M22] - _values[M21] * _values[M12]
+		tmp[M10] = _values[M20] * _values[M12] - _values[M10] * _values[M22]
+		tmp[M20] = _values[M10] * _values[M21] - _values[M20] * _values[M11]
+		tmp[M01] = _values[M21] * _values[M02] - _values[M01] * _values[M22]
+		tmp[M11] = _values[M00] * _values[M22] - _values[M20] * _values[M02]
+		tmp[M21] = _values[M20] * _values[M01] - _values[M00] * _values[M21]
+		tmp[M02] = _values[M01] * _values[M12] - _values[M11] * _values[M02]
+		tmp[M12] = _values[M10] * _values[M02] - _values[M00] * _values[M12]
+		tmp[M22] = _values[M00] * _values[M11] - _values[M10] * _values[M01]
 
-		values[M00] = invDet * tmp[M00]
-		values[M10] = invDet * tmp[M10]
-		values[M20] = invDet * tmp[M20]
-		values[M01] = invDet * tmp[M01]
-		values[M11] = invDet * tmp[M11]
-		values[M21] = invDet * tmp[M21]
-		values[M02] = invDet * tmp[M02]
-		values[M12] = invDet * tmp[M12]
-		values[M22] = invDet * tmp[M22]
+		_values[M00] = invDet * tmp[M00]
+		_values[M10] = invDet * tmp[M10]
+		_values[M20] = invDet * tmp[M20]
+		_values[M01] = invDet * tmp[M01]
+		_values[M11] = invDet * tmp[M11]
+		_values[M21] = invDet * tmp[M21]
+		_values[M02] = invDet * tmp[M02]
+		_values[M12] = invDet * tmp[M12]
+		_values[M22] = invDet * tmp[M22]
 
 		return this
 	}
@@ -194,7 +209,7 @@ class Matrix3(
 	 */
 	fun set(mat: Matrix3Ro): Matrix3 {
 		for (i in 0..9-1) {
-			values[i] = mat.values[i]
+			_values[i] = mat.values[i]
 		}
 		return this
 	}
@@ -205,20 +220,20 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun set(mat: Matrix4Ro): Matrix3 {
-		values[M00] = mat.values[M00]
-		values[M10] = mat.values[M10]
-		values[M20] = mat.values[M20]
-		values[M01] = mat.values[M11]
-		values[M11] = mat.values[M21]
-		values[M21] = mat.values[M02]
-		values[M02] = mat.values[M22]
-		values[M12] = mat.values[9]
-		values[M22] = mat.values[10]
+		_values[M00] = mat.values[M00]
+		_values[M10] = mat.values[M10]
+		_values[M20] = mat.values[M20]
+		_values[M01] = mat.values[M11]
+		_values[M11] = mat.values[M21]
+		_values[M21] = mat.values[M02]
+		_values[M02] = mat.values[M22]
+		_values[M12] = mat.values[9]
+		_values[M22] = mat.values[10]
 		return this
 	}
 
 	/**
-	 * Sets the matrix to the given matrix as a float array. The float array must have at least 9 elements; the first
+	 * Sets the matrix to the given matrix as a float list. The float array must have at least 9 elements; the first
 	 * 9 will be copied.
 	 *
 	 * @param values The matrix, in float form, that is to be copied. Remember that this matrix is in <a
@@ -227,7 +242,22 @@ class Matrix3(
 	 */
 	fun set(values: List<Float>): Matrix3 {
 		for (i in 0..9 - 1) {
-			this.values[i] = values[i]
+			this._values[i] = values[i]
+		}
+		return this
+	}
+	
+	/**
+	 * Sets the matrix to the given matrix as a float array. The float array must have at least 9 elements; the first
+	 * 9 will be copied.
+	 *
+	 * @param values The matrix, in float form, that is to be copied. Remember that this matrix is in <a
+	*           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun set(values: FloatArray): Matrix3 {
+		for (i in 0..9 - 1) {
+			this._values[i] = values[i]
 		}
 		return this
 	}
@@ -236,8 +266,8 @@ class Matrix3(
 	 * Sets this matrix to have the given translation.
 	 */
 	fun setTranslation(x: Float, y: Float): Matrix3 {
-		values[M02] = x
-		values[M12] = y
+		_values[M02] = x
+		_values[M12] = y
 		return this
 	}
 
@@ -248,8 +278,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun trn(x: Float, y: Float): Matrix3 {
-		values[M02] += x
-		values[M12] += y
+		_values[M02] += x
+		_values[M12] += y
 		return this
 	}
 
@@ -259,8 +289,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun trn(vector: Vector2): Matrix3 {
-		values[M02] += vector.x
-		values[M12] += vector.y
+		_values[M02] += vector.x
+		_values[M12] += vector.y
 		return this
 	}
 
@@ -270,8 +300,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining.
 	 */
 	fun trn(vector: Vector3): Matrix3 {
-		values[M02] += vector.x
-		values[M12] += vector.y
+		_values[M02] += vector.x
+		_values[M12] += vector.y
 		return this
 	}
 
@@ -297,7 +327,7 @@ class Matrix3(
 		tmp[M02] = 0f
 		tmp[M12] = 0f
 		tmp[M22] = 1f
-		mul(values, tmp)
+		mul(_values, tmp)
 		return this
 	}
 
@@ -307,32 +337,32 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun tra(): Matrix3 {
-		tmp[M00] = values[M00]
-		tmp[M01] = values[M10]
-		tmp[M02] = values[M20]
-		tmp[M10] = values[M01]
-		tmp[M11] = values[M11]
-		tmp[M12] = values[M21]
-		tmp[M20] = values[M02]
-		tmp[M21] = values[M12]
-		tmp[M22] = values[M22]
+		tmp[M00] = _values[M00]
+		tmp[M01] = _values[M10]
+		tmp[M02] = _values[M20]
+		tmp[M10] = _values[M01]
+		tmp[M11] = _values[M11]
+		tmp[M12] = _values[M21]
+		tmp[M20] = _values[M02]
+		tmp[M21] = _values[M12]
+		tmp[M22] = _values[M22]
 		return set(tmp)
 	}
 
 	override fun getTranslation(out: Vector2): Vector2 {
-		out.x = values[M02]
-		out.y = values[M12]
+		out.x = _values[M02]
+		out.y = _values[M12]
 		return out
 	}
 
 	override fun getScale(out: Vector2): Vector2 {
-		out.x = sqrt((values[M00] * values[M00] + values[M01] * values[M01]).toDouble()).toFloat()
-		out.y = sqrt((values[M10] * values[M10] + values[M11] * values[M11]).toDouble()).toFloat()
+		out.x = sqrt((_values[M00] * _values[M00] + _values[M01] * _values[M01]).toDouble()).toFloat()
+		out.y = sqrt((_values[M10] * _values[M10] + _values[M11] * _values[M11]).toDouble()).toFloat()
 		return out
 	}
 
 	override fun getRotation(): Float {
-		return atan2(values[M10], values[M00])
+		return atan2(_values[M10], _values[M00])
 	}
 
 	/**
@@ -341,8 +371,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Float): Matrix3 {
-		values[M00] *= scale
-		values[M11] *= scale
+		_values[M00] *= scale
+		_values[M11] *= scale
 		return this
 	}
 
@@ -353,8 +383,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scaleX: Float, scaleY: Float): Matrix3 {
-		values[M00] *= scaleX
-		values[M11] *= scaleY
+		_values[M00] *= scaleX
+		_values[M11] *= scaleY
 		return this
 	}
 
@@ -364,8 +394,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Vector2Ro): Matrix3 {
-		values[M00] *= scale.x
-		values[M11] *= scale.y
+		_values[M00] *= scale.x
+		_values[M11] *= scale.y
 		return this
 	}
 
@@ -375,8 +405,8 @@ class Matrix3(
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Vector3Ro): Matrix3 {
-		values[M00] *= scale.x
-		values[M11] *= scale.y
+		_values[M00] *= scale.x
+		_values[M11] *= scale.y
 		return this
 	}
 
@@ -386,30 +416,30 @@ class Matrix3(
 	 */
 	fun transpose(): Matrix3 {
 		// Where MXY you do not have to change MXX
-		val v01 = values[M10]
-		val v02 = values[M20]
-		val v10 = values[M01]
-		val v12 = values[M21]
-		val v20 = values[M02]
-		val v21 = values[M12]
-		values[M01] = v01
-		values[M02] = v02
-		values[M10] = v10
-		values[M12] = v12
-		values[M20] = v20
-		values[M21] = v21
+		val v01 = _values[M10]
+		val v02 = _values[M20]
+		val v10 = _values[M01]
+		val v12 = _values[M21]
+		val v20 = _values[M02]
+		val v21 = _values[M12]
+		_values[M01] = v01
+		_values[M02] = v02
+		_values[M10] = v10
+		_values[M12] = v12
+		_values[M20] = v20
+		_values[M21] = v21
 		return this
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		other as Matrix3Ro
-		if (values != other.values) return false
+		if (_values != other.values) return false
 		return true
 	}
 
 	override fun hashCode(): Int {
-		return values.hashCode()
+		return _values.hashCode()
 	}
 
 
@@ -462,5 +492,21 @@ class Matrix3(
 			matA[M22] = v22
 		}
 	}
+}
 
+
+@Serializer(forClass = Matrix3::class)
+object Matrix3Serializer : KSerializer<Matrix3> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Matrix3")
+
+	override fun serialize(encoder: Encoder, obj: Matrix3) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values)
+	}
+
+	override fun deserialize(decoder: Decoder): Matrix3 {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Matrix3(values)
+	}
 }
