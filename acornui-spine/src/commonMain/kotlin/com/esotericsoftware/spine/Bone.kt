@@ -239,16 +239,15 @@ class Bone : Updatable {
 		get() = sqrt((c * c + d * d)) * worldSignY
 
 	fun getWorldTransform(out: Matrix3): Matrix3 {
-		val values = out.values
-		values[Matrix3.M00] = a
-		values[Matrix3.M01] = b
-		values[Matrix3.M10] = c
-		values[Matrix3.M11] = d
-		values[Matrix3.M02] = worldX
-		values[Matrix3.M12] = worldY
-		values[Matrix3.M20] = 0f
-		values[Matrix3.M21] = 0f
-		values[Matrix3.M22] = 1f
+		out[Matrix3.M00] = a
+		out[Matrix3.M01] = b
+		out[Matrix3.M10] = c
+		out[Matrix3.M11] = d
+		out[Matrix3.M02] = worldX
+		out[Matrix3.M12] = worldY
+		out[Matrix3.M20] = 0f
+		out[Matrix3.M21] = 0f
+		out[Matrix3.M22] = 1f
 		return out
 	}
 

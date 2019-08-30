@@ -77,6 +77,10 @@ class Matrix3() : Matrix3Ro {
 		set(values)
 	}
 
+	operator fun set(index: Int, value: Float) {
+		_values[index] = value
+	}
+
 
 	/**
 	 * Sets this matrix to the identity matrix
