@@ -15,7 +15,7 @@
  */
 
 plugins {
-	//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.9"
+//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.11"
 	`kotlin-dsl`
 	`maven-publish`
 	id("kotlinx-serialization")
@@ -76,8 +76,8 @@ gradlePlugin {
 		}
 		create("kotlinJvm") {
 			id = "com.acornui.kotlin-jvm"
-			displayName = "Kotlin jvm configuration for Acorn UI"
 			implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
+			displayName = "Kotlin jvm configuration for Acorn UI"
 			description = "Configures an Acorn UI library project for Kotlin jvm."
 		}
 		create("kotlinJs") {

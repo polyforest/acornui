@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
 class KotlinMppPlugin : Plugin<Project> {
@@ -36,11 +35,7 @@ class KotlinMppPlugin : Plugin<Project> {
 		val kotlinLanguageVersion: String by target.extra
 		val kotlinSerializationVersion: String by target.extra
 		val kotlinCoroutinesVersion: String by target.extra
-
-		target.tasks.withType<KotlinCompile>().all {
-			kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-		}
-
+		
 		target.extensions.configure<KotlinMultiplatformExtension> {
 			sourceSets {
 				all {
@@ -49,7 +44,7 @@ class KotlinMppPlugin : Plugin<Project> {
 				}
 			}
 			js {
-				browser {}
+//				browser {}
 				compilations.all {
 					kotlinOptions {
 						moduleKind = "amd"
