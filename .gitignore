@@ -119,9 +119,3 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
-
-### Custom Build
-dist/
-www/
-wwwDist/
-out-win64/
