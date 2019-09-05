@@ -211,6 +211,13 @@ fun assertClose(expected: Float, actual: Float, margin: Float = 0.0001f) {
 	}
 }
 
+fun assertClose(expected: Double, actual: Double, margin: Double = 0.0001) {
+	val difference = abs(expected - actual)
+	if (difference > margin) {
+		fail("expected: $expected actual: $actual difference $difference is greater than allowed: $margin ")
+	}
+}
+
 fun assertClose(expected: Vector3Ro, actual: Vector3Ro, margin: Float = 0.0001f) {
 	assertClose(expected.x, actual.x, margin)
 	assertClose(expected.y, actual.y, margin)

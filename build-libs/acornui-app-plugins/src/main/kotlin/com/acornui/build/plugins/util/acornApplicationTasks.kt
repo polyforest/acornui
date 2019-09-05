@@ -5,15 +5,21 @@ import com.acornui.build.plugins.tasks.*
 import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.jsonStringify
+import com.acornui.toCamelCase
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.CopySpec
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import java.io.File
 
 fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {
@@ -240,15 +246,68 @@ fun replaceVersionWithModTime(src: String, root: File): String {
 /**
  * Returns a file collection of all runtime dependencies.
  */
-fun kotlinMppRuntimeDependencies(project: Project, platform: String, compilationName: String = "main") =
-		project.files().apply {
-			builtBy("$platform${compilationName.capitalize()}Classes")
-			val main =
-					project.kotlinExt.targets[platform].compilations[compilationName] as AbstractKotlinCompilationToRunnableFiles<*>
-			main.output.classesDirs.forEach { folder ->
-				from(project.fileTree(folder))
-			}
-			main.runtimeDependencyFiles.forEach { file ->
-				from(project.zipTree(file))
-			}
+fun kotlinMppRuntimeDependencies(project: Project, platform: String, compilationName: String = "main"): ConfigurableFileCollection {
+	return project.files().apply {
+		builtBy("$platform${compilationName.capitalize()}Classes")
+		val main =
+				project.kotlinExt.targets[platform].compilations[compilationName] as AbstractKotlinCompilationToRunnableFiles<*>
+		main.output.classesDirs.forEach { folder ->
+			from(project.fileTree(folder))
 		}
+		main.runtimeDependencyFiles.forEach { file ->
+			from(project.zipTree(file))
+		}
+	}
+}
+
+fun Project.runJvmTask() {
+	val jvmArgs: String? by extra
+	tasks.register<JavaExec>("runJvm") {
+		dependsOn("jvmAssemble")
+		group = "application"
+		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
+		val compilation =
+				jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
+
+		val classes = files(
+				compilation.runtimeDependencyFiles,
+				compilation.output.allOutputs
+		)
+		classpath = classes
+		workingDir = acornui.appResources.resolve("jvm/allMain")
+		main =
+				"${rootProject.group}.${rootProject.name}.jvm.${rootProject.name.toCamelCase().capitalize()}JvmKt"
+
+		@Suppress("INACCESSIBLE_TYPE")
+		this.jvmArgs = (jvmArgs?.split(" ") ?: listOf(
+				"-ea",
+				"-Ddebug=true"
+		)) + if (OperatingSystem.current() == OperatingSystem.MAC_OS) listOf("-XstartOnFirstThread") else emptyList()
+	}
+}
+
+fun Project.uberJarTask() {
+	tasks.register<Jar>("uberJar") {
+		dependsOn("jvmAssemble")
+		group = "build"
+		archiveBaseName.set("${project.name}-uber")
+		val mainClass = tasks.getByName<JavaExec>("runJvm").main
+		manifest {
+			attributes["Implementation-Version"] = project.version.toString()
+			attributes["Main-Class"] = mainClass
+		}
+		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
+		val compilation = jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
+		from({
+			compilation.runtimeDependencyFiles.filter { it.name.endsWith("jar") }.map { zipTree(it) }
+		})
+		from(acornui.appResources.resolve("jvm/allMain"))
+		with(tasks["jvmJar"] as CopySpec)
+	}
+}
+
+fun Project.jsBrowserTasks() {
+//	tasks.register<KotlinWebpack>("asdf") {
+//
+//	}
+}

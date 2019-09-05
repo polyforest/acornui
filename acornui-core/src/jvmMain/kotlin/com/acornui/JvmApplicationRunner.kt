@@ -24,7 +24,9 @@ import com.acornui.di.inject
 import com.acornui.graphic.Window
 import com.acornui.logging.Log
 import com.acornui.time.FrameDriver
-import com.acornui.time.nowMs
+import com.acornui.time.loopWhile
+import kotlinx.coroutines.runBlocking
+import kotlin.time.seconds
 
 open class JvmApplicationRunner(
 		override val injector: Injector
@@ -33,26 +35,22 @@ open class JvmApplicationRunner(
 	private val window = inject(Window)
 	private val stage = inject(Stage)
 
-	open fun run() {
+	open fun run() = runBlocking {
 		Log.debug("Activating stage")
 		stage.activate()
 
 		// The window has been damaged.
-		var lastFrameMs = nowMs()
-		val frameTimeMs = 1000 / inject(AppConfig).frameRate
-		while (!window.isCloseRequested()) {
-			// Poll for window events. Input callbacks will be invoked at this time.
-			val now = nowMs()
-			val dT = (now - lastFrameMs) / 1000f
-			lastFrameMs = now
-			tick(dT)
-			val sleepTime = lastFrameMs + frameTimeMs - nowMs()
-			if (sleepTime > 0) Thread.sleep(sleepTime)
+		loopWhile(inject(AppConfig).frameTime.toDouble().seconds) { dT ->
 			pollEvents()
+			tick(dT)
+			!window.isCloseRequested()
 		}
 		Log.debug("Window closed")
 	}
 
+	/**
+	 * Poll for window events - input callbacks will be called at this time.
+	 */
 	protected open fun pollEvents() {
 	}
 

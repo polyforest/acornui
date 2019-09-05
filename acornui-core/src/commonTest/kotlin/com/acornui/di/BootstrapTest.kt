@@ -23,7 +23,6 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.time.milliseconds
 import kotlin.time.seconds
 
 class BootstrapTest {
@@ -102,9 +101,7 @@ class BootstrapTest {
 			"Extended key"
 		}
 		assertFailsWith(TimeoutCancellationException::class) {
-			runTest {
-				bootstrap.awaitAll()
-			}
+			bootstrap.awaitAll()
 		}
 	}
 

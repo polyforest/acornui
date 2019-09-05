@@ -16,12 +16,15 @@
 
 package com.acornui.test
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.promise
+import kotlinx.coroutines.*
+import kotlin.time.Duration
 
 /**
  * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
  */
-actual fun <T> runTest(block: suspend CoroutineScope.() -> T) : dynamic
-		= GlobalScope.promise { block }
+actual fun <T> runTest(timeout: Duration, block: suspend CoroutineScope.() -> T): dynamic = GlobalScope.promise {
+	withTimeout(timeout.toLongMilliseconds()) {
+		block()
+		yield()
+	}
+}

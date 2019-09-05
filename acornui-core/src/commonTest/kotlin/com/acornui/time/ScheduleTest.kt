@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package com.acornui.test
+package com.acornui.time
 
-import kotlinx.coroutines.CoroutineScope
-import kotlin.time.Duration
+import com.acornui.test.assertClose
+import com.acornui.test.runTest
+import kotlin.test.Test
+import kotlin.time.MonoClock
 import kotlin.time.seconds
 
-/**
- * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
- */
-expect fun <T> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> T)
+class ScheduleTest {
+
+	@Test
+	fun scheduleTest() = runTest(4.seconds) {
+		var isDone = false
+		val mark = MonoClock.markNow()
+		schedule(2.seconds) {
+//			println("mark.elapsedNow().inSeconds ${mark.elapsedNow().inSeconds}")
+			assertClose(2.0, mark.elapsedNow().inSeconds, 0.1)
+			isDone = true
+		}
+		loopFrames { !isDone }
+	}
+}

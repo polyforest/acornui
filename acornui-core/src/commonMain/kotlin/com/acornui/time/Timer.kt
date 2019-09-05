@@ -20,18 +20,19 @@ import com.acornui.Disposable
 import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
+import kotlin.time.Duration
 
 /**
  * @author nbilyk
  */
-internal class Timer private constructor() : Updatable, Clearable, Disposable {
+private class Timer private constructor() : Updatable, Clearable, Disposable {
 
-	var isActive = false
-	var duration: Float = 0f
-	var repetitions: Int = 1
-	var currentTime: Float = 0f
-	var currentRepetition: Int = 0
-	var callback: () -> Unit = NOOP
+	private var isActive = false
+	private var duration: Float = 0f
+	private var repetitions: Int = 1
+	private var currentTime: Float = 0f
+	private var currentRepetition: Int = 0
+	private var callback: () -> Unit = NOOP
 
 	override fun update(dT: Float) {
 		currentTime += dT
@@ -99,90 +100,12 @@ fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: ()
 }
 
 /**
- * @author nbilyk
+ * @param duration The duration between repetitions.
+ * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
+ * until disposal.
+ * @param callback The function to call after every repetition.
  */
-internal class Tick private constructor() : Updatable, Clearable, Disposable {
-
-	/**
-	 * How many frames before the callback begins to be invoked.
-	 * This should be greater than or equal to 1.
-	 */
-	var startFrame = 1
-
-	var isActive = false
-		private set
-
-	/**
-	 * The number of times to invoke the callback.
-	 */
-	var repetitions: Int = 1
-
-	/**
-	 * The current frame.
-	 */
-	private var currentFrame: Int = 0
-
-	/**
-	 * The callback to invoke, starting at [startFrame] and continues for [repetitions].
-	 */
-	private var callback: Disposable.() -> Unit = NOOP
-
-	override fun update(dT: Float) {
-		++currentFrame
-		if (currentFrame >= startFrame)
-			this.callback()
-		if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
-			dispose()
-		}
-	}
-
-	override fun clear() {
-		startFrame = 1
-		repetitions = 1
-		currentFrame = 0
-		callback = NOOP
-	}
-
-	override fun dispose() {
-		if (!isActive) return
-		isActive = false
-		stop()
-		pool.free(this)
-	}
-
-	companion object {
-
-		private val NOOP: Disposable.() -> Unit = {}
-
-		private val pool = ClearableObjectPool { Tick() }
-
-		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
-			val e = pool.obtain()
-			e.callback = callback
-			e.repetitions = repetitions
-			e.startFrame = startFrame
-			e.isActive = true
-			e.start()
-			return e
-		}
-	}
-}
-
-fun callLater(startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
-	return tick(1, startFrame, callback)
-}
-
-//-----------------------------------------------
-
-/**
- * Invokes [callback] on every time driver tick until disposed.
- */
-fun tick(repetitions: Int = -1, callback: Disposable.() -> Unit): Disposable = tick(repetitions, 1, callback)
-
-/**
- * Invokes [callback] on every time driver tick until disposed.
- */
-fun tick(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
-	if (repetitions == 0) throw IllegalArgumentException("repetitions argument may not be zero.")
-	return Tick.obtain(repetitions, startFrame, callback)
+fun timer(duration: Duration, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
+	require(repetitions != 0) { "repetitions argument may not be zero." }
+	return Timer.obtain(duration.inSeconds.toFloat(), repetitions, delay, callback)
 }

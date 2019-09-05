@@ -20,6 +20,9 @@ import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlinx.coroutines.CoroutineScope
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * @author nbilyk
@@ -48,7 +51,7 @@ typealias FrameCallback = (dT: Float) -> Unit
 /**
  * Removes this instance's [Updatable.update] from the frame driver.
  */
-fun <T : Updatable> T.stop() : T {
+fun <T : Updatable> T.stop(): T {
 	FrameDriver.remove(::update)
 	return this
 }
@@ -56,10 +59,29 @@ fun <T : Updatable> T.stop() : T {
 /**
  * Adds this instance's [Updatable.update] to the frame driver.
  */
-fun <T : Updatable> T.start() : T {
+fun <T : Updatable> T.start(): T {
 	FrameDriver.add(::update)
 	return this
 }
 
 val Updatable.isDriven: Boolean
 	get() = FrameDriver.contains(::update)
+
+/**
+ * A blocking function to create a frame loop until [inner] returns false.
+ * @param frameTime The desired interval between frames. This will have no effect on JS backends.
+ * @see loopFrames
+ */
+expect suspend fun loopWhile(frameTime: Duration = (1.0 / 50.0).seconds, inner: (dT: Float) -> Boolean)
+
+/**
+ * Invokes [FrameDriver.dispatch] and [inner] on every frame until [inner] returns false.
+ * @see loopWhile
+ */
+suspend fun loopFrames(frameTime: Duration = (1.0 / 50.0).seconds, inner: (dT: Float) -> Boolean) {
+	loopWhile(frameTime) {
+		FrameDriver.dispatch(it)
+		inner(it)
+	}
+}
+

@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.test
+package com.acornui.time
 
 import kotlinx.coroutines.CoroutineScope
 import kotlin.time.Duration
-import kotlin.time.seconds
 
-/**
- * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
- */
-expect fun <T> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> T)
+actual suspend fun loopWhile(frameTime: Duration, inner: (dT: Float) -> Boolean) {
+}

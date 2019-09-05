@@ -16,12 +16,20 @@
 
 package com.acornui.test
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlin.time.Duration
 
 /**
  * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
  */
-actual fun <T> runTest(block: suspend CoroutineScope.() -> T) {
-	runBlocking { block() }
+actual fun <T> runTest(timeout: Duration, block: suspend CoroutineScope.() -> T) {
+	val supervisor = SupervisorJob()
+	val scope = CoroutineScope(GlobalScope.coroutineContext + supervisor)
+	runBlocking(scope.coroutineContext) {
+		withTimeout(timeout.toLongMilliseconds()) {
+			block()
+			yield()
+		}
+	}
+
 }

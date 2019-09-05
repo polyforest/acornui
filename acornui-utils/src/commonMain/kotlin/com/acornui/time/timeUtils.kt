@@ -17,20 +17,14 @@
 package com.acornui.time
 
 /**
- * [nanoElapsed] divided by `1,000,000`
- * @see nanoElapsed
+ * Returns the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
  */
-fun msElapsed(): Long = nanoElapsed() / 1_000_000L
+expect fun nowMs(): Long
 
 /**
  * Returns the number of seconds elapsed since 1 January 1970 00:00:00 UTC.
  */
 fun nowS(): Double = (nowMs().toDouble() / 1000.0)
-
-/**
- * Returns the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
- */
-expect fun nowMs(): Long
 
 /**
  * Returns the current value of the running high-resolution time source, in nanoseconds from the time the
@@ -43,3 +37,9 @@ expect fun nowMs(): Long
  * See [https://developer.mozilla.org/en-US/docs/Web/API/Performance/now]
  */
 expect fun nanoElapsed(): Long
+
+/**
+ * [nanoElapsed] divided by `1,000,000`
+ * @see nanoElapsed
+ */
+fun msElapsed(): Long = nanoElapsed() / 1_000_000L

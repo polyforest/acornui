@@ -20,117 +20,13 @@ package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 @Suppress("unused")
 class KotlinMppPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
-		target.pluginManager.apply("kotlinx-serialization")
-
-		val kotlinVersion: String by target.extra
-		val kotlinJvmTarget: String by target.extra
-		val kotlinLanguageVersion: String by target.extra
-		val kotlinSerializationVersion: String by target.extra
-		val kotlinCoroutinesVersion: String by target.extra
-		
-		target.extensions.configure<KotlinMultiplatformExtension> {
-			sourceSets {
-				all {
-					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
-					languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-				}
-			}
-			js {
-//				browser {}
-				compilations.all {
-					kotlinOptions {
-						moduleKind = "amd"
-						sourceMap = true
-						sourceMapEmbedSources = "always"
-						main = "noCall"
-					}
-				}
-			}
-			jvm {
-				compilations.all {
-					kotlinOptions {
-						jvmTarget = kotlinJvmTarget
-					}
-				}
-			}
-			targets.all {
-				compilations.all {
-					kotlinOptions {
-						languageVersion = kotlinLanguageVersion
-						apiVersion = kotlinLanguageVersion
-					}
-				}
-			}
-
-			sourceSets.all {
-				languageSettings.progressiveMode = true
-			}
-
-			sourceSets {
-				all {
-					languageSettings.progressiveMode = true
-				}
-
-				@Suppress("UNUSED_VARIABLE")
-				val commonMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-common", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val commonTest by getting {
-					dependencies {
-						implementation(kotlin("test-common", version = kotlinVersion))
-						implementation(kotlin("test-annotations-common", version = kotlinVersion))
-
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val jvmMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-jdk8", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val jvmTest by getting {
-					dependencies {
-						implementation(kotlin("test", version = kotlinVersion))
-						implementation(kotlin("test-junit", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val jsMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-js", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val jsTest by getting {
-					dependencies {
-						implementation(kotlin("test-js", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
-					}
-				}
-			}
-		}
+		KotlinCommonOptions.configure(target)
+		KotlinJsPlugin.configure(target)
+		KotlinJvmPlugin.configure(target)
 	}
 }

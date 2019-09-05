@@ -22,73 +22,88 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 @Suppress("unused")
 class KotlinJsPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
-		target.pluginManager.apply("kotlinx-serialization")
+		KotlinCommonOptions.configure(target)
+		configure(target)
+	}
 
-		val kotlinVersion: String by target.extra
-		val kotlinLanguageVersion: String by target.extra
-		val kotlinSerializationVersion: String by target.extra
-		val kotlinCoroutinesVersion: String by target.extra
-
-		target.tasks.withType<KotlinCompile>().all {
-			kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-		}
-
-		target.extensions.configure<KotlinMultiplatformExtension> {
-			js {
-//				browser {}
-				compilations.all {
-					kotlinOptions {
-						moduleKind = "amd"
-						sourceMap = true
-						sourceMapEmbedSources = "always"
-						main = "noCall"
-					}
-				}
+	companion object {
+		fun configure(target: Project) {
+			target.tasks.withType<KotlinWebpack>().all {
+				// We're going to handle wepack a little differently...
+				enabled = false
 			}
 
-			targets.all {
-				compilations.all {
-					kotlinOptions {
-						languageVersion = kotlinLanguageVersion
-						apiVersion = kotlinLanguageVersion
+			target.extensions.configure<KotlinMultiplatformExtension> {
+				val kotlinVersion: String by target.extra
+				val kotlinLanguageVersion: String by target.extra
+				val kotlinSerializationVersion: String by target.extra
+				val kotlinCoroutinesVersion: String by target.extra
+
+				js {
+					browser {
+						testTask {
+							useKarma {
+								useChromeHeadless()
+								useSafari()
+								useIe()
+								useFirefox()
+							}
+						}
+					}
+
+					compilations.all {
+						kotlinOptions {
+							moduleKind = "umd"
+							sourceMap = true
+							sourceMapEmbedSources = "always"
+							main = "noCall"
+						}
 					}
 				}
-			}
 
-			sourceSets {
-				all {
-					languageSettings.progressiveMode = true
-				}
-
-				val commonMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-common", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+				targets.all {
+					compilations.all {
+						kotlinOptions {
+							languageVersion = kotlinLanguageVersion
+							apiVersion = kotlinLanguageVersion
+						}
 					}
 				}
 
-				val jsMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-js", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+				sourceSets {
+					all {
+						languageSettings.progressiveMode = true
 					}
-				}
 
-				val jsTest by getting {
-					dependencies {
-						implementation(kotlin("test", version = kotlinVersion))
-						implementation(kotlin("test-js", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+					val commonMain by getting {
+						dependencies {
+							implementation(kotlin("stdlib-common", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+						}
+					}
+
+					val jsMain by getting {
+						dependencies {
+							implementation(kotlin("stdlib-js", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+						}
+					}
+
+					val jsTest by getting {
+						dependencies {
+							implementation(kotlin("test", version = kotlinVersion))
+							implementation(kotlin("test-js", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+						}
 					}
 				}
 			}

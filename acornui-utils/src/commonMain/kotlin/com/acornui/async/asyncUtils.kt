@@ -91,7 +91,7 @@ suspend fun delay(timeSeconds: Float) {
  * @see kotlinx.coroutines.delay
  */
 suspend fun delay(time: Duration) {
-	delay(time.inMilliseconds.toLong())
+	delay(time.toLongMilliseconds())
 }
 
 

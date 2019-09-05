@@ -17,7 +17,6 @@
 package com.acornui.io
 
 import com.acornui.serialization.binaryParse
-import com.acornui.serialization.jsonParse
 import com.acornui.test.runTest
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
@@ -28,14 +27,14 @@ class LoadKtTest {
 	@Test
 	fun loadTextLocal() = runTest {
 		val progressReporter = ProgressReporterImpl()
-		val request = "src/commonTest/resources/textToLoad.txt".toUrlRequestData()
+		val request = "src/jvmTest/resources/textToLoad.txt".toUrlRequestData()
 		assertEquals("text to load contents", TextLoader().load(request, progressReporter))
 	}
 
 	@Test
 	fun loadBinaryLocal() = runTest {
 		val progressReporter = ProgressReporterImpl()
-		val request = "src/commonTest/resources/binaryToLoad.bin".toUrlRequestData()
+		val request = "src/jvmTest/resources/binaryToLoad.bin".toUrlRequestData()
 		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request, progressReporter).toByteArray()))
 	}
 

@@ -257,13 +257,13 @@ private class LwjglApplicationRunner(
 
 	private val refreshCallback = object : GLFWWindowRefreshCallback() {
 		override fun invoke(windowId: Long) {
+			// The window has been damaged.
 			window.requestRender()
 			tick(0f)
 		}
 	}
 
 	override fun run() {
-		// The window has been damaged.
 		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
 		super.run()
 		GLFW.glfwSetWindowRefreshCallback(windowId, null)

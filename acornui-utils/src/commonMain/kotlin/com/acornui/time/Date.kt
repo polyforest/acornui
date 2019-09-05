@@ -20,6 +20,7 @@ import com.acornui.text.parseDate
 import com.acornui.zeroPadding
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
+import kotlin.time.Duration
 
 @Serializable(with = DateSerializer::class)
 interface DateRo : Comparable<DateRo> {
@@ -422,4 +423,18 @@ fun utcTime(hour: Int, minute: Int, second: Int = 0, milli: Int = 0): Date {
 	date.utcSecond = second
 	date.utcMilli = milli
 	return date
+}
+
+/**
+ * Returns a new date, incrementing the time by [duration].
+ */
+operator fun DateRo.plus(duration: Duration): DateRo {
+	return date(time + duration.toLongMilliseconds())
+}
+
+/**
+ * Modifies this date, incrementing by [duration].
+ */
+operator fun Date.plusAssign(duration: Duration) {
+	time += duration.toLongMilliseconds()
 }

@@ -23,70 +23,70 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
 class KotlinJvmPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
-		target.pluginManager.apply("kotlinx-serialization")
+		KotlinCommonOptions.configure(target)
+		configure(target)
+	}
 
-		val kotlinVersion: String by target.extra
-		val kotlinJvmTarget: String by target.extra
-		val kotlinLanguageVersion: String by target.extra
-		val kotlinSerializationVersion: String by target.extra
-		val kotlinCoroutinesVersion: String by target.extra
+	companion object {
 
-		target.tasks.withType<KotlinCompile>().all {
-			kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-		}
+		fun configure(target: Project) {
+			val kotlinVersion: String by target.extra
+			val kotlinJvmTarget: String by target.extra
+			val kotlinLanguageVersion: String by target.extra
+			val kotlinSerializationVersion: String by target.extra
+			val kotlinCoroutinesVersion: String by target.extra
 
-		target.extensions.configure<KotlinMultiplatformExtension> {
-			jvm {
-				compilations.all {
-					kotlinOptions {
-						jvmTarget = kotlinJvmTarget
-						languageVersion = kotlinLanguageVersion
-						apiVersion = kotlinLanguageVersion
+			target.extensions.configure<KotlinMultiplatformExtension> {
+				jvm {
+					compilations.all {
+						kotlinOptions {
+							jvmTarget = kotlinJvmTarget
+							languageVersion = kotlinLanguageVersion
+							apiVersion = kotlinLanguageVersion
+						}
+					}
+				}
+				sourceSets {
+					all {
+						languageSettings.progressiveMode = true
+					}
+
+					val commonMain by getting {
+						dependencies {
+							implementation(kotlin("stdlib-common", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+						}
+					}
+
+					val jvmMain by getting {
+						dependencies {
+							implementation(kotlin("stdlib-jdk8", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+						}
+					}
+
+					val jvmTest by getting {
+						dependencies {
+							implementation(kotlin("test", version = kotlinVersion))
+							implementation(kotlin("test-junit", version = kotlinVersion))
+							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
+							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+						}
 					}
 				}
 			}
-			sourceSets {
-				all {
-					languageSettings.progressiveMode = true
-				}
 
-				val commonMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-common", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
-					}
+			target.afterEvaluate {
+				tasks.withType(Test::class.java).configureEach {
+					jvmArgs("-ea")
 				}
-
-				val jvmMain by getting {
-					dependencies {
-						implementation(kotlin("stdlib-jdk8", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-					}
-				}
-
-				val jvmTest by getting {
-					dependencies {
-						implementation(kotlin("test", version = kotlinVersion))
-						implementation(kotlin("test-junit", version = kotlinVersion))
-						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-					}
-				}
-			}
-		}
-
-		target.afterEvaluate {
-			tasks.withType(Test::class.java).configureEach {
-				jvmArgs("-ea")
 			}
 		}
 	}
