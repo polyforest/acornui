@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.Synchronized
 
 interface Cache : Clearable {
 
@@ -117,15 +118,18 @@ open class CacheImpl(
 		}
 	}
 
+	@Synchronized
 	override fun containsKey(key: String): Boolean {
 		return cache.containsKey(key)
 	}
 
+	@Synchronized
 	override fun <T : Any> get(key: String): T? {
 		@Suppress("UNCHECKED_CAST")
 		return cache[key]?.value as T?
 	}
 
+	@Synchronized
 	override fun <T : Any> set(key: String, value: T) {
 		(cache[key]?.value as? Disposable)?.dispose()
 		val cacheValue = CacheValue(value, gcFrames)
@@ -134,6 +138,7 @@ open class CacheImpl(
 		deathPool.add(key)
 	}
 
+	@Synchronized
 	override fun refDec(key: String) {
 		if (cache.containsKey(key)) {
 			val cacheValue = cache[key]!!
@@ -145,6 +150,7 @@ open class CacheImpl(
 		}
 	}
 
+	@Synchronized
 	override fun refInc(key: String) {
 		val cacheValue = cache[key] ?: throw Exception("The key $key is not in the cache.")
 		if (cacheValue.refCount == 0) {
@@ -157,6 +163,7 @@ open class CacheImpl(
 		cacheValue.refCount++
 	}
 
+	@Synchronized
 	override fun clear() {
 		for (cacheValue in cache.values) {
 			(cacheValue.value as? Disposable)?.dispose()
