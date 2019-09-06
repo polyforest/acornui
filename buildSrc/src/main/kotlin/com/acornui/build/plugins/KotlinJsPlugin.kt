@@ -22,7 +22,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 @Suppress("unused")
 class KotlinJsPlugin : Plugin<Project> {
@@ -34,11 +34,6 @@ class KotlinJsPlugin : Plugin<Project> {
 
 	companion object {
 		fun configure(target: Project) {
-			target.tasks.withType<KotlinWebpack>().all {
-				// We're going to handle wepack a little differently...
-				enabled = false
-			}
-
 			target.extensions.configure<KotlinMultiplatformExtension> {
 				val kotlinVersion: String by target.extra
 				val kotlinLanguageVersion: String by target.extra
@@ -56,7 +51,7 @@ class KotlinJsPlugin : Plugin<Project> {
 							}
 						}
 					}
-
+					
 					compilations.all {
 						kotlinOptions {
 							moduleKind = "umd"
