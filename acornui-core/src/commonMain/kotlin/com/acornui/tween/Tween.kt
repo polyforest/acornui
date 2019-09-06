@@ -24,6 +24,7 @@ import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.time.FrameDriver
+import com.acornui.time.start
 import com.acornui.time.stop
 
 /**
@@ -287,8 +288,9 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 /**
  * Creates a tween driver and updates the tween forward until completion.
  */
-@Deprecated("use tween.start", ReplaceWith("tween.drive()"), DeprecationLevel.ERROR)
+@Deprecated("use tween.start", ReplaceWith("tween.start()", imports = arrayOf("com.acornui.time.start")), DeprecationLevel.ERROR)
 fun <T : Tween> driveTween(tween: T): T {
+	tween.start()
 	return tween
 }
 

@@ -20,7 +20,6 @@ import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlinx.coroutines.CoroutineScope
 import kotlin.time.Duration
 import kotlin.time.seconds
 
