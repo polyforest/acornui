@@ -34,14 +34,14 @@ class KotlinJvmPlugin : Plugin<Project> {
 
 	companion object {
 
-		fun configure(target: Project) {
-			val kotlinVersion: String by target.extra
-			val kotlinJvmTarget: String by target.extra
-			val kotlinLanguageVersion: String by target.extra
-			val kotlinSerializationVersion: String by target.extra
-			val kotlinCoroutinesVersion: String by target.extra
+		fun configure(project: Project) {
+			val kotlinVersion: String by project.extra
+			val kotlinJvmTarget: String by project.extra
+			val kotlinLanguageVersion: String by project.extra
+			val kotlinSerializationVersion: String by project.extra
+			val kotlinCoroutinesVersion: String by project.extra
 
-			target.extensions.configure<KotlinMultiplatformExtension> {
+			project.extensions.configure<KotlinMultiplatformExtension> {
 				jvm {
 					compilations.all {
 						kotlinOptions {
@@ -83,7 +83,7 @@ class KotlinJvmPlugin : Plugin<Project> {
 				}
 			}
 
-			target.afterEvaluate {
+			project.afterEvaluate {
 				tasks.withType(Test::class.java).configureEach {
 					jvmArgs("-ea")
 				}

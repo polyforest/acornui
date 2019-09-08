@@ -24,9 +24,9 @@ import org.gradle.api.Project
 @Suppress("unused")
 class KotlinMppPlugin : Plugin<Project> {
 
-	override fun apply(target: Project) {
-		KotlinCommonOptions.configure(target)
-		KotlinJsPlugin.configure(target)
-		KotlinJvmPlugin.configure(target)
+	override fun apply(project: Project) {
+		KotlinCommonOptions.configure(project)
+		KotlinJsPlugin.configure(project)
+		KotlinJvmPlugin.configure(project)
 	}
 }

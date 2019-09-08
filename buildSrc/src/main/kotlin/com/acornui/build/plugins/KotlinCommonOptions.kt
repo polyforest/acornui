@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 object KotlinCommonOptions {
 
 	@Suppress("UnstableApiUsage")
-	fun configure(target: Project) {
-		target.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
-		target.pluginManager.apply("kotlinx-serialization")
+	fun configure(project: Project) {
+		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
+		project.pluginManager.apply("kotlinx-serialization")
 
-		target.extensions.configure<KotlinMultiplatformExtension> {
+		project.extensions.configure<KotlinMultiplatformExtension> {
 			sourceSets {
 				all {
 					languageSettings.useExperimentalAnnotation("kotlin.Experimental")

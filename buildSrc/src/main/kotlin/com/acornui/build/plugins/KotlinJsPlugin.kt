@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 @Suppress("unused")
 class KotlinJsPlugin : Plugin<Project> {
@@ -33,12 +32,12 @@ class KotlinJsPlugin : Plugin<Project> {
 	}
 
 	companion object {
-		fun configure(target: Project) {
-			target.extensions.configure<KotlinMultiplatformExtension> {
-				val kotlinVersion: String by target.extra
-				val kotlinLanguageVersion: String by target.extra
-				val kotlinSerializationVersion: String by target.extra
-				val kotlinCoroutinesVersion: String by target.extra
+		fun configure(project: Project) {
+			project.extensions.configure<KotlinMultiplatformExtension> {
+				val kotlinVersion: String by project.extra
+				val kotlinLanguageVersion: String by project.extra
+				val kotlinSerializationVersion: String by project.extra
+				val kotlinCoroutinesVersion: String by project.extra
 
 				js {
 					browser {
