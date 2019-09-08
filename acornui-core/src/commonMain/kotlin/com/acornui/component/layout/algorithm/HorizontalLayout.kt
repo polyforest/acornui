@@ -72,7 +72,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 		// allowRelativeSizing is true.
 		// Size width inflexible elements first.
 		var measuredH = childAvailableHeight
-		var baseline = 0f
+		var baseline = Float.NEGATIVE_INFINITY
 		var inflexibleWidth = 0f
 		var flexibleWidth = 0f
 		for (i in 0..orderedElements.lastIndex) {
@@ -145,7 +145,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 			}
 		}
 		x += padding.right - gap
-		out.set(x, padding.bottom + bottomY, if (baseline == 0f) bottomY else (padding.top + baseline))
+		out.set(x, padding.bottom + bottomY, if (baseline == Float.NEGATIVE_INFINITY) bottomY else (padding.top + baseline))
 	}
 
 	override fun createLayoutData() = HorizontalLayoutData()

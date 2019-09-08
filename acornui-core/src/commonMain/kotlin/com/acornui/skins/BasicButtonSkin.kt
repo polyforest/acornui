@@ -171,7 +171,9 @@ private class BasicCheckboxSkin(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		out.baseline = textField.baselineY
+		// If the text field is visible, use it as a baseline.
+		// The vertical alignment is MIDDLE,
+		if (textField.visible) out.baseline = textField.baselineY
 	}
 }
 
