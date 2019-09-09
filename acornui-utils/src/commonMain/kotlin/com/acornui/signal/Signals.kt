@@ -65,8 +65,24 @@ interface Signal<in T : Any> : Bindable {
 
 }
 
+/**
+ * Adds a handler to this signal that will be automatically removed the next time the signal is dispatched.
+ * @see Signal.add
+ */
 fun <T : Any> Signal<T>.addOnce(handler: T) {
-	add(handler, true)
+	add(handler, isOnce = true)
+}
+
+/**
+ * Adds a signal and creates a [Disposable] handle that, when invoked, will remove the handler.
+ */
+fun <T : Any> Signal<T>.addWithHandle(handler: T, isOnce: Boolean = false): Disposable {
+	add(handler, isOnce)
+	return object : Disposable {
+		override fun dispose() {
+			remove(handler)
+		}
+	}
 }
 
 
