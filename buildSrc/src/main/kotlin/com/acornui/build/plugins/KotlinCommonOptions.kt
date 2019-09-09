@@ -13,28 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
 
 package com.acornui.build.plugins
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 object KotlinCommonOptions {
 
 	@Suppress("UnstableApiUsage")
 	fun configure(project: Project) {
+		val kotlinVersion: String by project.extra
+		val kotlinSerializationVersion: String by project.extra
+		val kotlinCoroutinesVersion: String by project.extra
+
 		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		project.pluginManager.apply("kotlinx-serialization")
 
 		project.extensions.configure<KotlinMultiplatformExtension> {
+
+
 			sourceSets {
 				all {
 					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
 					languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
 				}
+
+				val commonMain by getting {
+					dependencies {
+						implementation(kotlin("stdlib-common", version = kotlinVersion))
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+					}
+				}
+
+				val commonTest by getting {
+					dependencies {
+						implementation(kotlin("test-common", version = kotlinVersion))
+						implementation(kotlin("test-annotations-common", version = kotlinVersion))
+
+						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
+						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+					}
+				}
 			}
+
 		}
 	}
 }

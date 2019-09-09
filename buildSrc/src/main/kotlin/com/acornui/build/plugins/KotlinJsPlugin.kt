@@ -75,14 +75,6 @@ class KotlinJsPlugin : Plugin<Project> {
 						languageSettings.progressiveMode = true
 					}
 
-					val commonMain by getting {
-						dependencies {
-							implementation(kotlin("stdlib-common", version = kotlinVersion))
-							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
-							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
-						}
-					}
-
 					val jsMain by getting {
 						dependencies {
 							implementation(kotlin("stdlib-js", version = kotlinVersion))
