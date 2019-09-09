@@ -18,6 +18,7 @@
 
 package com.acornui.serialization
 
+import com.acornui.logging.Log
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
@@ -40,6 +41,19 @@ private val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false),
 
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
 	return jsonx.parse(deserializer, jsonStr)
+}
+
+/**
+ * Attempts to deserialize the [jsonStr] with a try/catch, constructing the object via [onFail] on failure.
+ */
+fun <T> jsonParseOrElse(deserializer: DeserializationStrategy<T>, jsonStr: String?, onFail: () -> T): T {
+	if (jsonStr.isNullOrEmpty()) return onFail()
+	return try {
+		jsonx.parse(deserializer, jsonStr)
+	} catch (e: Throwable) {
+		Log.error(e)
+		onFail()
+	}
 }
 
 fun <T> jsonStringify(serializer: SerializationStrategy<T>, value: T): String {
