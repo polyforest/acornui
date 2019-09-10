@@ -17,6 +17,7 @@
 package com.acornui.behavior
 
 import com.acornui.Disposable
+import com.acornui.collection.copy
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -29,7 +30,7 @@ interface SelectionRo<E : Any> {
 	 * The handler should have the signature:
 	 * oldSelected: List<E>, newSelected: List<E>
 	 */
-	val changed: Signal<(List<E>, List<E>) -> Unit>
+	val changed: Signal<(Set<E>, Set<E>) -> Unit>
 
 	/**
 	 * The first selected item. If there is more than one item selected, this will only return the first.
@@ -42,7 +43,7 @@ interface SelectionRo<E : Any> {
 	 * @param out The list to fill with the selected items.
 	 * @return Returns the [out] list.
 	 */
-	fun getSelectedItems(ordered: Boolean = false, out: MutableList<E> = ArrayList()): MutableList<E>
+	fun getSelectedItems(ordered: Boolean = false, out: MutableSet<E> = HashSet()): MutableSet<E>
 
 	val isEmpty: Boolean
 	val isNotEmpty: Boolean
@@ -61,7 +62,7 @@ interface Selection<E : Any> : SelectionRo<E> {
 	 * cancel the selection change.
 	 * (oldSelected: List<E>, newSelected: List<E>, cancel)
 	 */
-	val changing: Signal<(List<E>, List<E>, Cancel) -> Unit>
+	val changing: Signal<(Set<E>, Set<E>, Cancel) -> Unit>
 
 	/**
 	 * Gets/sets the first selected item.
@@ -74,9 +75,9 @@ interface Selection<E : Any> : SelectionRo<E> {
 	 * Sets the selected items and invokes [changing] and [changed] signals.
 	 */
 	@Deprecated("", ReplaceWith("setSelectedItems(items, true)"))
-	fun setSelectedItemsUser(items: List<E>) = setSelectedItems(items, true)
+	fun setSelectedItemsUser(items: Set<E>) = setSelectedItems(items, true)
 
-	fun setSelectedItems(items: List<E>, isUserInteraction: Boolean = false)
+	fun setSelectedItems(items: Set<E>, isUserInteraction: Boolean = false)
 
 	/**
 	 * Clears current selection.
@@ -94,12 +95,10 @@ interface Selection<E : Any> : SelectionRo<E> {
 
 /**
  * An object for tracking selection state.
- * This is typically paired with a selection controller.
- * @author nbilyk
  */
 abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
-	private val _changing = Signal3<List<E>, List<E>, Cancel>()
+	private val _changing = Signal3<Set<E>, Set<E>, Cancel>()
 
 	/**
 	 * The currently selected items are changing. This provides an opportunity to cancel the event before [changed]
@@ -109,7 +108,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	private val cancel = Cancel()
 
-	private val _changed = Signal2<List<E>, List<E>>()
+	private val _changed = Signal2<Set<E>, Set<E>>()
 
 	/**
 	 * Dispatched when the selection has changed based on user interaction from via [setSelectedItemsUser] and the
@@ -119,7 +118,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	 */
 	override val changed = _changed.asRo()
 
-	private val _selectedMap = HashMap<E, Boolean>()
+	private val _selection = HashSet<E>()
 
 	/**
 	 * Walks all selectable items, in order.
@@ -131,7 +130,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	 * @param out The list to fill with the selected items.
 	 * @param ordered If true, the list will be ordered. (Slower)
 	 */
-	override fun getSelectedItems(ordered: Boolean, out: MutableList<E>): MutableList<E> {
+	override fun getSelectedItems(ordered: Boolean, out: MutableSet<E>): MutableSet<E> {
 		out.clear()
 		if (ordered) {
 			walkSelectableItems {
@@ -139,38 +138,38 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 					out.add(it)
 			}
 		} else {
-			for (item in _selectedMap.keys) {
-				out.add(item)
-			}
+			out.addAll(_selection)
 		}
 		return out
 	}
 
 	/**
 	 * The first selected item.
+	 * Setting this will not invoke selection change events.
+	 * @see setSelectedItems
 	 */
 	override var selectedItem: E?
-		get() = _selectedMap.keys.firstOrNull()
+		get() = _selection.firstOrNull()
 		set(value) {
-			setSelectedItems(if (value == null) emptyList() else listOf(value), isUserInteraction = false)
+			setSelectedItems(if (value == null) emptySet() else setOf(value), isUserInteraction = false)
 		}
 
 	override val isEmpty: Boolean
-		get() = _selectedMap.isEmpty()
+		get() = _selection.isEmpty()
 
 	override val isNotEmpty: Boolean
-		get() = _selectedMap.isNotEmpty()
+		get() = _selection.isNotEmpty()
 
 	override val selectedItemsCount: Int
-		get() = _selectedMap.size
+		get() = _selection.size
 
 	override fun getItemIsSelected(item: E): Boolean {
-		return _selectedMap[item] ?: false
+		return _selection.contains(item)
 	}
 
-	override fun setSelectedItems(items: List<E>, isUserInteraction: Boolean) {
+	override fun setSelectedItems(items: Set<E>, isUserInteraction: Boolean) {
 		if (isUserInteraction) {
-			val previousSelection = _selectedMap.keys.toList()
+			val previousSelection = HashSet(_selection)
 			if (changing.isNotEmpty()) {
 				_changing.dispatch(previousSelection, items, cancel.reset())
 				if (cancel.canceled) return
@@ -182,21 +181,21 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 		}
 	}
 
-	private fun setSelectedItemsInternal(items: List<E>) {
-		val oldSelection = _selectedMap.keys.toList()
-		_selectedMap.clear()
-		_selectedMap.putAll(items.map { it to true })
+	private fun setSelectedItemsInternal(items: Set<E>) {
+		val oldSelection = HashSet(_selection)
+		_selection.clear()
+		_selection.addAll(items)
 		onSelectionChanged(oldSelection, items)
 	}
 
-	protected abstract fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>)
+	protected abstract fun onSelectionChanged(oldSelection: Set<E>, newSelection: Set<E>)
 
 	override fun clear(isUserInteraction: Boolean) {
-		setSelectedItems(emptyList(), isUserInteraction)
+		setSelectedItems(emptySet(), isUserInteraction)
 	}
 
 	override fun selectAll(isUserInteraction: Boolean) {
-		val newSelection = ArrayList<E>()
+		val newSelection = HashSet<E>()
 		walkSelectableItems {
 			newSelection.add(it)
 		}
@@ -211,16 +210,18 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 /**
  * Sets the selection to the intersection of the current selection and the provided selection.
- * @see MutableCollection.retainAll
+ * @see MutableSet.retainAll
  * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
-fun <E : Any> Selection<E>.retainAll(list: List<E>, isUserInteraction: Boolean = true) {
-	setSelectedItems(getSelectedItems(false).intersect(list).toList(), isUserInteraction)
+fun <E : Any> Selection<E>.retainAll(elements: Collection<E>, isUserInteraction: Boolean = true) {
+	val selected = getSelectedItems(false)
+	selected.retainAll(elements)
+	setSelectedItems(selected, isUserInteraction)
 }
 
 /**
  * Adds all of the specified elements to the current selection.
- * @see MutableCollection.addAll
+ * @see MutableSet.addAll
  * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
 fun <E : Any> Selection<E>.addAll(elements: Collection<E>, isUserInteraction: Boolean = true) {
@@ -231,7 +232,7 @@ fun <E : Any> Selection<E>.addAll(elements: Collection<E>, isUserInteraction: Bo
 
 /**
  * Removes all of the specified elements from the current selection.
- * @see MutableCollection.removeAll
+ * @see MutableSet.removeAll
  * @param isUserInteraction If true, [Selection.changing] and [Selection.changed] signals will be dispatched.
  */
 fun <E : Any> Selection<E>.removeAll(elements: Collection<E>, isUserInteraction: Boolean = true) {

@@ -39,6 +39,7 @@ object KotlinCommonOptions {
 				all {
 					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
 					languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+					languageSettings.useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
 				}
 
 				val commonMain by getting {

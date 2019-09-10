@@ -49,7 +49,6 @@ import com.acornui.text.dateFormatter
 import com.acornui.text.dateTimeFormatter
 import com.acornui.time.Date
 import com.acornui.time.DateRo
-import com.acornui.time.time
 
 open class Calendar(
 		owner: Owned
@@ -89,7 +88,7 @@ open class Calendar(
 			}
 		}
 
-		override fun onSelectionChanged(oldSelection: List<DateRo>, newSelection: List<DateRo>) {
+		override fun onSelectionChanged(oldSelection: Set<DateRo>, newSelection: Set<DateRo>) {
 			for (i in 0..cells.lastIndex) {
 				val cell = cells[i]
 				val d = cell.data
@@ -106,7 +105,7 @@ open class Calendar(
 			}
 		}
 
-		override fun onSelectionChanged(oldSelection: List<DateRo>, newSelection: List<DateRo>) {
+		override fun onSelectionChanged(oldSelection: Set<DateRo>, newSelection: Set<DateRo>) {
 		}
 	})
 
@@ -171,7 +170,7 @@ open class Calendar(
 			@Suppress("UNCHECKED_CAST")
 			val cell = e.currentTarget as CalendarItemRenderer
 			e.handled = true
-			selection.setSelectedItems(listOf(cell.data!!), isUserInteraction = true)
+			selection.setSelectedItems(setOf(cell.data!!), isUserInteraction = true)
 		}
 	}
 

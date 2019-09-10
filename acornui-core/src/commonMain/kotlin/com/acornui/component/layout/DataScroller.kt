@@ -195,7 +195,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 					if (selectMultiple) {
 						_selection.toggleSelected(e)
 					} else {
-						_selection.setSelectedItemsUser(listOf(e))
+						_selection.setSelectedItems(setOf(e), isUserInteraction = true)
 					}
 				}
 			}
@@ -267,7 +267,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private fun updateHighlight() {
 		val e = getElementUnderPosition(mousePosition(_mousePosition))
-		_highlighted.setSelectedItems(if (e == null) emptyList() else listOf(e), isUserInteraction = true)
+		_highlighted.setSelectedItems(if (e == null) emptySet() else setOf(e), isUserInteraction = true)
 	}
 
 	private fun getElementUnderPosition(p: Vector2Ro): E? {
@@ -451,7 +451,7 @@ private class DataScrollerSelection<E : Any>(
 		}
 	}
 
-	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
+	override fun onSelectionChanged(oldSelection: Set<E>, newSelection: Set<E>) {
 		listA.selection.setSelectedItems(newSelection, isUserInteraction = true)
 		listB.selection.setSelectedItems(newSelection, isUserInteraction = true)
 		for (e in oldSelection - newSelection) {
@@ -480,7 +480,7 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 		}
 	}
 
-	override fun onSelectionChanged(oldSelection: List<E>, newSelection: List<E>) {
+	override fun onSelectionChanged(oldSelection: Set<E>, newSelection: Set<E>) {
 		for (e in oldSelection - newSelection) {
 			rowMap[e]?.highlighted = false
 		}

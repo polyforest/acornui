@@ -65,11 +65,6 @@ open class OptionList<E : Any>(
 		data(data)
 	}
 
-	/**
-	 * If true, search sorting and item selection will be case insensitive.
-	 */
-	var caseInsensitive = true
-
 	private val _input = own(Signal0())
 
 	/**
@@ -131,7 +126,6 @@ open class OptionList<E : Any>(
 
 	private val textInput: TextInput = textInput {
 		input.add {
-			dataView.dirty()  // Most data views will change based on the text input.
 			if (openOnInput) open()
 			scrollModel.value = 0f // Scroll to the top.
 			dataScroller.highlighted.selectedItem = null
@@ -162,8 +156,6 @@ open class OptionList<E : Any>(
 
 	private var background: UiComponent? = null
 	private var downArrow: UiComponent? = null
-
-	private val dataView = ListView<E>()
 
 	private val dataScroller = vDataScroller<E> {
 		focusEnabled = true
@@ -201,36 +193,6 @@ open class OptionList<E : Any>(
 
 	val dataScrollerLayoutStyle: VirtualVerticalLayoutStyle
 		get() = dataScroller.layoutStyle
-
-	private val defaultSortComparator = { o1: E, o2: E ->
-		var str = textInput.text
-		if (caseInsensitive) str = str.toLowerCase()
-		val score1 = scoreBySearchIndex(o1, str)
-		val score2 = scoreBySearchIndex(o2, str)
-		score1.compareTo(score2)
-	}
-
-	/**
-	 * Sorts the list.
-	 * The default is to sort based on the text input's text compared to the position of the found text within
-	 * the formatted element via [formatter].
-	 * This does not modify the original list.
-	 */
-	var sortComparator: SortComparator<E>?
-		get() = dataView.sortComparator
-		set(value) {
-			dataView.sortComparator = value
-		}
-
-	/**
-	 * Filters the list.
-	 * This does not modify the original list.
-	 */
-	var filter: Filter<E>?
-		get() = dataView.filter
-		set(value) {
-			dataView.filter = value
-		}
 
 	/**
 	 * The scroll model for the dropdown list.
@@ -298,8 +260,6 @@ open class OptionList<E : Any>(
 		addChild(textInput)
 
 		keyDown().add(::keyDownHandler)
-
-		sortComparator = defaultSortComparator
 
 		watch(style) {
 			background?.dispose()
@@ -452,14 +412,6 @@ open class OptionList<E : Any>(
 			scrollModel.value = index + 1f - pageSize
 	}
 
-	private fun scoreBySearchIndex(obj: E, str: String): Int {
-		var itemStr = formatter.format(obj)
-		if (caseInsensitive) itemStr = itemStr.toLowerCase()
-		val i = itemStr.indexOf(str)
-		if (i == -1) return 10000
-		return i
-	}
-
 	var isOpen: Boolean = false
 		set(value) {
 			if (field != value) {
@@ -587,3 +539,12 @@ fun <E : Any> Owned.optionList(
 }
 
 typealias OptionListRendererFactory<E> = ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>
+
+fun <E : Any> OptionList<E>.sortedByInput(data: List<E?>, ignoreCase: Boolean = true): ListView<E?> {
+	val listView = ListView(data)
+	listView.sortComparator = compareBy<E?>({ it != null }, {
+		formatter.format(it!!).indexOf(text, ignoreCase = ignoreCase)
+	})::compare
+	input.add(listView::dirty)
+	return listView
+}

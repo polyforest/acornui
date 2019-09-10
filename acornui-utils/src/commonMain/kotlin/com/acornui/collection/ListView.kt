@@ -23,6 +23,9 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface ListViewRo<E> : ObservableList<E> {
 
@@ -450,4 +453,19 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 
 fun <E : Comparable<E>> ListView<E>.sort() {
 	sortComparator = { o1, o2 -> o1.compareTo(o2) }
+}
+
+fun <E> listView(source: List<E>, init: ListView<E>.() -> Unit): ListView<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ListView(source).apply(init)
+}
+
+fun <E> listView(source: ObservableList<E>, init: ListView<E>.() -> Unit): ListView<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ListView(source).apply(init)
+}
+
+fun <E> listView(init: ListView<E>.() -> Unit): ListView<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ListView<E>().apply(init)
 }
