@@ -16,8 +16,6 @@ import com.acornui.build.AcornDependencies
  * limitations under the License.
  */
 
-AcornDependencies.addVersionProperties(extra)
-
 rootProject.name = "acornui"
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")

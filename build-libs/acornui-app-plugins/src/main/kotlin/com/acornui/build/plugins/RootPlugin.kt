@@ -1,7 +1,6 @@
 package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
-import com.acornui.build.plugins.logging.LoggerAdapter
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -13,9 +12,6 @@ import org.gradle.kotlin.dsl.repositories
 class RootPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        // Configure the acorn logger to log to Gradle.
-        LoggerAdapter.configure(target.logger)
-
         with(target) {
             val acornUiHome: String? by extra
             val acornVersion: String by extra

@@ -40,6 +40,7 @@ class KotlinJsPlugin : Plugin<Project> {
 				val kotlinCoroutinesVersion: String by project.extra
 
 				js {
+					nodejs()
 					browser {
 						testTask {
 							useKarma {

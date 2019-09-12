@@ -23,12 +23,12 @@ import kotlin.test.assertEquals
 class JsonUtilsTest {
 
 	@Test fun testJsonParseOrElse() {
-		assertEquals(Foo(1, 2), jsonParseOrElse(Foo.serializer(), """{"a": 1, "b": 2}""") { Foo(3, 4) })
-		assertEquals(Foo(3, 4), jsonParseOrElse(Foo.serializer(), """{"junk": 1, "b": 2}""") { Foo(3, 4) })
-		assertEquals(Foo(3, 4), jsonParseOrElse(Foo.serializer(), "") { Foo(3, 4) })
-		assertEquals(Foo(3, 4), jsonParseOrElse(Foo.serializer(), null) { Foo(3, 4) })
+		assertEquals(Foo001(7, 6), jsonParseOrElse(Foo001.serializer(), """{"a": 7, "b": 6}""") { Foo001(3, 4) })
+		assertEquals(Foo001(3, 4), jsonParseOrElse(Foo001.serializer(), """{"junk": 1, "b": 2}""") { Foo001(3, 4) })
+		assertEquals(Foo001(3, 4), jsonParseOrElse(Foo001.serializer(), "") { Foo001(3, 4) })
+		assertEquals(Foo001(3, 4), jsonParseOrElse(Foo001.serializer(), null) { Foo001(3, 4) })
 	}
 }
 
 @Serializable
-private data class Foo(val a: Int, val b: Int)
+private data class Foo001(val a: Int, val b: Int)

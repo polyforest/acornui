@@ -16,6 +16,7 @@
 
 package com.acornui.serialization
 
+import com.acornui.system.userInfo
 import kotlin.browser.window
 
 object JsBase64 : Base64 {
@@ -24,13 +25,17 @@ object JsBase64 : Base64 {
 		val str = buildString(src.size) {
 			src.forEach { append(it.toChar()) }
 		}
-		return window.btoa(str)
+		return if (userInfo.isBrowser) window.btoa(str) else Buffer.from(str, "binary").toString("base64") as String
 	}
 
 	override fun decodeFromString(str: String): ByteArray {
-		val decoded = window.atob(str)
+		val decoded = if (userInfo.isBrowser) window.atob(str) else Buffer.from(str, "base64").toString()
 		return ByteArray(decoded.length) { decoded[it].toByte() }
 	}
 }
 
 actual val base64: Base64 = JsBase64
+
+external object Buffer {
+	fun from(string: String, encoding: String): dynamic
+}

@@ -105,148 +105,148 @@ class ListViewTest {
 	}
 
 	@Test fun filterAndSortObj() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
-		source.addAll(arrayOf(Foo(6), Foo(4), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(4), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 
 		listView.sort()
 		listView.filter = { it.i % 2 == 0 }
 
-		assertListEquals(arrayOf(Foo(2), Foo(4), Foo(6), Foo(8)), listView)
+		assertListEquals(arrayOf(Foo556(2), Foo556(4), Foo556(6), Foo556(8)), listView)
 
-		source.add(Foo(10))
-		source.add(0, Foo(14))
-		source.add(0, Foo(15))
-		source.add(0, Foo(17))
-		source.add(1, Foo(16))
+		source.add(Foo556(10))
+		source.add(0, Foo556(14))
+		source.add(0, Foo556(15))
+		source.add(0, Foo556(17))
+		source.add(1, Foo556(16))
 
-		assertListEquals(arrayOf(Foo(2), Foo(4), Foo(6), Foo(8), Foo(10), Foo(14), Foo(16)), listView)
-		assertListEquals(arrayOf(Foo(17), Foo(16), Foo(15), Foo(14), Foo(6), Foo(4), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8), Foo(10)), source)
+		assertListEquals(arrayOf(Foo556(2), Foo556(4), Foo556(6), Foo556(8), Foo556(10), Foo556(14), Foo556(16)), listView)
+		assertListEquals(arrayOf(Foo556(17), Foo556(16), Foo556(15), Foo556(14), Foo556(6), Foo556(4), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8), Foo556(10)), source)
 	}
 
 	@Test fun notifyElementModified() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 
 		listView.filter = { it.i % 2 == 0 }
 
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView) // Note: The read causes a validation.
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView) // Note: The read causes a validation.
 
 		source[2].i = 4
 
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView) // Assert that the list is stale.
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView) // Assert that the list is stale.
 		source.notifyElementModified(2) // Notify update.
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(4), Foo(2), Foo(8)), listView)
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(4), Foo556(2), Foo556(8)), listView)
 
 		source[2].i = 3
 		source.notifyElementModified(2) // Notify update.
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView)
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView)
 	}
 
 	@Test fun notifyElementModifiedWithSort() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 
 		listView.filter = { it.i % 2 == 0 }
 		listView.sort()
 
-		assertListEquals(arrayOf(Foo(2), Foo(6), Foo(8), Foo(10)), listView) // Note: The read causes a validation.
+		assertListEquals(arrayOf(Foo556(2), Foo556(6), Foo556(8), Foo556(10)), listView) // Note: The read causes a validation.
 
 		source[2].i = 4
 
-		assertListEquals(arrayOf(Foo(2), Foo(6), Foo(8), Foo(10)), listView) // Assert that the list is stale.
+		assertListEquals(arrayOf(Foo556(2), Foo556(6), Foo556(8), Foo556(10)), listView) // Assert that the list is stale.
 		source.notifyElementModified(2) // Notify update.
-		assertListEquals(arrayOf(Foo(2), Foo(4), Foo(6), Foo(8), Foo(10)), listView)
+		assertListEquals(arrayOf(Foo556(2), Foo556(4), Foo556(6), Foo556(8), Foo556(10)), listView)
 
 		source[2].i = 12
 		source.notifyElementModified(2) // Notify update.
-		assertListEquals(arrayOf(Foo(2), Foo(6), Foo(8), Foo(10), Foo(12)), listView)
+		assertListEquals(arrayOf(Foo556(2), Foo556(6), Foo556(8), Foo556(10), Foo556(12)), listView)
 
 		source[2].i = 3
 		source.notifyElementModified(2) // Notify update.
-		assertListEquals(arrayOf(Foo(2), Foo(6), Foo(8), Foo(10)), listView)
+		assertListEquals(arrayOf(Foo556(2), Foo556(6), Foo556(8), Foo556(10)), listView)
 	}
 
 	@Test fun elementChangedWFilter() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 
 		listView.filter = { it.i % 2 == 0 }
 
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView) // Note: The read causes a validation.
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView) // Note: The read causes a validation.
 
-		source[2] = Foo(4)
+		source[2] = Foo556(4)
 
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(4), Foo(2), Foo(8)), listView)
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(4), Foo556(2), Foo556(8)), listView)
 
-		source[2] = Foo(3)
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView)
+		source[2] = Foo556(3)
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView)
 
-		source[2] = Foo(7)
-		source[4] = Foo(7)
-		assertListEquals(arrayOf(Foo(6), Foo(10), Foo(2), Foo(8)), listView)
+		source[2] = Foo556(7)
+		source[4] = Foo556(7)
+		assertListEquals(arrayOf(Foo556(6), Foo556(10), Foo556(2), Foo556(8)), listView)
 	}
 
 	@Test fun addedHandler() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
 		listView.filter = { it.i % 2 == 0 }
 		var c = 0
 		listView.added.add { _, _ -> c++ }
 		listView.validate()
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 		assertEquals(4, c)
-		source.add(Foo(7))
+		source.add(Foo556(7))
 		assertEquals(4, c)
-		source.add(Foo(8))
+		source.add(Foo556(8))
 		assertEquals(5, c)
 
 		listView.sort()
 		listView.validate()
 
 		assertEquals(5, c)
-		source.add(Foo(7))
+		source.add(Foo556(7))
 		assertEquals(5, c)
-		source.add(Foo(8))
+		source.add(Foo556(8))
 		assertEquals(6, c)
 	}
 
 	@Test fun removedHandler() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
 		listView.filter = { it.i % 2 == 0 }
 		var c = 0
 		listView.removed.add { _, _ -> c++ }
 		listView.validate()
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 
-		source.remove(Foo(7))
+		source.remove(Foo556(7))
 		assertEquals(0, c)
-		source.remove(Foo(8))
+		source.remove(Foo556(8))
 		assertEquals(1, c)
 
 		listView.sort()
 		listView.validate()
 
 		assertEquals(1, c)
-		source.remove(Foo(3))
+		source.remove(Foo556(3))
 		assertEquals(1, c)
-		source.remove(Foo(10))
+		source.remove(Foo556(10))
 		assertEquals(2, c)
 	}
 
 
 	@Test fun changedHandler() {
-		val source = ActiveList<Foo>()
+		val source = ActiveList<Foo556>()
 		val listView = ListView(source)
 		listView.filter = { it.i % 2 == 0 }
 		var removedC = 0
@@ -256,18 +256,18 @@ class ListViewTest {
 		var changedC = 0
 		listView.changed.add { _, _, _ -> changedC++ }
 		listView.validate()
-		source.addAll(arrayOf(Foo(6), Foo(10), Foo(3), Foo(2), Foo(5), Foo(1), Foo(7), Foo(9), Foo(8)))
+		source.addAll(arrayOf(Foo556(6), Foo556(10), Foo556(3), Foo556(2), Foo556(5), Foo556(1), Foo556(7), Foo556(9), Foo556(8)))
 
 		// Removed
-		source[source.lastIndex] = Foo(-1)
+		source[source.lastIndex] = Foo556(-1)
 		assertEquals(0, changedC)
 		assertEquals(1, removedC)
 		// Added
-		source[2] = Foo(4)
+		source[2] = Foo556(4)
 		assertEquals(5, addedC)
 
 		// Modified
-		source[2] = Foo(6)
+		source[2] = Foo556(6)
 		assertEquals(1, removedC)
 		assertEquals(5, addedC)
 		assertEquals(1, changedC)
@@ -275,7 +275,7 @@ class ListViewTest {
 		listView.sort()
 		listView.validate()
 
-		source[2] = Foo(0)
+		source[2] = Foo556(0)
 		assertEquals(2, removedC)
 		assertEquals(6, addedC)
 		assertEquals(1, changedC)
@@ -308,8 +308,8 @@ class ListViewTest {
 
 }
 
-private data class Foo(var i: Int) : Comparable<Foo> {
-	override fun compareTo(other: Foo): Int {
+private data class Foo556(var i: Int) : Comparable<Foo556> {
+	override fun compareTo(other: Foo556): Int {
 		return this.i.compareTo(other.i)
 	}
 }

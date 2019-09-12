@@ -16,11 +16,13 @@
 
 package com.acornui
 
+import com.acornui.system.userInfo
 import kotlin.browser.window
 
 /**
  * A flag for enabling various debugging features like debug logging.
  */
 actual val debug: Boolean by lazy {
-	window.location.search.contains(Regex("""[&?]debug=(true|1)"""))
+	if (!userInfo.isBrowser) false
+	else window.location.search.contains(Regex("""[&?]debug=(true|1)"""))
 }

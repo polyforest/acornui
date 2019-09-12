@@ -17,6 +17,7 @@
 package com.acornui.text
 
 import com.acornui.i18n.Locale
+import com.acornui.system.userInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -30,7 +31,11 @@ class DateTimeFormatterTest {
 
 		val monthsLong = getMonths(true, listOf(Locale("en-US")))
 		assertEquals(listOf("January","February","March","April","May","June","July","August","September","October","November","December"), monthsLong)
+	}
 
+	@Test
+	fun getMonthsTestI18n() {
+		if (!userInfo.isBrowser) return
 		val monthsLongDe = getMonths(true, listOf(Locale("de-DE")))
 		assertEquals(listOf("Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"), monthsLongDe)
 

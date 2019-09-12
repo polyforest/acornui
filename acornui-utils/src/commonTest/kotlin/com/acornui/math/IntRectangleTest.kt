@@ -25,10 +25,10 @@ import kotlin.test.assertEquals
 class IntRectangleTest {
 
 	@Test fun serialize() {
-		val v = IntFoo(IntRectangle(1, 2, 3, 4))
-		val str = jsonStringify(IntFoo.serializer(), v)
+		val v = IntFoo987(IntRectangle(1, 2, 3, 4))
+		val str = jsonStringify(IntFoo987.serializer(), v)
 		assertEquals("""{"rect":[1,2,3,4]}""", str)
-		assertEquals(v, jsonParse(IntFoo.serializer(), """{"rect":[1,2,3,4]}"""))
+		assertEquals(v, jsonParse(IntFoo987.serializer(), """{"rect":[1,2,3,4]}"""))
 	}
 
 	@Test fun area() {
@@ -37,4 +37,4 @@ class IntRectangleTest {
 }
 
 @Serializable
-private data class IntFoo(val rect: IntRectangleRo)
+private data class IntFoo987(val rect: IntRectangleRo)

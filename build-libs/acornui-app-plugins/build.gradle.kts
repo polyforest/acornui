@@ -32,13 +32,13 @@ dependencies {
 	implementation(kotlin("compiler", version = kotlinVersion))
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
+	testImplementation(kotlin("test"))
+	testImplementation(kotlin("test-junit"))
+
 	implementation("com.acornui:acornui-utils:$version")
 	implementation("com.acornui:acornui-core:$version")
 	implementation("com.acornui:acornui-lwjgl-backend:$version")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-
-	testImplementation(kotlin("test"))
-	testImplementation(kotlin("test-junit"))
 
 	compile(rootProject.files("buildSrc/build/classes"))
 }
