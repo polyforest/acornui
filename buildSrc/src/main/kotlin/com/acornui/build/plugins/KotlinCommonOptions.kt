@@ -33,8 +33,6 @@ object KotlinCommonOptions {
 		project.pluginManager.apply("kotlinx-serialization")
 
 		project.extensions.configure<KotlinMultiplatformExtension> {
-
-
 			sourceSets {
 				all {
 					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
@@ -60,7 +58,6 @@ object KotlinCommonOptions {
 					}
 				}
 			}
-
 		}
 	}
 }
