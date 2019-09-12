@@ -32,7 +32,8 @@ open class DceTask @javax.inject.Inject constructor(objects: ObjectFactory) : De
         val sources = source.files.filter {
             it.extension.equals("js", ignoreCase = true) &&
                     !it.name.endsWith("meta.js", ignoreCase = true) &&
-                    !it.name.endsWith("js.map", ignoreCase = true)
+                    !it.name.endsWith("js.map", ignoreCase = true) &&
+                    !it.name.startsWith("kotlin-test-nodejs-runner")
         }.map { it.path }.toList()
         logger.lifecycle("Dead Code Elimination on files: $sources")
 
