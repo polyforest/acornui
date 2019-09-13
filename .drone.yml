@@ -44,18 +44,3 @@ steps:
       target: ~/artifacts.acornui.com/mvn
       source:
         - build/artifacts
-  - name: upload-dokka
-    image: appleboy/drone-scp
-    settings:
-      host:
-        - bandbox.dreamhost.com
-      username:
-        from_secret: BANDBOX_FTP_USERNAME
-      password:
-        from_secret: BANDBOX_FTP_PASSWORD
-      port: 22
-      command_timeout: 6m
-      target: ~/dokka.acornui.com
-      source:
-        - build/dokka
-      rm: false
