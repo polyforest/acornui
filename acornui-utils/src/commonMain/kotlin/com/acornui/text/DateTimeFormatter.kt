@@ -507,7 +507,7 @@ private val monthsOfYearCache = HashMap<Pair<Boolean, List<Locale>?>, List<Strin
  * Returns a list of the localized months of the year.
  *
  * @param longFormat If true, the whole month names will be returned instead of the abbreviations.
- * @param locales The locale chain to use for parsing. If this is null, then [com.acornui.system.userInfo.currentLocale]
+ * @param locales The locale chain to use for parsing. If this is null, then [com.acornui.system.UserInfo.currentLocale]
  * will be used from [com.acornui.system.userInfo].
  */
 fun getMonths(longFormat: Boolean, locales: List<Locale>? = null): List<String> {

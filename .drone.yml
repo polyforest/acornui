@@ -5,7 +5,7 @@ steps:
   - name: build-test-publish
     image: gradle:jdk8
     commands:
-      - gradle build publish --stacktrace --no-daemon
+      - gradle build publish dokka --stacktrace --no-daemon
   - name: upload-reports
     image: appleboy/drone-scp
     settings:
@@ -44,3 +44,19 @@ steps:
       target: ~/artifacts.acornui.com/mvn
       source:
         - build/artifacts
+  - name: upload-dokka
+    image: appleboy/drone-scp
+    settings:
+      host:
+        - bandbox.dreamhost.com
+      username:
+        from_secret: BANDBOX_FTP_USERNAME
+      password:
+        from_secret: BANDBOX_FTP_PASSWORD
+      port: 22
+      command_timeout: 4m
+      strip_components: 2
+      target: ~/dokka.acornui.com/mvn
+      source:
+        - build/dokka
+      rm: true

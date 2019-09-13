@@ -665,9 +665,9 @@ class Quaternion(
 
 	/**
 	 * Spherical linear interpolation between this quaternion and the other quaternion, based on the alpha value in the range
-	 * [0,1]. Taken from. Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/
+	 * `[0,1]`. Taken from. Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/
 	 * @param end the end quaternion
-	 * @param alpha alpha in the range [0,1]
+	 * @param alpha alpha in the range `[0,1]`
 	 * @return this quaternion for chaining
 	 */
 	fun slerp(end: QuaternionRo, alpha: Float): Quaternion {

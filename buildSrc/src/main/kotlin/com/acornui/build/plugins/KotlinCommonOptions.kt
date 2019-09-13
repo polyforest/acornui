@@ -17,8 +17,10 @@
 
 package com.acornui.build.plugins
 
+import com.acornui.build.util.maybeNamed
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 object KotlinCommonOptions {
@@ -55,6 +57,19 @@ object KotlinCommonOptions {
 
 						implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
+					}
+				}
+
+				// This will be very different in upcoming dokka 0.10.0
+				project.rootProject.tasks.maybeNamed<DokkaTask>("dokka") {
+					impliedPlatforms = mutableListOf("Common")
+					commonMain.kotlin.srcDirs.forEach { srcDir ->
+						if (srcDir.exists()) {
+							sourceRoot {
+								path = srcDir.path
+								platforms = mutableListOf("Common")
+							}
+						}
 					}
 				}
 			}

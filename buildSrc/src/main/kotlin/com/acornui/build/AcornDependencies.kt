@@ -26,6 +26,7 @@ object AcornDependencies {
 			"jorbisVersion" to "0.0.17",
 			"jlayerVersion" to "1.0.2",
 
+			"dokkaVersion" to "0.9.18",
 			"kotlinLanguageVersion" to "1.3",
 			"kotlinJvmTarget" to "1.8",
 			"kotlinSerializationVersion" to "0.11.1",

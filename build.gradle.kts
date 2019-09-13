@@ -25,6 +25,7 @@ val kotlinLanguageVersion: String by extra
 plugins {
 	kotlin("multiplatform")
 	`maven-publish`
+	id("org.jetbrains.dokka")
 }
 
 subprojects {
@@ -69,6 +70,24 @@ allprojects {
 			maven {
 				url = uri(rootProject.buildDir.resolve("artifacts"))
 			}
+		}
+	}
+}
+
+tasks {
+	dokka {
+		//		outputFormat = "html"
+//		outputDirectory = "${project.buildDir}/dokka"
+//		classpath = configurations.compile
+//		externalDocumentationLink {
+//			url = new URL("file://${project(":projectA").buildDir}/dokka/projectA/")
+//			packageListUrl = new URL(url, "package-list")
+//		}
+
+		reportUndocumented = false
+		kotlinTasks {
+			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+			emptyList()
 		}
 	}
 }

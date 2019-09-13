@@ -21,10 +21,13 @@ class RootPlugin : Plugin<Project> {
 
             preventSnapshotDependencyCaching()
 
+            target.pluginManager.apply("org.jetbrains.dokka")
+
             allprojects {
                 AcornDependencies.addVersionProperties(extra)
                 
                 project.pluginManager.apply("org.gradle.idea")
+
                 repositories {
                     mavenLocal()
                     jcenter()

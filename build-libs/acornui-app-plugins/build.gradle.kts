@@ -27,6 +27,7 @@ kotlinDslPluginOptions {
 
 val kotlinVersion: String by extra
 val kotlinSerializationVersion: String by extra
+val dokkaVersion: String by extra
 
 dependencies {
 	implementation(kotlin("compiler", version = kotlinVersion))
@@ -35,6 +36,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 	testImplementation(kotlin("test"))
 	testImplementation(kotlin("test-junit"))
+	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
 	implementation("com.acornui:acornui-utils:$version")
 	implementation("com.acornui:acornui-core:$version")
