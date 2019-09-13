@@ -76,14 +76,7 @@ allprojects {
 
 tasks {
 	dokka {
-		//		outputFormat = "html"
-//		outputDirectory = "${project.buildDir}/dokka"
-//		classpath = configurations.compile
-//		externalDocumentationLink {
-//			url = new URL("file://${project(":projectA").buildDir}/dokka/projectA/")
-//			packageListUrl = new URL(url, "package-list")
-//		}
-
+		outputDirectory = "${project.buildDir}/dokka/$version"
 		reportUndocumented = false
 		kotlinTasks {
 			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception

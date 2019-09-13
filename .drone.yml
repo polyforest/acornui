@@ -54,9 +54,8 @@ steps:
       password:
         from_secret: BANDBOX_FTP_PASSWORD
       port: 22
-      command_timeout: 4m
-      strip_components: 2
-      target: ~/dokka.acornui.com/mvn
+      command_timeout: 6m
+      target: ~/dokka.acornui.com
       source:
         - build/dokka
-      rm: true
+      rm: false
