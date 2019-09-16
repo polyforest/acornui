@@ -16,6 +16,7 @@
 
 package com.acornui
 
+import com.acornui.async.isUiThread
 import com.acornui.component.Stage
 import com.acornui.component.render
 import com.acornui.di.Injector
@@ -36,6 +37,7 @@ open class JvmApplicationRunner(
 	private val stage = inject(Stage)
 
 	open fun run() = runBlocking {
+		check(isUiThread()) { "JvmApplicationRunner must be run in the main UI thread. "}
 		Log.debug("Activating stage")
 		stage.activate()
 
