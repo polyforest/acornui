@@ -411,7 +411,7 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
-				addNode(BITMAP_CACHE) {}
+				addNode(BITMAP_CACHE, BITMAP_CACHE_DEPENDENCIES, 0, checkAllFound = false) {}
 			}
 		}
 
@@ -1041,7 +1041,7 @@ open class UiComponentImpl(
 
 		if (flagsInvalidated != 0) {
 			if (_invalidated.isDispatching) {
-				throw Exception("invalidated already dispatching. ${flagsInvalidated.toFlagsString()}. Possible cyclic validation dependency.")
+				throw Exception("invalidated already dispatching. ${ValidationFlags.flagsToString(flagsInvalidated)}. Possible cyclic validation dependency.")
 			}
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
@@ -1163,6 +1163,8 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat = Quaternion()
+
+		private const val BITMAP_CACHE_DEPENDENCIES = (ValidationFlags.HIERARCHY_DESCENDING or ValidationFlags.RENDER_CONTEXT or ValidationFlags.INTERACTIVITY_MODE).inv()
 	}
 }
 

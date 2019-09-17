@@ -1,7 +1,7 @@
 package com.acornui.component
 
 import com.acornui.assertionsEnabled
-import com.acornui.string.toRadix
+import kotlin.math.log2
 import kotlin.test.*
 
 class ValidationGraphTest {
@@ -151,16 +151,95 @@ class ValidationGraphTest {
 		t.validate()
 	}
 
+	@Test fun checkWithFutureDependencies() {
+		val vG = validationGraph {
+			addNode(THREE, dependencies = TWO or ONE, dependents = 0, checkAllFound = false) {}
+			addNode(ONE, 0) {}
+			addNode(TWO, ONE) {}
+		}
+
+		vG.validate()
+		vG.invalidate(ONE)
+		vG.assertIsNotValid(THREE)
+	}
+
+	@Test fun checkWithFutureDependents() {
+		val vG = validationGraph {
+			addNode(ONE, dependencies = 0, dependents = TWO or THREE, checkAllFound = false) {}
+			addNode(TWO, 0) {}
+			addNode(THREE, TWO) {}
+		}
+
+		vG.validate()
+		vG.invalidate(ONE)
+		vG.assertIsNotValid(ONE, TWO, THREE)
+		vG.validate(TWO)
+		vG.assertIsValid(ONE, TWO)
+		vG.assertIsNotValid(THREE)
+	}
+
+	@Test fun checkWithFutureDependentsAndDependencies() {
+		run {
+			val vG = validationGraph {
+				addNode(TWO, dependencies = ONE, dependents = THREE, checkAllFound = false) {}
+				addNode(ONE) {}
+				addNode(THREE) {}
+			}
+
+			vG.validate()
+			vG.invalidate(ONE)
+			vG.assertIsNotValid(ONE, TWO, THREE)
+			vG.validate(TWO)
+			vG.assertIsValid(ONE, TWO)
+			vG.assertIsNotValid(THREE)
+		}
+
+		run {
+			val vG = validationGraph {
+				addNode(ONE) {}
+				addNode(TWO, dependencies = ONE) {}
+				addNode(FOUR, dependencies = THREE, dependents = FIVE or SIX, checkAllFound = false) {}
+				addNode(THREE) {}
+				addNode(FIVE) {}
+				addNode(SIX, dependencies = FIVE) {}
+				addNode(SEVEN) {}
+			}
+
+			vG.validate()
+			vG.invalidate(THREE)
+			vG.assertIsNotValid(THREE, FOUR, FIVE, SIX)
+			vG.assertIsValid(ONE, TWO, SEVEN)
+		}
+
+		run {
+			val vG = validationGraph(::toFlagString) {
+				addNode(ONE, -1, 0, checkAllFound = false) {}
+				addNode(TWO) {}
+				addNode(THREE) {}
+			}
+
+			vG.validate()
+			vG.invalidate(TWO)
+			vG.assertIsNotValid(ONE, TWO)
+			vG.assertIsValid(THREE)
+		}
+
+	}
+
 	private fun ValidationGraph.assertIsValid(vararg flags: Int) {
 		for (flag in flags) {
-			assertEquals(true, isValid(flag), "flag ${flag.toRadix(2)} is not valid")
+			assertEquals(true, isValid(flag), "flag ${flag.toFlagString()} is not valid")
 		}
 	}
 
 	private fun ValidationGraph.assertIsNotValid(vararg flags: Int) {
 		for (flag in flags) {
-			assertEquals(false, isValid(flag), "flag ${flag.toRadix(2)} is valid")
+			assertEquals(false, isValid(flag), "flag ${flag.toFlagString()} is valid")
 		}
+	}
+
+	private fun toFlagString(v: Int): String {
+		return log2(v.toDouble()).toInt().toString()
 	}
 
 }

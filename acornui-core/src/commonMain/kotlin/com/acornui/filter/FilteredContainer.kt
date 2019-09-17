@@ -86,7 +86,7 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 		}
 	}
 
-	fun invalidateBitmapCache() {
+	private fun invalidateBitmapCache() {
 		window.requestRender()
 		for (i in 0..renderFilters.lastIndex) {
 			renderFilters[i].invalidateBitmapCache()

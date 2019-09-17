@@ -40,6 +40,11 @@ interface RenderFilter : Renderable, Observable {
 	var contents: Renderable?
 
 	/**
+	 * True if the bitmap cache is invalid and will be validated next render.
+	 */
+	val bitmapCacheIsValid: Boolean
+
+	/**
 	 * Marks any bitmap caches (if there are any) as invalid and need to be redrawn.
 	 */
 	fun invalidateBitmapCache()
@@ -56,7 +61,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 
 	protected val glState by GlState
 
-	protected var bitmapCacheIsValid = false
+	final override var bitmapCacheIsValid = false
 		private set
 
 	var enabled: Boolean by bindable(true)

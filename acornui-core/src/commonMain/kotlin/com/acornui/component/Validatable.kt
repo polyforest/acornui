@@ -68,19 +68,35 @@ private class ValidationNode(
 		val flag: Int,
 
 		/**
-		 * When this node's flag is invalidated, the flags defined in invalidationMask will also be invalidated.
+		 * The flattened dependents of this node.
+		 * When this node's flag is invalidated, these flags will also be invalidated.
 		 */
-		var invalidationMask: Int,
+		var dependents: Int,
 
 		/**
-		 * When flags is being validated, if any of them are in this mask, this node will also be validated.
+		 * The flattened dependencies of this node.
+		 * When flags are being validated, if any of them are in this mask, this node will also be validated.
 		 */
-		var validationMask: Int,
+		var dependencies: Int,
 
 		val onValidate: () -> Unit
 ) {
 
 	var isValid: Boolean = false
+
+	/**
+	 * Adds the given dependency bit flags.
+	 */
+	fun addDependencies(value: Int) {
+		dependencies = dependencies or value
+	}
+
+	/**
+	 * Adds the given dependent bit flags.
+	 */
+	fun addDependents(value: Int) {
+		dependents = dependents or value
+	}
 
 }
 
@@ -95,7 +111,15 @@ private class ValidationNode(
  * size. On retrieving the child component size, that child component may then validate its layout, thus effectively
  * validating certain flags in a bottom-up manner.
  */
-class ValidationGraph {
+class ValidationGraph(
+
+		/**
+		 * For error messages, bit flags can be hard to read. This method will convert the Integer flag into a human
+		 * readable string.
+		 * The default uses the names of the [ValidationFlags] properties.
+		 */
+		val toFlagString: Int.() -> String = ValidationFlags::flagToString
+) {
 
 	private val nodes = ArrayList<ValidationNode>()
 
@@ -129,31 +153,55 @@ class ValidationGraph {
 
 	fun addNode(flag: Int, dependencies: Int, onValidate: () -> Unit) = addNode(flag, dependencies, 0, onValidate)
 
+	fun addNode(flag: Int, dependencies: Int, dependents: Int, onValidate: () -> Unit) = addNode(flag, dependencies, dependents, true, onValidate)
+
 	/**
 	 * Appends a validation node.
+	 * @param flag The target validation bit flag.  This must be a power of two.  UiComponent reserves flags
+	 * `1` through `1 shl 15` so any custom flags for components should start at `1 shl 16`.
+	 *
 	 * @param dependencies If any of these dependencies become invalid, this node will also become invalid.
+	 * This can be multiple flags by using bitwise OR.  E.g. `ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM`.
+	 *
+	 * @param dependents If [flag] becomes invalid, all of its dependents will also become invalid.
+	 * This can be multiple flags by using bitwise OR.  E.g. `ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM`.
+	 *
+	 * @param checkAllFound If true, all dependencies and dependents provided must exist in this graph. If false,
+	 * future nodes may be listed. For example, if you have a node to add that you wish to invalidate when anything
+	 * else is invalidated, you can use `addNode(1 shl 16, dependencies = -1, dependents = 0, checkAllFound = false) {}`
 	 */
-	fun addNode(flag: Int, dependencies: Int, dependents: Int, onValidate: () -> Unit) {
-		if (assertionsEnabled && !MathUtils.isPowerOfTwo(flag)) throw IllegalArgumentException("flag ${flag.toRadix(2)} is not a power of 2.")
+	fun addNode(flag: Int, dependencies: Int, dependents: Int, checkAllFound: Boolean, onValidate: () -> Unit) {
+		if (assertionsEnabled) require(MathUtils.isPowerOfTwo(flag)) { "flag ${flag.toRadix(2)} is not a power of 2." }
+		// When this node is validated, we should validate dependencies first.
+		// When this node is invalidated, we should also invalidated dependents.
 		val newNode = ValidationNode(flag, dependents or flag, dependencies or flag, onValidate)
 		var dependenciesNotFound = dependencies
 		var dependentsNotFound = dependents
 		var insertIndex = nodes.size
 		for (i in 0..nodes.lastIndex) {
 			val previousNode = nodes[i]
-			if (previousNode.flag == flag) throw Exception("flag $flag already exists.")
-			val flagInv = previousNode.flag.inv()
-			dependenciesNotFound = dependenciesNotFound and flagInv
-			dependentsNotFound = dependentsNotFound and flagInv
-			if (previousNode.validationMask and newNode.invalidationMask > 0) {
-				previousNode.validationMask = newNode.validationMask or previousNode.validationMask
-				newNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
+			if (previousNode.flag == flag)
+				throw Exception("flag ${flag.toFlagString()} already exists.")
+			if (checkAllFound) {
+				val flagInv = previousNode.flag.inv()
+				dependenciesNotFound = dependenciesNotFound and flagInv
+				dependentsNotFound = dependentsNotFound and flagInv
+			}
+			if (previousNode.dependencies and newNode.dependents > 0) {
+				// The existing node is a dependent of the added node.
+				previousNode.addDependencies(newNode.dependencies)
+				newNode.addDependents(previousNode.dependents)
+
+				// Thew new node must come before the existing node.
 				if (insertIndex > i)
 					insertIndex = i
 			}
-			if (previousNode.invalidationMask and newNode.validationMask > 0) {
-				newNode.validationMask = newNode.validationMask or previousNode.validationMask
-				previousNode.invalidationMask = newNode.invalidationMask or previousNode.invalidationMask
+			if (previousNode.dependents and newNode.dependencies > 0) {
+				// The existing node is a dependency of the added node.
+				newNode.addDependencies(previousNode.dependencies)
+				previousNode.addDependents(newNode.dependents)
+
+				// Do not allow cyclical dependencies:
 				if (insertIndex <= i) {
 					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${dependents.toFlagsString()}")
 				}
@@ -162,10 +210,12 @@ class ValidationGraph {
 		nodes.add(insertIndex, newNode)
 		_invalidFlags = _invalidFlags or newNode.flag
 		_allFlags = _allFlags or newNode.flag
-		if (dependentsNotFound != 0)
-			throw Exception("validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found.")
-		if (dependenciesNotFound != 0)
-			throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found.")
+		if (checkAllFound) {
+			if (dependentsNotFound != 0)
+				throw Exception("validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found.")
+			if (dependenciesNotFound != 0)
+				throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found.")
+		}
 	}
 
 	/**
@@ -180,7 +230,7 @@ class ValidationGraph {
 		if (assertionsEnabled && currentIndex >= 0) {
 			// Cannot invalidate anything that is not dependent on the current node.
 			val currentNode = nodes[currentIndex]
-			val badFlags = flagsToInvalidate and (currentNode.validationMask and currentNode.flag.inv())
+			val badFlags = flagsToInvalidate and (currentNode.dependencies and currentNode.flag.inv())
 			if (badFlags > 0) {
 				throw Exception("Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are dependencies of the current node: ${badFlags.toFlagsString()}")
 			}
@@ -190,7 +240,7 @@ class ValidationGraph {
 			if (!n.isValid) continue
 			if (flagsToInvalidate and n.flag > 0) {
 				n.isValid = false
-				flagsToInvalidate = flagsToInvalidate or n.invalidationMask
+				flagsToInvalidate = flagsToInvalidate or n.dependents
 				flagsInvalidated = flagsInvalidated or n.flag
 			}
 		}
@@ -207,9 +257,8 @@ class ValidationGraph {
 		if (currentIndex != -1) {
 			if (assertionsEnabled) {
 				val node = nodes[currentIndex]
-				val badFlags = (node.invalidationMask and node.flag.inv()) and flags
-				if (badFlags > 0)
-					throw IllegalStateException("Cannot validate ${badFlags.toFlagsString()} while validating ${node.flag.toFlagString()}")
+				val badFlags = (node.dependents and node.flag.inv()) and flags
+				check(badFlags <= 0) { "Cannot validate ${badFlags.toFlagsString()} while validating ${node.flag.toFlagString()}" }
 			}
 			return 0
 		}
@@ -219,10 +268,10 @@ class ValidationGraph {
 		for (i in 0..nodes.lastIndex) {
 			currentIndex = i
 			val n = nodes[i]
-			if (!n.isValid && flagsToValidate and n.invalidationMask > 0) {
+			if (!n.isValid && flagsToValidate and n.dependents > 0) {
 				n.onValidate()
 				n.isValid = true
-				flagsToValidate = flagsToValidate or n.validationMask
+				flagsToValidate = flagsToValidate or n.dependencies
 				flagsValidated = flagsValidated or n.flag
 				_invalidFlags = _invalidFlags and n.flag.inv()
 			}
@@ -234,24 +283,18 @@ class ValidationGraph {
 	fun isValid(flag: Int): Boolean {
 		return _invalidFlags and flag == 0
 	}
-}
 
-/**
- * Using the ValidationFlags list, prints out a comma separated list of the flags this bit mask contains.
- * For non-reserved flags (flags at least 1 shl 16), the power of two will be printed.
- * @see ValidationFlags
- * @see ValidationFlags.flagToString
- */
-fun Int.toFlagsString(): String {
-	var str = ""
-	for (i in 0..31) {
-		val flag = 1 shl i
-		if (flag and this > 0) {
-			if (str.isNotEmpty()) str += ","
-			str += ValidationFlags.flagToString(flag)
+	private fun Int.toFlagsString(): String {
+		var str = ""
+		for (i in 0..31) {
+			val flag = 1 shl i
+			if (flag and this > 0) {
+				if (str.isNotEmpty()) str += ","
+				str += flag.toFlagString()
+			}
 		}
+		return str
 	}
-	return str
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -259,10 +302,8 @@ inline fun Int.containsFlag(flag: Int): Boolean {
 	return this and flag != 0
 }
 
-fun Int.toFlagString(): String = ValidationFlags.flagToString(this)
-
-fun validationGraph(init: ValidationGraph.() -> Unit): ValidationGraph {
-	val v = ValidationGraph()
+fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToString, init: ValidationGraph.() -> Unit): ValidationGraph {
+	val v = ValidationGraph(toFlagString)
 	v.init()
 	return v
 }

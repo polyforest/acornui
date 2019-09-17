@@ -305,8 +305,7 @@ open class ContainerImpl(
 				invalidateSize()
 			}
 		}
-		val bCF = if (flagsInvalidated.containsFlag(bitmapCacheInvalidatingFlags)) ValidationFlags.BITMAP_CACHE else 0
-		invalidate(flagsInvalidated and bubblingFlags or bCF)
+		invalidate(flagsInvalidated and bubblingFlags)
 	}
 
 	protected open fun childDisposedHandler(child: UiComponent) {
@@ -332,16 +331,12 @@ open class ContainerImpl(
 
 	companion object {
 
-		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING
+		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING or ValidationFlags.BITMAP_CACHE
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
 				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.RENDER_CONTEXT
-
-		var bitmapCacheInvalidatingFlags = (ValidationFlags.HIERARCHY_DESCENDING or
-						ValidationFlags.RENDER_CONTEXT or
-						ValidationFlags.INTERACTIVITY_MODE).inv() or ValidationFlags.BITMAP_CACHE
 	}
 }
 

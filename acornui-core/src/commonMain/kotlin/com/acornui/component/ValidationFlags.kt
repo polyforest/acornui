@@ -20,7 +20,7 @@ import kotlin.math.log2
 
 /**
  * A list of validation bit flags Acorn internally uses.
- * Extended validation flags should start at 1 shl 16
+ * Extended validation flags should start at `1 shl 16`
  *
  * @author nbilyk
  */
@@ -83,6 +83,25 @@ object ValidationFlags {
 		RESERVED_5 -> "RESERVED_5"
 		else -> log2(flag.toDouble()).toInt().toString()
 	}
+
+	/**
+	 * Using the ValidationFlags list, prints out a comma separated list of the flags this bit mask contains.
+	 * For non-reserved flags (flags at least 1 shl 16), the power of two will be printed.
+	 * @see ValidationFlags
+	 * @see ValidationFlags.flagToString
+	 */
+	fun flagsToString(flags: Int): String {
+		var str = ""
+		for (i in 0..31) {
+			val flag = 1 shl i
+			if (flag and flags > 0) {
+				if (str.isNotEmpty()) str += ","
+				str += flagToString(flag)
+			}
+		}
+		return str
+	}
+
 }
 
 fun Validatable.invalidateSize() {
