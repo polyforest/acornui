@@ -16,28 +16,28 @@
 
 @file:Suppress("LoopToCallChain")
 
-package com.acornui.lwjgl.persistence
+package com.acornui.persistence
 
 import com.acornui.collection.stringMapOf
 import com.acornui.Version
-import com.acornui.persistence.Persistence
+import com.acornui.logging.Log
 import com.acornui.serialization.*
 import java.io.File
 
-open class LwjglPersistence(
+open class JvmPersistence(
 		private val currentVersion: Version,
 		name: String,
 		persistenceDir: String = System.getProperty("user.home") + "/.prefs"
 ) : Persistence {
 
-	private val file = File(persistenceDir, name + ".data")
+	private val file = File(persistenceDir, "$name.data")
 	private val data: PersistenceData
 
 	override val version: Version?
 		get() = data.version
 
 	init {
-		println("Prefs location ${file.absolutePath}")
+		Log.info("Preferences location: ${file.absolutePath}")
 		file.parentFile.mkdirs()
 
 		data = if (file.exists()) {

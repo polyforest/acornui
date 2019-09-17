@@ -28,9 +28,16 @@ import com.acornui.logging.Log
 import kotlinx.coroutines.*
 
 /**
+ * The common interface to all Acorn UI applications.
+ */
+interface Application {
+	fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit)
+}
+
+/**
  * Utilities for boot tasks in an application.
  */
-abstract class ApplicationBase {
+abstract class ApplicationBase : Application {
 
 	/**
 	 * The number of seconds before logs are created for any remaining boot tasks.
@@ -47,8 +54,6 @@ abstract class ApplicationBase {
 		bootstrap.set(applicationScopeKey, applicationScope)
 		kotlinBugFixes()
 	}
-
-	abstract fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit = {})
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 

@@ -25,11 +25,9 @@ import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.js.delete
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
-import org.w3c.dom.BeforeUnloadEvent
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.get
 import kotlin.browser.document

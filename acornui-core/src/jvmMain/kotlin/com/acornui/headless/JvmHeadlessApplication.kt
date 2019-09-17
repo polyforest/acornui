@@ -76,7 +76,6 @@ open class JvmHeadlessApplication(
 			}
 		}
 	}
-
 }
 
 

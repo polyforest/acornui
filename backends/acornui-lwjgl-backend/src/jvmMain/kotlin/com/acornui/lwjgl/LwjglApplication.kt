@@ -62,7 +62,7 @@ import com.acornui.lwjgl.input.GlfwKeyInput
 import com.acornui.lwjgl.opengl.JvmGl20Debug
 import com.acornui.lwjgl.opengl.LwjglGl20
 import com.acornui.lwjgl.opengl.loadTexture
-import com.acornui.lwjgl.persistence.LwjglPersistence
+import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.serialization.jsonParse
 import com.acornui.time.start
@@ -185,7 +185,7 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	protected open val persistenceTask by task(Persistence) {
-		LwjglPersistence(get(Version), config().window.title)
+		JvmPersistence(get(Version), config().window.title)
 	}
 
 	protected open val fileReadWriteManagerTask by task(FileIoManager) {

@@ -38,7 +38,7 @@ import com.acornui.io.Bandwidth
 import com.acornui.io.Loader
 import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
-import com.acornui.js.JsApplicationBase
+import com.acornui.js.BrowserApplicationBase
 import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
@@ -52,10 +52,11 @@ import kotlin.browser.document
 import kotlin.dom.clear
 
 /**
+ * An Acorn UI application for browser-based web gl.
  * @author nbilyk
  */
 @Suppress("unused")
-open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
+open class WebGlApplication(private val rootId: String) : BrowserApplicationBase() {
 
 	private val rootElement: HTMLElement by lazy {
 		document.getElementById(rootId) as HTMLElement
@@ -111,9 +112,6 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 		GlStateImpl(get(Gl20), get(Window))
 	}
 
-	/**
-	 * The last chance to set dependencies on the application scope.
-	 */
 	override val componentsTask by task(HtmlComponent.FACTORY_KEY) {
 		{ JsHtmlComponent(it, rootElement) }
 	}
@@ -169,7 +167,7 @@ open class WebGlApplication(private val rootId: String) : JsApplicationBase() {
 	}
 
 	companion object {
-		val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(JsApplicationBase.CANVAS)
+		protected val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(BrowserApplicationBase.CANVAS)
 	}
 
 }

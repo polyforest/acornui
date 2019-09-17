@@ -14,43 +14,34 @@
  * limitations under the License.
  */
 
-package com.acornui.js
+package com.acornui
 
-import com.acornui.AppConfig
-import com.acornui.ApplicationBase
-import com.acornui.Version
 import com.acornui.asset.Loaders
 import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
-import com.acornui.component.HtmlComponent
-import com.acornui.cursor.CursorManager
+import com.acornui.component.Stage
+import com.acornui.component.render
 import com.acornui.di.*
-import com.acornui.focus.FocusManager
 import com.acornui.graphic.Window
-import com.acornui.input.*
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
-import com.acornui.js.cursor.JsCursorManager
-import com.acornui.js.input.JsClipboard
-import com.acornui.js.input.JsKeyInput
-import com.acornui.js.input.JsMouseInput
-import com.acornui.js.persistence.JsPersistence
 import com.acornui.logging.Log
+import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionManagerImpl
 import com.acornui.serialization.jsonParse
-import com.acornui.uncaughtExceptionHandler
+import com.acornui.time.FrameDriver
+import com.acornui.time.nowMs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.w3c.dom.DocumentReadyState
-import org.w3c.dom.HTMLElement
 import org.w3c.dom.LOADING
 import kotlin.browser.document
 import kotlin.browser.window
@@ -58,7 +49,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * The application base that would be used by all JS-based applications.
+ * The application base that would be used by all JS-based applications, including node-js.
  */
 @Suppress("unused")
 abstract class JsApplicationBase : ApplicationBase() {
@@ -66,28 +57,11 @@ abstract class JsApplicationBase : ApplicationBase() {
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
-		// Uncaught exception handler
-		val prevOnError = window.onerror
-		window.onerror = { message, source, lineNo, colNo, error ->
-			prevOnError?.invoke(message, source, lineNo, colNo, error)
-			if (error is Throwable)
-				uncaughtExceptionHandler(error)
-			else
-				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
-		}
-
 		if (::memberRefTest != ::memberRefTest)
 			Log.error("[SEVERE] Member reference equality fix isn't working.")
-
-		val oBU = window.onbeforeunload
-		window.onbeforeunload = {
-			oBU?.invoke(it)
-			dispose()
-			undefined // Necessary for ie11 not to alert user.
-		}
 	}
 
-	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	final override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
 		GlobalScope.launch(Dispatchers.Unconfined) {
 			contentLoad()
@@ -111,20 +85,8 @@ abstract class JsApplicationBase : ApplicationBase() {
 		}
 	}
 
-	abstract val canvasTask: suspend () -> HTMLElement
-	abstract val windowTask: suspend () -> Window
-	abstract val componentsTask: suspend () -> (owner: Owned) -> HtmlComponent
-
 	protected open suspend fun initializeFrameDriver(injector: Injector): JsApplicationRunner {
 		return JsApplicationRunnerImpl(injector)
-	}
-
-	protected open val mouseInputTask by task(MouseInput) {
-		JsMouseInput(get(CANVAS))
-	}
-
-	protected open val keyInputTask by task(KeyInput) {
-		JsKeyInput(get(CANVAS), config().input.jsCaptureAllKeyboardInput)
 	}
 
 	override val filesTask by task(Files) {
@@ -138,14 +100,6 @@ abstract class JsApplicationBase : ApplicationBase() {
 		AudioManagerImpl()
 	}
 
-	protected open val interactivityTask by task(InteractivityManager) {
-		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
-	}
-
-	protected open val cursorManagerTask by task(CursorManager) {
-		JsCursorManager(get(CANVAS))
-	}
-
 	protected open val persistenceTask by task(Persistence) {
 		JsPersistence(get(Version))
 	}
@@ -154,14 +108,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 		SelectionManagerImpl()
 	}
 
-	protected open val clipboardTask by task(Clipboard) {
-		JsClipboard(
-				get(CANVAS),
-				get(FocusManager),
-				get(InteractivityManager),
-				config().input.jsCaptureAllKeyboardInput
-		)
-	}
+	// TODO: Browserless clipboard
 
 	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
 		owner.own(UndoDispatcher(owner.injector))
@@ -179,10 +126,64 @@ abstract class JsApplicationBase : ApplicationBase() {
 		frameDriver?.stop()
 	}
 
-	companion object {
-		protected val CANVAS = dKey<HTMLElement>()
-	}
-
 }
 
 external fun delete(p: dynamic): Boolean
+
+
+interface JsApplicationRunner {
+
+	fun start()
+
+	fun stop()
+
+}
+
+class JsApplicationRunnerImpl(
+		override val injector: Injector
+) : JsApplicationRunner, Scoped {
+
+	private var lastFrameMs: Long = 0L
+	private val stage = inject(Stage)
+	private val appWindow = inject(Window)
+
+	private var isRunning: Boolean = false
+
+	private var tickFrameId: Int = -1
+
+	private val tick = {
+		_: Double ->
+		tick()
+	}
+
+	override fun start() {
+		if (isRunning) return
+		Log.info("Application#startIndex")
+		isRunning = true
+		stage.activate()
+		lastFrameMs = nowMs()
+		tickFrameId = window.requestAnimationFrame(tick)
+	}
+
+	private fun tick() {
+		val now = nowMs()
+		val dT = (now - lastFrameMs) / 1000f
+		lastFrameMs = now
+		FrameDriver.dispatch(dT)
+		if (appWindow.shouldRender(true)) {
+			stage.update()
+			appWindow.renderBegin()
+			if (stage.visible)
+				stage.render()
+			appWindow.renderEnd()
+		}
+		tickFrameId = window.requestAnimationFrame(tick)
+	}
+
+	override fun stop() {
+		if (!isRunning) return
+		Log.info("Application#stop")
+		isRunning = false
+		window.cancelAnimationFrame(tickFrameId)
+	}
+}

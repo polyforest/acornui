@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.js.persistence
+package com.acornui.persistence
 
 import com.acornui.Version
-import com.acornui.persistence.Persistence
+import com.acornui.logging.Log
 import kotlin.browser.localStorage
 
 class JsPersistence(private val currentVersion: Version) : Persistence {
@@ -32,7 +32,7 @@ class JsPersistence(private val currentVersion: Version) : Persistence {
 	private var currentVersionWritten: Boolean = false
 
 	init {
-		if (!storageAllowed) println("Storage not allowed.")
+		if (!storageAllowed) Log.warn("Storage not allowed.")
 		val versionStr = getItem("__version")
 		_version = if (versionStr == null)
 			null
