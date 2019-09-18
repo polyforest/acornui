@@ -41,6 +41,10 @@ interface ColorRo {
 		return Color().set(this).mulRgb(value)
 	}
 
+	operator fun times(value: ColorRo): Color {
+		return Color().set(r * value.r, g * value.g, b * value.b, a * value.a)
+	}
+
 	operator fun plus(color: ColorRo): Color {
 		return Color().set(this).add(color)
 	}
