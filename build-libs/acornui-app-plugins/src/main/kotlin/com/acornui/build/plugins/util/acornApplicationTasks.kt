@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import java.io.File
 
 fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {

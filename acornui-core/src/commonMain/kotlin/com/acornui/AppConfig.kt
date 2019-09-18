@@ -42,8 +42,10 @@ data class AppConfig(
 
 		/**
 		 * The location of the files.json file created by the AcornUI assets task.
+		 * If this is set to null and the Application doesn't otherwise have a manifest, the 
+		 * [com.acornui.io.file.Files] will be empty. 
 		 */
-		val assetsManifestPath: String = "assets/files.json",
+		val assetsManifestPath: String? = "assets/files.json",
 
 		/**
 		 * The properties for the Window.

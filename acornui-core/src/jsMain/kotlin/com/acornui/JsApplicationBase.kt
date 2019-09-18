@@ -16,8 +16,6 @@
 
 package com.acornui
 
-import com.acornui.asset.Loaders
-import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
@@ -27,22 +25,22 @@ import com.acornui.di.*
 import com.acornui.graphic.Window
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
-import com.acornui.io.file.Files
-import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionManagerImpl
-import com.acornui.serialization.jsonParse
+import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.LOADING
+import org.w3c.xhr.XMLHttpRequest
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.coroutines.resume
@@ -52,31 +50,34 @@ import kotlin.coroutines.suspendCoroutine
  * The application base that would be used by all JS-based applications, including node-js.
  */
 @Suppress("unused")
-abstract class JsApplicationBase : ApplicationBase() {
+abstract class JsApplicationBase(manifest: FilesManifest?) : ApplicationBase(manifest) {
 
 	private var frameDriver: JsApplicationRunner? = null
 
 	init {
 		if (::memberRefTest != ::memberRefTest)
 			Log.error("[SEVERE] Member reference equality fix isn't working.")
-	}
 
-	final override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
-		set(AppConfig, appConfig)
-		GlobalScope.launch(Dispatchers.Unconfined) {
-			contentLoad()
-			val owner = OwnedImpl(createInjector())
-			PendingDisposablesRegistry.register(owner)
-			initializeSpecialInteractivity(owner)
-			owner.onReady()
-
-			frameDriver = initializeFrameDriver(owner.injector)
-			frameDriver!!.start()
+		if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
+			println("Requiring XMLHttpRequest")
+			js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 		}
 	}
 
+	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+		set(AppConfig, appConfig)
+		contentLoad()
+		val owner = OwnedImpl(createInjector())
+		PendingDisposablesRegistry.register(owner)
+		initializeSpecialInteractivity(owner)
+		owner.onReady()
+
+		frameDriver = initializeFrameDriver(owner.injector)
+		frameDriver!!.start()
+	}
+
 	private suspend fun contentLoad() = suspendCoroutine<Unit> { cont ->
-		if (document.readyState == DocumentReadyState.LOADING) {
+		if (userInfo.isBrowser && document.readyState == DocumentReadyState.LOADING) {
 			document.addEventListener("DOMContentLoaded", {
 				cont.resume(Unit)
 			})
@@ -86,13 +87,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 	}
 
 	protected open suspend fun initializeFrameDriver(injector: Injector): JsApplicationRunner {
-		return JsApplicationRunnerImpl(injector)
-	}
-
-	override val filesTask by task(Files) {
-		val path = config().rootPath + config().assetsManifestPath
-		val manifest = jsonParse(FilesManifest.serializer(), get(Loaders.textLoader).load(path))
-		FilesImpl(manifest)
+		return if (userInfo.isBrowser) JsBrowserApplicationRunnerImpl(injector) else JsNodeApplicationRunnerImpl(injector)
 	}
 
 	protected open val audioManagerTask by task(AudioManager) {
@@ -139,22 +134,17 @@ interface JsApplicationRunner {
 
 }
 
-class JsApplicationRunnerImpl(
+abstract class JsApplicationRunnerBase(
 		override val injector: Injector
 ) : JsApplicationRunner, Scoped {
 
 	private var lastFrameMs: Long = 0L
-	private val stage = inject(Stage)
-	private val appWindow = inject(Window)
+	protected val stage = inject(Stage)
+	protected val appWindow = inject(Window)
 
 	private var isRunning: Boolean = false
 
-	private var tickFrameId: Int = -1
-
-	private val tick = {
-		_: Double ->
-		tick()
-	}
+	protected var tickFrameId: Int = -1
 
 	override fun start() {
 		if (isRunning) return
@@ -162,10 +152,9 @@ class JsApplicationRunnerImpl(
 		isRunning = true
 		stage.activate()
 		lastFrameMs = nowMs()
-		tickFrameId = window.requestAnimationFrame(tick)
 	}
 
-	private fun tick() {
+	protected open fun tick() {
 		val now = nowMs()
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
@@ -177,13 +166,67 @@ class JsApplicationRunnerImpl(
 				stage.render()
 			appWindow.renderEnd()
 		}
-		tickFrameId = window.requestAnimationFrame(tick)
 	}
 
 	override fun stop() {
 		if (!isRunning) return
 		Log.info("Application#stop")
 		isRunning = false
+	}
+}
+
+
+class JsBrowserApplicationRunnerImpl(injector: Injector) : JsApplicationRunnerBase(injector), Scoped {
+
+	private val tickCallback = { _: Double ->
+		tick()
+	}
+
+	override fun start() {
+		super.start()
+		tickFrameId = window.requestAnimationFrame(tickCallback)
+	}
+
+	override fun tick() {
+		super.tick()
+		tickFrameId = if (appWindow.isCloseRequested()) -1 else window.requestAnimationFrame(tickCallback)
+	}
+
+	override fun stop() {
+		super.stop()
 		window.cancelAnimationFrame(tickFrameId)
 	}
 }
+
+
+class JsNodeApplicationRunnerImpl(injector: Injector) : JsApplicationRunnerBase(injector), Scoped {
+
+	private val tickCallback = {
+		tick()
+	}
+
+	override fun start() {
+		super.start()
+		tickFrameId = setTimeout(tickCallback)
+	}
+
+	override fun tick() {
+		super.tick()
+		tickFrameId = if (appWindow.isCloseRequested()) -1 else setTimeout(tickCallback)
+	}
+
+	override fun stop() {
+		super.stop()
+		clearTimeout(tickFrameId)
+	}
+}
+
+/**
+ * For nodejs
+ */
+private external fun setTimeout(handler: dynamic, timeout: Int = definedExternally, vararg arguments: Any?): Int
+
+/**
+ * For nodejs
+ */
+private external fun clearTimeout(handle: Int = definedExternally)

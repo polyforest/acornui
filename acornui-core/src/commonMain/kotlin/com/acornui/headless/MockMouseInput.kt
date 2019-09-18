@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.input.MouseInput
 import com.acornui.input.WhichButton

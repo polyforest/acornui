@@ -19,6 +19,7 @@ package com.acornui.di
 import com.acornui.async.*
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
+import com.acornui.collection.removeFirst
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
 import kotlin.jvm.Synchronized
@@ -31,6 +32,7 @@ class Bootstrap(
 ) : Disposable {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
+	private var hasStarted = false
 
 	suspend fun dependenciesList(): List<DependencyPair<*>> {
 		awaitAll()
@@ -40,6 +42,7 @@ class Bootstrap(
 	private val _map = HashMap<DKey<*>, Deferred<Any>>()
 
 	suspend fun <T : Any> get(key: DKey<T>): T {
+		hasStarted = true
 		val d = _map.getOrElse(key) {
 			throw Exception("No task has been registered that provides key $key.")
 		}
@@ -58,19 +61,20 @@ class Bootstrap(
 	 */
 	@Synchronized
 	fun <T : Any> set(dKey: DKey<T>, value: T) {
-		addDependency(dKey, value)
+		check(!hasStarted)  { "Cannot set a dependency after the bootstrap has been started." }
 		var p: DKey<*>? = dKey
 		while (p != null) {
-			if (_map.containsKey(p))
-				throw Exception("value already set for key $p")
+			dependenciesList.removeFirst { it.key == p }
 			_map[p] = scope.async { value }
 			p = p.extends
 		}
+		dependenciesList.add(dKey to value)
 	}
 
 	@Synchronized
 	private fun <T : Any> addDependency(dKey: DKey<T>, value: T) {
 		val pair = dKey to value
+		
 		if (assertionsEnabled && dependenciesList.any { existingDependency ->
 					var p: DKey<*>? = dKey
 					while (p != null) {
@@ -86,6 +90,7 @@ class Bootstrap(
 	}
 
 	suspend fun awaitAll() {
+		hasStarted = true
 		_map.values.awaitAll()
 	}
 
@@ -98,6 +103,7 @@ class Bootstrap(
 	fun <R, T : Any> task(dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
 
 	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
+		check(!hasStarted)  { "Cannot add a task after the bootstrap has been started." }
 		var p: DKey<*>? = dKey
 		val deferred = GlobalScope.async(Dispatchers.Unconfined, CoroutineStart.LAZY) {
 			try {
@@ -116,8 +122,6 @@ class Bootstrap(
 			}
 		}
 		while (p != null) {
-			if (_map.containsKey(p))
-				throw Exception("value already set for key $p")
 			_map[p] = deferred
 			p = p.extends
 		}

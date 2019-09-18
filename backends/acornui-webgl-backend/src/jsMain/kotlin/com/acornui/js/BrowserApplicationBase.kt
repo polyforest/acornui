@@ -24,6 +24,7 @@ import com.acornui.di.dKey
 import com.acornui.focus.FocusManager
 import com.acornui.graphic.Window
 import com.acornui.input.*
+import com.acornui.io.file.FilesManifest
 import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
@@ -42,7 +43,7 @@ import kotlin.coroutines.suspendCoroutine
  * This will add boot tasks that initialize input for the target canvas.
  */
 @Suppress("unused")
-abstract class BrowserApplicationBase : JsApplicationBase() {
+abstract class BrowserApplicationBase(manifest: FilesManifest? = null) : JsApplicationBase(manifest) {
 
 	init {
 		// Uncaught exception handler

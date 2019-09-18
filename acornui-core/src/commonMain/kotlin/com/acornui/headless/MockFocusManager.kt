@@ -1,4 +1,4 @@
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent

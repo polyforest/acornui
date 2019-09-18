@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
-import com.acornui.audio.Sound
-import com.acornui.audio.SoundFactory
+import com.acornui.AppConfig
+import com.acornui.di.Owned
 
-object MockSoundFactory : SoundFactory {
-
-	override var defaultPriority: Float = 0f
-	override val duration: Float = 0f
-
-	override fun createInstance(priority: Float): Sound? {
-		return null
-	}
-
-	override fun dispose() {
-	}
+actual suspend fun headlessApplication(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	return JsHeadlessApplication().start(appConfig, onReady)
 }

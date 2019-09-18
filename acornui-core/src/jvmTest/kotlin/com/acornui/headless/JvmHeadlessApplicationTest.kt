@@ -16,6 +16,7 @@
 
 package com.acornui.headless
 
+import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.async.delay
 import com.acornui.component.Stage
@@ -30,17 +31,18 @@ import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
-import com.acornui.mock.MockGl20
-import com.acornui.mock.MockKeyInput
-import com.acornui.mock.MockMouseInput
+import com.acornui.test.runTest
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.runBlocking
 import kotlin.test.*
 import kotlin.time.seconds
 
 class JvmHeadlessApplicationTest {
 
-	@Test fun start() {
-		JvmHeadlessApplication("src/jvmTest/resources").start {
+	private val appConfig = AppConfig(assetsManifestPath = null)
+
+	@Test fun start() = runBlocking {
+		JvmHeadlessApplication().start(appConfig) {
 			assertTrue(inject(Files) is FilesImpl)
 			assertTrue(inject(Stage) is StageImpl)
 			assertEquals(inject(Gl20), MockGl20)
@@ -52,27 +54,51 @@ class JvmHeadlessApplicationTest {
 		}
 	}
 
-	@Test fun failedApplicationShouldntStall() {
+	/**
+	 * An application with a failing task should terminate.
+	 */
+	@Test fun failedApplicationShouldntStall() = runTest {
 		assertFailsWith(ExpectedException::class) {
-			object : JvmHeadlessApplication("src/jvmTest/resources") {
+			object : JvmHeadlessApplication() {
+				@Suppress("unused")
 				val failedTask by task(dKey()) {
 					throw ExpectedException("Should fail")
 				}
-			}.start {
+			}.start(appConfig) {
 				fail("Application should not start")
 			}
 		}
 	}
 
-	@Test fun taskTimeout() {
+	/**
+	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application 
+	 * should not start.
+	 */
+	@Test fun taskTimeout() = runTest {
 		assertFailsWith(TimeoutCancellationException::class) {
-			object : JvmHeadlessApplication("src/jvmTest/resources") {
+			object : JvmHeadlessApplication() {
+				@Suppress("unused")
 				val failedTask by task(dKey(), timeout = 1f) {
 					delay(20.seconds)
 				}
-			}.start {
+			}.start(appConfig) {
 				fail("Application should not start")
 			}
+		}
+	}
+	
+	/**
+	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application 
+	 * should not start.
+	 */
+	@Test fun optionalTaskTimeout() = runTest {
+		object : JvmHeadlessApplication() {
+			@Suppress("unused")
+			val failedTask by task(dKey(), timeout = 1f, isOptional = true) {
+				delay(20.seconds)
+			}
+		}.start(appConfig) {
+			exit()
 		}
 	}
 }

@@ -29,11 +29,8 @@ import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
-import com.acornui.io.file.Files
-import com.acornui.io.file.FilesImpl
+import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
-import com.acornui.mock.MockInjector
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 /**
@@ -41,17 +38,29 @@ import java.io.File
  * @author nbilyk
  */
 open class JvmHeadlessApplication(
-		private val assetsPath: String = "./",
-		private val assetsRoot: String = "./"
-) : ApplicationBase() {
+
+		/**
+		 * If set, the [AppConfig.assetsManifestPath] will be ignored and a manifest will be created from the file
+		 * system.
+		 */
+		manifest: FilesManifest? = null
+) : ApplicationBase(manifest) {
+
+	/**
+	 * Generate an asset manifest from the files in the given directory.
+	 * Using this constructor means that the [AppConfig.assetsManifestPath] will be ignored.
+	 */
+	constructor(assetsPath: String, assetsRoot: String = "./") : this(ManifestUtil.createManifest(File(assetsPath), File(assetsRoot)))
+
+	constructor(assetsDir: File, assetsRootDir: File = File("./")) : this(ManifestUtil.createManifest(assetsDir, assetsRootDir))
 
 	init {
 		uiThread = Thread.currentThread()
 	}
 
-	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
-		val injector = runBlocking { createInjector() }
+		val injector = createInjector()
 		val owner = OwnedImpl(injector)
 		owner.onReady()
 		JvmApplicationRunner(owner.injector).run()
@@ -59,12 +68,7 @@ open class JvmHeadlessApplication(
 		dispose()
 	}
 
-	override suspend fun createInjector(): Injector = InjectorImpl(MockInjector.create(), bootstrap.dependenciesList())
-
-	override val filesTask by task(Files) {
-		val manifest = ManifestUtil.createManifest(File(assetsPath), File(assetsRoot))
-		FilesImpl(manifest)
-	}
+	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(), bootstrap.dependenciesList())
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {

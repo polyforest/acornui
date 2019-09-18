@@ -38,6 +38,7 @@ import com.acornui.io.Bandwidth
 import com.acornui.io.Loader
 import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
+import com.acornui.io.file.FilesManifest
 import com.acornui.js.BrowserApplicationBase
 import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.html.JsHtmlComponent
@@ -56,7 +57,7 @@ import kotlin.dom.clear
  * @author nbilyk
  */
 @Suppress("unused")
-open class WebGlApplication(private val rootId: String) : BrowserApplicationBase() {
+open class WebGlApplication(private val rootId: String, manifest: FilesManifest? = null) : BrowserApplicationBase(manifest) {
 
 	private val rootElement: HTMLElement by lazy {
 		document.getElementById(rootId) as HTMLElement

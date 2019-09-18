@@ -1,4 +1,4 @@
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.VertexAttributes

@@ -23,7 +23,6 @@ import com.acornui.di.DKey
 import com.acornui.replace2
 import com.acornui.split2
 
-
 interface Files {
 
 	fun getFile(path: String): FileEntry?

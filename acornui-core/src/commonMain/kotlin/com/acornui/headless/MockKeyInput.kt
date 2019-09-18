@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.input.KeyInput
 import com.acornui.input.interaction.CharInteractionRo

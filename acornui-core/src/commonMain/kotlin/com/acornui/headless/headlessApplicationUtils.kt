@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
+@file:JvmName("HeadlessApplicationUtils")
+
 package com.acornui.headless
 
-import com.acornui.JsApplicationBase
-import com.acornui.di.Injector
-import com.acornui.di.InjectorImpl
-import com.acornui.io.file.FilesManifest
+import com.acornui.AppConfig
+import com.acornui.di.Owned
+import kotlin.jvm.JvmName
 
-class JsHeadlessApplication(manifest: FilesManifest? = null) : JsApplicationBase(manifest) {
-
-	/**
-	 * Creates an injector with JS dependencies from the bootstrap, and mock dependencies for input and graphics.
-	 */
-	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(), bootstrap.dependenciesList())
-	
-}
+expect suspend fun headlessApplication(appConfig: AppConfig, onReady: Owned.() -> Unit)
+suspend fun headlessApplication(onReady: Owned.() -> Unit) = headlessApplication(AppConfig(assetsManifestPath = null), onReady)

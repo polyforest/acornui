@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.asset.Loaders
 import com.acornui.component.RenderContextRo
@@ -27,7 +27,7 @@ import com.acornui.input.*
 import com.acornui.io.byteBuffer
 import com.acornui.io.file.Files
 
-object MockInjector {
+object HeadlessInjector {
 
 	val owner: Owned by lazy { OwnedImpl(injector = create()) }
 
@@ -38,7 +38,7 @@ object MockInjector {
 
 	fun create(): Injector {
 		return InjectorImpl(null, listOf<DependencyPair<*>>(
-				Window to MockWindow(),
+				Window to HeadlessWindow(),
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
 				Files to MockFiles,

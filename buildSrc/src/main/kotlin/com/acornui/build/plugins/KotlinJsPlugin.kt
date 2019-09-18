@@ -40,17 +40,8 @@ class KotlinJsPlugin : Plugin<Project> {
 				val kotlinCoroutinesVersion: String by project.extra
 
 				js {
+					browser()
 					nodejs()
-					browser {
-						testTask {
-							useKarma {
-								useChromeHeadless()
-								useSafari()
-								useIe()
-								useFirefox()
-							}
-						}
-					}
 					
 					compilations.all {
 						kotlinOptions {
@@ -90,6 +81,7 @@ class KotlinJsPlugin : Plugin<Project> {
 							implementation(kotlin("test-js", version = kotlinVersion))
 							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+							implementation(npm("xmlhttprequest", "1.8.0"))
 						}
 					}
 				}

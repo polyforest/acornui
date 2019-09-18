@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.browser.Location
 import com.acornui.graphic.Color
@@ -25,7 +25,10 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.emptySignal
 
-class MockWindow : Window {
+/**
+ * HeadlessWindow is used for testing and headless applications.  It mocks everything except for close/closing logic.
+ */
+class HeadlessWindow : Window {
 
 	private val _closeRequested = Signal1<Cancel>()
 	override val closeRequested: Signal<(Cancel) -> Unit> = _closeRequested.asRo()

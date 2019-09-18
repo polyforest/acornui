@@ -1,4 +1,4 @@
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.component.RenderContextRo
 import com.acornui.graphic.Color

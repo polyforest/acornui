@@ -20,7 +20,6 @@ package com.acornui.lwjgl
 
 import com.acornui.*
 import com.acornui.asset.Loaders
-import com.acornui.asset.load
 import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
@@ -45,8 +44,6 @@ import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.JvmClickDispatcher
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.*
-import com.acornui.io.file.Files
-import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.lwjgl.audio.NoAudioException
@@ -56,18 +53,16 @@ import com.acornui.lwjgl.audio.registerDefaultSoundDecoders
 import com.acornui.lwjgl.cursor.JvmCursorManager
 import com.acornui.lwjgl.files.JvmFileIoManager
 import com.acornui.lwjgl.glfw.GlfwWindowImpl
+import com.acornui.lwjgl.input.GlfwKeyInput
 import com.acornui.lwjgl.input.GlfwMouseInput
 import com.acornui.lwjgl.input.JvmClipboard
-import com.acornui.lwjgl.input.GlfwKeyInput
 import com.acornui.lwjgl.opengl.JvmGl20Debug
 import com.acornui.lwjgl.opengl.LwjglGl20
 import com.acornui.lwjgl.opengl.loadTexture
 import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
-import com.acornui.serialization.jsonParse
 import com.acornui.time.start
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.runBlocking
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import kotlin.system.exitProcess
@@ -77,7 +72,7 @@ import org.lwjgl.Version as LwjglVersion
  * @author nbilyk
  */
 @Suppress("unused")
-open class LwjglApplication : ApplicationBase() {
+open class LwjglApplication(manifest: FilesManifest? = null) : ApplicationBase(manifest) {
 
 	// If accessing the window id, use bootstrap.on(Window) { }
 	private var _windowId: Long = -1L
@@ -99,9 +94,9 @@ open class LwjglApplication : ApplicationBase() {
 		println("LWJGL Version: ${LwjglVersion.getVersion()}")
 	}
 
-	override fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
 		set(AppConfig, appConfig)
-		val injector = runBlocking { createInjector() }
+		val injector = createInjector()
 		val owner = OwnedImpl(injector)
 		owner.initializeSpecialInteractivity()
 		owner.onReady()
@@ -155,12 +150,6 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val keyInputTask by task(KeyInput) {
 		GlfwKeyInput(getWindowId())
-	}
-
-	override val filesTask by task(Files) {
-		val manifestJson = get(Loaders.textLoader).load(config().rootPath + config().assetsManifestPath)
-		val manifest = jsonParse(FilesManifest.serializer(), manifestJson)
-		FilesImpl(manifest)
 	}
 
 	private val audioManagerTask by task(AudioManager) {

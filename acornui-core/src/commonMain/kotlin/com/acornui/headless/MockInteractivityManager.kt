@@ -1,4 +1,4 @@
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo

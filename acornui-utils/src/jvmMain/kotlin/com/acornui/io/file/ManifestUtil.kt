@@ -27,13 +27,13 @@ import java.nio.file.Files
 object ManifestUtil {
 
 	/**
-	 * Creates a json manifest file of all the files in the given directory. Paths are relative to the provided
-	 * root directory.
+	 * Creates a manifest of all the files in the given directory. Paths are relative to the provided root directory.
 	 */
 	fun createManifest(directory: File, root: File = directory): FilesManifest {
-		if (!directory.exists() || !directory.isDirectory) throw IllegalArgumentException("directory does not exist ${directory.absolutePath}")
-		if (!root.exists()) throw IllegalArgumentException("root does not exist ${root.absolutePath}")
-		if (!root.isDirectory) throw IllegalArgumentException("root is not a directory")
+		require(directory.exists() && directory.isDirectory) { "directory does not exist ${directory.absolutePath}" }
+		require(root.exists()) { "root does not exist ${root.absolutePath}" }
+		require(root.isDirectory) { "root is not a directory" }
+		
 		val fileEntries = ArrayList<ManifestEntry>()
 		for (file in directory.walkTopDown()) {
 			if (!file.isDirectory) {

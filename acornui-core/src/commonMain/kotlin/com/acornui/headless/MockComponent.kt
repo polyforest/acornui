@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.acornui.mock
+package com.acornui.headless
 
 import com.acornui.component.UiComponentImpl
 
-class MockComponent : UiComponentImpl(MockInjector.owner) {
+class MockComponent : UiComponentImpl(HeadlessInjector.owner) {
 }

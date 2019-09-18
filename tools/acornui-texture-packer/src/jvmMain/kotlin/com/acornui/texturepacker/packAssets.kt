@@ -20,10 +20,10 @@ import com.acornui.asset.Loaders
 import com.acornui.async.exitOnCompletion
 import com.acornui.async.globalLaunch
 import com.acornui.di.inject
-import com.acornui.graphic.exit
 import com.acornui.headless.JvmHeadlessApplication
 import com.acornui.io.file.Files
 import com.acornui.texturepacker.writer.writeAtlas
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
 	packAssets(srcDir, destDir, unpackedSuffix)
 }
 
-fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String) {
+fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String) = runBlocking {
 	JvmHeadlessApplication(srcDir.path).start {
 		val files = inject(Files)
 		val rel = srcDir.absoluteFile.toRelativeString(File(".").absoluteFile)

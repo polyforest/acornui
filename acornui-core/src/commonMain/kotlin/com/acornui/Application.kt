@@ -24,20 +24,30 @@ import com.acornui.async.applicationScopeKey
 import com.acornui.di.*
 import com.acornui.io.*
 import com.acornui.io.file.Files
+import com.acornui.io.file.FilesImpl
+import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
+import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.*
 
 /**
  * The common interface to all Acorn UI applications.
  */
 interface Application {
-	fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit)
+	
+	suspend fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit)
 }
 
 /**
  * Utilities for boot tasks in an application.
  */
-abstract class ApplicationBase : Application {
+abstract class ApplicationBase(
+
+		/**
+		 * If set, the [AppConfig.assetsManifestPath] will be ignored and this manifest will be used.
+		 */
+		private val manifest: FilesManifest?
+) : Application {
 
 	/**
 	 * The number of seconds before logs are created for any remaining boot tasks.
@@ -66,7 +76,15 @@ abstract class ApplicationBase : Application {
 		bootstrap.awaitAll()
 	}
 
-	abstract val filesTask: suspend () -> Files
+	protected open val filesTask by task(Files) {
+		val config = config()
+		val manifest = manifest ?: if (config.assetsManifestPath == null) FilesManifest(emptyList())
+		else {
+			val manifestJson = get(Loaders.textLoader).load(config.rootPath + config.assetsManifestPath)
+			jsonParse(FilesManifest.serializer(), manifestJson)
+		}
+		FilesImpl(manifest)
+	}
 
 	protected open val versionTask by task(Version) {
 		// Copy the app config and set the build number.
