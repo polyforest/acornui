@@ -142,10 +142,6 @@ interface ColorRo {
 
 }
 
-fun Color(rgba: Long): Color {
-	return Color().set8888(rgba)
-}
-
 /**
  * A color class, holding the r, g, b and alpha component as floats in the range [0,1]. All methods perform clamping on the
  * internal values after execution.
@@ -159,6 +155,10 @@ data class Color(
 		override var b: Float = 0f,
 		override var a: Float = 0f
 ) : ColorRo, Clearable {
+
+	constructor(rgba: Long) : this() {
+		set8888(rgba)
+	}
 
 	/**
 	 * Sets this color to the given color.
