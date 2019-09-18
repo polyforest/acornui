@@ -1,7 +1,7 @@
 package com.acornui.text
 
 import com.acornui.i18n.Locale
-import com.acornui.system.userInfo
+import com.acornui.i18n.isI18nSupported
 import com.acornui.time.date
 import com.acornui.time.time
 import com.acornui.time.utcDate
@@ -9,7 +9,6 @@ import com.acornui.time.utcTime
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.fail
 
 class DateParserTest {
 
@@ -47,7 +46,8 @@ class DateParserTest {
 
 	@Test
 	fun parseDateI18n() {
-		if (!userInfo.isBrowser) return
+		if (!isI18nSupported) return
+		parser.type = DateTimeFormatType.DATE
 		parser.locales = listOf(Locale("de-DE"))
 		assertEquals(date(fullYear = 1978, month = 12, dayOfMonth = 31), parser.parse("31/12/1978"))
 	}
@@ -84,7 +84,9 @@ class DateParserTest {
 
 	@Test
 	fun parseDateOptionalYearI18n() {
-		if (!userInfo.isBrowser) return
+		if (!isI18nSupported) return
+		parser.yearIsOptional = true
+		parser.type = DateTimeFormatType.DATE
 		parser.locales = listOf(Locale("de-DE"))
 		assertEquals(date(fullYear = currentYear, month = 12, dayOfMonth = 31), parser.parse("31/12"))
 		assertEquals(date(fullYear = 2014, month = 12, dayOfMonth = 31), parser.parse("31/12/2014"))
@@ -127,7 +129,9 @@ class DateParserTest {
 
 	@Test
 	fun parseDateAllowTwoDigitYearI18n() {
-		if (!userInfo.isBrowser) return
+		if (!isI18nSupported) return
+		parser.allowTwoDigitYears = true
+		parser.type = DateTimeFormatType.DATE
 		parser.locales = listOf(Locale("de-DE"))
 		assertEquals(null, parser.parse("31/12"))
 		assertEquals(date(fullYear = 2014, month = 12, dayOfMonth = 31), parser.parse("31/12/2014"))

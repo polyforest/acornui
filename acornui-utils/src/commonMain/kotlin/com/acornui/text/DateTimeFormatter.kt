@@ -275,7 +275,7 @@ class DateTimeParser : StringParser<Date> {
 	 */
 	private operator fun String.minus(range: IntRange?): String {
 		if (range == null) return this
-		return substring(0, range.start) + substring(range.endInclusive + 1, length)
+		return substring(0, range.first) + substring(range.last + 1, length)
 	}
 
 	/**

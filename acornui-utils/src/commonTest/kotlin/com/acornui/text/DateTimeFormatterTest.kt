@@ -17,6 +17,7 @@
 package com.acornui.text
 
 import com.acornui.i18n.Locale
+import com.acornui.i18n.isI18nSupported
 import com.acornui.system.userInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,7 +36,7 @@ class DateTimeFormatterTest {
 
 	@Test
 	fun getMonthsTestI18n() {
-		if (!userInfo.isBrowser) return
+		if (!isI18nSupported) return
 		val monthsLongDe = getMonths(true, listOf(Locale("de-DE")))
 		assertEquals(listOf("Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"), monthsLongDe)
 
