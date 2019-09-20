@@ -60,7 +60,7 @@ import kotlin.dom.clear
 open class WebGlApplication(private val rootId: String, manifest: FilesManifest? = null) : BrowserApplicationBase(manifest) {
 
 	private val rootElement: HTMLElement by lazy {
-		document.getElementById(rootId) as HTMLElement
+		(document.getElementById(rootId) as HTMLElement?) ?: throw Exception("The root element with id $rootId could not be found.")
 	}
 
 	override val canvasTask by task(CANVAS) {
