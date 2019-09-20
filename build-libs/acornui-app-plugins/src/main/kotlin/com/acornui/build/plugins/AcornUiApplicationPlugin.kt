@@ -31,7 +31,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		project.appAssetsWebTasks()
 		project.runJvmTask()
 		project.uberJarTask()
-		project.jsBrowserTasks()
 
 		project.tasks.named<Delete>("clean") {
 			doLast {

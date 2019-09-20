@@ -304,9 +304,3 @@ fun Project.uberJarTask() {
 		with(tasks["jvmJar"] as CopySpec)
 	}
 }
-
-fun Project.jsBrowserTasks() {
-//	tasks.register<KotlinWebpack>("asdf") {
-//
-//	}
-}
