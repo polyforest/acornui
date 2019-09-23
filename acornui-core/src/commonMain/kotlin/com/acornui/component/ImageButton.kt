@@ -24,19 +24,22 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.focus.Focusable
-import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.input.interaction.MouseOrTouchState
+import com.acornui.math.Bounds
+import com.acornui.math.colorTransformation
+import com.acornui.math.grayscale
 import com.acornui.reflect.observable
 
 /**
- * A skinnable button with up, over, down, and disabled states.
+ * A button that tints a single element (typically a white image).
+ *
+ * Note: ImageButton does not currently support indeterminate states.
  */
 class ImageButton(
 		owner: Owned
-) : SingleElementContainerImpl<UiComponent>(owner), Focusable {
+) : SingleElementContainerImpl<UiComponent>(owner), Toggleable, Focusable {
 
 	val style = bind(ImageButtonStyle())
 
@@ -58,12 +61,17 @@ class ImageButton(
 		invalidateProperties()
 	}
 
+	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
+
 	private fun updateProperties() {
-		currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, false, false, disabled)
+		currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, false, disabled)
 		val colorTransform = when (currentState) {
 			ButtonState.OVER -> style.overState
 			ButtonState.DOWN -> style.downState
 			ButtonState.DISABLED -> style.disabledState
+			ButtonState.TOGGLED_UP -> style.toggledUpState
+			ButtonState.TOGGLED_OVER -> style.toggledOverState
+			ButtonState.TOGGLED_DOWN -> style.toggledDownState
 			else -> style.upState
 		}
 		colorTransformation.set(colorTransform)
@@ -129,6 +137,10 @@ class ImageButtonStyle : StyleBase() {
 	var upState by prop(colorTransformation {})
 	var overState by prop(colorTransformation { offset = Color(0.1f, 0.1f, 0.1f, 0.0f) })
 	var downState by prop(colorTransformation { tint(0.9f, 0.9f, 0.9f, 1f); offset = Color(-0.1f, -0.1f, -0.1f, 0.0f) })
+
+	var toggledUpState by prop(colorTransformation {})
+	var toggledOverState by prop(colorTransformation { offset = Color(0.1f, 0.1f, 0.1f, 0.0f) })
+	var toggledDownState by prop(colorTransformation { tint(0.9f, 0.9f, 0.9f, 1f); offset = Color(-0.1f, -0.1f, -0.1f, 0.0f) })
 
 	var disabledState by prop(colorTransformation { tint(0.2f, 0.2f, 0.2f, 0.5f); grayscale(); offset = Color(-0.1f, -0.1f, -0.1f, 0.0f) })
 

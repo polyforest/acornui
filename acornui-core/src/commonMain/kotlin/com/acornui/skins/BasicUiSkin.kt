@@ -797,6 +797,19 @@ open class BasicUiSkin(
 				tint(theme.iconColor * 0.9f)
 				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
 			}
+
+			toggledUpState = colorTransformation {
+				tint(theme.toggledIconColor)
+			}
+			toggledOverState = colorTransformation {
+				tint(theme.toggledIconColor)
+				offset = Color(0.1f, 0.1f, 0.1f, 0.0f)
+			}
+			toggledDownState = colorTransformation {
+				tint(theme.toggledIconColor * 0.9f)
+				offset = Color(-0.1f, -0.1f, -0.1f, 0.0f)
+			}
+
 			disabledState = colorTransformation {
 				tint(0.2f, 0.2f, 0.2f, 0.5f)
 				grayscale()

@@ -97,6 +97,7 @@ data class Theme(
 		val iconButtonGap: Float = 2f,
 
 		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
+		val toggledIconColor: ColorRo = Color(0.5f, 0.5f, 0.25f, 0.8f),
 
 		val atlasPath: String = "assets/uiskin/uiskin.json"
 )
