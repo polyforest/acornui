@@ -65,6 +65,13 @@ open class OptionList<E : Any>(
 		data(data)
 	}
 
+	/**
+	 * If true, when this option list is clicked, this list will open. Clicking the down arrow will still result in a
+	 * toggle.
+	 * If false (default), this list is only opened when either the down arrow is clicked, or the down key is pressed.
+	 */
+	var autoOpen: Boolean = false
+
 	private val _input = own(Signal0())
 
 	/**
@@ -154,7 +161,14 @@ open class OptionList<E : Any>(
 		disabledTag = it
 	}
 
+	/**
+	 * The background, as created by [OptionListStyle.background].
+	 */
 	private var background: UiComponent? = null
+
+	/**
+	 * The down arrow, as created by [OptionListStyle.downArrow].
+	 */
 	private var downArrow: UiComponent? = null
 
 	private val dataScroller = vDataScroller<E> {
@@ -261,6 +275,12 @@ open class OptionList<E : Any>(
 
 		keyDown().add(::keyDownHandler)
 
+		click().add {
+			if (autoOpen) {
+				if (it.target == downArrow) toggleOpen() else open()
+			}
+		}
+
 		watch(style) {
 			background?.dispose()
 			background = addOptionalChild(0, it.background(this))
@@ -270,10 +290,10 @@ open class OptionList<E : Any>(
 			downArrow.focusEnabled = false
 			downArrow.interactivityMode = if (editable) InteractivityMode.ALL else InteractivityMode.NONE
 			downArrow.click().add { e ->
-				// Using mouseDown instead of click because we close on blur (which is often via mouseDown).
 				if (!e.handled) {
 					e.handled = true
-					toggleOpen()
+					if (!autoOpen)
+						toggleOpen()
 				}
 			}
 			this.downArrow = downArrow
@@ -322,8 +342,7 @@ open class OptionList<E : Any>(
 			}
 			Ascii.DOWN -> {
 				event.handled = true
-				if (!isOpen)
-					open()
+				open()
 				highlightNext(1)
 			}
 			Ascii.UP -> {
