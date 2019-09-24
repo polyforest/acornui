@@ -16,6 +16,7 @@
 
 package com.acornui.js.audio
 
+import com.acornui.system.userInfo
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import org.khronos.webgl.ArrayBuffer
@@ -23,7 +24,7 @@ import org.w3c.dom.HTMLMediaElement
 import org.w3c.dom.events.EventTarget
 
 
-val audioContextSupported: Boolean = js("var JsAudioContext = window.AudioContext || window.webkitAudioContext; JsAudioContext != null") as Boolean
+val audioContextSupported: Boolean = userInfo.isBrowser && js("""var JsAudioContext = window.AudioContext || window.webkitAudioContext; JsAudioContext != null""") as Boolean
 
 external class AudioContext : EventTarget {
 
