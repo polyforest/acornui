@@ -18,5 +18,5 @@ package com.acornui.error
 
 actual val Throwable.stack: String
 	get() {
-		return asDynamic().stack as String
+		return asDynamic().stack as? String ?: ""
 	}
