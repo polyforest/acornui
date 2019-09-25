@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("JsonSerializerUtils")
+@file:Suppress("DEPRECATION")
 
 package com.acornui.serialization
 
