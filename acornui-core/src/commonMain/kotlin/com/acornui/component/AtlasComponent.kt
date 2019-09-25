@@ -28,6 +28,8 @@ import com.acornui.graphic.*
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import kotlinx.coroutines.Deferred
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A UiComponent that draws a region from a texture atlas.
@@ -111,13 +113,15 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	}
 }
 
-fun Owned.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
+inline fun Owned.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.init()
 	return a
 }
 
-fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
+inline fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.setRegion(atlasPath, region).catch { throw it }
 	a.init()

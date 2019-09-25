@@ -16,22 +16,24 @@
 
 package com.acornui.filter
 
+import com.acornui.Renderable
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.PaddedRenderable
 import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
-import com.acornui.Renderable
 import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.di.own
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Window
 import com.acornui.gl.core.*
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
+import com.acornui.graphic.Window
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.ceil
 
 open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
@@ -187,7 +189,8 @@ void main() {
 
 """)
 
-fun Owned.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter {
+inline fun Owned.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = BlurFilter(this)
 	b.init()
 	return b

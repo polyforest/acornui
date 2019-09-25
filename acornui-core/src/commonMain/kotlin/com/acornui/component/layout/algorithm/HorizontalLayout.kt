@@ -26,6 +26,8 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.floor
 
 class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayoutData> {
@@ -227,7 +229,8 @@ class HorizontalLayoutData : BasicLayoutData() {
 
 open class HorizontalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())
 
-fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer> = {}): HorizontalLayoutContainer {
+inline fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer> = {}): HorizontalLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val horizontalGroup = HorizontalLayoutContainer(this)
 	horizontalGroup.init()
 	return horizontalGroup

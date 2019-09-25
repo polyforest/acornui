@@ -35,6 +35,8 @@ import com.acornui.popup.addPopUp
 import com.acornui.popup.removePopUp
 import com.acornui.time.onTick
 import com.acornui.time.tick
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A progress bar made from simple rectangles.
@@ -124,7 +126,8 @@ class ProgressBarRectStyle : StyleBase() {
 	companion object : StyleType<ProgressBarRectStyle>
 }
 
-fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBarRect {
+inline fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBarRect  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val p = ProgressBarRect(this)
 	p.init()
 	return p

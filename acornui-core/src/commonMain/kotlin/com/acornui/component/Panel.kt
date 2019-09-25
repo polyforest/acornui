@@ -18,7 +18,10 @@ package com.acornui.component
 
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkinOptional
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.math.Bounds
@@ -26,6 +29,8 @@ import com.acornui.math.Pad
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class Panel(
 		owner: Owned
@@ -95,8 +100,8 @@ open class PanelStyle : StyleBase() {
 	companion object : StyleType<PanelStyle>
 }
 
-fun Owned.panel(
-		init: ComponentInit<Panel> = {}): Panel {
+inline fun Owned.panel(init: ComponentInit<Panel> = {}): Panel {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val p = Panel(this)
 	p.init()
 	return p

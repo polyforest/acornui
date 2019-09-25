@@ -22,6 +22,8 @@ import com.acornui.component.layout.algorithm.ScaleLayoutData
 import com.acornui.component.layout.algorithm.ScaleLayoutStyle
 import com.acornui.di.Owned
 import com.acornui.graphic.Texture
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A scale box layout
@@ -40,20 +42,23 @@ open class Image(owner: Owned) : SingleElementLayoutContainerImpl<ScaleLayoutSty
 	}
 }
 
-fun Owned.image(init: ComponentInit<Image> = {}): Image {
+inline fun Owned.image(init: ComponentInit<Image> = {}): Image  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
 	return i
 }
 
-fun Owned.image(path: String, init: ComponentInit<Image> = {}): Image {
+inline fun Owned.image(path: String, init: ComponentInit<Image> = {}): Image  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
 	i.contentsImage(path)
 	return i
 }
 
-fun Owned.image(atlasPath: String, region: String, init: ComponentInit<Image> = {}): Image {
+inline fun Owned.image(atlasPath: String, region: String, init: ComponentInit<Image> = {}): Image  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
 	i.contentsAtlas(atlasPath, region)

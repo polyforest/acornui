@@ -16,11 +16,15 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface RowBackground : UiComponent, Toggleable {
 
@@ -101,7 +105,8 @@ class RowBackgroundStyle : StyleBase() {
 	companion object : StyleType<RowBackgroundStyle>
 }
 
-fun Owned.rowBackground(init: ComponentInit<RowBackgroundImpl> = {}): RowBackgroundImpl {
+inline fun Owned.rowBackground(init: ComponentInit<RowBackgroundImpl> = {}): RowBackgroundImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val r = RowBackgroundImpl(this)
 	r.init()
 	return r

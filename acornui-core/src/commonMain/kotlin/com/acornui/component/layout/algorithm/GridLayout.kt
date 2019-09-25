@@ -31,6 +31,8 @@ import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
@@ -399,7 +401,8 @@ fun gridLayoutData(init: GridLayoutData.() -> Unit): GridLayoutData {
 
 open class GridLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<GridLayoutStyle, GridLayoutData>(owner, GridLayout())
 
-fun Owned.grid(init: ComponentInit<GridLayoutContainer> = {}): GridLayoutContainer {
+inline fun Owned.grid(init: ComponentInit<GridLayoutContainer> = {}): GridLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = GridLayoutContainer(this)
 	c.init()
 	return c
@@ -424,7 +427,8 @@ open class FormContainer(owner: Owned) : GridLayoutContainer(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.form(init: ComponentInit<FormContainer> = {}): FormContainer {
+inline fun Owned.form(init: ComponentInit<FormContainer> = {}): FormContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = FormContainer(this)
 	c.init()
 	return c
@@ -432,9 +436,11 @@ fun Owned.form(init: ComponentInit<FormContainer> = {}): FormContainer {
 
 val formLabelStyle = styleTag()
 
-fun Owned.formLabel(text: String = "", init: ComponentInit<TextField> = {}): TextField {
-	return text(text) {
+inline fun Owned.formLabel(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	val t = text(text) {
 		styleTags.add(formLabelStyle)
-		init()
 	}
+	t.init()
+	return t
 }

@@ -18,6 +18,8 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Owned
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class CheckboxImpl(
 		owner: Owned
@@ -31,13 +33,15 @@ open class CheckboxImpl(
 	companion object : StyleTag
 }
 
-fun Owned.checkbox(init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl {
+inline fun Owned.checkbox(init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = CheckboxImpl(this)
 	c.init()
 	return c
 }
 
-fun Owned.checkbox(label: String, init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl {
+inline fun Owned.checkbox(label: String, init: ComponentInit<CheckboxImpl> = {}): CheckboxImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = CheckboxImpl(this)
 	b.label = label
 	b.init()

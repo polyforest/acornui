@@ -16,26 +16,25 @@
 
 package com.acornui.component
 
-import com.acornui.async.globalAsync
-import com.acornui.async.then
-import com.acornui.collection.fill
 import com.acornui.AppConfig
 import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.async.async
+import com.acornui.async.then
+import com.acornui.collection.fill
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.di.notDisposed
-import com.acornui.graphic.*
-import com.acornui.time.onTick
 import com.acornui.gl.core.GlState
+import com.acornui.graphic.*
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
+import com.acornui.time.onTick
 import kotlinx.coroutines.Deferred
-
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 
@@ -219,14 +218,16 @@ private fun String.calculateFrameIndex(name: String): Int {
 	return -1
 }
 
-fun Owned.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation {
+inline fun Owned.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpriteAnimation(this)
 	s.setRegion(atlasPath, regionName)
 	s.init()
 	return s
 }
 
-fun Owned.spriteAnimation(init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation {
+inline fun Owned.spriteAnimation(init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpriteAnimation(this)
 	s.init()
 	return s

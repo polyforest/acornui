@@ -30,6 +30,8 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.Vector3
 import com.acornui.selection.SelectionRange
 import com.acornui.setCamera
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -417,7 +419,8 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	}
 }
 
-fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph {
+inline fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = Paragraph(this)
 	t.init()
 	return t

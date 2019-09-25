@@ -26,6 +26,8 @@ import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A NullRenderer is a renderer for a virtual list that represents a null object.
@@ -79,7 +81,8 @@ class NullRendererStyle : StyleBase() {
 	companion object : StyleType<NullRendererStyle>
 }
 
-fun Owned.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer {
+inline fun Owned.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val renderer = NullRenderer(this)
 	renderer.init()
 	return renderer

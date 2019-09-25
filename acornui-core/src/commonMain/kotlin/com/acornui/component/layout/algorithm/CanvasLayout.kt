@@ -17,10 +17,15 @@
 package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainerImpl
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.LayoutElementRo
+import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.NoopStyle
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 
@@ -89,7 +94,8 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 
 open class CanvasLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout())
 
-fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer> = {}): CanvasLayoutContainer {
+inline fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer> = {}): CanvasLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val canvasContainer = CanvasLayoutContainer(this)
 	canvasContainer.init()
 	return canvasContainer

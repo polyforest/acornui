@@ -20,6 +20,8 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A list of paragraphs to be laid out vertically.
@@ -53,7 +55,8 @@ class TextVerticalGroup(owner: Owned) : TextElementContainerImpl<TextNode>(owner
 
 }
 
-fun Owned.paragraphs(init: ComponentInit<TextVerticalGroup> = {}): TextVerticalGroup {
+inline fun Owned.paragraphs(init: ComponentInit<TextVerticalGroup> = {}): TextVerticalGroup  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = TextVerticalGroup(this)
 	s.init()
 	return s

@@ -76,4 +76,4 @@ class HeadlessTest {
 
 private class TestComponent(owner: Owned) : UiComponentImpl(owner)
 
-private fun Owned.testComponent(init: ComponentInit<UiComponent> = {}): UiComponent = TestComponent(this).apply(init)
+private inline fun Owned.testComponent(init: ComponentInit<UiComponent> = {}): UiComponent = TestComponent(this).apply(init)

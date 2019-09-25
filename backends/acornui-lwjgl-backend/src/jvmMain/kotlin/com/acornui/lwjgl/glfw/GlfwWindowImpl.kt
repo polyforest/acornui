@@ -26,6 +26,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.lwjgl.browser.JvmLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
+import com.acornui.substringInRange
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback

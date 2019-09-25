@@ -16,10 +16,10 @@
 
 package com.acornui.filter
 
+import com.acornui.Renderable
 import com.acornui.component.ComponentInit
 import com.acornui.component.RenderContextRo
 import com.acornui.component.childRenderContext
-import com.acornui.Renderable
 import com.acornui.di.Owned
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
@@ -28,6 +28,8 @@ import com.acornui.math.ColorTransformationRo
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.colorTransformation
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -101,7 +103,8 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 }
 
-fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter {
+inline fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
 	b.offsetX = 3f
 	b.offsetY = 3f
@@ -109,7 +112,8 @@ fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter {
 	return b
 }
 
-fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter {
+inline fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
 	b.offsetX = 0f
 	b.offsetY = 0f

@@ -43,6 +43,8 @@ import com.acornui.selection.SelectionRange
 import com.acornui.signal.Signal
 import com.acornui.tickTime
 import com.acornui.time.tick
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
@@ -511,13 +513,15 @@ var TextArea.selectable: Boolean
 	}
 
 
-fun Owned.textInput(init: ComponentInit<TextInputImpl> = {}): TextInputImpl {
+inline fun Owned.textInput(init: ComponentInit<TextInputImpl> = {}): TextInputImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextInputImpl(this)
 	t.init()
 	return t
 }
 
-fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl {
+inline fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextAreaImpl(this)
 	t.init()
 	return t

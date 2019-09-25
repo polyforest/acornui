@@ -22,6 +22,8 @@ import com.acornui.component.UiComponent
 import com.acornui.di.Owned
 import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A container with a custom one-off layout.
@@ -63,7 +65,8 @@ open class CustomLayoutContainer(
 	}
 }
 
-fun Owned.customLayout(init: ComponentInit<CustomLayoutContainer> = {}): CustomLayoutContainer {
+inline fun Owned.customLayout(init: ComponentInit<CustomLayoutContainer> = {}): CustomLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = CustomLayoutContainer(this)
 	c.init()
 	return c

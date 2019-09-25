@@ -16,21 +16,22 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.component.*
 import com.acornui.Disposable
+import com.acornui.component.*
 import com.acornui.di.Injector
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
-import com.acornui.setCamera
 import com.acornui.gl.core.*
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.TextureRo
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.freeAll
+import com.acornui.setCamera
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A UiComponent for drawing static [MeshRegion] with uniforms for model and color transformation.
@@ -129,13 +130,15 @@ open class StaticMeshComponent(
 	}
 }
 
-fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
+inline fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.init()
 	return s
 }
 
-fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
+inline fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.mesh = mesh
 	s.init()

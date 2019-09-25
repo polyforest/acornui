@@ -37,6 +37,8 @@ import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
 import com.acornui.text.NumberFormatter
 import com.acornui.text.numberFormatter
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -267,7 +269,8 @@ class NumericStepperStyle : StyleBase() {
 	companion object : StyleType<NumericStepperStyle>
 }
 
-fun Owned.numericStepper(init: ComponentInit<NumericStepper> = {}): NumericStepper {
+inline fun Owned.numericStepper(init: ComponentInit<NumericStepper> = {}): NumericStepper  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = NumericStepper(this)
 	c.init()
 	return c

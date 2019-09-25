@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.Disposable
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
@@ -25,21 +26,21 @@ import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.scaleBox
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.*
-import com.acornui.Disposable
 import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
 import com.acornui.di.own
+import com.acornui.factory.LazyInstance
+import com.acornui.factory.lazyInstance
 import com.acornui.graphic.Scaling
 import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.input.interaction.click
-import com.acornui.factory.LazyInstance
-import com.acornui.factory.lazyInstance
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal3
 import com.acornui.signal.Signal4
-
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider<StackLayoutData> {
 
@@ -67,7 +68,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 */
 	protected val contents = scrollArea()
 
-	protected val _tabBarContainer: UiComponent
+	private val _tabBarContainer: UiComponent
 
 	/**
 	 * The container for the tab buttons.
@@ -112,19 +113,6 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		}
 		protected set
 
-	private val tabClickHandler = { e: ClickInteractionRo ->
-		if (!e.handled) {
-			val index = tabBar.elements.indexOf(e.currentTarget)
-			if (_currentIndex != index) {
-				e.handled = true
-				_userCurrentIndexChanged.dispatch(this, _currentIndex, index, cancel.reset())
-				if (!cancel.canceled) {
-					currentIndex = index
-				}
-			}
-		}
-	}
-
 	init {
 		styleTags.add(TabNavigator)
 		_tabBarContainer = scaleBox {
@@ -147,6 +135,19 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 			background?.dispose()
 			background = addChild(0, it.background(this))
 			tabBar.style.gap = it.tabGap
+		}
+	}
+
+	private fun tabClickHandler(e: ClickInteractionRo) {
+		if (!e.handled) {
+			val index = tabBar.elements.indexOf(e.currentTarget)
+			if (_currentIndex != index) {
+				e.handled = true
+				_userCurrentIndexChanged.dispatch(this, _currentIndex, index, cancel.reset())
+				if (!cancel.canceled) {
+					currentIndex = index
+				}
+			}
 		}
 	}
 
@@ -212,7 +213,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 		_tabs.add(newIndex, tab)
 		tabBar.addElement(newIndex, tab.button)
-		tab.button.click().add(tabClickHandler)
+		tab.button.click().add(::tabClickHandler)
 
 		updateSelectedTab()
 		tab.disposed.add(::tabDisposedHandler)
@@ -252,7 +253,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 			}
 			t.styleTags.remove(DEFAULT_TAB_STYLE_LAST)
 		}
-		t.click().remove(tabClickHandler)
+		t.click().remove(::tabClickHandler)
 		tabBar.removeElement(r.button)
 
 		updateSelectedTab()
@@ -394,7 +395,8 @@ fun <S : ButtonImpl, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMar
 
 fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
 
-fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
+inline fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TabNavigator(this)
 	t.init()
 	return t

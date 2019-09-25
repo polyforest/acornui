@@ -31,6 +31,8 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.floor
 import kotlin.math.round
 
@@ -387,7 +389,8 @@ enum class FlowVAlign {
 
 open class FlowLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout())
 
-fun Owned.flow(init: ComponentInit<FlowLayoutContainer> = {}): FlowLayoutContainer {
+inline fun Owned.flow(init: ComponentInit<FlowLayoutContainer> = {}): FlowLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val flowContainer = FlowLayoutContainer(this)
 	flowContainer.init()
 	return flowContainer

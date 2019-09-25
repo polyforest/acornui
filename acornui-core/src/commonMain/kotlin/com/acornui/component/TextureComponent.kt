@@ -16,7 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.asset.*
+import com.acornui.asset.CachedGroup
+import com.acornui.asset.cacheAsync
+import com.acornui.asset.cachedGroup
+import com.acornui.asset.loadTexture
 import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.di.Owned
@@ -25,6 +28,8 @@ import com.acornui.graphic.Texture
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A UiComponent representing a single Texture.
@@ -163,20 +168,23 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 	}
 }
 
-fun Owned.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent {
+inline fun Owned.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent {
+inline fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.path = path
 	textureComponent.init()
 	return textureComponent
 }
 
-fun Owned.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent {
+inline fun Owned.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.texture = texture
 	textureComponent.init()

@@ -30,6 +30,8 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
@@ -140,7 +142,8 @@ class FramebufferFilter(
 /**
  * A frame buffer filter will cache the render target as a bitmap.
  */
-fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
+inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = FramebufferFilter(this)
 	b.init()
 	return b

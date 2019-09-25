@@ -26,6 +26,8 @@ import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * StackLayout places components one on top of another, allowing for percent-based sizes and alignment using
@@ -179,7 +181,8 @@ open class StackLayoutStyle : StyleBase() {
 
 open class StackLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout())
 
-fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer {
+inline fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StackLayoutContainer(this)
 	s.init()
 	return s

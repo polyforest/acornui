@@ -18,11 +18,13 @@ package com.acornui.component
 
 
 import com.acornui.di.Owned
-import com.acornui.graphic.Texture
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TextureWrapMode
+import com.acornui.graphic.Texture
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * @author nbilyk
@@ -57,9 +59,10 @@ class RepeatingTexture(
 	}
 }
 
-fun Owned.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture {
+inline fun Owned.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val g = RepeatingTexture(this)
-	g.init()
 	g.path = path
+	g.init()
 	return g
 }

@@ -33,6 +33,8 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.skins.Theme
 import com.acornui.skins.basicButtonSkin
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface ButtonRo : UiComponentRo, LabelableRo, ToggleableRo {
 
@@ -287,13 +289,15 @@ interface ButtonSkin : Labelable {
 
 }
 
-fun Owned.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl {
+inline fun Owned.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = ButtonImpl(this)
 	b.init()
 	return b
 }
 
-fun Owned.button(label: String, init: ComponentInit<ButtonImpl> = {}): ButtonImpl {
+inline fun Owned.button(label: String, init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = ButtonImpl(this)
 	b.label = label
 	b.init()

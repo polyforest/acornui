@@ -16,18 +16,21 @@
 
 package com.acornui.tween.animation
 
+import com.acornui.Disposable
 import com.acornui.collection.ArrayList
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.Disposable
 import com.acornui.di.Owned
-import com.acornui.component.AtlasComponent
-import com.acornui.component.atlas
-import com.acornui.time.onTick
-import com.acornui.tween.*
 import com.acornui.graphic.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
+import com.acornui.time.onTick
+import com.acornui.tween.TimelineTween
+import com.acornui.tween.Tween
+import com.acornui.tween.TweenBase
+import com.acornui.tween.timelineTween
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.tan
 
 /**
@@ -259,14 +262,16 @@ private class LayerTween(override val duration: Float, layer: Layer, private val
 	}
 }
 
-fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationInstance> = {}): AnimationInstance {
+inline fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationInstance> = {}): AnimationInstance  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = createComponentFromLibrary(bundle, libraryItemName) as? AnimationInstance ?: throw Exception("Library item is not an animation.")
 	c.init()
 	return c
 }
 
 
-fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance {
+inline fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val libraryItem = bundle.library[libraryItemName] ?: throw Exception("library item not found with name: $libraryItemName")
 	val component = when (libraryItem.itemType) {
 		LibraryItemType.CUSTOM -> throw Exception("Cannot create a component with a custom library type.")

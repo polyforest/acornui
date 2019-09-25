@@ -25,9 +25,11 @@ import com.acornui.di.Owned
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.wheel
+import com.acornui.math.*
 import com.acornui.tween.Tween
 import com.acornui.tween.createPropertyTween
-import com.acornui.math.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.floor
 
 /**
@@ -375,7 +377,8 @@ fun ScrollPolicy.toCssString(): String {
 	}
 }
 
-fun Owned.scrollArea(init: ComponentInit<ScrollArea> = {}): ScrollArea {
+inline fun Owned.scrollArea(init: ComponentInit<ScrollArea> = {}): ScrollArea  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = ScrollArea(this)
 	s.init()
 	return s

@@ -16,16 +16,18 @@
 
 package com.acornui.component
 
-import com.acornui.async.then
 import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cacheAsync
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
+import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.math.IntRectangleRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * @author nbilyk
@@ -134,7 +136,8 @@ class NinePatchComponent(owner: Owned) : RenderableComponent<Renderable>(owner) 
 	}
 }
 
-fun Owned.ninePatch(init: ComponentInit<NinePatchComponent> = {}): NinePatchComponent {
+inline fun Owned.ninePatch(init: ComponentInit<NinePatchComponent> = {}): NinePatchComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val ninePatch = NinePatchComponent(this)
 	ninePatch.init()
 	return ninePatch

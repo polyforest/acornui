@@ -18,6 +18,8 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Owned
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class CollapseButton(
 		owner: Owned
@@ -31,13 +33,15 @@ open class CollapseButton(
 	companion object : StyleTag
 }
 
-fun Owned.collapseButton(init: ComponentInit<CollapseButton> = {}): CollapseButton {
+inline fun Owned.collapseButton(init: ComponentInit<CollapseButton> = {}): CollapseButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = CollapseButton(this)
 	c.init()
 	return c
 }
 
-fun Owned.collapseButton(label: String, init: ComponentInit<CollapseButton> = {}): CollapseButton {
+inline fun Owned.collapseButton(label: String, init: ComponentInit<CollapseButton> = {}): CollapseButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = CollapseButton(this)
 	b.label = label
 	b.init()

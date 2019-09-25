@@ -22,7 +22,8 @@ import com.acornui.component.UiComponentImpl
 import com.acornui.di.Owned
 import com.acornui.setCamera
 import com.acornui.time.onTick
-
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A Spine scene is a component that allows for spine skeletons to be added and rendered.
@@ -113,7 +114,8 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 }
 
-fun Owned.spineScene(init: ComponentInit<SpineScene> = {}): SpineScene {
+inline fun Owned.spineScene(init: ComponentInit<SpineScene> = {}): SpineScene  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpineScene(this)
 	s.init()
 	return s

@@ -16,13 +16,15 @@
 
 package com.acornui.di
 
-import com.acornui.component.ComponentInit
 import com.acornui.Disposable
 import com.acornui.DisposedException
 import com.acornui.Lifecycle
+import com.acornui.component.ComponentInit
 import com.acornui.function.as1
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * When an [Owned] object is created, the creator is its owner.
@@ -82,11 +84,13 @@ inline fun <P1, P2, P3, P4> Owned.notDisposed(crossinline callback: (P1, P2, P3,
 	return { p1, p2, p3, p4 -> if (!isDisposed) callback(p1, p2, p3, p4) }
 }
 
-fun Owned.createScope(vararg dependenciesList: DependencyPair<*>, init: ComponentInit<Owned> = {}): Owned {
+inline fun Owned.createScope(vararg dependenciesList: DependencyPair<*>, init: ComponentInit<Owned> = {}): Owned  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return createScope(dependenciesList.toList(), init)
 }
 
-fun Owned.createScope(dependenciesList: List<DependencyPair<*>>, init: ComponentInit<Owned> = {}): Owned {
+inline fun Owned.createScope(dependenciesList: List<DependencyPair<*>>, init: ComponentInit<Owned> = {}): Owned  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val owner = this
 	val o = object : Owned {
 		override val isDisposed: Boolean = false

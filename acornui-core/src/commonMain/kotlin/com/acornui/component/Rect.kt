@@ -21,17 +21,19 @@ import com.acornui.component.drawing.staticMesh
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.di.Owned
-import com.acornui.graphic.BlendMode
-import com.acornui.setCamera
 import com.acornui.gl.core.putIndex
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.PI
 import com.acornui.math.Pad
 import com.acornui.math.Vector3
+import com.acornui.setCamera
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.*
 
 class Rect(
@@ -594,7 +596,8 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	}
 }
 
-fun Owned.rect(init: ComponentInit<Rect> = {}): Rect {
+inline fun Owned.rect(init: ComponentInit<Rect> = {}): Rect  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val r = Rect(this)
 	r.init()
 	return r

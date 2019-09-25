@@ -17,11 +17,16 @@
 package com.acornui.component
 
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.component.text.text
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class HeadingGroup(owner: Owned) : ElementContainerImpl<UiComponent>(owner), Labelable, LayoutDataProvider<StackLayoutData> {
 
@@ -83,7 +88,8 @@ open class HeadingGroup(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 
 }
 
-fun Owned.headingGroup(init: ComponentInit<HeadingGroup> = {}): HeadingGroup {
+inline fun Owned.headingGroup(init: ComponentInit<HeadingGroup> = {}): HeadingGroup  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val f = HeadingGroup(this)
 	f.init()
 	return f

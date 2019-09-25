@@ -22,8 +22,9 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
 import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface ScrollRect : ElementContainer<UiComponent> {
 
@@ -134,7 +135,8 @@ class ScrollRectStyle : StyleBase() {
 	companion object : StyleType<ScrollRectStyle>
 }
 
-fun Owned.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl {
+inline fun Owned.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = ScrollRectImpl(this)
 	s.init()
 	return s

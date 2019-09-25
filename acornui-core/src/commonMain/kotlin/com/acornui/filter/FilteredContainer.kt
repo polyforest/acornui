@@ -18,15 +18,17 @@
 
 package com.acornui.filter
 
+import com.acornui.Renderable
 import com.acornui.collection.forEach2
 import com.acornui.component.*
-import com.acornui.Renderable
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.MinMaxRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
@@ -137,7 +139,8 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 		get() = _renderFilters.bounds
 }
 
-fun Owned.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer {
+inline fun Owned.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = FilteredContainer(this)
 	c.init()
 	return c

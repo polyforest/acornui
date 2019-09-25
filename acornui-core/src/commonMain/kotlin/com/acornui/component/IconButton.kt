@@ -28,6 +28,8 @@ import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class IconButton(
 		owner: Owned
@@ -83,27 +85,33 @@ open class IconButton(
 	companion object : StyleTag
 }
 
-fun Owned.iconButton(init: ComponentInit<IconButton> = {}): IconButton {
+inline fun Owned.iconButton(init: ComponentInit<IconButton> = {}): IconButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.init()
 	return b
 }
 
-fun Owned.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton {
-	return IconButton(this).apply {
+inline fun Owned.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	val button = IconButton(this).apply {
 		element = iconImage(imagePath)
-		init()
 	}
+	button.init()
+	return button
 }
 
-fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton {
-	return IconButton(this).apply {
+inline fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	val button = IconButton(this).apply {
 		element = iconAtlas(atlasPath, region)
-		init()
 	}
+	button.init()
+	return button
 }
 
-fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton {
+inline fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.iconMap(regions.mapTo { key, value ->
 		key to atlas(atlasPath, value)

@@ -52,6 +52,8 @@ import com.acornui.signal.Signal0
 import com.acornui.signal.bind
 import com.acornui.text.StringFormatter
 import com.acornui.text.ToStringFormatter
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class OptionList<E : Any>(
 		owner: Owned
@@ -535,10 +537,11 @@ fun <E : Any> Owned.optionList(
 	return t
 }
 
-fun <E : Any> Owned.optionList(
+inline fun <E : Any> Owned.optionList(
 		data: ObservableList<E?>,
-		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
+		noinline rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = OptionList<E>(this)
 	t.data(data)
 	t.rendererFactory(rendererFactory)
@@ -546,10 +549,11 @@ fun <E : Any> Owned.optionList(
 	return t
 }
 
-fun <E : Any> Owned.optionList(
+inline fun <E : Any> Owned.optionList(
 		data: List<E?>,
-		rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
+		noinline rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = OptionList<E>(this)
 	t.data(data)
 	t.rendererFactory(rendererFactory)

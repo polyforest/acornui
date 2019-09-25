@@ -25,6 +25,8 @@ import com.acornui.component.style.StyleTag
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.round
 
 open class VScrollBar(
@@ -113,7 +115,8 @@ open class VScrollBar(
 	companion object : StyleTag
 }
 
-fun Owned.vScrollBar(init: ComponentInit<VScrollBar> = {}): VScrollBar {
+inline fun Owned.vScrollBar(init: ComponentInit<VScrollBar> = {}): VScrollBar  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val v = VScrollBar(this)
 	v.init()
 	return v

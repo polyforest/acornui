@@ -26,6 +26,8 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.floor
 
 class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> {
@@ -216,7 +218,8 @@ class VerticalLayoutData : BasicLayoutData() {
 
 open class VerticalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
 
-fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer> = {}): VerticalLayoutContainer {
+inline fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer> = {}): VerticalLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val verticalGroup = VerticalLayoutContainer(this)
 	verticalGroup.init()
 	return verticalGroup

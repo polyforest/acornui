@@ -24,18 +24,23 @@ import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
 import com.acornui.di.own
-import com.acornui.focus.*
+import com.acornui.focus.blurred
+import com.acornui.focus.focus
+import com.acornui.focus.focused
+import com.acornui.focus.isFocusedSelf
+import com.acornui.graphic.*
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown
-import com.acornui.popup.lift
-import com.acornui.toInt
-import com.acornui.graphic.*
 import com.acornui.math.*
+import com.acornui.popup.lift
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.toInt
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 
@@ -187,7 +192,8 @@ class ColorPickerStyle : StyleBase() {
 	companion object : StyleType<ColorPickerStyle>
 }
 
-fun Owned.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker {
+inline fun Owned.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPicker(this)
 	c.init()
 	return c
@@ -560,7 +566,8 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText {
+inline fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPickerWithText(this)
 	c.init()
 	return c

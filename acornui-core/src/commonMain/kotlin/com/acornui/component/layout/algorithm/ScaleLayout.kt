@@ -26,6 +26,8 @@ import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.math.Vector2
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.floor
 
 /**
@@ -151,7 +153,8 @@ open class ScaleLayoutData : BasicLayoutData() {
 
 open class ScaleBoxLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout())
 
-fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer {
+inline fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val boxContainer = ScaleBoxLayoutContainer(this)
 	boxContainer.init()
 	return boxContainer

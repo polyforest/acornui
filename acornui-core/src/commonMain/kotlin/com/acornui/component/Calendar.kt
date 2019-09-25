@@ -16,6 +16,8 @@
 
 package com.acornui.component
 
+import com.acornui.behavior.Selection
+import com.acornui.behavior.SelectionBase
 import com.acornui.collection.Filter
 import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.*
@@ -23,21 +25,18 @@ import com.acornui.component.style.*
 import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
-import com.acornui.behavior.Selection
-import com.acornui.behavior.SelectionBase
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.focus.focus
+import com.acornui.graphic.Color
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
-import com.acornui.zeroPadding
-import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.reflect.observable
@@ -49,6 +48,9 @@ import com.acornui.text.dateFormatter
 import com.acornui.text.dateTimeFormatter
 import com.acornui.time.Date
 import com.acornui.time.DateRo
+import com.acornui.zeroPadding
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class Calendar(
 		owner: Owned
@@ -63,7 +65,7 @@ open class Calendar(
 	private var _headerFactory: Owned.() -> Labelable = { text { charStyle.selectable = false } }
 	private var _rendererFactory: Owned.() -> CalendarItemRenderer = { calendarItemRenderer() }
 	private val grid = grid()
-	private lateinit var monthYearText: TextField
+	private val monthYearText: TextField
 
 	private val yearFormatter = dateTimeFormatter(DateTimeFormatType.YEAR)
 	private val monthFormatter = dateTimeFormatter(DateTimeFormatType.MONTH)
@@ -180,8 +182,8 @@ open class Calendar(
 		return cells[i]
 	}
 
-	private lateinit var monthDecContainer: ElementContainer<UiComponent>
-	private lateinit var monthIncContainer: ElementContainer<UiComponent>
+	private val monthDecContainer: ElementContainer<UiComponent>
+	private val monthIncContainer: ElementContainer<UiComponent>
 	private var monthDecButton: UiComponent? = null
 	private var monthIncButton: UiComponent? = null
 
@@ -401,7 +403,8 @@ class CalendarStyle : StyleBase() {
 	companion object : StyleType<CalendarStyle>
 }
 
-fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar {
+inline fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = Calendar(this)
 	c.init()
 	return c
@@ -588,7 +591,8 @@ open class CalendarItemRendererStyle : StyleBase() {
 	companion object : StyleType<CalendarItemRendererStyle>
 }
 
-fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRendererImpl> = {}): CalendarItemRendererImpl {
+inline fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRendererImpl> = {}): CalendarItemRendererImpl  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = CalendarItemRendererImpl(this)
 	c.init()
 	return c

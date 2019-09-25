@@ -33,12 +33,14 @@ import com.acornui.input.interaction.ClipboardItemType
 import com.acornui.input.interaction.CopyInteractionRo
 import com.acornui.input.interaction.DragAttachment
 import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.math.Bounds
 import com.acornui.selection.Selectable
 import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
-import com.acornui.math.Bounds
 import com.acornui.substringInRange
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {
 
@@ -293,7 +295,8 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 /**
  * Creates a [TextField] implementation with the provided text content.
  */
-fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.text = text
 	t.init()
@@ -303,7 +306,8 @@ fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField {
 /**
  * Creates a [TextField] implementation.
  */
-fun Owned.text(init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.text(init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.init()
 	return t

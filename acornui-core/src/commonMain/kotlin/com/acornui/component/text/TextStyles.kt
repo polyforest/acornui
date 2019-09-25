@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import kotlinx.coroutines.Deferred
 import com.acornui.collection.addAll
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.algorithm.FlowHAlign
@@ -30,6 +29,9 @@ import com.acornui.math.Corners
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.serialization.*
+import kotlinx.coroutines.Deferred
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 var TextField.strong by StyleTagToggle(TextStyleTags.strong)
 
@@ -63,7 +65,8 @@ object TextStyleTags {
 /**
  * A shortcut to creating a text field with the [TextStyleTags.heading] tag.
  */
-fun Owned.headingText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.headingText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.heading)
 	t.text = text
@@ -74,7 +77,8 @@ fun Owned.headingText(text: String = "", init: ComponentInit<TextField> = {}): T
 /**
  * A shortcut to creating a text field with the [TextStyleTags.large] tag.
  */
-fun Owned.largeText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.largeText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.large)
 	t.text = text
@@ -85,7 +89,8 @@ fun Owned.largeText(text: String = "", init: ComponentInit<TextField> = {}): Tex
 /**
  * A shortcut to creating a text field with the [TextStyleTags.small] tag.
  */
-fun Owned.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.small)
 	t.text = text
@@ -97,7 +102,8 @@ fun Owned.smallText(text: String = "", init: ComponentInit<TextField> = {}): Tex
 /**
  * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
  */
-fun Owned.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.strong)
 	t.text = text
@@ -108,7 +114,8 @@ fun Owned.strongText(text: String = "", init: ComponentInit<TextField> = {}): Te
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
  */
-fun Owned.emphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.emphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.emphasis)
 	t.text = text
@@ -119,7 +126,8 @@ fun Owned.emphasizedText(text: String = "", init: ComponentInit<TextField> = {})
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
  */
-fun Owned.strongEmphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.strongEmphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
 	t.text = text
@@ -130,7 +138,8 @@ fun Owned.strongEmphasizedText(text: String = "", init: ComponentInit<TextField>
 /**
  * A shortcut to creating a text field with the [TextStyleTags.error] tag.
  */
-fun Owned.errorText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.errorText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.error)
 	t.text = text
@@ -141,7 +150,8 @@ fun Owned.errorText(text: String = "", init: ComponentInit<TextField> = {}): Tex
 /**
  * A shortcut to creating a text field with the [TextStyleTags.warning] tag.
  */
-fun Owned.warningText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.warningText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.warning)
 	t.text = text
@@ -152,7 +162,8 @@ fun Owned.warningText(text: String = "", init: ComponentInit<TextField> = {}): T
 /**
  * A shortcut to creating a text field with the [TextStyleTags.info] tag.
  */
-fun Owned.infoText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Owned.infoText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.info)
 	t.text = text
