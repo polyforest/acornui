@@ -147,7 +147,7 @@ val UiComponentRo.coroutineScope: CoroutineScope
  * to the coroutine as a [Job].
  * When this component is disposed, the job will automatically be cancelled.
  */
-fun UiComponentRo.launch(context: CoroutineContext = Dispatchers.Unconfined, block: suspend CoroutineScope.() -> Unit): Job {
+fun UiComponentRo.launch(context: CoroutineContext = Dispatchers.UI, block: suspend CoroutineScope.() -> Unit): Job {
 	return coroutineScope.launch(context, block = block)
 }
 
@@ -155,6 +155,6 @@ fun UiComponentRo.launch(context: CoroutineContext = Dispatchers.Unconfined, blo
  * Creates a coroutine in the scope of this component and returns its future result as an implementation of [Deferred].
  * When this component is disposed, the job will automatically be cancelled.
  */
-fun <R> UiComponentRo.async(context: CoroutineContext = Dispatchers.Unconfined, block: suspend CoroutineScope.() -> R): Deferred<R> {
+fun <R> UiComponentRo.async(context: CoroutineContext = Dispatchers.UI, block: suspend CoroutineScope.() -> R): Deferred<R> {
 	return coroutineScope.async(context, block = block)
 }
