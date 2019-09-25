@@ -87,13 +87,14 @@ open class ContainerImpl(
 	protected fun <T : UiComponent> addChild(index: Int, child: T): T {
 		_assert(!isDisposed, "This Container is disposed.")
 		_assert(!child.isDisposed, "Added child is disposed.")
+		val maybeSizeConstraints = if (!isValidatingLayout && child.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
 		if (child.parent == this) {
 			// Reorder child.
 			val oldIndex = _children.indexOf(child)
 			val newIndex = if (index > oldIndex) index - 1 else index
 			_children.removeAt(oldIndex)
 			_children.add(newIndex, child)
-			invalidate(bubblingFlags)
+			invalidate(bubblingFlags or maybeSizeConstraints)
 			child.invalidateFocusOrderDeep()
 			return child
 		}
@@ -109,7 +110,7 @@ open class ContainerImpl(
 		if (isActive)
 			child.activate()
 		child.invalidate(cascadingFlags)
-		invalidate(bubblingFlags)
+		invalidate(bubblingFlags or maybeSizeConstraints)
 		if (!isValidatingLayout)
 			invalidateSize()
 

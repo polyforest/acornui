@@ -104,8 +104,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val naturalRenderContext: RenderContextRo
 
 	companion object {
-		var defaultLayoutInvalidatingFlags = ValidationFlags.HIERARCHY_ASCENDING or
-				ValidationFlags.LAYOUT or
+		var defaultLayoutInvalidatingFlags = ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
 	}
 }
@@ -425,7 +424,7 @@ open class UiComponentImpl(
 	// UiComponent
 	//-----------------------------------------------
 
-	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
+	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED or ValidationFlags.RENDER_CONTEXT)
 
 	//-----------------------------------------------
 	// Focusable
@@ -509,9 +508,7 @@ open class UiComponentImpl(
 		}
 
 	override val shouldLayout: Boolean
-		get() {
-			return includeInLayout && visible
-		}
+		get() = includeInLayout && visible
 
 	override var layoutInvalidatingFlags: Int = UiComponentRo.defaultLayoutInvalidatingFlags
 

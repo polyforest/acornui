@@ -16,8 +16,6 @@
 
 package com.acornui.component.layout
 
-import com.acornui.component.CanvasTransformableRo
-import com.acornui.component.localToGlobal
 import com.acornui.math.*
 
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {

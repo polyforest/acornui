@@ -28,7 +28,6 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
-import kotlin.properties.Delegates
 
 class JsHtmlComponent(
 		owner: Owned,
@@ -82,8 +81,8 @@ class JsHtmlComponent(
 			component.element.innerHTML = value
 		}
 
-	override fun updateLayoutEnabled() {
-		super.updateLayoutEnabled()
+	override fun updateRenderContext() {
+		super.updateRenderContext()
 		var v = true
 		parentWalk {
 			if (!it.visible) {
