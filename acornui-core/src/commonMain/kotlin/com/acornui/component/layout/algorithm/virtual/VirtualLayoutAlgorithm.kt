@@ -43,7 +43,7 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 	 * @param props The style parameters object.
 	 * @return
 	 */
-	fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: S): Float
+	fun getOffset(width: Float, height: Float, element: LayoutElementRo, index: Int, lastIndex: Int, isReversed: Boolean, props: S): Float
 
 	/**
 	 * Sizes and positions the given layout element.
@@ -60,13 +60,13 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 	 *
 	 * @return out Returns x,y coordinates representing the measured width and height.
 	 */
-	fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean, props: S)
+	fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElementRo?, isReversed: Boolean, props: S)
 
 	/**
 	 * Given a list of the elements laid out via [updateLayoutEntry] this calculates the measured dimensions considering
 	 * whitespace such as padding.
 	 */
-	fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: S, out: Bounds) {
+	fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElementRo>, props: S, out: Bounds) {
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val r = element.right
@@ -82,7 +82,7 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 	/**
 	 * Returns true if the layout element is in bounds.
 	 */
-	fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: S): Boolean
+	fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElementRo, props: S): Boolean
 
 	/**
 	 * A utility method to get the layout data automatically cast to the type it is expected to be.

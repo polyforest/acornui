@@ -19,6 +19,7 @@ package com.acornui.component.layout.algorithm.virtual
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.DataScroller
 import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.style.StyleBase
@@ -34,7 +35,7 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 
 	override val direction: VirtualLayoutDirection = VirtualLayoutDirection.HORIZONTAL
 
-	override fun getOffset(width: Float, height: Float, element: LayoutElement, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualHorizontalLayoutStyle): Float {
+	override fun getOffset(width: Float, height: Float, element: LayoutElementRo, index: Int, lastIndex: Int, isReversed: Boolean, props: VirtualHorizontalLayoutStyle): Float {
 		val padding = props.padding
 		val gap = props.gap
 		val elementW = round(element.width)
@@ -45,7 +46,7 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 		}
 	}
 
-	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElement?, isReversed: Boolean, props: VirtualHorizontalLayoutStyle) {
+	override fun updateLayoutEntry(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, currentIndex: Int, startIndex: Float, lastIndex: Int, previousElement: LayoutElementRo?, isReversed: Boolean, props: VirtualHorizontalLayoutStyle) {
 		val padding = props.padding
 		val gap = props.gap
 		val verticalAlign = props.verticalAlign
@@ -93,13 +94,13 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 	@Suppress("NOTHING_TO_INLINE")
 	private inline fun round(value: Float) : Float = MathUtils.offsetRound(value)
 
-	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, props: VirtualHorizontalLayoutStyle, out: Bounds) {
+	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElementRo>, props: VirtualHorizontalLayoutStyle, out: Bounds) {
 		val padding = props.padding
 		super.measure(explicitWidth, explicitHeight, elements, props, out)
 		out.add(padding.right, padding.bottom)
 	}
 
-	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElement, props: VirtualHorizontalLayoutStyle): Boolean {
+	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElementRo, props: VirtualHorizontalLayoutStyle): Boolean {
 		val buffer = props.buffer
 		if (explicitWidth != null) {
 			val right = element.x + element.width

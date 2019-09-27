@@ -235,7 +235,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	/**
 	 * All renderers, null and non-null.
 	 */
-	private val _activeRenderers = ArrayList<ListRenderer>()
+	private val _activeRenderers = ArrayList<ListRendererRo>()
 
 	/**
 	 * Returns a list of currently active renderers, both null and non-null.
@@ -378,7 +378,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	 *
 	 * @return
 	 */
-	private fun layoutElements(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElement?, laidOutRenderers: MutableList<UiComponent>) {
+	private fun layoutElements(explicitWidth: Float?, explicitHeight: Float?, currentIndex: Int, startIndex: Float, isReversed: Boolean, previousElement: LayoutElementRo?, laidOutRenderers: MutableList<UiComponent>) {
 		val n = _data.size
 		var skipped = 0
 		val d = if (isReversed) -1 else 1
