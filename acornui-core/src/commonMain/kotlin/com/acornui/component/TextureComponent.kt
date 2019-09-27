@@ -78,6 +78,7 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 		get() = _path
 		set(value) {
 			if (_path == value) return
+			_path = value
 			cached?.dispose()
 			cached = cachedGroup()
 			_setTexture(null)
