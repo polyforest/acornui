@@ -111,11 +111,7 @@ open class ScrollArea(
 			}
 		}
 
-	private val scrollChangedHandler = {
-		_: ScrollModelRo ->
-		invalidate(SCROLLING)
-		Unit
-	}
+
 
 	init {
 		styleTags.add(ScrollArea)
@@ -131,8 +127,8 @@ open class ScrollArea(
 		addChild(hScrollBar)
 		addChild(vScrollBar)
 
-		hScrollModel.changed.add(scrollChangedHandler)
-		vScrollModel.changed.add(scrollChangedHandler)
+		hScrollModel.changed.add(::scrollChangedHandler)
+		vScrollModel.changed.add(::scrollChangedHandler)
 
 		watch(style) {
 			tossScrolling = it.tossScrolling
@@ -142,6 +138,11 @@ open class ScrollArea(
 			corner = it.corner(this)
 			addChildAfter(corner!!, vScrollBar)
 		}
+	}
+
+	private fun scrollChangedHandler(m: ScrollModelRo) {
+		invalidate(SCROLLING)
+		Unit
 	}
 
 	/**
@@ -339,8 +340,8 @@ open class ScrollArea(
 
 	override fun dispose() {
 		super.dispose()
-		hScrollModel.changed.remove(scrollChangedHandler)
-		vScrollModel.changed.remove(scrollChangedHandler)
+		hScrollModel.changed.remove(::scrollChangedHandler)
+		vScrollModel.changed.remove(::scrollChangedHandler)
 		tossScrolling = false
 	}
 

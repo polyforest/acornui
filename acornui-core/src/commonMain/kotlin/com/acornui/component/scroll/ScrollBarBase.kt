@@ -47,13 +47,13 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 	var stepSize = 5f
 
 	/**
-	 * The value to multiply against the scroll model to convert to pixels.
-	 * In other words, how many pixels per 1 unit on the scroll model.
+	 * The value to multiply against the scroll model to convert to points.
+	 * In other words, how many points per 1 unit on the scroll model.
 	 */
-	var modelToPixels by Delegates.observable(1f) {
+	var modelToPoints by Delegates.observable(1f) {
 		prop, old, new ->
 		if (new.isNaN() || new.isInfinite())
-			throw Exception("modelToPixels may not be NaN")
+			throw Exception("modelToPoints may not be NaN")
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -148,11 +148,11 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 	}
 
 	open fun stepDec() {
-		scrollModel.value = (scrollModel.rawValue - stepSize / modelToPixels)
+		scrollModel.value = (scrollModel.rawValue - stepSize / modelToPoints)
 	}
 
 	open fun stepInc() {
-		scrollModel.value = (scrollModel.rawValue + stepSize / modelToPixels)
+		scrollModel.value = (scrollModel.rawValue + stepSize / modelToPoints)
 	}
 
 	open fun pageUp() {
@@ -171,11 +171,11 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 	private var _explicitPageSize: Float? = null
 
 	/**
-	 * Returns the explicit page size if it was set, or the size of the track divided by the modelToPixels ratio.
+	 * Returns the explicit page size if it was set, or the size of the track divided by the modelToPoints ratio.
 	 */
 	fun pageSize(): Float {
 		if (_explicitPageSize != null) return _explicitPageSize!!
-		return (maxTrack() - minTrack()) / modelToPixels
+		return (maxTrack() - minTrack()) / modelToPoints
 	}
 
 	fun pageSize(value: Float?) {

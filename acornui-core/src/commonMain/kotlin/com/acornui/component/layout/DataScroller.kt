@@ -27,6 +27,7 @@ import com.acornui.behavior.Selection
 import com.acornui.behavior.SelectionBase
 import com.acornui.behavior.retainAll
 import com.acornui.behavior.toggleSelected
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.recycle.IndexedPool
@@ -112,9 +113,6 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	var scrollPolicy by validationProp(ScrollPolicy.AUTO, ValidationFlags.LAYOUT)
 
 	private val tossScroller = clipper.enableTossScrolling()
-	private val tossBinding = own(TossScrollModelBinding(tossScroller,
-			if (isVertical) ScrollModelImpl() else scrollBar.scrollModel,
-			if (!isVertical) ScrollModelImpl() else scrollBar.scrollModel))
 
 	//---------------------------------------------------
 	// Properties
@@ -183,7 +181,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			if (!it.handled && scrollModel.max > 0f && d != 0f && !keyState.keyIsDown(Ascii.CONTROL)) {
 				it.handled = true
 				tossScroller.stop()
-				scrollModel.value += d / scrollBar.modelToPixels
+				scrollModel.value += d / scrollBar.modelToPoints
 			}
 		}
 
@@ -199,6 +197,19 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 					}
 				}
 			}
+		}
+		own(DataScrollerTossScrollBinding())
+	}
+
+	private inner class DataScrollerTossScrollBinding : TossScrollModelBinding(tossScroller,
+			hScrollModel = if (isVertical) ScrollModelImpl() else scrollBar.scrollModel,
+			vScrollModel = if (!isVertical) ScrollModelImpl() else scrollBar.scrollModel) {
+
+		override fun globalToModel(diffPoints: Vector2) {
+			if (contents.activeRenderers.isEmpty()) return
+			val aRIndex = contents.activeRenderers.sortedInsertionIndex(contents.visiblePosition) { index, it -> index.compareTo(it.index) } - 1
+			val renderer = contents.activeRenderers[aRIndex]
+			diffPoints.scl(1f / if (isVertical) renderer.height else renderer.width)
 		}
 	}
 
@@ -320,7 +331,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				contents.setSize(w, h)
 				bottomContents.setSize(w, h)
 			}
-			scrollBar.modelToPixels = bottomContents.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			scrollBar.modelToPoints = bottomContents.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		} else {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
@@ -351,16 +362,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				contents.setSize(w, h)
 				bottomContents.setSize(w, h)
 			}
-			scrollBar.modelToPixels = bottomContents.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
+			scrollBar.modelToPoints = bottomContents.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		}
 
 		val scrollBarH = if (!isVertical && scrollBar.visible) scrollBar.height else 0f
 		val scrollBarW = if (isVertical && scrollBar.visible) scrollBar.width else 0f
-		out.set(explicitWidth ?: pad.expandWidth2(bottomContents.width + scrollBarW), explicitHeight ?: pad.expandHeight2(bottomContents.height + scrollBarH))
+		out.set(explicitWidth ?: pad.expandWidth2(bottomContents.width + scrollBarW), explicitHeight
+				?: pad.expandHeight2(bottomContents.height + scrollBarH))
 		clipper.setSize(pad.reduceWidth2(out.width - scrollBarW), pad.reduceHeight2(out.height - scrollBarH))
 
-		tossBinding.modelToPixelsX = scrollBar.modelToPixels
-		tossBinding.modelToPixelsY = scrollBar.modelToPixels
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
 
 		rowMap.clear()

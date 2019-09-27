@@ -78,7 +78,7 @@ open class VScrollBar(
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		if (thumb.visible) {
-			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
+			val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
 			val thumbLd = thumb.layoutData as BasicLayoutData?
 			if (thumbHeight.isNaN())
 				throw Exception("thumb height may not be NaN")

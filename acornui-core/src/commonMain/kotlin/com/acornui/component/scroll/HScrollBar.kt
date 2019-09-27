@@ -78,7 +78,7 @@ open class HScrollBar(
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		if (thumb.visible) {
-			val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPixels)
+			val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
 			val thumbLd = thumb.layoutData as BasicLayoutData?
 			if (thumbLd == null) thumb.setSize(thumbWidth, h)
 			else thumb.setSize(thumbLd.getPreferredWidth(thumbWidth), thumbLd.getPreferredHeight(h))

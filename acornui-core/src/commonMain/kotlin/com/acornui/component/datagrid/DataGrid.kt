@@ -40,11 +40,8 @@ import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.keyDown
 import com.acornui.input.wheel
-import com.acornui.math.Bounds
-import com.acornui.math.Corners
+import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
@@ -244,7 +241,16 @@ class DataGrid<RowData>(
 		get() = vScrollBar.scrollModel
 
 	private val tossScroller = contents.enableTossScrolling()
-	private val tossBinding = own(TossScrollModelBinding(tossScroller, hScrollModel, vScrollModel))
+	private val tossBinding = own(DataGridTossScrollBinding())
+
+	private inner class DataGridTossScrollBinding : TossScrollModelBinding(tossScroller, hScrollModel, vScrollModel) {
+
+		override fun globalToModel(diffPoints: Vector2) {
+			if (_totalRows <= 0) return
+			val firstRowHeight = _cellMetrics.rowHeights.first()
+			diffPoints.scl(1f / firstRowHeight)
+		}
+	}
 
 	/**
 	 * Toggles whether or not toss scrolling is enabled.
@@ -330,6 +336,8 @@ class DataGrid<RowData>(
 
 	private val keyState by KeyState
 
+	var focusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
+
 	init {
 		focusEnabled = true
 		styleTags.add(Companion)
@@ -392,13 +400,11 @@ class DataGrid<RowData>(
 
 		wheel().add {
 			if (!keyState.keyIsDown(Ascii.CONTROL))
-				vScrollModel.value += it.deltaY / vScrollBar.modelToPixels
+				vScrollModel.value += it.deltaY / vScrollBar.modelToPoints
 		}
 
 		blurred().add(::blurredHandler)
 	}
-
-	var focusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
 
 	private fun blurredHandler() {
 		editorCellCheck()
@@ -1012,7 +1018,7 @@ class DataGrid<RowData>(
 		)
 		val bottomBounds = _bottomCellMetrics.bounds
 		val bottomRowCount = _bottomCellMetrics.visibleRows
-		vScrollBar.modelToPixels = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
+		vScrollBar.modelToPoints = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f
@@ -1048,8 +1054,6 @@ class DataGrid<RowData>(
 		hScrollBar.setPosition(-border.left, out.height - hScrollBarH - border.top)
 		vScrollBar.setSize(vScrollBarW, out.height - hScrollBarH - headerCells.height)
 		vScrollBar.setPosition(out.width - vScrollBarW - border.right, headerCells.height - border.top)
-
-		tossBinding.modelToPixelsY = vScrollBar.modelToPixels
 
 		updateVerticalDividers(contentsW, out.height)
 

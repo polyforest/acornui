@@ -25,7 +25,6 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.config
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
-import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
@@ -115,8 +114,7 @@ class TossScroller(
 
 	private val diff = Vector2()
 
-	private val dragStartHandler = {
-		event: DragInteractionRo ->
+	private val dragStartHandler = { event: DragInteractionRo ->
 		stop()
 		startPosition.set(event.startPosition)
 		position.set(event.position)
@@ -157,8 +155,7 @@ class TossScroller(
 		}
 	}
 
-	private val dragHandler = {
-		event: DragInteractionRo ->
+	private val dragHandler = { event: DragInteractionRo ->
 		position.set(event.position)
 		dispatchDragEvent(TOSS, _toss)
 		Unit
@@ -166,14 +163,15 @@ class TossScroller(
 
 	private fun dispatchDragEvent(type: InteractionType<DragInteraction>, signal: StoppableSignalImpl<DragInteraction>) {
 		event.clear()
+		event.target = target
+		event.currentTarget = target
 		event.type = type
 		event.startPosition.set(startPosition)
 		event.position.set(position)
 		signal.dispatch(event)
 	}
 
-	private val dragEndHandler = {
-		event: DragInteractionRo ->
+	private val dragEndHandler = { event: DragInteractionRo ->
 		pushHistory()
 		// Calculate the velocity.
 		if (historyPoints.size >= 2) {
@@ -192,8 +190,7 @@ class TossScroller(
 		historyTimes.clear()
 	}
 
-	private val clickHandler = {
-		event: ClickInteractionRo ->
+	private val clickHandler = { event: ClickInteractionRo ->
 		if (clickPreventer > 0) {
 			event.propagation.stopImmediatePropagation()
 		}
@@ -251,47 +248,47 @@ class TossScroller(
 	}
 }
 
-class TossScrollModelBinding(
+/**
+ * Converts the current toss difference in points to whatever unit the scroll models are using.
+ */
+typealias PointsToModel = (modelStart: Vector2Ro, diffPoints: Vector2Ro, out: Vector2) -> Unit
+
+open class TossScrollModelBinding(
 		private val tossScroller: TossScroller,
 		private val hScrollModel: ScrollModel,
 		private val vScrollModel: ScrollModel
 ) : Disposable {
 
-	var modelToPixelsX: Float = 1f
-	var modelToPixelsY: Float = 1f
-
-	private val modelStart = Vector2()
-	private val diffPixels = Vector2()
-
-	private var matrix: Matrix4Ro? = null
-
-	private val tossStartHandler = {
-		_: DragInteractionRo ->
-		modelStart.set(hScrollModel.value, vScrollModel.value)
-		matrix = tossScroller.target.modelTransformInv
-	}
-
-	private val changedHandler = {
-		event: DragInteractionRo ->
-		val cM = matrix!!
-		diffPixels.set(event.startPosition).sub(event.position)
-		cM.rot(diffPixels)
-
-		hScrollModel.value = modelStart.x + diffPixels.x / modelToPixelsX
-		vScrollModel.value = modelStart.y + diffPixels.y / modelToPixelsY
-
-		Unit
-	}
+	private val lastPositionLocal = Vector2()
+	private val diff = Vector2()
 
 	init {
-		tossScroller.tossStart.add(tossStartHandler)
-		tossScroller.toss.add(changedHandler)
+		tossScroller.tossStart.add(::tossStartHandler)
+		tossScroller.toss.add(::tossHandler)
 	}
 
+	private fun tossStartHandler(event: DragInteractionRo) {
+		lastPositionLocal.set(event.positionLocal)
+	}
+
+	private fun tossHandler(event: DragInteractionRo) {
+		diff.set(event.positionLocal).sub(lastPositionLocal)
+		globalToModel(diff)
+		hScrollModel.value -= diff.x
+		vScrollModel.value -= diff.y
+		lastPositionLocal.set(event.positionLocal)
+	}
+
+	/**
+	 * Converts points, in global coordinate space, to model.
+	 */
+	protected open fun globalToModel(diffPoints: Vector2) {
+	}
+
+
 	override fun dispose() {
-		tossScroller.tossStart.remove(tossStartHandler)
-		tossScroller.toss.remove(changedHandler)
-		matrix = null
+		tossScroller.tossStart.remove(::tossStartHandler)
+		tossScroller.toss.remove(::tossHandler)
 	}
 }
 
