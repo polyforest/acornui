@@ -18,18 +18,19 @@ package com.acornui.component.scroll
 
 import com.acornui.Disposable
 import com.acornui.math.MathUtils
+import com.acornui.observe.Observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import kotlin.math.round
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
-interface ScrollModelRo {
+interface ScrollModelRo : Observable {
 
 	/**
 	 * Dispatched when the value property has changed.
 	 */
-	val changed: Signal<(ScrollModelRo) -> Unit>
+	override val changed: Signal<(ScrollModelRo) -> Unit>
 
 	/**
 	 * The undecorated value.

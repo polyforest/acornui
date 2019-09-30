@@ -22,21 +22,14 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.VAlign
 import com.acornui.di.Owned
-import com.acornui.observe.Observable
-import com.acornui.signal.Signal1
-import kotlin.properties.ObservableProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import com.acornui.observe.ObservableBase
 
-abstract class DataGridColumn<in RowData, CellData> : Observable {
-
-	private val _changed = Signal1<DataGridColumn<RowData, CellData>>()
-	override val changed = _changed.asRo()
+abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
 
 	/**
 	 * If false, this column will not be shown.
 	 */
-	var visible by bindable(true)
+	var visible by watched(true)
 
 	fun toggleVisible() {
 		visible = !visible
@@ -46,50 +39,50 @@ abstract class DataGridColumn<in RowData, CellData> : Observable {
 	 * If true, elements in this column can be edited.
 	 * If this is true, [createEditorCell] must be implemented.
 	 */
-	var editable by bindable(true)
+	var editable by watched(true)
 
 	/**
 	 * If true, this column can be resized by the user.
 	 */
-	var resizable by bindable(true)
+	var resizable by watched(true)
 
 	/**
 	 * If true, the column can be sorted by the user.
 	 */
-	var sortable by bindable(false)
+	var sortable by watched(false)
 
 	/**
 	 * If true, the column can be reordered (moved) by the user.
 	 */
-	var reorderable by bindable(true)
+	var reorderable by watched(true)
 
-	var width: Float? by bindable(null)
-	var widthPercent: Float? by bindable(null)
-	var minWidth: Float by bindable(8f)
+	var width: Float? by watched(null)
+	var widthPercent: Float? by watched(null)
+	var minWidth: Float by watched(8f)
 
 	/**
 	 * The vertical alignment of the header cells.
 	 * If this is not set, the data grid's style will be used.
 	 */
-	var headerCellVAlign: VAlign? by bindable(null)
+	var headerCellVAlign: VAlign? by watched(null)
 
 	/**
 	 * The horizontal alignment of the header cells.
 	 * If this is not set, the data grid's style will be used.
 	 */
-	var headerCellHAlign: HAlign? by bindable(null)
+	var headerCellHAlign: HAlign? by watched(null)
 
 	/**
 	 * The vertical alignment of the body cells.
 	 * If this is not set, the data grid's style will be used.
 	 */
-	var cellVAlign: VAlign? by bindable(null)
+	var cellVAlign: VAlign? by watched(null)
 
 	/**
 	 * The horizontal alignment of the body cells.
 	 * If this is not set, the data grid's style will be used.
 	 */
-	var cellHAlign: HAlign? by bindable(null)
+	var cellHAlign: HAlign? by watched(null)
 
 	/**
 	 * A flexible column will flex its size to fit within the available bounds of the container.
@@ -97,7 +90,7 @@ abstract class DataGridColumn<in RowData, CellData> : Observable {
 	 * Neither [width] or [widthPercent] have been set, [flexible] is true, or [flexible] is null and [resizable] is
 	 * true and [widthPercent] is not null.
 	 */
-	var flexible: Boolean? by bindable(null)
+	var flexible: Boolean? by watched(null)
 
 	/**
 	 * Constructs a new header cell to be placed at the top of the grid. This should not include the header background
@@ -171,11 +164,5 @@ abstract class DataGridColumn<in RowData, CellData> : Observable {
 	 */
 	fun getIsFlexible(): Boolean {
 		return (width == null && widthPercent == null) || flexible ?: (resizable == true && widthPercent != null)
-	}
-
-	private fun <T> bindable(initialValue: T): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-		override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-			_changed.dispatch(this@DataGridColumn)
-		}
 	}
 }
