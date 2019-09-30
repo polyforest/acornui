@@ -80,8 +80,8 @@ private class BasicButtonSkin(
 			backgroundColor = theme.getButtonFillColor(buttonState)
 			borderColors = BorderColors(theme.getButtonStrokeColor(buttonState))
 		}
-		upShine.visible = !buttonState.isDown
-		downShine.visible = buttonState.isDown
+		upShine.visible = !buttonState.isDown && buttonState != ButtonState.DISABLED
+		downShine.visible = buttonState.isDown && buttonState != ButtonState.DISABLED
 		val shineColor = if (buttonState.isToggled) theme.fillToggledShine else theme.fillShine
 		upShine.colorTint = shineColor
 		downShine.colorTint = shineColor
