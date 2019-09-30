@@ -19,10 +19,8 @@ package com.acornui.skins
 import com.acornui.component.ButtonState
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.graphic.color
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import com.acornui.serialization.*
 import kotlinx.serialization.Serializable
 
 /**
@@ -45,7 +43,7 @@ data class Theme(
 		val fillToggled: ColorRo = Color(0xedf1faff),
 		val fillToggledOver: ColorRo = Color(0xfdffffff),
 		val fillToggledDown: ColorRo = Color(0xdde1eaff),
-		val fillDisabled: ColorRo = Color(0xccccccff),
+		val fillDisabled: ColorRo = Color(0xcccccc88),
 
 		val stroke: ColorRo = Color(0x888888ff),
 		val strokeOver: ColorRo = Color(0x989898ff),
@@ -53,7 +51,7 @@ data class Theme(
 		val strokeToggled: ColorRo = Color(0x2287f9cc),
 		val strokeToggledOver: ColorRo = Color(0x3297ffcc),
 		val strokeToggledDown: ColorRo = Color(0x1277e9cc),
-		val strokeDisabled: ColorRo = Color(0x999999ff),
+		val strokeDisabled: ColorRo = Color(0x99999988),
 
 		/**
 		 * The shine color to overlay. (Set to clear for no shine.)
