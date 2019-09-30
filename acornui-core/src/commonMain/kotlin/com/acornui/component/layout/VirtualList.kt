@@ -103,7 +103,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 				for (i in 0.._activeRenderers.lastIndex) {
 					val renderer = _activeRenderers[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = false, props = layoutStyle)
-					_visiblePosition = renderer.index - itemOffset
+					_visiblePosition = maxOf(0f, renderer.index - itemOffset)
 					if (itemOffset > -1) {
 						break
 					}
@@ -125,11 +125,12 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 			if (_visibleBottomPosition == null) {
 				// Calculate the current bottomPosition.
 				_visibleBottomPosition = _data.lastIndex.toFloat()
+				val size = _data.size.toFloat()
 				val lastIndex = _data.lastIndex
 				for (i in _activeRenderers.lastIndex downTo 0) {
 					val renderer = _activeRenderers[i]
 					val itemOffset = layoutAlgorithm.getOffset(width, height, renderer, renderer.index, lastIndex, isReversed = true, props = layoutStyle)
-					_visibleBottomPosition = renderer.index + itemOffset
+					_visibleBottomPosition = minOf(size, renderer.index + itemOffset)
 					if (itemOffset > -1) {
 						break
 					}
