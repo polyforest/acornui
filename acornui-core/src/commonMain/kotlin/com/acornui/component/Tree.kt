@@ -247,9 +247,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		data = null
 	}
 
-	companion object : StyleTag {
-		val SELECTED = styleTag()
-	}
+	companion object : StyleTag
 }
 
 open class DefaultTreeItemRendererStyle : StyleBase() {
