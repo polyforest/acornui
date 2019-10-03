@@ -74,10 +74,27 @@ fun <E, T> recycle(
 	}
 }
 
-/**
- * Recycles [data] list into [other] list. It is similar to [List.mapTo] except reuses elements instead of generating
- * every time.
- */
+@Deprecated("Use mapToRecycled", ReplaceWith("data.mapToRecycled(other, factory, compare)"))
 fun <E1, E2> recycle(data: List<E1>?, other: MutableList<E2>, factory: (E1) -> E2, compare: (E2, E1) -> Boolean) {
-	recycle(data, other, { e, index -> factory(e) }, { e1, e2, index -> }, {}, { element -> data?.find { compare(element, it) } })
+	data.mapToRecycled(other, factory, compare)
 }
+
+/**
+ * Recycles elements from this list into [other] list. It is similar to [List.mapTo] except reuses elements that can
+ * be found as a match using [compare].
+ * @param other The list of transformed elements. This will be mutated to contain the new elements.
+ * @param factory When there is no match via [compare], a new element will be constructed with this method.
+ * @param compare Returns true when the output [R] should be recycled from the input [T].
+ */
+fun <T, R> List<T>?.mapToRecycled(other: MutableList<R>, factory: (T) -> R, compare: (R, T) -> Boolean) {
+	recycle(
+			this,
+			other,
+			factory = { e, index -> factory(e) },
+			configure = { e1, e2, index -> },
+			disposer = {},
+			retriever = { element -> this?.find { compare(element, it) } }
+	)
+}
+
+
