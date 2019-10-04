@@ -45,6 +45,7 @@ interface ItemRenderer<E> : ItemRendererRo<E>, UiComponent {
  * @param disposer Used to dispose the element.
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  */
+@Deprecated("Use recycleItemRenderers", ReplaceWith("recycleItemRenderers(data, existingElements, factory, configure, disposer, equality)"))
 fun <E, T : ItemRendererRo<E>> recycle(
 		data: Iterable<E>?,
 		existingElements: MutableList<T>,
@@ -53,3 +54,75 @@ fun <E, T : ItemRendererRo<E>> recycle(
 		disposer: (element: T) -> Unit,
 		equality: EqualityCheck<E?> = { a, b -> a == b }
 ) = com.acornui.recycle.recycle(data, existingElements, factory, configure, disposer, { it.data }, equality)
+
+/**
+ * Recycles a list of item renderers, creating or disposing renderers only as needed.
+ * @param data The updated set of data items.
+ * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
+ * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
+ * the new element.
+ * @param configure Used to configure the element.
+ * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
+ * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ */
+fun <E, T : ItemRendererRo<E>> recycleItemRenderers(
+		data: Iterable<E>?,
+		existingElements: MutableList<T>,
+		factory: (item: E, index: Int) -> T,
+		configure: (element: T, item: E, index: Int) -> Unit,
+		disposer: (element: T) -> Unit,
+		equality: EqualityCheck<E?> = { a, b -> a == b }
+) = com.acornui.recycle.recycle(data, existingElements, factory, configure, disposer, { it.data }, equality)
+
+/**
+ * Recycles a list of item renderers, creating or disposing renderers only as needed.
+ * @param data The updated set of data items.
+ * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
+ * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
+ * the new element.
+ * @param configure Used to configure the element.
+ * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
+ * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ */
+fun <E, T : ItemRenderer<E>> recycleItemRenderers(
+		data: Iterable<E>?,
+		existingElements: MutableList<T>,
+		factory: (item: E, index: Int) -> T,
+		configure: (element: T, item: E, index: Int) -> Unit = { element, item, index -> element.data = item },
+		disposer: (element: T) -> Unit = { it.dispose() },
+		equality: EqualityCheck<E?> = { a, b -> a == b }
+) = com.acornui.recycle.recycle(
+		data,
+		existingElements = existingElements,
+		factory = factory,
+		configure = configure,
+		disposer = disposer,
+		retriever = { it.data },
+		equality = equality
+)
+
+/**
+ * Recycles a list of item renderers, creating or disposing renderers only as needed.
+ * @receiver The element container on which to add item renderers.
+ * @param data The updated set of data items.
+ * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
+ * @param factory Used to create new item renderers as needed.
+ * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
+ * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ */
+fun <E, T : ItemRenderer<E>> ElementContainer<UiComponent>.recycleItemRenderers(
+		data: Iterable<E>?,
+		existingElements: MutableList<T>,
+		factory: (item: E, index: Int) -> T,
+		configure: (element: T, item: E, index: Int) -> Unit = { element, item, index -> element.data = item; addElement(index, element) },
+		disposer: (element: T) -> Unit = { it.dispose() },
+		equality: EqualityCheck<E?> = { a, b -> a == b }
+) = com.acornui.recycle.recycle(
+		data,
+		existingElements,
+		factory = factory,
+		configure = configure,
+		disposer = disposer,
+		retriever = { it.data },
+		equality = equality
+)

@@ -210,7 +210,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 	}
 
 	protected open fun updateChildren() {
-		recycle(_data?.children,
+		recycleItemRenderers(_data?.children,
 				_elements,
 				factory = { item, index ->
 					DefaultTreeItemRenderer(this, tree)
