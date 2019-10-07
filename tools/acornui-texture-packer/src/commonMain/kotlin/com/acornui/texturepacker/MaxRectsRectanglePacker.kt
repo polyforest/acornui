@@ -805,8 +805,8 @@ enum class FreeRectChoiceHeuristic {
 }
 
 private class RectComparator : Comparator<Rect> {
-	override fun compare(o1: Rect, o2: Rect): Int {
-		return o1.name.compareTo(o2.name)
+	override fun compare(a: Rect, b: Rect): Int {
+		return a.name.compareTo(b.name)
 	}
 }
 
