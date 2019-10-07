@@ -17,6 +17,7 @@
 package com.acornui.i18n
 
 import com.acornui.Disposable
+import com.acornui.toDisposable
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -47,9 +48,9 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 	fun bind(callback: (bundle: I18nBundleRo) -> Unit): Disposable {
 		_changed.add(callback)
 		callback(bundle)
-		return object : Disposable {
-			override fun dispose() = _changed.remove(callback)
-		}
+		return {
+			_changed.remove(callback)
+		}.toDisposable()
 	}
 
 	private fun bundleChangedHandler(o: Observable) {

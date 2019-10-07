@@ -33,3 +33,14 @@ fun <A : Comparable<A>> A?.compareTo(other: A?): Int {
 }
 
 typealias EqualityCheck<E> = (a: E, b: E) -> Boolean
+
+/**
+ * Converts a lambda to a [Disposable] object, where the lambda is called on [Disposable.dispose].
+ */
+fun (()->Any?).toDisposable(): Disposable {
+	return object : Disposable {
+		override fun dispose() {
+			this@toDisposable()
+		}
+	}
+}

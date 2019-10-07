@@ -31,24 +31,6 @@ interface DataBindingRo<out T> {
 
 	val value: T
 
-	/**
-	 * Immediately, and when the data has changed, the callback will be invoked.
-	 *
-	 * If you need to know the old value as well, use the [changed] signal.
-	 */
-	fun bind(callback: (T) -> Unit): Disposable {
-		val handler: DataChangeHandler<T> = { _, new: T ->
-			callback(new)
-		}
-		changed.add(handler)
-		callback(value)
-
-		return object : Disposable {
-			override fun dispose() {
-				changed.remove(handler)
-			}
-		}
-	}
 }
 
 interface DataBinding<T> : DataBindingRo<T> {

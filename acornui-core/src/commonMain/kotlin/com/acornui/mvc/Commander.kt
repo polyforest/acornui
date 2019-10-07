@@ -1,6 +1,7 @@
 package com.acornui.mvc
 
 import com.acornui.Disposable
+import com.acornui.toDisposable
 
 
 /**
@@ -30,11 +31,9 @@ class Commander : Disposable {
 	fun onCommandInvoked(callback: (command: Command) -> Unit): Disposable {
 		CommandDispatcher.commandInvoked.add(callback)
 
-		val disposable = object : Disposable {
-			override fun dispose() {
-				CommandDispatcher.commandInvoked.remove(callback)
-			}
-		}
+		val disposable = {
+			CommandDispatcher.commandInvoked.remove(callback)
+		}.toDisposable()
 		disposables.add(disposable)
 		return disposable
 	}

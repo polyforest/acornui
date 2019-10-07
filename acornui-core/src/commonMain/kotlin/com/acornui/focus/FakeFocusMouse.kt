@@ -27,6 +27,7 @@ import com.acornui.di.inject
 import com.acornui.input.*
 import com.acornui.input.interaction.*
 import com.acornui.time.nowMs
+import com.acornui.toDisposable
 
 /**
  * Dispatches mouse events when using SPACE or ENTER key presses on the focused element.
@@ -138,9 +139,7 @@ fun UiComponentRo.enterTarget(target: UiComponentRo, filter: (KeyInteractionRo) 
 	createOrReuseAttachment(EnterTarget) {
 		EnterTarget(target, filter)
 	}
-	return object : Disposable {
-		override fun dispose() {
-			removeAttachment<EnterTarget>(EnterTarget)
-		}
-	}
+	return {
+		removeAttachment<EnterTarget>(EnterTarget)
+	}.toDisposable()
 }

@@ -20,6 +20,7 @@ import com.acornui.collection.firstOrNull2
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
 import com.acornui.Disposable
+import com.acornui.toDisposable
 import com.acornui.asset.*
 import com.acornui.async.globalLaunch
 import com.acornui.async.then
@@ -31,6 +32,7 @@ import com.acornui.io.file.Files
 import com.acornui.removeBackslashes
 import com.acornui.replace2
 import com.acornui.observe.Observable
+import com.acornui.observe.bind
 import com.acornui.signal.Signal1
 import com.acornui.signal.bind
 import com.acornui.string.StringReader
@@ -219,12 +221,10 @@ fun Scoped.loadBundle(
 			_loadBundle(locale, bundleName, path, defaultPath, cachedGroup)
 		}
 	}
-	return object : Disposable {
-		override fun dispose() {
-			localeBinding.dispose()
-			cachedGroup.dispose()
-		}
-	}
+	return {
+		localeBinding.dispose()
+		cachedGroup.dispose()
+	}.toDisposable()
 }
 
 /**

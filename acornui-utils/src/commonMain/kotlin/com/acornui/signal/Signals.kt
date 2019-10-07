@@ -19,6 +19,7 @@ package com.acornui.signal
 import com.acornui.Disposable
 import com.acornui.function.*
 import com.acornui.recycle.Clearable
+import com.acornui.toDisposable
 import kotlin.jvm.Synchronized
 
 interface Signal<in T : Any> : Bindable {
@@ -78,11 +79,7 @@ fun <T : Any> Signal<T>.addOnce(handler: T) {
  */
 fun <T : Any> Signal<T>.addWithHandle(handler: T, isOnce: Boolean = false): Disposable {
 	add(handler, isOnce)
-	return object : Disposable {
-		override fun dispose() {
-			remove(handler)
-		}
-	}
+	return { remove(handler) }.toDisposable()
 }
 
 

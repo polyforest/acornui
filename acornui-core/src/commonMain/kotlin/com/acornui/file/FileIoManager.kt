@@ -28,7 +28,7 @@ import com.acornui.io.*
 interface FileIoManager : Disposable {
 
 	/**
-	 * If false, [pickFileForSave] will fail.
+	 * If false, the methods on the manager will fail.
 	 */
 	val saveSupported: Boolean
 

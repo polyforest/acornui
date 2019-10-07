@@ -17,6 +17,7 @@
 package com.acornui.signal
 
 import com.acornui.Disposable
+import com.acornui.toDisposable
 
 /**
  * Bindable is a generic interface that represents the ability to add callbacks to the asynchronous event(s)
@@ -45,9 +46,7 @@ interface Bindable {
 fun Bindable.bind(callback: () -> Unit): Disposable {
 	addBinding(callback)
 	callback()
-	return object : Disposable {
-		override fun dispose() = removeBinding(callback)
-	}
+	return { removeBinding(callback) }.toDisposable()
 }
 
 private class MergedBinding(private val bindableA: Bindable, private val bindableB: Bindable) : Bindable {
