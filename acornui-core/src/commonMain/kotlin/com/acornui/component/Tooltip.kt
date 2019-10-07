@@ -254,7 +254,7 @@ class TooltipView(owner: Owned) : ContainerImpl(owner), ItemRenderer<String> {
 		val childHeight = padding.reduceHeight(explicitHeight)
 		textField.setSize(childWidth, childHeight)
 		textField.moveTo(padding.left, padding.top)
-		out.set(padding.expandWidth2(textField.width), padding.expandHeight2(textField.height))
+		out.set(padding.expandWidth(textField.width), padding.expandHeight(textField.height))
 		background?.setSize(out)
 	}
 

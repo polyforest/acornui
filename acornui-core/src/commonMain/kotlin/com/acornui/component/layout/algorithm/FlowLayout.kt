@@ -133,7 +133,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		}
 		measuredW += padding.left + padding.right
 		if (measuredW > out.width) out.width = measuredW // Use the measured width if it is larger than the explicit.
-		val measuredH = padding.expandHeight2(y)
+		val measuredH = padding.expandHeight(y)
 		if (measuredH > out.height) out.height = measuredH
 		out.baseline = lines.firstOrNull()?.baseline ?: measuredH
 	}

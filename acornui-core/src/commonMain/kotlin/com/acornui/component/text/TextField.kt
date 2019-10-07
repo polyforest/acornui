@@ -240,7 +240,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 			val fontData = font?.getCompletedOrNull()?.data
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
-			out.height = padding.expandHeight2(lineHeight)
+			out.height = padding.expandHeight(lineHeight)
 			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f) / charStyle.scaleY
 		}
 

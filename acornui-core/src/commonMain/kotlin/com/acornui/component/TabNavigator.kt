@@ -22,7 +22,10 @@ import com.acornui.Disposable
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
-import com.acornui.component.layout.algorithm.*
+import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
+import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.layout.algorithm.hGroup
+import com.acornui.component.layout.algorithm.scaleGroup
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.*
 import com.acornui.di.Owned
@@ -306,7 +309,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		out.width.min = maxOf(tabBar.minWidth ?: 0f, contents.minWidth ?: 0f)
-		out.height.min = style.tabBarPadding.expandHeight2(tabBar.minHeight ?: 0f) + (contents.minHeight ?: 0f)
+		out.height.min = style.tabBarPadding.expandHeight(tabBar.minHeight ?: 0f) + (contents.minHeight ?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -316,7 +319,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		val pad = style.contentsPadding
 		contents.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(contentsHeight))
 		contents.moveTo(pad.left, tabBarHeight + pad.top)
-		background.setSize(pad.expandWidth2(contents.width), pad.expandHeight2(contents.height))
+		background.setSize(pad.expandWidth(contents.width), pad.expandHeight(contents.height))
 		background.moveTo(0f, tabBarHeight)
 		out.width = maxOf(background.width, tabBarWidth)
 		out.height = background.height + tabBarHeight
@@ -326,8 +329,8 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		val tabPadding = style.tabBarPadding
 		_tabBarContainer.setSize(tabPadding.reduceWidth(explicitWidth), null)
 		_tabBarContainer.setPosition(tabPadding.left, tabPadding.top)
-		this.tabBarHeight = tabPadding.expandHeight2(_tabBarContainer.height)
-		this.tabBarWidth = tabPadding.expandWidth2(_tabBarContainer.width)
+		this.tabBarHeight = tabPadding.expandHeight(_tabBarContainer.height)
+		this.tabBarWidth = tabPadding.expandWidth(_tabBarContainer.width)
 	}
 
 	override fun dispose() {

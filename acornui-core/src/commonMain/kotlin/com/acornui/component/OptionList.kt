@@ -16,7 +16,11 @@
 
 package com.acornui.component
 
-import com.acornui.collection.*
+import com.acornui.Disposable
+import com.acornui.collection.ListView
+import com.acornui.collection.ObservableList
+import com.acornui.collection.indexOfFirst2
+import com.acornui.collection.indexOfLast2
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.ListRenderer
@@ -29,7 +33,6 @@ import com.acornui.component.style.*
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
-import com.acornui.Disposable
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -42,10 +45,10 @@ import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
-import com.acornui.popup.PopUpManager
-import com.acornui.popup.lift
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.popup.PopUpManager
+import com.acornui.popup.lift
 import com.acornui.recycle.Clearable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal0
@@ -479,7 +482,7 @@ open class OptionList<E : Any>(
 		textInput.setSize(if (w == null) null else w - style.hGap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.hGap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.hGap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
+		out.set(pad.expandWidth(textInput.width + style.hGap + downArrow.width), pad.expandHeight(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 		listLift.setSize(listWidth ?: out.width, listHeight)
 		listLift.moveTo(0f, out.height + style.vGap)

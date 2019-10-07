@@ -75,8 +75,8 @@ open class HeadingGroup(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 		val hP = style.headingPadding
 		heading?.setSize(hP.reduceWidth(explicitWidth), null)
 		heading?.setPosition(hP.left, hP.top)
-		val headingW = hP.expandWidth2(heading?.width ?: 0f)
-		val headingH = hP.expandHeight2(heading?.height ?: 0f)
+		val headingW = hP.expandWidth(heading?.width ?: 0f)
+		val headingH = hP.expandHeight(heading?.height ?: 0f)
 
 		contents.setSize(explicitWidth, if (explicitHeight == null) null else explicitHeight - headingH)
 		contents.setPosition(0f, headingH)

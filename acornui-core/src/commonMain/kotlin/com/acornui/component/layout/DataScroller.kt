@@ -16,23 +16,20 @@
 
 package com.acornui.component.layout
 
+import com.acornui.behavior.Selection
+import com.acornui.behavior.SelectionBase
+import com.acornui.behavior.retainAll
+import com.acornui.behavior.toggleSelected
 import com.acornui.collection.ObservableList
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutDirection
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
-import com.acornui.behavior.Selection
-import com.acornui.behavior.SelectionBase
-import com.acornui.behavior.retainAll
-import com.acornui.behavior.toggleSelected
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.recycle.IndexedPool
-import com.acornui.recycle.Recycler
-import com.acornui.recycle.disposeAndClear
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.focus.Focusable
@@ -43,6 +40,9 @@ import com.acornui.input.interaction.click
 import com.acornui.input.mouseMove
 import com.acornui.input.wheel
 import com.acornui.math.*
+import com.acornui.recycle.IndexedPool
+import com.acornui.recycle.Recycler
+import com.acornui.recycle.disposeAndClear
 
 // FIXME: #161 largest renderer?
 
@@ -367,9 +367,9 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 		val scrollBarH = if (!isVertical && scrollBar.visible) scrollBar.height else 0f
 		val scrollBarW = if (isVertical && scrollBar.visible) scrollBar.width else 0f
-		out.set(explicitWidth ?: pad.expandWidth2(bottomContents.width + scrollBarW), explicitHeight
-				?: pad.expandHeight2(bottomContents.height + scrollBarH))
-		clipper.setSize(pad.reduceWidth2(out.width - scrollBarW), pad.reduceHeight2(out.height - scrollBarH))
+		out.set(explicitWidth ?: pad.expandWidth(bottomContents.width + scrollBarW), explicitHeight
+				?: pad.expandHeight(bottomContents.height + scrollBarH))
+		clipper.setSize(pad.reduceWidth(out.width - scrollBarW), pad.reduceHeight(out.height - scrollBarH))
 
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
 

@@ -97,8 +97,8 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 
 		backRect.setSize(w, h)
 
-		val fillMaxW = s.borderThicknesses.reduceWidth2(w)
-		val fillH = s.borderThicknesses.reduceHeight2(h)
+		val fillMaxW = s.borderThicknesses.reduceWidth(w)
+		val fillH = s.borderThicknesses.reduceHeight(h)
 		frontRect.setSize(fillMaxW * _progress, fillH)
 		frontRect.setPosition(s.borderThicknesses.left, s.borderThicknesses.top)
 		out.set(w, h)

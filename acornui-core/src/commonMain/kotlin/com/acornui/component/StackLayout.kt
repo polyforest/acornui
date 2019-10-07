@@ -106,7 +106,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 			}
 			element.moveTo(childX, childY)
 		}
-		out.set(padding.expandWidth2(measuredW ?: 0f), padding.expandHeight2(measuredH
+		out.set(padding.expandWidth(measuredW ?: 0f), padding.expandHeight(measuredH
 				?: 0f), padding.top + if (measuredB == null) measuredH ?: 0f else measuredB)
 	}
 

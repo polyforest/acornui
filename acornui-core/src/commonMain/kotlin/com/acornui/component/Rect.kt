@@ -102,8 +102,8 @@ class Rect(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (simpleMode) return
 		val margin = style.margin
-		val w = margin.reduceWidth2(explicitWidth ?: 0f)
-		val h = margin.reduceHeight2(explicitHeight ?: 0f)
+		val w = margin.reduceWidth(explicitWidth ?: 0f)
+		val h = margin.reduceHeight(explicitHeight ?: 0f)
 		if (w <= 0f || h <= 0f) return
 
 		val corners = style.borderRadii
@@ -485,8 +485,8 @@ class Rect(
 		val tint = renderContext.colorTint
 		val transform = renderContext.modelTransform
 		val margin = style.margin
-		val w = margin.reduceWidth2(_bounds.width)
-		val h = margin.reduceHeight2(_bounds.height)
+		val w = margin.reduceWidth(_bounds.width)
+		val h = margin.reduceHeight(_bounds.height)
 		if (w <= 0f || h <= 0f || tint.a <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
@@ -494,8 +494,8 @@ class Rect(
 
 				val innerX = margin.left + borderThicknesses.left
 				val innerY = margin.top + borderThicknesses.top
-				val fillW = borderThicknesses.reduceWidth2(w)
-				val fillH = borderThicknesses.reduceHeight2(h)
+				val fillW = borderThicknesses.reduceWidth(w)
+				val fillH = borderThicknesses.reduceHeight(h)
 				transform.prj(innerRect[0].set(innerX, innerY, 0f))
 				transform.prj(innerRect[1].set(innerX + fillW, innerY, 0f))
 				transform.prj(innerRect[2].set(innerX + fillW, innerY + fillH, 0f))

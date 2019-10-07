@@ -110,18 +110,18 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 		val closeButton = closeButton!!
 		val background = background!!
 
-		textField.setSize(if (explicitWidth == null) null else titleBarPadding.reduceWidth2(explicitWidth - closeButton.width - style.titleBarGap), null)
+		textField.setSize(if (explicitWidth == null) null else titleBarPadding.reduceWidth(explicitWidth - closeButton.width - style.titleBarGap), null)
 
 		val tFH = maxOf(textField.height, closeButton.height)
 		textField.moveTo(titleBarPadding.left, titleBarPadding.top + (tFH - textField.height) * 0.5f)
-		val titleBarHeight = titleBarPadding.expandHeight2(maxOf(textField.height, closeButton.height))
+		val titleBarHeight = titleBarPadding.expandHeight(maxOf(textField.height, closeButton.height))
 		val contentsW = explicitWidth
 		val contentsH = if (explicitHeight == null) null else explicitHeight - titleBarHeight
 
 		contents.setSize(padding.reduceWidth(contentsW), padding.reduceHeight(contentsH))
 		contents.setPosition(padding.left, titleBarHeight + padding.top)
-		val measuredWidth = maxOf(titleBarPadding.expandWidth2(textField.width + style.titleBarGap + closeButton.width), padding.expandWidth2(contents.width))
-		background.setSize(measuredWidth, padding.expandHeight2(contents.height))
+		val measuredWidth = maxOf(titleBarPadding.expandWidth(textField.width + style.titleBarGap + closeButton.width), padding.expandWidth(contents.width))
+		background.setSize(measuredWidth, padding.expandHeight(contents.height))
 
 		background.setPosition(0f, titleBarHeight)
 		out.set(measuredWidth, titleBarHeight + background.height)

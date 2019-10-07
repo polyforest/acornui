@@ -55,8 +55,8 @@ class NullRenderer(
 
 	override fun updateSizeConstraints(out: SizeConstraints) {
 		val contents = contents ?: return
-		out.width.min = style.padding.expandWidth2(contents.minWidth ?: 0f)
-		out.height.min = style.padding.expandHeight2(contents.minHeight?: 0f)
+		out.width.min = style.padding.expandWidth(contents.minWidth ?: 0f)
+		out.height.min = style.padding.expandHeight(contents.minHeight?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -64,7 +64,7 @@ class NullRenderer(
 		val pad = style.padding
 		contents.setSize(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
 		contents.moveTo(pad.left, pad.top)
-		out.set(pad.expandWidth2(contents.width), pad.expandHeight2(contents.height))
+		out.set(pad.expandWidth(contents.width), pad.expandHeight(contents.height))
 	}
 
 	companion object : StyleTag

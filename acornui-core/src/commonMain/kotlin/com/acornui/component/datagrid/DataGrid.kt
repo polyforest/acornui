@@ -18,6 +18,7 @@
 
 package com.acornui.component.datagrid
 
+import com.acornui.EqualityCheck
 import com.acornui.assertionsEnabled
 import com.acornui.collection.*
 import com.acornui.component.*
@@ -25,7 +26,6 @@ import com.acornui.component.layout.*
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.TextStyleTags
-import com.acornui.EqualityCheck
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -40,8 +40,11 @@ import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.keyDown
 import com.acornui.input.wheel
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Corners
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Pad
+import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
@@ -998,14 +1001,14 @@ class DataGrid<RowData>(
 		val contentsW = columnsWidth - hScrollBar.scrollModel.max
 		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth ?: 0f else 0f
 
-		out.width = border.expandWidth2(bodyW)
+		out.width = border.expandWidth(bodyW)
 
 		updateHeader(contentsW)
 
 		val hScrollBarH = if (hScrollBar.visible) hScrollBar.minHeight ?: 0f else 0f
 
 		_totalRows = calculateTotalRows()
-		var contentsH = if (explicitHeight == null) null else border.reduceHeight2(explicitHeight) - headerCells.height - hScrollBarH
+		var contentsH = if (explicitHeight == null) null else border.reduceHeight(explicitHeight) - headerCells.height - hScrollBarH
 		sizeCellsReversed(
 				width = contentsW,
 				height = contentsH,
@@ -1048,7 +1051,7 @@ class DataGrid<RowData>(
 		groupHeadersAndFooters.setSize(contentsW, contentsH)
 		groupHeadersAndFooters.setPosition(0f, headerCells.height)
 
-		out.height = border.expandHeight2(headerCells.height + contents.height + hScrollBarH)
+		out.height = border.expandHeight(headerCells.height + contents.height + hScrollBarH)
 
 		hScrollBar.setSize(out.width - vScrollBarW, hScrollBarH)
 		hScrollBar.setPosition(-border.left, out.height - hScrollBarH - border.top)
@@ -1129,7 +1132,7 @@ class DataGrid<RowData>(
 
 		// Update the header cell backgrounds.
 		headerCellBackgrounds.interactivityMode = if (columnSortingEnabled || columnReorderingEnabled) InteractivityMode.CHILDREN else InteractivityMode.NONE
-		val headerHeight = cellPad.expandHeight2(headerCellHeight)
+		val headerHeight = cellPad.expandHeight(headerCellHeight)
 		var cellBackgroundIndex = 0
 		iterateVisibleColumnsInternal { i, col, colX, colWidth ->
 			val columnCache = cache.columnCaches[i]
@@ -1285,8 +1288,8 @@ class DataGrid<RowData>(
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
 
-						cell.setSize(pad.reduceWidth2(columnWidth), rowHeight2)
-						iRowHeight = maxOf(iRowHeight, pad.expandHeight2(cell.height))
+						cell.setSize(pad.reduceWidth(columnWidth), rowHeight2)
+						iRowHeight = maxOf(iRowHeight, pad.expandHeight(cell.height))
 						true
 					}
 				}
@@ -1403,8 +1406,8 @@ class DataGrid<RowData>(
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
 
-						cell.setSize(pad.reduceWidth2(columnWidth), rowHeight2)
-						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight2(cell.height))
+						cell.setSize(pad.reduceWidth(columnWidth), rowHeight2)
+						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight(cell.height))
 						true
 					}
 				}

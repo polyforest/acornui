@@ -16,12 +16,12 @@
 
 package com.acornui.component
 
+import com.acornui.Disposable
 import com.acornui.collection.Filter
 import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
-import com.acornui.Disposable
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -32,17 +32,16 @@ import com.acornui.focus.focus
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown
-import com.acornui.popup.PopUpManager
-import com.acornui.popup.lift
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.popup.PopUpManager
+import com.acornui.popup.lift
 import com.acornui.recycle.Clearable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal0
 import com.acornui.text.*
 import com.acornui.time.Date
 import com.acornui.time.DateRo
-import com.acornui.time.time
 
 open class DatePicker(
 		owner: Owned
@@ -280,7 +279,7 @@ open class DatePicker(
 		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
-		out.set(pad.expandWidth2(textInput.width + style.gap + downArrow.width), pad.expandHeight2(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
+		out.set(pad.expandWidth(textInput.width + style.gap + downArrow.width), pad.expandHeight(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
 		background?.setSize(out.width, out.height)
 
 		calendarLift.moveTo(0f, out.height)

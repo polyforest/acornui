@@ -46,13 +46,11 @@ interface PadRo {
 		return height - top - bottom
 	}
 
-	// TODO: we might be able to overload the nullable floats now.
-
-	fun reduceWidth2(width: Float): Float {
+	fun reduceWidth(width: Float): Float {
 		return width - left - right
 	}
 
-	fun reduceHeight2(height: Float): Float {
+	fun reduceHeight(height: Float): Float {
 		return height - top - bottom
 	}
 
@@ -66,11 +64,11 @@ interface PadRo {
 		return height + top + bottom
 	}
 
-	fun expandWidth2(width: Float): Float {
+	fun expandWidth(width: Float): Float {
 		return width + left + right
 	}
 
-	fun expandHeight2(height: Float): Float {
+	fun expandHeight(height: Float): Float {
 		return height + top + bottom
 	}
 

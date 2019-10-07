@@ -44,7 +44,7 @@ class PaddedRenderable<T : Renderable>(
 
 	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
 		inner.setSize(padding.reduceWidth(newW), padding.reduceHeight(newH))
-		_bounds.set(padding.expandWidth2(inner.width), padding.expandHeight2(inner.height))
+		_bounds.set(padding.expandWidth(inner.width), padding.expandHeight(inner.height))
 	}
 
 	private val drawableRenderContext = RenderContext()

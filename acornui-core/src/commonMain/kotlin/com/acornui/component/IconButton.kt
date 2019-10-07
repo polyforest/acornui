@@ -175,8 +175,8 @@ open class IconButtonSkinPart(
 		textField.setSize(textWidth, childAvailableHeight)
 		val contentWidth = roundToNearest(if (label == "") icon.width else icon.width + hGap + textField.width, 2f)
 		val contentHeight = roundToNearest(if (label == "") icon.height else maxOf(textField.height, icon.height), 2f)
-		val w = maxOf(padding.expandWidth2(contentWidth), explicitWidth ?: 4f)
-		val h = maxOf(padding.expandHeight2(contentHeight), explicitHeight ?: 4f)
+		val w = maxOf(padding.expandWidth(contentWidth), explicitWidth ?: 4f)
+		val h = maxOf(padding.expandHeight(contentHeight), explicitHeight ?: 4f)
 
 		texture.setSize(w, h)
 

@@ -32,6 +32,7 @@ interface IntPadRo {
 	val bottom: Int
 	val left: Int
 
+
 	fun isEmpty(): Boolean = top == 0 && right == 0 && bottom == 0 && left == 0
 	fun isNotEmpty(): Boolean = !isEmpty()
 
@@ -45,13 +46,11 @@ interface IntPadRo {
 		return height - top - bottom
 	}
 
-	// TODO: we might be able to overload the nullable ints now.
-
-	fun reduceWidth2(width: Int): Int {
+	fun reduceWidth(width: Int): Int {
 		return width - left - right
 	}
 
-	fun reduceHeight2(height: Int): Int {
+	fun reduceHeight(height: Int): Int {
 		return height - top - bottom
 	}
 
@@ -65,11 +64,11 @@ interface IntPadRo {
 		return height + top + bottom
 	}
 
-	fun expandWidth2(width: Int): Int {
+	fun expandWidth(width: Int): Int {
 		return width + left + right
 	}
 
-	fun expandHeight2(height: Int): Int {
+	fun expandHeight(height: Int): Int {
 		return height + top + bottom
 	}
 

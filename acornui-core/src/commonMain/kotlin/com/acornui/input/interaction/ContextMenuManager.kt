@@ -16,22 +16,22 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.component.text.text
-import com.acornui.Disposable
 import com.acornui.di.Injector
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.input.*
-import com.acornui.popup.PopUpInfo
-import com.acornui.popup.PopUpManager
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.popup.PopUpInfo
+import com.acornui.popup.PopUpManager
 import com.acornui.signal.StoppableSignal
 
 class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
@@ -253,26 +253,26 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 		for (i in 0..itemViews.lastIndex) {
 			iconsW = maxOf(iconsW, itemViews[i].icon?.width ?: 0f)
 		}
-		iconsW = cellPadding.expandWidth2(iconsW)
+		iconsW = cellPadding.expandWidth(iconsW)
 
 		var tipsW = 0f
 		for (i in 0..itemViews.lastIndex) {
 			val itemView = itemViews[i]
 			tipsW = maxOf(tipsW, (itemView.hotkeyLabel ?: itemView.rightArrow)?.width ?: 0f)
 		}
-		tipsW = cellPadding.expandWidth2(tipsW)
+		tipsW = cellPadding.expandWidth(tipsW)
 
 		var labelsW = 0f
 		for (i in 0..itemViews.lastIndex) {
 			val label = itemViews[i].label
 			if (explicitWidth != null) {
-				label.width(style.padding.reduceWidth2(explicitWidth) - iconsW - tipsW - gap * 2f)
+				label.width(style.padding.reduceWidth(explicitWidth) - iconsW - tipsW - gap * 2f)
 			}
 			labelsW = maxOf(labelsW, label.width)
 		}
-		labelsW = cellPadding.expandWidth2(labelsW)
+		labelsW = cellPadding.expandWidth(labelsW)
 
-		val measuredW = style.padding.expandWidth2(iconsW + labelsW + tipsW + gap * 2f)
+		val measuredW = style.padding.expandWidth(iconsW + labelsW + tipsW + gap * 2f)
 
 		var rowY = style.padding.top
 		val left = style.padding.left + cellPadding.left
@@ -290,7 +290,7 @@ class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
 			hotkeyLabel?.moveTo(rightColX, rowY + cellPadding.top + (cellHeight - hotkeyLabel.height) / 2f)
 			rightArrow?.moveTo(rightColX, rowY + cellPadding.top + (cellHeight - rightArrow.height) / 2f)
 
-			val rowH = cellPadding.expandHeight2(cellHeight)
+			val rowH = cellPadding.expandHeight(cellHeight)
 			itemView.background.setSize(measuredW, rowH)
 			itemView.background.moveTo(0f, rowY)
 

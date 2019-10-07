@@ -160,8 +160,8 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 				padding.reduceWidth(explicitWidth) ?: s.defaultSwatchWidth,
 				padding.reduceHeight(explicitHeight) ?: s.defaultSwatchHeight
 		)
-		val measuredW = padding.expandWidth2(colorSwatch.width)
-		val measuredH = padding.expandHeight2(colorSwatch.height)
+		val measuredW = padding.expandWidth(colorSwatch.width)
+		val measuredH = padding.expandHeight(colorSwatch.height)
 		background.setSize(measuredW, measuredH)
 		colorSwatch.moveTo(0.5f * (background.width - colorSwatch.width), 0.5f * (background.height - colorSwatch.height))
 		out.set(background.width, background.height, colorSwatch.bottom)

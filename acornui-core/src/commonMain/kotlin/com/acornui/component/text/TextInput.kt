@@ -211,17 +211,17 @@ class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
 			val font = charStyle.getFont()?.getCompletedOrNull()
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
-			margin.reduceWidth2(pad.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth))
+			margin.reduceWidth(pad.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth))
 		}
 
 		editableText.setSize(w, h)
 		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
 		out.set(
-				explicitWidth ?: margin.expandHeight2(pad.expandHeight2(w)),
-				explicitHeight ?: margin.expandHeight2(pad.expandHeight2(editableText.height)),
+				explicitWidth ?: margin.expandHeight(pad.expandHeight(w)),
+				explicitHeight ?: margin.expandHeight(pad.expandHeight(editableText.height)),
 				baseline = editableText.baseline + editableText.y
 		)
-		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
+		background?.setSize(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}
 
@@ -450,7 +450,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val margin = textInputStyle.margin
-		val w = margin.reduceWidth2(explicitWidth ?: textInputStyle.defaultWidth)
+		val w = margin.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth)
 		val rows = rows
 		val h = if (explicitHeight == null && rows != null) {
 			val font = charStyle.getFont()
@@ -465,10 +465,10 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 		editableText.pageHeight = h ?: 400f
 		out.set(
 				explicitWidth ?: textInputStyle.defaultWidth,
-				explicitHeight ?: margin.expandHeight2(scroller.height),
+				explicitHeight ?: margin.expandHeight(scroller.height),
 				baseline = editableText.baseline + editableText.y
 		)
-		background?.setSize(margin.reduceWidth2(out.width), margin.reduceHeight(out.height))
+		background?.setSize(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
 		background?.setPosition(margin.left, margin.top)
 	}
 

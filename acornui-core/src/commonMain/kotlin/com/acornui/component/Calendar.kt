@@ -551,7 +551,7 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 		val pad = style.padding
 		textField.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(explicitHeight))
 		textField.moveTo(pad.left, pad.top)
-		background.setSize(pad.expandWidth2(textField.width), pad.expandHeight2(textField.height))
+		background.setSize(pad.expandWidth(textField.width), pad.expandHeight(textField.height))
 		out.set(background.width, background.height, textField.baselineY)
 	}
 
