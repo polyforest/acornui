@@ -17,6 +17,7 @@
 package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
@@ -28,6 +29,7 @@ import com.acornui.math.PadRo
 import com.acornui.math.Vector2
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.math.floor
 
 /**
@@ -91,7 +93,8 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 				val remainingSpace = childAvailableHeight!! - h * scaleY
 				if (remainingSpace != 0f) {
 					when (layoutData?.verticalAlign ?: style.verticalAlign) {
-						VAlign.TOP -> {}
+						VAlign.TOP -> {
+						}
 						VAlign.MIDDLE -> {
 							val halfSpace = floor((remainingSpace * 0.5f))
 							child.y = halfSpace + padding.top
@@ -151,11 +154,30 @@ open class ScaleLayoutData : BasicLayoutData() {
 	}
 }
 
-open class ScaleBoxLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout())
+open class ScaleBoxLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<ScaleLayoutStyle, ScaleLayoutData, E>(owner, ScaleLayout())
 
-inline fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer> = {}): ScaleBoxLayoutContainer  {
+@Deprecated("Renamed to scaleGroup", ReplaceWith("this.scaleGroup(init)"), DeprecationLevel.ERROR)
+@JvmName("scaleBoxT")
+inline fun <E : UiComponent> Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val boxContainer = ScaleBoxLayoutContainer(this)
-	boxContainer.init()
-	return boxContainer
+	return scaleGroup(init)
 }
+
+@Deprecated("Renamed to scaleGroup", ReplaceWith("this.scaleGroup(init)"), DeprecationLevel.ERROR)
+inline fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer<UiComponent>> = {}): ScaleBoxLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return scaleGroup<UiComponent>(init)
+}
+
+@JvmName("scaleGroupT")
+inline fun <E : UiComponent> Owned.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ScaleBoxLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<UiComponent>> = {}): ScaleBoxLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return scaleGroup<UiComponent>(init)
+}
+
+

@@ -1,10 +1,11 @@
-package com.acornui.component
+@file:Suppress("CascadeIf", "unused")
+
+package com.acornui.component.layout
 
 import com.acornui.collection.addOrReorder
 import com.acornui.collection.filterTo2
-import com.acornui.component.layout.LayoutData
-import com.acornui.component.layout.LayoutElement
-import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.ContainerImpl
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
@@ -13,8 +14,9 @@ import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
 /**
+ * A container that uses a [LayoutAlgorithm] to size and position its internal [elements].
  *
- * @author nbilyk
+ * Similar to [ElementLayoutContainer] except that its elements are protected instead of public.
  */
 abstract class LayoutContainer<S : Style, out U : LayoutData>(
 		owner: Owned,
@@ -57,8 +59,7 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 
 	/**
 	 * Adds an element to this container at the given index.
-	 * Unlike children, adding element to an [ElementContainer] where the element
-	 * has already been added, the element will be removed.
+	 * If the element is already added to this container, it will be reordered.
 	 *
 	 * @param index The index at which to add the element. This must be between 0 and `elements.size`
 	 * @throws IndexOutOfBoundsException
@@ -82,7 +83,7 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 	 * @param element The element to remove.
 	 * @return Returns true if the element existed in the elements list and was removed.
 	 */
-	fun removeElement(element: UiComponent?): Boolean {
+	protected fun removeElement(element: UiComponent?): Boolean {
 		if (element == null) return false
 		val index = elements.indexOf(element)
 		if (index == -1) return false
@@ -101,7 +102,7 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 	/**
 	 * Adds an element after the provided element.
 	 */
-	fun addElementAfter(element: UiComponent, after: UiComponent): Int {
+	protected fun addElementAfter(element: UiComponent, after: UiComponent): Int {
 		val index = elements.indexOf(after)
 		if (index == -1) return -1
 		addElement(index + 1, element)
@@ -111,7 +112,7 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 	/**
 	 * Adds an element before the provided element.
 	 */
-	fun addElementBefore(element: UiComponent, before: UiComponent): Int {
+	protected fun addElementBefore(element: UiComponent, before: UiComponent): Int {
 		val index = elements.indexOf(before)
 		if (index == -1) return -1
 		addElement(index, element)
@@ -157,7 +158,6 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 			if (dispose) element.dispose()
 		}
 	}
-
 
 	protected val layoutStyle: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()

@@ -19,7 +19,7 @@ package com.acornui.component.datagrid
 import com.acornui.collection.ObservableList
 import com.acornui.collection.addAll
 import com.acornui.component.*
-import com.acornui.component.layout.ElementLayoutContainerImpl
+import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.HorizontalLayoutStyle
@@ -32,6 +32,8 @@ import com.acornui.component.text.TextStyleTags
 import com.acornui.di.Owned
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface DataGridGroupHeader : UiComponent {
 
@@ -44,7 +46,7 @@ open class DataGridGroupHeaderImpl<E>(
 		owner: Owned,
 		protected val group: DataGridGroup<E>,
 		protected val list: ObservableList<E>
-) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(
+) : ElementLayoutContainer<HorizontalLayoutStyle, HorizontalLayoutData, UiComponent>(
 		owner,
 		HorizontalLayout()
 ), DataGridGroupHeader, Labelable {
@@ -112,6 +114,7 @@ class DataGridGroupHeaderStyle : StyleBase() {
 }
 
 fun <E> Owned.dataGridGroupHeader(group: DataGridGroup<E>, list: ObservableList<E>, label: String = "", init: ComponentInit<DataGridGroupHeaderImpl<E>> = {}): DataGridGroupHeader {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val d = DataGridGroupHeaderImpl(this, group, list)
 	d.label = label
 	d.init()

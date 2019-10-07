@@ -155,7 +155,7 @@ fun Owned.lift(init: ComponentInit<Lift>): Lift {
 	return l
 }
 
-private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContainer(delegate) {
+private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContainer<UiComponent>(delegate) {
 
 	init {
 		includeInLayout = false

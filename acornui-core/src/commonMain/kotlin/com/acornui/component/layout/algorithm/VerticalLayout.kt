@@ -18,6 +18,7 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.collection.sortTo
 import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
@@ -28,6 +29,7 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.math.floor
 
 class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> {
@@ -216,11 +218,15 @@ class VerticalLayoutData : BasicLayoutData() {
 	var priority: Float by bindable(0f)
 }
 
-open class VerticalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<VerticalLayoutStyle, VerticalLayoutData>(owner, VerticalLayout())
+open class VerticalLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<VerticalLayoutStyle, VerticalLayoutData, E>(owner, VerticalLayout())
 
-inline fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer> = {}): VerticalLayoutContainer  {
+@JvmName("vGroupT")
+inline fun <E : UiComponent> Owned.vGroup(init: ComponentInit<VerticalLayoutContainer<E>> = {}): VerticalLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val verticalGroup = VerticalLayoutContainer(this)
-	verticalGroup.init()
-	return verticalGroup
+	return VerticalLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.vGroup(init: ComponentInit<VerticalLayoutContainer<UiComponent>> = {}): VerticalLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return vGroup<UiComponent>(init)
 }

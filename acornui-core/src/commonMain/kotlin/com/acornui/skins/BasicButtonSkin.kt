@@ -18,7 +18,7 @@ private class BasicButtonSkin(
 		private val theme: Theme,
 		borderRadius: CornersRo,
 		borderThickness: PadRo
-) : CanvasLayoutContainer(owner), ButtonSkin {
+) : CanvasLayoutContainer<UiComponent>(owner), ButtonSkin {
 
 	constructor(owner: Owned, theme: Theme) : this(owner, theme, Corners(theme.borderRadius), Pad(theme.strokeThickness))
 
@@ -145,7 +145,7 @@ fun Owned.basicLabelButtonSkin(theme: Theme, texture: ButtonSkin = basicButtonSk
 private class BasicCheckboxSkin(
 		owner: Owned,
 		private val box: ButtonSkin
-) : HorizontalLayoutContainer(owner), ButtonSkin {
+) : HorizontalLayoutContainer<UiComponent>(owner), ButtonSkin {
 
 	private val textField: TextField
 
@@ -183,7 +183,7 @@ private class BasicCheckboxBox(
 		upRegion: String,
 		toggledRegion: String,
 		indeterminateRegion: String
-) : ButtonSkin, StackLayoutContainer(owner) {
+) : ButtonSkin, StackLayoutContainer<UiComponent>(owner) {
 
 	private val indeterminateState = +iconAtlas(theme.atlasPath, indeterminateRegion)
 	private val toggledState = +iconAtlas(theme.atlasPath, toggledRegion)

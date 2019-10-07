@@ -24,8 +24,8 @@ import com.acornui.component.style.Style
 import com.acornui.math.Bounds
 
 /**
- * A LayoutAlgorithm implementation sizes and positions layout elements. This is typically paired with a
- * LayoutContainer implementation.
+ * A LayoutAlgorithm implementation sizes and positions layout elements.
+ *
  */
 interface LayoutAlgorithm<S : Style, out T : LayoutData> : LayoutDataProvider<T> {
 

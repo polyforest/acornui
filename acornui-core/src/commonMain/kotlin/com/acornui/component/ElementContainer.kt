@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "CascadeIf")
 
 package com.acornui.component
 
@@ -22,7 +22,6 @@ import com.acornui.collection.addOrReorder
 import com.acornui.collection.filterTo2
 import com.acornui.collection.forEach2
 import com.acornui.component.layout.LayoutElement
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
 
@@ -126,7 +125,7 @@ interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParent
  * It is up to this element container how to treat added elements. It may add them as children to the display graph,
  * or it may provide the element to a child element container.
  */
-interface ElementContainer<T : UiComponent> : ElementContainerRo<T>, ElementParent<T>, Container
+interface ElementContainer<E : UiComponent> : ElementContainerRo<E>, ElementParent<E>, Container
 
 /**
  * @author nbilyk

@@ -17,7 +17,8 @@
 package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.ElementLayoutContainerImpl
+import com.acornui.component.UiComponent
+import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
@@ -26,6 +27,7 @@ import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 
 class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 
@@ -39,8 +41,10 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 			val element = elements[i]
 			val sC = element.sizeConstraints
 			val layoutData = element.layoutDataCast
-			minWidth = maxOf((sC.width.min ?: 0f) + (layoutData?.left ?: 0f) + (layoutData?.right ?: 0f) + (layoutData?.horizontalCenter ?: 0f), minWidth)
-			minHeight = maxOf((sC.height.min ?: 0f) + (layoutData?.top ?: 0f) + (layoutData?.bottom ?: 0f) + (layoutData?.verticalCenter ?: 0f), minHeight)
+			minWidth = maxOf((sC.width.min ?: 0f) + (layoutData?.left ?: 0f) + (layoutData?.right
+					?: 0f) + (layoutData?.horizontalCenter ?: 0f), minWidth)
+			minHeight = maxOf((sC.height.min ?: 0f) + (layoutData?.top ?: 0f) + (layoutData?.bottom
+					?: 0f) + (layoutData?.verticalCenter ?: 0f), minHeight)
 		}
 		out.width.min = minWidth
 		out.height.min = minHeight
@@ -92,14 +96,7 @@ class CanvasLayout : LayoutAlgorithm<NoopStyle, CanvasLayoutData> {
 	override fun createLayoutData() = CanvasLayoutData()
 }
 
-open class CanvasLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(owner, CanvasLayout())
-
-inline fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer> = {}): CanvasLayoutContainer  {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val canvasContainer = CanvasLayoutContainer(this)
-	canvasContainer.init()
-	return canvasContainer
-}
+open class CanvasLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<NoopStyle, CanvasLayoutData, E>(owner, CanvasLayout())
 
 open class CanvasLayoutData : BasicLayoutData() {
 
@@ -141,4 +138,15 @@ fun canvasLayoutData(init: CanvasLayoutData.() -> Unit = {}): CanvasLayoutData {
 	val c = CanvasLayoutData()
 	c.init()
 	return c
+}
+
+@JvmName("canvasT")
+inline fun <E : UiComponent> Owned.canvas(init: ComponentInit<CanvasLayoutContainer<E>> = {}): CanvasLayoutContainer<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return CanvasLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer<UiComponent>> = {}): CanvasLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return canvas<UiComponent>(init)
 }

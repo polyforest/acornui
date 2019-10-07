@@ -28,6 +28,7 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 
 /**
  * StackLayout places components one on top of another, allowing for percent-based sizes and alignment using
@@ -105,7 +106,8 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 			}
 			element.moveTo(childX, childY)
 		}
-		out.set(padding.expandWidth2(measuredW ?: 0f), padding.expandHeight2(measuredH ?: 0f), padding.top + if (measuredB == null) measuredH ?: 0f else measuredB)
+		out.set(padding.expandWidth2(measuredW ?: 0f), padding.expandHeight2(measuredH
+				?: 0f), padding.top + if (measuredB == null) measuredH ?: 0f else measuredB)
 	}
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
@@ -179,11 +181,15 @@ open class StackLayoutStyle : StyleBase() {
 	companion object : StyleType<StackLayoutStyle>
 }
 
-open class StackLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<StackLayoutStyle, StackLayoutData>(owner, StackLayout())
+open class StackLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<StackLayoutStyle, StackLayoutData, E>(owner, StackLayout())
 
-inline fun Owned.stack(init: ComponentInit<StackLayoutContainer> = {}): StackLayoutContainer  {
+@JvmName("stackT")
+inline fun <E : UiComponent> Owned.stack(init: ComponentInit<StackLayoutContainer<E>> = {}): StackLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val s = StackLayoutContainer(this)
-	s.init()
-	return s
+	return StackLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.stack(init: ComponentInit<StackLayoutContainer<UiComponent>> = {}): StackLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return stack<UiComponent>(init)
 }

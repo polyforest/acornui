@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.component
 
 import com.acornui.Disposable
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
-import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
-import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.component.layout.algorithm.hGroup
-import com.acornui.component.layout.algorithm.scaleBox
+import com.acornui.component.layout.algorithm.*
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.*
 import com.acornui.di.Owned
@@ -68,7 +67,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	 */
 	protected val contents = scrollArea()
 
-	private val _tabBarContainer: UiComponent
+	protected val _tabBarContainer: UiComponent
 
 	/**
 	 * The container for the tab buttons.
@@ -76,7 +75,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	val tabBarContainer: UiComponentRo
 		get() = _tabBarContainer
 
-	private lateinit var tabBar: HorizontalLayoutContainer
+	private val tabBar: HorizontalLayoutContainer<Button>
 
 	private var background: UiComponent? = null
 	private val _tabs = ArrayList<TabNavigatorTab>()
@@ -115,12 +114,12 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 
 	init {
 		styleTags.add(TabNavigator)
-		_tabBarContainer = scaleBox {
+		_tabBarContainer = scaleGroup {
 			interactivityMode = InteractivityMode.CHILDREN
 			style.scaling = Scaling.STRETCH_X
 			style.horizontalAlign = HAlign.LEFT
 			style.verticalAlign = VAlign.BOTTOM
-			tabBar = +hGroup {
+			tabBar = +hGroup<Button> {
 				interactivityMode = InteractivityMode.CHILDREN
 				style.verticalAlign = VAlign.BOTTOM
 			} layout {
@@ -345,11 +344,11 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 }
 
 interface TabNavigatorTab : Owned, Disposable, LayoutDataProvider<StackLayoutData> {
-	val button: ButtonImpl
+	val button: Button
 	val content: LazyInstance<Owned, UiComponent>
 }
 
-class TabNavigatorTabImpl<S : ButtonImpl, T : UiComponent>(
+class TabNavigatorTabImpl<S : Button, T : UiComponent>(
 		owner: Owned,
 		buttonFactory: TabNavigatorTab.() -> S,
 		contentFactory: TabNavigatorTab.() -> T
@@ -395,7 +394,7 @@ fun <S : ButtonImpl, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMar
 
 fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
 
-inline fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator  {
+inline fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TabNavigator(this)
 	t.init()

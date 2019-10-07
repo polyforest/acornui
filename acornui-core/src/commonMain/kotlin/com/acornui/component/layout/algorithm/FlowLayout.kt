@@ -19,7 +19,8 @@ package com.acornui.component.layout.algorithm
 import com.acornui.collection.forEach2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.component.layout.ElementLayoutContainerImpl
+import com.acornui.component.UiComponent
+import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.SizeConstraints
@@ -33,6 +34,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.math.floor
 import kotlin.math.round
 
@@ -116,7 +118,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 					line.descender = belowBaseline
 			}
 			val elementH = element.height
-			if (elementH > line.nonBaselineHeight) 	line.nonBaselineHeight = elementH
+			if (elementH > line.nonBaselineHeight) line.nonBaselineHeight = elementH
 			previousElement = element
 		}
 		line.endIndex = elements.size
@@ -206,8 +208,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 			yVal.compareTo(line.bottom)
 		})
 		val line = _lines[lineIndex]
-		return elements.sortedInsertionIndex(x, line.startIndex, line.endIndex) {
-			xVal, element ->
+		return elements.sortedInsertionIndex(x, line.startIndex, line.endIndex) { xVal, element ->
 			xVal.compareTo(element.right)
 		}
 	}
@@ -387,11 +388,15 @@ enum class FlowVAlign {
 	BASELINE
 }
 
-open class FlowLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<FlowLayoutStyle, FlowLayoutData>(owner, FlowLayout())
+open class FlowLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<FlowLayoutStyle, FlowLayoutData, E>(owner, FlowLayout())
 
-inline fun Owned.flow(init: ComponentInit<FlowLayoutContainer> = {}): FlowLayoutContainer  {
+@JvmName("flowT")
+inline fun <E : UiComponent> Owned.flow(init: ComponentInit<FlowLayoutContainer<E>> = {}): FlowLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val flowContainer = FlowLayoutContainer(this)
-	flowContainer.init()
-	return flowContainer
+	return FlowLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.flow(init: ComponentInit<FlowLayoutContainer<UiComponent>> = {}): FlowLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return flow<UiComponent>(init)
 }

@@ -19,7 +19,7 @@ package com.acornui.popup
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.ElementLayoutContainerImpl
+import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.style.*
@@ -159,7 +159,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(injector: Injector) : ElementLayoutContainerImpl<NoopStyle, CanvasLayoutData>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(injector: Injector) : ElementLayoutContainer<NoopStyle, CanvasLayoutData, UiComponent>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate", "UNUSED_PARAMETER")
 
 package com.acornui.component.scroll
 
@@ -30,14 +30,15 @@ import com.acornui.tween.Tween
 import com.acornui.tween.createPropertyTween
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.math.floor
 
 /**
  * A container with scrolling.
  */
-open class ScrollArea(
+open class ScrollArea<E : UiComponent>(
 		owner: Owned
-) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<StackLayoutData> {
+) : ElementContainerImpl<E>(owner), LayoutDataProvider<StackLayoutData> {
 
 	val style = bind(ScrollAreaStyle())
 	private val keyState by KeyState
@@ -112,7 +113,6 @@ open class ScrollArea(
 		}
 
 
-
 	init {
 		styleTags.add(ScrollArea)
 		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, ::validateScroll)
@@ -170,11 +170,11 @@ open class ScrollArea(
 		}
 	}
 
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: E) {
 		contents.addElement(newIndex, element)
 	}
 
-	override fun onElementRemoved(index: Int, element: UiComponent) {
+	override fun onElementRemoved(index: Int, element: E) {
 		contents.removeElement(element)
 	}
 
@@ -295,7 +295,8 @@ open class ScrollArea(
 		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
 		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
 
-		out.set(explicitWidth ?: scrollRect.contentsWidth + vScrollBarW2, explicitHeight ?: scrollRect.contentsHeight + hScrollBarH2)
+		out.set(explicitWidth ?: scrollRect.contentsWidth + vScrollBarW2, explicitHeight ?: scrollRect.contentsHeight
+		+ hScrollBarH2)
 
 		// Update the scroll models and scroll bar sizes.
 		if (needsHScrollBar) {
@@ -356,11 +357,11 @@ open class ScrollArea(
 	}
 }
 
-fun ScrollArea.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {
+fun ScrollArea<*>.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {
 	return createPropertyTween(this, "scrollX", duration, ease, { hScrollModel.value }, { hScrollModel.value = it }, toScrollX, delay)
 }
 
-fun ScrollArea.tweenScrollY(duration: Float, ease: Interpolation, toScrollY: Float, delay: Float = 0f): Tween {
+fun ScrollArea<*>.tweenScrollY(duration: Float, ease: Interpolation, toScrollY: Float, delay: Float = 0f): Tween {
 	return createPropertyTween(this, "scrollY", duration, ease, { vScrollModel.value }, { vScrollModel.value = it }, toScrollY, delay)
 }
 
@@ -378,11 +379,15 @@ fun ScrollPolicy.toCssString(): String {
 	}
 }
 
-inline fun Owned.scrollArea(init: ComponentInit<ScrollArea> = {}): ScrollArea  {
+@JvmName("scrollAreaT")
+inline fun <E : UiComponent> Owned.scrollArea(init: ComponentInit<ScrollArea<E>> = {}): ScrollArea<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val s = ScrollArea(this)
-	s.init()
-	return s
+	return ScrollArea<E>(this).apply(init)
+}
+
+inline fun Owned.scrollArea(init: ComponentInit<ScrollArea<UiComponent>> = {}): ScrollArea<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return scrollArea<UiComponent>(init)
 }
 
 class ScrollAreaStyle : StyleBase() {

@@ -27,11 +27,13 @@ import com.acornui.math.Bounds
 
 /**
  * A container that uses a [LayoutAlgorithm] to size and position its external [elements].
+ *
+ * Similar to [LayoutContainer] except that its elements are protected instead of public.
  */
-open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
+open class ElementLayoutContainer<S : Style, out U : LayoutData, E : UiComponent>(
 		owner: Owned,
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
-) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, Focusable {
+) : ElementContainerImpl<E>(owner), LayoutDataProvider<U>, Focusable {
 
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
@@ -45,5 +47,4 @@ open class ElementLayoutContainerImpl<S : Style, out U : LayoutData>(
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
 	}
-
 }

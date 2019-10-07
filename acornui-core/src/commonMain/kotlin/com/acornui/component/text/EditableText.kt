@@ -16,41 +16,39 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.globalAsync
 import com.acornui.async.getCompletedOrNull
-import com.acornui.async.then
+import com.acornui.async.launch
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.rect
 import com.acornui.di.inject
-import com.acornui.di.notDisposed
 import com.acornui.di.own
 import com.acornui.focus.blurredSelf
 import com.acornui.focus.focusedSelf
 import com.acornui.focus.isFocusedSelf
+import com.acornui.function.as1
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.input.*
 import com.acornui.input.interaction.*
 import com.acornui.isWhitespace2
+import com.acornui.math.Bounds
+import com.acornui.math.MathUtils
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.commander
 import com.acornui.mvc.invokeCommand
+import com.acornui.reflect.observable
 import com.acornui.repeat2
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.selection.selectAll
 import com.acornui.selection.unselect
+import com.acornui.signal.Signal0
+import com.acornui.string.isLetterOrDigit2
 import com.acornui.substringInRange
 import com.acornui.time.delayedCallback
 import com.acornui.time.onTick
-import com.acornui.function.as1
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
-import com.acornui.reflect.observable
-import com.acornui.signal.Signal0
-import com.acornui.string.isLetterOrDigit2
 
 /**
  * Encapsulates the common functionality of editable text.
@@ -182,9 +180,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.clipboardPaste().add {
 			if (editable && !it.defaultPrevented()) {
 				it.handled = true
-				globalAsync {
-					it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-				} then notDisposed { str ->
+				launch {
+					val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
 					if (str != null) {
 						val glyphs = host.charStyle.getFont()?.getCompletedOrNull()?.glyphs
 						replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())

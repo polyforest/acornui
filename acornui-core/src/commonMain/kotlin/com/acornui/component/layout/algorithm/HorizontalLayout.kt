@@ -18,6 +18,7 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.collection.sortTo
 import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
@@ -28,6 +29,7 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.math.floor
 
 class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayoutData> {
@@ -227,11 +229,15 @@ class HorizontalLayoutData : BasicLayoutData() {
 	var priority: Float by bindable(0f)
 }
 
-open class HorizontalLayoutContainer(owner: Owned) : ElementLayoutContainerImpl<HorizontalLayoutStyle, HorizontalLayoutData>(owner, HorizontalLayout())
+open class HorizontalLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<HorizontalLayoutStyle, HorizontalLayoutData, E>(owner, HorizontalLayout())
 
-inline fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer> = {}): HorizontalLayoutContainer  {
+@JvmName("hGroupT")
+inline fun <E : UiComponent> Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer<E>> = {}): HorizontalLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val horizontalGroup = HorizontalLayoutContainer(this)
-	horizontalGroup.init()
-	return horizontalGroup
+	return HorizontalLayoutContainer<E>(this).apply(init)
+}
+
+inline fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer<UiComponent>> = {}): HorizontalLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return hGroup<UiComponent>(init)
 }

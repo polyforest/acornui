@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.EqualityCheck
+import kotlin.jvm.JvmName
 
 interface ItemRendererRo<out E> : UiComponentRo {
 
@@ -65,6 +66,7 @@ fun <E, T : ItemRendererRo<E>> recycle(
  * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  */
+@JvmName("recycleItemRenderersRo")
 fun <E, T : ItemRendererRo<E>> recycleItemRenderers(
 		data: Iterable<E>?,
 		existingElements: MutableList<T>,
