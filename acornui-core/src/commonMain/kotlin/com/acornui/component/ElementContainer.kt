@@ -198,7 +198,7 @@ open class ElementContainerImpl<T : UiComponent>(
 		val element = _elements.removeAt(index)
 		element.disposed.remove(::elementDisposedHandler)
 		onElementRemoved(index, element)
-		if (element.parent != null) throw Exception("Removing an element should remove from the display.")
+		require(element.parent == null) { "Removing an element should remove from the display." }
 		return element
 	}
 

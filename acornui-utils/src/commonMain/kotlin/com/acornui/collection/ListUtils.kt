@@ -389,7 +389,8 @@ inline fun <E> List<E>.lastOrNull2(lastIndex: Int = this.lastIndex, startIndex: 
 
 /**
  * Returns the first element matching the given [predicate], walking backwards from [lastIndex], or throws an exception
- * if no such element was found. Does not cause allocation.
+ * if no such element was found.
+ * Does not cause allocation.
  * @param lastIndex The starting index to search from (inclusive).
  * @param startIndex The ending index to search to (inclusive).
  * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
@@ -426,14 +427,32 @@ inline fun <T> List<T>.any2(predicate: (T) -> Boolean): Boolean {
 	return false
 }
 
+/**
+ * Performs the given [action] on each element.
+ * Does not cause allocation.
+ * @param startIndex The index (inclusive) to begin iteration.
+ * @param lastIndex The index (inclusive) to end iteration.
+ * @param action Each element within the range will be provided, in order.
+ */
 inline fun <E> List<E>.forEach2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, action: (E) -> Unit) {
 	for (i in startIndex..lastIndex) action(this[i])
 }
 
+/**
+ * Performs the given [action] on each element.
+ * Does not cause allocation.
+ * @param lastIndex The index (inclusive) to begin iteration.
+ * @param startIndex The index (inclusive) to end iteration.
+ * @param action Each element within the range will be provided, in reverse order.
+ */
 inline fun <E> List<E>.forEachReversed2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, action: (E) -> Unit) {
 	for (i in lastIndex downTo startIndex) action(this[i])
 }
 
+/**
+ * Sums the float list for the specified range.
+ * Does not cause allocation.
+ */
 fun List<Float>.sum2(startIndex: Int = 0, lastIndex: Int = this.lastIndex): Float {
 	if (startIndex == lastIndex) return this[startIndex]
 	var t = 0f
@@ -464,6 +483,7 @@ class ListTransform<E, R>(private val target: List<E>, private val transform: (E
 
 /**
  * Returns the number of elements matching the given [predicate].
+ * Does not cause allocation.
  * @param predicate A method that returns true if the counter should increment.
  * @param startIndex The index to start counting form (inclusive)
  * @param lastIndex The index to count until (inclusive)
@@ -476,7 +496,12 @@ inline fun <E> List<E>.count2(startIndex: Int = 0, lastIndex: Int = this.lastInd
 	return count
 }
 
-
+/**
+ * Removes the first element that matches [predicate].
+ * Does not cause allocation.
+ * @param predicate Returns true when the item should be removed. Iteration will continue until the end is reached
+ * or `true` is returned.
+ */
 inline fun <E> MutableList<E>.removeFirst(predicate: (E) -> Boolean): E? {
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	if (index == -1) return null
@@ -485,6 +510,7 @@ inline fun <E> MutableList<E>.removeFirst(predicate: (E) -> Boolean): E? {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * Does not cause allocation.
  */
 inline fun <E> List<E>.sumByInt2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, selector: (E) -> Int): Int {
 	if (startIndex == lastIndex) return selector(this[startIndex])
@@ -497,6 +523,7 @@ inline fun <E> List<E>.sumByInt2(startIndex: Int = 0, lastIndex: Int = this.last
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * Does not cause allocation.
  */
 inline fun <E> List<E>.sumByFloat2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, selector: (E) -> Float): Float {
 	if (startIndex == lastIndex) return selector(this[startIndex])
