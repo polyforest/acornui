@@ -46,6 +46,8 @@ import kotlin.coroutines.suspendCoroutine
 abstract class BrowserApplicationBase(manifest: FilesManifest? = null) : JsApplicationBase(manifest) {
 
 	init {
+		val window = if (jsTypeOf(window) != "undefined") window else error("BrowserApplicationBase can only be used in browser applications.")
+
 		// Uncaught exception handler
 		val prevOnError = window.onerror
 		window.onerror = { message, source, lineNo, colNo, error ->
