@@ -21,5 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * JS doesn't have the equivalent of 'runBlocking', but in order to make the JS and JVM backends as consistent as
  * possible we make the [com.acornui.Application.start] method `suspend`, and then wrap the main method in `runMain`.
+ * There should only be one `main` method, with one `runMain` call. JVM backends this will be blocking, JS backends
+ * will not.
+ *
+ * [https://github.com/Kotlin/kotlinx.coroutines/issues/195]
  */
 expect fun runMain(block: suspend CoroutineScope.() -> Unit)

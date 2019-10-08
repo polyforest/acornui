@@ -16,15 +16,4 @@
 
 package com.acornui.test
 
-import kotlinx.coroutines.*
-import kotlin.time.Duration
-
-/**
- * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
- * FIXME: Doesn't work for nodejs tests.
- */
-actual fun <T> runTest(timeout: Duration, block: suspend CoroutineScope.() -> T): dynamic = GlobalScope.promise {
-	withTimeout(timeout.toLongMilliseconds()) {
-		block()
-	}
-}
+class ExpectedException(message: String? = "An expected exception for unit tests.") : Exception(message)

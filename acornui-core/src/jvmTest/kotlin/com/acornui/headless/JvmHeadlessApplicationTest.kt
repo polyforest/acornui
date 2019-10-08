@@ -31,6 +31,7 @@ import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
+import com.acornui.test.ExpectedException
 import com.acornui.test.runTest
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
@@ -102,5 +103,3 @@ class JvmHeadlessApplicationTest {
 		}
 	}
 }
-
-private class ExpectedException(message: String) : Exception(message)

@@ -16,18 +16,14 @@
 
 package com.acornui.async
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.promise
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.*
 
 /**
  * JS doesn't have the equivalent of 'runBlocking', but in order to make the JS and JVM backends as consistent as
  * possible we make the [com.acornui.Application.start] method `suspend`, and then wrap the main method in `runMain`.
  */
 actual fun runMain(block: suspend CoroutineScope.() -> Unit) {
-	GlobalScope.promise {
+	GlobalScope.launch(Dispatchers.Unconfined) {
 		block()
-		yield()
 	}
 }
