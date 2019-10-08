@@ -167,17 +167,17 @@ open class ElementContainerImpl<T : UiComponent>(
 	}
 
 	/**
-	 * Invoked when an external element has been added or reordered. If this is overriden and the [addChild] is
+	 * Invoked when an external element has been added or reordered. If this is overridden and the [addChild] is
 	 * delegated, the [onElementRemoved] should mirror the delegation.
 	 *
 	 * Example:
 	 *```
 	 * private val otherContainer = addChild(container())
 	 *
-	 * override fun onElementAdded(oldIndex: Int, newIndex: Int, child: T) {
+	 * override fun onElementAdded(oldIndex: Int, newIndex: Int, element: T) {
 	 *     otherContainer.addElement(newIndex, child)
 	 * }
-	 * override fun onElementRemoved(index: Int, child: T) {
+	 * override fun onElementRemoved(index: Int, element: T) {
 	 *     otherContainer.removeElement(index)
 	 * }
 	 * ```
