@@ -22,6 +22,7 @@ import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
 import com.acornui.recycle.Clearable
 import kotlin.jvm.JvmName
+import kotlin.time.Duration
 
 // TODO: make serializable
 
@@ -135,11 +136,11 @@ class StringFormItem(
 
 interface Loader<out T> {
 
-	val defaultInitialTimeEstimate: Float
+	val defaultInitialTimeEstimate: Duration
 
 	suspend fun load(requestData: UrlRequestData,
 					 progressReporter: ProgressReporter,
-					 initialTimeEstimate: Float = defaultInitialTimeEstimate
+					 initialTimeEstimate: Duration = defaultInitialTimeEstimate
 	): T
 }
 

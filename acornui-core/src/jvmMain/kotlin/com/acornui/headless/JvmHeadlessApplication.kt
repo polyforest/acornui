@@ -32,6 +32,8 @@ import com.acornui.io.*
 import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.
@@ -72,10 +74,10 @@ open class JvmHeadlessApplication(
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {
-			override val defaultInitialTimeEstimate: Float
-				get() = Bandwidth.downBpsInv * 100_000
+			override val defaultInitialTimeEstimate: Duration
+				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): RgbData {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
 				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
 			}
 		}

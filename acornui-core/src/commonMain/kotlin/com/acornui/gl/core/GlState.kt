@@ -105,11 +105,11 @@ interface GlState {
 
 	/**
 	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
-	 * This will set the gl uniforms u_modelTrans (if exists), u_viewTrans (if exists), u_projTrans
+	 * This will set the gl uniforms `u_modelTrans` (if exists), `u_viewTrans` (if exists), and `u_projTrans`
 	 * The shader should have the following uniforms:
-	 * u_projTrans - Either MVP or VP if u_modelTrans is present.
-	 * u_modelTrans (optional) - M
-	 * u_viewTrans (optional) - V
+	 * `u_projTrans` - Either MVP or VP if u_modelTrans is present.
+	 * `u_modelTrans` (optional) - M
+	 * `u_viewTrans` (optional) - V
 	 */
 	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro = Matrix4.IDENTITY)
 

@@ -27,6 +27,8 @@ import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 var validSchemes = listOf("http", "https", "ftp", "ftps")
 
@@ -49,7 +51,7 @@ fun String.toUrl(): URL? {
 suspend fun <T> load(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float,
+		initialTimeEstimate: Duration,
 		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
 	// TODO: cookies, cancellation and progress
@@ -136,16 +138,16 @@ private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
 suspend fun loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = Bandwidth.downBpsInv * 1_000
+		initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 1_000
 ) = load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
 	inputStream.readTextAndClose()
 }
 
 actual class TextLoader : Loader<String> {
-	override val defaultInitialTimeEstimate: Float
-		get() = Bandwidth.downBpsInv * 1_000
+	override val defaultInitialTimeEstimate: Duration
+		get() = Bandwidth.downBpsInv.seconds * 1_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): String {
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): String {
 		return loadText(requestData, progressReporter, initialTimeEstimate)
 	}
 }
@@ -153,7 +155,7 @@ actual class TextLoader : Loader<String> {
 suspend fun loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float
+		initialTimeEstimate: Duration
 ): ReadByteBuffer = load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
 	val byteArray = inputStream.use {
 		it.readAllBytes2()
@@ -164,10 +166,10 @@ suspend fun loadBinary(
 }
 
 actual class BinaryLoader : Loader<ReadByteBuffer> {
-	override val defaultInitialTimeEstimate: Float
-		get() = Bandwidth.downBpsInv * 10_000
+	override val defaultInitialTimeEstimate: Duration
+		get() = Bandwidth.downBpsInv.seconds * 10_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): ReadByteBuffer {
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): ReadByteBuffer {
 		return loadBinary(requestData, progressReporter, initialTimeEstimate)
 	}
 }

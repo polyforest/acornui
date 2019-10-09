@@ -23,21 +23,23 @@ import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.files.Blob
 import org.w3c.xhr.*
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 suspend fun <T> load(
 		requestData: UrlRequestData,
 		responseType: XMLHttpRequestResponseType,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float,
+		initialTimeEstimate: Duration,
 		process: (httpRequest: XMLHttpRequest) -> T
 
 ): T {
-	// TODO: progressReporter
+	val progress = progressReporter.addChild(ProgressImpl(total = initialTimeEstimate))
 	val httpRequest = XMLHttpRequest()
 	val c = CompletableDeferred<T>()
 	httpRequest.onprogress = { event ->
-		//			_bytesLoaded = event.loaded
-//			_bytesTotal = event.total
+		progress.loaded = Bandwidth.downBpsInv.seconds * event.loaded
+		progress.total = Bandwidth.downBpsInv.seconds * event.total
 		Unit
 	}
 
@@ -87,13 +89,13 @@ suspend fun <T> load(
 			else -> httpRequest.send()
 		}
 	}
-	return c.await()
+	return c.await().also { progressReporter.removeChild(progress) }
 }
 
 suspend fun loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float
+		initialTimeEstimate: Duration
 ): String {
 	return load(requestData, XMLHttpRequestResponseType.TEXT, progressReporter, initialTimeEstimate) { httpRequest ->
 		httpRequest.response!! as String
@@ -101,10 +103,10 @@ suspend fun loadText(
 }
 
 actual class TextLoader : Loader<String> {
-	override val defaultInitialTimeEstimate: Float
-		get() = Bandwidth.downBpsInv * 1_000
+	override val defaultInitialTimeEstimate: Duration
+		get() = Bandwidth.downBpsInv.seconds * 1_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): String {
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): String {
 		return loadText(requestData, progressReporter, initialTimeEstimate)
 	}
 }
@@ -112,7 +114,7 @@ actual class TextLoader : Loader<String> {
 suspend fun loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float
+		initialTimeEstimate: Duration
 ): ReadByteBuffer {
 	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, progressReporter, initialTimeEstimate) { httpRequest ->
 		JsByteBuffer(Uint8Array(httpRequest.response!! as ArrayBuffer))
@@ -120,10 +122,10 @@ suspend fun loadBinary(
 }
 
 actual class BinaryLoader : Loader<ReadByteBuffer> {
-	override val defaultInitialTimeEstimate: Float
-		get() = Bandwidth.downBpsInv * 10_000
+	override val defaultInitialTimeEstimate: Duration
+		get() = Bandwidth.downBpsInv.seconds * 10_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): ReadByteBuffer {
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): ReadByteBuffer {
 		return loadBinary(requestData, progressReporter, initialTimeEstimate)
 	}
 }
@@ -131,7 +133,7 @@ actual class BinaryLoader : Loader<ReadByteBuffer> {
 suspend fun loadArrayBuffer(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float = Bandwidth.downBpsInv * 100_000
+		initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000
 ): ArrayBuffer {
 	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, progressReporter, initialTimeEstimate) { httpRequest ->
 		httpRequest.response as ArrayBuffer

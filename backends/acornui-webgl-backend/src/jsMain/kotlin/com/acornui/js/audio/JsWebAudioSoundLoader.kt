@@ -21,6 +21,7 @@ import com.acornui.audio.SoundFactory
 import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
 import com.acornui.io.loadArrayBuffer
+import kotlin.time.Duration
 
 /**
  * An asset loader for js AudioContext sounds.
@@ -28,7 +29,7 @@ import com.acornui.io.loadArrayBuffer
  *
  * @author nbilyk
  */
-suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): SoundFactory {
+suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): SoundFactory {
 	if (!audioContextSupported) {
 		throw Exception("Audio not supported in this browser.")
 	}

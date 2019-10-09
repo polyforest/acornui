@@ -24,9 +24,12 @@ import com.acornui.math.*
 import com.acornui.time.nanoElapsed
 import kotlin.test.Test
 import kotlin.math.abs
+import kotlin.math.exp
+import kotlin.test.assertEquals
 
 import kotlin.test.assertFails
 import kotlin.test.fail
+import kotlin.time.Duration
 
 fun assertListEquals(expected: IntArray, actual: IntArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
@@ -227,6 +230,21 @@ fun assertClose(expected: Vector3Ro, actual: Vector3Ro, margin: Float = 0.0001f)
 fun assertClose(expected: Vector2Ro, actual: Vector2Ro, margin: Float = 0.0001f) {
 	assertClose(expected.x, actual.x, margin)
 	assertClose(expected.y, actual.y, margin)
+}
+
+fun <T: Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {
+	assertGreaterThan(expectedMin, actual)
+	assertLessThan(expectedMax, actual)
+}
+
+fun <T: Comparable<T>> assertGreaterThan(expectedMin: T, actual: T) {
+	if (actual <= expectedMin)
+		fail("Expected value to be greater than: <$expectedMin>, but was: <$actual>")
+}
+
+fun <T: Comparable<T>> assertLessThan(expectedMax: T, actual: T) {
+	if (actual >= expectedMax)
+		fail("Expected value to be less than: <$expectedMax>, but was: <$actual>")
 }
 
 /**

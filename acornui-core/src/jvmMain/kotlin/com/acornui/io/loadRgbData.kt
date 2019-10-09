@@ -24,8 +24,10 @@ import kotlinx.io.ByteArrayInputStream
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
+import kotlin.time.Duration
+import kotlin.time.seconds
 
-suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Float = Bandwidth.downBpsInv * 100_000): RgbData {
+suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000): RgbData {
 	return load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
 		try {
 			createImageData(inputStream)

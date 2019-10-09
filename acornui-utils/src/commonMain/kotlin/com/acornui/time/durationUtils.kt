@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-package com.acornui.headless
+package com.acornui.time
 
-import com.acornui.io.Loader
-import com.acornui.io.ProgressReporter
-import com.acornui.io.UrlRequestData
+import com.acornui.collection.forEach2
 import kotlin.time.Duration
-import kotlin.time.seconds
 
-class MockLoader<T>(private val default: T) : Loader<T> {
-
-	override val defaultInitialTimeEstimate: Duration
-		get() = 1.seconds
-
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): T {
-		return default
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ */
+inline fun <T> List<T>.sumByDuration(selector: (T) -> Duration): Duration {
+	var sum: Duration = Duration.ZERO
+	forEach2 {
+		sum += selector(it)
 	}
+	return sum
+}
+
+/**
+ * Returns the sum of this list of durations.
+ */
+fun List<Duration>.sum(): Duration {
+	var sum: Duration = Duration.ZERO
+	forEach2 {
+		sum += it
+	}
+	return sum
 }

@@ -21,8 +21,9 @@ import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
 import com.acornui.io.load
 import java.io.InputStream
+import kotlin.time.Duration
 
-suspend fun loadSound(audioManager: OpenAlAudioManager, requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float) {
+suspend fun loadSound(audioManager: OpenAlAudioManager, requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration) {
 	load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
 		val data = SoundDecoders.decode(requestData.url.extension(), inputStream)
 		OpenAlSoundFactory(audioManager, data.pcm, data.channels, data.sampleRate)

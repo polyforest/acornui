@@ -19,7 +19,10 @@ package com.acornui.io
 import com.acornui.ChildRo
 import com.acornui.Parent
 import com.acornui.ParentRo
-import com.acornui.collection.sumByFloat2
+import com.acornui.async.delay
+import com.acornui.time.sumByDuration
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * An interface indicating something that takes time to complete.
@@ -27,24 +30,43 @@ import com.acornui.collection.sumByFloat2
 interface Progress {
 
 	/**
-	 * The number of seconds currently loaded.
+	 * The amount of time currently loaded.
 	 */
-	val secondsLoaded: Float
+	val loaded: Duration
 
 	/**
 	 * The total number of seconds estimated to load.
 	 */
-	val secondsTotal: Float
-
-	val percentLoaded: Float
-		get() = if (secondsTotal <= 0f) 1f else secondsLoaded / secondsTotal
+	val total: Duration
 }
 
-val Progress.secondsRemaining: Float
-	get() = secondsTotal - secondsLoaded
+data class ProgressImpl(override var loaded: Duration = Duration.ZERO, override var total: Duration = Duration.ZERO) : Progress
+
+val Progress.percentLoaded: Double
+	get() = if (total <= Duration.ZERO) 1.0 else loaded / total
+
+val Progress.remaining: Duration
+	get() = total - loaded
 
 val Progress.isLoading: Boolean
-	get() = percentLoaded < 1f
+	get() = if (total <= Duration.ZERO) false else loaded < total
+
+/**
+ * Suspends the coroutine until this [Progress] instance has finished loading, for at least [interval].
+ * @param interval The minimum buffer the progress instance must remain completed.
+ */
+suspend fun Progress.await(interval: Duration = 0.1.seconds) {
+	var loadedCheck = 0
+	while (loadedCheck < 10) {
+		if (isLoading) {
+			loadedCheck = 0
+			delay(interval)
+		} else {
+			loadedCheck++
+			delay(interval / 10.0)
+		}
+	}
+}
 
 /**
  * Provides a way to add child [Progress] trackers.
@@ -67,11 +89,11 @@ open class ProgressReporterImpl : ProgressReporter {
 		return _children.removeAt(index)
 	}
 
-	override val secondsLoaded: Float
-		get() = _children.sumByFloat2 { it.secondsLoaded }
+	override val loaded: Duration
+		get() = _children.sumByDuration { it.loaded }
 
-	override val secondsTotal: Float
-		get() = _children.sumByFloat2 { it.secondsTotal }
+	override val total: Duration
+		get() = _children.sumByDuration { it.total }
 }
 
 object GlobalProgressReporter : ProgressReporterImpl()

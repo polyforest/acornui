@@ -22,6 +22,7 @@ import com.acornui.di.*
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.io.*
+import kotlin.time.Duration
 
 object Loaders {
 	val textLoader = dKey<Loader<String>>()
@@ -34,7 +35,7 @@ object Loaders {
 
 suspend fun <T> Loader<T>.load(url: String,
 				 progressReporter: ProgressReporter = GlobalProgressReporter,
-				 initialTimeEstimate: Float = defaultInitialTimeEstimate
+				 initialTimeEstimate: Duration = defaultInitialTimeEstimate
 ): T = load(url.toUrlRequestData(), progressReporter, initialTimeEstimate)
 
 /**
@@ -43,7 +44,7 @@ suspend fun <T> Loader<T>.load(url: String,
 suspend fun Scoped.loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.textureLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
 ): String {
 	return inject(Loaders.textLoader).load(requestData, progressReporter, initialTimeEstimate)
 }
@@ -54,7 +55,7 @@ suspend fun Scoped.loadText(
 suspend fun Scoped.loadText(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.textLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textLoader).defaultInitialTimeEstimate
 ): String {
 	return inject(Loaders.textLoader).load(path, progressReporter, initialTimeEstimate)
 }
@@ -65,7 +66,7 @@ suspend fun Scoped.loadText(
 suspend fun Scoped.loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
 ): ReadByteBuffer {
 	return inject(Loaders.binaryLoader).load(requestData, progressReporter, initialTimeEstimate)
 }
@@ -76,7 +77,7 @@ suspend fun Scoped.loadBinary(
 suspend fun Scoped.loadBinary(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
 ): ReadByteBuffer {
 	return inject(Loaders.binaryLoader).load(path, progressReporter, initialTimeEstimate)
 }
@@ -87,7 +88,7 @@ suspend fun Scoped.loadBinary(
 suspend fun Scoped.loadTexture(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.textureLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
 ): Texture {
 	return inject(Loaders.textureLoader).load(requestData, progressReporter, initialTimeEstimate)
 }
@@ -98,7 +99,7 @@ suspend fun Scoped.loadTexture(
 suspend fun Scoped.loadTexture(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.textureLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
 ): Texture = inject(Loaders.textureLoader).load(path, progressReporter, initialTimeEstimate)
 
 /**
@@ -107,7 +108,7 @@ suspend fun Scoped.loadTexture(
 suspend fun Scoped.loadMusic(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.musicLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
 ): Music {
 	return inject(Loaders.musicLoader).load(requestData, progressReporter, initialTimeEstimate)
 }
@@ -118,7 +119,7 @@ suspend fun Scoped.loadMusic(
 suspend fun Scoped.loadMusic(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.musicLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
 ): Music {
 	return inject(Loaders.musicLoader).load(path, progressReporter, initialTimeEstimate)
 }
@@ -129,7 +130,7 @@ suspend fun Scoped.loadMusic(
 suspend fun Scoped.loadSound(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.soundLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate
 ): SoundFactory {
 	return inject(Loaders.soundLoader).load(requestData, progressReporter, initialTimeEstimate)
 }
@@ -140,7 +141,7 @@ suspend fun Scoped.loadSound(
 suspend fun Scoped.loadSound(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Float = inject(Loaders.soundLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate
 ): SoundFactory {
 	return inject(Loaders.soundLoader).load(path, progressReporter, initialTimeEstimate)
 }

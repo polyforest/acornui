@@ -29,6 +29,7 @@ import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.url.URL
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.time.Duration
 
 /**
  * @author nbilyk
@@ -94,8 +95,9 @@ suspend fun loadTexture(
 		glState: GlState,
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Float
+		initialTimeEstimate: Duration
 ): Texture {
+	// TODO: handle progress reporter
 	val completion = CompletableDeferred<Texture>()
 	val path = requestData.toUrlStr()
 	val jsTexture = WebGlTexture(gl, glState)

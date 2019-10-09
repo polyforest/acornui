@@ -28,7 +28,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.io.GlobalProgressReporter
 import com.acornui.io.Progress
 import com.acornui.io.isLoading
-import com.acornui.io.secondsRemaining
+import com.acornui.io.remaining
 import com.acornui.math.*
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.addPopUp
@@ -37,6 +37,8 @@ import com.acornui.time.onTick
 import com.acornui.time.tick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * A progress bar made from simple rectangles.
@@ -84,8 +86,8 @@ class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
 	fun watch(target: Progress) {
 		_watched?.dispose()
 		_watched = onTick {
-			targetP = if (target.secondsTotal == 0f) 0f
-			else target.secondsLoaded / target.secondsTotal
+			targetP = if (target.total == Duration.ZERO) 0f
+			else (target.loaded / target.total).toFloat()
 			progress += (targetP - progress) * 0.1f
 		}
 	}
@@ -145,7 +147,7 @@ var progressBar: Owned.()->UiComponent = {
 
 private var progressBarPopUp: PopUpInfo<UiComponent>? = null
 fun Scoped.showAssetLoadingBar(progress: Progress = GlobalProgressReporter, onCompleted: () -> Unit = {}) {
-	if (progress.secondsRemaining < 0.5f) return onCompleted() // Close enough
+	if (progress.remaining < 0.4.seconds) return onCompleted() // Close enough
 
 	if (progressBarPopUp == null) {
 		// We only want a single progress bar pop up.

@@ -66,6 +66,8 @@ import kotlinx.coroutines.GlobalScope
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import kotlin.system.exitProcess
+import kotlin.time.Duration
+import kotlin.time.seconds
 import org.lwjgl.Version as LwjglVersion
 
 /**
@@ -204,10 +206,10 @@ open class LwjglApplication(manifest: FilesManifest? = null) : ApplicationBase(m
 		val glState = get(GlState)
 
 		object : Loader<Texture> {
-			override val defaultInitialTimeEstimate: Float
-				get() = Bandwidth.downBpsInv * 100_000
+			override val defaultInitialTimeEstimate: Duration
+				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): Texture {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
 				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
@@ -215,10 +217,10 @@ open class LwjglApplication(manifest: FilesManifest? = null) : ApplicationBase(m
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {
-			override val defaultInitialTimeEstimate: Float
-				get() = Bandwidth.downBpsInv * 100_000
+			override val defaultInitialTimeEstimate: Duration
+				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): RgbData {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
 				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
 			}
 		}

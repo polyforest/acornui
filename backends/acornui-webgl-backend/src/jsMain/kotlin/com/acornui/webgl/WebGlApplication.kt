@@ -51,6 +51,8 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.clear
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * An Acorn UI application for browser-based web gl.
@@ -138,10 +140,10 @@ open class WebGlApplication(private val rootId: String, manifest: FilesManifest?
 		val glState = get(GlState)
 
 		object : Loader<Texture> {
-			override val defaultInitialTimeEstimate: Float
-				get() = Bandwidth.downBpsInv * 100_000
+			override val defaultInitialTimeEstimate: Duration
+				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): Texture {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
 				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
@@ -152,10 +154,10 @@ open class WebGlApplication(private val rootId: String, manifest: FilesManifest?
 		val glState = get(GlState)
 
 		object : Loader<RgbData> {
-			override val defaultInitialTimeEstimate: Float
-				get() = Bandwidth.downBpsInv * 100_000
+			override val defaultInitialTimeEstimate: Duration
+				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Float): RgbData {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
 				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate).rgbData
 			}
 		}
