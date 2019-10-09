@@ -121,6 +121,12 @@ internal object EmptyObservableList : ListBase<Nothing>(), ObservableList<Nothin
 
 	override fun notifyElementModified(index: Int) {}
 
+	override fun iterate(body: (Nothing) -> Boolean) {
+	}
+
+	override fun iterateReversed(body: (Nothing) -> Boolean) {
+	}
+
 	override fun concurrentIterator(): ConcurrentListIterator<Nothing> = object : ConcurrentListIterator<Nothing> {
 		override val size: Int = 0
 		override var cursor: Int = 0

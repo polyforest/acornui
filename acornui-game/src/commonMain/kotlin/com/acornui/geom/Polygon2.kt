@@ -17,19 +17,11 @@
 package com.acornui.geom
 
 import com.acornui._assert
-import com.acornui.collection.addAll2
 import com.acornui.collection.copy
 import com.acornui.math.*
-import com.acornui.serialization.*
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
-
-fun Polygon2(vertices: List<Float>): Polygon2 {
-	val p = Polygon2(vertices.size)
-	p.vertices.addAll(vertices)
-	return p
-}
 
 interface Polygon2Ro {
 
@@ -56,6 +48,10 @@ interface Polygon2Ro {
  * A 2d polygon.
  */
 class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
+
+	constructor(vertices: List<Float>): this(vertices.size) {
+		this.vertices.addAll(vertices)
+	}
 
 	/**
 	 * x, y, ...
@@ -133,13 +129,13 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 
 	fun set(other: Polygon2Ro): Polygon2 {
 		vertices.clear()
-		vertices.addAll2(other.vertices)
+		vertices.addAll(other.vertices)
 		return this
 	}
 
 	fun setVertices(newVertices: List<Float>): Polygon2 {
 		vertices.clear()
-		vertices.addAll2(newVertices)
+		vertices.addAll(newVertices)
 		return this
 	}
 

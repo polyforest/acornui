@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.collection
 
 import com.acornui.Disposable
@@ -21,7 +23,23 @@ import com.acornui.recycle.Clearable
 
 interface ConcurrentList<out E> : List<E> {
 
+	/**
+	 * Returns an iterator whose cursor changes when elements are added or removed at or before the current index.
+	 */
 	fun concurrentIterator(): ConcurrentListIterator<E>
+
+	fun iterate(body: (E) -> Boolean, reversed: Boolean) {
+		if (reversed) iterateReversed(body)
+		else iterate(body)
+	}
+
+	/**
+	 * Iterates over this list using a concurrent iterator.
+	 * Depending on implementation this may be pooled to prevent allocation.
+	 */
+	fun iterate(body: (E) -> Boolean)
+
+	fun iterateReversed(body: (E) -> Boolean)
 }
 
 interface MutableConcurrentList<E> : ConcurrentList<E>, MutableList<E> {
@@ -64,13 +82,9 @@ inline fun <E> ConcurrentListIterator<E>.iterateReversed(body: (E) -> Boolean) {
 	}
 }
 
-fun <E> ConcurrentListIteratorImpl(
-		list: ObservableList<E>
-) : ConcurrentListIterator<E> {
-	return WatchedConcurrentListIteratorImpl(ConcurrentListIteratorImpl(list as List<E>), list)
-}
+open class WatchedConcurrentListIteratorImpl<out E>(private val impl: ConcurrentListIteratorImpl<E>, private val list: ObservableList<E>) : ConcurrentListIterator<E> by impl {
 
-private open class WatchedConcurrentListIteratorImpl<out E>(private val impl: ConcurrentListIteratorImpl<E>, private val list: ObservableList<E>) : ConcurrentListIterator<E> by impl {
+	constructor(list: ObservableList<E>) : this(ConcurrentListIteratorImpl(list as List<E>), list)
 
 	private val addedHandler = {
 		index: Int, _: E ->
@@ -93,13 +107,9 @@ private open class WatchedConcurrentListIteratorImpl<out E>(private val impl: Co
 	}
 }
 
-fun <E> MutableConcurrentListIteratorImpl(
-		list: MutableObservableList<E>
-) : MutableConcurrentListIterator<E> {
-	return WatchedMutableConcurrentListIteratorImpl(MutableConcurrentListIteratorImpl(list as MutableList<E>), list)
-}
+open class WatchedMutableConcurrentListIteratorImpl<E>(private val impl: MutableConcurrentListIteratorImpl<E>, private val list: MutableObservableList<E>) : WatchedConcurrentListIteratorImpl<E>(impl, list), MutableConcurrentListIterator<E> {
 
-private open class WatchedMutableConcurrentListIteratorImpl<E>(private val impl: MutableConcurrentListIteratorImpl<E>, private val list: MutableObservableList<E>) : WatchedConcurrentListIteratorImpl<E>(impl, list), MutableConcurrentListIterator<E> {
+	constructor(list: MutableObservableList<E>) : this(MutableConcurrentListIteratorImpl(list as MutableList<E>), list)
 
 	override fun iterator(): MutableIterator<E> = list.iterator()
 
@@ -218,8 +228,7 @@ open class MutableConcurrentListIteratorImpl<E>(
 	}
 
 	override fun set(element: E) {
-		if (lastRet < 0)
-			throw IllegalStateException()
+		check(lastRet >= 0)
 		list[lastRet] = element
 	}
 

@@ -23,7 +23,6 @@ import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
-import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -94,7 +93,7 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 
 	private var isDirty: Boolean = true
 
-	val iteratorPool = ClearableObjectPool { ConcurrentListIteratorImpl(this) }
+	private val iteratorPool by lazy { ClearableObjectPool { WatchedConcurrentListIteratorImpl(this) } }
 
 	/**
 	 * If set, this list will be reduced to elements passing the given filter function.
@@ -320,29 +319,24 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 	}
 
 	override fun iterator(): Iterator<E> {
-		return ConcurrentListIteratorImpl(this)
+		return WatchedConcurrentListIteratorImpl(this)
 	}
 
 	override fun listIterator(): ListIterator<E> {
-		return ConcurrentListIteratorImpl(this)
+		return WatchedConcurrentListIteratorImpl(this)
 	}
 
 	override fun listIterator(index: Int): ListIterator<E> {
-		val iterator = ConcurrentListIteratorImpl(this)
+		val iterator = WatchedConcurrentListIteratorImpl(this)
 		iterator.cursor = index
 		return iterator
 	}
 
 	override fun concurrentIterator(): ConcurrentListIterator<E> {
-		return ConcurrentListIteratorImpl(this)
+		return WatchedConcurrentListIteratorImpl(this)
 	}
 
-	inline fun iterate(body: (E) -> Boolean, reversed: Boolean) {
-		if (reversed) iterateReversed(body)
-		else iterate(body)
-	}
-
-	inline fun iterate(body: (E) -> Boolean) {
+	override fun iterate(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		while (iterator.hasNext()) {
 			val shouldContinue = body(iterator.next())
@@ -351,7 +345,7 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 		iteratorPool.free(iterator)
 	}
 
-	inline fun iterateReversed(body: (E) -> Boolean) {
+	override fun iterateReversed(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		iterator.cursor = size
 		while (iterator.hasPrevious()) {

@@ -99,6 +99,10 @@ abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 		return true
 	}
 
+	/**
+	 * Removes all current elements, in reverse order.
+	 * Does not handle any concurrent modification.
+	 */
 	override fun clear() {
 		for (i in lastIndex downTo 0) {
 			removeAt(i)

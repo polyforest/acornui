@@ -47,9 +47,9 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 	private val _reset = Signal0()
 	override val reset = _reset.asRo()
 
-	protected var updatesEnabled: Boolean = true
+	private var updatesEnabled: Boolean = true
 
-	val iteratorPool = ClearableObjectPool { ConcurrentListIteratorImpl(this) }
+	private val iteratorPool = ClearableObjectPool { WatchedConcurrentListIteratorImpl(this) }
 
 	constructor() : this(8)
 
@@ -168,7 +168,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		return wrapped.lastIndexOf(element)
 	}
 
-	override fun concurrentIterator(): MutableConcurrentListIterator<E> = MutableConcurrentListIteratorImpl(this)
+	override fun concurrentIterator(): MutableConcurrentListIterator<E> = WatchedMutableConcurrentListIteratorImpl(this)
 
 	override fun iterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
 
@@ -180,12 +180,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		return iterator
 	}
 
-	inline fun iterate(body: (E) -> Boolean, reversed: Boolean) {
-		if (reversed) iterateReversed(body)
-		else iterate(body)
-	}
-
-	inline fun iterate(body: (E) -> Boolean) {
+	override fun iterate(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		while (iterator.hasNext()) {
 			val shouldContinue = body(iterator.next())
@@ -194,7 +189,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		iteratorPool.free(iterator)
 	}
 
-	inline fun iterateReversed(body: (E) -> Boolean) {
+	override fun iterateReversed(body: (E) -> Boolean) {
 		val iterator = iteratorPool.obtain()
 		iterator.cursor = size
 		while (iterator.hasPrevious()) {

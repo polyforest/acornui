@@ -2,6 +2,8 @@
 
 package com.acornui.component.layout
 
+import com.acornui.collection.addAfter
+import com.acornui.collection.addBefore
 import com.acornui.collection.addOrReorder
 import com.acornui.collection.filterTo2
 import com.acornui.component.ContainerImpl
@@ -140,10 +142,10 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 			addChild(element)
 		} else if (newIndex == 0) {
 			val nextElement = elements[newIndex + 1]
-			addChildBefore(element, nextElement)
+			_children.addBefore(element, nextElement)
 		} else {
 			val previousElement = elements[newIndex - 1]
-			addChildAfter(element, previousElement)
+			_children.addAfter(element, previousElement)
 		}
 	}
 

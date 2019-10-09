@@ -297,9 +297,19 @@ class ValidationGraph(
 	}
 }
 
+/**
+ * Returns true if this bit mask contains the given binary bit mask.
+ * Example (for brevity consider 'b' to be a binary literal):
+ * ```
+ * 0101b.containsFlag(100b) // true
+ * 0101b.containsFlag(10b)  // false
+ * 0101b.containsFlag(101b) // true
+ * 0101b.containsFlag(111b) // false
+ * ```
+ */
 @Suppress("NOTHING_TO_INLINE")
 inline fun Int.containsFlag(flag: Int): Boolean {
-	return this and flag != 0
+	return this and flag == flag
 }
 
 fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToString, init: ValidationGraph.() -> Unit): ValidationGraph {

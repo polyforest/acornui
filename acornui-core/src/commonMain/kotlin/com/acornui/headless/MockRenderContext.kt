@@ -12,7 +12,7 @@ object MockRenderContext : RenderContextRo {
 
 	override val parentContext: RenderContextRo? = null
 	override val clipRegion: MinMaxRo = MinMaxRo.NEGATIVE_INFINITY
-	override val colorTint: ColorRo = Color.CLEAR
+	override val colorTint: ColorRo = Color.WHITE
 	override val viewProjectionTransformInv: Matrix4Ro = Matrix4.IDENTITY
 	override val viewProjectionTransform: Matrix4Ro  = Matrix4.IDENTITY
 	override val viewTransform: Matrix4Ro = Matrix4.IDENTITY

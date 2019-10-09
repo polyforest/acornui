@@ -22,6 +22,7 @@ import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.Disposable
 import com.acornui.async.getCompletedOrNull
+import com.acornui.collection.forEach2
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.gl.core.GlState
@@ -113,7 +114,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 
 	private val _elements = ArrayList<TextElement>()
 
-	override val elements: List<TextElement>
+	override val elements: MutableList<TextElement>
 		get() = _elements
 
 	protected val styles = Styles(this)
@@ -203,10 +204,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	 * @param dispose If dispose is true, the elements will be disposed.
 	 */
 	override fun clearElements(dispose: Boolean) {
-		for (i in 0.._elements.lastIndex) {
-			if (dispose)
-				_elements[i].dispose()
-		}
+		if (dispose) _elements.forEach2 { it.dispose() }
 		_elements.clear()
 		textParent?.invalidate(bubblingFlags)
 	}

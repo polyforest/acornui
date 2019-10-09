@@ -45,7 +45,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	override var textField: TextField? = null
 
 	private val _lines = ArrayList<LineInfo>()
-	private val _elements = ArrayList<TextSpanElement>()
+	private val _elements = ElementsList()
 
 	private val _textElements = ArrayList<TextElement>()
 
@@ -87,24 +87,14 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	override val elements: List<TextSpanElement>
-		get() = _elements
+	override val elements: MutableList<TextSpanElement> = _elements
 
 	override fun <S : TextSpanElement> addElement(index: Int, element: S): S {
-		if (element.textParent != null) throw Exception("Remove element first.")
-		_elements.addOrReorder(index, element) { _, _ ->
-			invalidate(bubblingFlags)
-			element.textParent = this
-		}
+		_elements.add(index, element)
 		return element
 	}
 
-	override fun removeElement(index: Int): TextSpanElement {
-		val element = _elements.removeAt(index)
-		element.textParent = null
-		invalidate(bubblingFlags)
-		return element
-	}
+	override fun removeElement(index: Int): TextSpanElement = _elements.removeAt(index)
 
 	override fun clearElements(dispose: Boolean) {
 		for (i in 0.._elements.lastIndex) {
@@ -116,8 +106,8 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	override fun updateStyles() {
 		super.updateStyles()
-		for (i in 0.._elements.lastIndex) {
-			_elements[i].validateStyles()
+		_elements.forEach2 {
+			it.validateStyles()
 		}
 	}
 
@@ -409,6 +399,46 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			for (i in 0..textElements.lastIndex) {
 				textElements[i].renderForeground(clip, transform, tint)
 			}
+		}
+	}
+
+	private inner class ElementsList : MutableListBase<TextSpanElement>() {
+
+		private val elements = ArrayList<TextSpanElement>()
+
+		override fun add(index: Int, element: TextSpanElement) {
+			if (element.textParent != null && element.textParent != this@Paragraph) throw Exception("Remove element first.")
+			val oldIndex = elements.indexOf(element)
+			if (oldIndex == -1) {
+				element.textParent = this@Paragraph
+				elements.add(index, element)
+			} else {
+				val newIndex = if (oldIndex < index) index - 1 else index
+				if (index == oldIndex || index == oldIndex + 1) return
+				elements.removeAt(oldIndex)
+				elements.add(newIndex, element)
+			}
+			invalidate(bubblingFlags)
+		}
+
+		override fun removeAt(index: Int): TextSpanElement {
+			val element = elements.removeAt(index)
+			element.textParent = null
+			return element
+		}
+
+		override val size: Int
+			get() = elements.size
+
+		override fun get(index: Int): TextSpanElement = elements[index]
+
+		override fun set(index: Int, element: TextSpanElement): TextSpanElement {
+			val oldElement = elements.set(index, element)
+			if (oldElement == element) return element
+			oldElement.textParent = null
+			element.textParent = this@Paragraph
+			invalidate(bubblingFlags)
+			return oldElement
 		}
 	}
 

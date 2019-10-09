@@ -30,7 +30,7 @@ import com.acornui.selection.SelectionRange
 interface TextNodeContainerRo : ContainerRo, TextNodeRo
 interface TextNodeContainer : TextNode, TextNodeContainerRo
 
-abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementContainerImpl<T>(owner), TextNodeContainer {
+abstract class TextElementContainerImpl<E : TextNode>(owner: Owned) : ElementContainerImpl<E>(owner), TextNodeContainer {
 
 	private val _lines = ArrayList<LineInfo>()
 	private val _textElements = ArrayList<TextElementRo>()
@@ -48,8 +48,8 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 		set(value) {
 			if (field == value) return
 			field = value
-			for (i in 0.._elements.lastIndex) {
-				_elements[i].allowClipping = value
+			elements.forEach2 {
+				it.allowClipping = value
 			}
 		}
 
@@ -62,20 +62,19 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 		set(value) {
 			if (field == value) return
 			field = value
-			for (i in 0.._elements.lastIndex) {
-				_elements[i].textField = value
+			elements.forEach2 {
+				it.textField = value
 			}
 		}
 
 	override val placeholder: TextElementRo?
-		get() = _elements.lastOrNull()?.placeholder
+		get() = elements.lastOrNull()?.placeholder
 
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
 		var r = rangeStart
-		for (i in 0.._elements.lastIndex) {
-			val element = _elements[i]
-			element.setSelection(r, selection)
-			r += element.textElements.size
+		elements.forEach2 {
+			it.setSelection(r, selection)
+			r += it.textElements.size
 		}
 	}
 
@@ -87,7 +86,7 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 
 	private fun updateTextElements() {
 		_textElements.clear()
-		_elements.forEach2 {
+		elements.forEach2 {
 			_textElements.addAll(it.textElements)
 		}
 	}
@@ -97,8 +96,7 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 		_lines.forEach2(action = LineInfo.Companion::free)
 		_lines.clear()
 		var relativeIndex = 0
-		for (i in 0.._elements.lastIndex) {
-			val element = _elements[i]
+		elements.forEach2 { element ->
 			val elementLines = element.lines
 			for (j in 0..elementLines.lastIndex) {
 				val line = LineInfo.obtain()
@@ -113,11 +111,10 @@ abstract class TextElementContainerImpl<T : TextNode>(owner: Owned) : ElementCon
 		}
 	}
 	override fun toString(builder: StringBuilder) {
-		for (i in 0.._elements.lastIndex) {
-			_elements[i].toString(builder)
+		for (i in 0..elements.lastIndex) {
+			elements[i].toString(builder)
 		}
 	}
-
 
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16

@@ -18,9 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.collection.addOrReorder
-import com.acornui.collection.filterTo2
-import com.acornui.collection.forEach2
+import com.acornui.collection.*
 import com.acornui.component.layout.LayoutElement
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
@@ -36,8 +34,17 @@ interface ElementParentRo<out T> {
 
 /**
  * An element parent is an interface that externally exposes the ability to add and remove elements.
+ * How those elements are added to the display graph is implementation specific.
  */
 interface ElementParent<T> : ElementParentRo<T> {
+
+	/**
+	 * A list of externally added objects.
+	 *
+	 * The behavior of this mutable list differs in one respect: implementations are expected to handle reordering.
+	 * That is, when an element already exists in this list, and is added again, the element's index will change.
+	 */
+	override val elements: MutableList<T>
 
 	/**
 	 * Syntax sugar for addElement.
@@ -64,9 +71,9 @@ interface ElementParent<T> : ElementParentRo<T> {
 	}
 
 	/**
-	 * Adds an external element to this container at the given index.
-	 * Unlike children, adding element to an [ElementContainer] where the element
-	 * has already been added, the element will be removed.
+	 * Adds or reorders an external element to this container at the given index.
+	 *
+	 * Unlike children, an element can belong to multiple element containers.
 	 *
 	 * @param index The index at which to add the element. This must be between 0 and `elements.size`
 	 * @throws IndexOutOfBoundsException
@@ -81,10 +88,7 @@ interface ElementParent<T> : ElementParentRo<T> {
 	 */
 	fun removeElement(element: T?): Boolean {
 		if (element == null) return false
-		val index = elements.indexOf(element)
-		if (index == -1) return false
-		removeElement(index)
-		return true
+		return elements.remove(element)
 	}
 
 	/**
@@ -96,25 +100,6 @@ interface ElementParent<T> : ElementParentRo<T> {
 
 	fun clearElements(dispose: Boolean = true)
 
-	/**
-	 * Adds an element after the provided element.
-	 */
-	fun addElementAfter(element: T, after: T): Int {
-		val index = elements.indexOf(after)
-		if (index == -1) return -1
-		addElement(index + 1, element)
-		return index + 1
-	}
-
-	/**
-	 * Adds an element before the provided element.
-	 */
-	fun addElementBefore(element: T, before: T): Int {
-		val index = elements.indexOf(before)
-		if (index == -1) return -1
-		addElement(index, element)
-		return index
-	}
 }
 
 interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParentRo<T>
@@ -128,22 +113,21 @@ interface ElementContainerRo<out T : UiComponentRo> : ContainerRo, ElementParent
 interface ElementContainer<E : UiComponent> : ElementContainerRo<E>, ElementParent<E>, Container
 
 /**
+ * The base class for a component that contains children and external elements.
+ *
  * @author nbilyk
  */
-open class ElementContainerImpl<T : UiComponent>(
+open class ElementContainerImpl<E : UiComponent>(
 		owner: Owned
-) : ContainerImpl(owner), ElementContainer<T>, Container {
+) : ContainerImpl(owner), ElementContainer<E>, Container {
 
 	//-------------------------------------------------------------------------------------------------
 	// Element methods.
 	//-------------------------------------------------------------------------------------------------
 
-	protected val _elements = ArrayList<T>()
+	private val _elements = ElementsList()
 
-	/**
-	 * A list of externally added components.
-	 */
-	final override val elements: List<T> = _elements
+	final override val elements: MutableList<E> = _elements
 
 	private val _elementsToLayout = ArrayList<LayoutElement>()
 	protected val elementsToLayout: List<LayoutElement>
@@ -153,17 +137,14 @@ open class ElementContainerImpl<T : UiComponent>(
 			return _elementsToLayout
 		}
 
-	override fun <S : T> addElement(index: Int, element: S): S {
-		_elements.addOrReorder(index, element) { oldIndex, newIndex ->
-			if (oldIndex == -1) element.disposed.add(::elementDisposedHandler)
-			onElementAdded(oldIndex, newIndex, element)
-		}
+	override fun <S : E> addElement(index: Int, element: S): S {
+		_elements.add(index, element)
 		return element
 	}
 
 	private fun elementDisposedHandler(element: UiComponent) {
 		@Suppress("UNCHECKED_CAST")
-		removeElement(element as T)
+		removeElement(element as E)
 	}
 
 	/**
@@ -182,27 +163,23 @@ open class ElementContainerImpl<T : UiComponent>(
 	 * }
 	 * ```
 	 */
-	protected open fun onElementAdded(oldIndex: Int, newIndex: Int, element: T) {
+	protected open fun onElementAdded(oldIndex: Int, newIndex: Int, element: E) {
 		if (newIndex == elements.size - 1) {
 			addChild(element)
 		} else if (newIndex == 0) {
 			val nextElement = _elements[newIndex + 1]
-			addChildBefore(element, nextElement)
+			_children.addBefore(element, nextElement)
 		} else {
 			val previousElement = _elements[newIndex - 1]
-			addChildAfter(element, previousElement)
+			_children.addAfter(element, previousElement)
 		}
 	}
 
-	override fun removeElement(index: Int): T {
-		val element = _elements.removeAt(index)
-		element.disposed.remove(::elementDisposedHandler)
-		onElementRemoved(index, element)
-		require(element.parent == null) { "Removing an element should remove from the display." }
-		return element
+	override fun removeElement(index: Int): E {
+		return _elements.removeAt(index)
 	}
 
-	protected open fun onElementRemoved(index: Int, element: T) {
+	protected open fun onElementRemoved(index: Int, element: E) {
 		removeChild(element)
 	}
 
@@ -241,5 +218,48 @@ open class ElementContainerImpl<T : UiComponent>(
 	override fun dispose() {
 		clearElements(dispose = false) // The elements this container owns will be disposed in the disposed signal.
 		super.dispose()
+	}
+
+	private inner class ElementsList : MutableListBase<E>() {
+
+		private val list = ArrayList<E>()
+
+		override fun add(index: Int, element: E) {
+			val oldIndex = list.indexOf(element)
+			if (oldIndex == -1) {
+				element.disposed.add(::elementDisposedHandler)
+				list.add(index, element)
+			} else {
+				val newIndex = if (oldIndex < index) index - 1 else index
+				if (index == oldIndex || index == oldIndex + 1) return
+				list.removeAt(oldIndex)
+				list.add(newIndex, element)
+			}
+			onElementAdded(oldIndex, index, element)
+		}
+
+		override fun removeAt(index: Int): E {
+			val element = list.removeAt(index)
+			element.disposed.remove(::elementDisposedHandler)
+			onElementRemoved(index, element)
+			require(element.parent == null) { "Removing an element should remove from the display." }
+			return element
+		}
+
+		override val size: Int
+			get() = list.size
+
+		override fun get(index: Int): E = list[index]
+
+		override fun set(index: Int, element: E): E {
+			val oldElement = list.set(index, element)
+			if (oldElement == element) return element
+			oldElement.disposed.remove(::elementDisposedHandler)
+			onElementRemoved(index, element)
+			require(element.parent == null) { "Removing an element should remove from the display." }
+			element.disposed.add(::elementDisposedHandler)
+			onElementAdded(index, index, element)
+			return oldElement
+		}
 	}
 }

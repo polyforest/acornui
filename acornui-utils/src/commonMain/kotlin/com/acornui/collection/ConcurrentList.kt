@@ -17,13 +17,14 @@
 package com.acornui.collection
 
 import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.ObjectPool
 
 class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 
 	private val iteratorStack = ArrayList<ConcurrentListImplIterator<E>>()
 	private val list = ArrayList<E>()
 
-	val iteratorPool = ClearableObjectPool { ConcurrentListImplIterator(this, iteratorStack) }
+	private val iteratorPool: ObjectPool<ConcurrentListIterator<E>> = ClearableObjectPool { ConcurrentListImplIterator(this, iteratorStack) }
 
 	override fun add(index: Int, element: E) {
 		list.add(index, element)
@@ -65,12 +66,7 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 		return iterator
 	}
 
-	inline fun iterate(body: (E) -> Boolean, reversed: Boolean) {
-		if (reversed) iterateReversed(body)
-		else iterate(body)
-	}
-
-	inline fun iterate(body: (E) -> Boolean) {
+	override fun iterate(body: (E) -> Boolean) {
 		if (size == 0) return
 		else if (size == 1) {
 			body(this[0])
@@ -84,7 +80,7 @@ class ConcurrentListImpl<E> : MutableListBase<E>(), MutableConcurrentList<E> {
 		iteratorPool.free(iterator)
 	}
 
-	inline fun iterateReversed(body: (E) -> Boolean) {
+	override fun iterateReversed(body: (E) -> Boolean) {
 		if (size == 0) return
 		else if (size == 1) {
 			body(this[0])
@@ -107,7 +103,7 @@ class ConcurrentListImplIterator<E>(
 
 	init {
 		stack.add(this)
-		if (stack.size > 50) throw IllegalStateException("Concurrent list iterators are being created, but not disposed.")
+		check(stack.size <= 50) { "Concurrent list iterators are being created, but not disposed." }
 	}
 
 	override fun dispose() {

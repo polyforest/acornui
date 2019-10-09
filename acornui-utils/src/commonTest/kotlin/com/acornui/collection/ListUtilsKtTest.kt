@@ -19,6 +19,7 @@ package com.acornui.collection
 import com.acornui.test.assertListEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class ListUtilsKtTest {
 	@Test
@@ -158,7 +159,8 @@ class ListUtilsKtTest {
 
 	}
 
-	@Test fun sortedInsertionIndex() {
+	@Test
+	fun sortedInsertionIndex() {
 		val arr = arrayListOf(1, 4, 6, 7, 8)
 		assertEquals(2, arr.sortedInsertionIndex(5))
 		assertEquals(3, arr.sortedInsertionIndex(6))
@@ -167,9 +169,9 @@ class ListUtilsKtTest {
 		assertEquals(5, arr.sortedInsertionIndex(9))
 	}
 
-	@Test fun sortedInsertionIndexWithComparator() {
-		val comparator = {
-			o1: Int?, o2: Int? ->
+	@Test
+	fun sortedInsertionIndexWithComparator() {
+		val comparator = { o1: Int?, o2: Int? ->
 			if (o1 == null && o2 == null) 0
 			else if (o1 == null) -1
 			else if (o2 == null) 1
@@ -193,7 +195,8 @@ class ListUtilsKtTest {
 		assertEquals(4, arr.sortedInsertionIndex(10, fromIndex = 2, toIndex = 4, comparator = comparator))
 	}
 
-	@Test fun orderedColumns() {
+	@Test
+	fun orderedColumns() {
 		val arr = arrayListOf(0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 4, 5)
 		assertEquals(4, arr.sortedInsertionIndex(4, fromIndex = 0, toIndex = 4))
 		assertEquals(1, arr.sortedInsertionIndex(0, fromIndex = 0, toIndex = 4))
@@ -210,7 +213,8 @@ class ListUtilsKtTest {
 
 	}
 
-	@Test fun shiftAll() {
+	@Test
+	fun shiftAll() {
 		val list = ArrayList<Int>(16)
 		list.addAll(0, 1, 2, 3, 4, 5, 6)
 		list.shiftAll(3)
@@ -220,13 +224,38 @@ class ListUtilsKtTest {
 		assertListEquals(listOf(0, 1, 2, 3, 4, 5, 6), list)
 	}
 
-	@Test fun subListSafe() {
+	@Test
+	fun subListSafe() {
 		val list = listOf(1, 2, 3, 4)
 		assertListEquals(listOf(2, 3), list.subListSafe(1, 3))
 		assertListEquals(listOf(2, 3, 4), list.subListSafe(1, 4))
 		assertListEquals(listOf(2, 3, 4), list.subListSafe(1, 5))
 		assertListEquals(listOf(1, 2, 3, 4), list.subListSafe(0, 5))
 		assertListEquals(listOf(1, 2, 3, 4), list.subListSafe(-1, 5))
+	}
+
+	@Test
+	fun addBefore() {
+		val list = mutableListOf(1, 3, 5)
+		list.addBefore(4, 5)
+		list.addBefore(2, 3)
+		assertListEquals(listOf(1, 2, 3, 4, 5), list)
+
+		assertFails {
+			list.addBefore(10, -1)
+		}
+	}
+
+	@Test
+	fun addAfter() {
+		val list = mutableListOf(1, 3, 5)
+		list.addAfter(4, 3)
+		list.addAfter(2, 1)
+		assertListEquals(listOf(1, 2, 3, 4, 5), list)
+
+		assertFails {
+			list.addBefore(10, -1)
+		}
 	}
 
 }

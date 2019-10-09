@@ -16,6 +16,7 @@
 
 package com.acornui.popup
 
+import com.acornui.collection.addBefore
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
@@ -343,7 +344,7 @@ class PopUpManagerImpl(injector: Injector) : ElementLayoutContainer<NoopStyle, C
 		if (index == _currentPopUps.lastIndex)
 			addElement(child)
 		else
-			addElementBefore(child, _currentPopUps[index + 1].child)
+			elements.addBefore(child, _currentPopUps[index + 1].child)
 		refresh()
 		if (popUpInfo.focus)
 			child.focus(popUpInfo.highlightFocused)

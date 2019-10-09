@@ -18,6 +18,7 @@
 
 package com.acornui.component.scroll
 
+import com.acornui.collection.addAfter
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
@@ -136,7 +137,7 @@ open class ScrollArea<E : UiComponent>(
 
 			corner?.dispose()
 			corner = it.corner(this)
-			addChildAfter(corner!!, vScrollBar)
+			_children.addAfter(corner!!, vScrollBar)
 		}
 	}
 

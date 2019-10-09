@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate")
+
 package com.acornui.component
 
-import com.acornui._assert
-import com.acornui.collection.ConcurrentListImpl
-import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.ParentRo
+import com.acornui.collection.*
+import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.di.Owned
 import com.acornui.focus.invalidateFocusOrderDeep
 import com.acornui.math.Ray
@@ -36,6 +37,8 @@ interface Container : UiComponent, ContainerRo
 
 
 /**
+ * The base class for a component that contains children.
+ *
  * @author nbilyk
  */
 open class ContainerImpl(
@@ -53,9 +56,8 @@ open class ContainerImpl(
 	 */
 	protected var cascadingFlags = defaultCascadingFlags
 
-	protected val _children = ConcurrentListImpl<UiComponent>()
-	override val children: List<UiComponentRo>
-		get() = _children
+	protected val _children: MutableConcurrentList<UiComponent> = ChildrenList()
+	override val children: List<UiComponentRo> = _children
 
 	/**
 	 * Appends a child to the display children.
@@ -81,60 +83,13 @@ open class ContainerImpl(
 	}
 
 	/**
-	 * Adds the specified child to this container.
+	 * Adds or reorders the specified child to this container at the specified index.
+	 * If the child is already added to a different container, an error will be thrown.
 	 * @param index The index of where to insert the child.
 	 */
 	protected fun <T : UiComponent> addChild(index: Int, child: T): T {
-		_assert(!isDisposed, "This Container is disposed.")
-		_assert(!child.isDisposed, "Added child is disposed.")
-		val maybeSizeConstraints = if (!isValidatingLayout && child.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
-		if (child.parent == this) {
-			// Reorder child.
-			val oldIndex = _children.indexOf(child)
-			val newIndex = if (index > oldIndex) index - 1 else index
-			_children.removeAt(oldIndex)
-			_children.add(newIndex, child)
-			invalidate(bubblingFlags or maybeSizeConstraints)
-			child.invalidateFocusOrderDeep()
-			return child
-		}
-		_assert(child.parent == null, "Remove child first.")
-		if (index < 0 || index > _children.size)
-			throw Exception("index is out of bounds.")
-
-		child.parent = this
 		_children.add(index, child)
-		child.invalidated.add(::childInvalidatedHandler)
-		child.disposed.add(::childDisposedHandler)
-
-		if (isActive)
-			child.activate()
-		child.invalidate(cascadingFlags)
-		invalidate(bubblingFlags or maybeSizeConstraints)
-		if (!isValidatingLayout)
-			invalidateSize()
-
 		return child
-	}
-
-	/**
-	 * Adds a child after the [after] child.
-	 */
-	protected fun addChildAfter(child: UiComponent, after: UiComponent): Int {
-		val index = _children.indexOf(after)
-		if (index == -1) return -1
-		addChild(index + 1, child)
-		return index + 1
-	}
-
-	/**
-	 * Adds a child before the [before] child.
-	 */
-	protected fun addChildBefore(child: UiComponent, before: UiComponent): Int {
-		val index = _children.indexOf(before)
-		if (index == -1) return -1
-		addChild(index, child)
-		return index
 	}
 
 	/**
@@ -142,10 +97,7 @@ open class ContainerImpl(
 	 */
 	protected fun removeChild(child: UiComponent?): Boolean {
 		if (child == null) return false
-		val index = _children.indexOf(child)
-		if (index == -1) return false
-		removeChild(index)
-		return true
+		return _children.remove(child)
 	}
 
 	/**
@@ -153,30 +105,14 @@ open class ContainerImpl(
 	 * @return Returns true if a child was removed, or false if the index was out of range.
 	 */
 	protected fun removeChild(index: Int): UiComponent {
-		_assert(!isDisposed, "This Container is disposed.")
-
-		val child = _children.removeAt(index)
-		child.parent = null
-
-		child.invalidated.remove(::childInvalidatedHandler)
-		child.disposed.remove(::childDisposedHandler)
-		if (child.isActive) {
-			child.deactivate()
-		}
-		invalidate(bubblingFlags)
-		child.invalidate(cascadingFlags)
-		child.invalidateFocusOrderDeep()
-		if (!isValidatingLayout)
-			invalidateSize()
-
-		return child
+		return _children.removeAt(index)
 	}
 
 	/**
 	 * Removes all children, optionally disposing them.
 	 */
 	protected fun clearChildren(dispose: Boolean = true) {
-		val c = _children
+		val c = children
 		while (c.isNotEmpty()) {
 			val child = removeChild(c.lastIndex)
 			if (dispose)
@@ -216,7 +152,7 @@ open class ContainerImpl(
 		}
 	}
 
-	private val childrenIterator = _children.iteratorPool.obtain()
+	private val childrenUpdateIterator = _children.concurrentIterator()
 
 	override fun update() {
 		super.update()
@@ -224,19 +160,17 @@ open class ContainerImpl(
 			0 -> return
 			1 -> _children[0].update()
 			else -> {
-				val c = childrenIterator
-				while (c.hasNext()) {
-					c.next().update()
+				childrenUpdateIterator.iterate {
+					it.update()
+					true
 				}
-				c.clear()
 			}
 		}
 	}
 
 	override fun draw(renderContext: RenderContextRo) {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
-		for (i in 0.._children.lastIndex) {
-			val child = _children[i]
+		_children.forEach2 { child ->
 			if (child.visible)
 				child.renderIn(renderContext)
 		}
@@ -253,8 +187,7 @@ open class ContainerImpl(
 		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
-				for (i in _children.lastIndex downTo 0) {
-					val child = _children[i]
+				_children.forEachReversed2 { child ->
 					val childRayCache = if (child.naturalRenderContext.cameraEquals(naturalRenderContext)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
@@ -280,7 +213,7 @@ open class ContainerImpl(
 		val placeholder = addChild(UiComponentImpl(this))
 		return Delegates.observable(null as T?) { _, oldValue, newValue ->
 			if (oldValue !== newValue) {
-				val index = children.indexOf(oldValue ?: placeholder)
+				val index = _children.indexOf(oldValue ?: placeholder)
 				removeChild(index)
 				if (disposeOld)
 					oldValue?.dispose()
@@ -296,7 +229,7 @@ open class ContainerImpl(
 		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
 				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
 
-	protected open fun childInvalidatedHandler(child: UiComponent, flagsInvalidated: Int) {
+	protected open fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
 			// A child has invalidated a flag marked as layout invalidating.
 			if (!isValidatingLayout && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {
@@ -309,7 +242,7 @@ open class ContainerImpl(
 		invalidate(flagsInvalidated and bubblingFlags)
 	}
 
-	protected open fun childDisposedHandler(child: UiComponent) {
+	protected open fun onChildDisposed(child: UiComponent) {
 		removeChild(child)
 	}
 
@@ -328,6 +261,90 @@ open class ContainerImpl(
 
 	init {
 		focusEnabledChildren = true
+	}
+
+	private inner class ChildrenList : MutableListBase<UiComponent>(), MutableConcurrentList<UiComponent> {
+
+		private val list = ConcurrentListImpl<UiComponent>()
+
+		override fun add(index: Int, element: UiComponent) {
+			check(!isDisposed) { "This Container is disposed." }
+			check(!element.isDisposed) { "Added child is disposed." }
+			check(index >= 0 && index <= list.size) { "index is out of bounds." }
+			val maybeSizeConstraints = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
+			if (element.parent == this@ContainerImpl) {
+				// Reorder child.
+				val oldIndex = list.indexOf(element)
+				val newIndex = if (index > oldIndex) index - 1 else index
+				list.removeAt(oldIndex)
+				list.add(newIndex, element)
+				invalidate(bubblingFlags or maybeSizeConstraints)
+				element.invalidateFocusOrderDeep()
+				return
+			} else {
+				check(element.parent == null) { "Remove child first." }
+			}
+
+			configureChild(element)
+			list.add(index, element)
+			invalidate(bubblingFlags or maybeSizeConstraints)
+			if (!isValidatingLayout)
+				invalidateSize()
+		}
+
+		override fun removeAt(index: Int): UiComponent {
+			check(!isDisposed) { "This Container is disposed." }
+
+			val child = list.removeAt(index)
+			unconfigureChild(child)
+			invalidate(bubblingFlags)
+			if (!isValidatingLayout)
+				invalidateSize()
+			return child
+		}
+
+		override val size: Int
+			get() = list.size
+
+		override fun get(index: Int): UiComponent = list[index]
+
+		override fun set(index: Int, element: UiComponent): UiComponent {
+			check(!isDisposed) { "This Container is disposed." }
+			check(!element.isDisposed) { "Set child is disposed." }
+
+			val maybeSizeConstraints = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
+			val oldChild = list[index]
+			unconfigureChild(oldChild)
+			configureChild(element)
+			list[index] = element
+
+			invalidate(bubblingFlags or maybeSizeConstraints)
+			if (!isValidatingLayout)
+				invalidateSize()
+			return oldChild
+		}
+
+		private fun configureChild(element: UiComponent) {
+			element.parent = this@ContainerImpl
+			element.invalidated.add(::onChildInvalidated)
+			element.disposed.add(::onChildDisposed)
+			if (isActive) element.activate()
+			element.invalidate(cascadingFlags)
+		}
+
+		private fun unconfigureChild(oldChild: UiComponent) {
+			oldChild.parent = null
+			oldChild.invalidated.remove(::onChildInvalidated)
+			oldChild.disposed.remove(::onChildDisposed)
+			if (oldChild.isActive) oldChild.deactivate()
+			oldChild.invalidate(cascadingFlags)
+			oldChild.invalidateFocusOrderDeep()
+		}
+
+		override fun iterate(body: (UiComponent) -> Boolean) = list.iterate(body)
+		override fun iterateReversed(body: (UiComponent) -> Boolean) = list.iterateReversed(body)
+
+		override fun concurrentIterator(): MutableConcurrentListIterator<UiComponent> = list.concurrentIterator()
 	}
 
 	companion object {

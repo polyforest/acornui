@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused", "ConvertTwoComparisonsToRangeCheck")
+
 package com.acornui.collection
 
 import com.acornui.math.MathUtils.clamp
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ObjectPool
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
@@ -172,6 +176,7 @@ fun <E> List<E>.sortedInsertionIndex(fromIndex: Int = 0, toIndex: Int = size, ma
 /**
  * Returns true if the given index is within range of this List.
  */
+@Suppress("FunctionName")
 fun List<*>.rangeCheck(index: Int): Boolean = index >= 0 && index < size
 
 /**
@@ -305,6 +310,7 @@ fun <E> Iterator<E>.toList(): List<E> {
 	return list
 }
 
+@Suppress("FunctionName")
 inline fun <E> ArrayList(size: Int, factory: (index: Int) -> E): ArrayList<E> {
 	val a = ArrayList<E>(size)
 	for (i in 0..size - 1) {
@@ -560,6 +566,7 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
  * Clones this list, replacing the value at the given index with the new value.
  */
 fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
+	// TODO: replace with kotlinx persistent collections
 	val newList = ArrayList<E>(size)
 	for (i in 0..lastIndex) {
 		newList.add(if (i == index) newValue else this[i])
@@ -572,6 +579,7 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
  * @throws Exception Throws exception when [oldValue] was not found.
  */
 fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
+	// TODO: replace with kotlinx persistent collections
 	val newList = ArrayList<E>(size)
 	var found = false
 	for (i in 0..lastIndex) {
@@ -585,6 +593,7 @@ fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
 }
 
 fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<E> {
+	// TODO: replace with kotlinx persistent collections
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	return if (index == -1) throw Exception("Could not find a value matching the predicate")
 	else replaceAt(index, newValue)
@@ -597,8 +606,9 @@ fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<
  * than startIndex
  */
 fun <E> List<E>.replaceRange(startIndex: Int, endIndex: Int = startIndex, newElements: List<E>): List<E> {
-	if (endIndex > size) throw IllegalArgumentException("endIndex ($endIndex) may not be greater than size ($size)")
-	if (endIndex < startIndex) throw IllegalArgumentException("endIndex ($endIndex) may not be less than startIndex ($startIndex)")
+	// TODO: replace with kotlinx persistent collections
+	require(endIndex <= size) { "endIndex ($endIndex) may not be greater than size ($size)" }
+	require(endIndex >= startIndex) { "endIndex ($endIndex) may not be less than startIndex ($startIndex)" }
 	if (endIndex == startIndex && newElements.isEmpty()) return copy()
 	val newSize = size - (endIndex - startIndex) + newElements.size
 	val newList = ArrayList<E>(newSize)
@@ -652,7 +662,8 @@ fun <E : Comparable<E>> List<E>.isReverseSorted(): Boolean {
  * If `(index == oldIndex || index == oldIndex + 1)` there will be no change.
  * @param onReorder If an add or a reorder happens, [onReorder] will be called with the old index, and the new index.
  */
-inline fun <E> MutableList<E>.addOrReorder(index: Int, element: E, onReorder: (oldIndex: Int, newIndex: Int) -> Unit) {
+inline fun <E> MutableList<E>.addOrReorder(index: Int, element: E, onReorder: (oldIndex: Int, newIndex: Int) -> Unit = { _, _ -> }) {
+	contract { callsInPlace(onReorder, InvocationKind.AT_MOST_ONCE) }
 	val oldIndex = indexOf(element)
 	if (oldIndex == -1) {
 		add(index, element)
@@ -674,4 +685,30 @@ fun <E> List<E>.subListSafe(startIndex: Int, toIndex: Int): List<E> {
 	val tI = clamp(toIndex, 0, size)
 	if (tI <= sI) return emptyList()
 	return subList(sI, tI)
+}
+
+/**
+ * Adds an element after the provided element.
+ * @param element The element to add.
+ * @param after The element to find. This will then be immediately before [element].
+ * @throws IllegalArgumentException if [after] is not in this list.
+ */
+fun <E, T : E> MutableList<E>.addAfter(element: T, after: E): T {
+	val index = indexOf(after)
+	require(index != -1) { "element $element not found. "}
+	add(index + 1, element)
+	return element
+}
+
+/**
+ * Adds an element after the provided element.
+ * @param element The element to add.
+ * @param before The element to find. This will then be immediately after [element].
+ * @throws IllegalArgumentException if [before] is not in this list.
+ */
+fun <E, T : E> MutableList<E>.addBefore(element: T, before: E): T {
+	val index = indexOf(before)
+	require(index != -1) { "element $element not found. "}
+	add(index, element)
+	return element
 }

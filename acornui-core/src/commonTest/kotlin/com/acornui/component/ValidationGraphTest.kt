@@ -226,6 +226,13 @@ class ValidationGraphTest {
 
 	}
 
+	@Test fun containsFlag() {
+		assertTrue("0101".toInt(2).containsFlag("100".toInt(2)))
+		assertFalse("0101".toInt(2).containsFlag("10".toInt(2)))
+		assertTrue("0101".toInt(2).containsFlag("101".toInt(2)))
+		assertFalse("0101".toInt(2).containsFlag("111".toInt(2)))
+	}
+
 	private fun ValidationGraph.assertIsValid(vararg flags: Int) {
 		for (flag in flags) {
 			assertEquals(true, isValid(flag), "flag ${flag.toFlagString()} is not valid")

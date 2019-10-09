@@ -357,7 +357,7 @@ class DataGrid<RowData>(
 		watch(style) {
 			topRight?.dispose()
 			topRight = it.headerCellBackground(this)
-			clipper.addElementBefore(topRight!!, headerCellBackgrounds)
+			clipper.elements.addBefore(topRight!!, headerCellBackgrounds)
 			topRight!!.interactivityMode = InteractivityMode.NONE
 
 			headerDivider?.dispose()
