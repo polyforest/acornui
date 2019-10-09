@@ -69,7 +69,7 @@ fun <T : Disposable> Pool<T>.disposeAndClear() {
  * @param capacity The pool will never contain more than this many free objects.
  * @param create The factory method for producing new elements when this pool is empty.
  */
-open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, private val create: () -> T) : Pool<T> {
+open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, private val create: () -> T) : Pool<T>, Disposable {
 
 	constructor(create: () -> T) : this(8, 20000, create)
 
@@ -107,4 +107,6 @@ open class ObjectPool<T>(initialCapacity: Int, private val capacity: Int, privat
 	override fun clear() {
 		freeObjects.clear()
 	}
+
+	override fun dispose() = clear()
 }
