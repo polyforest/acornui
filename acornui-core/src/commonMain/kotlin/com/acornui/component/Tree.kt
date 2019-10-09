@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package com.acornui.component
 
+import com.acornui.ChildRo
+import com.acornui.ExperimentalAcorn
+import com.acornui.Parent
+import com.acornui.ParentRo
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.vGroup
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.component.text.text
-import com.acornui.ChildRo
-import com.acornui.Parent
-import com.acornui.ParentRo
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Owned
@@ -31,11 +37,15 @@ import com.acornui.di.own
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
 import com.acornui.observe.Observable
-import com.acornui.signal.*
+import com.acornui.signal.Cancel
+import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
+import com.acornui.signal.Signal3
 
 /**
  * A Tree component represents a hierarchy of parent/children relationships.
  */
+@ExperimentalAcorn
 class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
 
 	private val toggledChangeRequestedCancel = Cancel()
@@ -134,7 +144,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 
 	protected val hGroup = addChild(hGroup())
 	protected val textField = hGroup.addElement(text())
-	protected val childrenContainer = addChild(vGroup())
+	protected val childrenContainer = addChild(vGroup<TreeItemRenderer<E>>())
 
 	private val _elements = ArrayList<TreeItemRenderer<E>>()
 	override val elements: List<TreeItemRenderer<E>>
@@ -169,6 +179,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		set(value) {
 			val oldData = _data
 			if (oldData == value) return
+			toggled = false
 			if (oldData is Observable) {
 				oldData.changed.remove(::dataChangedHandler)
 			}
@@ -210,22 +221,9 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 	}
 
 	protected open fun updateChildren() {
-		recycleItemRenderers(_data?.children,
-				_elements,
-				factory = { item, index ->
-					DefaultTreeItemRenderer(this, tree)
-				},
-				configure = { element, item, index ->
-					if (item !== element.data) {
-						element.data = item
-						element.toggled = false
-					}
-					childrenContainer.addElement(index, element)
-				},
-				disposer = {
-					it.dispose()
-				}
-		)
+		childrenContainer.recycleItemRenderers(_data?.children) {
+			DefaultTreeItemRenderer(this, tree)
+		}
 		childrenContainer.visible = toggled
 	}
 
