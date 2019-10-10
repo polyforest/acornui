@@ -20,8 +20,6 @@ package com.acornui
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
