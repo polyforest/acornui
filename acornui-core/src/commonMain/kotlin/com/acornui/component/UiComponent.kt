@@ -1089,7 +1089,7 @@ open class UiComponentImpl(
 	 * Updates this component's draw region.
 	 *
 	 * By default, this will be the same area as the [bounds].
-	 * This may be overriden to modify the area that
+	 * This may be overridden to modify the area that
 	 *
 	 * @param out The region that will be set as the [drawRegion].
 	 */
