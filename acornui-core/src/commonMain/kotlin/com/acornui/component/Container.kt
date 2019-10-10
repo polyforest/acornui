@@ -25,6 +25,9 @@ import com.acornui.di.Owned
 import com.acornui.focus.invalidateFocusOrderDeep
 import com.acornui.math.Ray
 import com.acornui.math.RayRo
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -358,8 +361,13 @@ open class ContainerImpl(
 	}
 }
 
+@JvmName("containerT")
+inline fun <E : UiComponent> Owned.container(init: ComponentInit<ElementContainerImpl<E>> = {}): ElementContainerImpl<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ElementContainerImpl<E>(this).apply(init)
+}
+
 fun Owned.container(init: ComponentInit<ElementContainerImpl<UiComponent>> = {}): ElementContainerImpl<UiComponent> {
-	val c = ElementContainerImpl<UiComponent>(this)
-	c.init()
-	return c
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ElementContainerImpl<UiComponent>(this).apply(init)
 }
