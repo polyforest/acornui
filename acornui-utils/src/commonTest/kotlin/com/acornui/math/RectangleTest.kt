@@ -21,6 +21,8 @@ import com.acornui.serialization.jsonStringify
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class RectangleTest {
 	@Test
@@ -34,6 +36,25 @@ class RectangleTest {
 	@Test
 	fun area() {
 		assertEquals(12f, Rectangle(1f, 2f, 3f, 4f).area)
+	}
+
+	@Test
+	fun containsPoint() {
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(2f, 3f))
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(3.99f, 5.99f))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(1f, 2f))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(0f, 2f))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(2f, 0f))
+		assertTrue(Rectangle(-1f, 2f, 3f, 4f).contains(0f, 5f))
+		assertTrue(Rectangle(-1f, -2f, 3f, 4f).contains(1f, 1f))
+	}
+
+	@Test
+	fun containsRectangle() {
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 3f, 4f)))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 3f, 5f)))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 4f, 4f)))
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 2f, 3f)))
 	}
 }
 

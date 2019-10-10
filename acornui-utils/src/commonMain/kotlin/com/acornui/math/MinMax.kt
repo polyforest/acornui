@@ -21,50 +21,12 @@ import com.acornui.recycle.Clearable
 /**
  * A MinMax object represents a minimum and maximum cartesian point.
  */
-interface MinMaxRo {
+interface MinMaxRo : RectangleRo {
 
 	val xMin: Float
 	val xMax: Float
 	val yMin: Float
 	val yMax: Float
-	val width: Float
-	val height: Float
-
-	fun isEmpty(): Boolean {
-		return xMax <= xMin || yMax <= yMin
-	}
-
-	fun isNotEmpty(): Boolean = !isEmpty()
-
-	fun intersects(other: MinMaxRo): Boolean {
-		return (xMax > other.xMin && yMax > other.yMin && xMin < other.xMax && yMin < other.yMax)
-	}
-
-	fun intersects(other: RectangleRo): Boolean {
-		return (xMax > other.left && yMax > other.top && xMin < other.right && yMin < other.bottom)
-	}
-
-	fun contains(x: Float, y: Float): Boolean {
-		return x > xMin && y > yMin && x < xMax && y < yMax
-	}
-
-	/**
-	 * Clamps a 2d vector to these bounds.
-	 */
-	fun clampPoint(value: Vector2): Vector2 {
-		if (value.x < xMin) value.x = xMin
-		if (value.y < yMin) value.y = yMin
-		if (value.x > xMax) value.x = xMax
-		if (value.y > yMax) value.y = yMax
-		return value
-	}
-
-	fun copy(xMin: Float = this.xMin,
-			 xMax: Float = this.xMax,
-			 yMin: Float = this.yMin,
-			 yMax: Float = this.yMax): MinMax {
-		return MinMax(xMin, yMin, xMax, yMax)
-	}
 
 	companion object {
 
@@ -80,6 +42,13 @@ interface MinMaxRo {
 	}
 }
 
+fun MinMaxRo.copy(xMin: Float = this.xMin,
+				  xMax: Float = this.xMax,
+				  yMin: Float = this.yMin,
+				  yMax: Float = this.yMax): MinMax {
+	return MinMax(xMin, yMin, xMax, yMax)
+}
+
 /**
  * A two dimensional minimum maximum range.
  */
@@ -89,6 +58,24 @@ class MinMax(
 		override var xMax: Float = Float.NEGATIVE_INFINITY,
 		override var yMax: Float = Float.NEGATIVE_INFINITY
 ) : MinMaxRo, Clearable {
+
+	override val x: Float
+		get() = xMin
+
+	override val y: Float
+		get() = yMin
+
+	override val left: Float
+		get() = xMin
+
+	override val top: Float
+		get() = yMin
+
+	override val right: Float
+		get() = xMax
+
+	override val bottom: Float
+		get() = yMax
 
 	fun inf(): MinMax {
 		clear()
@@ -146,6 +133,20 @@ class MinMax(
 	override val height: Float
 		get() = yMax - yMin
 
+	/**
+	 * Sets this region to match the bounds of the rectangle.
+	 */
+	fun set(rectangle: RectangleRo?): MinMax {
+		if (rectangle == null)
+			clear()
+		else
+			set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
+		return this
+	}
+
+	/**
+	 * Sets this region to match the other region.
+	 */
 	fun set(other: MinMaxRo?): MinMax {
 		if (other == null) {
 			clear()
@@ -156,13 +157,6 @@ class MinMax(
 			yMax = other.yMax
 		}
 		return this
-	}
-
-	/**
-	 * Sets this region to match the bounds of the rectangle.
-	 */
-	fun set(rectangle: RectangleRo): MinMax {
-		return set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
 	}
 
 	fun set(xMin: Float, yMin: Float, xMax: Float, yMax: Float): MinMax {
@@ -228,5 +222,4 @@ class MinMax(
 	override fun toString(): String {
 		return "MinMax(xMin=$xMin, yMin=$yMin, xMax=$xMax, yMax=$yMax)"
 	}
-
 }

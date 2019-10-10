@@ -30,88 +30,117 @@ import kotlinx.serialization.internal.StringDescriptor
  */
 @Serializable(with = RectangleSerializer::class)
 interface RectangleRo {
+
 	val x: Float
+
 	val y: Float
+
 	val width: Float
+
 	val height: Float
+
 	val left: Float
+		get() = x
+
 	val top: Float
+		get() = y
+
 	val right: Float
+		get() = x + width
+
 	val bottom: Float
-	fun isEmpty(): Boolean
-	fun isNotEmpty(): Boolean
-	
-	/**
-	 * return the Vector2 with coordinates of this rectangle
-	 * @param out The Vector2
-	 */
-	fun getPosition(out: Vector2): Vector2
+		get() = y + height
+
+	fun isEmpty(): Boolean {
+		return width == 0f || height == 0f
+	}
+
+	fun isNotEmpty(): Boolean = !isEmpty()
 
 	/**
-	 * @return the Vector2 with size of this rectangle
-	 * @param out The Vector2
-	 */
-	fun getSize(out: Vector2): Vector2
-
-	/**
+	 * Returns true if the given point intersects with this rectangle.
+	 * (Matching edges do not count as intersection)
 	 * @param x point x coordinate
 	 * @param y point y coordinate
 	 * @return whether the point is contained in the rectangle
 	 */
-	fun intersects(x: Float, y: Float): Boolean
+	fun contains(x: Float, y: Float): Boolean {
+		return x > this.x && x < right && y > this.y && y < this.bottom
+	}
 
-	/**
-	 * @param point The coordinates vector
-	 * @return whether the point is contained in the rectangle
-	 */
-	fun intersects(point: Vector2Ro): Boolean
+	fun contains(point: Vector2Ro) = contains(point.x, point.y)
 
 	/**
 	 * Does an intersection test with a Ray (in the same coordinate space)
+	 * (Matching edges do not count as intersection)
 	 * @param r The ray to check against.
 	 * @param out If provided, will be set to the intersection position if there was one.
 	 * @return Returns true if the ray intersects this Rectangle.
 	 */
-	fun intersects(r: RayRo, out: Vector3? = null): Boolean
+	fun intersects(r: RayRo, out: Vector3? = null): Boolean {
+		if (r.direction.z == 0f) return false
+		val m = -r.origin.z * r.directionInv.z
+		if (m < 0) return false // Intersection (if there is one) is behind the ray.
+		val x2 = r.origin.x + m * r.direction.x
+		val y2 = r.origin.y + m * r.direction.y
+
+		val intersects = x2 > x && x2 < right && y2 > y && y2 < bottom
+		if (out != null && intersects) {
+			r.getEndPoint(m, out)
+		}
+		return intersects
+	}
 
 	/**
-	 * @param rectangle the other {@link Rectangle}.
-	 * @return whether the other rectangle is contained in this rectangle.
+	 * Returns true if the given rectangle is completely contained within this rectangle.
+	 * @param other the other rectangle to check.
 	 */
-	fun contains(rectangle: RectangleRo): Boolean
+	fun contains(other: RectangleRo): Boolean {
+		return other.x >= this.x && other.right <= this.right && other.y >= this.y && other.bottom <= this.bottom
+	}
 
 	/**
-	 * @param r the other {@link Rectangle}
-	 * @return whether this rectangle overlaps the other rectangle.
+	 * Returns true if the provided region intersects with this rectangle.
+	 * (Matching edges do not count as intersection)
 	 */
-	fun intersects(r: RectangleRo): Boolean
+	fun intersects(x: Float, y: Float, width: Float, height: Float): Boolean {
+		return this.x < x + width && this.right > x && this.y < y + height && this.bottom > y
+	}
 
-	fun intersects(xVal: Float, yVal: Float, widthVal: Float, heightVal: Float): Boolean
+	fun intersects(r: RectangleRo): Boolean = intersects(r.x, r.y, r.width, r.height)
+
 	/**
 	 * Calculates the aspect ratio ( width / height ) of this rectangle
 	 * @return the aspect ratio of this rectangle. Returns 0 if height is 0 to avoid NaN
 	 */
-	fun getAspectRatio(): Float
+	fun getAspectRatio(): Float {
+		return if (height == 0f) 0f else width / height
+	}
 
 	/**
 	 * Calculates the center of the rectangle. Results are located in the given Vector2
 	 * @param out the Vector2 to use
 	 * @return the given out with results stored inside
 	 */
-	fun getCenter(out: Vector2): Vector2
+	fun getCenter(out: Vector2): Vector2 {
+		out.x = x + width * 0.5f
+		out.y = y + height * 0.5f
+		return out
+	}
 
 	/**
 	 * Returns true if this rectangle's bounds can contain the given dimensions
 	 * Note: x, y coordinates are not considered.
 	 */
-	fun canContain(width: Float, height: Float): Boolean
+	fun canContain(width: Float, height: Float): Boolean {
+		return this.width >= width && this.height >= height
+	}
 
 	val area: Float
-	val perimeter: Float
+		get() = width * height
 
-	fun copy(x: Float = this.x, y: Float = this.y, width: Float = this.width, height: Float = this.height): Rectangle {
-		return Rectangle(x, y, width, height)
-	}
+	val perimeter: Float
+		get() = 2 * (this.width + this.height)
 
 	fun reduce(padding: PadRo): Rectangle = reduce(padding.left, padding.top, padding.right, padding.bottom)
 
@@ -122,9 +151,24 @@ interface RectangleRo {
 		return Rectangle(x + left, y + left, width - left - right, height - top - bottom)
 	}
 
+	/**
+	 * Clamps a 2d vector to these bounds.
+	 */
+	fun clampPoint(value: Vector2): Vector2 {
+		if (value.x < x) value.x = x
+		if (value.y < y) value.y = y
+		if (value.x > right) value.x = right
+		if (value.y > bottom) value.y = bottom
+		return value
+	}
+
 	companion object {
 		val EMPTY = Rectangle()
 	}
+}
+
+fun RectangleRo.copy(x: Float = this.x, y: Float = this.y, width: Float = this.width, height: Float = this.height): Rectangle {
+	return Rectangle(x, y, width, height)
 }
 
 @Serializable(with = RectangleSerializer::class)
@@ -167,12 +211,6 @@ class Rectangle(
 			height = value - y
 		}
 
-	override fun isEmpty(): Boolean {
-		return width == 0f || height == 0f
-	}
-
-	override fun isNotEmpty(): Boolean = !isEmpty()
-
 	/**
 	 * @param x bottom-left x coordinate
 	 * @param y bottom-left y coordinate
@@ -211,26 +249,6 @@ class Rectangle(
 	}
 
 	/**
-	 * @return the Vector2 with coordinates of this rectangle
-	 * @param out The Vector2
-	 */
-	override fun getPosition(out: Vector2): Vector2 {
-		return out.set(x, y)
-	}
-
-	/**
-	 * Sets the x and y-coordinates of the bottom left corner from vector
-	 * @param position The position vector
-	 * @return this rectangle for chaining
-	 */
-	fun setPosition(position: Vector2Ro): Rectangle {
-		this.x = position.x
-		this.y = position.y
-
-		return this
-	}
-
-	/**
 	 * Sets the x and y-coordinates of the bottom left corner
 	 * @param x The x-coordinate
 	 * @param y The y-coordinate
@@ -243,6 +261,8 @@ class Rectangle(
 		return this
 	}
 
+	fun setPosition(position: Vector2Ro): Rectangle = setPosition(position.x, position.y)
+
 	/**
 	 * Sets the width and height of this rectangle
 	 * @param width The width
@@ -254,77 +274,6 @@ class Rectangle(
 		this.height = height
 
 		return this
-	}
-
-	/**
-	 * @return the Vector2 with size of this rectangle
-	 * @param out The Vector2
-	 */
-	override fun getSize(out: Vector2): Vector2 {
-		return out.set(width, height)
-	}
-
-	/**
-	 * @param x point x coordinate
-	 * @param y point y coordinate
-	 * @return whether the point is contained in the rectangle
-	 */
-	override fun intersects(x: Float, y: Float): Boolean {
-		return this.x <= x && right >= x && this.y <= y && bottom >= y
-	}
-
-	/**
-	 * @param point The coordinates vector
-	 * @return whether the point is contained in the rectangle
-	 */
-	override fun intersects(point: Vector2Ro): Boolean {
-		return intersects(point.x, point.y)
-	}
-
-	/**
-	 * Does an intersection test with a Ray (in the same coordinate space)
-	 * @param r The ray to check against.
-	 * @param out If provided, will be set to the intersection position if there was one.
-	 * @return Returns true if the ray intersects this Rectangle.
-	 */
-	override fun intersects(r: RayRo, out: Vector3?): Boolean {
-		if (r.direction.z == 0f) return false
-		val m = -r.origin.z * r.directionInv.z
-		if (m < 0) return false // Intersection (if there is one) is behind the ray.
-		val x2 = r.origin.x + m * r.direction.x
-		val y2 = r.origin.y + m * r.direction.y
-
-		val intersects = x2 >= x && x2 <= x + width && y2 >= y && y2 <= y + height
-		if (out != null && intersects) {
-			r.getEndPoint(m, out)
-		}
-		return intersects
-	}
-
-	/**
-	 * @param rectangle the other {@link Rectangle}.
-	 * @return whether the other rectangle is contained in this rectangle.
-	 */
-	override fun contains(rectangle: RectangleRo): Boolean {
-		val xMin = rectangle.x
-		val xMax = xMin + rectangle.width
-
-		val yMin = rectangle.y
-		val yMax = yMin + rectangle.height
-
-		return ((xMin > x && xMin < x + width) && (xMax > x && xMax < x + width)) && ((yMin > y && yMin < y + height) && (yMax > y && yMax < y + height))
-	}
-
-	/**
-	 * @param r the other {@link Rectangle}
-	 * @return whether this rectangle overlaps the other rectangle.
-	 */
-	override fun intersects(r: RectangleRo): Boolean {
-		return intersects(r.x, r.y, r.width, r.height)
-	}
-
-	override fun intersects(xVal: Float, yVal: Float, widthVal: Float, heightVal: Float): Boolean {
-		return x < xVal + widthVal && right > xVal && y < yVal + heightVal && bottom > yVal
 	}
 
 	/**
@@ -350,16 +299,6 @@ class Rectangle(
 		this.height = rect.height
 
 		return this
-	}
-
-	override fun getAspectRatio(): Float {
-		return if (height == 0f) 0f else width / height
-	}
-
-	override fun getCenter(out: Vector2): Vector2 {
-		out.x = x + width * 0.5f
-		out.y = y + height * 0.5f
-		return out
 	}
 
 	/**
@@ -424,20 +363,6 @@ class Rectangle(
 		setPosition((rect.x + rect.width / 2) - width / 2, (rect.y + rect.height / 2) - height / 2)
 		return this
 	}
-
-	/**
-	 * Returns true if this rectangle's bounds can contain the given dimensions
-	 * Note: x, y coordinates are not considered.
-	 */
-	override fun canContain(width: Float, height: Float): Boolean {
-		return this.width >= width && this.height >= height
-	}
-
-	override val area: Float
-		get() = this.width * this.height
-
-	override val perimeter: Float
-		get() = 2 * (this.width + this.height)
 
 	fun inflate(left: Float, top: Float, right: Float, bottom: Float) {
 		x -= left

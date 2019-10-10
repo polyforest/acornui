@@ -34,40 +34,65 @@ interface IntRectangleRo {
 	val y: Int
 	val width: Int
 	val height: Int
+
 	val left: Int
+		get() = x
+
 	val top: Int
+		get() = y
+
 	val right: Int
+		get() = x + width
+
 	val bottom: Int
-	val isEmpty: Boolean
+		get() = y + height
+
+	fun isEmpty(): Boolean = (width == 0 || height == 0)
+
+	fun isNotEmpty(): Boolean = !isEmpty()
 
 	/**
 	 * @param x point x coordinate
 	 * @param y point y coordinate
 	 * @return whether the point is contained in the rectangle
 	 */
-	fun intersects(x: Int, y: Int): Boolean
-
-	/**
-	 * @param rectangle the other {@link Rectangle}.
-	 * @return whether the other rectangle is contained in this rectangle.
-	 */
-	fun contains(rectangle: IntRectangleRo): Boolean
+	fun intersects(x: Int, y: Int): Boolean {
+		return x > this.x && x < this.right && y > this.y && y < this.bottom
+	}
 
 	/**
 	 * @param r the other {@link Rectangle}
 	 * @return whether this rectangle overlaps the other rectangle.
 	 */
-	fun intersects(r: IntRectangleRo): Boolean
+	fun intersects(r: IntRectangleRo): Boolean {
+		return intersects(r.x, r.y, r.width, r.height)
+	}
 
-	fun intersects(xVal: Int, yVal: Int, widthVal: Int, heightVal: Int): Boolean
+	fun intersects(x: Int, y: Int, width: Int, height: Int): Boolean {
+		return x + width > this.x && x < this.right && y + height > this.y && y < this.bottom
+	}
+
+	/**
+	 * Returns true if the given rectangle is completely contained within this rectangle.
+	 * @param other the other rectangle to check.
+	 */
+	fun contains(other: IntRectangleRo): Boolean {
+		return other.x >= this.x && other.right <= this.right && other.y >= this.y && other.bottom <= this.bottom
+	}
+
 	/**
 	 * Returns true if this rectangle's bounds can contain the given dimensions
 	 * Note: x, y coordinates are not considered.
 	 */
-	fun canContain(width: Int, height: Int): Boolean
+	fun canContain(width: Int, height: Int): Boolean {
+		return this.width >= width && this.height >= height
+	}
 
 	val area: Int
+		get() = this.width * this.height
+
 	val perimeter: Int
+		get() = 2 * (this.width + this.height)
 
 	fun copy(x: Int = this.x, y: Int = this.y, width: Int = this.width, height: Int = this.height): IntRectangle {
 		return IntRectangle(x, y, width, height)
@@ -93,27 +118,6 @@ class IntRectangle(
 		override var width: Int = 0,
 		override var height: Int = 0
 ) : IntRectangleRo, Clearable {
-
-	override val left: Int
-		get() = x
-
-	override val top: Int
-		get() = y
-
-	override val right: Int
-		get() {
-			return x + width
-		}
-
-	override val bottom: Int
-		get() {
-			return y + height
-		}
-
-	override val isEmpty: Boolean
-		get() {
-			return width == 0 || height == 0
-		}
 
 	/**
 	 * @param x bottom-left x coordinate
@@ -168,15 +172,6 @@ class IntRectangle(
 	}
 
 	/**
-	 * @param x point x coordinate
-	 * @param y point y coordinate
-	 * @return whether the point is contained in the rectangle
-	 */
-	override fun intersects(x: Int, y: Int): Boolean {
-		return this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y
-	}
-
-	/**
 	 * @param rectangle the other {@link Rectangle}.
 	 * @return whether the other rectangle is contained in this rectangle.
 	 */
@@ -188,18 +183,6 @@ class IntRectangle(
 		val ymax = ymin + rectangle.height
 
 		return ((xmin > x && xmin < x + width) && (xmax > x && xmax < x + width)) && ((ymin > y && ymin < y + height) && (ymax > y && ymax < y + height))
-	}
-
-	/**
-	 * @param r the other {@link Rectangle}
-	 * @return whether this rectangle overlaps the other rectangle.
-	 */
-	override fun intersects(r: IntRectangleRo): Boolean {
-		return intersects(r.x, r.y, r.width, r.height)
-	}
-
-	override fun intersects(xVal: Int, yVal: Int, widthVal: Int, heightVal: Int): Boolean {
-		return x < xVal + widthVal && x + width > xVal && y < yVal + heightVal && y + height > yVal
 	}
 
 	/**
@@ -223,16 +206,6 @@ class IntRectangle(
 	override fun canContain(width: Int, height: Int): Boolean {
 		return this.width >= width && this.height >= height
 	}
-
-	override val area: Int
-		get() {
-			return this.width * this.height
-		}
-
-	override val perimeter: Int
-		get() {
-			return 2 * (this.width + this.height)
-		}
 
 	fun inflate(left: Int, top: Int, right: Int, bottom: Int) {
 		x -= left
