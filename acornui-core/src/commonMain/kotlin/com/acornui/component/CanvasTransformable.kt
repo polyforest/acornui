@@ -60,7 +60,7 @@ interface CanvasTransformableRo : ModelTransformableRo {
 }
 
 /**
- * Projects the given in global space to window coordinates. The window coordinate system has its
+ * Projects the given in global space to canvas coordinates. The canvas coordinate system has its
  * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
  */
 fun CanvasTransformableRo.globalToCanvas(globalCoords: Vector3): Vector3 {
@@ -74,8 +74,8 @@ fun CanvasTransformableRo.globalToCanvas(globalCoords: Vector3): Vector3 {
 }
 
 /**
- * Translates a point given in window coordinates to global space. The x- and y-coordinate of vec are assumed to be
- * in window coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
+ * Translates a point given in canvas coordinates to global space. The x- and y-coordinate of vec are assumed to be
+ * in canvas coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
  * the canvas coordinates in input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
  * of 1 will return a point on the far plane.
  * @param canvasCoords the point in canvas coordinates (origin top left). This will be mutated.
