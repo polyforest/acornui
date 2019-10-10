@@ -19,23 +19,27 @@
 package com.acornui.component.layout
 
 import com.acornui.EqualityCheck
-import com.acornui.collection.*
+import com.acornui.behavior.Selection
+import com.acornui.behavior.SelectionBase
+import com.acornui.behavior.retainAll
+import com.acornui.collection.ObservableList
+import com.acornui.collection.forEach2
+import com.acornui.collection.unshift
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.style.Style
-import com.acornui.behavior.Selection
-import com.acornui.behavior.SelectionBase
-import com.acornui.behavior.retainAll
-import com.acornui.recycle.IndexedPool
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.function.as2
 import com.acornui.function.as3
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
+import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.ObjectPool
+import com.acornui.recycle.Pool
 import com.acornui.recycle.disposeAndClear
+import kotlin.jvm.JvmName
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -498,53 +502,50 @@ interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleab
 
 /**
  * Recycles a list of list item renderers, creating or disposing renderers only as needed.
- * @param data The updated set of data items.
- * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
- * @param factory Used to create new item renderers as needed. [configure] will be called after factory to configure
- * the new element.
- * @param configure Used to configure the element.
- * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
- * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
- */
-fun <E, T : ListItemRenderer<E>> recycleItemRenderers(
-		data: Iterable<E>?,
-		existingElements: MutableList<T>,
-		factory: (item: E, index: Int) -> T,
-		configure: (element: T, item: E, index: Int) -> Unit = { element, item, index -> element.data = item; element.index = index },
-		disposer: (element: T) -> Unit = { it.dispose() },
-		equality: EqualityCheck<E?> = { a, b -> a == b }
-) = com.acornui.recycle.recycle(
-		data,
-		existingElements = existingElements,
-		factory = factory,
-		configure = configure,
-		disposer = disposer,
-		retriever = { it.data },
-		equality = equality
-)
-
-/**
- * Recycles a list of list item renderers, creating or disposing renderers only as needed.
+ * This method will automatically add and remove the renderers from the receiver element container.
+ *
  * @receiver The element container on which to add item renderers.
  * @param data The updated set of data items.
  * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
- * @param factory Used to create new item renderers as needed.
- * @param disposer Used to dispose the element. By default this calls [ItemRenderer.dispose] on the renderer.
+ * @param configure If set, when the element is recycled, configure will be called after the [ListItemRenderer.data] and
+ * [ListItemRenderer.index] properties have been set.
+ * @param unconfigure If set, when the element is returned to a managed object pool, unconfigure will be called.
+ * ([ListItemRenderer.data] will automatically be set to null)
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ * @param factory Used to create new item renderers as needed.
  */
-fun <E, T : ListItemRenderer<E>> ElementContainer<UiComponent>.recycleItemRenderers(
+@JvmName("recycleListItemRenderers")
+fun <E, T : ListItemRenderer<E>> ElementContainer<T>.recycleItemRenderers(
 		data: Iterable<E>?,
-		existingElements: MutableList<T>,
-		factory: (item: E, index: Int) -> T,
-		configure: (element: T, item: E, index: Int) -> Unit = { element, item, index -> element.data = item; element.index = index; addElement(index, element) },
-		disposer: (element: T) -> Unit = { it.dispose() },
-		equality: EqualityCheck<E?> = { a, b -> a == b }
-) = com.acornui.recycle.recycle(
-		data,
-		existingElements,
-		factory = factory,
-		configure = configure,
-		disposer = disposer,
-		retriever = { it.data },
-		equality = equality
-)
+		existingElements: MutableList<T> = elements,
+		configure: (element: T, item: E, index: Int) -> Unit = { _, _, _ -> },
+		unconfigure: (element: T) -> Unit = {},
+		equality: EqualityCheck<E?> = { a, b -> a == b },
+		factory: ElementContainer<T>.() -> T
+) {
+	@Suppress("UNCHECKED_CAST")
+	val pool = createOrReuseAttachment(RendererPoolKey(factory)) {
+		ObjectPool { factory() }
+	} as Pool<T>
+	com.acornui.recycle.recycle(
+			data,
+			existingElements,
+			factory = { _, _ -> pool.obtain() },
+			configure = {
+				element, item, index ->
+				if (element.data != item)
+					element.data = item
+				if (element.index != index)
+					element.index = index
+				addElement(index, element)
+				configure(element, item, index)
+			},
+			disposer = {
+				unconfigure(it)
+				it.data = null
+				pool.free(it)
+			},
+			retriever = { it.data },
+			equality = equality
+	)
+}
