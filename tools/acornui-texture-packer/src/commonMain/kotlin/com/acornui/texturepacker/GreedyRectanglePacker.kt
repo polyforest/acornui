@@ -153,7 +153,7 @@ class GreedyRectanglePacker(private val settings: PackerAlgorithmSettingsData) :
 	}
 
 	private fun addBucket(buckets: MutableList<IntRectangle>, bucket: IntRectangle) {
-		if (bucket.isEmpty) return
+		if (bucket.isEmpty()) return
 		val index = getAreaIndex(bucket.area, buckets)
 		buckets.add(index, bucket)
 	}
