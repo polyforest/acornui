@@ -101,6 +101,9 @@ interface GlState {
 	@Deprecated("use out.set(scissor)", ReplaceWith("out.set(scissor)"))
 	fun getScissor(out: IntRectangle): IntRectangle = out.set(scissor)
 
+	/**
+	 * @see Gl20.scissor
+	 */
 	fun setScissor(x: Int, y: Int, width: Int, height: Int)
 
 	/**
