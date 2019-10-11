@@ -20,13 +20,14 @@ package com.acornui
 
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
+import com.acornui.component.layout.SizableRo
 import com.acornui.gl.core.GlState
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 
-interface RenderableRo {
+interface RenderableRo : SizableRo {
 
 	/**
 	 * The local drawing region of this renderable component.

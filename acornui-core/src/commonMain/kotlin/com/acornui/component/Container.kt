@@ -159,15 +159,9 @@ open class ContainerImpl(
 
 	override fun update() {
 		super.update()
-		when (_children.size) {
-			0 -> return
-			1 -> _children[0].update()
-			else -> {
-				childrenUpdateIterator.iterate {
-					it.update()
-					true
-				}
-			}
+		childrenUpdateIterator.iterate {
+			it.update()
+			true
 		}
 	}
 

@@ -50,7 +50,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable, Renderable {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable, RenderableRo {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -171,7 +171,7 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
+interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable, Renderable {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>
@@ -261,8 +261,7 @@ open class UiComponentImpl(
 	final override fun activate() {
 		if (_isDisposed)
 			throw DisposedException()
-		if (_isActive)
-			throw IllegalStateException("Already active")
+		check(!_isActive) { "Already active" }
 		_isActive = true
 		_activated.dispatch(this)
 	}
@@ -272,8 +271,7 @@ open class UiComponentImpl(
 	final override fun deactivate() {
 		if (_isDisposed)
 			throw DisposedException()
-		if (!_isActive)
-			throw IllegalStateException("Not active")
+		check(_isActive) { "Not active" }
 		_isActive = false
 		_deactivated.dispatch(this)
 	}
@@ -548,8 +546,7 @@ open class UiComponentImpl(
 	/**
 	 * Returns the explicit size constraints.
 	 */
-	override val explicitSizeConstraints: SizeConstraintsRo
-		get() = _explicitSizeConstraints
+	override val explicitSizeConstraints: SizeConstraintsRo = _explicitSizeConstraints
 
 	override val minWidth: Float?
 		get() {
