@@ -137,10 +137,8 @@ class MinMax(
 	 * Sets this region to match the bounds of the rectangle.
 	 */
 	fun set(rectangle: RectangleRo?): MinMax {
-		if (rectangle == null)
-			clear()
-		else
-			set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
+		if (rectangle == null) clear()
+		else set(rectangle.x, rectangle.y, rectangle.right, rectangle.bottom)
 		return this
 	}
 
