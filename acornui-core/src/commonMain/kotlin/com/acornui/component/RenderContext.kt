@@ -263,7 +263,8 @@ class RenderContext() : RenderContextRo, Clearable {
 }
 
 /**
- *
+ * CustomRenderContext is a render context that isn't hierarchical. It expects a camera for the view and projection
+ * matrices, and explicitly set canvas, model, and color transforms.
  */
 class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
 
@@ -286,7 +287,7 @@ class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
 
 	override val canvasTransform = Rectangle()
 
-	override val modelTransform: Matrix4 = Matrix4()
+	override val modelTransform = Matrix4()
 
 	private val _modelTransformInv by lazy { Matrix4() }
 	override val modelTransformInv: Matrix4Ro
