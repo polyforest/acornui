@@ -56,8 +56,8 @@ interface IntRectangleRo {
 	 * @param y point y coordinate
 	 * @return whether the point is contained in the rectangle
 	 */
-	fun intersects(x: Int, y: Int): Boolean {
-		return x > this.x && x < this.right && y > this.y && y < this.bottom
+	fun contains(x: Int, y: Int): Boolean {
+		return x >= this.x && y >= this.y && x < this.right && y < this.bottom
 	}
 
 	/**
@@ -75,6 +75,29 @@ interface IntRectangleRo {
 	fun intersects(x: Int, y: Int, width: Int, height: Int): Boolean {
 		return x + width > this.x && x < this.right && y + height > this.y && y < this.bottom
 	}
+
+	/**
+	 * Returns true if the provided region intersects with this rectangle. Additionally sets the [out] Rectangle
+	 * as the region of intersection (only if there was an intersection).
+	 * (Matching edges do not count as intersection)
+	 * @return Returns true if there was an area of intersection.
+	 */
+	fun intersects(x: Int, y: Int, width: Int, height: Int, out: IntRectangle): Boolean {
+		val right = x + width
+		val bottom = y + height
+		return if (this.x < right && this.right > x && this.y < bottom && this.bottom > y) {
+			val iLeft = maxOf(x, this.x)
+			val iTop = maxOf(y, this.y)
+			val iRight = minOf(right, this.right)
+			val iBottom = minOf(bottom, this.bottom)
+			out.set(x = iLeft, y = iTop, width = iRight - iLeft, height = iBottom - iTop)
+			true
+		} else {
+			false
+		}
+	}
+
+	fun intersects(r: IntRectangleRo, out: IntRectangle): Boolean = intersects(r.x, r.y, r.width, r.height, out)
 
 	/**
 	 * Returns true if the given rectangle is completely contained within this rectangle.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "ConvertTwoComparisonsToRangeCheck")
 
 package com.acornui.math
 
@@ -59,13 +59,13 @@ interface RectangleRo {
 
 	/**
 	 * Returns true if the given point intersects with this rectangle.
-	 * (Matching edges do not count as intersection)
+	 * (Matching edges count as intersection)
 	 * @param x point x coordinate
 	 * @param y point y coordinate
 	 * @return whether the point is contained in the rectangle
 	 */
 	fun contains(x: Float, y: Float): Boolean {
-		return x > this.x && x < right && y > this.y && y < this.bottom
+		return x >= this.x && y >= this.y && x < right && y < this.bottom
 	}
 
 	fun contains(point: Vector2Ro) = contains(point.x, point.y)
@@ -84,7 +84,7 @@ interface RectangleRo {
 		val x2 = r.origin.x + m * r.direction.x
 		val y2 = r.origin.y + m * r.direction.y
 
-		val intersects = x2 > x && x2 < right && y2 > y && y2 < bottom
+		val intersects = x2 >= x && x2 <= right && y2 >= y && y2 <= bottom
 		if (out != null && intersects) {
 			r.getEndPoint(m, out)
 		}
@@ -108,6 +108,29 @@ interface RectangleRo {
 	}
 
 	fun intersects(r: RectangleRo): Boolean = intersects(r.x, r.y, r.width, r.height)
+
+	/**
+	 * Returns true if the provided region intersects with this rectangle. Additionally sets the [out] Rectangle
+	 * as the region of intersection (only if there was an intersection).
+	 * (Matching edges do not count as intersection)
+	 * @return Returns true if there was an area of intersection.
+	 */
+	fun intersects(x: Float, y: Float, width: Float, height: Float, out: Rectangle): Boolean {
+		val right = x + width
+		val bottom = y + height
+		return if (this.x < right && this.right > x && this.y < bottom && this.bottom > y) {
+			val iLeft = maxOf(x, this.x)
+			val iTop = maxOf(y, this.y)
+			val iRight = minOf(right, this.right)
+			val iBottom = minOf(bottom, this.bottom)
+			out.set(x = iLeft, y = iTop, width = iRight - iLeft, height = iBottom - iTop)
+			true
+		} else {
+			false
+		}
+	}
+
+	fun intersects(r: RectangleRo, out: Rectangle): Boolean = intersects(r.x, r.y, r.width, r.height, out)
 
 	/**
 	 * Calculates the aspect ratio ( width / height ) of this rectangle

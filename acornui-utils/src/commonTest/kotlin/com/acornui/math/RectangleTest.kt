@@ -43,11 +43,19 @@ class RectangleTest {
 	fun containsPoint() {
 		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(2f, 3f))
 		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(3.99f, 5.99f))
-		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(1f, 2f))
 		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(0f, 2f))
 		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(2f, 0f))
 		assertTrue(Rectangle(-1f, 2f, 3f, 4f).contains(0f, 5f))
 		assertTrue(Rectangle(-1f, -2f, 3f, 4f).contains(1f, 1f))
+
+		// After Top/Left edge
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(1f, 2f))
+		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(1f, 3f))
+
+		// After Bottom/Right edge
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(4f, 6f))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(4f, 5f))
+		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(3f, 6f))
 	}
 
 	@Test
@@ -65,6 +73,19 @@ class RectangleTest {
 		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(0f, 2f, 4f, 2f)))
 		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(0f, 1f, 4f, 2f)))
 		assertTrue(Rectangle(3f, 0f, 4f, 2f).intersects(Rectangle(0f, 0f, 3.01f, 2f)))
+	}
+
+	@Test
+	fun intersectsRectangleWithOut() {
+		val out = Rectangle()
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(2f, 0f, 4f, 2f), out))
+		assertEquals(Rectangle(2f, 0f, 2f, 2f), out)
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(0f, 1f, 4f, 2f), out))
+		assertEquals(Rectangle(0f, 1f, 4f, 1f), out)
+		assertTrue(Rectangle(3f, 0f, 4f, 2f).intersects(Rectangle(0f, 0f, 4f, 2f), out))
+		assertEquals(Rectangle(3f, 0f, 1f, 2f), out)
+		assertTrue(Rectangle(3f, 3f, 4f, 2f).intersects(Rectangle(0f, 0f, 4f, 4f), out))
+		assertEquals(Rectangle(3f, 3f, 1f, 1f), out)
 	}
 
 	@Test
