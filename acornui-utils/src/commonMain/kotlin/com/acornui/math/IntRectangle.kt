@@ -68,6 +68,10 @@ interface IntRectangleRo {
 		return intersects(r.x, r.y, r.width, r.height)
 	}
 
+	/**
+	 * Returns true if the provided region intersects with this rectangle.
+	 * (Matching edges do not count as intersection)
+	 */
 	fun intersects(x: Int, y: Int, width: Int, height: Int): Boolean {
 		return x + width > this.x && x < this.right && y + height > this.y && y < this.bottom
 	}
@@ -154,7 +158,6 @@ class IntRectangle(
 	fun setPosition(x: Int, y: Int): IntRectangle {
 		this.x = x
 		this.y = y
-
 		return this
 	}
 
@@ -167,22 +170,7 @@ class IntRectangle(
 	fun setSize(width: Int, height: Int): IntRectangle {
 		this.width = width
 		this.height = height
-
 		return this
-	}
-
-	/**
-	 * @param rectangle the other {@link Rectangle}.
-	 * @return whether the other rectangle is contained in this rectangle.
-	 */
-	override fun contains(rectangle: IntRectangleRo): Boolean {
-		val xmin = rectangle.x
-		val xmax = xmin + rectangle.width
-
-		val ymin = rectangle.y
-		val ymax = ymin + rectangle.height
-
-		return ((xmin > x && xmin < x + width) && (xmax > x && xmax < x + width)) && ((ymin > y && ymin < y + height) && (ymax > y && ymax < y + height))
 	}
 
 	/**
@@ -195,7 +183,6 @@ class IntRectangle(
 		this.y = rect.y
 		this.width = rect.width
 		this.height = rect.height
-
 		return this
 	}
 

@@ -66,9 +66,8 @@ class BoxTest {
 		run {
 			// Axis-aligned ray is directly above an axis aligned box
 			val ray = Ray()
-			ray.origin.set(50f, 100f, 150f)
-			ray.direction.set(0f, 0f, -1f)
-			ray.update()
+			ray.setOrigin(50f, 100f, 150f)
+			ray.setDirection(0f, 0f, -1f)
 
 			val boxA = Box()
 			boxA.set(0f, 0f, 0f, 100f, 200f, 10f)
@@ -90,9 +89,8 @@ class BoxTest {
 		run {
 			// Non axis-aligned Ray
 			val ray = Ray()
-			ray.origin.set(50f, 100f, 20f)
-			ray.direction.set(0.5f, 0.25f, -1f)
-			ray.update()
+			ray.setOrigin(50f, 100f, 20f)
+			ray.setDirection(0.5f, 0.25f, -1f)
 
 			val boxA = Box()
 			boxA.set(0f, 0f, 10f, 100f, 200f, 10f)
@@ -107,9 +105,8 @@ class BoxTest {
 
 	@Test fun intersectsBackwardsRay() {
 		val ray = Ray()
-		ray.origin.set(50f, 100f, -150f)
-		ray.direction.set(0f, 0f, 1f)
-		ray.update()
+		ray.setOrigin(50f, 100f, -150f)
+		ray.setDirection(0f, 0f, 1f)
 
 		val boxA = Box()
 		boxA.set(0f, 0f, 0f, 100f, 200f, -10f)
@@ -122,9 +119,8 @@ class BoxTest {
 
 	@Test fun doesNotIntersectBehindRay() {
 		val ray = Ray()
-		ray.origin.set(50f, 100f, 20f)
-		ray.direction.set(0f, 0f, 1f)
-		ray.update()
+		ray.setOrigin(50f, 100f, 20f)
+		ray.setDirection(0f, 0f, 1f)
 
 		val box = Box()
 		box.set(0f, 0f, 0f, 100f, 200f, 10f)

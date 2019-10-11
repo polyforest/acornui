@@ -320,7 +320,7 @@ class Vector2(
 	 * @param mat the matrix
 	 * @return this vector
 	 */
-	fun mul(mat: Matrix3): Vector2 {
+	fun mul(mat: Matrix3Ro): Vector2 {
 		val vals = mat.values
 		val x2 = x * vals[0] + y * vals[3] + vals[6]
 		val y2 = x * vals[1] + y * vals[4] + vals[7]

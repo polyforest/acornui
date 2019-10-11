@@ -89,12 +89,14 @@ fun CanvasTransformableRo.canvasToGlobal(canvasCoords: Vector3): Vector3 {
 	return canvasCoords
 }
 
+private val originTmp = Vector3()
+private val directionTmp = Vector3()
 
 fun CanvasTransformableRo.getPickRay(canvasX: Float, canvasY: Float, out: Ray): Ray {
-	canvasToGlobal(out.origin.set(canvasX, canvasY, -1f))
-	canvasToGlobal(out.direction.set(canvasX, canvasY, 0f))
-	out.direction.sub(out.origin)
-	out.update()
+	canvasToGlobal(originTmp.set(canvasX, canvasY, -1f))
+	canvasToGlobal(directionTmp.set(canvasX, canvasY, 0f))
+	directionTmp.sub(originTmp)
+	out.set(originTmp, directionTmp)
 	return out
 }
 

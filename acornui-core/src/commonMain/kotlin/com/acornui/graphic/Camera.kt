@@ -135,6 +135,9 @@ fun CameraRo.project(globalCoords: Vector3, viewportX: Float, viewportY: Float, 
 	return globalCoords
 }
 
+private val originTmp = Vector3()
+private val directionTmp = Vector3()
+
 /**
  * Creates a picking [Ray] from the coordinates given in global coordinates. The global coordinates origin
  * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
@@ -146,10 +149,10 @@ fun CameraRo.project(globalCoords: Vector3, viewportX: Float, viewportY: Float, 
  * @return The [out] parameter. The Ray will be in global coordinate space.
  */
 fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
-	canvasToGlobal(out.origin.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
-	canvasToGlobal(out.direction.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
-	out.direction.sub(out.origin)
-	out.update()
+	canvasToGlobal(originTmp.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
+	canvasToGlobal(directionTmp.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
+	directionTmp.sub(originTmp)
+	out.set(originTmp, directionTmp)
 	return out
 }
 

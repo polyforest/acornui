@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Nicholas Bilyk
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,19 +31,19 @@ import kotlin.test.assertTrue
 /**
  * @author nbilyk
  */
-class RayTest {
+class Ray2Test {
 
 	@Test fun mul() {
 	}
 
 	@Test fun intersectsRay() {
 		run {
-			val r1 = Ray(Vector3(5f, 5f, 4f), Vector3(5f, 5f, 2f))
-			val r2 = Ray(Vector3(5f, 5f, 5f), Vector3(5f, 5f, -2f))
+			val r1 = Ray2(Vector2(0f, 0f), Vector2(1f, 0f))
+			val r2 = Ray2(Vector2(1f, 1f), Vector2(0f, -1f))
 
-			val out = Vector3()
+			val out = Vector2()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(6.25f, 6.25f, 4.5f), out)
+			assertClose(Vector2(1f, 0f), out)
 		}
 
 		run {
@@ -51,7 +51,7 @@ class RayTest {
 			val r2 = Ray(Vector3(6f, 8f, 2f), Vector3(6f, 7f, 4f))
 
 			val out = Vector3()
-			assertTrue(r1.intersectsRay(r2, out))
+			r1.intersectsRay(r2, out)
 			assertClose(Vector3(9f, 11.5f, 4f), out)
 		}
 
@@ -72,70 +72,18 @@ class RayTest {
 			assertTrue(r1.intersectsRay(r2, out))
 			assertClose(Vector3(30f, 0f, 30f), out)
 		}
-
-		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(10f, 30f, 30f), Vector3(1f, -1f, 0f))
-
-			assertFalse(r1.intersectsRay(r2))
-		}
-
-		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(10f, 30f, 31f), Vector3(2f, -3f, 0f))
-
-			assertFalse(r1.intersectsRay(r2))
-		}
-
-		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, 1f, 2f))
-			val r2 = Ray(Vector3(10f, 40f, 50f), Vector3(0f, 3f, 4f))
-
-			assertTrue(r1.intersectsRay(r2))
-		}
-
-		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, 1f, 2f))
-			val r2 = Ray(Vector3(11f, 40f, 50f), Vector3(0f, 3f, 4f))
-
-			assertFalse(r1.intersectsRay(r2))
-		}
-	}
-
-	@Test fun intersectsTriangle() {
-		run {
-			val r1 = Ray(Vector3(1f, 2f, -20f), Vector3(0f, 0f, 1f))
-
-			val out = Vector3()
-			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(10f, 10f, 0f), Vector3(0f, 10f, 0f), out))
-			assertEquals(Vector3(1f, 2f, 0f), out)
-		}
-
-		run {
-			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(1f, 0f, 0f))
-
-			val out = Vector3()
-			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
-			assertEquals(Vector3(0f, 2f, 1f), out)
-		}
-
-		run {
-			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(-1f, 0f, 0f))
-
-			val out = Vector3()
-			assertFalse(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
-		}
 	}
 
 	@Test fun serialize() {
-		val ray = Ray(Vector3(1.1f, 2.1f, 3.1f), Vector3(4.1f, 5.1f, 6.1f))
-		val str = jsonStringify(Ray.serializer(), ray)
-		val ray2 = jsonParse(Ray.serializer(), str)
+		val ray = Ray2(Vector2(1.1f, 2.1f), Vector2(4.1f, 5.1f))
+		val str = jsonStringify(Ray2.serializer(), ray)
+		assertEquals("""{"origin":[1.1,2.1,3.1],"direction":[4.1,5.1,6.1]}""", str)
+		val ray2 = jsonParse(Ray2.serializer(), str)
 		assertClose(ray.origin, ray2.origin)
 		assertClose(ray.direction, ray2.direction)
 
-		val bin = binaryDump(Ray.serializer(), ray)
-		val ray3 = binaryParse(Ray.serializer(), bin)
+		val bin = binaryDump(Ray2.serializer(), ray)
+		val ray3 = binaryParse(Ray2.serializer(), bin)
 		assertClose(ray.origin, ray3.origin)
 		assertClose(ray.direction, ray3.direction)
 	}

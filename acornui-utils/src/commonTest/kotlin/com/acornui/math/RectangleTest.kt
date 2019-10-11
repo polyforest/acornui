@@ -18,6 +18,7 @@ package com.acornui.math
 
 import com.acornui.serialization.jsonParse
 import com.acornui.serialization.jsonStringify
+import com.acornui.test.assertClose
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -55,6 +56,23 @@ class RectangleTest {
 		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 3f, 5f)))
 		assertFalse(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 4f, 4f)))
 		assertTrue(Rectangle(1f, 2f, 3f, 4f).contains(Rectangle(1f, 2f, 2f, 3f)))
+	}
+
+	@Test
+	fun intersectsRectangle() {
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(2f, 0f, 4f, 2f)))
+		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(4f, 0f, 4f, 2f)))
+		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(0f, 2f, 4f, 2f)))
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Rectangle(0f, 1f, 4f, 2f)))
+		assertTrue(Rectangle(3f, 0f, 4f, 2f).intersects(Rectangle(0f, 0f, 3.01f, 2f)))
+	}
+
+	@Test
+	fun intersectsRay() {
+		val intersectionPoint = Vector3()
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(Vector3(1f, 1f, 1f), direction = Vector3(0f, 0f, -1f)), intersectionPoint))
+		assertClose(Vector3(1f, 1f, 0f), intersectionPoint)
+		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(Vector3(1f, 1f, 1f), direction = Vector3(0f, 0f, 1f)))) // Behind the ray
 	}
 }
 

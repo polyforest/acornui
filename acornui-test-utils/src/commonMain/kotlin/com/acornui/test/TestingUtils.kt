@@ -18,18 +18,15 @@
 
 package com.acornui.test
 
-import com.acornui.collection.toList
 import com.acornui.closeTo
-import com.acornui.math.*
+import com.acornui.collection.toList
+import com.acornui.math.Vector2Ro
+import com.acornui.math.Vector3Ro
 import com.acornui.time.nanoElapsed
-import kotlin.test.Test
 import kotlin.math.abs
-import kotlin.math.exp
-import kotlin.test.assertEquals
-
+import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.fail
-import kotlin.time.Duration
 
 fun assertListEquals(expected: IntArray, actual: IntArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
@@ -140,7 +137,7 @@ fun <T : Any> assertUnorderedListEquals(expected: Iterator<T>, actual: Iterator<
 	val expectedList = expected.toList()
 	val actualList = actual.toList()
 	if (expectedList.size != actualList.size) {
-		fail("actual size: ${actualList.size} expected size: ${expectedList.size}")
+		fail("expected size: ${expectedList.size} actual size: ${actualList.size}")
 	}
 
 	val finds = Array(expectedList.size) { false }
@@ -207,29 +204,31 @@ class TestUtils {
 	}
 }
 
-fun assertClose(expected: Float, actual: Float, margin: Float = 0.0001f) {
+fun assertClose(expected: Float, actual: Float, maxDifference: Float = 0.0001f, propertyName: String = "") {
 	val difference = abs(expected - actual)
-	if (difference > margin) {
-		fail("expected: $expected actual: $actual difference $difference is greater than allowed: $margin ")
+	if (difference > maxDifference) {
+		val name = if (propertyName.isEmpty()) "" else "'$propertyName' "
+		fail("expected ${name}close:<$expected> but was:<$actual> difference:<$difference> max:<$maxDifference> ")
 	}
 }
 
-fun assertClose(expected: Double, actual: Double, margin: Double = 0.0001) {
+fun assertClose(expected: Double, actual: Double, maxDifference: Double = 0.0001, propertyName: String = "") {
 	val difference = abs(expected - actual)
-	if (difference > margin) {
-		fail("expected: $expected actual: $actual difference $difference is greater than allowed: $margin ")
+	if (difference > maxDifference) {
+		val name = if (propertyName.isEmpty()) "" else "'$propertyName' "
+		fail("expected ${name}close:<$expected> but was:<$actual> difference:<$difference> max:<$maxDifference> ")
 	}
 }
 
-fun assertClose(expected: Vector3Ro, actual: Vector3Ro, margin: Float = 0.0001f) {
-	assertClose(expected.x, actual.x, margin)
-	assertClose(expected.y, actual.y, margin)
-	assertClose(expected.z, actual.z, margin)
+fun assertClose(expected: Vector3Ro, actual: Vector3Ro, maxDifference: Float = 0.0001f) {
+	assertClose(expected.x, actual.x, maxDifference, "x")
+	assertClose(expected.y, actual.y, maxDifference, "y")
+	assertClose(expected.z, actual.z, maxDifference, "z")
 }
 
-fun assertClose(expected: Vector2Ro, actual: Vector2Ro, margin: Float = 0.0001f) {
-	assertClose(expected.x, actual.x, margin)
-	assertClose(expected.y, actual.y, margin)
+fun assertClose(expected: Vector2Ro, actual: Vector2Ro, maxDifference: Float = 0.0001f) {
+	assertClose(expected.x, actual.x, maxDifference, "x")
+	assertClose(expected.y, actual.y, maxDifference, "y")
 }
 
 fun <T: Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {
@@ -239,12 +238,12 @@ fun <T: Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {
 
 fun <T: Comparable<T>> assertGreaterThan(expectedMin: T, actual: T) {
 	if (actual <= expectedMin)
-		fail("Expected value to be greater than: <$expectedMin>, but was: <$actual>")
+		fail("expected greater than:<$expectedMin> but was:<$actual>")
 }
 
 fun <T: Comparable<T>> assertLessThan(expectedMax: T, actual: T) {
 	if (actual >= expectedMax)
-		fail("Expected value to be less than: <$expectedMax>, but was: <$actual>")
+		fail("expected less than:<$expectedMax> but was:<$actual>")
 }
 
 /**
