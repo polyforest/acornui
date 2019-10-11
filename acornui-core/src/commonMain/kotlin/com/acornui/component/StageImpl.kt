@@ -99,13 +99,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		super.updateRenderContext()
 	}
 
-	override fun invalidate(flags: Int): Int {
-		val flagsInvalidated = super.invalidate(flags)
-		if (flagsInvalidated != 0)
-			window.requestRender()
-		return flagsInvalidated
-	}
-
 	//-------------------------------------------------------------
 	// External elements
 	// Pop up manager view

@@ -1033,7 +1033,7 @@ open class UiComponentImpl(
 	// Validatable
 	//-----------------------------------------------
 
-	override fun invalidate(flags: Int): Int {
+	final override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
 		if (flagsInvalidated != 0) {
