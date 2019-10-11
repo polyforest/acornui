@@ -16,8 +16,6 @@
 
 package com.acornui.collection
 
-import com.acornui.recycle.Clearable
-
 /**
  * Returns first index of *element*, or -1 if the collection does not contain element
  */
@@ -139,71 +137,6 @@ fun <E> MutableList<E>.shiftAll(delta: Int) {
 @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND") fun <T> List<T>.peek(): T? {
 	return if (isEmpty()) null
 	else this[lastIndex]
-}
-
-/**
- * An iterator object for a simple Array.
- * Use this wrapper when using an Array<T> where an Iterable<T> is needed.
- */
-open class ArrayIterator<E>(
-		val array: Array<E>
-) : Clearable, ListIterator<E>, Iterable<E> {
-
-	var cursor: Int = 0     // index of next element to return
-	var lastRet: Int = -1   // index of last element returned; -1 if no such
-
-	override fun hasNext(): Boolean {
-		return cursor != array.size
-	}
-
-	override fun next(): E {
-		val i = cursor
-		if (i >= array.size)
-			throw Exception("Iterator does not have next.")
-		cursor = i + 1
-		lastRet = i
-		return array[i]
-	}
-
-	override fun nextIndex(): Int {
-		return cursor
-	}
-
-	override fun hasPrevious(): Boolean {
-		return cursor != 0
-	}
-
-	override fun previous(): E {
-		val i = cursor - 1
-		if (i < 0)
-			throw Exception("Iterator does not have previous.")
-		cursor = i
-		lastRet = i
-		return array[i]
-	}
-
-	override fun previousIndex(): Int {
-		return cursor - 1
-	}
-
-	/**
-	 * An ArrayIterator can have elements be set, but it cannot implement [MutableListIterator] because the array's
-	 * size cannot change.
-	 */
-	fun set(element: E) {
-		if (lastRet < 0)
-			throw Exception("Cannot set before iteration.")
-		array[lastRet] = element
-	}
-
-	override fun clear() {
-		cursor = 0
-		lastRet = -1
-	}
-
-	override fun iterator(): Iterator<E> {
-		return this
-	}
 }
 
 fun <E> Array<E>.equalsArray(other: Array<E>): Boolean {
