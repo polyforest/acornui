@@ -59,14 +59,14 @@ abstract class RenderableBase : Renderable, Sizable {
 
 	/**
 	 * The explicit width, as set by width(value)
-	 * Typically one would use width() in order to retrieve the explicit or actual width.
+	 * Typically one would use `width` in order to retrieve the explicit or actual width.
 	 */
 	final override var explicitWidth: Float? = null
 		private set
 
 	/**
 	 * The explicit height, as set by height(value)
-	 * Typically one would use height() in order to retrieve the explicit or actual height.
+	 * Typically one would use `height` in order to retrieve the explicit or actual height.
 	 */
 	final override var explicitHeight: Float? = null
 		private set
