@@ -52,7 +52,7 @@ interface RectangleRo {
 		get() = y + height
 
 	fun isEmpty(): Boolean {
-		return width == 0f || height == 0f
+		return width <= 0f || height <= 0f
 	}
 
 	fun isNotEmpty(): Boolean = !isEmpty()

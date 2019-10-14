@@ -21,7 +21,6 @@ import com.acornui.test.assertRange
 import com.acornui.test.runTest
 import kotlinx.coroutines.launch
 import kotlin.test.Test
-import kotlin.time.MonoClock
 import kotlin.time.measureTime
 import kotlin.time.milliseconds
 import kotlin.time.seconds
@@ -29,9 +28,8 @@ import kotlin.time.seconds
 class ProgressTest {
 
 	@Test fun await() = runTest {
-		val p = ProgressImpl(total = 2000.milliseconds)
+		val p = ProgressImpl(total = 500.milliseconds)
 		val interval = 20.milliseconds
-		val m = MonoClock.markNow()
 		launch {
 			while (p.isLoading) {
 				p.loaded += interval

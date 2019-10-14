@@ -63,9 +63,9 @@ class NavBindingTest {
 
 private class MockNavBindable(override val injector: Injector, private val depth: Int) : ParentRo<NavBindable>,  NavBindable {
 
-	override val parent: ParentRo<out ChildRo>?
+	override val parent: ParentRo<ChildRo>?
 		get() {
-			if (depth == 0) return null else return MockNavBindable(injector, depth - 1)
+			return if (depth == 0) null else MockNavBindable(injector, depth - 1)
 		}
 
 	override val children: List<NavBindable>

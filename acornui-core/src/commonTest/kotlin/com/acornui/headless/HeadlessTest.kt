@@ -57,13 +57,13 @@ class HeadlessTest {
 				tweenX(4f, Easing.linear, 100f).start()
 				launch {
 					delay(1.seconds)
-					assertClose(25f, x, margin =  5f)
+					assertClose(25f, x, maxDifference =  5f)
 					delay(1.seconds)
-					assertClose(50f, x, margin =  5f)
+					assertClose(50f, x, maxDifference =  5f)
 					delay(1.seconds)
-					assertClose(75f, x, margin =  5f)
+					assertClose(75f, x, maxDifference =  5f)
 					delay(1.seconds)
-					assertClose(100f, x, margin =  5f)
+					assertClose(100f, x, maxDifference =  5f)
 				}
 			}
 
