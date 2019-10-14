@@ -1185,6 +1185,7 @@ interface Gl20 {
 	 * Return the value for the passed pName.
 	 *
 	 * @param pName one of [COLOR_WRITEMASK]
+	 * @param out The boolean array to populate with the values. This must be the expected size of the values.
 	 */
 	fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray
 
@@ -1205,6 +1206,14 @@ interface Gl20 {
 	fun getParameteri(pName: Int): Int
 
 	/**
+	 * Return the value for the passed pName.
+	 *
+	 * @param pName
+	 * @param out The boolean array to populate with the values.  This must be the expected size of the values.
+	 */
+	fun getParameteriv(pName: Int, out: IntArray): IntArray
+
+	/**
 	 * Return the value for the passed pName given the passed program.
 	 *
 	 * @param pName one of [DELETE_STATUS], [LINK_STATUS], [VALIDATE_STATUS]
@@ -1214,8 +1223,8 @@ interface Gl20 {
 	/**
 	 * Return the value for the passed pName given the passed program.
 	 *
-	 * @param pName one of [INFO_LOG_LENGTH], [ATTACHED_SHADERS], [ACTIVE_ATTRIBUTES], [ACTIVE_ATTRIBUTE_MAX_LENGTH], [ACTIVE_UNIFORMS],
-	 *           [ACTIVE_UNIFORM_MAX_LENGTH]
+	 * @param pName one of [INFO_LOG_LENGTH], [ATTACHED_SHADERS], [ACTIVE_ATTRIBUTES], [ACTIVE_ATTRIBUTE_MAX_LENGTH],
+	 * [ACTIVE_UNIFORMS], [ACTIVE_UNIFORM_MAX_LENGTH]
 	 */
 	fun getProgramParameteri(program: GlProgramRef, pName: Int): Int
 

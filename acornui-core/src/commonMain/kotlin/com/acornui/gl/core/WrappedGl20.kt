@@ -877,6 +877,13 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		return ret
 	}
 
+	override fun getParameteriv(pName: Int, out: IntArray): IntArray {
+		before()
+		val ret = wrapped.getParameteriv(pName, out)
+		after()
+		return ret
+	}
+
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean {
 		before()
 		val ret = wrapped.getProgramParameterb(program, pName)

@@ -589,6 +589,14 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		return context.getParameter(pName) as Int
 	}
 
+	override fun getParameteriv(pName: Int, out: IntArray): IntArray {
+		val r = context.getParameter(pName).asDynamic()
+		for (i in 0..out.lastIndex) {
+			out[i] = r[i] as Int
+		}
+		return out
+	}
+
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean {
 		return context.getProgramParameter((program as WebGlProgramRef).o, pName) as Boolean
 	}
