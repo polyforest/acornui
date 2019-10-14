@@ -395,6 +395,8 @@ object MockGl20 : Gl20 {
 
 	override fun getParameteri(pName: Int): Int = 0
 
+	override fun getParameteriv(pName: Int, out: IntArray): IntArray = intArrayOf()
+
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean = false
 
 	override fun getProgramParameteri(program: GlProgramRef, pName: Int): Int = 0

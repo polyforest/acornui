@@ -22,6 +22,7 @@ import com.acornui.io.NativeReadBuffer
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.*
 import org.lwjgl.opengl.GL11.nglGetBooleanv
+import org.lwjgl.opengl.GL11.nglGetIntegerv
 import org.lwjgl.system.MemoryStack.stackGet
 import org.lwjgl.system.MemoryUtil.memAddress
 import java.nio.*
@@ -627,6 +628,11 @@ open class LwjglGl20 : Gl20 {
 
 	override fun getParameteri(pName: Int): Int {
 		return GL11.glGetInteger(pName)
+	}
+
+	override fun getParameteriv(pName: Int, out: IntArray): IntArray {
+		GL11C.glGetIntegerv(pName, out)
+		return out
 	}
 
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean {
