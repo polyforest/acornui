@@ -146,4 +146,4 @@ fun Owned.basicIconButtonSkin(texture: ButtonSkin,
 
 ): IconButtonSkin = BasicIconButtonSkin(this, texture, padding, hGap, vAlign, iconOnLeft)
 
-fun Owned.basicIconButtonSkin(theme: Theme): IconButtonSkin = BasicIconButtonSkin(this, basicButtonSkin(theme), theme.buttonPad, theme.iconButtonGap, VAlign.MIDDLE, iconOnLeft = true)
+fun Owned.basicIconButtonSkin(theme: Theme): IconButtonSkin = basicIconButtonSkin(basicButtonSkin(theme), theme.buttonPad, theme.iconButtonGap, VAlign.MIDDLE, iconOnLeft = true)

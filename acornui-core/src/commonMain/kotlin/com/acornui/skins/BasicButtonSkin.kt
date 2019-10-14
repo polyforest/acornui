@@ -1,10 +1,13 @@
 package com.acornui.skins
 
 import com.acornui.component.*
+import com.acornui.component.layout.LayoutContainer
 import com.acornui.component.layout.VAlign
-import com.acornui.component.layout.algorithm.CanvasLayoutContainer
+import com.acornui.component.layout.algorithm.CanvasLayout
+import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
+import com.acornui.component.style.NoopStyle
 import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
@@ -18,7 +21,7 @@ private class BasicButtonSkin(
 		private val theme: Theme,
 		borderRadius: CornersRo,
 		borderThickness: PadRo
-) : CanvasLayoutContainer<UiComponent>(owner), ButtonSkin {
+) : LayoutContainer<NoopStyle, CanvasLayoutData>(owner, CanvasLayout()), ButtonSkin {
 
 	constructor(owner: Owned, theme: Theme) : this(owner, theme, Corners(theme.borderRadius), Pad(theme.strokeThickness))
 
@@ -103,13 +106,13 @@ private class BasicLabelButtonSkin(
 		owner: Owned,
 		private val texture: ButtonSkin,
 		private val padding: PadRo
-) : ElementContainerImpl<UiComponent>(owner), ButtonSkin {
+) : ContainerImpl(owner), ButtonSkin {
 
 	private val textField: TextField = text()
 
 	init {
-		+texture
-		+textField
+		addChild(texture)
+		addChild(textField)
 
 		textField.selectable = false
 		textField.flowStyle.horizontalAlign = FlowHAlign.CENTER
@@ -137,7 +140,8 @@ private class BasicLabelButtonSkin(
 	}
 }
 
-fun Owned.basicLabelButtonSkin(theme: Theme, texture: ButtonSkin = basicButtonSkin(theme), padding: PadRo = theme.buttonPad): ButtonSkin = BasicLabelButtonSkin(this, texture, padding)
+fun Owned.basicLabelButtonSkin(texture: ButtonSkin, padding: PadRo): ButtonSkin = BasicLabelButtonSkin(this, texture, padding)
+fun Owned.basicLabelButtonSkin(theme: Theme): ButtonSkin = BasicLabelButtonSkin(this, basicButtonSkin(theme), theme.buttonPad)
 
 /**
  * A typical implementation of a skin part for a labelable button state.
@@ -241,16 +245,16 @@ fun Owned.collapseButtonSkin(theme: Theme): ButtonSkin {
 	))
 }
 
-private class BasicTabSkin(owner: Owned, val theme: Theme) : ContainerImpl(owner), ButtonSkin {
+private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerImpl<UiComponent>(owner), ButtonSkin {
 
-	private val notToggled: ButtonSkin
-	private val toggled: ButtonSkin
+	private val notToggled: IconButtonSkin
+	private val toggled: IconButtonSkin
 
 	init {
 		val corners = Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f)
-		notToggled = addChild(basicLabelButtonSkin(theme, texture = basicButtonSkin(theme, corners)))
+		notToggled = addChild(basicIconButtonSkin(texture = basicButtonSkin(theme, corners)))
 		val borderThickness = Pad(top = theme.strokeThickness, right = theme.strokeThickness, bottom = 0f, left = theme.strokeThickness)
-		toggled = addChild(basicLabelButtonSkin(theme, texture = basicButtonSkin(theme, corners, borderThickness)))
+		toggled = addChild(basicIconButtonSkin(texture = basicButtonSkin(theme, corners, borderThickness)))
 	}
 
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
@@ -258,6 +262,18 @@ private class BasicTabSkin(owner: Owned, val theme: Theme) : ContainerImpl(owner
 		notToggled.buttonState = value
 		toggled.visible = value.isToggled
 		notToggled.visible = !value.isToggled
+
+		if (value.isToggled) {
+			if (toggled.element !== element) {
+				notToggled.element = null
+				toggled.element = element
+			}
+		} else {
+			if (notToggled.element !== element) {
+				toggled.element = null
+				notToggled.element = element
+			}
+		}
 	}
 
 	override var label: String by observableAndCall("") { value ->
@@ -265,10 +281,16 @@ private class BasicTabSkin(owner: Owned, val theme: Theme) : ContainerImpl(owner
 		notToggled.label = value
 	}
 
+	private val activeSkin: IconButtonSkin
+		get() = if (buttonState.isToggled) toggled else notToggled
+
+	override fun onElementChanged(oldElement: UiComponent?, newElement: UiComponent?) {
+		activeSkin.element = newElement
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		toggled.setSize(explicitWidth, explicitHeight)
-		notToggled.setSize(explicitWidth, explicitHeight)
-		out.set(toggled.bounds)
+		activeSkin.setSize(explicitWidth, explicitHeight)
+		out.set(activeSkin.bounds)
 	}
 }
 
