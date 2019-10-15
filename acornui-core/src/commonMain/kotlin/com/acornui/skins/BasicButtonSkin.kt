@@ -3,11 +3,7 @@ package com.acornui.skins
 import com.acornui.component.*
 import com.acornui.component.layout.LayoutContainer
 import com.acornui.component.layout.VAlign
-import com.acornui.component.layout.algorithm.CanvasLayout
-import com.acornui.component.layout.algorithm.CanvasLayoutData
-import com.acornui.component.layout.algorithm.FlowHAlign
-import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
-import com.acornui.component.style.NoopStyle
+import com.acornui.component.layout.algorithm.*
 import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
@@ -21,7 +17,7 @@ private class BasicButtonSkin(
 		private val theme: Theme,
 		borderRadius: CornersRo,
 		borderThickness: PadRo
-) : LayoutContainer<NoopStyle, CanvasLayoutData>(owner, CanvasLayout()), ButtonSkin {
+) : LayoutContainer<CanvasLayoutStyle, CanvasLayoutData>(owner, CanvasLayout()), ButtonSkin {
 
 	constructor(owner: Owned, theme: Theme) : this(owner, theme, Corners(theme.borderRadius), Pad(theme.strokeThickness))
 

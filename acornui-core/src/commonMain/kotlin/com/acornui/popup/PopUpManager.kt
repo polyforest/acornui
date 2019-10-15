@@ -23,6 +23,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
+import com.acornui.component.layout.algorithm.CanvasLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
@@ -160,7 +161,7 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl(injector: Injector) : ElementLayoutContainer<NoopStyle, CanvasLayoutData, UiComponent>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
+class PopUpManagerImpl(injector: Injector) : ElementLayoutContainer<CanvasLayoutStyle, CanvasLayoutData, UiComponent>(OwnedImpl(injector), CanvasLayout()), PopUpManager {
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 

@@ -172,6 +172,7 @@ class VerticalLayoutStyle : StyleBase() {
 
 	/**
 	 * The horizontal alignment of each element within the measured width.
+	 * This can be overridden on the individual element with [VerticalLayoutData.horizontalAlign]
 	 */
 	var horizontalAlign by prop(HAlign.LEFT)
 
@@ -206,6 +207,7 @@ class VerticalLayoutData : BasicLayoutData() {
 
 	/**
 	 * If set, the horizontal alignment for this item overrides the vertical layout's horizontalAlign.
+	 * @see VerticalLayoutStyle.horizontalAlign
 	 */
 	var horizontalAlign: HAlign? by bindable(null)
 

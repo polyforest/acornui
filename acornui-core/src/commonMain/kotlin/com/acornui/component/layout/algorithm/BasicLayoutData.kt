@@ -18,7 +18,6 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.layout.LayoutData
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
