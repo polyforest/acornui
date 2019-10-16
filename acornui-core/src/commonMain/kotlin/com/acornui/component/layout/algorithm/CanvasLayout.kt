@@ -117,21 +117,6 @@ class CanvasLayout : LayoutAlgorithm<CanvasLayoutStyle, CanvasLayoutData> {
 			}
 		}
 	}
-	
-	private operator fun Float?.times(x: Float?): Float? {
-		if (this == null || x == null) return null
-		return this * x
-	}
-	
-	private operator fun Float?.plus(x: Float?): Float? {
-		if (this == null || x == null) return null
-		return this + x
-	}
-	
-	private operator fun Float?.minus(x: Float?): Float? {
-		if (this == null || x == null) return null
-		return this - x
-	}
 
 	override fun createLayoutData() = CanvasLayoutData()
 }
@@ -210,7 +195,7 @@ open class CanvasLayoutData : BasicLayoutData() {
 		val right = right
 		val horizontalCenter = horizontalCenter
 		val p = widthPercent ?: 1f
-		return p timesOrNull if (left != null && right != null) availableWidth - right - left
+		return p * if (left != null && right != null) availableWidth - right - left
 		else if (left != null && horizontalCenter != null) 0.5f * availableWidth - left + horizontalCenter
 		else if (right != null && horizontalCenter != null) 0.5f * availableWidth - right - horizontalCenter
 		else if (widthPercent != null) availableWidth
@@ -223,15 +208,11 @@ open class CanvasLayoutData : BasicLayoutData() {
 		val bottom = bottom
 		val verticalCenter = verticalCenter
 		val p = heightPercent ?: 1f
-		return p timesOrNull if (top != null && bottom != null) availableHeight - bottom - top
+		return p * if (top != null && bottom != null) availableHeight - bottom - top
 		else if (top != null && verticalCenter != null) 0.5f * availableHeight - top + verticalCenter
 		else if (bottom != null && verticalCenter != null) 0.5f * availableHeight - bottom - verticalCenter
 		else if (heightPercent != null) availableHeight
 		else null
-	}
-
-	private infix fun Float?.timesOrNull(x: Float?): Float? {
-		return if (x == null || this == null) null else this * x
 	}
 }
 
@@ -250,4 +231,19 @@ inline fun <E : UiComponent> Owned.canvas(init: ComponentInit<CanvasLayoutContai
 inline fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer<UiComponent>> = {}): CanvasLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return canvas<UiComponent>(init)
+}
+
+private operator fun Float?.times(x: Float?): Float? {
+	if (this == null || x == null) return null
+	return this * x
+}
+
+private operator fun Float?.plus(x: Float?): Float? {
+	if (this == null || x == null) return null
+	return this + x
+}
+
+private operator fun Float?.minus(x: Float?): Float? {
+	if (this == null || x == null) return null
+	return this - x
 }
