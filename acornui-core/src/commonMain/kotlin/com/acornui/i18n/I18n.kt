@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("I18nUtils")
+
 package com.acornui.i18n
 
 import com.acornui.collection.firstOrNull2
@@ -37,6 +39,7 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.bind
 import com.acornui.string.StringReader
 import com.acornui.system.userInfo
+import kotlin.jvm.JvmName
 
 interface I18n {
 
