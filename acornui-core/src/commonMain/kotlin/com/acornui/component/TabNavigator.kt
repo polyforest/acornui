@@ -126,6 +126,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 				interactivityMode = InteractivityMode.CHILDREN
 				style.verticalAlign = VAlign.BOTTOM
 			} layout {
+				widthPercent = 1f
 				maxScaleX = 1f
 				maxScaleY = 1f
 			}
@@ -137,6 +138,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 			background?.dispose()
 			background = addChild(0, it.background(this))
 			tabBar.style.gap = it.tabGap
+			tabBar.style.horizontalAlign = it.tabsHorizontalAlign
 		}
 	}
 
@@ -373,6 +375,11 @@ class TabNavigatorStyle : StyleBase() {
 	 * The horizontal gap between tabs.
 	 */
 	var tabGap by prop(0f)
+
+	/**
+	 * The horizontal alignment of the tabs within the tab bar.
+	 */
+	var tabsHorizontalAlign by prop(HAlign.LEFT)
 
 	/**
 	 * The padding around the tabs.

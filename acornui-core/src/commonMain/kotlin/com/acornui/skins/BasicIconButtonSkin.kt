@@ -1,44 +1,42 @@
 package com.acornui.skins
 
 import com.acornui.component.*
-import com.acornui.component.layout.SizeConstraints
-import com.acornui.component.layout.VAlign
+import com.acornui.component.layout.*
+import com.acornui.component.layout.algorithm.HorizontalLayout
+import com.acornui.component.layout.algorithm.HorizontalLayoutData
+import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.MathUtils
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.reflect.observableAndCall
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface IconButtonSkin : ButtonSkin, SingleElementContainer<UiComponent>
 
-private class BasicIconButtonSkin(
+class BasicIconButtonSkin(
 		owner: Owned,
-		private val texture: ButtonSkin,
-		private val padding: PadRo,
-		private val hGap: Float,
+		private val texture: ButtonSkin
+) : SingleElementContainerImpl<UiComponent>(owner), IconButtonSkin, LayoutDataProvider<HorizontalLayoutData> {
 
-		/**
-		 * The vertical alignment between the icon and the label.
-		 */
-		private val vAlign: VAlign,
+	val layoutStyle = bind(IconButtonLayoutStyle())
+	private val layoutAlgorithm = HorizontalLayout()
+	override fun createLayoutData() = layoutAlgorithm.createLayoutData()
 
-		/**
-		 * If false, the icon will be on the right instead of left.
-		 */
-		private val iconOnLeft: Boolean
-) : SingleElementContainerImpl<UiComponent>(owner), IconButtonSkin {
-
-	private val icon: Image
 	private val textField: TextField
 
 	init {
+		styleTags.add(BasicIconButtonSkin)
 		addChild(texture)
-		icon = addChild(image())
 		textField = addChild(text {
 			interactivityMode = InteractivityMode.NONE
+			visible = false
 		})
 	}
 
@@ -47,81 +45,90 @@ private class BasicIconButtonSkin(
 			field = value
 			textField.label = value
 			texture.label = value
+			textField.visible = value.isNotEmpty()
 		}
 
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
 		texture.buttonState = value
 	}
 
-	override fun onElementChanged(oldElement: UiComponent?, newElement: UiComponent?) {
-		icon.element = newElement
+	override fun updateStyles() {
+		super.updateStyles()
+		layoutAlgorithm.style.apply {
+			gap = layoutStyle.gap
+			padding = layoutStyle.padding
+			verticalAlign = layoutStyle.verticalAlign
+			horizontalAlign = layoutStyle.horizontalAlign
+		}
 	}
 
+	private val _elementsToLayout = ArrayList<LayoutElement>()
+	private val elementsToLayout: List<LayoutElement>
+		get() {
+			val icon = element
+			_elementsToLayout.clear()
+			if (icon != null && icon.shouldLayout)
+				_elementsToLayout.add(icon)
+			if (textField.shouldLayout)
+				_elementsToLayout.add(if (layoutStyle.iconOnLeft) _elementsToLayout.size else 0, textField)
+			return _elementsToLayout
+		}
+
 	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.width.min = icon.width + padding.left + padding.right
-		out.height.min = icon.height + padding.top + padding.bottom
+		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val childAvailableWidth = padding.reduceWidth(explicitWidth)
-		val childAvailableHeight = padding.reduceHeight(explicitHeight)
-		val textWidth = if (childAvailableWidth == null) null else childAvailableWidth - icon.width - hGap
-		textField.setSize(textWidth, childAvailableHeight)
-		val contentWidth = MathUtils.roundToNearest(if (label == "") icon.width else icon.width + hGap + textField.width, 2f)
-		val contentHeight = MathUtils.roundToNearest(if (label == "") icon.height else maxOf(textField.height, icon.height), 2f)
-		val w = maxOf(padding.expandWidth(contentWidth), explicitWidth ?: 4f)
-		val h = maxOf(padding.expandHeight(contentHeight), explicitHeight ?: 4f)
-
-		texture.setSize(w, h)
-
-		val iconX: Float
-		val textFieldX: Float
-		if (iconOnLeft) {
-			iconX = if (childAvailableWidth != null) {
-				(childAvailableWidth - contentWidth) * 0.5f + padding.left
-			} else {
-				padding.left
-			}
-			textFieldX = MathUtils.offsetRound(iconX + icon.width + hGap)
-		} else {
-			textFieldX = if (childAvailableWidth != null) {
-				(childAvailableWidth - contentWidth) * 0.5f + padding.left
-			} else {
-				padding.left
-			}
-			iconX = textFieldX + textField.width + hGap
-		}
-
-		val yOffset = if (childAvailableHeight == null) padding.top else (childAvailableHeight - contentHeight) * 0.5f + padding.top
-
-		val baseline = yOffset + textField.baseline
-		val iconY: Float
-		val textFieldY: Float
-		when (vAlign) {
-			VAlign.TOP -> {
-				iconY = yOffset
-				textFieldY = yOffset
-			}
-			VAlign.MIDDLE -> {
-				iconY = yOffset + (contentHeight - icon.height) * 0.5f
-				textFieldY = (yOffset + (contentHeight - textField.height) * 0.5f)
-			}
-			VAlign.BOTTOM -> {
-				iconY = yOffset + (contentHeight - icon.height)
-				textFieldY = yOffset + (contentHeight - textField.height)
-			}
-			VAlign.BASELINE -> {
-				iconY = baseline - icon.baseline
-				textFieldY = baseline - textField.baseline
-			}
-		}
-		icon.moveTo(iconX, iconY)
-		textField.moveTo(textFieldX, textFieldY)
-
-		out.set(w, h, textField.baselineY)
+		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
+		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
+		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
+		texture.setSize(out)
 	}
+
+	companion object : StyleTag
 }
 
+class IconButtonLayoutStyle : StyleBase() {
+
+	override val type: StyleType<IconButtonLayoutStyle> = Companion
+
+	/**
+	 * The horizontal gap between elements.
+	 */
+	var gap by prop(4f)
+
+	/**
+	 * The Padding object with left, bottom, top, and right padding.
+	 */
+	var padding: PadRo by prop(Pad(4f))
+
+	/**
+	 * The horizontal alignment of the entire row within the explicit width.
+	 * If the explicit width is null, this will have no effect.
+	 */
+	var horizontalAlign by prop(HAlign.CENTER)
+
+	/**
+	 * The vertical alignment of each element within the measured height.
+	 * This can be overridden on the individual element with [HorizontalLayoutData.verticalAlign]
+	 */
+	var verticalAlign by prop(VAlign.MIDDLE)
+
+	/**
+	 * If false, the icon will be on the right instead of left.
+	 */
+	var iconOnLeft by prop(true)
+
+	companion object : StyleType<IconButtonLayoutStyle>
+
+}
+
+inline fun Owned.basicIconButtonSkin(texture: ButtonSkin, init: ComponentInit<BasicIconButtonSkin> = {}): BasicIconButtonSkin {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return BasicIconButtonSkin(this, texture).apply(init)
+}
+
+@Deprecated("DSL changed")
 fun Owned.basicIconButtonSkin(texture: ButtonSkin,
 
 							  /**
@@ -144,6 +151,21 @@ fun Owned.basicIconButtonSkin(texture: ButtonSkin,
 							   */
 							  iconOnLeft: Boolean = true
 
-): IconButtonSkin = BasicIconButtonSkin(this, texture, padding, hGap, vAlign, iconOnLeft)
+): IconButtonSkin = BasicIconButtonSkin(this, texture).apply {
+	layoutStyle.padding = padding
+	layoutStyle.gap = hGap
+	layoutStyle.verticalAlign = vAlign
+	layoutStyle.iconOnLeft = iconOnLeft
+}
 
-fun Owned.basicIconButtonSkin(theme: Theme): IconButtonSkin = basicIconButtonSkin(basicButtonSkin(theme), theme.buttonPad, theme.iconButtonGap, VAlign.MIDDLE, iconOnLeft = true)
+inline fun Owned.basicIconButtonSkin(theme: Theme, init: ComponentInit<BasicIconButtonSkin> = {}): IconButtonSkin {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return BasicIconButtonSkin(this, basicButtonSkin(theme)).apply {
+		layoutStyle.apply {
+			padding = theme.buttonPad
+			gap = theme.iconButtonGap
+			verticalAlign = VAlign.MIDDLE
+		}
+		init()
+	}
+}

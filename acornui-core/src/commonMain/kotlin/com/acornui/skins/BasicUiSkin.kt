@@ -325,7 +325,9 @@ open class BasicUiSkin(
 
 		target.addStyleRule(buttonStyle {
 			val texture = basicButtonSkin(theme, Corners(topLeft = 0f, topRight = maxOf(4f, theme.borderRadius), bottomRight = 0f, bottomLeft = 0f))
-			val skinPart = basicIconButtonSkin(texture, stepperPad)
+			val skinPart = basicIconButtonSkin(texture) {
+				layoutStyle.padding = stepperPad
+			}
 			val theme = theme
 			skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
 				colorTint = theme.iconColor
@@ -335,7 +337,9 @@ open class BasicUiSkin(
 
 		target.addStyleRule(buttonStyle {
 			val texture = basicButtonSkin(theme, Corners(topLeft = 0f, topRight = 0f, bottomRight = maxOf(4f, theme.borderRadius), bottomLeft = 0f))
-			val skinPart = basicIconButtonSkin(texture, stepperPad)
+			val skinPart = basicIconButtonSkin(texture) {
+				layoutStyle.padding = stepperPad
+			}
 			val theme = theme
 			skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
 				colorTint = theme.iconColor
