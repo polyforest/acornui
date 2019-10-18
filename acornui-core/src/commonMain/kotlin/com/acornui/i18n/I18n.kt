@@ -45,7 +45,7 @@ interface I18n {
 
 	/**
 	 * Returns a localization bundle for the given bundle name.
-	 * This bundle will be for the [com.acornui.system.userInfo.currentLocale] locale chain.
+	 * This bundle will be for the [com.acornui.system.UserInfo.currentLocale] locale chain.
 	 */
 	fun getBundle(bundleName: String): I18nBundleRo
 
