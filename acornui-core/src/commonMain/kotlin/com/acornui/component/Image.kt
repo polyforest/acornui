@@ -49,7 +49,7 @@ inline fun Owned.image(init: ComponentInit<Image> = {}): Image  {
 	return i
 }
 
-inline fun Owned.image(path: String, init: ComponentInit<Image> = {}): Image  {
+inline fun Owned.image(path: String?, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
@@ -68,7 +68,7 @@ inline fun Owned.image(atlasPath: String, region: String, init: ComponentInit<Im
 /**
  * Creates a texture component and uses it as the element of a single element container.
  */
-fun SingleElementContainer<UiComponent>.contentsImage(value: String) {
+fun SingleElementContainer<UiComponent>.contentsImage(value: String?) {
 	createOrReuseElement { textureC() }.path = value
 }
 
