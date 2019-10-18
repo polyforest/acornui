@@ -34,6 +34,8 @@ import com.acornui.di.own
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.lazyInstance
 import com.acornui.graphic.Scaling
+import com.acornui.i18n.I18nBundleRo
+import com.acornui.i18n.bindLabel
 import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -403,6 +405,12 @@ class TabNavigatorStyle : StyleBase() {
 fun <S : ButtonImpl, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
 
 fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
+fun <T : UiComponent> Owned.tab(bundle: I18nBundleRo, key: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab(
+		{
+			button {
+				bindLabel(bundle, key)
+			}
+		}, contentFactory)
 
 inline fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
