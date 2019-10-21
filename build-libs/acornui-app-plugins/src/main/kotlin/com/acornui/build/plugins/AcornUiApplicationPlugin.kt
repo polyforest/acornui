@@ -69,18 +69,14 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
 
-					@Suppress("INACCESSIBLE_TYPE")
-					val os = when (OperatingSystem.current()) {
-						OperatingSystem.LINUX -> "linux"
-						OperatingSystem.MAC_OS -> "macos"
-						OperatingSystem.WINDOWS -> "windows"
-						else -> throw Exception("Unsupported operating system: ${OperatingSystem.current()}")
-					}
+					val oses = listOf("linux", "macos", "windows")
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
-					runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
-					extensions.forEach {
-						implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion")
-						runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+					for (os in oses) {
+						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
+						extensions.forEach {
+							implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion")
+							runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+						}
 					}
 				}
 			}
