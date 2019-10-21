@@ -164,7 +164,7 @@ open class ElementContainerImpl<E : UiComponent>(
 	 * ```
 	 */
 	protected open fun onElementAdded(oldIndex: Int, newIndex: Int, element: E) {
-		if (newIndex == elements.size - 1) {
+		if (newIndex == elements.lastIndex) {
 			addChild(element)
 		} else if (newIndex == 0) {
 			val nextElement = _elements[newIndex + 1]
@@ -229,13 +229,14 @@ open class ElementContainerImpl<E : UiComponent>(
 			if (oldIndex == -1) {
 				element.disposed.add(::elementDisposedHandler)
 				list.add(index, element)
+				onElementAdded(oldIndex, index, element)
 			} else {
 				val newIndex = if (oldIndex < index) index - 1 else index
 				if (index == oldIndex || index == oldIndex + 1) return
 				list.removeAt(oldIndex)
 				list.add(newIndex, element)
+				onElementAdded(oldIndex, newIndex, element)
 			}
-			onElementAdded(oldIndex, index, element)
 		}
 
 		override fun removeAt(index: Int): E {
