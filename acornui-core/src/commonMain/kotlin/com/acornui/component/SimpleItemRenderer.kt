@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.ListItemRenderer
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag

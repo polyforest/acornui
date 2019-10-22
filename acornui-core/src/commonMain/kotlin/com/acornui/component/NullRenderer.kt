@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.ListRenderer
 import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.spacer
 import com.acornui.component.style.SkinPart

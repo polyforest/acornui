@@ -22,8 +22,6 @@ import com.acornui.collection.ObservableList
 import com.acornui.collection.indexOfFirst2
 import com.acornui.collection.indexOfLast2
 import com.acornui.component.layout.DataScrollerStyle
-import com.acornui.component.layout.ListItemRenderer
-import com.acornui.component.layout.ListRenderer
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
