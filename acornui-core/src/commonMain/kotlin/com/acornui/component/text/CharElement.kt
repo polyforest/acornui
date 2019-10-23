@@ -351,7 +351,7 @@ class CharElementStyle : CharElementStyleRo {
 	override var scaleY: Float = 1f
 
 	fun set(charStyle: CharStyle) {
-		font = charStyle.getFont()
+		font = charStyle.getFontAsync()
 		underlined = charStyle.underlined
 		strikeThrough = charStyle.strikeThrough
 		lineThickness = charStyle.lineThickness

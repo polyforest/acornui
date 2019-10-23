@@ -17,7 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.async.getCompletedOrNull
-import com.acornui.async.then
+import com.acornui.async.launch
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
@@ -127,8 +127,9 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		styleTags.add(TextField)
 
 		watch(charStyle) { cS ->
-			cS.getFont()?.then {
-				if (!isDisposed) invalidate(ValidationFlags.LAYOUT)
+			launch {
+				cS.getFontAsync()?.await()
+				invalidateLayout()
 			}
 			refreshCursor()
 			if (cS.selectable) {
@@ -236,7 +237,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
-			val font = charStyle.getFont()
+			val font = charStyle.getFontAsync()
 			val fontData = font?.getCompletedOrNull()?.data
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY

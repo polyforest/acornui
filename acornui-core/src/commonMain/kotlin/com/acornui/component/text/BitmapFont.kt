@@ -371,7 +371,7 @@ object BitmapFontRegistry : Clearable, Disposable {
 	/**
 	 * Returns the font registered to the given style. Throws an exception if the font is not registered.
 	 */
-	fun getFont(request: BitmapFontRequest): Deferred<BitmapFont> {
+	fun getFontAsync(request: BitmapFontRequest): Deferred<BitmapFont> {
 		return registry.getOrPut(request) {
 			fontResolver.invoke(request).then {
 				for (page in it.pages) {

@@ -168,7 +168,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val glyphs = host.charStyle.getFont()?.getCompletedOrNull()?.glyphs
+				val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
 				if (glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
@@ -183,7 +183,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				launch {
 					val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
 					if (str != null) {
-						val glyphs = host.charStyle.getFont()?.getCompletedOrNull()?.glyphs
+						val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
 						replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
 						currentGroup = CommandGroup()
 						_input.dispatch()

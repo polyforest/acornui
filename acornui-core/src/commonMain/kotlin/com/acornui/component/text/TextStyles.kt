@@ -267,9 +267,9 @@ class CharStyle : StyleBase() {
 	companion object : StyleType<CharStyle>
 }
 
-fun CharStyle.getFont(): Deferred<BitmapFont>? {
+fun CharStyle.getFontAsync(): Deferred<BitmapFont>? {
 	val family = fontFamily ?: return null
-	return BitmapFontRegistry.getFont(BitmapFontRequest(
+	return BitmapFontRegistry.getFontAsync(BitmapFontRequest(
 			family,
 			fontSize,
 			fontWeight,
