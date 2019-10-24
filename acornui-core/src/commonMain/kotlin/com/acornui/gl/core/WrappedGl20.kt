@@ -16,8 +16,10 @@
 
 package com.acornui.gl.core
 
-import com.acornui.graphic.Texture
+import com.acornui.collection.FloatArrayListRo
+import com.acornui.collection.IntArrayListRo
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
 
 /**
@@ -613,7 +615,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 		before()
 		wrapped.uniform1fv(location, v)
 		after()
@@ -625,7 +627,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 		before()
 		wrapped.uniform1iv(location, v)
 		after()
@@ -637,7 +639,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 		before()
 		wrapped.uniform2fv(location, v)
 		after()
@@ -649,7 +651,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 		before()
 		wrapped.uniform2iv(location, v)
 		after()
@@ -661,7 +663,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 		before()
 		wrapped.uniform3fv(location, v)
 		after()
@@ -673,7 +675,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 		before()
 		wrapped.uniform3iv(location, v)
 		after()
@@ -685,7 +687,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 		before()
 		wrapped.uniform4fv(location, v)
 		after()
@@ -697,25 +699,25 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 		before()
 		wrapped.uniform4iv(location, v)
 		after()
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 		before()
 		wrapped.uniformMatrix2fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 		before()
 		wrapped.uniformMatrix3fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 		before()
 		wrapped.uniformMatrix4fv(location, transpose, value)
 		after()
@@ -739,7 +741,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
 		before()
 		wrapped.vertexAttrib1fv(index, values)
 		after()
@@ -751,7 +753,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
 		before()
 		wrapped.vertexAttrib2fv(index, values)
 		after()
@@ -763,7 +765,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
 		before()
 		wrapped.vertexAttrib3fv(index, values)
 		after()
@@ -775,7 +777,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
 		before()
 		wrapped.vertexAttrib4fv(index, values)
 		after()
@@ -807,9 +809,23 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		return ret
 	}
 
+	override fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray {
+		before()
+		val ret = wrapped.getUniformiv(program, location, out)
+		after()
+		return ret
+	}
+
 	override fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float {
 		before()
 		val ret = wrapped.getUniformf(program, location)
+		after()
+		return ret
+	}
+
+	override fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray {
+		before()
+		val ret = wrapped.getUniformfv(program, location, out)
 		after()
 		return ret
 	}
@@ -880,6 +896,20 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 	override fun getParameteriv(pName: Int, out: IntArray): IntArray {
 		before()
 		val ret = wrapped.getParameteriv(pName, out)
+		after()
+		return ret
+	}
+
+	override fun getParameterf(pName: Int): Float {
+		before()
+		val ret = wrapped.getParameterf(pName)
+		after()
+		return ret
+	}
+
+	override fun getParameterfv(pName: Int, out: FloatArray): FloatArray {
+		before()
+		val ret = wrapped.getParameterfv(pName, out)
 		after()
 		return ret
 	}

@@ -16,6 +16,8 @@
 
 package com.acornui.headless
 
+import com.acornui.collection.FloatArrayListRo
+import com.acornui.collection.IntArrayListRo
 import com.acornui.gl.core.*
 import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
@@ -281,58 +283,58 @@ object MockGl20 : Gl20 {
 	override fun uniform1f(location: GlUniformLocationRef, x: Float) {
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 	}
 
 	override fun uniform1i(location: GlUniformLocationRef, x: Int) {
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 	}
 
 	override fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float) {
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 	}
 
 	override fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int) {
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 	}
 
 	override fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 	}
 
 	override fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 	}
 
 	override fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
+	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
 	}
 
 	override fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
+	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
 	}
 
 	override fun useProgram(program: GlProgramRef?) {
@@ -344,25 +346,25 @@ object MockGl20 : Gl20 {
 	override fun vertexAttrib1f(index: Int, x: Float) {
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
 	}
 
 	override fun vertexAttrib2f(index: Int, x: Float, y: Float) {
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
 	}
 
 	override fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
 	}
 
 	override fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float) {
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
+	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
 	}
 
 	override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) {
@@ -375,7 +377,11 @@ object MockGl20 : Gl20 {
 
 	override fun getUniformi(program: GlProgramRef, location: GlUniformLocationRef): Int = 0
 
+	override fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray = out
+
 	override fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float = 0f
+
+	override fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray = out
 
 	override fun getVertexAttribi(index: Int, pName: Int): Int = 0
 
@@ -391,11 +397,15 @@ object MockGl20 : Gl20 {
 
 	override fun getParameterb(pName: Int): Boolean = false
 
-	override fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray = booleanArrayOf()
+	override fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray = out
 
 	override fun getParameteri(pName: Int): Int = 0
 
-	override fun getParameteriv(pName: Int, out: IntArray): IntArray = intArrayOf()
+	override fun getParameteriv(pName: Int, out: IntArray): IntArray = out
+
+	override fun getParameterf(pName: Int): Float = 0f
+
+	override fun getParameterfv(pName: Int, out: FloatArray): FloatArray = out
 
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean = false
 

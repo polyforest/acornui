@@ -16,16 +16,20 @@
 
 package com.acornui.lwjgl.opengl
 
-import com.acornui.graphic.Texture
+import com.acornui.collection.FloatArrayListRo
+import com.acornui.collection.IntArrayListRo
 import com.acornui.gl.core.*
+import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.*
 import org.lwjgl.opengl.GL11.nglGetBooleanv
-import org.lwjgl.opengl.GL11.nglGetIntegerv
 import org.lwjgl.system.MemoryStack.stackGet
 import org.lwjgl.system.MemoryUtil.memAddress
-import java.nio.*
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
+import java.nio.ShortBuffer
 
 /**
  * @author nbilyk
@@ -93,7 +97,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun bufferDatafv(target: Int, data: NativeReadBuffer<Float>, usage: Int) {
-		GL15.glBufferData(target, data.native as FloatBuffer, usage)
+		GL15.glBufferData(target, data.asNative(), usage)
 	}
 
 	override fun bufferDatasv(target: Int, data: NativeReadBuffer<Short>, usage: Int) {
@@ -101,7 +105,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun bufferSubDatafv(target: Int, offset: Int, data: NativeReadBuffer<Float>) {
-		GL15.glBufferSubData(target, offset.toLong(), data.native as FloatBuffer)
+		GL15.glBufferSubData(target, offset.toLong(), data.asNative())
 	}
 
 	override fun bufferSubDatasv(target: Int, offset: Int, data: NativeReadBuffer<Short>) {
@@ -424,7 +428,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?) {
-		val p: FloatBuffer? = if (pixels == null) null else pixels.native as FloatBuffer
+		val p: FloatBuffer? = if (pixels == null) null else pixels.asNative()
 		GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, p)
 	}
 
@@ -450,76 +454,76 @@ open class LwjglGl20 : Gl20 {
 		GL20.glUniform1f((location as JvmGlUniformLocation).o, x)
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		GL20.glUniform1fv((location as JvmGlUniformLocation).o, v.native as FloatBuffer)
+	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		GL20.glUniform1fv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform1i(location: GlUniformLocationRef, x: Int) {
 		GL20.glUniform1i((location as JvmGlUniformLocation).o, x)
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		GL20.glUniform1iv((location as JvmGlUniformLocation).o, v.native as IntBuffer)
+	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		GL20.glUniform1iv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float) {
 		GL20.glUniform2f((location as JvmGlUniformLocation).o, x, y)
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		GL20.glUniform2fv((location as JvmGlUniformLocation).o, v.native as FloatBuffer)
+	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		GL20.glUniform2fv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int) {
 		GL20.glUniform2i((location as JvmGlUniformLocation).o, x, y)
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		GL20.glUniform2iv((location as JvmGlUniformLocation).o, v.native as IntBuffer)
+	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		GL20.glUniform2iv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
 		GL20.glUniform3f((location as JvmGlUniformLocation).o, x, y, z)
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		GL20.glUniform3fv((location as JvmGlUniformLocation).o, v.native as FloatBuffer)
+	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		GL20.glUniform3fv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
 		GL20.glUniform3i((location as JvmGlUniformLocation).o, x, y, z)
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		GL20.glUniform3iv((location as JvmGlUniformLocation).o, v.native as IntBuffer)
+	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		GL20.glUniform3iv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
 		GL20.glUniform4f((location as JvmGlUniformLocation).o, x, y, z, w)
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		GL20.glUniform4fv((location as JvmGlUniformLocation).o, v.native as FloatBuffer)
+	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		GL20.glUniform4fv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
 	override fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
 		GL20.glUniform4i((location as JvmGlUniformLocation).o, x, y, z, w)
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		GL20.glUniform4iv((location as JvmGlUniformLocation).o, v.native as IntBuffer)
+	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		GL20.glUniform4iv((location as JvmGlUniformLocation).o, v.asNative())
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, transpose, value.native as FloatBuffer)
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, transpose, value.native as FloatBuffer)
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, transpose, value.native as FloatBuffer)
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
 	}
 
 	override fun useProgram(program: GlProgramRef?) {
@@ -535,32 +539,32 @@ open class LwjglGl20 : Gl20 {
 		GL20.glVertexAttrib1f(index, x)
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
-		GL20.glVertexAttrib1fv(index, values.native as FloatBuffer)
+	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
+		GL20.glVertexAttrib1fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib2f(index: Int, x: Float, y: Float) {
 		GL20.glVertexAttrib2f(index, x, y)
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
-		GL20.glVertexAttrib2fv(index, values.native as FloatBuffer)
+	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
+		GL20.glVertexAttrib2fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
 		GL20.glVertexAttrib3f(index, x, y, z)
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
-		GL20.glVertexAttrib3fv(index, values.native as FloatBuffer)
+	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
+		GL20.glVertexAttrib3fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float) {
 		GL20.glVertexAttrib4f(index, x, y, z, w)
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
-		GL20.glVertexAttrib4fv(index, values.native as FloatBuffer)
+	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
+		GL20.glVertexAttrib4fv(index, values.asNative())
 	}
 
 	override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) {
@@ -579,8 +583,18 @@ open class LwjglGl20 : Gl20 {
 		return GL20.glGetUniformi((program as JvmGlProgram).o, (location as JvmGlUniformLocation).o)
 	}
 
+	override fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray {
+		GL20.glGetUniformiv((program as JvmGlProgram).o, (location as JvmGlUniformLocation).o, out)
+		return out
+	}
+
 	override fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float {
 		return GL20.glGetUniformf((program as JvmGlProgram).o, (location as JvmGlUniformLocation).o)
+	}
+
+	override fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray {
+		GL20.glGetUniformfv((program as JvmGlProgram).o, (location as JvmGlUniformLocation).o, out)
+		return out
 	}
 
 	override fun getVertexAttribi(index: Int, pName: Int): Int {
@@ -635,6 +649,15 @@ open class LwjglGl20 : Gl20 {
 		return out
 	}
 
+	override fun getParameterf(pName: Int): Float {
+		return GL11.glGetFloat(pName)
+	}
+
+	override fun getParameterfv(pName: Int, out: FloatArray): FloatArray {
+		GL11C.glGetFloatv(pName, out)
+		return out
+	}
+
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean {
 		return GL20.glGetProgrami((program as JvmGlProgram).o, pName) > 0
 	}
@@ -669,3 +692,6 @@ class JvmGlActiveInfo(
 		override var type: Int) : GlActiveInfoRef
 
 class JvmGlUniformLocation(val o: Int) : GlUniformLocationRef
+
+@Suppress("CAST_NEVER_SUCCEEDS")
+private fun NativeReadBuffer<Float>.asNative(): FloatBuffer = native as FloatBuffer

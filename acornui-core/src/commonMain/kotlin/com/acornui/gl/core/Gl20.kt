@@ -23,14 +23,15 @@
 
 package com.acornui.gl.core
 
+import com.acornui.collection.FloatArrayListRo
+import com.acornui.collection.IntArrayListRo
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.graphic.Texture
-import com.acornui.graphic.Window
-import com.acornui.io.floatBuffer
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Texture
+import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
 import com.acornui.math.Matrix3Ro
 import com.acornui.math.Matrix4Ro
@@ -1024,47 +1025,47 @@ interface Gl20 {
 
 	fun uniform1f(location: GlUniformLocationRef, x: Float)
 
-	fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
+	fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
 	fun uniform1i(location: GlUniformLocationRef, x: Int)
 
-	fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
+	fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float)
 	fun uniform2f(location: GlUniformLocationRef, v: Vector2) = uniform2f(location, v.x, v.y)
 
-	fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
+	fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
 	fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int)
 
-	fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
+	fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float)
 	fun uniform3f(location: GlUniformLocationRef, v: Vector3) = uniform3f(location, v.x, v.y, v.z)
 	fun uniform3f(location: GlUniformLocationRef, c: ColorRo) = uniform3f(location, c.r, c.g, c.b)
 
-	fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
+	fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
 	fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int)
 
-	fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
+	fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float)
 	fun uniform4f(location: GlUniformLocationRef, color: ColorRo) {
 		uniform4f(location, color.r, color.g, color.b, color.a)
 	}
 
-	fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>)
+	fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
 	fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int)
 
-	fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>)
+	fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
-	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
+	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
 
-	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
+	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
 
-	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>)
+	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
 
 	fun useProgram(program: GlProgramRef?)
 
@@ -1072,19 +1073,19 @@ interface Gl20 {
 
 	fun vertexAttrib1f(index: Int, x: Float)
 
-	fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>)
+	fun vertexAttrib1fv(index: Int, values: FloatArrayListRo)
 
 	fun vertexAttrib2f(index: Int, x: Float, y: Float)
 
-	fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>)
+	fun vertexAttrib2fv(index: Int, values: FloatArrayListRo)
 
 	fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
 
-	fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>)
+	fun vertexAttrib3fv(index: Int, values: FloatArrayListRo)
 
 	fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
 
-	fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>)
+	fun vertexAttrib4fv(index: Int, values: FloatArrayListRo)
 
 	/**
 	 * Defines the data for the specified shader attribute.
@@ -1103,6 +1104,8 @@ interface Gl20 {
 	 *
 	 * Note - if the current frame buffer is the window, the values should be multiplied by
 	 * [com.acornui.graphic.Window.scaleX] and [com.acornui.graphic.Window.scaleY]
+	 *
+	 * To query this range, call [getParameteriv] with argument [VIEWPORT].
 	 *
 	 * @param x Specify the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).
 	 * @param y
@@ -1125,7 +1128,17 @@ interface Gl20 {
 	/**
 	 * Return the uniform value at the passed location in the passed program.
 	 */
+	fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray
+
+	/**
+	 * Return the uniform value at the passed location in the passed program.
+	 */
 	fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float
+
+	/**
+	 * Return the uniform value at the passed location in the passed program.
+	 */
+	fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray
 
 	/**
 	 * Return the information requested in pName about the vertex attribute at the passed index.
@@ -1168,16 +1181,16 @@ interface Gl20 {
 	 * Return the value for the passed pName given the passed target.
 	 *
 	 * @param pName one of [RENDERBUFFER_WIDTH], [RENDERBUFFER_HEIGHT], [RENDERBUFFER_INTERNAL_FORMAT], [RENDERBUFFER_RED_SIZE],
-	 *           [RENDERBUFFER_GREEN_SIZE], [RENDERBUFFER_BLUE_SIZE], [RENDERBUFFER_ALPHA_SIZE], [RENDERBUFFER_DEPTH_SIZE],
-	 *           [RENDERBUFFER_STENCIL_SIZE]
+	 * [RENDERBUFFER_GREEN_SIZE], [RENDERBUFFER_BLUE_SIZE], [RENDERBUFFER_ALPHA_SIZE], [RENDERBUFFER_DEPTH_SIZE],
+	 * [RENDERBUFFER_STENCIL_SIZE]
 	 */
 	fun getRenderbufferParameter(target: Int, pName: Int): Int
 
 	/**
 	 * Return the value for the passed pName.
 	 *
-	 * @param pName one of [BLEND], [CULL_FACE], [DEPTH_TEST], [DEPTH_WRITEMASK], [DITHER], [POLYGON_OFFSET_FILL], [SAMPLE_COVERAGE_INVERT],
-	 *           [SCISSOR_TEST], [STENCIL_TEST], [UNPACK_FLIP_Y_WEBGL], [UNPACK_PREMULTIPLY_ALPHA_WEBGL]
+	 * @param pName one of [BLEND], [CULL_FACE], [DEPTH_TEST], [DEPTH_WRITEMASK], [DITHER], [POLYGON_OFFSET_FILL],
+	 * [SAMPLE_COVERAGE_INVERT], [SCISSOR_TEST], [STENCIL_TEST]
 	 */
 	fun getParameterb(pName: Int): Boolean
 
@@ -1185,7 +1198,7 @@ interface Gl20 {
 	 * Return the value for the passed pName.
 	 *
 	 * @param pName one of [COLOR_WRITEMASK]
-	 * @param out The boolean array to populate with the values. This must be the expected size of the values.
+	 * @param out The array to populate with the values. This must be the expected size of the values.
 	 */
 	fun getParameterbv(pName: Int, out: BooleanArray): BooleanArray
 
@@ -1209,9 +1222,22 @@ interface Gl20 {
 	 * Return the value for the passed pName.
 	 *
 	 * @param pName
-	 * @param out The boolean array to populate with the values.  This must be the expected size of the values.
+	 * @param out The array to populate with the values.  This must be the expected size of the values.
 	 */
 	fun getParameteriv(pName: Int, out: IntArray): IntArray
+
+	/**
+	 * Return the value for the passed pName.
+	 */
+	fun getParameterf(pName: Int): Float
+
+	/**
+	 * Return the value for the passed pName.
+	 *
+	 * @param pName
+	 * @param out The array to populate with the values.  This must be the expected size of the values.
+	 */
+	fun getParameterfv(pName: Int, out: FloatArray): FloatArray
 
 	/**
 	 * Return the value for the passed pName given the passed program.
@@ -1263,28 +1289,9 @@ fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
 	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
 
-private val matrixValuesBuffer by lazy { floatBuffer(16) }
 fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix4Ro) = uniformMatrix4fv(location, transpose, value.values)
-fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: List<Float>) {
-	val buffer = matrixValuesBuffer
-	buffer.clear()
-	for (i in 0..value.lastIndex) {
-		buffer.put(value[i])
-	}
-	buffer.flip()
-	uniformMatrix4fv(location, transpose, buffer)
-}
 
 fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix3Ro) = uniformMatrix3fv(location, transpose, value.values)
-fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: List<Float>) {
-	val buffer = matrixValuesBuffer
-	buffer.clear()
-	for (i in 0..value.lastIndex) {
-		buffer.put(value[i])
-	}
-	buffer.flip()
-	uniformMatrix3fv(location, transpose, buffer)
-}
 
 /**
  * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear

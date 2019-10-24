@@ -16,6 +16,8 @@
 
 package com.acornui.math
 
+import com.acornui.collection.FloatArrayList
+import com.acornui.collection.FloatArrayListRo
 import com.acornui.collection.FloatList
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
@@ -29,7 +31,7 @@ import kotlin.math.sqrt
 @Serializable(with = Matrix3Serializer::class)
 interface Matrix3Ro {
 
-	val values: List<Float>
+	val values: FloatArrayListRo
 
 	/**
 	 * @return The determinant of this matrix
@@ -60,12 +62,12 @@ interface Matrix3Ro {
 @Serializable(with = Matrix3Serializer::class)
 class Matrix3() : Matrix3Ro {
 
-	private val _values = FloatList(floatArrayOf(
+	private val _values = FloatArrayList(floatArrayOf(
 		1f, 0f, 0f,
 		0f, 1f, 0f,
 		0f, 0f, 1f))
 	
-	override val values: List<Float> = _values
+	override val values: FloatArrayListRo = _values
 	
 	constructor (m00:Float, m10:Float, m20:Float, m01:Float, m11:Float, m21:Float, m02:Float, m12:Float, m22:Float) : this(floatArrayOf(m00, m10, m20, m01, m11, m21, m02, m12, m22))
 	
@@ -105,7 +107,7 @@ class Matrix3() : Matrix3Ro {
 	 * <pre>
 	 * A.mul(B) results in A := AB
 	 * </pre>
-	 * @param m Matrix to multiply by.
+	 * @param matrix Matrix to multiply by.
 	 * @return This matrix for the purpose of chaining operations together.
 	 */
 	fun mul(matrix: Matrix3Ro): Matrix3 {
@@ -472,7 +474,7 @@ class Matrix3() : Matrix3Ro {
 		 * @param matA The float array representing the first matrix. Must have at least 9 elements.
 		 * @param matB The float array representing the second matrix. Must have at least 9 elements.
 		 */
-		private fun mul(matA: FloatList, matB: List<Float>) {
+		private fun mul(matA: FloatArrayList, matB: List<Float>) {
 			val v00 = matA[M00] * matB[M00] + matA[M01] * matB[M10] + matA[M02] * matB[M20]
 			val v01 = matA[M00] * matB[M01] + matA[M01] * matB[M11] + matA[M02] * matB[M21]
 			val v02 = matA[M00] * matB[M02] + matA[M01] * matB[M12] + matA[M02] * matB[M22]

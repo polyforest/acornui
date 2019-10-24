@@ -16,8 +16,10 @@
 
 package com.acornui.webgl
 
-import com.acornui.graphic.Texture
+import com.acornui.collection.FloatArrayListRo
+import com.acornui.collection.IntArrayListRo
 import com.acornui.gl.core.*
+import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
 import org.khronos.webgl.*
 
@@ -417,76 +419,76 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform1f((location as WebGlUniformLocationRef).o, x)
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		context.uniform1fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
+	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		context.uniform1fv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform1i(location: GlUniformLocationRef, x: Int) {
 		context.uniform1i((location as WebGlUniformLocationRef).o, x)
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		context.uniform1iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
+	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		context.uniform1iv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float) {
 		context.uniform2f((location as WebGlUniformLocationRef).o, x, y)
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		context.uniform2fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
+	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		context.uniform2fv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int) {
 		context.uniform2i((location as WebGlUniformLocationRef).o, x, y)
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		context.uniform2iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
+	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		context.uniform2iv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
 		context.uniform3f((location as WebGlUniformLocationRef).o, x, y, z)
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		context.uniform3fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
+	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		context.uniform3fv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
 		context.uniform3i((location as WebGlUniformLocationRef).o, x, y, z)
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		context.uniform3iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
+	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		context.uniform3iv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
 		context.uniform4f((location as WebGlUniformLocationRef).o, x, y, z, w)
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: NativeReadBuffer<Float>) {
-		context.uniform4fv((location as WebGlUniformLocationRef).o, v.native as Float32Array)
+	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+		context.uniform4fv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
 	override fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
 		context.uniform4i((location as WebGlUniformLocationRef).o, x, y, z, w)
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: NativeReadBuffer<Int>) {
-		context.uniform4iv((location as WebGlUniformLocationRef).o, v.native as Int32Array)
+	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+		context.uniform4iv((location as WebGlUniformLocationRef).o, v.asNative2())
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		context.uniformMatrix2fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		context.uniformMatrix2fv((location as WebGlUniformLocationRef).o, transpose, value. asNative2())
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		context.uniformMatrix3fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		context.uniformMatrix3fv((location as WebGlUniformLocationRef).o, transpose, value. asNative2())
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: NativeReadBuffer<Float>) {
-		context.uniformMatrix4fv((location as WebGlUniformLocationRef).o, transpose, value.native as Float32Array)
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+		context.uniformMatrix4fv((location as WebGlUniformLocationRef).o, transpose, value. asNative2())
 	}
 
 	override fun useProgram(program: GlProgramRef?) {
@@ -501,32 +503,32 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.vertexAttrib1f(index, x)
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: NativeReadBuffer<Float>) {
-		context.vertexAttrib1fv(index, values.native as Float32Array)
+	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
+		context.vertexAttrib1fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib2f(index: Int, x: Float, y: Float) {
 		context.vertexAttrib2f(index, x, y)
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: NativeReadBuffer<Float>) {
-		context.vertexAttrib2fv(index, values.native as Float32Array)
+	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
+		context.vertexAttrib2fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
 		context.vertexAttrib3f(index, x, y, z)
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: NativeReadBuffer<Float>) {
-		context.vertexAttrib3fv(index, values.native as Float32Array)
+	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
+		context.vertexAttrib3fv(index, values.asNative())
 	}
 
 	override fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float) {
 		context.vertexAttrib4f(index, x, y, z, w)
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: NativeReadBuffer<Float>) {
-		context.vertexAttrib4fv(index, values.native as Float32Array)
+	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
+		context.vertexAttrib4fv(index, values.asNative())
 	}
 
 	override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) {
@@ -545,8 +547,24 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		return context.getUniform((program as WebGlProgramRef).o, (location as WebGlUniformLocationRef).o) as Int
 	}
 
+	override fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray {
+		val r = context.getUniform((program as WebGlProgramRef).o, (location as WebGlUniformLocationRef).o) as Int32Array
+		for (i in 0..out.lastIndex) {
+			out[i] = r[i]
+		}
+		return out
+	}
+
 	override fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float {
 		return context.getUniform((program as WebGlProgramRef).o, (location as WebGlUniformLocationRef).o) as Float
+	}
+
+	override fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray {
+		val r = context.getUniform((program as WebGlProgramRef).o, (location as WebGlUniformLocationRef).o) as Float32Array
+		for (i in 0..out.lastIndex) {
+			out[i] = r[i]
+		}
+		return out
 	}
 
 	override fun getVertexAttribi(index: Int, pName: Int): Int {
@@ -590,9 +608,21 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun getParameteriv(pName: Int, out: IntArray): IntArray {
-		val r = context.getParameter(pName).asDynamic()
+		val r = context.getParameter(pName) as Int32Array
 		for (i in 0..out.lastIndex) {
-			out[i] = r[i] as Int
+			out[i] = r[i]
+		}
+		return out
+	}
+
+	override fun getParameterf(pName: Int): Float {
+		return context.getParameter(pName) as Float
+	}
+
+	override fun getParameterfv(pName: Int, out: FloatArray): FloatArray {
+		val r = context.getParameter(pName) as Float32Array
+		for (i in 0..out.lastIndex) {
+			out[i] = r[i]
 		}
 		return out
 	}
@@ -666,3 +696,9 @@ class WebGl20Debug(private val context: WebGLRenderingContext) : WrappedGl20(Web
 		}
 	}
 })
+
+@Suppress("CAST_NEVER_SUCCEEDS", "NOTHING_TO_INLINE")
+private inline fun FloatArrayListRo.asNative2(): Float32Array = asNative() as Float32Array
+
+@Suppress("CAST_NEVER_SUCCEEDS", "NOTHING_TO_INLINE")
+private inline fun IntArrayListRo.asNative2(): Int32Array = asNative() as Int32Array

@@ -16,6 +16,8 @@
 
 package com.acornui.math
 
+import com.acornui.collection.FloatArrayList
+import com.acornui.collection.FloatArrayListRo
 import com.acornui.collection.FloatList
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
@@ -30,7 +32,7 @@ interface Matrix4Ro {
 
 	val mode: MatrixMode
 
-	val values: List<Float>
+	val values: FloatArrayListRo
 
 	operator fun get(index: Int): Float {
 		return values[index]
@@ -148,13 +150,13 @@ interface Matrix4Ro {
 @Serializable(with = Matrix4Serializer::class)
 class Matrix4() : Matrix4Ro {
 
-	private val _values: FloatList = FloatList(floatArrayOf(
+	private val _values = FloatArrayList(floatArrayOf(
 			1f, 0f, 0f, 0f,
 			0f, 1f, 0f, 0f,
 			0f, 0f, 1f, 0f,
 			0f, 0f, 0f, 1f))
 
-	override val values: List<Float> = _values
+	override val values: FloatArrayListRo = _values
 
 	constructor(values: FloatArray) : this() {
 		set(values)
@@ -1574,6 +1576,9 @@ private fun maxOf(modeA: MatrixMode, modeB: MatrixMode): MatrixMode {
 	return if (modeA.ordinal > modeB.ordinal) modeA
 	else modeB
 }
+
+val Matrix4Ro.isIdentity: Boolean
+	get() = mode == MatrixMode.IDENTITY
 
 @Serializer(forClass = Matrix4::class)
 object Matrix4Serializer : KSerializer<Matrix4> {

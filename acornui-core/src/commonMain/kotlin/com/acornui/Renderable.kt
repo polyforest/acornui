@@ -22,10 +22,8 @@ import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
 import com.acornui.component.layout.SizableRo
 import com.acornui.gl.core.GlState
-import com.acornui.math.Bounds
-import com.acornui.math.BoundsRo
-import com.acornui.math.MinMax
-import com.acornui.math.MinMaxRo
+import com.acornui.graphic.CameraRo
+import com.acornui.math.*
 
 interface RenderableRo : SizableRo {
 
@@ -100,4 +98,18 @@ abstract class RenderableBase : Renderable, Sizable {
 fun GlState.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
 	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
 	else setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
+}
+
+/**
+ *
+ */
+fun GlState.setCamera(camera: CameraRo, modelTransform: Matrix4Ro) {
+	setCamera(camera.combined, camera.view, modelTransform)
+}
+
+/**
+ *
+ */
+fun GlState.setCamera(camera: CameraRo) {
+	setCamera(camera.combined, camera.view)
 }

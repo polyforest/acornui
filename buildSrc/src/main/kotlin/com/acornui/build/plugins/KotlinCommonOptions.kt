@@ -37,9 +37,12 @@ object KotlinCommonOptions {
 		project.extensions.configure<KotlinMultiplatformExtension> {
 			sourceSets {
 				all {
-					languageSettings.useExperimentalAnnotation("kotlin.Experimental")
-					languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-					languageSettings.useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+					languageSettings.apply {
+						enableLanguageFeature("InlineClasses")
+						useExperimentalAnnotation("kotlin.Experimental")
+						useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+						useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+					}
 				}
 
 				val commonMain by getting {

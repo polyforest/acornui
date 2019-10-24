@@ -27,7 +27,7 @@ interface ColorTransformationRo {
 	 * Returns true if this color transformation doesn't modify a color and therefore can be no-oped.
 	 */
 	val isIdentity: Boolean
-		get() = matrix.mode == MatrixMode.IDENTITY && offset == Color.CLEAR
+		get() = matrix.isIdentity && offset == Color.CLEAR
 
 	val matrix: Matrix4Ro
 	val offset: ColorRo

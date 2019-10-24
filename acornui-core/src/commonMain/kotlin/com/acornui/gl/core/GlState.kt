@@ -114,7 +114,7 @@ interface GlState {
 	 * `u_modelTrans` (optional) - M
 	 * `u_viewTrans` (optional) - V
 	 */
-	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro = Matrix4.IDENTITY)
+	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro = Matrix4.IDENTITY)
 
 	/**
 	 * The current viewport rectangle, in gl window coordinates.
@@ -339,7 +339,7 @@ class GlStateImpl(
 
 	private val _mvp = Matrix4()
 
-	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro) {
+	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
 		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
 			if (viewProjectionCache.set(viewProjection, _shader!!, batch)) {
@@ -347,12 +347,12 @@ class GlStateImpl(
 					gl.uniformMatrix4fv(it, false, viewTransform)
 				}
 			}
-			this.model = model
+			this.model = modelTransform
 		} else {
-			this.viewProjection = if (model.mode == MatrixMode.IDENTITY) {
+			this.viewProjection = if (modelTransform.isIdentity) {
 				viewProjection
 			} else {
-				_mvp.set(viewProjection).mul(model)
+				_mvp.set(viewProjection).mul(modelTransform)
 			}
 		}
 	}

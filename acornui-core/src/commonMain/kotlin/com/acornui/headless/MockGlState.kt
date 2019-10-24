@@ -75,7 +75,7 @@ object MockGlState : GlState {
 	override fun setScissor(x: Int, y: Int, width: Int, height: Int) {
 	}
 
-	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, model: Matrix4Ro) {
+	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
 	}
 
 	override val viewport: IntRectangleRo
