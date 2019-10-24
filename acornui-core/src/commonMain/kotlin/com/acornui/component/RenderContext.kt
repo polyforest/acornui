@@ -235,9 +235,7 @@ class RenderContext() : RenderContextRo, Clearable {
 		get() = cameraOverride?.projection ?: parentContext.projectionTransform
 
 	override val canvasTransform: RectangleRo
-		get() {
-			return canvasTransformOverride ?: parentContext.canvasTransform
-		}
+		get() = canvasTransformOverride ?: parentContext.canvasTransform
 
 	private val _clipRegionIntersection: MinMax = MinMax()
 	override val clipRegion: MinMaxRo
