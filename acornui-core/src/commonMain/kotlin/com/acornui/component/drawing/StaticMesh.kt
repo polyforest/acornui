@@ -198,34 +198,33 @@ class StaticMesh(
 		if (refCount > 0) {
 			oldTextures.addAll(textures)
 		}
-		val previousBatch = glState.batch
-		glState.setTexture(glState.whitePixel)
-		glState.batch = batch
-		batch.clear()
-		batch.begin()
-		glState.blendMode(BlendMode.NORMAL, false)
-		mesh(batch) {
-			inner()
-		}
-		batch.flush()
-		batch.resetRenderCount()
-		textures.clear()
-		for (i in 0..batch.drawCalls.lastIndex) {
-			// Keeps track of the textures used so we can reference count them.
-			val texture = batch.drawCalls[i].texture ?: glState.whitePixel
-			if (!textures.contains(texture))
-				textures.add(texture)
-		}
-		if (refCount > 0) {
-			for (i in 0..textures.lastIndex) {
-				textures[i].refInc()
+		glState.useBatch(batch) {
+			glState.setTexture(glState.whitePixel)
+			batch.clear()
+			batch.begin()
+			glState.blendMode(BlendMode.NORMAL, false)
+			mesh(batch) {
+				inner()
 			}
-			for (i in 0..oldTextures.lastIndex) {
-				oldTextures[i].refDec()
+			batch.flush()
+			batch.resetRenderCount()
+			textures.clear()
+			for (i in 0..batch.drawCalls.lastIndex) {
+				// Keeps track of the textures used so we can reference count them.
+				val texture = batch.drawCalls[i].texture ?: glState.whitePixel
+				if (!textures.contains(texture))
+					textures.add(texture)
 			}
-			oldTextures.clear()
+			if (refCount > 0) {
+				for (i in 0..textures.lastIndex) {
+					textures[i].refInc()
+				}
+				for (i in 0..oldTextures.lastIndex) {
+					oldTextures[i].refDec()
+				}
+				oldTextures.clear()
+			}
 		}
-		glState.batch = previousBatch
 		updateBoundingBox()
 	}
 

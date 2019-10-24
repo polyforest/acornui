@@ -518,6 +518,16 @@ inline fun GlState.useShader(s: ShaderProgram, inner: () -> Unit) {
 }
 
 /**
+ * Temporarily uses a batch, resetting to the old batch after [inner].
+ */
+inline fun GlState.useBatch(b: ShaderBatch, inner: () -> Unit) {
+	val previousBatch = this.batch
+	batch = b
+	inner()
+	batch = previousBatch
+}
+
+/**
  * @see Gl20.viewport
  */
 fun GlState.setViewport(value: IntRectangleRo) = setViewport(value.x, value.y, maxOf(0, value.width), maxOf(0, value.height))
