@@ -138,7 +138,6 @@ open class LwjglApplication(manifest: FilesManifest? = null) : ApplicationBase(m
 	}
 
 	protected open val glStateTask by task(GlState) {
-		get(Window) // Shaders need a window to be created first.
 		GlStateImpl(get(Gl20), get(Window))
 	}
 
