@@ -16,8 +16,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.FloatArrayListRo
-import com.acornui.collection.IntArrayListRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
@@ -615,7 +613,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArray) {
 		before()
 		wrapped.uniform1fv(location, v)
 		after()
@@ -627,7 +625,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+	override fun uniform1iv(location: GlUniformLocationRef, v: IntArray) {
 		before()
 		wrapped.uniform1iv(location, v)
 		after()
@@ -639,7 +637,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArray) {
 		before()
 		wrapped.uniform2fv(location, v)
 		after()
@@ -651,7 +649,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+	override fun uniform2iv(location: GlUniformLocationRef, v: IntArray) {
 		before()
 		wrapped.uniform2iv(location, v)
 		after()
@@ -663,7 +661,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArray) {
 		before()
 		wrapped.uniform3fv(location, v)
 		after()
@@ -675,7 +673,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+	override fun uniform3iv(location: GlUniformLocationRef, v: IntArray) {
 		before()
 		wrapped.uniform3iv(location, v)
 		after()
@@ -687,7 +685,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
+	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArray) {
 		before()
 		wrapped.uniform4fv(location, v)
 		after()
@@ -699,25 +697,25 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
+	override fun uniform4iv(location: GlUniformLocationRef, v: IntArray) {
 		before()
 		wrapped.uniform4iv(location, v)
 		after()
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
 		before()
 		wrapped.uniformMatrix2fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
 		before()
 		wrapped.uniformMatrix3fv(location, transpose, value)
 		after()
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
 		before()
 		wrapped.uniformMatrix4fv(location, transpose, value)
 		after()
@@ -741,7 +739,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
+	override fun vertexAttrib1fv(index: Int, values: FloatArray) {
 		before()
 		wrapped.vertexAttrib1fv(index, values)
 		after()
@@ -753,7 +751,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
+	override fun vertexAttrib2fv(index: Int, values: FloatArray) {
 		before()
 		wrapped.vertexAttrib2fv(index, values)
 		after()
@@ -765,7 +763,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
+	override fun vertexAttrib3fv(index: Int, values: FloatArray) {
 		before()
 		wrapped.vertexAttrib3fv(index, values)
 		after()
@@ -777,7 +775,7 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
+	override fun vertexAttrib4fv(index: Int, values: FloatArray) {
 		before()
 		wrapped.vertexAttrib4fv(index, values)
 		after()

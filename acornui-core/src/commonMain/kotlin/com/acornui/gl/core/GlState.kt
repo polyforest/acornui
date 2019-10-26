@@ -386,7 +386,7 @@ class GlStateImpl(
 					uniforms.put(colorTransU, value.matrix)
 
 					val colorOffsetU = uniforms.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_OFFSET)
-					uniforms.put4(colorOffsetU, value.offset)
+					uniforms.putRgba(colorOffsetU, value.offset)
 				}
 			}
 		}

@@ -23,8 +23,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.FloatArrayListRo
-import com.acornui.collection.IntArrayListRo
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -33,7 +31,6 @@ import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
-import com.acornui.math.*
 import kotlin.math.round
 
 interface Gl20 {
@@ -42,7 +39,6 @@ interface Gl20 {
 
 		const val TRUE = 1
 		const val FALSE = 0
-
 
 		/* ClearBufferMask */
 		const val DEPTH_BUFFER_BIT: Int = 256
@@ -1023,41 +1019,41 @@ interface Gl20 {
 
 	fun uniform1f(location: GlUniformLocationRef, x: Float)
 
-	fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo)
+	fun uniform1fv(location: GlUniformLocationRef, v: FloatArray)
 
 	fun uniform1i(location: GlUniformLocationRef, x: Int)
 
-	fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo)
+	fun uniform1iv(location: GlUniformLocationRef, v: IntArray)
 
 	fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float)
 
-	fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo)
+	fun uniform2fv(location: GlUniformLocationRef, v: FloatArray)
 
 	fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int)
 
-	fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo)
+	fun uniform2iv(location: GlUniformLocationRef, v: IntArray)
 
 	fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float)
 
-	fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo)
+	fun uniform3fv(location: GlUniformLocationRef, v: FloatArray)
 
 	fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int)
 
-	fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo)
+	fun uniform3iv(location: GlUniformLocationRef, v: IntArray)
 
 	fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float)
 
-	fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo)
+	fun uniform4fv(location: GlUniformLocationRef, v: FloatArray)
 
 	fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int)
 
-	fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo)
+	fun uniform4iv(location: GlUniformLocationRef, v: IntArray)
 
-	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
+	fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray)
 
-	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
+	fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray)
 
-	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo)
+	fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray)
 
 	fun useProgram(program: GlProgramRef?)
 
@@ -1065,19 +1061,19 @@ interface Gl20 {
 
 	fun vertexAttrib1f(index: Int, x: Float)
 
-	fun vertexAttrib1fv(index: Int, values: FloatArrayListRo)
+	fun vertexAttrib1fv(index: Int, values: FloatArray)
 
 	fun vertexAttrib2f(index: Int, x: Float, y: Float)
 
-	fun vertexAttrib2fv(index: Int, values: FloatArrayListRo)
+	fun vertexAttrib2fv(index: Int, values: FloatArray)
 
 	fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
 
-	fun vertexAttrib3fv(index: Int, values: FloatArrayListRo)
+	fun vertexAttrib3fv(index: Int, values: FloatArray)
 
 	fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
 
-	fun vertexAttrib4fv(index: Int, values: FloatArrayListRo)
+	fun vertexAttrib4fv(index: Int, values: FloatArray)
 
 	/**
 	 * Defines the data for the specified shader attribute.
@@ -1280,28 +1276,6 @@ interface GlUniformLocationRef
 fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
 	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put(location: GlUniformLocationRef, transpose: Boolean, value: Matrix4Ro) = uniformMatrix4fv(location, transpose, value.values)
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put(location: GlUniformLocationRef, transpose: Boolean, value: Matrix3Ro) = uniformMatrix3fv(location, transpose, value.values)
-
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put4(location: GlUniformLocationRef, color: ColorRo) {
-	uniform4f(location, color.r, color.g, color.b, color.a)
-}
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put(location: GlUniformLocationRef, c: ColorRo) = uniform3f(location, c.r, c.g, c.b)
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put(location: GlUniformLocationRef, v: Vector3Ro) = uniform3f(location, v.x, v.y, v.z)
-
-@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
-fun Gl20.put(location: GlUniformLocationRef, v: Vector2Ro) = uniform2f(location, v.x, v.y)
-
 
 /**
  * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear

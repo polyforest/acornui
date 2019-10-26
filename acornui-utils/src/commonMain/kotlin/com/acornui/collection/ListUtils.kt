@@ -87,16 +87,12 @@ fun <T> List<T>.copyInto(destination: MutableList<T>, destinationOffset: Int = 0
 			destination[dest++] = this[i]
 		}
 	}
-
-	// val delta = destinationOffset - startIndex
-
-
 	return destination
 }
 
 fun <E> List<E>.copy(): MutableList<E> {
 	val newList = ArrayList<E>(size)
-	arrayCopy(this, 0, newList)
+	copyInto(newList)
 	return newList
 }
 

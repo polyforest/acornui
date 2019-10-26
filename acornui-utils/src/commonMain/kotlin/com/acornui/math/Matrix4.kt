@@ -16,10 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.collection.FloatArrayList
-import com.acornui.collection.FloatArrayListRo
-import com.acornui.collection.FloatList
-import com.acornui.collection.contentEquals
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
@@ -33,7 +29,7 @@ interface Matrix4Ro {
 
 	val mode: MatrixMode
 
-	val values: FloatArrayListRo
+	val values: FloatArray
 
 	operator fun get(index: Int): Float {
 		return values[index]
@@ -133,7 +129,7 @@ interface Matrix4Ro {
 	 * same list.
 	 */
 	fun copy(): Matrix4 {
-		return Matrix4(FloatList(values.toFloatArray()))
+		return Matrix4(values)
 	}
 
 }
@@ -151,13 +147,11 @@ interface Matrix4Ro {
 @Serializable(with = Matrix4Serializer::class)
 class Matrix4() : Matrix4Ro {
 
-	private val _values = FloatArrayList(floatArrayOf(
+	override val values = floatArrayOf(
 			1f, 0f, 0f, 0f,
 			0f, 1f, 0f, 0f,
 			0f, 0f, 1f, 0f,
-			0f, 0f, 0f, 1f))
-
-	override val values: FloatArrayListRo = _values
+			0f, 0f, 0f, 1f)
 
 	constructor(values: FloatArray) : this() {
 		set(values)
@@ -179,7 +173,7 @@ class Matrix4() : Matrix4Ro {
 	}
 
 	operator fun set(index: Int, value: Float) {
-		_values[index] = value
+		values[index] = value
 		if (index == M03 || index == M13 || index == M23) {
 			if (value != 0f && _mode == MatrixMode.IDENTITY)
 				_mode = MatrixMode.TRANSLATION
@@ -195,7 +189,7 @@ class Matrix4() : Matrix4Ro {
 	}
 
 	private fun refreshMode() {
-		val values = _values
+		val values = values
 		if (values[M03] != 0f || values[M13] != 0f || values[M23] != 0f) _mode = MatrixMode.TRANSLATION
 		if (values[M00] != 1f || values[M11] != 1f || values[M22] != 1f || values[M33] != 1f) _mode = MatrixMode.SCALE
 		if (values[M01] != 0f || values[M02] != 0f || values[M10] != 0f || values[M12] != 0f || values[M20] != 0f ||
@@ -217,24 +211,24 @@ class Matrix4() : Matrix4Ro {
 				MatrixMode.IDENTITY -> {
 				}
 				MatrixMode.TRANSLATION -> {
-					_values[M03] = other.values[M03]
-					_values[M13] = other.values[M13]
-					_values[M23] = other.values[M23]
+					values[M03] = other.values[M03]
+					values[M13] = other.values[M13]
+					values[M23] = other.values[M23]
 				}
 				MatrixMode.SCALE -> {
-					_values[M03] = other.values[M03]
-					_values[M13] = other.values[M13]
-					_values[M23] = other.values[M23]
-					_values[M00] = other.values[M00]
-					_values[M11] = other.values[M11]
-					_values[M22] = other.values[M22]
-					_values[M33] = other.values[M33]
+					values[M03] = other.values[M03]
+					values[M13] = other.values[M13]
+					values[M23] = other.values[M23]
+					values[M00] = other.values[M00]
+					values[M11] = other.values[M11]
+					values[M22] = other.values[M22]
+					values[M33] = other.values[M33]
 				}
 				MatrixMode.FULL -> throw Exception("Unreachable")
 			}
 		} else {
 			for (i in 0..16 - 1) {
-				_values[i] = other.values[i]
+				values[i] = other.values[i]
 			}
 			_mode = other.mode
 		}
@@ -250,17 +244,15 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(values: List<Float>): Matrix4 {
-		for (i in 0..16 - 1) {
-			this._values[i] = values[i]
+		for (i in 0..15) {
+			this.values[i] = values[i]
 		}
 		refreshMode()
 		return this
 	}
 
 	fun set(values: FloatArray): Matrix4 {
-		for (i in 0..16 - 1) {
-			this._values[i] = values[i]
-		}
+		values.copyInto(this.values, 0, 0, 16)
 		refreshMode()
 		return this
 	}
@@ -323,7 +315,7 @@ class Matrix4() : Matrix4Ro {
 		val yy = quaternionY * ys
 		val yz = quaternionY * zs
 		val zz = quaternionZ * zs
-		val values = _values
+		val values = values
 
 		values[M00] = (1f - (yy + zz))
 		values[M01] = (xy - wz)
@@ -388,7 +380,7 @@ class Matrix4() : Matrix4Ro {
 		val yy = quaternionY * ys
 		val yz = quaternionY * zs
 		val zz = quaternionZ * zs
-		val values = _values
+		val values = values
 
 		values[M00] = scaleX * (1f - (yy + zz))
 		values[M01] = scaleY * (xy - wz)
@@ -424,7 +416,7 @@ class Matrix4() : Matrix4Ro {
 	 * @param pos The translation vector.
 	 */
 	fun set(xAxis: Vector3Ro, yAxis: Vector3Ro, zAxis: Vector3Ro, pos: Vector3Ro): Matrix4 {
-		val values = _values
+		val values = values
 		values[M00] = xAxis.x
 		values[M01] = xAxis.y
 		values[M02] = xAxis.z
@@ -460,7 +452,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun setToOrtho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4 {
-		val values = _values
+		val values = values
 		val xOrth = 2f / (right - left)
 		val yOrth = 2f / (top - bottom)
 		val zOrth = -2f / (far - near)
@@ -502,7 +494,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun setToProjection(near: Float, far: Float, fovy: Float, aspectRatio: Float): Matrix4 {
-		val values = _values
+		val values = values
 		val lFd = 1f / tan(fovy / 2f)
 		val lA1 = (far + near) / (near - far)
 		val lA2 = (2f * far * near) / (near - far)
@@ -534,7 +526,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun trn(vector: Vector3Ro): Matrix4 {
-		val values = _values
+		val values = values
 		values[M03] += vector.x
 		values[M13] += vector.y
 		values[M23] += vector.z
@@ -554,7 +546,7 @@ class Matrix4() : Matrix4Ro {
 
 	 */
 	fun trn(x: Float, y: Float, z: Float): Matrix4 {
-		val values = _values
+		val values = values
 		values[M03] += x
 		values[M13] += y
 		values[M23] += z
@@ -575,7 +567,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining operations together.
 	 */
 	fun mul(matrix: Matrix4Ro): Matrix4 {
-		val matA = _values
+		val matA = values
 		val matB = matrix.values
 		when (matrix.mode) {
 			MatrixMode.IDENTITY -> {
@@ -810,7 +802,7 @@ class Matrix4() : Matrix4Ro {
 	 */
 	fun idt(): Matrix4 {
 		if (_mode == MatrixMode.IDENTITY) return this
-		val values = _values
+		val values = values
 		values[M00] = 1f
 		values[M01] = 0f
 		values[M02] = 0f
@@ -838,7 +830,7 @@ class Matrix4() : Matrix4Ro {
 	 * @throws Exception if the matrix is singular (not invertible)
 	 */
 	fun inv(): Matrix4 {
-		val values = _values
+		val values = values
 		val tmp = tmp
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
@@ -913,7 +905,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
-		val values = _values
+		val values = values
 		return when (_mode) {
 			MatrixMode.IDENTITY, MatrixMode.TRANSLATION -> {
 				1f
@@ -967,9 +959,9 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun setTranslation(x: Float, y: Float, z: Float): Matrix4 {
-		_values[M03] = x
-		_values[M13] = y
-		_values[M23] = z
+		values[M03] = x
+		values[M13] = y
+		values[M23] = z
 		if (_mode == MatrixMode.IDENTITY)
 			_mode = MatrixMode.TRANSLATION
 		return this
@@ -1004,15 +996,15 @@ class Matrix4() : Matrix4Ro {
 		l_vex.crs(up).nor()
 		l_vey.set(l_vex).crs(l_vez).nor()
 		idt()
-		_values[M00] = l_vex.x
-		_values[M01] = l_vex.y
-		_values[M02] = l_vex.z
-		_values[M10] = l_vey.x
-		_values[M11] = l_vey.y
-		_values[M12] = l_vey.z
-		_values[M20] = -l_vez.x
-		_values[M21] = -l_vez.y
-		_values[M22] = -l_vez.z
+		values[M00] = l_vex.x
+		values[M01] = l_vex.y
+		values[M02] = l_vex.z
+		values[M10] = l_vey.x
+		values[M11] = l_vey.y
+		values[M12] = l_vey.z
+		values[M20] = -l_vez.x
+		values[M21] = -l_vez.y
+		values[M22] = -l_vez.z
 		_mode = MatrixMode.FULL
 		return this
 	}
@@ -1043,7 +1035,7 @@ class Matrix4() : Matrix4Ro {
 	}
 
 	override fun toString(): String {
-		val values = _values
+		val values = values
 		return """[${values[M00]}|${values[M01]}|${values[M02]}|${values[M03]}]
 [${values[M10]}|${values[M11]}|${values[M12]}|${values[M13]}]
 [${values[M20]}|${values[M21]}|${values[M22]}|${values[M23]}]
@@ -1056,7 +1048,7 @@ class Matrix4() : Matrix4Ro {
 	 * @param mat the matrix
 	 */
 	fun set(mat: Matrix3Ro): Matrix4 {
-		val values = _values
+		val values = values
 		values[M00] = mat.values[M00]
 		values[M10] = mat.values[M10]
 		values[M20] = mat.values[M20]
@@ -1082,28 +1074,28 @@ class Matrix4() : Matrix4Ro {
 	fun scl(scale: Float): Matrix4 = scl(scale, scale, scale)
 
 	fun scl(x: Float, y: Float, z: Float): Matrix4 {
-		_values[M00] *= x
-		_values[M11] *= y
-		_values[M22] *= z
+		values[M00] *= x
+		values[M11] *= y
+		values[M22] *= z
 		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
 			_mode = MatrixMode.SCALE
 		return this
 	}
 
 	override val translationX: Float
-		get() = _values[M03]
+		get() = values[M03]
 
 	override val translationY: Float
-		get() = _values[M13]
+		get() = values[M13]
 
 	override val translationZ: Float
-		get() = _values[M23]
+		get() = values[M23]
 
 	/**
 	 * Sets the provided position Vector3 with the translation of this Matrix
 	 */
 	override fun getTranslation(out: Vector3): Vector3 {
-		val values = _values
+		val values = values
 		out.x = values[M03]
 		out.y = values[M13]
 		out.z = values[M23]
@@ -1124,7 +1116,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return the squared scale factor on the X axis
 	 */
 	override fun getScaleXSquared(): Float {
-		val values = _values
+		val values = values
 		return values[M00] * values[M00] + values[M01] * values[M01] + values[M02] * values[M02]
 	}
 
@@ -1132,7 +1124,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return the squared scale factor on the Y axis
 	 */
 	override fun getScaleYSquared(): Float {
-		val values = _values
+		val values = values
 		return values[M10] * values[M10] + values[M11] * values[M11] + values[M12] * values[M12]
 	}
 
@@ -1140,7 +1132,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return the squared scale factor on the Z axis
 	 */
 	override fun getScaleZSquared(): Float {
-		val values = _values
+		val values = values
 		return values[M20] * values[M20] + values[M21] * values[M21] + values[M22] * values[M22]
 	}
 
@@ -1202,7 +1194,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun translate(x: Float = 0f, y: Float = 0f, z: Float = 0f): Matrix4 {
-		val mat = _values
+		val mat = values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 				_mode = MatrixMode.TRANSLATION
@@ -1313,7 +1305,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return Returns the vec for chaining.
 	 */
 	override fun prj(vec: Vector3): Vector3 {
-		val mat = _values
+		val mat = values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1346,7 +1338,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return Returns the vec for chaining.
 	 */
 	override fun rot(vec: Vector3): Vector3 {
-		val mat = _values
+		val mat = values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1375,7 +1367,7 @@ class Matrix4() : Matrix4Ro {
 	 * @return Returns the vec for chaining.
 	 */
 	override fun rot(vec: Vector2): Vector2 {
-		val mat = _values
+		val mat = values
 		when (_mode) {
 			MatrixMode.IDENTITY -> {
 			}
@@ -1405,15 +1397,15 @@ class Matrix4() : Matrix4Ro {
 	 */
 	fun shearZ(shearXZ: Float = 0f, shearYZ: Float = 0f): Matrix4 {
 		if (shearXZ == 0f && shearYZ == 0f) return this
-		var tmp0 = _values[M00] + shearYZ * _values[M01]
-		var tmp1 = _values[M01] + shearXZ * _values[M00]
-		_values[M00] = tmp0
-		_values[M01] = tmp1
+		var tmp0 = values[M00] + shearYZ * values[M01]
+		var tmp1 = values[M01] + shearXZ * values[M00]
+		values[M00] = tmp0
+		values[M01] = tmp1
 
-		tmp0 = _values[M10] + shearYZ * _values[M11]
-		tmp1 = _values[M11] + shearXZ * _values[M10]
-		_values[M10] = tmp0
-		_values[M11] = tmp1
+		tmp0 = values[M10] + shearYZ * values[M11]
+		tmp1 = values[M11] + shearXZ * values[M10]
+		values[M10] = tmp0
+		values[M11] = tmp1
 		_mode = MatrixMode.FULL
 
 		return this
@@ -1426,30 +1418,30 @@ class Matrix4() : Matrix4Ro {
 		return when (_mode) {
 			MatrixMode.IDENTITY -> true
 			MatrixMode.TRANSLATION -> {
-				_values[M03] == other.values[M03] &&
-						_values[M13] == other.values[M13] &&
-						_values[M23] == other.values[M23]
+				values[M03] == other.values[M03] &&
+						values[M13] == other.values[M13] &&
+						values[M23] == other.values[M23]
 			}
 			MatrixMode.SCALE -> {
-				_values[M03] == other.values[M03] &&
-						_values[M13] == other.values[M13] &&
-						_values[M23] == other.values[M23] &&
-						_values[M00] == other.values[M00] &&
-						_values[M11] == other.values[M11] &&
-						_values[M22] == other.values[M22] &&
-						_values[M33] == other.values[M33]
+				values[M03] == other.values[M03] &&
+						values[M13] == other.values[M13] &&
+						values[M23] == other.values[M23] &&
+						values[M00] == other.values[M00] &&
+						values[M11] == other.values[M11] &&
+						values[M22] == other.values[M22] &&
+						values[M33] == other.values[M33]
 			}
-			MatrixMode.FULL -> _values contentEquals other.values
+			MatrixMode.FULL -> values contentEquals other.values
 		}
 	}
 
 	override fun hashCode(): Int {
-		return _values.hashCode()
+		return values.hashCode()
 	}
 
 	companion object {
 
-		private val tmp = FloatList(16)
+		private val tmp = FloatArray(16)
 
 		// These values are kept for reference, but were too big of a performance problem on the JS side. Use the values directly.
 
@@ -1592,7 +1584,7 @@ object Matrix4Serializer : KSerializer<Matrix4> {
 			StringDescriptor.withName("Matrix4")
 
 	override fun serialize(encoder: Encoder, obj: Matrix4) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values)
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values.asList())
 	}
 
 	override fun deserialize(decoder: Decoder): Matrix4 {

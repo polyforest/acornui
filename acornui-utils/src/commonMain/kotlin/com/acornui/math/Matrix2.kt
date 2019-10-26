@@ -16,10 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.collection.FloatArrayList
-import com.acornui.collection.FloatArrayListRo
-import com.acornui.collection.FloatList
-import com.acornui.collection.contentEquals
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
@@ -35,7 +31,7 @@ import kotlin.math.sqrt
 @Serializable(with = Matrix2Serializer::class)
 interface Matrix2Ro {
 
-	val values: FloatArrayListRo
+	val values: FloatArray
 
 	/**
 	 * @return The determinant of this matrix
@@ -51,7 +47,7 @@ interface Matrix2Ro {
 	 * same list.
 	 */
 	fun copy(): Matrix2 {
-		return Matrix2(values.toFloatArray())
+		return Matrix2(values)
 	}
 }
 
@@ -61,11 +57,9 @@ interface Matrix2Ro {
 @Serializable(with = Matrix2Serializer::class)
 class Matrix2() : Matrix2Ro {
 
-	private val _values = FloatArrayList(floatArrayOf(
+	override val values = floatArrayOf(
 		1f, 0f,
-		0f, 1f))
-	
-	override val values: FloatArrayListRo = _values
+		0f, 1f)
 
 	/**
 	 * Constructs this 2x2 matrix with column-major values.
@@ -81,7 +75,7 @@ class Matrix2() : Matrix2Ro {
 	}
 
 	operator fun set(index: Int, value: Float) {
-		_values[index] = value
+		values[index] = value
 	}
 
 
@@ -90,10 +84,10 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun idt(): Matrix2 {
-		_values[M00] = 1f
-		_values[M10] = 0f
-		_values[M01] = 0f
-		_values[M11] = 1f
+		values[M00] = 1f
+		values[M10] = 0f
+		values[M01] = 0f
+		values[M11] = 1f
 		return this
 	}
 
@@ -107,7 +101,7 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining operations together.
 	 */
 	fun mul(matrix: Matrix2Ro): Matrix2 {
-		mul(_values, matrix.values)
+		mul(values, matrix.values)
 		return this
 	}
 
@@ -125,22 +119,22 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun mulLeft(m: Matrix2Ro): Matrix2 {
-		val v00 = m.values[M00] * _values[M00] + m.values[M01] * _values[M10]
-		val v01 = m.values[M00] * _values[M01] + m.values[M01] * _values[M11]
+		val v00 = m.values[M00] * values[M00] + m.values[M01] * values[M10]
+		val v01 = m.values[M00] * values[M01] + m.values[M01] * values[M11]
 
-		val v10 = m.values[M10] * _values[M00] + m.values[M11] * _values[M10]
-		val v11 = m.values[M10] * _values[M01] + m.values[M11] * _values[M11]
+		val v10 = m.values[M10] * values[M00] + m.values[M11] * values[M10]
+		val v11 = m.values[M10] * values[M01] + m.values[M11] * values[M11]
 
-		_values[M00] = v00
-		_values[M10] = v10
-		_values[M01] = v01
-		_values[M11] = v11
+		values[M00] = v00
+		values[M10] = v10
+		values[M01] = v01
+		values[M11] = v11
 
 		return this
 	}
 
 	fun prj(vec: Vector2): Vector2 {
-		val mat = _values
+		val mat = values
 		val x = (vec.x * mat[M00] + vec.y * mat[M01])
 		val y = (vec.x * mat[M10] + vec.y * mat[M11])
 		vec.x = x
@@ -149,7 +143,7 @@ class Matrix2() : Matrix2Ro {
 	}
 
 	override fun toString(): String {
-		val values = _values
+		val values = values
 		return """[${values[M00]}|${values[M01]}}]
 [${values[M10]}|${values[M11]}}]"""
 	}
@@ -158,7 +152,7 @@ class Matrix2() : Matrix2Ro {
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
-		val values = _values
+		val values = values
 		return values[M00] * values[M11] - values[M10] * values[M01]
 	}
 
@@ -170,7 +164,7 @@ class Matrix2() : Matrix2Ro {
 	fun inv(): Matrix2 {
 		val det = det()
 		if (det == 0f) throw Exception("Can't invert a singular matrix")
-		val values = _values
+		val values = values
 		val invDet = 1f / det
 
 		val a = values[M00]
@@ -194,7 +188,7 @@ class Matrix2() : Matrix2Ro {
 	fun set(mat: Matrix2Ro): Matrix2 {
 		val v = mat.values
 		for (i in 0..3) {
-			_values[i] = v[i]
+			values[i] = v[i]
 		}
 		return this
 	}
@@ -205,10 +199,10 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining operations.
 	 */
 	fun set(mat: Matrix3Ro): Matrix2 {
-		_values[M00] = mat.values[Matrix3.M00]
-		_values[M10] = mat.values[Matrix3.M10]
-		_values[M01] = mat.values[Matrix3.M01]
-		_values[M11] = mat.values[Matrix3.M11]
+		values[M00] = mat.values[Matrix3.M00]
+		values[M10] = mat.values[Matrix3.M10]
+		values[M01] = mat.values[Matrix3.M01]
+		values[M11] = mat.values[Matrix3.M11]
 		return this
 	}
 
@@ -216,12 +210,12 @@ class Matrix2() : Matrix2Ro {
 	 * Sets the matrix to the given matrix as a float list. The float array must have at least 4 elements; the first
 	 * 4 will be copied.
 	 *
-	 * @param values The matrix, in float form, that is to be copied. Remember that this matrix is in <a
+	 * @param v The matrix, in float form, that is to be copied. Remember that this matrix is in <a
 	*           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(v: List<Float>): Matrix2 {
-		val values = _values
+		val values = values
 		for (i in 0..3) {
 			values[i] = v[i]
 		}
@@ -237,10 +231,7 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(v: FloatArray): Matrix2 {
-		val values = _values
-		for (i in 0..3) {
-			values[i] = v[i]
-		}
+		v.copyInto(values, 0, 0, 4)
 		return this
 	}
 
@@ -261,7 +252,7 @@ class Matrix2() : Matrix2Ro {
 		tmp[M01] = -sin
 		tmp[M11] = cos
 
-		mul(_values, tmp)
+		mul(values, tmp)
 		return this
 	}
 
@@ -271,7 +262,7 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun tra(): Matrix2 {
-		val values = _values
+		val values = values
 		val b = values[M10]
 		val c = values[M01]
 		values[M10] = c
@@ -280,13 +271,13 @@ class Matrix2() : Matrix2Ro {
 	}
 
 	override fun getScale(out: Vector2): Vector2 {
-		out.x = sqrt((_values[M00] * _values[M00] + _values[M01] * _values[M01]).toDouble()).toFloat()
-		out.y = sqrt((_values[M10] * _values[M10] + _values[M11] * _values[M11]).toDouble()).toFloat()
+		out.x = sqrt((values[M00] * values[M00] + values[M01] * values[M01]).toDouble()).toFloat()
+		out.y = sqrt((values[M10] * values[M10] + values[M11] * values[M11]).toDouble()).toFloat()
 		return out
 	}
 
 	override fun getRotation(): Float {
-		return atan2(_values[M10], _values[M00])
+		return atan2(values[M10], values[M00])
 	}
 
 	/**
@@ -295,8 +286,8 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Float): Matrix2 {
-		_values[M00] *= scale
-		_values[M11] *= scale
+		values[M00] *= scale
+		values[M11] *= scale
 		return this
 	}
 
@@ -307,8 +298,8 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scaleX: Float, scaleY: Float): Matrix2 {
-		_values[M00] *= scaleX
-		_values[M11] *= scaleY
+		values[M00] *= scaleX
+		values[M11] *= scaleY
 		return this
 	}
 
@@ -318,8 +309,8 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Vector2Ro): Matrix2 {
-		_values[M00] *= scale.x
-		_values[M11] *= scale.y
+		values[M00] *= scale.x
+		values[M11] *= scale.y
 		return this
 	}
 
@@ -329,8 +320,8 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun scl(scale: Vector3Ro): Matrix2 {
-		_values[M00] *= scale.x
-		_values[M11] *= scale.y
+		values[M00] *= scale.x
+		values[M11] *= scale.y
 		return this
 	}
 
@@ -339,21 +330,21 @@ class Matrix2() : Matrix2Ro {
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun transpose(): Matrix2 {
-		val v01 = _values[M10]
-		val v10 = _values[M01]
-		_values[M01] = v01
-		_values[M10] = v10
+		val v01 = values[M10]
+		val v10 = values[M01]
+		values[M01] = v01
+		values[M10] = v10
 		return this
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		other as Matrix2Ro
-		return _values contentEquals (other.values)
+		return values contentEquals (other.values)
 	}
 
 	override fun hashCode(): Int {
-		return _values.hashCode()
+		return values.hashCode()
 	}
 
 
@@ -366,7 +357,7 @@ class Matrix2() : Matrix2Ro {
 		const val M10: Int = 1
 		const val M11: Int = 3
 
-		private val tmp = FloatList(floatArrayOf(0f, 0f, 0f, 0f))
+		private val tmp = floatArrayOf(0f, 0f, 0f, 0f)
 
 		/**
 		 * Multiplies matrix a with matrix b in the following manner:
@@ -377,7 +368,7 @@ class Matrix2() : Matrix2Ro {
 		 * @param matA The float array representing the first matrix. Must have at least 4 elements.
 		 * @param matB The float array representing the second matrix. Must have at least 4 elements.
 		 */
-		private fun mul(matA: FloatArrayList, matB: List<Float>) {
+		private fun mul(matA: FloatArray, matB: FloatArray) {
 			val v00 = matA[M00] * matB[M00] + matA[M01] * matB[M10]
 			val v01 = matA[M00] * matB[M01] + matA[M01] * matB[M11]
 
@@ -400,7 +391,7 @@ object Matrix2Serializer : KSerializer<Matrix2> {
 			StringDescriptor.withName("Matrix2")
 
 	override fun serialize(encoder: Encoder, obj: Matrix2) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values)
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values.toList())
 	}
 
 	override fun deserialize(decoder: Decoder): Matrix2 {

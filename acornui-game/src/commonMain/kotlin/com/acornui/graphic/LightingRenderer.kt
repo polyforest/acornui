@@ -188,24 +188,24 @@ class LightingRenderer(
 
 		lightingShader.uniforms.apply {
 			// Prepare uniforms.
-			put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
-			put("u_directionalShadowMap", directionalShadowUnit)
+            put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
+            put("u_directionalShadowMap", directionalShadowUnit)
 			for (i in 0..numShadowPointLights - 1) {
-				put("u_pointLightShadowMaps[$i]", pointShadowUnit + i)
+                put("u_pointLightShadowMaps[$i]", pointShadowUnit + i)
 			}
 	
 			pointLightUniforms(lightingShader.uniforms, pointLights)
 	
 			glState.setTexture(directionalShadowsFbo.texture, directionalShadowUnit)
-			put("u_directionalLightMvp", u_directionalLightMvp.set(bias).mul(directionalLightCamera.combined))
+            put("u_directionalLightMvp", u_directionalLightMvp.set(bias).mul(directionalLightCamera.combined))
 			
 			getUniformLocation("u_shadowsEnabled")?.let {
-				put(it, if (allowShadows) 1 else 0)
+                put(it, if (allowShadows) 1 else 0)
 			}
-			put("u_ambient", ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
-			put("u_directional", directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
+            put("u_ambient", ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
+            put("u_directional", directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
 			getUniformLocation("u_directionalLightDir")?.let {
-				put(it, directionalLight.direction)
+                put(it, directionalLight.direction)
 			}
 		}
 		glState.blendMode(BlendMode.NORMAL, premultipliedAlpha = false)
@@ -223,7 +223,7 @@ class LightingRenderer(
 			val pointLight = if (i < pointLights.size) pointLights[i] else PointLight.EMPTY_POINT_LIGHT
 			uniforms.put("u_pointLights[$i].radius", pointLight.radius)
 			uniforms.put("u_pointLights[$i].position", pointLight.position)
-			uniforms.put3("u_pointLights[$i].color", pointLight.color)
+			uniforms.putRgb("u_pointLights[$i].color", pointLight.color)
 		}
 	}
 
