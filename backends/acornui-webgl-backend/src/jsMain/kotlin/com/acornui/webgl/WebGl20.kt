@@ -504,7 +504,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
-		context.vertexAttrib1fv(index, values.asNative())
+		context.vertexAttrib1fv(index, values.native)
 	}
 
 	override fun vertexAttrib2f(index: Int, x: Float, y: Float) {
@@ -512,7 +512,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
-		context.vertexAttrib2fv(index, values.asNative())
+		context.vertexAttrib2fv(index, values.native)
 	}
 
 	override fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
@@ -520,7 +520,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
-		context.vertexAttrib3fv(index, values.asNative())
+		context.vertexAttrib3fv(index, values.native)
 	}
 
 	override fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float) {
@@ -528,7 +528,7 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 	}
 
 	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
-		context.vertexAttrib4fv(index, values.asNative())
+		context.vertexAttrib4fv(index, values.native)
 	}
 
 	override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) {
@@ -698,7 +698,7 @@ class WebGl20Debug(private val context: WebGLRenderingContext) : WrappedGl20(Web
 })
 
 @Suppress("CAST_NEVER_SUCCEEDS", "NOTHING_TO_INLINE")
-private inline fun FloatArrayListRo.asNative2(): Float32Array = asNative() as Float32Array
+private inline fun FloatArrayListRo.asNative2(): Float32Array = native as Float32Array
 
 @Suppress("CAST_NEVER_SUCCEEDS", "NOTHING_TO_INLINE")
-private inline fun IntArrayListRo.asNative2(): Int32Array = asNative() as Int32Array
+private inline fun IntArrayListRo.asNative2(): Int32Array = native as Int32Array

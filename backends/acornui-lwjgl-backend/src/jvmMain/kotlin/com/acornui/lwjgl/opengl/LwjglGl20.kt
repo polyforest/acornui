@@ -26,6 +26,7 @@ import org.lwjgl.opengl.*
 import org.lwjgl.opengl.GL11.nglGetBooleanv
 import org.lwjgl.system.MemoryStack.stackGet
 import org.lwjgl.system.MemoryUtil.memAddress
+import java.lang.UnsupportedOperationException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -428,8 +429,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?) {
-		val p: FloatBuffer? = if (pixels == null) null else pixels.asNative()
-		GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, p)
+		GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.asNative())
 	}
 
 	override fun texImage2D(target: Int, level: Int, internalFormat: Int, format: Int, type: Int, texture: Texture) {
@@ -447,7 +447,8 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun texSubImage2D(target: Int, level: Int, xOffset: Int, yOffset: Int, format: Int, type: Int, texture: Texture) {
-//		GL11.glTexSubImage2D(target, level, offsetX, yOffset, format, type, (texture as JvmTexture).image)
+		throw UnsupportedOperationException()
+		//GL11.glTexSubImage2D(target, level, xOffset, yOffset, format, type, (texture as JvmTexture).bytes)
 	}
 
 	override fun uniform1f(location: GlUniformLocationRef, x: Float) {
@@ -455,7 +456,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform1fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
-		GL20.glUniform1fv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform1fv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform1i(location: GlUniformLocationRef, x: Int) {
@@ -463,7 +464,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo) {
-		GL20.glUniform1iv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform1iv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float) {
@@ -471,7 +472,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
-		GL20.glUniform2fv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform2fv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform2i(location: GlUniformLocationRef, x: Int, y: Int) {
@@ -479,7 +480,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo) {
-		GL20.glUniform2iv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform2iv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
@@ -487,7 +488,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
-		GL20.glUniform3fv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform3fv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform3i(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
@@ -495,7 +496,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo) {
-		GL20.glUniform3iv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform3iv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
@@ -503,7 +504,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo) {
-		GL20.glUniform4fv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform4fv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniform4i(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
@@ -511,19 +512,19 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun uniform4iv(location: GlUniformLocationRef, v: IntArrayListRo) {
-		GL20.glUniform4iv((location as JvmGlUniformLocation).o, v.asNative())
+		GL20.glUniform4iv((location as JvmGlUniformLocation).o, v.native)
 	}
 
 	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
-		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
+		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, transpose, value.native)
 	}
 
 	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
-		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
+		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, transpose, value.native)
 	}
 
 	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArrayListRo) {
-		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, transpose, value.asNative())
+		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, transpose, value.native)
 	}
 
 	override fun useProgram(program: GlProgramRef?) {
@@ -540,7 +541,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun vertexAttrib1fv(index: Int, values: FloatArrayListRo) {
-		GL20.glVertexAttrib1fv(index, values.asNative())
+		GL20.glVertexAttrib1fv(index, values.native)
 	}
 
 	override fun vertexAttrib2f(index: Int, x: Float, y: Float) {
@@ -548,7 +549,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun vertexAttrib2fv(index: Int, values: FloatArrayListRo) {
-		GL20.glVertexAttrib2fv(index, values.asNative())
+		GL20.glVertexAttrib2fv(index, values.native)
 	}
 
 	override fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
@@ -556,7 +557,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun vertexAttrib3fv(index: Int, values: FloatArrayListRo) {
-		GL20.glVertexAttrib3fv(index, values.asNative())
+		GL20.glVertexAttrib3fv(index, values.native)
 	}
 
 	override fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float) {
@@ -564,7 +565,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun vertexAttrib4fv(index: Int, values: FloatArrayListRo) {
-		GL20.glVertexAttrib4fv(index, values.asNative())
+		GL20.glVertexAttrib4fv(index, values.native)
 	}
 
 	override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) {
