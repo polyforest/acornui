@@ -20,6 +20,7 @@ import com.acornui.test.assertListEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertNotSame
 
 class ListUtilsKtTest {
 	@Test
@@ -297,6 +298,15 @@ class ListUtilsKtTest {
 		assertFails {
 			list.addBefore(10, -1)
 		}
+	}
+
+
+	@Test
+	fun copy() {
+		val list = listOf(1, 2, 3, 4)
+		assertListEquals(list, list.copy())
+		assertNotSame(list, list.copy())
+		assertListEquals(emptyList<Int>(), emptyList<Int>().copy())
 	}
 
 }

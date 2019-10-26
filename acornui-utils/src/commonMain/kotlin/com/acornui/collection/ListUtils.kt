@@ -64,6 +64,7 @@ fun <E> arrayCopy(src: List<E>,
  * @return the [destination] array.
  */
 fun <T> List<T>.copyInto(destination: MutableList<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): MutableList<T> {
+	if (startIndex == endIndex) return destination
 	if (endIndex < startIndex) throw IndexOutOfBoundsException("endIndex is expected to be greater than startIndex <$startIndex> but was: <$endIndex>")
 	if (endIndex > size || endIndex < 0) throw IndexOutOfBoundsException("endIndex is out of range")
 	if (startIndex >= size || startIndex < 0) throw IndexOutOfBoundsException("startIndex is out of range")

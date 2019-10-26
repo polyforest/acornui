@@ -94,9 +94,9 @@ class Matrix2Test {
 	fun rotate() {
 		val m1 = Matrix2(1f, 0f, 2f, 0f)
 		m1.rotate(PI / 2f)
-		assertListEquals(listOf(2f, 0f, -1f, 0f), m1.values)
+		assertListEquals(floatArrayOf(2f, 0f, -1f, 0f), m1.values)
 		m1.rotate(-PI / 2f)
-		assertListEquals(listOf(1f, 0f, 2f, 0f), m1.values)
+		assertListEquals(floatArrayOf(1f, 0f, 2f, 0f), m1.values)
 
 		val m3 = Matrix2()
 		m3.rotate(PI / 2f)
@@ -126,14 +126,14 @@ class Matrix2Test {
 	fun scl1() {
 		val m1 = Matrix2(1f, 2f, 3f, 4f)
 		m1.scl(3f)
-		assertListEquals(listOf(3f, 2f, 3f, 12f), m1.values)
+		assertListEquals(floatArrayOf(3f, 2f, 3f, 12f), m1.values)
 	}
 
 	@Test
 	fun tra() {
 		val m1 = Matrix2(1f, 2f, 3f, 4f)
 		m1.tra()
-		assertListEquals(listOf(1f, 3f, 2f, 4f), m1.values)
+		assertListEquals(floatArrayOf(1f, 3f, 2f, 4f), m1.values)
 	}
 
 	@Test

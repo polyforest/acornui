@@ -16,7 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.closeTo
 import com.acornui.serialization.jsonParse
 import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
@@ -60,7 +59,7 @@ class Matrix4Test {
 	@Test
 	fun mul() {
 		m1.mul(m2)
-		assertListEquals(arrayListOf(2273f, 9539f, 8448f, 4515f, 2126f, 5114f, 6422f, 6350f, 597f, 1783f, 2001f, 1775f, 3155f, 7929f, 8456f, 7551f), m1.values)
+		assertListEquals(floatArrayOf(2273f, 9539f, 8448f, 4515f, 2126f, 5114f, 6422f, 6350f, 597f, 1783f, 2001f, 1775f, 3155f, 7929f, 8456f, 7551f), m1.values)
 	}
 
 	@Test
@@ -78,7 +77,7 @@ class Matrix4Test {
 	@Test
 	fun trn() {
 		m1.trn(3f, 2f, -2f)
-		assertListEquals(arrayListOf(3f, 5f, 6f, 13f,
+		assertListEquals(floatArrayOf(3f, 5f, 6f, 13f,
 				17f, 23f, 27f, 35f,
 				19f, 101f, 73f, 19f,
 				11f + 3f, 25f + 2f, 41f - 2f, 43f), m1.values)
@@ -87,7 +86,7 @@ class Matrix4Test {
 	@Test
 	fun mulLeft() {
 		m2.mulLeft(m1)
-		assertListEquals(arrayListOf(2273f, 9539f, 8448f, 4515f, 2126f, 5114f, 6422f, 6350f, 597f, 1783f, 2001f, 1775f, 3155f, 7929f, 8456f, 7551f), m2.values)
+		assertListEquals(floatArrayOf(2273f, 9539f, 8448f, 4515f, 2126f, 5114f, 6422f, 6350f, 597f, 1783f, 2001f, 1775f, 3155f, 7929f, 8456f, 7551f), m2.values)
 	}
 
 	@Test
@@ -99,44 +98,44 @@ class Matrix4Test {
 	@Test
 	fun inv() {
 		m1.inv()
-		assertListEquals(arrayListOf(-0.220252f, 0.13327442f, -0.010191573f, -0.037388105f, 0.16295114f, -0.02223616f, 0.016406294f, -0.038414393f, -0.21033126f, 0.0021095844f, -0.006043674f, 0.06454188f, 0.16215292f, -0.02317692f, -0.0011688238f, -0.0063857688f), m1.values)
+		assertListEquals(floatArrayOf(-0.220252f, 0.13327442f, -0.010191573f, -0.037388105f, 0.16295114f, -0.02223616f, 0.016406294f, -0.038414393f, -0.21033126f, 0.0021095844f, -0.006043674f, 0.06454188f, 0.16215292f, -0.02317692f, -0.0011688238f, -0.0063857688f), m1.values)
 	}
 
 	@Test
 	fun det() {
 		m1.det()
-		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
 	@Test
 	fun setTranslation() {
 		m1.setTranslation(3f, 62f, 23f)
-		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 3.0f, 62.0f, 23.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 3.0f, 62.0f, 23.0f, 43.0f), m1.values)
 	}
 
 	@Test
 	fun setFromEulerAnglesRad() {
 		m1.setFromEulerAnglesRad(3f, 62f, 23f)
-		assertListEquals(arrayListOf(0.61562574f, -0.5700127f, -0.5441419f, 0.0f, -0.782292f, -0.35881627f, -0.50918555f, 0.0f, 0.094995186f, 0.73914564f, -0.6668129f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values, comparator = {a, b -> a.closeTo(b, 0.01f)})
+		assertListEquals(floatArrayOf(0.61562574f, -0.5700127f, -0.5441419f, 0.0f, -0.782292f, -0.35881627f, -0.50918555f, 0.0f, 0.094995186f, 0.73914564f, -0.6668129f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values, margin = 0.01f)
 	}
 
 	@Test
 	fun setToLookAt() {
 		m1.setToLookAt(Vector3(3f, 62f, 23f), Vector3(2f, 32f, -23f))
-		assertListEquals(arrayListOf(-0.99850476f, 0.030565504f, -0.045319494f, 0.0f, 0.053111956f, 0.3463439f, -0.9366029f, 0.0f, -0.012931608f, -0.93760955f, -0.34744945f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values)
+		assertListEquals(floatArrayOf(-0.99850476f, 0.030565504f, -0.045319494f, 0.0f, 0.053111956f, 0.3463439f, -0.9366029f, 0.0f, -0.012931608f, -0.93760955f, -0.34744945f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values)
 	}
 
 	@Test
 	fun setToGlobal() {
 		m1.setToGlobal(Vector3(3f, 62f, 23f), Vector3(2f, 32f, -23f), Vector3(7f, 12f, 322f))
-		assertListEquals(arrayListOf(0.99694073f, 0.059497714f, -0.050685726f, 0.0f, -0.07585418f, 0.5801475f, -0.8109716f, 0.0f, -0.01884576f, 0.8123355f, 0.58288586f, 0.0f, 3.0f, 62.0f, 23.0f, 1.0f), m1.values)
+		assertListEquals(floatArrayOf(0.99694073f, 0.059497714f, -0.050685726f, 0.0f, -0.07585418f, 0.5801475f, -0.8109716f, 0.0f, -0.01884576f, 0.8123355f, 0.58288586f, 0.0f, 3.0f, 62.0f, 23.0f, 1.0f), m1.values)
 
 	}
 
 	@Test
 	fun scl() {
 		m1.scl(0.2f, 3f, 0.22f)
-		assertListEquals(arrayListOf(0.6f, 5.0f, 6.0f, 13.0f, 17.0f, 69.0f, 27.0f, 35.0f, 19.0f, 101.0f, 16.06f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(0.6f, 5.0f, 6.0f, 13.0f, 17.0f, 69.0f, 27.0f, 35.0f, 19.0f, 101.0f, 16.06f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
 	@Test
@@ -210,13 +209,13 @@ class Matrix4Test {
 	@Test
 	fun translate() {
 		m1.translate(3f, 23f, 44f)
-		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
+		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
 	}
 
 	@Test
 	fun translate1() {
 		m1.translate(Vector3(3f, 23f, 44f))
-		assertListEquals(arrayListOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
+		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
 	}
 
 	@Test
@@ -224,31 +223,31 @@ class Matrix4Test {
 		val quat = Quaternion(0.2f, 0.6f, 0.1f, 0.7f)
 		m1.rotate(quat)
 		println(m1.values)
-		assertListEquals(listOf(-7.96f, -70.76f, -46.58f, 1.48f, 23.2f, 61.6f, 54.1f, 40.4f, 3.72f, 20.92f, 15.56f, 9.64f, 11f, 25f, 41f, 43f), m1.values) { a, b -> a.closeTo(b) }
+		assertListEquals(floatArrayOf(-7.96f, -70.76f, -46.58f, 1.48f, 23.2f, 61.6f, 54.1f, 40.4f, 3.72f, 20.92f, 15.56f, 9.64f, 11f, 25f, 41f, 43f), m1.values)
 	}
 
 	@Test
 	fun rotate1() {
 		m1.rotate(Vector3(0.2f, 0.65f, 0.33f), Vector3(-0.4f, 2.5f, 33f))
-		assertListEquals(listOf(3f, 5f, 6f, 13f, 17f, 23f, 27f, 35f, 19f, 101f, 73f, 19f, 11f, 25f, 41f, 43f), m1.values) { a, b -> a.closeTo(b) }
+		assertListEquals(floatArrayOf(3f, 5f, 6f, 13f, 17f, 23f, 27f, 35f, 19f, 101f, 73f, 19f, 11f, 25f, 41f, 43f), m1.values)
 	}
 
 	@Test
 	fun rotate2() {
 		m1.rotate(3f, -23f, 1f, 3.23f)
-		assertListEquals(listOf(-8.74778f, -18.490776f, -18.35281f, -23.043419f, 13.780127f, 11.134449f, 17.438988f, 28.59626f, -19.81375f, -101.43531f, -73.84483f, -20.155771f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values) { a, b -> a.closeTo(b) }
+		assertListEquals(floatArrayOf(-8.74778f, -18.490776f, -18.35281f, -23.043419f, 13.780127f, 11.134449f, 17.438988f, 28.59626f, -19.81375f, -101.43531f, -73.84483f, -20.155771f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
 	@Test
 	fun scale() {
 		m1.scale(Vector3(3f, 23f, 44f))
-		assertListEquals(arrayListOf(9.0f, 15.0f, 18.0f, 39.0f, 391.0f, 529.0f, 621.0f, 805.0f, 836.0f, 4444.0f, 3212.0f, 836.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(9.0f, 15.0f, 18.0f, 39.0f, 391.0f, 529.0f, 621.0f, 805.0f, 836.0f, 4444.0f, 3212.0f, 836.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
 	@Test
 	fun scale1() {
 		m1.scale(3f, 23f, 44f)
-		assertListEquals(arrayListOf(9.0f, 15.0f, 18.0f, 39.0f, 391.0f, 529.0f, 621.0f, 805.0f, 836.0f, 4444.0f, 3212.0f, 836.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(9.0f, 15.0f, 18.0f, 39.0f, 391.0f, 529.0f, 621.0f, 805.0f, 836.0f, 4444.0f, 3212.0f, 836.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
 	@Test
@@ -275,7 +274,7 @@ class Matrix4Test {
 	@Test
 	fun shearZ() {
 		m1.shearZ(0.2f, 0.5f)
-		assertListEquals(arrayListOf(11.5f, 16.5f, 6.0f, 13.0f, 17.6f, 24.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
+		assertListEquals(floatArrayOf(11.5f, 16.5f, 6.0f, 13.0f, 17.6f, 24.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 	
 	@Test

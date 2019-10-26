@@ -53,18 +53,18 @@ class Matrix3Test {
 	@Test
 	fun mul() {
 		m1.mul(m2)
-		assertListEquals(listOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), m1.values)
+		assertListEquals(floatArrayOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), m1.values)
 	}
 
 	@Test
 	fun times() {
-		assertListEquals(listOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), (m1 * m2).values)
+		assertListEquals(floatArrayOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), (m1 * m2).values)
 	}
 
 	@Test
 	fun mulLeft() {
 		m2.mulLeft(m1)
-		assertListEquals(listOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), m2.values)
+		assertListEquals(floatArrayOf(-18.2f, -6.8650007f, 56.64f, 26.074001f, 18.4778f, 66.58f, -27.069f, -7.801501f, -13.622f), m2.values)
 	}
 
 	@Test
@@ -80,9 +80,9 @@ class Matrix3Test {
 	@Test
 	fun inv() {
 		m1.inv()
-		assertListEquals(listOf(-0.86723113f, 0.09250347f, 0.0523858f, 1.9117938f, -0.034284234f, -0.11622098f, -0.05577584f, -0.0026800546f, 0.046884965f), m1.values)
+		assertListEquals(floatArrayOf(-0.86723113f, 0.09250347f, 0.0523858f, 1.9117938f, -0.034284234f, -0.11622098f, -0.05577584f, -0.0026800546f, 0.046884965f), m1.values)
 		m2.inv()
-		assertListEquals(listOf(-0.023647474f, 0.05247052f, 0.055358544f, -0.2298895f, 0.1624513f, -0.16920671f, 0.24814126f, 0.114462934f, -0.097220585f), m2.values)
+		assertListEquals(floatArrayOf(-0.023647474f, 0.05247052f, 0.055358544f, -0.2298895f, 0.1624513f, -0.16920671f, 0.24814126f, 0.114462934f, -0.097220585f), m2.values)
 
 		run {
 			val m1 = Matrix3(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f)
@@ -117,41 +117,41 @@ class Matrix3Test {
 				11f, 25f, 41f, 43f))
 
 		m1.set(m3)
-		assertListEquals(listOf(3.0f, 5.0f, 6.0f, 17.0f, 23.0f, 27.0f, 19.0f, 101.0f, 73.0f), m1.values)
+		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 17.0f, 23.0f, 27.0f, 19.0f, 101.0f, 73.0f), m1.values)
 	}
 
 	@Test
 	fun setTranslation() {
 		m1.setTranslation(2f, 3f)
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 2f, 3f, 23f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 2f, 3f, 23f), m1.values)
 	}
 
 	@Test
 	fun trn() {
 		m1.trn(9f, -23f)
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
 	}
 
 	@Test
 	fun trn1() {
 		m1.trn(Vector2(9f, -23f))
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
 	}
 
 	@Test
 	fun trn2() {
 		m1.trn(Vector3(9f, -23f, 100f))
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
 	}
 
 	@Test
 	fun rotate() {
 		m1.rotate(PI / 2f)
-		assertListEquals(listOf(13.0f, 5.9f, 0.1f, -0.3f, -0.7f, -1.4f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(13.0f, 5.9f, 0.1f, -0.3f, -0.7f, -1.4f, 1.1f, 1.17f, 23.0f), m1.values)
 		m1.rotate(-PI / 2f)
-		assertListEquals(listOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f), m1.values)
 		m1.rotate(2.131f)
-		assertListEquals(listOf(10.853501f, 4.6262155f, -0.65918756f, -7.1618085f, -3.7280197f, -1.2391415f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(10.853501f, 4.6262155f, -0.65918756f, -7.1618085f, -3.7280197f, -1.2391415f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 
 	@Test
@@ -174,25 +174,25 @@ class Matrix3Test {
 	@Test
 	fun scl1() {
 		m1.scl(3f)
-		assertListEquals(listOf(0.90000004f, 0.7f, 1.4f, 13.0f, 17.7f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(0.90000004f, 0.7f, 1.4f, 13.0f, 17.7f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 
 	@Test
 	fun scl2() {
 		m1.scl(3f, 4f)
-		assertListEquals(listOf(0.90000004f, 0.7f, 1.4f, 13.0f, 23.6f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(0.90000004f, 0.7f, 1.4f, 13.0f, 23.6f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 
 	@Test
 	fun scl3() {
 		m1.scl(Vector2(3f, 4f))
-		assertListEquals(listOf(0.90000004f, 0.7f, 1.4f, 13.0f, 23.6f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(0.90000004f, 0.7f, 1.4f, 13.0f, 23.6f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 
 	@Test
 	fun tra() {
 		m1.tra()
-		assertListEquals(listOf(0.3f, 13.0f, 1.1f, 0.7f, 5.9f, 1.17f, 1.4f, 0.1f, 23.0f), m1.values)
+		assertListEquals(floatArrayOf(0.3f, 13.0f, 1.1f, 0.7f, 5.9f, 1.17f, 1.4f, 0.1f, 23.0f), m1.values)
 	}
 
 	@Test
