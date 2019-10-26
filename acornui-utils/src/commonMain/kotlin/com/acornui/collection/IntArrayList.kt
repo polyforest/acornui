@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.acornui.collection
 
 import com.acornui.recycle.Clearable
 
 /**
  * A read-only view of a IntArray.
+ *
+ * At the time of writing, inline classes cannot implement equals, so unlike most lists, equals is not a deep check.
+ * Use [contentEquals] instead.
  */
 interface IntArrayListRo : List<Int> {
 
@@ -27,9 +32,32 @@ interface IntArrayListRo : List<Int> {
 	 * Returns the unboxed IntArray.
 	 * @suppress
 	 */
-	fun asNative(): IntArray
+	val native: IntArray
+
 }
 
+inline infix fun IntArrayListRo.contentEquals(other: IntArrayListRo): Boolean = native.contentEquals(other.native)
+inline infix fun IntArray.contentEquals(other: IntArrayListRo): Boolean = contentEquals(other.native)
+inline infix fun IntArrayListRo.contentEquals(other: IntArray): Boolean = native.contentEquals(other)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun IntArrayListRo.copyInto(other: IntArrayList, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = native.copyInto(other.native, destinationOffset, startIndex, endIndex)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun IntArray.copyInto(other: IntArrayList, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = copyInto(other.native, destinationOffset, startIndex, endIndex)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun IntArrayListRo.copyInto(other: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = native.copyInto(other, destinationOffset, startIndex, endIndex)
+
+/**
+ * A wrapper to [IntArray] that implements [List].
+ */
 inline class IntArrayList(val inner: IntArray) : IntArrayListRo {
 
 	override val size: Int
@@ -84,7 +112,8 @@ inline class IntArrayList(val inner: IntArray) : IntArrayListRo {
 		return SubList(this, fromIndex, toIndex)
 	}
 
-	override fun asNative(): IntArray = inner
+	override val native: IntArray
+		get() = inner
 }
 
 /**

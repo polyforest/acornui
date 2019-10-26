@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.acornui.collection
 
 import com.acornui.recycle.Clearable
 
 /**
  * A read-only view of a FloatArray.
+
+ * At the time of writing, inline classes cannot implement equals, so unlike most lists, equals is not a deep check.
+ * Use [contentEquals] instead.
  */
 interface FloatArrayListRo : List<Float> {
 
@@ -27,9 +32,32 @@ interface FloatArrayListRo : List<Float> {
 	 * Returns the unboxed FloatArray.
 	 * @suppress
 	 */
-	fun asNative(): FloatArray
+	val native: FloatArray
 }
 
+inline infix fun FloatArrayListRo.contentEquals(other: FloatArrayListRo): Boolean = native.contentEquals(other.native)
+inline infix fun FloatArray.contentEquals(other: FloatArrayListRo): Boolean = contentEquals(other.native)
+inline infix fun FloatArrayListRo.contentEquals(other: FloatArray): Boolean = native.contentEquals(other)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun FloatArrayListRo.copyInto(other: FloatArrayList, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = native.copyInto(other.native, destinationOffset, startIndex, endIndex)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun FloatArray.copyInto(other: FloatArrayList, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = copyInto(other.native, destinationOffset, startIndex, endIndex)
+
+/**
+ * @see kotlin.collections.copyInto
+ */
+fun FloatArrayListRo.copyInto(other: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size) = native.copyInto(other, destinationOffset, startIndex, endIndex)
+
+
+/**
+ * A wrapper to [FloatArray] that implements [List].
+ */
 inline class FloatArrayList(val inner: FloatArray) : FloatArrayListRo {
 
 	override val size: Int
@@ -84,7 +112,8 @@ inline class FloatArrayList(val inner: FloatArray) : FloatArrayListRo {
 		return SubList(this, fromIndex, toIndex)
 	}
 
-	override fun asNative(): FloatArray = inner
+	override val native: FloatArray
+		get() = inner
 }
 
 /**

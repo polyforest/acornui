@@ -17,7 +17,8 @@
 package com.acornui.collection
 
 /**
- * Returns first index of *element*, or -1 if the collection does not contain element
+ * Returns first index of [element] starting at [fromIndex], or -1 if the array does not contain element after
+ * [fromIndex].
  */
 fun <E> Array<out E>.indexOf(element: E, fromIndex: Int): Int {
 	for (i in fromIndex..lastIndex) {
@@ -32,13 +33,12 @@ fun <E> Array<out E>.indexOf(element: E, fromIndex: Int): Int {
 /**
  * @author nbilyk
  */
-@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos"))
 fun <E> arrayCopy(src: Array<out E>,
 						 srcPos: Int,
 						 dest: Array<E>,
 						 destPos: Int = 0,
 						 length: Int = src.size) {
-
 	if (destPos > srcPos) {
 		var destIndex = length + destPos - 1
 		for (i in srcPos + length - 1 downTo srcPos) {
@@ -52,7 +52,7 @@ fun <E> arrayCopy(src: Array<out E>,
 	}
 }
 
-@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos)"))
 fun arrayCopy(src: FloatArray,
 					 srcPos: Int,
 					 dest: FloatArray,
@@ -71,13 +71,12 @@ fun arrayCopy(src: FloatArray,
 	}
 }
 
-@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos - 1"))
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos)"))
 fun arrayCopy(src: IntArray,
 					 srcPos: Int,
 					 dest: IntArray,
 					 destPos: Int = 0,
 					 length: Int = src.size) {
-
 	if (destPos > srcPos) {
 		var destIndex = length + destPos - 1
 		for (i in srcPos + length - 1 downTo srcPos) {
@@ -92,12 +91,12 @@ fun arrayCopy(src: IntArray,
 }
 
 fun <E> MutableList<E>.pop(): E {
-	return removeAt(size - 1)
+	return removeAt(lastIndex)
 }
 
 fun <E> MutableList<E>.popOrNull(): E? {
 	if (isEmpty()) return null
-	return removeAt(size - 1)
+	return removeAt(lastIndex)
 }
 
 fun <E> MutableList<E>.poll(): E {
@@ -137,24 +136,6 @@ fun <E> MutableList<E>.shiftAll(delta: Int) {
 @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND") fun <T> List<T>.peek(): T? {
 	return if (isEmpty()) null
 	else this[lastIndex]
-}
-
-fun <E> Array<E>.equalsArray(other: Array<E>): Boolean {
-	if (this === other) return true
-	if (other.size != size) return false
-	for (i in 0..lastIndex) {
-		if (this[i] != other[i]) return false
-	}
-	return true
-}
-
-fun FloatArray.equalsArray(other: FloatArray): Boolean {
-	if (this === other) return true
-	if (other.size != size) return false
-	for (i in 0..lastIndex) {
-		if (this[i] != other[i]) return false
-	}
-	return true
 }
 
 fun <E> Iterable<E>.hashCodeIterable(): Int {
@@ -208,6 +189,7 @@ fun FloatArray.scl(scalar: Float) {
 /**
  * Returns the index of the largest value in this list.
  */
+@Deprecated("May be removed", level = DeprecationLevel.ERROR)
 fun IntArray.indexOfMax(): Int {
 	if (isEmpty()) return -1
 	var max = this[0]
@@ -223,8 +205,9 @@ fun IntArray.indexOfMax(): Int {
 }
 
 /**
- * Returns the index of the largest value in this list.
+ * Returns the index of the smallest value in this list.
  */
+@Deprecated("May be removed", level = DeprecationLevel.ERROR)
 fun IntArray.indexOfMin(): Int {
 	if (isEmpty()) return -1
 	var min = this[0]
@@ -238,3 +221,4 @@ fun IntArray.indexOfMin(): Int {
 	}
 	return minIndex
 }
+

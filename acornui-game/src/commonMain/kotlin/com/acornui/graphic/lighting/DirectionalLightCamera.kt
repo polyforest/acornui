@@ -17,7 +17,6 @@
 package com.acornui.graphic.lighting
 
 import com.acornui._assert
-import com.acornui.collection.equalsArray
 import com.acornui.graphic.CameraRo
 import com.acornui.math.*
 import com.acornui.observe.ModTagWatch
@@ -103,7 +102,7 @@ class DirectionalLightCamera {
 	 */
 	fun update(newDirection: Vector3Ro, viewCam: CameraRo): Boolean {
 		if (!viewCamWatch.set(viewCam.modTag) &&
-				direction == newDirection && lastClipSpace.equalsArray(clipSpace)) {
+				direction == newDirection && lastClipSpace.contentEquals(clipSpace)) {
 			// Up-to-date
 			return false
 		}

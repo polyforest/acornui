@@ -19,6 +19,7 @@ package com.acornui.math
 import com.acornui.collection.FloatArrayList
 import com.acornui.collection.FloatArrayListRo
 import com.acornui.collection.FloatList
+import com.acornui.collection.contentEquals
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
