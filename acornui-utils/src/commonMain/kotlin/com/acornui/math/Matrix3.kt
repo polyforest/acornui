@@ -68,7 +68,10 @@ class Matrix3() : Matrix3Ro {
 		0f, 0f, 1f))
 	
 	override val values: FloatArrayListRo = _values
-	
+
+	/**
+	 * Constructs this 2x2 matrix with column-major values.
+	 */
 	constructor (m00:Float, m10:Float, m20:Float, m01:Float, m11:Float, m21:Float, m02:Float, m12:Float, m22:Float) : this(floatArrayOf(m00, m10, m20, m01, m11, m21, m02, m12, m22))
 	
 	constructor(values: FloatArray) : this() {
@@ -164,14 +167,18 @@ class Matrix3() : Matrix3Ro {
 	}
 
 	override fun toString(): String {
-		return "[" + _values[M00] + "|" + _values[M01] + "|" + _values[M02] + "]\n" + "[" + _values[M10] + "|" + _values[M11] + "|" + _values[M12] + "]\n" + "[" + _values[M20] + "|" + _values[M21] + "|" + _values[M22] + "]"
+		val values = _values
+		return """[${values[M00]}|${values[M01]}|${values[M02]}]
+[${values[M10]}|${values[M11]}|${values[M12]}]
+[${values[M20]}|${values[M21]}|${values[M22]}]"""
 	}
 
 	/**
 	 * @return The determinant of this matrix
 	 */
 	override fun det(): Float {
-		return _values[M00] * _values[M11] * _values[M22] + _values[M01] * _values[M12] * _values[M20] + _values[M02] * _values[M10] * _values[M21] - _values[M00] * _values[M12] * _values[M21] - _values[M01] * _values[M10] * _values[M22] - _values[M02] * _values[M11] * _values[M20]
+		val values = _values
+		return values[M00] * values[M11] * values[M22] + values[M01] * values[M12] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] - values[M02] * values[M11] * values[M20]
 	}
 
 	/**
@@ -182,28 +189,29 @@ class Matrix3() : Matrix3Ro {
 	fun inv(): Matrix3 {
 		val det = det()
 		if (det == 0f) throw Exception("Can't invert a singular matrix")
+		val values = _values
 
 		val invDet = 1f / det
 
-		tmp[M00] = _values[M11] * _values[M22] - _values[M21] * _values[M12]
-		tmp[M10] = _values[M20] * _values[M12] - _values[M10] * _values[M22]
-		tmp[M20] = _values[M10] * _values[M21] - _values[M20] * _values[M11]
-		tmp[M01] = _values[M21] * _values[M02] - _values[M01] * _values[M22]
-		tmp[M11] = _values[M00] * _values[M22] - _values[M20] * _values[M02]
-		tmp[M21] = _values[M20] * _values[M01] - _values[M00] * _values[M21]
-		tmp[M02] = _values[M01] * _values[M12] - _values[M11] * _values[M02]
-		tmp[M12] = _values[M10] * _values[M02] - _values[M00] * _values[M12]
-		tmp[M22] = _values[M00] * _values[M11] - _values[M10] * _values[M01]
+		tmp[M00] = values[M11] * values[M22] - values[M21] * values[M12]
+		tmp[M10] = values[M20] * values[M12] - values[M10] * values[M22]
+		tmp[M20] = values[M10] * values[M21] - values[M20] * values[M11]
+		tmp[M01] = values[M21] * values[M02] - values[M01] * values[M22]
+		tmp[M11] = values[M00] * values[M22] - values[M20] * values[M02]
+		tmp[M21] = values[M20] * values[M01] - values[M00] * values[M21]
+		tmp[M02] = values[M01] * values[M12] - values[M11] * values[M02]
+		tmp[M12] = values[M10] * values[M02] - values[M00] * values[M12]
+		tmp[M22] = values[M00] * values[M11] - values[M10] * values[M01]
 
-		_values[M00] = invDet * tmp[M00]
-		_values[M10] = invDet * tmp[M10]
-		_values[M20] = invDet * tmp[M20]
-		_values[M01] = invDet * tmp[M01]
-		_values[M11] = invDet * tmp[M11]
-		_values[M21] = invDet * tmp[M21]
-		_values[M02] = invDet * tmp[M02]
-		_values[M12] = invDet * tmp[M12]
-		_values[M22] = invDet * tmp[M22]
+		values[M00] = invDet * tmp[M00]
+		values[M10] = invDet * tmp[M10]
+		values[M20] = invDet * tmp[M20]
+		values[M01] = invDet * tmp[M01]
+		values[M11] = invDet * tmp[M11]
+		values[M21] = invDet * tmp[M21]
+		values[M02] = invDet * tmp[M02]
+		values[M12] = invDet * tmp[M12]
+		values[M22] = invDet * tmp[M22]
 
 		return this
 	}
@@ -440,8 +448,7 @@ class Matrix3() : Matrix3Ro {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		other as Matrix3Ro
-		if (_values != other.values) return false
-		return true
+		return _values contentEquals other.values
 	}
 
 	override fun hashCode(): Int {

@@ -1043,7 +1043,11 @@ class Matrix4() : Matrix4Ro {
 
 	override fun toString(): String {
 		val values = _values
-		return "[" + values[M00] + "|" + values[M01] + "|" + values[M02] + "|" + values[M03] + "]\n" + "[" + values[M10] + "|" + values[M11] + "|" + values[M12] + "|" + values[M13] + "]\n" + "[" + values[M20] + "|" + values[M21] + "|" + values[M22] + "|" + values[M23] + "]\n" + "[" + values[M30] + "|" + values[M31] + "|" + values[M32] + "|" + values[M33] + "]\n"
+		return """[${values[M00]}|${values[M01]}|${values[M02]}|${values[M03]}]
+[${values[M10]}|${values[M11]}|${values[M12]}|${values[M13]}]
+[${values[M20]}|${values[M21]}|${values[M22]}|${values[M23]}]
+[${values[M30]}|${values[M31]}|${values[M32]}|${values[M33]}]
+"""
 	}
 
 	/**
@@ -1434,7 +1438,7 @@ class Matrix4() : Matrix4Ro {
 						_values[M22] == other.values[M22] &&
 						_values[M33] == other.values[M33]
 			}
-			MatrixMode.FULL -> _values == other.values
+			MatrixMode.FULL -> _values contentEquals other.values
 		}
 	}
 

@@ -83,6 +83,17 @@ class Matrix3Test {
 		assertListEquals(listOf(-0.86723113f, 0.09250347f, 0.0523858f, 1.9117938f, -0.034284234f, -0.11622098f, -0.05577584f, -0.0026800546f, 0.046884965f), m1.values)
 		m2.inv()
 		assertListEquals(listOf(-0.023647474f, 0.05247052f, 0.055358544f, -0.2298895f, 0.1624513f, -0.16920671f, 0.24814126f, 0.114462934f, -0.097220585f), m2.values)
+
+		run {
+			val m1 = Matrix3(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f)
+			val m2 = Matrix3(-0.5f, -1.6f, 2.5f, 9f, 1.6f, 2.34f, 9.32f, -2.2f, -1.15f)
+			assertListEquals(Matrix3.IDENTITY.values, m1.set(m2).inv().mul(m2).values)
+		}
+		run {
+			val m1 = Matrix3(-0.5f, -1.6f, 2.5f, 9f, 1.6f, 2.34f, 9.32f, -2.2f, -1.15f)
+			val m2 = Matrix3(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f, 1.17f, 23f)
+			assertListEquals(Matrix3.IDENTITY.values, m1.set(m2).inv().mul(m2).values)
+		}
 	}
 
 	@Test
@@ -179,8 +190,8 @@ class Matrix3Test {
 	}
 
 	@Test
-	fun transpose() {
-		m1.transpose()
+	fun tra() {
+		m1.tra()
 		assertListEquals(listOf(0.3f, 13.0f, 1.1f, 0.7f, 5.9f, 1.17f, 1.4f, 0.1f, 23.0f), m1.values)
 	}
 
