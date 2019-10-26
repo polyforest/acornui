@@ -23,11 +23,52 @@ import kotlin.test.assertFails
 
 class ListUtilsKtTest {
 	@Test
-	fun arrayCopy() {
-	}
+	fun copyIntoArrayList() {
+		run {
+			val f = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			f.copyInto(f, destinationOffset = 0, startIndex = 1, endIndex = 5)
+			assertListEquals(listOf(2f, 3f, 4f, 5f, 5f), f)
+		}
 
-	@Test
-	fun copy() {
+
+		run {
+			val f = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			f.copyInto(f, destinationOffset = 1, startIndex = 0, endIndex = 4)
+			assertListEquals(listOf(1f, 1f, 2f, 3f, 4f), f)
+		}
+
+		run {
+			val f = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			f.copyInto(f, destinationOffset = 3)
+			assertListEquals(listOf(1f, 2f, 3f, 1f, 2f, 3f, 4f, 5f), f)
+		}
+
+		run {
+			val f = mutableListOf(0f, 0f, 0f, 0f, 1f, 2f, 3f, 4f, 5f)
+			f.copyInto(f, destinationOffset = 1, startIndex = 4, endIndex = 7)
+			assertListEquals(listOf(0f, 1f, 2f, 3f, 1f, 2f, 3f, 4f, 5f), f)
+		}
+
+		run {
+			val src = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			val dest = mutableListOf(0f, 0f, 0f, 0f, 0f)
+			src.copyInto(dest, destinationOffset = 1)
+			assertListEquals(listOf(0f, 1f, 2f, 3f, 4f, 5f), dest)
+		}
+
+		run {
+			val src = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			val dest = mutableListOf(0f, 0f, 0f, 0f, 0f)
+			src.copyInto(dest, destinationOffset = 1, startIndex = 3)
+			assertListEquals(listOf(0f, 4f, 5f, 0f, 0f), dest)
+		}
+
+		run {
+			val src = mutableListOf(1f, 2f, 3f, 4f, 5f)
+			val dest = mutableListOf(0f, 0f, 0f, 0f, 0f)
+			src.copyInto(dest, destinationOffset = 3, startIndex = 1)
+			assertListEquals(listOf(0f, 0f, 0f, 2f, 3f, 4f, 5f), dest)
+		}
 	}
 
 	@Test

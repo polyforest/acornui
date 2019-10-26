@@ -24,6 +24,7 @@ import com.acornui.recycle.ObjectPool
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos)"))
 fun <E> arrayCopy(src: List<E>,
 				  srcPos: Int,
 				  dest: MutableList<E>,
@@ -41,6 +42,56 @@ fun <E> arrayCopy(src: List<E>,
 			dest.addOrSet(destIndex++, src[i])
 		}
 	}
+}
+
+/**
+ * Copies this list or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the
+ * destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of
+ * this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when [destinationOffset] < 0 or [destinationOffset] > destination.size
+ *
+ * Unlike [Array.copyInto] this can expand the size of [destination].
+ *
+ * @return the [destination] array.
+ */
+fun <T> List<T>.copyInto(destination: MutableList<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): MutableList<T> {
+	if (endIndex < startIndex) throw IndexOutOfBoundsException("endIndex is expected to be greater than startIndex <$startIndex> but was: <$endIndex>")
+	if (endIndex > size || endIndex < 0) throw IndexOutOfBoundsException("endIndex is out of range")
+	if (startIndex >= size || startIndex < 0) throw IndexOutOfBoundsException("startIndex is out of range")
+	if (destinationOffset < 0 || destinationOffset > destination.size) throw IndexOutOfBoundsException("destinationOffset must be between 0 and destination size.")
+
+	val n = endIndex - startIndex
+	val destLastIndex = destinationOffset + n - 1
+	val destToSource = startIndex - destinationOffset
+	for (i in destination.size..destLastIndex) {
+		destination.add(this[i + destToSource])
+	}
+
+	if (destinationOffset > startIndex) {
+		var dest = destinationOffset + endIndex - startIndex
+		for (i in endIndex - 1 downTo startIndex) {
+			destination[--dest] = this[i]
+		}
+	} else {
+		var dest = destinationOffset
+		for (i in startIndex..endIndex - 1) {
+			destination[dest++] = this[i]
+		}
+	}
+
+	// val delta = destinationOffset - startIndex
+
+
+	return destination
 }
 
 fun <E> List<E>.copy(): MutableList<E> {
@@ -695,7 +746,7 @@ fun <E> List<E>.subListSafe(startIndex: Int, toIndex: Int): List<E> {
  */
 fun <E, T : E> MutableList<E>.addAfter(element: T, after: E): T {
 	val index = indexOf(after)
-	require(index != -1) { "element $element not found. "}
+	require(index != -1) { "element $element not found. " }
 	add(index + 1, element)
 	return element
 }
@@ -708,7 +759,7 @@ fun <E, T : E> MutableList<E>.addAfter(element: T, after: E): T {
  */
 fun <E, T : E> MutableList<E>.addBefore(element: T, before: E): T {
 	val index = indexOf(before)
-	require(index != -1) { "element $element not found. "}
+	require(index != -1) { "element $element not found. " }
 	add(index, element)
 	return element
 }
