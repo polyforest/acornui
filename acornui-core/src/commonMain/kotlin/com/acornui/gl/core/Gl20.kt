@@ -33,10 +33,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
-import com.acornui.math.Matrix3Ro
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import kotlin.math.round
 
 interface Gl20 {
@@ -1021,6 +1018,7 @@ interface Gl20 {
 
 //	public fun texSubImage2D(target: Int, level: Int, offsetX: Int, yOffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: BufferView)
 
+	// TODO: Not implemented
 	fun texSubImage2D(target: Int, level: Int, xOffset: Int, yOffset: Int, format: Int, type: Int, texture: Texture)
 
 	fun uniform1f(location: GlUniformLocationRef, x: Float)
@@ -1032,7 +1030,6 @@ interface Gl20 {
 	fun uniform1iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform2f(location: GlUniformLocationRef, x: Float, y: Float)
-	fun uniform2f(location: GlUniformLocationRef, v: Vector2) = uniform2f(location, v.x, v.y)
 
 	fun uniform2fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
@@ -1041,8 +1038,6 @@ interface Gl20 {
 	fun uniform2iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform3f(location: GlUniformLocationRef, x: Float, y: Float, z: Float)
-	fun uniform3f(location: GlUniformLocationRef, v: Vector3) = uniform3f(location, v.x, v.y, v.z)
-	fun uniform3f(location: GlUniformLocationRef, c: ColorRo) = uniform3f(location, c.r, c.g, c.b)
 
 	fun uniform3fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
@@ -1051,9 +1046,6 @@ interface Gl20 {
 	fun uniform3iv(location: GlUniformLocationRef, v: IntArrayListRo)
 
 	fun uniform4f(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float)
-	fun uniform4f(location: GlUniformLocationRef, color: ColorRo) {
-		uniform4f(location, color.r, color.g, color.b, color.a)
-	}
 
 	fun uniform4fv(location: GlUniformLocationRef, v: FloatArrayListRo)
 
@@ -1289,9 +1281,27 @@ fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
 	scissor(round(x).toInt(), round(y).toInt(), round(width).toInt(), round(height).toInt())
 }
 
-fun Gl20.uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix4Ro) = uniformMatrix4fv(location, transpose, value.values)
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put(location: GlUniformLocationRef, transpose: Boolean, value: Matrix4Ro) = uniformMatrix4fv(location, transpose, value.values)
 
-fun Gl20.uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: Matrix3Ro) = uniformMatrix3fv(location, transpose, value.values)
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put(location: GlUniformLocationRef, transpose: Boolean, value: Matrix3Ro) = uniformMatrix3fv(location, transpose, value.values)
+
+
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put4(location: GlUniformLocationRef, color: ColorRo) {
+	uniform4f(location, color.r, color.g, color.b, color.a)
+}
+
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put(location: GlUniformLocationRef, c: ColorRo) = uniform3f(location, c.r, c.g, c.b)
+
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put(location: GlUniformLocationRef, v: Vector3Ro) = uniform3f(location, v.x, v.y, v.z)
+
+@Deprecated("Set directly on shader", level = DeprecationLevel.ERROR)
+fun Gl20.put(location: GlUniformLocationRef, v: Vector2Ro) = uniform2f(location, v.x, v.y)
+
 
 /**
  * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear

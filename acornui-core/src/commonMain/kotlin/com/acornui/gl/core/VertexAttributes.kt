@@ -44,8 +44,7 @@ class VertexAttributes(
 		var offset = 0
 		for (i in 0..attributes.lastIndex) {
 			val attribute = attributes[i]
-			if (attributeByUsage.containsKey(attribute.usage))
-				throw IllegalArgumentException("Cannot have two attributes with the same usage.")
+			require(!attributeByUsage.containsKey(attribute.usage)) { "Cannot have two attributes with the same usage." }
 			attributeByUsage[attribute.usage] = attribute
 			offsetsByUsage[attribute.usage] = offset shr 2
 			offset += attribute.size

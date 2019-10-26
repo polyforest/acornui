@@ -194,10 +194,10 @@ void main() {
 		if (isFirst) {
 			isFirst = false
 			// Poisson disk
-			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[0]"), -0.94201624f, -0.39906216f)
-			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[1]"), 0.94558609f, -0.76890725f)
-			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[2]"), -0.09418410f, -0.92938870f)
-			gl.uniform2f(getRequiredUniformLocation("u_poissonDisk[3]"), 0.34495938f, 0.29387760f)
+			uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
+			uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
+			uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
+			uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
 		}
 	}
 }
@@ -287,7 +287,7 @@ void main() {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0);  // set the fragment shader's texture to unit 0
+		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0);  // set the fragment shader's texture to unit 0
 	}
 
 }

@@ -224,10 +224,10 @@ VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "
 		if (isFirst) {
 			isFirst = false
 			// Poisson disk
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[0]"), -0.94201624f, -0.39906216f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[1]"), 0.94558609f, -0.76890725f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[2]"), -0.09418410f, -0.92938870f)
-			gl.uniform2f(getRequiredUniformLocation("poissonDisk[3]"), 0.34495938f, 0.29387760f)
+			uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
+			uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
+			uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
+			uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
 		}
 	}
 }

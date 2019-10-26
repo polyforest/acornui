@@ -20,9 +20,9 @@ import com.acornui.async.disposeOnShutdown
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Window
-import com.acornui.gl.core.*
 import kotlin.math.ceil
 
 
@@ -81,15 +81,16 @@ fun Scoped.createSmoothCorner(
 		val framebuffer = framebuffer(ceil(cRX).toInt(), ceil(cRY).toInt())
 		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
+		val uniforms = curvedShader.uniforms
 		glState.shader = curvedShader
 		framebuffer.begin()
 		clearAndReset()
 		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 		glState.useViewport(0, 0, framebuffer.widthPixels, framebuffer.heightPixels) {
-			gl.uniform2f(curvedShader.getRequiredUniformLocation("u_cornerRadius"), cRX, cRY)
+			uniforms.put("u_cornerRadius", cRX, cRY)
 
-			curvedShader.getUniformLocation("u_strokeThickness")?.let {
-				gl.uniform2f(it, sX, sY)
+			uniforms.getUniformLocation("u_strokeThickness")?.let {
+				uniforms.put(it, sX, sY)
 			}
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val batch = glState.batch

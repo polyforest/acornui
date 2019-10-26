@@ -340,11 +340,12 @@ class GlStateImpl(
 	private val _mvp = Matrix4()
 
 	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
-		val hasModel = _shader!!.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
+		val uniforms = _shader!!.uniforms
+		val hasModel = uniforms.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
 			if (viewProjectionCache.set(viewProjection, _shader!!, batch)) {
-				_shader!!.getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
-					gl.uniformMatrix4fv(it, false, viewTransform)
+				uniforms.getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
+					uniforms.put(it, viewTransform)
 				}
 			}
 			this.model = modelTransform
@@ -370,21 +371,22 @@ class GlStateImpl(
 		get() = if (_colorTransformationIsSet) _colorTransformation else null
 		set(value) {
 			batch.flush()
-			val useColorTransU = _shader!!.getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS)
+			val uniforms = _shader!!.uniforms
+			val useColorTransU = uniforms.getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS)
 			if (useColorTransU != null) {
 				if (value == null) {
 					_colorTransformationIsSet = false
-					gl.uniform1i(useColorTransU, 0)
+					uniforms.put(useColorTransU, 0)
 				} else {
 					_colorTransformationIsSet = true
 					_colorTransformation.set(value)
-					gl.uniform1i(useColorTransU, 1)
+					uniforms.put(useColorTransU, 1)
 
-					val colorTransU = _shader!!.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_TRANS)
-					gl.uniformMatrix4fv(colorTransU, false, value.matrix)
+					val colorTransU = uniforms.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_TRANS)
+					uniforms.put(colorTransU, value.matrix)
 
-					val colorOffsetU = _shader!!.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_OFFSET)
-					gl.uniform4f(colorOffsetU, value.offset)
+					val colorOffsetU = uniforms.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_OFFSET)
+					uniforms.put4(colorOffsetU, value.offset)
 				}
 			}
 		}
@@ -397,10 +399,11 @@ class GlStateImpl(
 		set(value) {
 			val changed = modelCache.set(value, _shader!!, batch)
 			if (changed) {
-				val hasNormalTrans = _shader!!.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)
+				val uniforms = _shader!!.uniforms
+				val hasNormalTrans = uniforms.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)
 				if (hasNormalTrans != null) {
 					tmpMat.set(value).setTranslation(0f, 0f).inv().tra()
-					gl.uniformMatrix3fv(hasNormalTrans, false, tmpMat)
+					uniforms.put(hasNormalTrans, tmpMat)
 				}
 			}
 		}
@@ -433,38 +436,19 @@ private class MatrixCache(
 	 * Applies the given matrix as the model transformation.
 	 */
 	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch): Boolean {
-		val uniform = shader.getUniformLocation(name) ?: return false
+		val uniforms = shader.uniforms
+		val uniform = uniforms.getUniformLocation(name) ?: return false
 		if (_shader != shader || value != _value) {
 			batch.flush()
 			_shader = shader
 			_value.set(value)
-			gl.uniformMatrix4fv(uniform, false, value)
+			uniforms.put(uniform, value)
 			return true
 		}
 		return false
 	}
 }
 
-private class ColorCache(
-		private val gl: Gl20,
-		private val name: String) {
-
-	private val _value = Color()
-	val value: ColorRo
-		get() = _value
-
-	private var _shader: ShaderProgram? = null
-
-	fun set(value: ColorRo, shader: ShaderProgram, batch: ShaderBatch) {
-		val uniform = shader.getUniformLocation(name) ?: return
-		if (_shader != shader || value != _value) {
-			batch.flush()
-			_shader = shader
-			_value.set(value)
-			gl.uniform4f(uniform, value)
-		}
-	}
-}
 
 /**
  * Temporarily uses a scissor rectangle, resetting to the old scissor rectangle after [inner].

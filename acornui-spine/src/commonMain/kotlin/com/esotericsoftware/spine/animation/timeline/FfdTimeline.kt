@@ -31,7 +31,6 @@
 
 package com.esotericsoftware.spine.animation.timeline
 
-import com.acornui.collection.arrayCopy
 import com.acornui.collection.fill
 import com.acornui.math.MathUtils
 import com.esotericsoftware.spine.Skeleton
@@ -80,7 +79,7 @@ class FfdTimeline(
 				}
 			} else {
 				vertices = FloatArray(vertexCount)
-				arrayCopy(frameVertices, 0, vertices, frame.offset, frameVertices.size)
+				frameVertices.copyInto(vertices, frame.offset, 0, frameVertices.size + frame.offset - 1)
 				//
 				if (attachment is MeshAttachment) {
 					val meshVertices = attachment.data.vertices

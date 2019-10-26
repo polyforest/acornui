@@ -100,20 +100,21 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			blurShader = disposeOnShutdown(BlurShader(gl))
 		}
 		val blurShader = blurShader!!
+		val uniforms = blurShader.uniforms
 		glState.useShader(blurShader) {
-			gl.uniform2f(blurShader.getRequiredUniformLocation("u_resolutionInv"), 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
+			uniforms.put("u_resolutionInv", 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
 			glState.setTexture(framebufferFilter.texture)
 			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
 			val passes = quality.passes
 			for (i in 1..passes) {
 				val p = i.toFloat() / passes.toFloat()
 				blurFramebufferA.begin()
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), 0f, blurY * p * 0.25f * window.scaleY)
+				uniforms.put("u_dir", 0f, blurY * p * 0.25f * window.scaleY)
 				glState.batch.putIdtQuad()
 				blurFramebufferA.end()
 				blurFramebufferB.begin()
 				glState.setTexture(blurFramebufferA.texture)
-				gl.uniform2f(blurShader.getRequiredUniformLocation("u_dir"), blurX * p * 0.25f * window.scaleX, 0f)
+				uniforms.put("u_dir", blurX * p * 0.25f * window.scaleX, 0f)
 				glState.batch.putIdtQuad()
 				blurFramebufferB.end()
 				glState.setTexture(blurFramebufferB.texture)

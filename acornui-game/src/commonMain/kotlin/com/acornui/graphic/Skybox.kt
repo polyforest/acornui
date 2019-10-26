@@ -174,7 +174,7 @@ class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner
 		gl.frontFace(Gl20.CW)
 		gl.cullFace(Gl20.BACK)
 
-		glState.viewProjection = viewProjection
+		glState.shader!!.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
 
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		val attributeLocation = shader.getAttributeLocationByUsage(VertexAttributeUsage.POSITION)
@@ -227,6 +227,6 @@ void main() {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
+		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0)  // set the fragment shader's texture to unit 0
 	}
 }

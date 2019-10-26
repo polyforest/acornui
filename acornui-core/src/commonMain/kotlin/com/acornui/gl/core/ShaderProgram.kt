@@ -16,25 +16,27 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.stringMapOf
 import com.acornui.Disposable
+import com.acornui.collection.*
+import com.acornui.observe.Observable
+import com.acornui.signal.Signal1
 import com.acornui.system.userInfo
 
 
-interface ShaderProgram : Disposable {
+interface ShaderProgram : Disposable, Observable {
 
 	val program: GlProgramRef
 
+	val uniforms: Uniforms
+
 	fun getAttributeLocationByUsage(usage: Int): Int
 	fun getAttributeLocation(name: String): Int
-	fun getUniformLocation(name: String): GlUniformLocationRef?
 
-	fun getRequiredUniformLocation(name: String): GlUniformLocationRef {
-		return getUniformLocation(name) ?: throw Exception("Uniform not found $name")
-	}
-
+	val isBound: Boolean
 	fun bind()
 	fun unbind()
+
+
 }
 
 object CommonShaderAttributes {
@@ -76,11 +78,19 @@ abstract class ShaderProgramBase(
 		)
 ) : ShaderProgram {
 
+	private val _changed = Signal1<Observable>()
+	override val changed = _changed.asRo()
+
+	private var _isBound: Boolean = false
+	override val isBound: Boolean
+		get() = _isBound
+
 	private val _program: GlProgramRef = gl.createProgram()
+	override val program: GlProgramRef = _program
+
 	private val vertexShader: GlShaderRef
 	private val fragmentShader: GlShaderRef
 
-	private val uniformLocationCache = stringMapOf<GlUniformLocationRef?>()
 	private val attributeLocationCache = stringMapOf<Int>()
 
 	init {
@@ -93,15 +103,20 @@ abstract class ShaderProgramBase(
 		}
 	}
 
-	override val program: GlProgramRef
-		get() = _program
+	override val uniforms: Uniforms = UniformsImpl(gl, _program).apply {
+		changed.add { _changed.dispatch(this@ShaderProgramBase) }
+	}
 
 	override fun bind() {
+		_isBound = true
 		gl.useProgram(_program)
+		uniforms.bind()
 	}
 
 	override fun unbind() {
+		_isBound = false
 		gl.useProgram(null)
+		uniforms.unbind()
 	}
 
 	override fun getAttributeLocationByUsage(usage: Int): Int {
@@ -114,13 +129,6 @@ abstract class ShaderProgramBase(
 			attributeLocationCache[name] = gl.getAttribLocation(_program, name)
 		}
 		return attributeLocationCache[name]!!
-	}
-
-	override fun getUniformLocation(name: String): GlUniformLocationRef? {
-		if (!uniformLocationCache.containsKey(name)) {
-			uniformLocationCache[name] = gl.getUniformLocation(_program, name)
-		}
-		return uniformLocationCache[name]
 	}
 
 	private fun compileShader(shaderSrc: String, shaderType: Int): GlShaderRef {
@@ -142,7 +150,6 @@ abstract class ShaderProgramBase(
 		gl.deleteShader(fragmentShader)
 		gl.deleteProgram(_program)
 	}
-
 
 }
 
@@ -198,7 +205,7 @@ void main() {
 
 	override fun bind() {
 		super.bind()
-		gl.uniform1i(getUniformLocation(CommonShaderUniforms.U_TEXTURE)!!, 0)  // set the fragment shader's texture to unit 0
+		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0)  // set the fragment shader's texture to unit 0
 	}
 
 }
@@ -217,7 +224,7 @@ val standardVertexAttributes = VertexAttributes(listOf(
 )
 
 val DEFAULT_SHADER_HEADER: String
-		get() = """
+	get() = """
 #version ${if (userInfo.isDesktop) "120" else "100"}
 #ifdef GL_ES
 #define LOW_P lowp

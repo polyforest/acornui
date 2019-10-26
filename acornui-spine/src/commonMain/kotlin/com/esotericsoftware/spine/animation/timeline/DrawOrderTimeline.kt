@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine.animation.timeline
 
-import com.acornui.collection.arrayCopy
+import com.acornui.collection.copyInto
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.SpineEvent
 import com.esotericsoftware.spine.animation.Animation
@@ -104,7 +104,7 @@ class DrawOrderTimeline(data: DrawOrderTimelineData) : Timeline {
 		val slots = skeleton.slots
 		val drawOrderToSetupIndex = drawOrders[frameIndex]
 		if (drawOrderToSetupIndex == null)
-			arrayCopy(slots, 0, drawOrder, 0, slots.size)
+			slots.copyInto(drawOrder)
 		else {
 			var i = 0
 			val n = drawOrderToSetupIndex.size

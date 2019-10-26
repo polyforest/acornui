@@ -54,11 +54,10 @@ class WebGlTexture(
 	private val _rgbData by lazy {
 		// Creates a temporary frame buffer, draws the image to that, uses gl readPixels to get the data, then disposes.
 		val batch = glState.batch
-		val previousShader = glState.shader
 		refInc()
 		val framebuffer = Framebuffer(gl, glState, widthPixels, heightPixels, false, false)
 		framebuffer.begin()
-		glState.viewProjection = Matrix4.IDENTITY
+		glState.shader!!.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, Matrix4.IDENTITY)
 		glState.setTexture(this)
 		glState.blendMode(BlendMode.NORMAL, false)
 		batch.putVertex(-1f, -1f, 0f, u = 0f, v = 0f)
@@ -70,7 +69,6 @@ class WebGlTexture(
 		val pixelData = BufferFactory.byteBuffer(widthPixels * heightPixels * 4)
 		gl.readPixels(0, 0, widthPixels, heightPixels, Gl20.RGBA, Gl20.UNSIGNED_BYTE, pixelData)
 		framebuffer.end()
-		glState.shader = previousShader
 		framebuffer.dispose()
 		val rgbData = RgbData(widthPixels, heightPixels, true)
 		val bytes = rgbData.bytes
