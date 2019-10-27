@@ -51,16 +51,6 @@ interface GlState {
 	val premultipliedAlpha: Boolean
 
 	/**
-	 * Applies the given matrix as the view-projection transformation.
-	 */
-	var viewProjection: Matrix4Ro
-
-	/**
-	 * Applies the given matrix as the model transformation.
-	 */
-	var model: Matrix4Ro
-
-	/**
 	 * Sets the color transformation matrix and offset uniforms.
 	 */
 	var colorTransformation: ColorTransformationRo?
@@ -107,7 +97,7 @@ interface GlState {
 	fun setScissor(x: Int, y: Int, width: Int, height: Int)
 
 	/**
-	 * Sets the [GlState.viewProjection] and [GlState.model] matrices.
+	 * Sets the model, view, and projection matrices.
 	 * This will set the gl uniforms `u_modelTrans` (if exists), `u_viewTrans` (if exists), and `u_projTrans`
 	 * The shader should have the following uniforms:
 	 * `u_projTrans` - Either MVP or VP if u_modelTrans is present.
@@ -168,9 +158,6 @@ class GlStateImpl(
 	 * The default shader for this application.
 	 */
 	private val defaultShader: ShaderProgram = DefaultShaderProgram(gl)
-
-	private val viewProjectionCache = MatrixCache(gl, CommonShaderUniforms.U_PROJ_TRANS)
-	private val modelCache = MatrixCache(gl, CommonShaderUniforms.U_MODEL_TRANS)
 
 	private var _activeTexture: Int = -1
 
@@ -242,11 +229,17 @@ class GlStateImpl(
 		get() = _shader
 		set(value) {
 			if (_shader == value) return
+			_shader?.uniforms?.changing?.remove(::uniformsChangingHandler)
 			batch.flush()
 			_shader?.unbind()
 			_shader = value
 			_shader?.bind()
+			_shader?.uniforms?.changing?.add(::uniformsChangingHandler)
 		}
+
+	private fun uniformsChangingHandler() {
+		batch.flush()
+	}
 
 	//----------------------------------------------------
 	// Blending
@@ -337,32 +330,26 @@ class GlStateImpl(
 		}
 	}
 
-	private val _mvp = Matrix4()
+	private val mvp = Matrix4()
+	private val tmpMat = Matrix3()
 
 	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
 		val uniforms = _shader!!.uniforms
 		val hasModel = uniforms.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 		if (hasModel) {
-			if (viewProjectionCache.set(viewProjection, _shader!!, batch)) {
-				uniforms.getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
-					uniforms.put(it, viewTransform)
-				}
+			uniforms.putOptional(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
+			uniforms.putOptional(CommonShaderUniforms.U_VIEW_TRANS, viewTransform)
+
+			uniforms.putOptional(CommonShaderUniforms.U_MODEL_TRANS, modelTransform)
+			uniforms.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)?.let {
+				tmpMat.set(modelTransform).setTranslation(0f, 0f).inv().tra()
+				uniforms.put(it, tmpMat)
 			}
-			this.model = modelTransform
 		} else {
-			this.viewProjection = if (modelTransform.isIdentity) {
-				viewProjection
-			} else {
-				_mvp.set(viewProjection).mul(modelTransform)
-			}
+			val v = if (modelTransform.isIdentity) viewProjection else mvp.set(viewProjection).mul(modelTransform)
+			uniforms.putOptional(CommonShaderUniforms.U_PROJ_TRANS, v)
 		}
 	}
-
-	override var viewProjection: Matrix4Ro
-		get() = viewProjectionCache.value
-		set(value) {
-			viewProjectionCache.set(value, _shader!!, batch)
-		}
 
 	private var _colorTransformationIsSet = false
 	private var _colorTransformation = ColorTransformation()
@@ -391,23 +378,6 @@ class GlStateImpl(
 			}
 		}
 
-
-	private val tmpMat = Matrix3()
-
-	override var model: Matrix4Ro
-		get() = modelCache.value
-		set(value) {
-			val changed = modelCache.set(value, _shader!!, batch)
-			if (changed) {
-				val uniforms = _shader!!.uniforms
-				val hasNormalTrans = uniforms.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)
-				if (hasNormalTrans != null) {
-					tmpMat.set(value).setTranslation(0f, 0f).inv().tra()
-					uniforms.put(hasNormalTrans, tmpMat)
-				}
-			}
-		}
-
 	init {
 		shader = defaultShader
 		blendMode(BlendMode.NORMAL, premultipliedAlpha = false)
@@ -421,34 +391,6 @@ class GlStateImpl(
 	}
 
 }
-
-private class MatrixCache(
-		private val gl: Gl20,
-		private val name: String) {
-
-	private val _value = Matrix4()
-	val value: Matrix4Ro
-		get() = _value
-
-	private var _shader: ShaderProgram? = null
-
-	/**
-	 * Applies the given matrix as the model transformation.
-	 */
-	fun set(value: Matrix4Ro, shader: ShaderProgram, batch: ShaderBatch): Boolean {
-		val uniforms = shader.uniforms
-		val uniform = uniforms.getUniformLocation(name) ?: return false
-		if (_shader != shader || value != _value) {
-			batch.flush()
-			_shader = shader
-			_value.set(value)
-			uniforms.put(uniform, value)
-			return true
-		}
-		return false
-	}
-}
-
 
 /**
  * Temporarily uses a scissor rectangle, resetting to the old scissor rectangle after [inner].

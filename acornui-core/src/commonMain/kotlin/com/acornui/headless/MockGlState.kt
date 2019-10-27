@@ -35,12 +35,6 @@ object MockGlState : GlState {
 		get() = BlendMode.NONE
 	override val premultipliedAlpha: Boolean
 		get() = false
-	override var viewProjection: Matrix4Ro
-		get() = Matrix4.IDENTITY
-		set(value) {}
-	override var model: Matrix4Ro
-		get() = Matrix4.IDENTITY
-		set(value) {}
 	override var colorTransformation: ColorTransformationRo?
 		get() = ColorTransformation.IDENTITY
 		set(value) {}

@@ -17,13 +17,15 @@
 package com.acornui.gl.core
 
 import com.acornui.Disposable
-import com.acornui.collection.*
-import com.acornui.observe.Observable
-import com.acornui.signal.Signal1
+import com.acornui.collection.stringMapOf
 import com.acornui.system.userInfo
+import kotlin.collections.Map
+import kotlin.collections.listOf
+import kotlin.collections.mapOf
+import kotlin.collections.set
 
 
-interface ShaderProgram : Disposable, Observable {
+interface ShaderProgram : Disposable {
 
 	val program: GlProgramRef
 
@@ -78,9 +80,6 @@ abstract class ShaderProgramBase(
 		)
 ) : ShaderProgram {
 
-	private val _changed = Signal1<Observable>()
-	override val changed = _changed.asRo()
-
 	private var _isBound: Boolean = false
 	override val isBound: Boolean
 		get() = _isBound
@@ -103,9 +102,7 @@ abstract class ShaderProgramBase(
 		}
 	}
 
-	override val uniforms: Uniforms = UniformsImpl(gl, _program).apply {
-		changed.add { _changed.dispatch(this@ShaderProgramBase) }
-	}
+	override val uniforms: Uniforms = UniformsImpl(gl, _program)
 
 	override fun bind() {
 		_isBound = true

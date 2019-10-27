@@ -16,13 +16,23 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.*
+import com.acornui.collection.stringMapOf
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.observe.Observable
+import com.acornui.signal.Signal
+import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
+import kotlin.collections.HashMap
+import kotlin.collections.MutableMap
+import kotlin.collections.contentEquals
+import kotlin.collections.copyInto
+import kotlin.collections.fill
+import kotlin.collections.getOrPut
+import kotlin.collections.set
 
-interface Uniforms : Observable {
+interface Uniforms {
+
+	val changing: Signal<()->Unit>
 
 	val isBound: Boolean
 	fun bind()
@@ -165,8 +175,8 @@ fun Uniforms.putOptional(name: String, v: Vector2Ro) = getUniformLocation(name)?
 
 class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Uniforms {
 
-	private val _changed = Signal1<Observable>()
-	override val changed = _changed.asRo()
+	private val _changing = Signal0()
+	override val changing = _changing.asRo()
 
 	private val uniformLocationCache = stringMapOf<GlUniformLocationRef?>()
 
@@ -234,6 +244,7 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		require(v.size in 1..4)
 		val existing = uniformsIv.getOrPut(location) { IntArray(v.size) }
 		if (!existing.contentEquals(v)) {
+			_changing.dispatch()
 			v.copyInto(existing)
 			when (v.size) {
 				1 -> gl.uniform1iv(location, v)
@@ -241,7 +252,6 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 				3 -> gl.uniform3iv(location, v)
 				4 -> gl.uniform4iv(location, v)
 			}
-			_changed.dispatch(this)
 		}
 	}
 
@@ -255,10 +265,10 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsIv.getOrPut(location) { IntArray(2) }
 		if (existing[0] != x || existing[1] != y) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			gl.uniform2i(location, x, y)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -266,11 +276,11 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsIv.getOrPut(location) { IntArray(3) }
 		if (existing[0] != x || existing[1] != y || existing[2] != z) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			existing[2] = z
 			gl.uniform3i(location, x, y, z)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -278,12 +288,12 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsIv.getOrPut(location) { IntArray(4) }
 		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			existing[2] = z
 			existing[3] = w
 			gl.uniform4i(location, x, y, z, w)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -292,6 +302,7 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		require(v.size in 1..4)
 		val existing = uniformsFv.getOrPut(location) { FloatArray(v.size) }
 		if (!existing.contentEquals(v)) {
+			_changing.dispatch()
 			v.copyInto(existing)
 			when (v.size) {
 				1 -> gl.uniform1fv(location, v)
@@ -299,7 +310,6 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 				3 -> gl.uniform3fv(location, v)
 				4 -> gl.uniform4fv(location, v)
 			}
-			_changed.dispatch(this)
 		}
 	}
 
@@ -313,10 +323,10 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsFv.getOrPut(location) { FloatArray(2) }
 		if (existing[0] != x || existing[1] != y) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			gl.uniform2f(location, x, y)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -324,11 +334,11 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsFv.getOrPut(location) { FloatArray(3) }
 		if (existing[0] != x || existing[1] != y || existing[2] != z) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			existing[2] = z
 			gl.uniform3f(location, x, y, z)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -336,12 +346,12 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsFv.getOrPut(location) { FloatArray(4) }
 		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
+			_changing.dispatch()
 			existing[0] = x
 			existing[1] = y
 			existing[2] = z
 			existing[3] = w
 			gl.uniform4f(location, x, y, z, w)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -349,9 +359,9 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsMat2.getOrPut(location) { Matrix2() }
 		if (existing != value) {
+			_changing.dispatch()
 			existing.set(value)
 			gl.uniformMatrix2fv(location, false, value.values)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -359,9 +369,9 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsMat3.getOrPut(location) { Matrix3() }
 		if (existing != value) {
+			_changing.dispatch()
 			existing.set(value)
 			gl.uniformMatrix3fv(location, false, value.values)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -369,9 +379,9 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		checkBound()
 		val existing = uniformsMat4.getOrPut(location) { Matrix4() }
 		if (existing != value) {
+			_changing.dispatch()
 			existing.set(value)
 			gl.uniformMatrix4fv(location, false, value.values)
-			_changed.dispatch(this)
 		}
 	}
 
@@ -382,9 +392,9 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 	private inline fun <T> MutableMap<GlUniformLocationRef, T>.change(location: GlUniformLocationRef, newValue: T, onChanged: () -> Unit) {
 		checkBound()
 		if (this[location] != newValue) {
+			_changing.dispatch()
 			this[location] = newValue
 			onChanged()
-			_changed.dispatch(this@UniformsImpl)
 		}
 	}
 }
