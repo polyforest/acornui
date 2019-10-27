@@ -262,21 +262,9 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		}
 	}
 
-	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
-		checkBound()
-		val existing = uniformsFv.getOrPut(location) { FloatArray(2) }
-		if (existing[0] != x || existing[1] != y || existing[2] != z) {
-			existing[0] = x
-			existing[1] = y
-			existing[2] = z
-			gl.uniform3f(location, x, y, z)
-			_changed.dispatch(this)
-		}
-	}
-
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
 		checkBound()
-		val existing = uniformsIv.getOrPut(location) { IntArray(2) }
+		val existing = uniformsIv.getOrPut(location) { IntArray(3) }
 		if (existing[0] != x || existing[1] != y || existing[2] != z) {
 			existing[0] = x
 			existing[1] = y
@@ -286,14 +274,17 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 		}
 	}
 
-	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
-		checkBound()
-		gl.uniform4f(location, x, y, z, w)
-	}
-
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
 		checkBound()
-		gl.uniform4i(location, x, y, z, w)
+		val existing = uniformsIv.getOrPut(location) { IntArray(4) }
+		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
+			existing[0] = x
+			existing[1] = y
+			existing[2] = z
+			existing[3] = w
+			gl.uniform4i(location, x, y, z, w)
+			_changed.dispatch(this)
+		}
 	}
 
 	override fun put(location: GlUniformLocationRef, v: FloatArray) {
@@ -325,6 +316,31 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 			existing[0] = x
 			existing[1] = y
 			gl.uniform2f(location, x, y)
+			_changed.dispatch(this)
+		}
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
+		checkBound()
+		val existing = uniformsFv.getOrPut(location) { FloatArray(3) }
+		if (existing[0] != x || existing[1] != y || existing[2] != z) {
+			existing[0] = x
+			existing[1] = y
+			existing[2] = z
+			gl.uniform3f(location, x, y, z)
+			_changed.dispatch(this)
+		}
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
+		checkBound()
+		val existing = uniformsFv.getOrPut(location) { FloatArray(4) }
+		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
+			existing[0] = x
+			existing[1] = y
+			existing[2] = z
+			existing[3] = w
+			gl.uniform4f(location, x, y, z, w)
 			_changed.dispatch(this)
 		}
 	}
