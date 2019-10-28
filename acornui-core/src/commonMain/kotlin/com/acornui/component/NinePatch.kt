@@ -19,7 +19,6 @@ package com.acornui.component
 import com.acornui.RenderableBase
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
-import com.acornui.setCamera
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
@@ -279,7 +278,6 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 		val tint = renderContext.colorTint
 		val transform = renderContext.modelTransform
 		if (texture == null || width <= 0f || height <= 0f || tint.a <= 0f) return
-		glState.setCamera(renderContext)
 
 		transform.rot(worldNormal.set(normal)).nor()
 

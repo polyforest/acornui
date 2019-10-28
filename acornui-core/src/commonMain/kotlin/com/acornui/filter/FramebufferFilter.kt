@@ -30,6 +30,7 @@ import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
+import com.acornui.useCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -99,7 +100,9 @@ class FramebufferFilter(
 
 		framebuffer.begin()
 		clearAndReset(clearColor, clearMask)
-		contents.render(renderContext)
+		glState.useCamera(renderContext) {
+			contents.render(renderContext)
+		}
 		framebuffer.end()
 		framebuffer.drawable(sprite)
 		setDrawPadding(renderable.padding)

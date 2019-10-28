@@ -31,7 +31,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.PI
 import com.acornui.math.Pad
 import com.acornui.math.Vector3
-import com.acornui.setCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.*
@@ -515,7 +514,6 @@ class Rect(
 				fillColor.set(style.backgroundColor).mul(tint)
 				borderColors.set(style.borderColors).mul(tint)
 
-				glState.setCamera(renderContext)
 				val batch = glState.batch
 				glState.setTexture(glState.whitePixel)
 				glState.blendMode(BlendMode.NORMAL, false)

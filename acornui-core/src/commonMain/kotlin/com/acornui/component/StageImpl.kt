@@ -29,7 +29,9 @@ import com.acornui.popup.PopUpManager
 import com.acornui.function.as2
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
+import com.acornui.setCamera
 import com.acornui.time.timer
+import com.acornui.useCamera
 
 /**
  * @author nbilyk
@@ -133,6 +135,11 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		glState.batch.resetRenderCount()
 		super.render(renderContext)
 		glState.batch.flush()
+	}
+
+	override fun draw(renderContext: RenderContextRo) {
+		glState.setCamera(renderContext, useModel = false)
+		super.draw(renderContext)
 	}
 
 	override fun dispose() {

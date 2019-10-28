@@ -20,8 +20,8 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.RenderContextRo
 import com.acornui.component.UiComponentImpl
 import com.acornui.di.Owned
-import com.acornui.setCamera
 import com.acornui.time.onTick
+import com.acornui.useCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -104,11 +104,12 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	}
 
 	override fun render(renderContext: RenderContextRo) {
-		glState.setCamera(renderContext, useModel = true)
-		val colorTint = renderContext.colorTint
+		glState.useCamera(renderContext, useModel = true) {
+			val colorTint = renderContext.colorTint
 
-		for (i in 0.._children.lastIndex) {
-			_children[i].draw(glState, colorTint)
+			for (i in 0.._children.lastIndex) {
+				_children[i].draw(glState, colorTint)
+			}
 		}
 	}
 

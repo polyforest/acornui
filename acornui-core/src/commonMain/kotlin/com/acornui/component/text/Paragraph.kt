@@ -29,7 +29,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.Vector3
 import com.acornui.selection.SelectionRange
-import com.acornui.setCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.ceil
@@ -377,7 +376,6 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			}
 			if (lineEnd <= lineStart)
 				return
-			glState.setCamera(renderContext)
 
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
@@ -392,7 +390,6 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 				}
 			}
 		} else {
-			glState.setCamera(renderContext)
 			for (i in 0..textElements.lastIndex) {
 				textElements[i].renderBackground(clip, transform, tint)
 			}

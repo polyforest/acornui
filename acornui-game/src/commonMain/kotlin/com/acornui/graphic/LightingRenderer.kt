@@ -25,6 +25,7 @@ import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4
+import com.acornui.setCamera
 
 /**
  * @author nbilyk
@@ -111,7 +112,7 @@ class LightingRenderer(
 		gl.depthFunc(Gl20.LESS)
 
 		directionalLightShadows(directionalShadowMapShader, camera, directionalLight, renderOcclusion)
-		pointLightShadows(pointShadowMapShader, pointLights, renderOcclusion)
+		pointLightShadows(pointShadowMapShader, camera, pointLights, renderOcclusion)
 
 		// Reset the gl properties
 		gl.disable(Gl20.DEPTH_TEST)
@@ -124,6 +125,7 @@ class LightingRenderer(
 	private fun directionalLightShadows(directionalShadowMapShader: ShaderProgram, camera: CameraRo, directionalLight: DirectionalLight, renderOcclusion: () -> Unit) {
 		// Directional light shadows
 		glState.shader = directionalShadowMapShader
+		glState.setCamera(camera)
 		val uniforms = directionalShadowMapShader.uniforms
 		directionalShadowsFbo.begin()
 		val oldClearColor = window.clearColor
@@ -142,8 +144,9 @@ class LightingRenderer(
 	}
 
 
-	private fun pointLightShadows(pointShadowMapShader: ShaderProgram, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
+	private fun pointLightShadows(pointShadowMapShader: ShaderProgram, camera: CameraRo, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
 		glState.shader = pointShadowMapShader
+		pointShadowMapShader.uniforms.setCamera(camera)
 		val uniforms = pointShadowMapShader.uniforms
 		val u_pointLightMvp = uniforms.getRequiredUniformLocation("u_pointLightMvp")
 		val oldClearColor = window.clearColor

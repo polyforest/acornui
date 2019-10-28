@@ -29,7 +29,7 @@ import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.freeAll
-import com.acornui.setCamera
+import com.acornui.useCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -104,10 +104,11 @@ open class StaticMeshComponent(
 
 	override fun draw(renderContext: RenderContextRo) {
 		val mesh = mesh ?: return
-		glState.setCamera(renderContext, useModel = true)
 		colorTransformation.tint(renderContext.colorTint)
 		glState.useColorTransformation(colorTransformation) {
-			mesh.render()
+			glState.useCamera(renderContext, useModel = true) {
+				mesh.render()
+			}
 		}
 	}
 
@@ -130,14 +131,14 @@ open class StaticMeshComponent(
 	}
 }
 
-inline fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent  {
+inline fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.init()
 	return s
 }
 
-inline fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent  {
+inline fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.mesh = mesh
@@ -167,7 +168,8 @@ class StaticMesh(
 	private val oldTextures = ArrayList<TextureRo>()
 
 	init {
-		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION) ?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
+		val positionAttribute = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION)
+				?: throw IllegalArgumentException("A static mesh must at least have a position attribute.")
 		if (positionAttribute.numComponents != 3) throw IllegalArgumentException("position must be 3 components.")
 	}
 

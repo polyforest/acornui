@@ -22,6 +22,7 @@ import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
 import com.acornui.component.layout.SizableRo
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.useCamera
 import com.acornui.graphic.CameraRo
 import com.acornui.math.*
 
@@ -98,6 +99,14 @@ abstract class RenderableBase : Renderable, Sizable {
 fun GlState.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
 	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
 	else setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
+}
+
+/**
+ * Sets the camera on this [GlState] using this the given [renderContext].
+ */
+fun GlState.useCamera(renderContext: RenderContextRo, useModel: Boolean = false, inner: () -> Unit) {
+	if (useModel) shader!!.uniforms.useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform, inner)
+	else shader!!.uniforms.useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, Matrix4.IDENTITY, inner)
 }
 
 /**

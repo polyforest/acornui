@@ -19,7 +19,6 @@ package com.acornui.component
 import com.acornui.RenderableBase
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
-import com.acornui.setCamera
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
@@ -187,7 +186,6 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 		val tint = renderContext.colorTint
 		val transform = renderContext.modelTransform
 		if (texture == null || width == 0f || height == 0f) return // Nothing to draw
-		glState.setCamera(renderContext)
 		val tmpVec = tmpVec
 		transform.rot(normalWorld.set(normalLocal)).nor()
 
