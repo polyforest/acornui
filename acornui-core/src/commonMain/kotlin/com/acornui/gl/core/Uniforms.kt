@@ -21,7 +21,6 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
-import com.acornui.signal.Signal1
 import kotlin.collections.HashMap
 import kotlin.collections.MutableMap
 import kotlin.collections.contentEquals

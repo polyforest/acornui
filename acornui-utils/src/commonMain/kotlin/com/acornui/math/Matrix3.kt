@@ -16,6 +16,7 @@
 
 package com.acornui.math
 
+import com.acornui.recycle.ObjectPool
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
@@ -497,6 +498,14 @@ class Matrix3() : Matrix3Ro {
 			matA[M02] = v02
 			matA[M12] = v12
 			matA[M22] = v22
+		}
+
+		private val pool = ObjectPool { Matrix3() }
+
+		fun obtain(): Matrix3 = pool.obtain()
+		fun free(value: Matrix3) {
+			value.idt()
+			pool.free(value)
 		}
 	}
 }

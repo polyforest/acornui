@@ -104,7 +104,9 @@ interface GlState {
 	 * `u_modelTrans` (optional) - M
 	 * `u_viewTrans` (optional) - V
 	 */
-	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro = Matrix4.IDENTITY)
+	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro = Matrix4.IDENTITY) {
+		shader!!.uniforms.setCamera(viewProjection, viewTransform, modelTransform)
+	}
 
 	/**
 	 * The current viewport rectangle, in gl window coordinates.
@@ -330,27 +332,6 @@ class GlStateImpl(
 		}
 	}
 
-	private val mvp = Matrix4()
-	private val tmpMat = Matrix3()
-
-	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
-		val uniforms = _shader!!.uniforms
-		val hasModel = uniforms.getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
-		if (hasModel) {
-			uniforms.putOptional(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
-			uniforms.putOptional(CommonShaderUniforms.U_VIEW_TRANS, viewTransform)
-
-			uniforms.putOptional(CommonShaderUniforms.U_MODEL_TRANS, modelTransform)
-			uniforms.getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)?.let {
-				tmpMat.set(modelTransform).setTranslation(0f, 0f).inv().tra()
-				uniforms.put(it, tmpMat)
-			}
-		} else {
-			val v = if (modelTransform.isIdentity) viewProjection else mvp.set(viewProjection).mul(modelTransform)
-			uniforms.putOptional(CommonShaderUniforms.U_PROJ_TRANS, v)
-		}
-	}
-
 	private var _colorTransformationIsSet = false
 	private var _colorTransformation = ColorTransformation()
 
@@ -482,4 +463,51 @@ fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: () -> Unit)
 
 fun ColorTransformation.combine(previous: ColorTransformationRo?, cT: ColorTransformationRo): ColorTransformation {
 	return if (previous != null) set(previous).mul(cT) else set(cT)
+}
+
+private val mvp = Matrix4()
+private val tmpMat = Matrix3()
+
+fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, modelTransformOut: Matrix4) {
+	getUniformLocation(CommonShaderUniforms.U_PROJ_TRANS)?.let {
+		get(it, viewProjectionOut)
+	}
+	getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
+		get(it, viewTransformOut)
+	}
+	getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS)?.let {
+		get(it, modelTransformOut)
+	}
+}
+
+fun Uniforms.setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
+	val hasModel = getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
+	if (hasModel) {
+		putOptional(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
+		putOptional(CommonShaderUniforms.U_VIEW_TRANS, viewTransform)
+		putOptional(CommonShaderUniforms.U_MODEL_TRANS, modelTransform)
+		getUniformLocation(CommonShaderUniforms.U_NORMAL_TRANS)?.let {
+			tmpMat.set(modelTransform).setTranslation(0f, 0f).inv().tra()
+			put(it, tmpMat)
+		}
+	} else {
+		val v = if (modelTransform.isIdentity) viewProjection else mvp.set(viewProjection).mul(modelTransform)
+		putOptional(CommonShaderUniforms.U_PROJ_TRANS, v)
+	}
+}
+
+/**
+ * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
+ */
+fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro, inner: ()->Unit) {
+	val previousViewProjection = Matrix4.obtain()
+	val previousViewTransform = Matrix4.obtain()
+	val previousModelTransform = Matrix4.obtain()
+	getCamera(previousViewProjection, previousViewTransform, previousModelTransform)
+	setCamera(viewProjection, viewTransform, modelTransform)
+	inner()
+	setCamera(previousViewProjection, previousViewTransform, previousModelTransform)
+	Matrix4.free(previousViewProjection)
+	Matrix4.free(previousViewTransform)
+	Matrix4.free(previousModelTransform)
 }
