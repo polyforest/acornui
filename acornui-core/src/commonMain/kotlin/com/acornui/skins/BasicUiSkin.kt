@@ -189,7 +189,9 @@ open class BasicUiSkin(
 				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
 			}
 		}
-		target.addStyleRule(charStyle { fontFamily = "Roboto" })
+		theme.bodyFont.addStyles(files)
+		theme.headingFont.addStyles(files, withAncestor(TextStyleTags.heading))
+		theme.formLabelFont.addStyles(files, withAncestor(formLabelStyle))
 	}
 
 	protected open fun panelStyle() {
@@ -264,6 +266,24 @@ open class BasicUiSkin(
 		}
 
 		target.addStyleRule(headingGroupStyle, HeadingGroup)
+	}
+
+	private fun ThemeFontVo.addStyles(files: Files, filter: StyleFilter = AlwaysFilter) {
+		target.addStyleRule(charStyle {
+			colorTint = color
+			fontFamily = family
+			fontSize = size
+			fontWeight = weight
+			fontStyle = style
+		}, filter)
+
+		target.addStyleRule(charStyle {
+			fontWeight = getStrongWeight(files)
+		}, filter and withAncestor(TextStyleTags.strong))
+
+
+		if (hasItalic(files))
+			target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis) and filter)
 	}
 
 	protected open fun themeRectStyle() {

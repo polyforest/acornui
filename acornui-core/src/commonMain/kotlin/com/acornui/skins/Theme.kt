@@ -17,8 +17,13 @@
 package com.acornui.skins
 
 import com.acornui.component.ButtonState
+import com.acornui.component.text.BitmapFontRequest
+import com.acornui.component.text.FontSize
+import com.acornui.component.text.FontStyle
+import com.acornui.component.text.FontWeight
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.io.file.Files
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlinx.serialization.Serializable
@@ -97,7 +102,11 @@ data class Theme(
 		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
 		val toggledIconColor: ColorRo = Color(0.5f, 0.5f, 0.25f, 0.8f),
 
-		val atlasPath: String = "assets/uiskin/uiskin.json"
+		val atlasPath: String = "assets/uiskin/uiskin.json",
+
+		val bodyFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333333ff)),
+		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
+		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x27273aff))
 )
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
@@ -134,4 +143,27 @@ fun Theme.getButtonStrokeColor(buttonState: ButtonState): ColorRo {
 
 		ButtonState.DISABLED -> strokeDisabled
 	}
+}
+
+@Serializable
+data class ThemeFontVo(
+		val family: String,
+		val size: String = FontSize.REGULAR,
+		val weight: String = FontWeight.REGULAR,
+		val style: String = FontStyle.NORMAL,
+		val color: ColorRo
+) {
+
+	fun getStrongWeight(files: Files): String {
+		val index = FontWeight.values.indexOf(weight)
+		for (i in index + 1..FontWeight.values.lastIndex) {
+			val w = FontWeight.values[i]
+			val found = FontPathResolver.getPath(files, BitmapFontRequest(family, size, w, style, 1f))
+			if (found != null) return w
+		}
+		return weight
+	}
+
+	fun hasItalic(files: Files): Boolean = FontPathResolver.getPath(files, BitmapFontRequest(family, size, weight, FontStyle.ITALIC, 1f)) != null
+	fun hasWeight(files: Files, weight: String): Boolean = FontPathResolver.getPath(files, BitmapFontRequest(family, size, weight, style, 1f)) != null
 }
