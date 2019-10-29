@@ -102,30 +102,36 @@ class SignalTest {
 	@Test fun concurrentAdd() {
 		val arr = arrayListOf<Int>()
 
-		val s = Signal1<Int>()
-		s.add {
+		val s = Signal1<Unit>()
+		s.addOnce {
 			arr.add(1)
-			s.add {
+			s.addOnce {
 				arr.add(4)
-				s.add {
+				s.addOnce {
 					arr.add(7)
-					s.add {
+					s.addOnce {
 						arr.add(8)
 					}
 				}
 			}
 		}
-		s.add {
+		s.addOnce {
 			arr.add(2)
-			s.add { arr.add(5) }
-			s.add { arr.add(6) }
+			s.addOnce { arr.add(5) }
+			s.addOnce { arr.add(6) }
 		}
-		s.add {
+		s.addOnce {
 			arr.add(3)
 		}
 
-		s.dispatch(0)
-
+		// Adding a handler within a handler should not invoke the inner handler until next dispatch.
+		s.dispatch(Unit)
+		assertListEquals(arrayOf(1, 2, 3), arr)
+		s.dispatch(Unit)
+		assertListEquals(arrayOf(1, 2, 3, 4, 5, 6), arr)
+		s.dispatch(Unit)
+		assertListEquals(arrayOf(1, 2, 3, 4, 5, 6, 7), arr)
+		s.dispatch(Unit)
 		assertListEquals(arrayOf(1, 2, 3, 4, 5, 6, 7, 8), arr)
 	}
 

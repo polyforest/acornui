@@ -98,6 +98,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	protected val handlers = arrayListOf<T>()
 	protected val isOnces = arrayListOf<Boolean>()
 	protected var cursor = -1
+	protected var n = -1
 
 	/**
 	 * True if the signal has handlers.
@@ -142,6 +143,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 		}
 		handlers.removeAt(index)
 		isOnces.removeAt(index)
+		n--
 	}
 
 	/**
@@ -168,30 +170,31 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 		if (cursor != -1)
 			throw Exception("This signal is currently dispatching.")
 		cursor = 0
+		n = handlers.size
 		try {
-			if (handlers.size <= 4) {
-				if (cursor < handlers.size) {
+			if (n <= 4) {
+				if (cursor < n) {
 					val isOnce1 = isOnces[cursor]
 					val handler1 = handlers[cursor]
 					if (isOnce1) removeAt(cursor)
 					executor(handler1)
 					cursor++
 				}
-				if (cursor < handlers.size) {
+				if (cursor < n) {
 					val isOnce2 = isOnces[cursor]
 					val handler2 = handlers[cursor]
 					if (isOnce2) removeAt(cursor)
 					executor(handler2)
 					cursor++
 				}
-				if (cursor < handlers.size) {
+				if (cursor < n) {
 					val isOnce3 = isOnces[cursor]
 					val handler3 = handlers[cursor]
 					if (isOnce3) removeAt(cursor)
 					executor(handler3)
 					cursor++
 				}
-				if (cursor < handlers.size) {
+				if (cursor < n) {
 					val isOnce4 = isOnces[cursor]
 					val handler4 = handlers[cursor]
 					if (isOnce4) removeAt(cursor)
@@ -199,7 +202,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 					cursor++
 				}
 			}
-			while (cursor < handlers.size) {
+			while (cursor < n) {
 				val isOnce = isOnces[cursor]
 				val handler = handlers[cursor]
 				if (isOnce) removeAt(cursor)
@@ -210,6 +213,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 			throw e
 		} finally {
 			cursor = -1
+			n = -1
 		}
 	}
 
