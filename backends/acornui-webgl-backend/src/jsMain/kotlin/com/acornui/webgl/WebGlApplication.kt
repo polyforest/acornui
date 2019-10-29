@@ -16,6 +16,7 @@
 
 package com.acornui.webgl
 
+import com.acornui.AppConfig
 import com.acornui.Version
 import com.acornui.asset.Loaders
 import com.acornui.component.HtmlComponent
@@ -38,7 +39,6 @@ import com.acornui.io.Bandwidth
 import com.acornui.io.Loader
 import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
-import com.acornui.io.file.FilesManifest
 import com.acornui.js.BrowserApplicationBase
 import com.acornui.js.file.JsFileIoManager
 import com.acornui.js.html.JsHtmlComponent
@@ -59,7 +59,7 @@ import kotlin.time.seconds
  * @author nbilyk
  */
 @Suppress("unused")
-open class WebGlApplication(private val rootId: String, manifest: FilesManifest? = null) : BrowserApplicationBase(manifest) {
+open class WebGlApplication(private val rootId: String) : BrowserApplicationBase() {
 
 	private val rootElement: HTMLElement by lazy {
 		(document.getElementById(rootId) as HTMLElement?) ?: throw Exception("The root element with id $rootId could not be found.")
@@ -172,5 +172,8 @@ open class WebGlApplication(private val rootId: String, manifest: FilesManifest?
 	companion object {
 		protected val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(BrowserApplicationBase.CANVAS)
 	}
+}
 
+suspend fun webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit) {
+	WebGlApplication(rootId).start(appConfig, onReady)
 }

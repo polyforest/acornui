@@ -41,7 +41,9 @@ object FrameDriver : Signal<FrameCallback>, Clearable {
 	override fun addBinding(callback: () -> Unit) = signal.addBinding(callback)
 	override fun removeBinding(callback: () -> Unit) = signal.removeBinding(callback)
 
-	fun dispatch(dT: Float) = signal.dispatch(dT)
+	fun dispatch(dT: Float) {
+		signal.dispatch(dT)
+	}
 	override fun clear() = signal.clear()
 }
 

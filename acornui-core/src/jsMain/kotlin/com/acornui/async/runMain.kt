@@ -23,7 +23,7 @@ import kotlinx.coroutines.*
  * possible we make the [com.acornui.Application.start] method `suspend`, and then wrap the main method in `runMain`.
  */
 actual fun runMain(block: suspend CoroutineScope.() -> Unit) {
-	GlobalScope.launch(Dispatchers.Unconfined) {
+	mainScope.launch(Dispatchers.Unconfined) {
 		block()
 	}
 }

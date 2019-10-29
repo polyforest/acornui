@@ -16,12 +16,14 @@
 
 package com.acornui.texturepacker
 
+import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.async.exitOnCompletion
 import com.acornui.async.globalLaunch
 import com.acornui.di.inject
-import com.acornui.headless.JvmHeadlessApplication
+import com.acornui.headless.headlessApplication
 import com.acornui.io.file.Files
+import com.acornui.io.file.ManifestUtil
 import com.acornui.texturepacker.writer.writeAtlas
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -34,7 +36,7 @@ fun main(args: Array<String>) {
 }
 
 fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String) = runBlocking {
-	JvmHeadlessApplication(srcDir.path).start {
+	headlessApplication(AppConfig(manifest = ManifestUtil.createManifest(srcDir, File("./")))) {
 		val files = inject(Files)
 		val rel = srcDir.absoluteFile.toRelativeString(File(".").absoluteFile)
 		val dirEntry = files.getDir(rel)

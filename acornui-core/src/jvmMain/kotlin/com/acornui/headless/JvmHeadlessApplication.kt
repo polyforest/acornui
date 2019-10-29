@@ -29,9 +29,6 @@ import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
-import com.acornui.io.file.FilesManifest
-import com.acornui.io.file.ManifestUtil
-import java.io.File
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -39,22 +36,7 @@ import kotlin.time.seconds
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.
  * @author nbilyk
  */
-open class JvmHeadlessApplication(
-
-		/**
-		 * If set, the [AppConfig.assetsManifestPath] will be ignored and a manifest will be created from the file
-		 * system.
-		 */
-		manifest: FilesManifest? = null
-) : ApplicationBase(manifest) {
-
-	/**
-	 * Generate an asset manifest from the files in the given directory.
-	 * Using this constructor means that the [AppConfig.assetsManifestPath] will be ignored.
-	 */
-	constructor(assetsPath: String, assetsRoot: String = "./") : this(ManifestUtil.createManifest(File(assetsPath), File(assetsRoot)))
-
-	constructor(assetsDir: File, assetsRootDir: File = File("./")) : this(ManifestUtil.createManifest(assetsDir, assetsRootDir))
+open class JvmHeadlessApplication : ApplicationBase() {
 
 	init {
 		uiThread = Thread.currentThread()

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:JvmName("RunMainUtils")
 
 package com.acornui.async
 
@@ -24,5 +25,5 @@ import kotlinx.coroutines.runBlocking
  * possible we make the [com.acornui.Application.start] method `suspend`, and then wrap the main method in `runMain`.
  */
 actual fun runMain(block: suspend CoroutineScope.() -> Unit) {
-	runBlocking { block() }
+	runBlocking(mainScope.coroutineContext) { block() }
 }

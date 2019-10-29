@@ -17,6 +17,12 @@
 package com.acornui.async
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+
+/**
+ * The coroutine scope in which [runMain] is executed.
+ */
+val mainScope = CoroutineScope(GlobalScope.coroutineContext)
 
 /**
  * JS doesn't have the equivalent of 'runBlocking', but in order to make the JS and JVM backends as consistent as

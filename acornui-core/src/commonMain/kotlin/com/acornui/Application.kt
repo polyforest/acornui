@@ -21,14 +21,18 @@ import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
 import com.acornui.async.applicationScopeKey
+import com.acornui.async.mainScope
 import com.acornui.di.*
-import com.acornui.io.*
+import com.acornui.io.BinaryLoader
+import com.acornui.io.TextLoader
 import com.acornui.io.file.Files
 import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.serialization.jsonParse
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 /**
  * The common interface to all Acorn UI applications.
@@ -41,13 +45,7 @@ interface Application {
 /**
  * Utilities for boot tasks in an application.
  */
-abstract class ApplicationBase(
-
-		/**
-		 * If set, the [AppConfig.assetsManifestPath] will be ignored and this manifest will be used.
-		 */
-		private val manifest: FilesManifest?
-) : Application {
+abstract class ApplicationBase : Application {
 
 	/**
 	 * The number of seconds before logs are created for any remaining boot tasks.
@@ -56,8 +54,11 @@ abstract class ApplicationBase(
 
 	protected suspend fun config() = get(AppConfig)
 
+	/**
+	 * A supervisor is created to say that if a child job fails, the bootstrap shouldn't fail.
+	 */
 	private val supervisor = SupervisorJob()
-	protected val applicationScope = CoroutineScope(GlobalScope.coroutineContext + supervisor)
+	protected val applicationScope = CoroutineScope(mainScope.coroutineContext + supervisor)
 	protected val bootstrap = Bootstrap(applicationScope)
 
 	init {
@@ -78,7 +79,7 @@ abstract class ApplicationBase(
 
 	protected open val filesTask by task(Files) {
 		val config = config()
-		val manifest = manifest ?: if (config.assetsManifestPath == null) FilesManifest(emptyList())
+		val manifest = config.manifest ?: if (config.assetsManifestPath == null) FilesManifest(emptyList())
 		else {
 			val manifestJson = get(Loaders.textLoader).load(config.rootPath + config.assetsManifestPath)
 			jsonParse(FilesManifest.serializer(), manifestJson)

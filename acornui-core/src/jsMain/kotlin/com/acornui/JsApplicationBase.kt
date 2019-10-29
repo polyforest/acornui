@@ -25,7 +25,6 @@ import com.acornui.di.*
 import com.acornui.graphic.Window
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
-import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
@@ -34,10 +33,6 @@ import com.acornui.selection.SelectionManagerImpl
 import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.LOADING
 import org.w3c.xhr.XMLHttpRequest
@@ -50,7 +45,7 @@ import kotlin.coroutines.suspendCoroutine
  * The application base that would be used by all JS-based applications, including node-js.
  */
 @Suppress("unused")
-abstract class JsApplicationBase(manifest: FilesManifest?) : ApplicationBase(manifest) {
+abstract class JsApplicationBase : ApplicationBase() {
 
 	private var frameDriver: JsApplicationRunner? = null
 

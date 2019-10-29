@@ -44,7 +44,6 @@ import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.JvmClickDispatcher
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.*
-import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.lwjgl.audio.NoAudioException
 import com.acornui.lwjgl.audio.OpenAlAudioManager
@@ -74,7 +73,7 @@ import org.lwjgl.Version as LwjglVersion
  * @author nbilyk
  */
 @Suppress("unused")
-open class LwjglApplication(manifest: FilesManifest? = null) : ApplicationBase(manifest) {
+open class LwjglApplication : ApplicationBase() {
 
 	// If accessing the window id, use bootstrap.on(Window) { }
 	private var _windowId: Long = -1L
@@ -265,3 +264,6 @@ private class LwjglApplicationRunner(
 	}
 }
 
+suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit) {
+	LwjglApplication().start(appConfig, onReady)
+}
