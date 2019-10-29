@@ -146,7 +146,7 @@ class LightingRenderer(
 
 	private fun pointLightShadows(pointShadowMapShader: ShaderProgram, camera: CameraRo, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
 		glState.shader = pointShadowMapShader
-		pointShadowMapShader.uniforms.setCamera(camera)
+		glState.setCamera(camera)
 		val uniforms = pointShadowMapShader.uniforms
 		val u_pointLightMvp = uniforms.getRequiredUniformLocation("u_pointLightMvp")
 		val oldClearColor = window.clearColor
