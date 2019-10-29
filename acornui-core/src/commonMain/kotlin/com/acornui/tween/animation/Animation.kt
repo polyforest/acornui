@@ -16,7 +16,7 @@
 
 package com.acornui.tween.animation
 
-import com.acornui.Disposable
+import com.acornui.Updatable
 import com.acornui.collection.ArrayList
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
@@ -24,9 +24,7 @@ import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
-import com.acornui.time.onTick
 import com.acornui.tween.TimelineTween
-import com.acornui.tween.Tween
 import com.acornui.tween.TweenBase
 import com.acornui.tween.timelineTween
 import kotlin.contracts.InvocationKind
@@ -66,13 +64,11 @@ class AnimationInstance(
 		owner: Owned,
 		val bundle: AnimationBundle,
 		override val libraryItem: AnimationLibraryItem
-) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance {
+) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance, Updatable {
 
-	val tween: TimelineTween
-	private var driver: Disposable? = null
+	val tween: TimelineTween = timelineTween()
 
 	init {
-		tween = timelineTween()
 		tween.loopAfter = true
 		for (i in libraryItem.timeline.layers.lastIndex downTo 0) {
 			val layer = libraryItem.timeline.layers[i]
@@ -81,29 +77,12 @@ class AnimationInstance(
 			component.visible = false
 			tween.add(LayerTween(libraryItem.timeline.duration, layer, component, bundle.easings))
 		}
-		start()
 	}
 
-	/**
-	 * Starts driving the tween. (This is automatically done after initialization).
-	 * @see Tween.paused
-	 */
-	fun start() {
-		if (driver != null) return
-		driver = onTick {
-			tween.update(it)
-		}
+	override fun update(dT: Float) {
+		tween.update(dT)
 	}
 
-	/**
-	 * Stops driving the tween. This would be called if a custom tween updater is used instead. For pause/play
-	 * functionality, use [Tween.paused]
-	 * @see Tween.paused
-	 */
-	fun stop() {
-		driver?.dispose()
-		driver = null
-	}
 }
 
 private class LayerTween(override val duration: Float, layer: Layer, private val target: UiComponent, globalEasings: Map<String, AnimationEasing>) : TweenBase() {
