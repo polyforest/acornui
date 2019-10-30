@@ -26,6 +26,10 @@ import com.acornui.graphic.OrthographicCamera
 import com.acornui.graphic.Window
 import com.acornui.graphic.centerCamera
 import com.acornui.function.as2
+import com.acornui.gl.core.GlState
+import com.acornui.gl.core.Uniforms
+import com.acornui.gl.core.setCamera
+import com.acornui.gl.core.useCamera
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -333,4 +337,20 @@ class IdtProjectionContext : RenderContextRo, Clearable {
 		modelTransform.idt()
 		colorTint.set(Color.WHITE)
 	}
+}
+
+/**
+ * Sets the camera on this [GlState] using this the given [renderContext].
+ */
+fun Uniforms.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
+	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
+	else setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, Matrix4.IDENTITY)
+}
+
+/**
+ * Sets the camera on this [GlState] using this the given [renderContext].
+ */
+fun Uniforms.useCamera(renderContext: RenderContextRo, useModel: Boolean = false, inner: () -> Unit) {
+	if (useModel) useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform, inner)
+	else useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, Matrix4.IDENTITY, inner)
 }

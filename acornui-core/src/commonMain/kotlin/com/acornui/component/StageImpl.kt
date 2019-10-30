@@ -16,22 +16,20 @@
 
 package com.acornui.component
 
+import com.acornui.Disposable
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
-import com.acornui.Disposable
 import com.acornui.di.Injector
 import com.acornui.di.OwnedImpl
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
-import com.acornui.input.SoftKeyboardManager
-import com.acornui.popup.PopUpManager
 import com.acornui.function.as2
+import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
-import com.acornui.setCamera
+import com.acornui.popup.PopUpManager
 import com.acornui.time.timer
-import com.acornui.useCamera
 
 /**
  * @author nbilyk
@@ -138,7 +136,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	}
 
 	override fun draw(renderContext: RenderContextRo) {
-		glState.setCamera(renderContext, useModel = false)
+		glState.uniforms.setCamera(renderContext, useModel = false)
 		super.draw(renderContext)
 	}
 

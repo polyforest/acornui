@@ -21,10 +21,10 @@ package com.acornui
 import com.acornui.component.RenderContextRo
 import com.acornui.component.layout.Sizable
 import com.acornui.component.layout.SizableRo
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.useCamera
-import com.acornui.graphic.CameraRo
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.BoundsRo
+import com.acornui.math.MinMax
+import com.acornui.math.MinMaxRo
 
 interface RenderableRo : SizableRo {
 
@@ -91,34 +91,4 @@ abstract class RenderableBase : Renderable, Sizable {
 	 * Renders any graphics using the provided [renderContext].
 	 */
 	abstract override fun render(renderContext: RenderContextRo)
-}
-
-/**
- * Sets the camera on this [GlState] using this the given [renderContext].
- */
-fun GlState.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
-	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
-	else setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform)
-}
-
-/**
- * Sets the camera on this [GlState] using this the given [renderContext].
- */
-fun GlState.useCamera(renderContext: RenderContextRo, useModel: Boolean = false, inner: () -> Unit) {
-	if (useModel) shader!!.uniforms.useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform, inner)
-	else shader!!.uniforms.useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, Matrix4.IDENTITY, inner)
-}
-
-/**
- *
- */
-fun GlState.setCamera(camera: CameraRo, modelTransform: Matrix4Ro) {
-	setCamera(camera.combined, camera.view, modelTransform)
-}
-
-/**
- *
- */
-fun GlState.setCamera(camera: CameraRo) {
-	setCamera(camera.combined, camera.view)
 }

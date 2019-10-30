@@ -22,6 +22,7 @@ import com.acornui.closeTo
 import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.math.MathUtils.clamp
 import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
@@ -581,6 +582,13 @@ data class Color(
 		 */
 		fun fromName(name: String): ColorRo? {
 			return nameColorMap[name.toLowerCase().trim()]
+		}
+
+		private val pool = ClearableObjectPool { Color() }
+
+		fun obtain(): Color = pool.obtain()
+		fun free(value: Color) {
+			pool.free(value)
 		}
 	}
 }

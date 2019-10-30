@@ -25,7 +25,6 @@ import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4
-import com.acornui.setCamera
 
 /**
  * @author nbilyk
@@ -125,7 +124,7 @@ class LightingRenderer(
 	private fun directionalLightShadows(directionalShadowMapShader: ShaderProgram, camera: CameraRo, directionalLight: DirectionalLight, renderOcclusion: () -> Unit) {
 		// Directional light shadows
 		glState.shader = directionalShadowMapShader
-		glState.setCamera(camera)
+		directionalShadowMapShader.uniforms.setCamera(camera)
 		val uniforms = directionalShadowMapShader.uniforms
 		directionalShadowsFbo.begin()
 		val oldClearColor = window.clearColor
@@ -146,7 +145,7 @@ class LightingRenderer(
 
 	private fun pointLightShadows(pointShadowMapShader: ShaderProgram, camera: CameraRo, pointLights: List<PointLight>, renderOcclusion: () -> Unit) {
 		glState.shader = pointShadowMapShader
-		glState.setCamera(camera)
+		pointShadowMapShader.uniforms.setCamera(camera)
 		val uniforms = pointShadowMapShader.uniforms
 		val u_pointLightMvp = uniforms.getRequiredUniformLocation("u_pointLightMvp")
 		val oldClearColor = window.clearColor

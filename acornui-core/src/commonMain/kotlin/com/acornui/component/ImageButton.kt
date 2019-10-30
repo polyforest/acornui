@@ -101,7 +101,7 @@ class ImageButton(
 	}
 
 	override fun draw(renderContext: RenderContextRo) {
-		glState.useColorTransformation(colorTransformation) {
+		glState.uniforms.useColorTransformation(colorTransformation) {
 			super.draw(renderContext)
 		}
 	}

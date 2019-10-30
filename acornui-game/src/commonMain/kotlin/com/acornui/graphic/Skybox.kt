@@ -174,7 +174,7 @@ class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner
 		gl.frontFace(Gl20.CW)
 		gl.cullFace(Gl20.BACK)
 
-		glState.shader!!.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
+		shader.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
 
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		val attributeLocation = shader.getAttributeLocationByUsage(VertexAttributeUsage.POSITION)

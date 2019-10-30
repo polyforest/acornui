@@ -29,7 +29,6 @@ import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.freeAll
-import com.acornui.useCamera
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -105,8 +104,8 @@ open class StaticMeshComponent(
 	override fun draw(renderContext: RenderContextRo) {
 		val mesh = mesh ?: return
 		colorTransformation.tint(renderContext.colorTint)
-		glState.useColorTransformation(colorTransformation) {
-			glState.useCamera(renderContext, useModel = true) {
+		glState.uniforms.useColorTransformation(colorTransformation) {
+			glState.uniforms.useCamera(renderContext, useModel = true) {
 				mesh.render()
 			}
 		}

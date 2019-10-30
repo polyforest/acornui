@@ -18,6 +18,8 @@ package com.acornui.gl.core
 
 import com.acornui.Disposable
 import com.acornui.di.DKey
+import com.acornui.di.Scoped
+import com.acornui.di.inject
 import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.reflect.observable
@@ -41,6 +43,9 @@ interface GlState {
 	 */
 	var shader: ShaderProgram?
 
+	val uniforms: Uniforms
+		get() = shader?.uniforms ?: EmptyUniforms
+
 	/**
 	 * A global override to disable blending. Useful if the shader doesn't support blending.
 	 */
@@ -49,11 +54,6 @@ interface GlState {
 	val blendMode: BlendMode
 
 	val premultipliedAlpha: Boolean
-
-	/**
-	 * Sets the color transformation matrix and offset uniforms.
-	 */
-	var colorTransformation: ColorTransformationRo?
 
 	/**
 	 * Returns whether scissoring is currently enabled.
@@ -97,18 +97,6 @@ interface GlState {
 	fun setScissor(x: Int, y: Int, width: Int, height: Int)
 
 	/**
-	 * Sets the model, view, and projection matrices.
-	 * This will set the gl uniforms `u_modelTrans` (if exists), `u_viewTrans` (if exists), and `u_projTrans`
-	 * The shader should have the following uniforms:
-	 * `u_projTrans` - Either MVP or VP if u_modelTrans is present.
-	 * `u_modelTrans` (optional) - M
-	 * `u_viewTrans` (optional) - V
-	 */
-	fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro = Matrix4.IDENTITY) {
-		shader!!.uniforms.setCamera(viewProjection, viewTransform, modelTransform)
-	}
-
-	/**
 	 * The current viewport rectangle, in gl window coordinates.
 	 * (0,0 is bottom left, width, height includes dpi scaling)
 	 */
@@ -145,6 +133,9 @@ interface GlState {
 
 	companion object : DKey<GlState>
 }
+
+val Scoped.uniforms: Uniforms
+	get() = inject(GlState).uniforms
 
 /**
  * GlState stores OpenGl state information necessary for knowing whether basic draw calls can be batched.
@@ -332,33 +323,6 @@ class GlStateImpl(
 		}
 	}
 
-	private var _colorTransformationIsSet = false
-	private var _colorTransformation = ColorTransformation()
-
-	override var colorTransformation: ColorTransformationRo?
-		get() = if (_colorTransformationIsSet) _colorTransformation else null
-		set(value) {
-			batch.flush()
-			val uniforms = _shader!!.uniforms
-			val useColorTransU = uniforms.getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS)
-			if (useColorTransU != null) {
-				if (value == null) {
-					_colorTransformationIsSet = false
-					uniforms.put(useColorTransU, 0)
-				} else {
-					_colorTransformationIsSet = true
-					_colorTransformation.set(value)
-					uniforms.put(useColorTransU, 1)
-
-					val colorTransU = uniforms.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_TRANS)
-					uniforms.put(colorTransU, value.matrix)
-
-					val colorOffsetU = uniforms.getRequiredUniformLocation(CommonShaderUniforms.U_COLOR_OFFSET)
-					uniforms.putRgba(colorOffsetU, value.offset)
-				}
-			}
-		}
-
 	init {
 		shader = defaultShader
 		blendMode(BlendMode.NORMAL, premultipliedAlpha = false)
@@ -443,26 +407,43 @@ fun GlState.setScissor(value: IntRectangleRo) = setScissor(value.x, value.y, val
 
 fun GlState.setFramebuffer(value: FramebufferInfoRo) = setFramebuffer(value.framebuffer, value.width, value.height, value.scaleX, value.scaleY)
 
-private val combined = ColorTransformation()
+fun Uniforms.getColorTransformation(out: ColorTransformation): ColorTransformation? {
+	val useColorTransU = getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS) ?: return null
+	if (!getb(useColorTransU)) return null
+	val colorTrans = Matrix4.obtain()
+	get(CommonShaderUniforms.U_COLOR_TRANS, colorTrans)
+	out.matrix = colorTrans
+	val colorOffset = Color.obtain()
+	getRgba(CommonShaderUniforms.U_COLOR_OFFSET, colorOffset)
+	out.offset = colorOffset
+	Matrix4.free(colorTrans)
+	Color.free(colorOffset)
+	return out
+}
+
+fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) = uniforms.useColorTransformation(cT, inner)
+
+fun Uniforms.setColorTransformation(value: ColorTransformationRo?) {
+	if (value == null) {
+		putOptional(CommonShaderUniforms.U_USE_COLOR_TRANS, 0)
+	} else {
+		putOptional(CommonShaderUniforms.U_USE_COLOR_TRANS, 1)
+		putOptional(CommonShaderUniforms.U_COLOR_TRANS, value.matrix)
+		putRgbaOptional(CommonShaderUniforms.U_COLOR_OFFSET, value.offset)
+	}
+}
 
 /**
  * Adds a color transformation to the current stack, using that color transformation within [inner].
  */
-fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: () -> Unit) {
-	val wasSet = colorTransformation != null
-	val previous = if (wasSet) ColorTransformation.obtain().set(colorTransformation!!) else null
-	colorTransformation = combined.combine(previous, cT)
+fun Uniforms.useColorTransformation(value: ColorTransformationRo?, inner: () -> Unit) {
+	val cT = ColorTransformation.obtain()
+	val previous = getColorTransformation(cT)
+	val combined = if (previous == null || value == null) value else previous.mul(value)
+	setColorTransformation(combined)
 	inner()
-	if (wasSet) {
-		colorTransformation = previous
-		ColorTransformation.free(previous!!)
-	} else {
-		colorTransformation = null
-	}
-}
-
-fun ColorTransformation.combine(previous: ColorTransformationRo?, cT: ColorTransformationRo): ColorTransformation {
-	return if (previous != null) set(previous).mul(cT) else set(cT)
+	setColorTransformation(previous)
+	ColorTransformation.free(cT)
 }
 
 private val mvp = Matrix4()
@@ -480,6 +461,15 @@ fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, mo
 	}
 }
 
+/**
+ * Sets the model, view, and projection matrices.
+ * This will set the gl uniforms `u_modelTrans` (if exists), `u_viewTrans` (if exists), and `u_projTrans`
+ * The shader should have the following optional uniforms:
+ * `u_projTrans` - Either MVP or VP if u_modelTrans is present.
+ * `u_modelTrans` - M
+ * `u_viewTrans` - V
+ * `u_normalTrans`
+ */
 fun Uniforms.setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
 	val hasModel = getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS) != null
 	if (hasModel) {

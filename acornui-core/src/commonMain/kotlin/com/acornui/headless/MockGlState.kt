@@ -35,9 +35,6 @@ object MockGlState : GlState {
 		get() = BlendMode.NONE
 	override val premultipliedAlpha: Boolean
 		get() = false
-	override var colorTransformation: ColorTransformationRo?
-		get() = ColorTransformation.IDENTITY
-		set(value) {}
 	override var scissorEnabled: Boolean
 		get() = false
 		set(value) {}
@@ -67,9 +64,6 @@ object MockGlState : GlState {
 		get() = IntRectangle.EMPTY
 
 	override fun setScissor(x: Int, y: Int, width: Int, height: Int) {
-	}
-
-	override fun setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro) {
 	}
 
 	override val viewport: IntRectangleRo

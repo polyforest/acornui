@@ -17,10 +17,12 @@
 package com.acornui.gl.core
 
 import com.acornui.collection.stringMapOf
+import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.signal.emptySignal
 import kotlin.collections.HashMap
 import kotlin.collections.MutableMap
 import kotlin.collections.contentEquals
@@ -144,6 +146,23 @@ interface Uniforms {
 	fun putOptional(name: String, value: Matrix4Ro) = getUniformLocation(name)?.let { put(it, value) }
 }
 
+private val rgba = FloatArray(4)
+fun Uniforms.getRgba(location: GlUniformLocationRef, color: Color): Color {
+	get(location, rgba)
+	color.set(rgba[0], rgba[1], rgba[2], rgba[3])
+	return color
+}
+
+fun Uniforms.getRgba(name: String, color: Color): Color = getRgba(getRequiredUniformLocation(name), color)
+
+private val rgb = FloatArray(3)
+fun Uniforms.getRgb(location: GlUniformLocationRef, color: Color): Color {
+	get(location, rgb)
+	color.set(rgba[0], rgba[1], rgba[2], 1f)
+	return color
+}
+
+fun Uniforms.getRgb(name: String, color: Color): Color = getRgb(getRequiredUniformLocation(name), color)
 
 fun Uniforms.putRgba(location: GlUniformLocationRef, color: ColorRo) =
 		put(location, color.r, color.g, color.b, color.a)
@@ -395,5 +414,105 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 			this[location] = newValue
 			onChanged()
 		}
+	}
+}
+
+/**
+ * An object that represents the lack of uniforms when there is no bound shader.
+ */
+object EmptyUniforms : Uniforms {
+
+	override val changing: Signal<() -> Unit> = emptySignal()
+
+	override val isBound: Boolean = false
+
+	override fun bind() {
+		throw UnsupportedOperationException()
+	}
+
+	override fun unbind() {
+		throw UnsupportedOperationException()
+	}
+
+	override fun getUniformLocation(name: String): GlUniformLocationRef? = null
+
+	override fun geti(location: GlUniformLocationRef): Int {
+		throw UnsupportedOperationException()
+	}
+
+	override fun get(location: GlUniformLocationRef, out: IntArray): IntArray {
+		throw UnsupportedOperationException()
+	}
+
+	override fun getf(location: GlUniformLocationRef): Float {
+		throw UnsupportedOperationException()
+	}
+
+	override fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray {
+		throw UnsupportedOperationException()
+	}
+
+	override fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2 {
+		throw UnsupportedOperationException()
+	}
+
+	override fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3 {
+		throw UnsupportedOperationException()
+	}
+
+	override fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4 {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, v: FloatArray) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, v: IntArray) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix2Ro) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix3Ro) {
+		throw UnsupportedOperationException()
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix4Ro) {
+		throw UnsupportedOperationException()
 	}
 }

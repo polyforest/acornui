@@ -57,7 +57,7 @@ class WebGlTexture(
 		refInc()
 		val framebuffer = Framebuffer(gl, glState, widthPixels, heightPixels, false, false)
 		framebuffer.begin()
-		glState.shader!!.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, Matrix4.IDENTITY)
+		glState.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, Matrix4.IDENTITY)
 		glState.setTexture(this)
 		glState.blendMode(BlendMode.NORMAL, false)
 		batch.putVertex(-1f, -1f, 0f, u = 0f, v = 0f)
