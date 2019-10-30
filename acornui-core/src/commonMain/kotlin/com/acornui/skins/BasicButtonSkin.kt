@@ -30,7 +30,7 @@ private class BasicButtonSkin(
 	private val downShine: Rect
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, 0, ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.STYLES, ::updateProperties)
 		fill = +rect {
 			style.apply {
 				val bT = borderThickness.copy()
