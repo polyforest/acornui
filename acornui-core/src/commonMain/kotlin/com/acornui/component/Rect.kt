@@ -476,11 +476,9 @@ class Rect(
 				}
 			}
 		}
-
 	}
 
-
-	override fun render(renderContext: RenderContextRo) {
+	override fun draw(renderContext: RenderContextRo) {
 		val tint = renderContext.colorTint
 		val transform = renderContext.modelTransform
 		val margin = style.margin
@@ -574,7 +572,7 @@ class Rect(
 					if (strokeC.visible) strokeC.renderIn(renderContext)
 				}
 			} else {
-				super.render(renderContext)
+				super.draw(renderContext)
 			}
 		}
 	}
