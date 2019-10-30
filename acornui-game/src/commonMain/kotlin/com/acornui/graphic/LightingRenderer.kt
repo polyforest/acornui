@@ -184,12 +184,13 @@ class LightingRenderer(
 	/**
 	 * Bind the shadow buffers and render the world.
 	 */
-	fun renderWorld(lightingShader: ShaderProgram, ambientLight: AmbientLight, directionalLight: DirectionalLight, pointLights: List<PointLight>, renderWorld: () -> Unit) {
+	fun renderWorld(camera: CameraRo, lightingShader: ShaderProgram, ambientLight: AmbientLight, directionalLight: DirectionalLight, pointLights: List<PointLight>, renderWorld: () -> Unit) {
 		val previousShader = glState.shader
 		glState.shader = lightingShader
 
 		lightingShader.uniforms.apply {
 			// Prepare uniforms.
+			setCamera(camera)
             put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
             put("u_directionalShadowMap", directionalShadowUnit)
 			for (i in 0..numShadowPointLights - 1) {
