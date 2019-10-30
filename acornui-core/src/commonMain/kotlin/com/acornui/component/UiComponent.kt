@@ -98,7 +98,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val layoutInvalidatingFlags: Int
 
 	/**
-	 * The render context that represents the transformations of this component as it is in the display graph.
+	 * The render context used to render to the screen.
 	 * @see UiComponentRo.render
 	 */
 	val naturalRenderContext: RenderContextRo
