@@ -232,6 +232,8 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 		isRotated = other.isRotated
 		blendMode = other.blendMode
 		premultipliedAlpha = other.premultipliedAlpha
+		scaleX = other.scaleX
+		scaleY = other.scaleY
 		return this
 	}
 
