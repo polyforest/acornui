@@ -75,7 +75,6 @@ class FramebufferFilter(
 
 	private val sprite = Sprite(glState)
 	private val renderable = PaddedRenderable(sprite)
-	private val drew = own(Signal0())
 
 	override fun draw(renderContext: RenderContextRo) {
 		if (!bitmapCacheIsValid)
@@ -106,24 +105,10 @@ class FramebufferFilter(
 		framebuffer.drawable(sprite)
 		setDrawPadding(renderable.padding)
 		renderable.setSize(null, null)
-		drew.dispatch()
 	}
 
 	fun drawToScreen(renderContext: RenderContextRo) {
 		renderable.render(renderContext)
-	}
-
-	/**
-	 * Creates a component that renders the sprite that represents the last time [drawToFramebuffer] was called.
-	 */
-	fun createSnapshot(owner: Owned): UiComponent {
-		val drawable = drawable()
-		return owner.drawableC(drawable) {
-			own(drew.bind {
-				drawable(drawable)
-				invalidate(ValidationFlags.LAYOUT)
-			})
-		}
 	}
 
 	/**
