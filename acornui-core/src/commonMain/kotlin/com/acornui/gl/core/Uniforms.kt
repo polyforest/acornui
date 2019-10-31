@@ -49,49 +49,101 @@ interface Uniforms {
 	 * Return the uniform value at the given location for this program.
 	 */
 	fun getb(location: GlUniformLocationRef): Boolean = geti(location) > 0
-
 	fun getb(name: String): Boolean = getb(getRequiredUniformLocation(name))
+	fun getbOptional(name: String): Boolean? {
+		val loc = getUniformLocation(name) ?: return null
+		return getb(loc)
+	}
 
 	/**
 	 * Return the uniform value at the given location for this program.
 	 */
 	fun geti(location: GlUniformLocationRef): Int
-
 	fun geti(name: String): Int = geti(getRequiredUniformLocation(name))
-
-	fun get(location: GlUniformLocationRef, out: IntArray): IntArray
+	fun getiOptional(name: String): Int? {
+		val loc = getUniformLocation(name) ?: return null
+		return geti(loc)
+	}
 
 	/**
 	 * Return the uniform value at the given location for this program.
 	 * If the uniform does not exist, an IllegalStateException will be thrown.
 	 * If the uniform has never been set, [out] will be populated with 0.
 	 */
+	fun get(location: GlUniformLocationRef, out: IntArray): IntArray
 	fun get(name: String, out: IntArray): IntArray = get(getRequiredUniformLocation(name), out)
 
-	fun getf(location: GlUniformLocationRef): Float
+	/**
+	 * Return the uniform value at the location with the given name for this program.
+	 * If the uniform does not exist, [out] will not be changed and null will be returned.
+	 * If the uniform exists but has never been set, [out] will be populated with 0.
+	 */
+	fun getOptional(name: String, out: IntArray): IntArray? {
+		val loc = getUniformLocation(name) ?: return null
+		return get(loc, out)
+	}
 
+	fun getf(location: GlUniformLocationRef): Float
 	fun getf(name: String): Float = getf(getRequiredUniformLocation(name))
+	fun getfOptional(name: String): Float {
+		val loc = getUniformLocation(name) ?: return 0f
+		return getf(loc)
+	}
 
 	/**
 	 * Return the uniform value at the given location for this program.
 	 */
 	fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray
+	fun get(name: String, out: FloatArray): FloatArray = get(getRequiredUniformLocation(name), out)
 
 	/**
-	 * Return the uniform value at the given location for this program.
-	 * If the uniform does not exist, an IllegalStateException will be thrown.
-	 * If the uniform has never been set, [out] will be populated with 0f.
+	 * Return the uniform value at the location with the given name for this program.
+	 * If the uniform does not exist, [out] will not be changed and null will be returned.
+	 * If the uniform exists but has never been set, [out] will be populated with 0f.
 	 */
-	fun get(name: String, out: FloatArray): FloatArray = get(getRequiredUniformLocation(name), out)
+	fun getOptional(name: String, out: FloatArray): FloatArray? {
+		val loc = getUniformLocation(name) ?: return out.also { it.fill(0f) }
+		return get(loc, out)
+	}
 
 	fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2
 	fun get(name: String, out: Matrix2): Matrix2 = get(getRequiredUniformLocation(name), out)
 
+	/**
+	 * Return the uniform value at the location with the given name for this program.
+	 * If the uniform does not exist, [out] will not be changed and null will be returned.
+	 * If the uniform exists but has never been set, [out] will be set to the identity matrix.
+	 */
+	fun getOptional(name: String, out: Matrix2): Matrix2? {
+		val loc = getUniformLocation(name) ?: return null
+		return get(loc, out)
+	}
+
 	fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3
 	fun get(name: String, out: Matrix3): Matrix3 = get(getRequiredUniformLocation(name), out)
 
+	/**
+	 * Return the uniform value at the location with the given name for this program.
+	 * If the uniform does not exist, [out] will not be changed and null will be returned.
+	 * If the uniform exists but has never been set, [out] will be set to the identity matrix.
+	 */
+	fun getOptional(name: String, out: Matrix3): Matrix3? {
+		val loc = getUniformLocation(name) ?: return null
+		return get(loc, out)
+	}
+
 	fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4
 	fun get(name: String, out: Matrix4): Matrix4 = get(getRequiredUniformLocation(name), out)
+
+	/**
+	 * Return the uniform value at the location with the given name for this program.
+	 * If the uniform does not exist, [out] will not be changed and null will be returned.
+	 * If the uniform exists but has never been set, [out] will be set to the identity matrix.
+	 */
+	fun getOptional(name: String, out: Matrix4): Matrix4? {
+		val loc = getUniformLocation(name) ?: return null
+		return get(loc, out)
+	}
 
 	fun put(location: GlUniformLocationRef, v: FloatArray)
 	fun put(name: String, v: FloatArray) = put(getRequiredUniformLocation(name), v)

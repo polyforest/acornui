@@ -29,7 +29,8 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 	protected abstract val renderable: T?
 
 	init {
-		validation.addNode(VERTICES, ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
+		draws = true
+		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

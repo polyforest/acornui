@@ -51,12 +51,12 @@ object ValidationFlags {
 
 	const val RENDER_CONTEXT: Int = 1 shl 9
 	const val BITMAP_CACHE: Int = 1 shl 10
+	const val REDRAW_REGION: Int = 1 shl 11
 
-	const val RESERVED_1: Int = 1 shl 11
-	const val RESERVED_2: Int = 1 shl 12
-	const val RESERVED_3: Int = 1 shl 13
-	const val RESERVED_4: Int = 1 shl 14
-	const val RESERVED_5: Int = 1 shl 15
+	const val RESERVED_1: Int = 1 shl 12
+	const val RESERVED_2: Int = 1 shl 13
+	const val RESERVED_3: Int = 1 shl 14
+	const val RESERVED_4: Int = 1 shl 15
 
 	/**
 	 * Prints out the name of the flag for reserved flags, or the power of two for non-reserved flags.
@@ -80,7 +80,6 @@ object ValidationFlags {
 		RESERVED_2 -> "RESERVED_2"
 		RESERVED_3 -> "RESERVED_3"
 		RESERVED_4 -> "RESERVED_4"
-		RESERVED_5 -> "RESERVED_5"
 		else -> log2(flag.toDouble()).toInt().toString()
 	}
 

@@ -135,6 +135,14 @@ fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
 	return minMax
 }
 
+//fun CanvasTransformableRo.localToScreen(local: MinMaxRo, out: IntRectangle): MinMax {
+//
+//}
+//
+//fun CanvasTransformableRo.canvasToScreen(canvas: MinMaxRo, out: IntRectangle): MinMax {
+//
+//}
+
 /**
  * Converts a bounding rectangle from canvas to local coordinates.
  * Warning: this does require a matrix inversion calculation, which is a fairly expensive operation.

@@ -22,6 +22,7 @@ import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.graphic.Window
+import com.acornui.graphic.render
 import com.acornui.logging.Log
 import com.acornui.time.FrameDriver
 import com.acornui.time.loopWhile
@@ -57,14 +58,6 @@ open class JvmApplicationRunner(
 
 	protected fun tick(dT: Float) {
 		FrameDriver.dispatch(dT)
-		if (window.shouldRender(true)) {
-			stage.update()
-			if (window.width > 0f && window.height > 0f) {
-				window.renderBegin()
-				if (stage.visible)
-					stage.render()
-				window.renderEnd()
-			}
-		}
+		window.render(stage)
 	}
 }

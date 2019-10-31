@@ -17,24 +17,20 @@
 package com.acornui.component
 
 import com.acornui.Disposable
+import com.acornui.RedrawRegions
+import com.acornui.RedrawRegionsImpl
 import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.graphic.CameraRo
-import com.acornui.graphic.OrthographicCamera
-import com.acornui.graphic.Window
-import com.acornui.graphic.centerCamera
 import com.acornui.function.as2
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.Uniforms
 import com.acornui.gl.core.setCamera
 import com.acornui.gl.core.useCamera
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
+import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
 
 interface RenderContextRo : CanvasTransformableRo {
 
@@ -54,6 +50,11 @@ interface RenderContextRo : CanvasTransformableRo {
 	 * The color multiplier for vertices.
 	 */
 	val colorTint: ColorRo
+
+	/**
+	 * The regions that should be redrawn in the next render.
+	 */
+	val redraw: RedrawRegions
 
 	companion object : DKey<RenderContextRo> {
 
@@ -135,6 +136,8 @@ class OrthographicRenderContext(override val injector: Injector) : Scoped, Rende
 
 	override val colorTint: ColorRo = Color.WHITE
 
+	override val redraw: RedrawRegions = RedrawRegionsImpl()
+
 	private fun validate() {
 		if (isValid) return
 		isValid = true
@@ -156,7 +159,7 @@ class OrthographicRenderContext(override val injector: Injector) : Scoped, Rende
  * transformations, allows for a custom camera to be set, and has properties for external overrides.
  */
 class RenderContext() : RenderContextRo, Clearable {
-
+// TODO: Handle validation
 	constructor(initialParentContext: RenderContextRo?) : this() {
 		_parentContext = initialParentContext
 	}
@@ -252,6 +255,11 @@ class RenderContext() : RenderContextRo, Clearable {
 	override val colorTint: ColorRo
 		get() = colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 
+	var redrawRegionsOverride: RedrawRegions? = null
+
+	override val redraw: RedrawRegions
+		get() = redrawRegionsOverride ?: parentContext.redraw ?: RedrawRegions.NEVER
+
 	override fun clear() {
 		_parentContext = null
 		cameraOverride = null
@@ -261,40 +269,41 @@ class RenderContext() : RenderContextRo, Clearable {
 		colorTintOverride = null
 		modelTransformLocal.idt()
 		modelTransformOverride = null
+		redrawRegionsOverride = null
 	}
 }
 
-/**
- * CustomRenderContext is a render context that isn't hierarchical. It expects a camera for the view and projection
- * matrices, and explicitly set canvas, model, and color transforms.
- */
-class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
-
-	override val parentContext: RenderContextRo? = null
-
-	override val clipRegion = MinMax()
-	override val colorTint = Color.WHITE.copy()
-
-	override val viewProjectionTransform: Matrix4Ro
-		get() = camera.combined
-
-	override val viewProjectionTransformInv: Matrix4Ro
-		get() = camera.combinedInv
-
-	override val viewTransform: Matrix4Ro
-		get() = camera.view
-
-	override val projectionTransform: Matrix4Ro
-		get() = camera.projection
-
-	override val canvasTransform = Rectangle()
-
-	override val modelTransform = Matrix4()
-
-	private val _modelTransformInv by lazy { Matrix4() }
-	override val modelTransformInv: Matrix4Ro
-		get() = _modelTransformInv.set(modelTransform).inv()
-}
+///**
+// * CustomRenderContext is a render context that isn't hierarchical. It expects a camera for the view and projection
+// * matrices, and explicitly set canvas, model, and color transforms.
+// */
+//class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
+//
+//	override val parentContext: RenderContextRo? = null
+//
+//	override val clipRegion = MinMax()
+//	override val colorTint = Color.WHITE.copy()
+//
+//	override val viewProjectionTransform: Matrix4Ro
+//		get() = camera.combined
+//
+//	override val viewProjectionTransformInv: Matrix4Ro
+//		get() = camera.combinedInv
+//
+//	override val viewTransform: Matrix4Ro
+//		get() = camera.view
+//
+//	override val projectionTransform: Matrix4Ro
+//		get() = camera.projection
+//
+//	override val canvasTransform = Rectangle()
+//
+//	override val modelTransform = Matrix4()
+//
+//	private val _modelTransformInv by lazy { Matrix4() }
+//	override val modelTransformInv: Matrix4Ro
+//		get() = _modelTransformInv.set(modelTransform).inv()
+//}
 
 /**
  * IdtProjectionContext is a render context where the model/view/projection transformations are the identity matrix.
@@ -322,6 +331,8 @@ class IdtProjectionContext : RenderContextRo, Clearable {
 	override val clipRegion: MinMaxRo = MinMax()
 
 	override val colorTint = Color.WHITE.copy()
+
+	override val redraw: RedrawRegions = RedrawRegions.ALWAYS
 
 	override fun clear() {
 		modelTransform.idt()
