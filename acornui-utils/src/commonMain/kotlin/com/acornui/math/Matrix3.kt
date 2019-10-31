@@ -274,7 +274,7 @@ class Matrix3() : Matrix3Ro {
 	/**
 	 * Sets this matrix to have the given translation.
 	 */
-	fun setTranslation(x: Float, y: Float): Matrix3 {
+	fun setTranslation(x: Float = 0f, y: Float = 0f): Matrix3 {
 		values[M02] = x
 		values[M12] = y
 		return this

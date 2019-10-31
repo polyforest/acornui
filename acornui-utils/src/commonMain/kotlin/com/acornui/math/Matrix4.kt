@@ -959,7 +959,7 @@ class Matrix4() : Matrix4Ro {
 	 * @param z The Z coordinate of the translation vector
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
-	fun setTranslation(x: Float, y: Float, z: Float): Matrix4 {
+	fun setTranslation(x: Float = 0f, y: Float = 0f, z: Float = 0f): Matrix4 {
 		values[M03] = x
 		values[M13] = y
 		values[M23] = z
