@@ -110,7 +110,7 @@ class Framebuffer(
 	}
 
 	init {
-		if (widthPixels <= 0 || heightPixels <= 0) throw IllegalArgumentException("width or height cannot be less than zero.")
+		require(widthPixels > 0 && heightPixels > 0) { "width or height cannot be less than zero." }
 		if (hasDepth && hasStencil) {
 			if (allowDepthAndStencil(gl)) {
 				this.hasDepth = true
@@ -254,7 +254,6 @@ class Framebuffer(
 		return sprite.apply {
 			setUv(0f, 0f, 1f, 1f, false)
 			texture = this@Framebuffer.texture
-			setSize(null, null)
 			setScaling(scaleX, scaleY)
 		}
 	}

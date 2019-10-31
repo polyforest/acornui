@@ -17,13 +17,13 @@
 package com.acornui.component
 
 import com.acornui.AppConfig
-import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.async.async
 import com.acornui.async.then
 import com.acornui.collection.fill
+import com.acornui.collection.forEach2
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -76,12 +76,12 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		private set
 
 	init {
-		onTick {
+		onTick { dT ->
 			val loadedAnimation = animation
 			if (!paused && loadedAnimation != null) {
 				val tickTime = tickTime
 
-				elapsed += it
+				elapsed += dT
 				while (elapsed >= tickTime) {
 					// Tick a frame
 					elapsed -= tickTime
@@ -133,21 +133,27 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		invalidateLayout()
 	}
 
+	init {
+		validation.addNode(VERTICES, ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val animation = animation ?: return
-		var w = 0f
-		var h = 0f
-		for (i in 0..animation.frames.lastIndex) {
-			val r = animation.frames[i]
-			r.setSize(explicitWidth, explicitHeight)
-			if (r.width > w) w = r.width
-			if (r.height > h) h = r.height
-		}
+		val w = explicitWidth ?: animation.frames.firstOrNull()?.naturalWidth ?: 0f
+		val h = explicitHeight ?: animation.frames.firstOrNull()?.naturalHeight ?: 0f
 		out.set(w, h)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
-		animation?.frames?.getOrNull(currentFrame - startFrame)?.render(renderContext)
+	private fun updateWorldVertices() {
+		val animation = animation ?: return
+		if (width <= 0f || height <= 0f) return
+		animation.frames.forEach2 {
+			it.updateWorldVertices(width, height, renderContext.modelTransform, renderContext.colorTint)
+		}
+	}
+
+	override fun draw() {
+		animation?.frames?.getOrNull(currentFrame - startFrame)?.render()
 	}
 
 	override fun dispose() {
@@ -155,11 +161,15 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		group?.dispose()
 		group = null
 	}
+
+	companion object {
+		private const val VERTICES = ValidationFlags.RESERVED_1
+	}
 }
 
 data class LoadedAnimation(
 		val textures: List<Texture>,
-		val frames: List<Renderable>
+		val frames: List<BasicRenderable>
 ) {
 	fun refDec() {
 		for (i in 0..textures.lastIndex) {

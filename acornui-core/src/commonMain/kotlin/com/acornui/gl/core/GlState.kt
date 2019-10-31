@@ -503,3 +503,10 @@ fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, mode
 	Matrix4.free(previousViewTransform)
 	Matrix4.free(previousModelTransform)
 }
+
+/**
+ * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
+ */
+fun Uniforms.useCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY, inner: () -> Unit) {
+	useCamera(camera.combined, camera.view, model, inner)
+}

@@ -18,7 +18,6 @@ package com.acornui
 
 import com.acornui.async.isUiThread
 import com.acornui.component.Stage
-import com.acornui.component.render
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject

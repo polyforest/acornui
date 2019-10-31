@@ -190,22 +190,22 @@ class ContainerImplTest {
 			init {
 				var drawCountA = 0
 				addChild(object : MockComponent("a") {
-					override fun draw(renderContext: RenderContextRo) {
-						super.draw(renderContext)
+					override fun draw() {
+						super.draw()
 						drawCountA++
 					}
 				})
 				var drawCountB = 0
 				addChild(object : MockComponent("b") {
-					override fun draw(renderContext: RenderContextRo) {
-						super.draw(renderContext)
+					override fun draw() {
+						super.draw()
 						drawCountB++
 					}
 				})
 				var drawCountC = 0
 				addChild(object : MockComponent("c") {
-					override fun draw(renderContext: RenderContextRo) {
-						super.draw(renderContext)
+					override fun draw() {
+						super.draw()
 						drawCountC++
 					}
 				})

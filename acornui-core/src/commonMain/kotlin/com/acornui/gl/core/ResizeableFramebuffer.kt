@@ -151,7 +151,6 @@ class ResizeableFramebuffer(
 		val textureW = framebuffer?.widthPixels?.toFloat() ?: 0f
 		val textureH = framebuffer?.heightPixels?.toFloat() ?: 0f
 		sprite.setUv(0f, 0f, widthPixels / textureW, heightPixels / textureH, isRotated = false)
-		sprite.setSize(null, null)
 		sprite.setScaling(scaleX, scaleY)
 		return sprite
 	}

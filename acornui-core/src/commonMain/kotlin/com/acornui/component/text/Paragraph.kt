@@ -350,7 +350,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private val tL = Vector3()
 	private val tR = Vector3()
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		val tint = renderContext.colorTint
 		val clip = renderContext.clipRegion
 		val transform = renderContext.modelTransform

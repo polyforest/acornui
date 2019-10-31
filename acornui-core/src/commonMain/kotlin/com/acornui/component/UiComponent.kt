@@ -50,7 +50,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable, RenderableRo {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -99,20 +99,15 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 
 	/**
 	 * The render context used to render to the screen.
-	 * @see UiComponentRo.render
+	 * @see UiComponent.render
 	 */
-	val naturalRenderContext: RenderContextRo
+	val renderContext: RenderContextRo
 
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
 	}
 }
-
-/**
- * Renders this component using its [UiComponentRo.naturalRenderContext].
- */
-fun UiComponentRo.render() = render(naturalRenderContext)
 
 /**
  * Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
@@ -171,7 +166,7 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable, Renderable {
+interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>
@@ -213,11 +208,15 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	fun update()
 
 	/**
-	 * Renders this component using its [UiComponentRo.naturalRenderContext], temporarily setting
-	 * the parent context to the given value.
+	 * The local drawing region of this component.
+	 * Use [localToCanvas] to convert this region to canvas coordinates.
 	 */
-	fun renderIn(parentRenderContext: RenderContextRo)
+	val drawRegion: MinMaxRo
 
+	/**
+	 * Renders this component.
+	 */
+	fun render()
 }
 
 /**
@@ -232,7 +231,7 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
  */
 open class UiComponentImpl(
 		final override val owner: Owned
-) : UiComponent, RenderableBase() {
+) : UiComponent {
 
 	final override val injector = owner.injector
 
@@ -352,8 +351,27 @@ open class UiComponentImpl(
 
 	// ChildRo properties
 	override var parent by observable<ContainerRo?>(null) { value ->
-		_naturalRenderContext.parentContext = value?.naturalRenderContext ?: defaultRenderContext
+		_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
 	}
+
+	// Sizable properties
+	protected val _bounds = Bounds()
+	protected val _drawRegion = MinMax()
+
+	/**
+	 * The explicit width, as set by width(value)
+	 * Typically one would use `width` in order to retrieve the explicit or actual width.
+	 */
+	final override var explicitWidth: Float? = null
+		private set
+
+	/**
+	 * The explicit height, as set by height(value)
+	 * Typically one would use `height` in order to retrieve the explicit or actual height.
+	 */
+	final override var explicitHeight: Float? = null
+		private set
+
 
 	// Focusable properties
 	protected val focusManager by FocusManager
@@ -366,28 +384,28 @@ open class UiComponentImpl(
 	// Render context properties
 
 	protected val defaultRenderContext = inject(RenderContextRo)
-	protected val _naturalRenderContext = RenderContext(defaultRenderContext)
-	override val naturalRenderContext: RenderContextRo = _naturalRenderContext
+	protected val _renderContext = RenderContext(defaultRenderContext)
+	final override val renderContext: RenderContextRo = _renderContext
 
 	override val viewProjectionTransformInv: Matrix4Ro
-		get() = naturalRenderContext.viewProjectionTransformInv
+		get() = renderContext.viewProjectionTransformInv
 
 	override val viewProjectionTransform: Matrix4Ro
-		get() = naturalRenderContext.viewProjectionTransform
+		get() = renderContext.viewProjectionTransform
 
 	override val viewTransform: Matrix4Ro
-		get() = naturalRenderContext.viewTransform
+		get() = renderContext.viewTransform
 
 	override val projectionTransform: Matrix4Ro
-		get() = naturalRenderContext.projectionTransform
+		get() = renderContext.projectionTransform
 
 	override val canvasTransform: RectangleRo
-		get() = naturalRenderContext.canvasTransform
+		get() = renderContext.canvasTransform
 
 	var cameraOverride: CameraRo?
-		get() = _naturalRenderContext.cameraOverride
+		get() = _renderContext.cameraOverride
 		set(value) {
-			_naturalRenderContext.cameraOverride = value
+			_renderContext.cameraOverride = value
 		}
 
 	//
@@ -604,10 +622,21 @@ open class UiComponentImpl(
 	 */
 	final override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		if (oldW == newW && oldH == newH) return
+	/**
+	 * Does the same thing as setting width and height individually.
+	 */
+	final override fun setSize(width: Float?, height: Float?) {
+		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
+		val oldW = explicitWidth
+		val oldH = explicitHeight
+		if (oldW == width && oldH == height) return
+		explicitWidth = width
+		explicitHeight = height
+		onSizeSet(oldW, oldH, width, height)
 		invalidate(ValidationFlags.LAYOUT)
 	}
+	
+	protected open fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {}
 
 	/**
 	 * Do not call this directly, use [validate(ValidationFlags.SIZE_CONSTRAINTS)]
@@ -716,25 +745,27 @@ open class UiComponentImpl(
 
 	/**
 	 * The color tint of this component.
-	 * The final pixel color value for the default shader is [colorTint * pixel]
+	 *
+	 * To get the multiplied (global) color tint, see [renderContext]
+	 * The final pixel color value for the default shader is `renderContext.colorTint * pixel`
 	 */
 	override var colorTint: ColorRo
-		get() = naturalRenderContext.colorTint
+		get() = _renderContext.colorTintLocal
 		set(value) {
-			if (naturalRenderContext.colorTint == value) return
+			if (_renderContext.colorTintLocal == value) return
 			colorTint(value.r, value.g, value.b, value.a)
 		}
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
-		_naturalRenderContext.colorTintLocal.set(r, g, b, a)
+		_renderContext.colorTintLocal.set(r, g, b, a)
 		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
 	 */
-	override val concatenatedColorTint: ColorRo
-		get() = naturalRenderContext.colorTint
+	final override val concatenatedColorTint: ColorRo
+		get() = renderContext.colorTint
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
@@ -833,7 +864,7 @@ open class UiComponentImpl(
 	override val transform: Matrix4Ro
 		get() {
 			validate(ValidationFlags.TRANSFORM)
-			return _naturalRenderContext.modelTransformLocal
+			return _renderContext.modelTransformLocal
 		}
 
 	private var _customTransform: Matrix4Ro? = null
@@ -993,21 +1024,21 @@ open class UiComponentImpl(
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
-	override val modelTransform: Matrix4Ro
-		get() = naturalRenderContext.modelTransform
+	final override val modelTransform: Matrix4Ro
+		get() = renderContext.modelTransform
 
 	/**
 	 * Returns the inverse concatenated transformation matrix.
 	 */
-	override val modelTransformInv: Matrix4Ro
-		get() = naturalRenderContext.modelTransformInv
+	final override val modelTransformInv: Matrix4Ro
+		get() = renderContext.modelTransformInv
 
 	/**
 	 * Applies all operations to the transformation matrix.
 	 * Do not call this directly, use [validate(ValidationFlags.TRANSFORM)]
 	 */
 	protected open fun updateTransform() {
-		val mat = _naturalRenderContext.modelTransformLocal
+		val mat = _renderContext.modelTransformLocal
 		if (_customTransform != null) {
 			mat.set(_customTransform!!)
 			return
@@ -1073,7 +1104,7 @@ open class UiComponentImpl(
 	 * The draw region does not have a validation flag associated with it; invalidating any property will cause
 	 * the draw region to be recalculated upon the next request.
 	 *
-	 * @see naturalRenderContext
+	 * @see renderContext
 	 * @see localToCanvas
 	 */
 	override val drawRegion: MinMaxRo
@@ -1094,23 +1125,16 @@ open class UiComponentImpl(
 		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 
-	override fun renderIn(parentRenderContext: RenderContextRo) {
-		val previous = _naturalRenderContext.parentContext
-		_naturalRenderContext.parentContext = parentRenderContext
-		render(_naturalRenderContext)
-		_naturalRenderContext.parentContext = previous
-	}
-
-	override fun render(renderContext: RenderContextRo) {
-		if (renderContext.colorTint.a > 0f)
-			draw(renderContext)
+	override fun render() {
+		if (colorTint.a > 0f)
+			draw()
 	}
 
 	/**
 	 * Renders this component.
 	 * This will only be called if [alpha] is greater than zero.
 	 */
-	open fun draw(renderContext: RenderContextRo) {
+	open fun draw() {
 	}
 
 	//-----------------------------------------------

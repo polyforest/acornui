@@ -16,20 +16,22 @@
 
 package com.acornui.component
 
-import com.acornui.RenderableBase
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.IntRectangleRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 import com.acornui.math.Vector3
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.properties.Delegates
 
-class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
+class NinePatch(val glState: GlState) : BasicRenderable, Clearable {
 
 	var isRotated: Boolean = false
 		private set
@@ -84,10 +86,9 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 
 	private val indices = intArrayOf(0, 1, 5, 5, 4, 0, 1, 2, 6, 6, 5, 1, 2, 3, 7, 7, 6, 2, 4, 5, 9, 9, 8, 4, 5, 6, 10, 10, 9, 5, 6, 7, 11, 11, 10, 6, 8, 9, 13, 13, 12, 8, 9, 10, 14, 14, 13, 9, 10, 11, 15, 15, 14, 10)
 
-	private val localPoints = Array(16) { Vector3() }
-	private val normal = Vector3.NEG_Z
-	private val worldNormal = Vector3()
-	private val tmpVec = Vector3()
+	private val vertices = Array(16) { Vector3() }
+	private val normal = Vector3()
+	private val tint = Color()
 
 	@Suppress("RemoveExplicitTypeArguments") // Kotlin compiler bug
 	var texture: Texture? by Delegates.observable<Texture?>(null) {
@@ -112,7 +113,7 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 		this.scaleY = scaleY
 	}
 
-	val naturalWidth: Float
+	override val naturalWidth: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -122,7 +123,7 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 			} / scaleX
 		}
 
-	val naturalHeight: Float
+	override val naturalHeight: Float
 		get() {
 			val t = texture ?: return 0f
 			return if (isRotated) {
@@ -228,9 +229,11 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 		splitBottom = 0f
 	}
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		val width = newW ?: naturalWidth
-		val height = newH ?: naturalHeight
+	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+		val vertices = vertices
+		transform.rot(normal.set(Vector3.NEG_Z)).nor()
+		this.tint.set(tint)
+
 		val minW = splitLeft + splitRight
 		val minH = splitTop + splitBottom
 		val scaleX = if (minW <= 0f || width > minW) 1f else width / minW
@@ -247,39 +250,35 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 		val y3 = height
 
 		// Row 0
-		localPoints[ 0].set(x0, y0, 0f)
-		localPoints[ 1].set(x1, y0, 0f)
-		localPoints[ 2].set(x2, y0, 0f)
-		localPoints[ 3].set(x3, y0, 0f)
+		transform.prj(vertices[ 0].set(x0, y0, 0f))
+		transform.prj(vertices[ 1].set(x1, y0, 0f))
+		transform.prj(vertices[ 2].set(x2, y0, 0f))
+		transform.prj(vertices[ 3].set(x3, y0, 0f))
 
 		// Row 1
-		localPoints[ 4].set(x0, y1, 0f)
-		localPoints[ 5].set(x1, y1, 0f)
-		localPoints[ 6].set(x2, y1, 0f)
-		localPoints[ 7].set(x3, y1, 0f)
+		transform.prj(vertices[ 4].set(x0, y1, 0f))
+		transform.prj(vertices[ 5].set(x1, y1, 0f))
+		transform.prj(vertices[ 6].set(x2, y1, 0f))
+		transform.prj(vertices[ 7].set(x3, y1, 0f))
 
 		// Row 2
-		localPoints[ 8].set(x0, y2, 0f)
-		localPoints[ 9].set(x1, y2, 0f)
-		localPoints[10].set(x2, y2, 0f)
-		localPoints[11].set(x3, y2, 0f)
+		transform.prj(vertices[ 8].set(x0, y2, 0f))
+		transform.prj(vertices[ 9].set(x1, y2, 0f))
+		transform.prj(vertices[10].set(x2, y2, 0f))
+		transform.prj(vertices[11].set(x3, y2, 0f))
 
 		// Row 3
-		localPoints[12].set(x0, y3, 0f)
-		localPoints[13].set(x1, y3, 0f)
-		localPoints[14].set(x2, y3, 0f)
-		localPoints[15].set(x3, y3, 0f)
-
-		_bounds.set(width, height)
+		transform.prj(vertices[12].set(x0, y3, 0f))
+		transform.prj(vertices[13].set(x1, y3, 0f))
+		transform.prj(vertices[14].set(x2, y3, 0f))
+		transform.prj(vertices[15].set(x3, y3, 0f))
 	}
 
-	override fun render(renderContext: RenderContextRo) {
-		val texture = texture
-		val tint = renderContext.colorTint
-		val transform = renderContext.modelTransform
-		if (texture == null || width <= 0f || height <= 0f || tint.a <= 0f) return
-
-		transform.rot(worldNormal.set(normal)).nor()
+	override fun render() {
+		val texture = texture ?: return
+		val vertices = vertices
+		val tint = tint
+		val normal = normal
 
 		glState.setTexture(texture)
 		glState.blendMode(blendMode, premultipliedAlpha)
@@ -308,29 +307,22 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 			// u2, v2 = u, v2
 			// u, v2 = u, v
 
-			// Row 0
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[0])), worldNormal, tint, rowU0, colV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[1])), worldNormal, tint, rowU0, colV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[2])), worldNormal, tint, rowU0, colV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[3])), worldNormal, tint, rowU0, colV3)
-
-			// Row 1
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[4])), worldNormal, tint, rowU1, colV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[5])), worldNormal, tint, rowU1, colV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[6])), worldNormal, tint, rowU1, colV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[7])), worldNormal, tint, rowU1, colV3)
-
-			// Row 2
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[8])), worldNormal, tint, rowU2, colV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[9])), worldNormal, tint, rowU2, colV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[10])), worldNormal, tint, rowU2, colV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[11])), worldNormal, tint, rowU2, colV3)
-
-			// Row 3
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[12])), worldNormal, tint, rowU3, colV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[13])), worldNormal, tint, rowU3, colV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, rowU3, colV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, rowU3, colV3)
+			batch.putVertex(vertices[ 0], normal, tint, rowU0, colV0) // Row 0
+			batch.putVertex(vertices[ 1], normal, tint, rowU0, colV1)
+			batch.putVertex(vertices[ 2], normal, tint, rowU0, colV2)
+			batch.putVertex(vertices[ 3], normal, tint, rowU0, colV3)
+			batch.putVertex(vertices[ 4], normal, tint, rowU1, colV0) // Row 1
+			batch.putVertex(vertices[ 5], normal, tint, rowU1, colV1)
+			batch.putVertex(vertices[ 6], normal, tint, rowU1, colV2)
+			batch.putVertex(vertices[ 7], normal, tint, rowU1, colV3)
+			batch.putVertex(vertices[ 8], normal, tint, rowU2, colV0) // Row 2
+			batch.putVertex(vertices[ 9], normal, tint, rowU2, colV1)
+			batch.putVertex(vertices[10], normal, tint, rowU2, colV2)
+			batch.putVertex(vertices[11], normal, tint, rowU2, colV3)
+			batch.putVertex(vertices[12], normal, tint, rowU3, colV0) // Row 3
+			batch.putVertex(vertices[13], normal, tint, rowU3, colV1)
+			batch.putVertex(vertices[14], normal, tint, rowU3, colV2)
+			batch.putVertex(vertices[15], normal, tint, rowU3, colV3)
 		} else {
 			val splitLeftU = splitLeft / texture.widthPixels
 			val splitRightU = splitRight / texture.widthPixels
@@ -347,29 +339,22 @@ class NinePatch(val glState: GlState) : RenderableBase(), Clearable {
 			val rowV2 = v2 - splitBottomV
 			val rowV3 = v2
 
-			// Row 0
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[0])), worldNormal, tint, colU0, rowV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[1])), worldNormal, tint, colU1, rowV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[2])), worldNormal, tint, colU2, rowV0)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[3])), worldNormal, tint, colU3, rowV0)
-
-			// Row 1
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[4])), worldNormal, tint, colU0, rowV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[5])), worldNormal, tint, colU1, rowV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[6])), worldNormal, tint, colU2, rowV1)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[7])), worldNormal, tint, colU3, rowV1)
-
-			// Row 2
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[8])), worldNormal, tint, colU0, rowV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[9])), worldNormal, tint, colU1, rowV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[10])), worldNormal, tint, colU2, rowV2)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[11])), worldNormal, tint, colU3, rowV2)
-
-			// Row 3
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[12])), worldNormal, tint, colU0, rowV3)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[13])), worldNormal, tint, colU1, rowV3)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[14])), worldNormal, tint, colU2, rowV3)
-			batch.putVertex(transform.prj(tmpVec.set(localPoints[15])), worldNormal, tint, colU3, rowV3)
+			batch.putVertex(vertices[ 0], normal, tint, colU0, rowV0) // Row 0
+			batch.putVertex(vertices[ 1], normal, tint, colU1, rowV0)
+			batch.putVertex(vertices[ 2], normal, tint, colU2, rowV0)
+			batch.putVertex(vertices[ 3], normal, tint, colU3, rowV0)
+			batch.putVertex(vertices[ 4], normal, tint, colU0, rowV1) // Row 1
+			batch.putVertex(vertices[ 5], normal, tint, colU1, rowV1)
+			batch.putVertex(vertices[ 6], normal, tint, colU2, rowV1)
+			batch.putVertex(vertices[ 7], normal, tint, colU3, rowV1)
+			batch.putVertex(vertices[ 8], normal, tint, colU0, rowV2) // Row 2
+			batch.putVertex(vertices[ 9], normal, tint, colU1, rowV2)
+			batch.putVertex(vertices[10], normal, tint, colU2, rowV2)
+			batch.putVertex(vertices[11], normal, tint, colU3, rowV2)
+			batch.putVertex(vertices[12], normal, tint, colU0, rowV3) // Row 3
+			batch.putVertex(vertices[13], normal, tint, colU1, rowV3)
+			batch.putVertex(vertices[14], normal, tint, colU2, rowV3)
+			batch.putVertex(vertices[15], normal, tint, colU3, rowV3)
 		}
 		batch.putIndices(indices)
 	}

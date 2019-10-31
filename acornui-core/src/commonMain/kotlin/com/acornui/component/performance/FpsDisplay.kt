@@ -16,7 +16,6 @@
 
 package com.acornui.component.performance
 
-import com.acornui.component.RenderContextRo
 import com.acornui.component.text.TextFieldImpl
 import com.acornui.di.Owned
 import com.acornui.graphic.Color
@@ -50,8 +49,8 @@ class FpsDisplay(owner: Owned) : TextFieldImpl(owner) {
 		}
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
-		super.draw(renderContext)
+	override fun draw() {
+		super.draw()
 		frames++
 	}
 }

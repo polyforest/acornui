@@ -16,42 +16,42 @@
 
 package com.acornui.component
 
-import com.acornui.Renderable
-import com.acornui.RenderableBase
-import com.acornui.math.MinMaxRo
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.Pad
 
 /**
  * Adds padding to an [inner] renderable component.
- * [bounds] and [drawRegion] will be inflated by the padding, and the [inner] renderable
  */
-class PaddedRenderable<T : Renderable>(
+class PaddedRenderable<T : BasicRenderable>(
 
 		/**
 		 * The inner drawable this padding decorator wraps.
 		 */
 		val inner: T
 
-) : RenderableBase() {
+) : BasicRenderable {
 
 	/**
 	 * The padding to add to the [inner] drawable's natural size.  (In points)
 	 */
 	val padding = Pad()
 
-	override val drawRegion: MinMaxRo
-		get() = _drawRegion.set(inner.drawRegion).translate(padding.left, padding.top)
+	override val naturalWidth: Float
+		get() = padding.expandWidth(inner.naturalWidth)
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		inner.setSize(padding.reduceWidth(newW), padding.reduceHeight(newH))
-		_bounds.set(padding.expandWidth(inner.width), padding.expandHeight(inner.height))
+	override val naturalHeight: Float
+		get() = padding.expandHeight(inner.naturalHeight)
+
+	private val innerTransform = Matrix4()
+
+	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+		innerTransform.set(transform).translate(padding.left, padding.top, 0f)
+		inner.updateWorldVertices(padding.reduceWidth(width), padding.reduceHeight(height), innerTransform, tint)
 	}
 
-	private val drawableRenderContext = RenderContext()
-
-	override fun render(renderContext: RenderContextRo) {
-		drawableRenderContext.parentContext = renderContext
-		drawableRenderContext.modelTransformLocal.setTranslation(padding.left, padding.top, 0f)
-		inner.render(drawableRenderContext)
+	override fun render() {
+		inner.render()
 	}
 }

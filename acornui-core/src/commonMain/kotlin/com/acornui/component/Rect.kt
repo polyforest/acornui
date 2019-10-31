@@ -28,6 +28,7 @@ import com.acornui.gl.core.putVertex
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.math.PI
 import com.acornui.math.Pad
 import com.acornui.math.Vector3
@@ -57,7 +58,6 @@ class Rect(
 	}
 
 	private inner class ComplexMode {
-
 		val topLeftCorner = Sprite(glState)
 		val topLeftStrokeCorner = Sprite(glState)
 		val topRightCorner = Sprite(glState)
@@ -82,6 +82,7 @@ class Rect(
 			mesh = stroke
 			interactivityMode = InteractivityMode.NONE
 		}
+		val transform = Matrix4()
 	}
 
 	init {
@@ -212,39 +213,27 @@ class Rect(
 					}
 
 					if (topLeftCorner.texture != null) {
-						defaultRenderContext.childRenderContext {
-							modelTransformLocal.translate(fillPad.left, fillPad.top)
-							colorTintOverride = tint
-							topLeftCorner.setSize(null, null)
-							topLeftCorner.render(this)
-						}
+						transform.setTranslation(fillPad.left, fillPad.top)
+						topLeftCorner.updateWorldVertices(transform = transform, tint = tint)
+						topLeftCorner.render()
 					}
 
 					if (topRightCorner.texture != null) {
-						defaultRenderContext.childRenderContext {
-							modelTransformLocal.translate(w - topRightX, fillPad.top)
-							colorTintOverride = tint
-							topRightCorner.setSize(null, null)
-							topRightCorner.render(this)
-						}
+						transform.setTranslation(w - topRightX, fillPad.top)
+						topRightCorner.updateWorldVertices(transform = transform, tint = tint)
+						topRightCorner.render()
 					}
 
 					if (bottomRightCorner.texture != null) {
-						defaultRenderContext.childRenderContext {
-							modelTransformLocal.translate(w - bottomRightX, h - bottomRightY)
-							colorTintOverride = tint
-							bottomRightCorner.setSize(null, null)
-							bottomRightCorner.render(this)
-						}
+						transform.setTranslation(w - bottomRightX, h - bottomRightY)
+						bottomRightCorner.updateWorldVertices(transform = transform, tint = tint)
+						bottomRightCorner.render()
 					}
 
 					if (bottomLeftCorner.texture != null) {
-						defaultRenderContext.childRenderContext {
-							modelTransformLocal.translate(fillPad.left, h - bottomLeftY)
-							colorTintOverride = tint
-							bottomLeftCorner.setSize(null, null)
-							bottomLeftCorner.render(this)
-						}
+						transform.setTranslation(fillPad.left, h - bottomLeftY)
+						bottomLeftCorner.updateWorldVertices(transform = transform, tint = tint)
+						bottomLeftCorner.render()
 					}
 
 					trn(margin.left, margin.top)
@@ -478,7 +467,7 @@ class Rect(
 		}
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		val tint = renderContext.colorTint
 		val transform = renderContext.modelTransform
 		val margin = style.margin
@@ -565,14 +554,14 @@ class Rect(
 			if (style.linearGradient != null) {
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
-						if (fillC.visible) fillC.renderIn(renderContext)
+						if (fillC.visible) fillC.render()
 					}) {
-						if (gradientC.visible) gradientC.renderIn(renderContext)
+						if (gradientC.visible) gradientC.render()
 					}
-					if (strokeC.visible) strokeC.renderIn(renderContext)
+					if (strokeC.visible) strokeC.render()
 				}
 			} else {
-				super.draw(renderContext)
+				super.draw()
 			}
 		}
 	}
@@ -592,7 +581,7 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	}
 }
 
-inline fun Owned.rect(init: ComponentInit<Rect> = {}): Rect  {
+inline fun Owned.rect(init: ComponentInit<Rect> = {}): Rect {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val r = Rect(this)
 	r.init()

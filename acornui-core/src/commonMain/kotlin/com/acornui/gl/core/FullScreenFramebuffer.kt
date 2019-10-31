@@ -41,7 +41,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	private val renderContext = IdtProjectionContext()
 
 	private val sprite = Sprite(glState).apply {
-		setSize(2f, 2f)
+		updateWorldVertices(2f, 2f)
 		renderContext.modelTransform.setTranslation(-1f, -1f, 0f)
 	}
 
@@ -96,7 +96,7 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	 */
 	fun render(colorTint: ColorRo = Color.WHITE) {
 		renderContext.colorTint.set(colorTint)
-		sprite.render(renderContext)
+		sprite.render()
 	}
 
 	override fun dispose() {

@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.Renderable
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cacheAsync
 import com.acornui.asset.cachedGroup
@@ -32,7 +31,7 @@ import kotlin.contracts.contract
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : RenderableComponent<Renderable>(owner) {
+class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(owner) {
 
 	override val renderable: NinePatch = NinePatch(glState)
 

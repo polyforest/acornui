@@ -17,7 +17,6 @@
 package com.esotericsoftware.spine.component
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.RenderContextRo
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.useCamera
 import com.acornui.di.Owned
@@ -103,7 +102,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun render(renderContext: RenderContextRo) {
+	override fun render() {
 		glState.uniforms.useCamera(renderContext, useModel = true) {
 			val colorTint = renderContext.colorTint
 

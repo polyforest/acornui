@@ -16,38 +16,50 @@
 
 package com.acornui.component
 
-import com.acornui.Renderable
 import com.acornui.di.Owned
 import com.acornui.math.Bounds
-import com.acornui.math.MinMax
 
 /**
  * @author nbilyk
  */
-abstract class RenderableComponent<T : Renderable?>(
+abstract class RenderableComponent<T : BasicRenderable?>(
 		owner: Owned
 ) : UiComponentImpl(owner) {
 
 	protected abstract val renderable: T?
 
+	init {
+		validation.addNode(VERTICES, ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = renderable ?: return
-		drawable.setSize(explicitWidth, explicitHeight)
-		out.set(drawable.bounds)
+		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
-		renderable?.render(renderContext)
+	protected open fun updateWorldVertices() {
+		if (width <= 0f || height <= 0f) return
+		val renderContext = renderContext
+		renderable?.updateWorldVertices(width, height, renderContext.modelTransform, renderContext.colorTint)
 	}
 
-	override fun updateDrawRegion(out: MinMax) {
-		out.set(renderable?.drawRegion)
+	override fun draw() {
+		if (width <= 0f || height <= 0f) return
+		renderable?.render()
+	}
+
+	companion object {
+
+		/**
+		 * The validation flag for this component's vertices.
+		 */
+		const val VERTICES = ValidationFlags.RESERVED_1
 	}
 }
 
-class RenderableComponentImpl<T: Renderable>(owner: Owned, override val renderable: T) : RenderableComponent<T>(owner)
+class RenderableComponentImpl<T: BasicRenderable>(owner: Owned, override val renderable: T) : RenderableComponent<T>(owner)
 
-fun <T: Renderable> Owned.drawableC(drawable: T, init: ComponentInit<RenderableComponentImpl<T>> = {}): RenderableComponentImpl<T> {
+fun <T: BasicRenderable> Owned.drawableC(drawable: T, init: ComponentInit<RenderableComponentImpl<T>> = {}): RenderableComponentImpl<T> {
 	val d = RenderableComponentImpl(this, drawable)
 	d.init()
 	return d

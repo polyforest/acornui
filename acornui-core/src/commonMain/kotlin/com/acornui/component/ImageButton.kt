@@ -100,9 +100,9 @@ class ImageButton(
 		isDownChanged.add { invalidateProperties() }
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		glState.uniforms.useColorTransformation(colorTransformation) {
-			super.draw(renderContext)
+			super.draw()
 		}
 	}
 

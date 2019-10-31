@@ -24,12 +24,12 @@ import com.acornui.math.*
 interface ModelTransformableRo {
 
 	/**
-	 * The transformation of global to local coordinates.
+	 * The transformation of local to global coordinates.
 	 */
 	val modelTransform: Matrix4Ro
 
 	/**
-	 * The transformation of local to global coordinates.
+	 * The transformation of global to local coordinates.
 	 */
 	val modelTransformInv: Matrix4Ro
 }

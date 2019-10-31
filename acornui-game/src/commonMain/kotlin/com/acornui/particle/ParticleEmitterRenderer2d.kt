@@ -22,9 +22,9 @@ import com.acornui.component.Sprite
 import com.acornui.LifecycleBase
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
-import com.acornui.math.PI
-import com.acornui.math.Quaternion
-import com.acornui.math.Vector3
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.math.*
 
 class ParticleEmitterRenderer2d(
 		override val injector: Injector,
@@ -44,20 +44,21 @@ class ParticleEmitterRenderer2d(
 		}
 	}
 
-	override fun render(renderContext: RenderContextRo) {
+	override fun render(transform: Matrix4Ro, tint: ColorRo) {
 		if (!emitterInstance.emitter.enabled) return
 		val particles = emitterInstance.particles
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active) {
-				particle.draw(renderContext)
+				particle.draw(transform, tint)
 			}
 		}
 	}
 
-	private val childRenderContext = RenderContext()
+	private val transform = Matrix4()
+	private val tint = Color()
 
-	private fun Particle.draw(renderContext: RenderContextRo) {
+	private fun Particle.draw(emitterTransform: Matrix4Ro, emitterTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
 		val emitter = emitterInstance.emitter
 
@@ -69,12 +70,10 @@ class ParticleEmitterRenderer2d(
 		} else {
 			rotationFinal.set(rotation)
 		}
-		sprite.setSize(null, null)
 
 		val rotation = rotationFinal
 		val origin = origin
-		childRenderContext.parentContext = renderContext
-		childRenderContext.modelTransformLocal.apply {
+		transform.apply {
 			idt()
 			trn(position.x + emitterPosition.x, position.y + emitterPosition.y, position.z + emitterPosition.z)
 			if (!rotation.isZero()) {
@@ -85,8 +84,10 @@ class ParticleEmitterRenderer2d(
 			if (!origin.isZero())
 				translate(-origin.x * sprite.naturalWidth, -origin.y * sprite.naturalHeight)
 		}
-		childRenderContext.colorTintLocal.set(colorTint)
-		sprite.render(childRenderContext)
+		transform.mulLeft(emitterTransform)
+		tint.set(emitterTint).mul(colorTint)
+		sprite.updateWorldVertices(transform = transform, tint = tint)
+		sprite.render()
 	}
 
 	companion object {

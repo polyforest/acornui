@@ -16,20 +16,20 @@
 
 package com.acornui.component
 
-import com.acornui.Renderable
-import com.acornui.RenderableBase
 import com.acornui.recycle.Clearable
 import com.acornui.graphic.*
 import com.acornui.gl.core.GlState
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 
-class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
+class Atlas(private val glState: GlState) : BasicRenderable, Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
 
 	private var texture: Texture? = null
 
-	private val drawable: Renderable?
+	private val drawable: BasicRenderable?
 		get() = sprite ?: ninePatch
 
 	private var sprite: Sprite? = null
@@ -117,14 +117,14 @@ class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
 		this.scaleY = scaleY
 	}
 
-	val naturalWidth: Float
+	override val naturalWidth: Float
 		get() {
 			val region = region ?: return 0f
 			val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 			return (region.padding[0] + regionWidth + region.padding[2]).toFloat()
 		}
 
-	val naturalHeight: Float
+	override val naturalHeight: Float
 		get() {
 			val region = region ?: return 0f
 			val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
@@ -136,14 +136,13 @@ class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
 	private var totalPadRight = 0f
 	private var totalPadBottom = 0f
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		val w = newW ?: naturalWidth
-		val h = newH ?: naturalHeight
+	private val drawableTransform = Matrix4()
 
+	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
 		val drawable = drawable ?: return
-		updatePadding(w, h)
-		drawable.setSize(w - totalPadLeft - totalPadRight, h - totalPadBottom - totalPadTop)
-		_bounds.set(drawable.width + totalPadLeft + totalPadRight, drawable.height + totalPadTop + totalPadBottom)
+		updatePadding(width, height)
+		drawableTransform.set(transform).translate(totalPadLeft, totalPadTop, 0f)
+		drawable.updateWorldVertices(width - totalPadLeft - totalPadRight, height - totalPadBottom - totalPadTop, drawableTransform, tint)
 	}
 
 	private fun updatePadding(width: Float, height: Float) {
@@ -177,14 +176,8 @@ class Atlas(private val glState: GlState) : RenderableBase(), Clearable {
 		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
 	}
 
-	private val drawableRenderContext = RenderContext()
-
-	override fun render(renderContext: RenderContextRo) {
-		val drawable = drawable ?: return
-
-		drawableRenderContext.parentContext = renderContext
-		drawableRenderContext.modelTransformLocal.setTranslation(totalPadLeft, totalPadTop, 0f)
-		drawable.render(drawableRenderContext)
+	override fun render() {
+		drawable?.render()
 	}
 
 	override fun clear() {

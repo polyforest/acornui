@@ -296,16 +296,6 @@ class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
 		get() = _modelTransformInv.set(modelTransform).inv()
 }
 
-@PublishedApi
-internal val renderContextPool = ClearableObjectPool { RenderContext() }
-
-inline fun RenderContextRo.childRenderContext(inner: RenderContext.() -> Unit) {
-	val c = renderContextPool.obtain()
-	c.parentContext = this
-	c.inner()
-	renderContextPool.free(c)
-}
-
 /**
  * IdtProjectionContext is a render context where the model/view/projection transformations are the identity matrix.
  */

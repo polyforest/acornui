@@ -165,11 +165,11 @@ open class ContainerImpl(
 		}
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		_children.forEach2 { child ->
 			if (child.visible)
-				child.renderIn(renderContext)
+				child.render()
 		}
 	}
 
@@ -185,7 +185,7 @@ open class ContainerImpl(
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				_children.forEachReversed2 { child ->
-					val childRayCache = if (child.naturalRenderContext.cameraEquals(naturalRenderContext)) ray else null
+					val childRayCache = if (child.renderContext.cameraEquals(renderContext)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()

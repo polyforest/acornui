@@ -21,16 +21,15 @@ import com.acornui.Updatable
 import com.acornui.async.globalAsync
 import com.acornui.asset.*
 import com.acornui.async.UI
-import com.acornui.component.InteractivityMode
-import com.acornui.component.RenderContextRo
-import com.acornui.component.Sprite
-import com.acornui.component.UiComponentImpl
+import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.gl.core.GlState
+import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
+import com.acornui.math.Matrix4Ro
 import com.acornui.serialization.binaryParse
 import com.acornui.serialization.parseJson
 import com.acornui.time.onTick
@@ -106,9 +105,9 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun render(renderContext: RenderContextRo) {
+	override fun render() {
 		val effect = _effect ?: return
-		effect.render(renderContext)
+		effect.render(renderContext.modelTransform, renderContext.colorTint)
 	}
 
 	override fun dispose() {
@@ -130,9 +129,6 @@ class LoadedParticleEffect(
 ) : Updatable, Disposable {
 
 	private val emitterInstances = effectInstance.emitterInstances
-
-	init {
-	}
 
 	fun refInc() {
 		for (i in 0..renderers.lastIndex) {
@@ -156,9 +152,9 @@ class LoadedParticleEffect(
 		cachedGroup.dispose()
 	}
 
-	fun render(renderContext: RenderContextRo) {
+	fun render(transform: Matrix4Ro, tint: ColorRo) {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].render(renderContext)
+			renderers[i].render(transform, tint)
 		}
 	}
 }
@@ -222,7 +218,7 @@ interface ParticleEmitterRenderer {
 
 	fun refDec()
 
-	fun render(renderContext: RenderContextRo)
+	fun render(transform: Matrix4Ro, tint: ColorRo)
 
 }
 

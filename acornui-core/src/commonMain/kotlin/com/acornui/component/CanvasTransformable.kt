@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.Renderable
 import com.acornui.graphic.yDown
 import com.acornui.gl.core.Framebuffer
 
@@ -172,10 +171,10 @@ fun CanvasTransformableRo.localIntersectsCanvas(localRegion: MinMaxRo, canvasReg
 /**
  * Returns true if the draw region intersects with the canvas region.
  */
-fun CanvasTransformableRo.drawRegionIntersectsCanvas(element: Renderable, canvasRegion: MinMaxRo): Boolean {
+fun CanvasTransformableRo.drawRegionIntersectsCanvas(element: UiComponent, canvasRegion: MinMaxRo): Boolean {
 	return localIntersectsCanvas(element.drawRegion, canvasRegion)
 }
 
-fun UiComponentRo.intersectsClipRegion(): Boolean {
-	return localIntersectsCanvas(drawRegion, naturalRenderContext.clipRegion)
+fun UiComponent.intersectsClipRegion(): Boolean {
+	return localIntersectsCanvas(drawRegion, renderContext.clipRegion)
 }

@@ -100,7 +100,7 @@ class JsHtmlComponent(
 		out.set(component.bounds)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		component.concatenatedTransform = renderContext.modelTransform
 		component.concatenatedColorTint = renderContext.colorTint
 	}

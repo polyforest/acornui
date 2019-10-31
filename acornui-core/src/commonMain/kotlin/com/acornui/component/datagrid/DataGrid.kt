@@ -787,11 +787,8 @@ class DataGrid<RowData>(
 			_dataView.filter = value
 		}
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		if (oldW != newW || oldH != newH) {
-			invalidate(COLUMNS_WIDTHS_VALIDATION)
-		}
-		super.onSizeSet(oldW, oldH, newW, newH)
+	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
+		invalidate(COLUMNS_WIDTHS_VALIDATION)
 	}
 
 	override fun updateSizeConstraints(out: SizeConstraints) {

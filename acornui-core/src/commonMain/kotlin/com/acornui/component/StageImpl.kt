@@ -129,15 +129,15 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		out.set(w, h)
 	}
 
-	override fun render(renderContext: RenderContextRo) {
+	override fun render() {
 		glState.batch.resetRenderCount()
-		super.render(renderContext)
+		super.render()
 		glState.batch.flush()
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		glState.uniforms.setCamera(renderContext, useModel = false)
-		super.draw(renderContext)
+		super.draw()
 	}
 
 	override fun dispose() {

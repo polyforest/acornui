@@ -40,8 +40,8 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	init {
 		cameraOverride = camera
-		_naturalRenderContext.modelTransformOverride = Matrix4.IDENTITY
-		_naturalRenderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		_renderContext.modelTransformOverride = Matrix4.IDENTITY
+		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 		validation.addNode(1 shl 16, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateCanvasTransform)
 	}
 
@@ -59,8 +59,8 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val canvasTransformOverride = Rectangle()
 
 	protected open fun updateCanvasTransform() {
-		_naturalRenderContext.parentContext.localToCanvas(region.set(x, y, right, bottom).translate(-originX, -originY))
-		_naturalRenderContext.canvasTransformOverride = canvasTransformOverride.set(
+		_renderContext.parentContext.localToCanvas(region.set(x, y, right, bottom).translate(-originX, -originY))
+		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
 				region.xMin,
 				region.yMin,
 				region.width,
@@ -68,9 +68,9 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		glState.useViewportFromCanvasTransform(renderContext.canvasTransform) {
-			super.draw(renderContext)
+			super.draw()
 		}
 	}
 

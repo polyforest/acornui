@@ -96,14 +96,14 @@ class ScrollRectImpl(
 		maskClip.setSize(w, h)
 		maskClip.setScaling(1f, 1f)
 		out.set(w, h)
-		_naturalRenderContext.clipRegionLocal = drawRegion
+		_renderContext.clipRegionLocal = drawRegion
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		return maskClip.intersectsGlobalRay(globalRay, intersection)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		if (maskClip.visible) {
 			StencilUtil.mask(glState.batch, gl, {
 				maskClip.render()

@@ -161,7 +161,8 @@ private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContai
 		includeInLayout = false
 	}
 
-	override val concatenatedColorTint: ColorRo
-		get() = delegate.concatenatedColorTint
+	// TODO:
+//	override val concatenatedColorTint: ColorRo
+//		get() = delegate.concatenatedColorTint
 
 }

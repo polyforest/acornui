@@ -101,7 +101,7 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
+	override fun draw() {
 		val mesh = mesh ?: return
 		colorTransformation.tint(renderContext.colorTint)
 		glState.uniforms.useColorTransformation(colorTransformation) {

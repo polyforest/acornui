@@ -16,13 +16,15 @@
 
 package com.acornui.component
 
-import com.acornui.RenderableBase
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Texture
 import com.acornui.math.IntRectangleRo
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 import com.acornui.math.Vector3
 import com.acornui.recycle.Clearable
@@ -34,7 +36,7 @@ import kotlin.properties.Delegates
  *
  * @author nbilyk
  */
-class Sprite(val glState: GlState) : RenderableBase(), Clearable {
+class Sprite(val glState: GlState) : BasicRenderable, Clearable {
 
 	/**
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
@@ -85,8 +87,7 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 	var isUv: Boolean = true
 		private set
 
-	private val normalLocal = Vector3.NEG_Z
-	private val normalWorld = Vector3()
+	private val normal = Vector3()
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
 		region[0] = u
@@ -128,31 +129,6 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 	var v2: Float = 0f
 		private set
 
-	/**
-	 * When the transform or the layout needs validation, update the 4 vertices of this texture.
-	 */
-	private val pointsLocal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-
-	val naturalWidth: Float
-		get() {
-			val t = texture ?: return 0f
-			return if (isRotated) {
-				t.heightPixels.toFloat() * abs(v2 - v)
-			} else {
-				t.widthPixels.toFloat() * abs(u2 - u)
-			} / scaleX
-		}
-
-	val naturalHeight: Float
-		get() {
-			val t = texture ?: return 0f
-			return if (isRotated) {
-				t.widthPixels.toFloat() * abs(u2 - u)
-			} else {
-				t.heightPixels.toFloat() * abs(v2 - v)
-			} / scaleY
-		}
-
 	private fun updateUv() {
 		val t = texture ?: return
 
@@ -169,25 +145,45 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 		}
 	}
 
-	override fun onSizeSet(oldW: Float?, oldH: Float?, newW: Float?, newH: Float?) {
-		val w = newW ?: naturalWidth
-		val h = newH ?: naturalHeight
-		_bounds.set(w, h)
+	private val vertices = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val tint = Color()
 
-		pointsLocal[0].set(0f, 0f, 0f)
-		pointsLocal[1].set(w, 0f, 0f)
-		pointsLocal[2].set(w, h, 0f)
-		pointsLocal[3].set(0f, h, 0f)
+	override val naturalWidth: Float
+		get() {
+			val t = texture ?: return 0f
+			return if (isRotated) {
+				t.heightPixels.toFloat() * abs(v2 - v)
+			} else {
+				t.widthPixels.toFloat() * abs(u2 - u)
+			} / scaleX
+		}
+
+	override val naturalHeight: Float
+		get() {
+			val t = texture ?: return 0f
+			return if (isRotated) {
+				t.widthPixels.toFloat() * abs(u2 - u)
+			} else {
+				t.heightPixels.toFloat() * abs(v2 - v)
+			} / scaleY
+		}
+
+	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+		if (texture == null) return // Nothing to draw
+		val vertices = vertices
+		this.tint.set(tint)
+		transform.rot(normal.set(Vector3.NEG_Z)).nor()
+
+		transform.prj(vertices[0].set(0f, 0f, 0f))
+		transform.prj(vertices[1].set(width, 0f, 0f))
+		transform.prj(vertices[2].set(width, height, 0f))
+		transform.prj(vertices[3].set(0f, height, 0f))
 	}
 
-	private val tmpVec = Vector3()
-
-	override fun render(renderContext: RenderContextRo) {
-		val tint = renderContext.colorTint
-		val transform = renderContext.modelTransform
-		if (texture == null || width == 0f || height == 0f) return // Nothing to draw
-		val tmpVec = tmpVec
-		transform.rot(normalWorld.set(normalLocal)).nor()
+	override fun render() {
+		if (texture == null) return // Nothing to draw
+		val tint = tint
+		val normalWorld = normal
 
 		val batch = glState.batch
 		glState.setTexture(texture)
@@ -196,22 +192,22 @@ class Sprite(val glState: GlState) : RenderableBase(), Clearable {
 
 		if (isRotated) {
 			// Top left
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u2, v)
+			batch.putVertex(vertices[0], normalWorld, tint, u2, v)
 			// Top right
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v2)
+			batch.putVertex(vertices[1], normalWorld, tint, u2, v2)
 			// Bottom right
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u, v2)
+			batch.putVertex(vertices[2], normalWorld, tint, u, v2)
 			// Bottom left
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v)
+			batch.putVertex(vertices[3], normalWorld, tint, u, v)
 		} else {
 			// Top left
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[0])), normalWorld, tint, u, v)
+			batch.putVertex(vertices[0], normalWorld, tint, u, v)
 			// Top right
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[1])), normalWorld, tint, u2, v)
+			batch.putVertex(vertices[1], normalWorld, tint, u2, v)
 			// Bottom right
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[2])), normalWorld, tint, u2, v2)
+			batch.putVertex(vertices[2], normalWorld, tint, u2, v2)
 			// Bottom left
-			batch.putVertex(transform.prj(tmpVec.set(pointsLocal[3])), normalWorld, tint, u, v2)
+			batch.putVertex(vertices[3], normalWorld, tint, u, v2)
 		}
 		batch.putQuadIndices()
 	}
