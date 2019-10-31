@@ -72,8 +72,7 @@ object MockGlState : GlState {
 	override fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 	}
 
-	override fun getFramebuffer(out: FramebufferInfo) {
-	}
+	override val framebuffer: FramebufferInfoRo = FramebufferInfo()
 
 	override fun setFramebuffer(framebuffer: GlFramebufferRef?, width: Int, height: Int, scaleX: Float, scaleY: Float) {
 	}

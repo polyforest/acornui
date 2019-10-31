@@ -20,9 +20,9 @@ import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
 import com.acornui.component.Stage
-import com.acornui.component.render
 import com.acornui.di.*
 import com.acornui.graphic.Window
+import com.acornui.graphic.render
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.logging.Log
@@ -154,13 +154,7 @@ abstract class JsApplicationRunnerBase(
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
 		FrameDriver.dispatch(dT)
-		if (appWindow.shouldRender(true)) {
-			stage.update()
-			appWindow.renderBegin()
-			if (stage.visible)
-				stage.render()
-			appWindow.renderEnd()
-		}
+		appWindow.render(stage)
 	}
 
 	override fun stop() {

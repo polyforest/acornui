@@ -189,18 +189,18 @@ class WebGlWindowImpl(
 
 	override var isVisible: Boolean = true
 		private set(value) {
-			if (field == value) return
 			field = value
 			_isVisibleChanged.dispatch(value)
 		}
 
 	override var isActive: Boolean = true
 		private set(value) {
-			if (field == value) return
 			field = value
 			_isActiveChanged.dispatch(value)
 		}
 
+	override var useRedrawRegions: Boolean = true
+	
 	override val framebufferWidth: Int
 		get() = ceil(width * scaleX).toInt()
 

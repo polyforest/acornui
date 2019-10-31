@@ -105,7 +105,7 @@ class ParticleEffectComponent(
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
 
-	override fun render() {
+	override fun draw() {
 		val effect = _effect ?: return
 		effect.render(renderContext.modelTransform, renderContext.colorTint)
 	}

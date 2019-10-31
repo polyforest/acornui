@@ -48,6 +48,8 @@ class HeadlessWindow : Window {
 	private val closeCancel = Cancel()
 	private var closeIsRequested = false
 
+	override var useRedrawRegions: Boolean = true
+
 	override fun setSize(width: Float, height: Float) {
 	}
 

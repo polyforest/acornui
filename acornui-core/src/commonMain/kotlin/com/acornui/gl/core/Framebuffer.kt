@@ -191,7 +191,7 @@ class Framebuffer(
 
 	fun begin() {
 		glState.batch.flush()
-		glState.getFramebuffer(previousFramebuffer)
+		previousFramebuffer.set(glState.framebuffer)
 		glState.setFramebuffer(framebufferHandle, widthPixels, heightPixels, scaleX, scaleY)
 		previousViewport.set(glState.viewport)
 		glState.setViewport(_viewport)

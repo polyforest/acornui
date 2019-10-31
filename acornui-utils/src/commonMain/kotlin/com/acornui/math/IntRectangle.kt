@@ -16,6 +16,7 @@
 
 package com.acornui.math
 
+import com.acornui.ceilInt
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
@@ -23,6 +24,7 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.IntSerializer
 import kotlinx.serialization.internal.StringDescriptor
+import kotlin.math.floor
 
 /**
  * The read-only interface to [IntRectangle].
@@ -47,7 +49,7 @@ interface IntRectangleRo {
 	val bottom: Int
 		get() = y + height
 
-	fun isEmpty(): Boolean = (width == 0 || height == 0)
+	fun isEmpty(): Boolean = width <= 0 || height <= 0
 
 	fun isNotEmpty(): Boolean = !isEmpty()
 
@@ -312,4 +314,16 @@ object IntRectangleSerializer : KSerializer<IntRectangle> {
 				height = values[3]
 		)
 	}
+}
+
+/**
+ * Sets this rectangle to the given min max region, extending any fractions.
+ * E.g. if `x` was `2.8f`, x will be `2` If `right` was `10.1`, x will be `11`
+ */
+fun IntRectangle.set(minMax: MinMaxRo): IntRectangle {
+	val newX = minMax.x.toInt()
+	val newY = minMax.y.toInt()
+	val newR = ceilInt(minMax.right)
+	val newB = ceilInt(minMax.bottom)
+	return set(newX, newY, newR - newX, newB - newY)
 }

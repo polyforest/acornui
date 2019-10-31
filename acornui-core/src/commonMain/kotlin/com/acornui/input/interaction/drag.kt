@@ -110,7 +110,7 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(-1, ::enterFrameHandler.as1)
+			_enterFrame = tick(-1, callback = ::enterFrameHandler.as1)
 			stage.mouseMove().add(::stageMouseMoveHandler)
 			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
@@ -205,7 +205,7 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(-1, ::enterFrameHandler.as1)
+			_enterFrame = tick(-1, callback = ::enterFrameHandler.as1)
 			stage.touchMove().add(::stageTouchMoveHandler)
 			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {

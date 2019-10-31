@@ -51,9 +51,7 @@ interface RectangleRo {
 	val bottom: Float
 		get() = y + height
 
-	fun isEmpty(): Boolean {
-		return width <= 0f || height <= 0f
-	}
+	fun isEmpty(): Boolean = width <= 0f || height <= 0f
 
 	fun isNotEmpty(): Boolean = !isEmpty()
 

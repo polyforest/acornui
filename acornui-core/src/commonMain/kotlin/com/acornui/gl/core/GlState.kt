@@ -118,9 +118,9 @@ interface GlState {
 	fun setViewport(x: Int, y: Int, width: Int, height: Int)
 
 	/**
-	 * Gets the current framebuffer, populating the [out] parameter.
+	 * The current framebuffer.
 	 */
-	fun getFramebuffer(out: FramebufferInfo)
+	val framebuffer: FramebufferInfoRo
 
 	/**
 	 * Sets the current framebuffer and some information about it.
@@ -298,8 +298,7 @@ class GlStateImpl(
 	}
 
 	private val _framebuffer = FramebufferInfo(null, window.framebufferWidth, window.framebufferHeight, window.scaleX, window.scaleY)
-
-	override fun getFramebuffer(out: FramebufferInfo) = out.set(_framebuffer)
+	override val framebuffer: FramebufferInfoRo = _framebuffer
 
 	override fun setFramebuffer(framebuffer: GlFramebufferRef?,
 								width: Int,
@@ -365,15 +364,15 @@ inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	IntRectangle.free(oldViewport)
 }
 
-private val framebufferInfo = FramebufferInfo()
+private val framebufferInfoTmp = FramebufferInfo()
 
 fun GlState.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: () -> Unit) {
-	getFramebuffer(framebufferInfo)
+	framebufferInfoTmp.set(framebuffer)
 	useViewport(
-			floor(canvasTransform.x * framebufferInfo.scaleX).toInt(),
-			floor((framebufferInfo.height - canvasTransform.bottom * framebufferInfo.scaleY)).toInt(),
-			ceil(canvasTransform.width * framebufferInfo.scaleX).toInt(),
-			ceil(canvasTransform.height * framebufferInfo.scaleY).toInt(),
+			floor(canvasTransform.x * framebufferInfoTmp.scaleX).toInt(),
+			floor((framebufferInfoTmp.height - canvasTransform.bottom * framebufferInfoTmp.scaleY)).toInt(),
+			ceil(canvasTransform.width * framebufferInfoTmp.scaleX).toInt(),
+			ceil(canvasTransform.height * framebufferInfoTmp.scaleY).toInt(),
 			inner
 	)
 }
@@ -450,11 +449,17 @@ private val mvp = Matrix4()
 private val tmpMat = Matrix3()
 
 fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, modelTransformOut: Matrix4) {
-	getUniformLocation(CommonShaderUniforms.U_PROJ_TRANS)?.let {
-		get(it, viewProjectionOut)
+	val uProjTrans = getUniformLocation(CommonShaderUniforms.U_PROJ_TRANS)
+	if (uProjTrans == null) {
+		viewProjectionOut.idt()
+	} else {
+		get(uProjTrans, viewProjectionOut)
 	}
-	getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)?.let {
-		get(it, viewTransformOut)
+	val uViewTrans = getUniformLocation(CommonShaderUniforms.U_VIEW_TRANS)
+	if (uViewTrans == null) {
+		viewTransformOut.idt()
+	} else {
+		get(uViewTrans, viewTransformOut)
 	}
 	getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS)?.let {
 		get(it, modelTransformOut)

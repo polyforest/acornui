@@ -25,6 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.lwjgl.browser.JvmLocation
 import com.acornui.logging.Log
+import com.acornui.reflect.observable
 import com.acornui.signal.*
 import com.acornui.substringInRange
 import org.lwjgl.glfw.Callbacks
@@ -244,13 +245,19 @@ class GlfwWindowImpl(
 		_sizeChanged.dispatch(width, height)
 	}
 
-	override var isVisible: Boolean by Delegates.observable(true) { prop, old, new ->
-		_isVisibleChanged.dispatch(new)
-	}
+	override var isVisible: Boolean = true
+		private set(value) {
+			field = value
+			_isVisibleChanged.dispatch(value)
+		}
 
-	override var isActive: Boolean by Delegates.observable(true) { prop, old, new ->
-		_isActiveChanged.dispatch(new)
-	}
+	override var isActive: Boolean = true
+		private set(value) {
+			field = value
+			_isActiveChanged.dispatch(value)
+		}
+	
+	override var useRedrawRegions: Boolean = true
 
 	override fun setSize(width: Float, height: Float) {
 		if (this.width == width && this.height == height) return // no-op
@@ -280,7 +287,6 @@ class GlfwWindowImpl(
 	}
 
 	override fun renderBegin() {
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
 
 	override fun renderEnd() {

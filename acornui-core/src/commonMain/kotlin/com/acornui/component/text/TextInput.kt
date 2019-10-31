@@ -402,7 +402,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private fun startScrollWatch(event: Any) {
 		mousePosition(startMouse)
 		_frameWatch?.dispose()
-		_frameWatch = tick(-1, ::scrollWatcher.as1)
+		_frameWatch = tick(-1, callback = ::scrollWatcher.as1)
 		stage.mouseUp().add(::endScrollWatch)
 		stage.touchEnd().add(::endScrollWatch)
 	}

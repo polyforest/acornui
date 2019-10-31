@@ -18,6 +18,7 @@ package com.acornui.graphic
 
 import com.acornui.Disposable
 import com.acornui.browser.Location
+import com.acornui.component.Stage
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -110,6 +111,12 @@ interface Window : Disposable {
 	 * will trigger a render.
 	 */
 	var continuousRendering: Boolean
+
+	/**
+	 * If true, there will be a pass before render invalidating screen regions. Only those regions will be cleared and
+	 * redrawn.
+	 */
+	var useRedrawRegions: Boolean
 
 	/**
 	 * True if a render and update has been requested, or if [continuousRendering] is true.
@@ -226,4 +233,17 @@ data class PopUpSpecs(
  */
 fun Scoped.exit() {
 	inject(Window).requestClose()
+}
+
+fun Window.render(stage: Stage) {
+	if (shouldRender(true)) {
+		stage.update()
+		if (width > 0f && height > 0f) {
+//			if (useRedrawRegions)
+//				stage.invalidateRedrawRegions()
+			renderBegin()
+			stage.render()
+			renderEnd()
+		}
+	}
 }

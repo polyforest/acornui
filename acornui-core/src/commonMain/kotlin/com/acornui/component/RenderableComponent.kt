@@ -29,6 +29,7 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 	protected abstract val renderable: T?
 
 	init {
+		draws = true
 		validation.addNode(VERTICES, ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
 	}
 

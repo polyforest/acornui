@@ -26,8 +26,7 @@ import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
 import com.acornui.function.as1
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.*
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -408,8 +407,12 @@ open class UiComponentImpl(
 			_renderContext.cameraOverride = value
 		}
 
-	//
+	/**
+	 * Set to true if this component does drawing and should invalidate its redraw region.
+	 */
+	protected var draws = false
 
+	//
 
 	private val rayTmp = Ray()
 
@@ -427,6 +430,7 @@ open class UiComponentImpl(
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
 				addNode(BITMAP_CACHE, BITMAP_CACHE_DEPENDENCIES, 0, checkAllFound = false) {}
+				addNode(REDRAW_REGION, REDRAW_REGION_DEPENDENCIES, 0, checkAllFound = false, onValidate = ::updateRedrawRegion)
 			}
 		}
 
@@ -1057,6 +1061,21 @@ open class UiComponentImpl(
 	protected open fun updateRenderContext() {
 	}
 
+	private val redrawRegionTmp = MinMax()
+	private val redrawRegion = IntRectangle()
+	private val framebufferInfo = FramebufferInfo()
+
+	protected open fun updateRedrawRegion() {
+		framebufferInfo.set(glState.framebuffer)
+		if (draws)
+			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
+		localToCanvas(redrawRegionTmp.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
+		redrawRegion.set(redrawRegionTmp)
+		redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
+		if (draws)
+			renderContext.redraw.invalidate(redrawRegion)
+	}
+
 	//-----------------------------------------------
 	// Validatable
 	//-----------------------------------------------
@@ -1125,8 +1144,8 @@ open class UiComponentImpl(
 		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 
-	override fun render() {
-		if (colorTint.a > 0f)
+	final override fun render() {
+		if (colorTint.a > 0f && renderContext.redraw.needsRedraw(redrawRegion))
 			draw()
 	}
 
@@ -1182,7 +1201,8 @@ open class UiComponentImpl(
 	companion object {
 		private val quat = Quaternion()
 
-		private const val BITMAP_CACHE_DEPENDENCIES = (ValidationFlags.HIERARCHY_DESCENDING or ValidationFlags.RENDER_CONTEXT or ValidationFlags.INTERACTIVITY_MODE).inv()
+		private const val BITMAP_CACHE_DEPENDENCIES = (ValidationFlags.HIERARCHY_DESCENDING or ValidationFlags.RENDER_CONTEXT or ValidationFlags.INTERACTIVITY_MODE or ValidationFlags.REDRAW_REGION).inv()
+		private const val REDRAW_REGION_DEPENDENCIES = ValidationFlags.INTERACTIVITY_MODE.inv() // Everything but interactivity mode
 	}
 }
 

@@ -69,6 +69,7 @@ class AnimationInstance(
 	val tween: TimelineTween = timelineTween()
 
 	init {
+		draws = true
 		tween.loopAfter = true
 		for (i in libraryItem.timeline.layers.lastIndex downTo 0) {
 			val layer = libraryItem.timeline.layers[i]

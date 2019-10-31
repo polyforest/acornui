@@ -43,6 +43,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	var isPaused: Boolean = false
 
 	init {
+		draws = true
 		onTick {
 			tick(it)
 		}
@@ -102,7 +103,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		window.requestRender()
 	}
 
-	override fun render() {
+	override fun draw() {
 		glState.uniforms.useCamera(renderContext, useModel = true) {
 			val colorTint = renderContext.colorTint
 

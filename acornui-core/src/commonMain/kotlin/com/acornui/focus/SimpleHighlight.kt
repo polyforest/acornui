@@ -89,9 +89,9 @@ open class SimpleHighlight(
 		}
 	}
 
-	override fun render() {
+	override fun draw() {
 		_renderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
-		super.render()
+		super.draw()
 	}
 
 	override fun dispose() {
