@@ -26,9 +26,7 @@ import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
 import com.acornui.function.as1
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.canvasToScreen
+import com.acornui.gl.core.*
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -81,22 +79,15 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val visible: Boolean
 
 	/**
-	 * If false, layout containers should not position or size this element.
+	 * Set this to false to make this layout element not included in layout algorithms.
 	 */
 	val includeInLayout: Boolean
 
 	/**
-	 * If false, containers should not render this element by default.
-	 * This is different from [visible] in that this component is expected to have its [UiComponent.render] method
-	 * manually called. This component will still invalidate its redraw regions.
-	 */
-	val includeInRender: Boolean
-
-	/**
-	 * Returns true if this component is active, visible, and has opacity.
-	 *
-	 * This will be true if this component and all its ancestors meet the conditions:
-	 * [isActive], [visible], [alpha] > 0f
+	 * Returns true if this component will be rendered. This will be true under the following conditions:
+	 * This component is on the stage.
+	 * No ancestor has [visible] false.
+	 * No ancestor has [alpha] <= 0f.
 	 */
 	val isRendered: Boolean
 
@@ -107,7 +98,6 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 
 	/**
 	 * The render context used to render to the screen.
-	 * Requesting this property does not trigger a validation for [ValidationFlags.RENDER_CONTEXT].
 	 * @see UiComponent.render
 	 */
 	val renderContext: RenderContextRo
@@ -194,9 +184,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var visible: Boolean
 
 	override var includeInLayout: Boolean
-	override var includeInRender: Boolean
-
-	override var layoutInvalidatingFlags: Int
 
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
@@ -215,24 +202,15 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var defaultHeight: Float?
 
 	/**
-	 * If set, when the layout is validated, this baseline will be used instead of the measured value.
-	 */
-	var baselineOverride: Float?
-
-	/**
-	 * The drawing region of this component in canvas coordinates.
-	 */
-	val drawRegionCanvas: RectangleRo
-
-	/**
-	 * The drawing region of this component in screen coordinates.
-	 */
-	val drawRegionScreen: IntRectangleRo
-
-	/**
 	 * Updates this component, validating it and its children.
 	 */
 	fun update()
+
+	/**
+	 * The local drawing region of this component.
+	 * Use [localToCanvas] to convert this region to canvas coordinates.
+	 */
+	val drawRegion: MinMaxRo
 
 	/**
 	 * Renders this component.
@@ -283,8 +261,6 @@ open class UiComponentImpl(
 			throw DisposedException()
 		check(!_isActive) { "Already active" }
 		_isActive = true
-
-		invalidate(ValidationFlags.REDRAW_REGIONS)
 		_activated.dispatch(this)
 	}
 
@@ -296,8 +272,9 @@ open class UiComponentImpl(
 		check(_isActive) { "Not active" }
 		_isActive = false
 
+		// When deactivated, this component will not be updated; invalidate its last draw region.
 		if (draws)
-			renderContext.redraw.invalidate(_previousDrawRegionScreen)
+			renderContext.redraw.invalidate(redrawRegion)
 		_deactivated.dispatch(this)
 	}
 
@@ -338,7 +315,7 @@ open class UiComponentImpl(
 
 	// InteractiveElement properties
 	protected var _inheritedInteractivityMode = InteractivityMode.ALL
-	final override val interactivityModeInherited: InteractivityMode
+	final override val inheritedInteractivityMode: InteractivityMode
 		get() {
 			validate(ValidationFlags.INTERACTIVITY_MODE)
 			return _inheritedInteractivityMode
@@ -361,7 +338,7 @@ open class UiComponentImpl(
 		}
 
 	override val interactivityEnabled: Boolean
-		get() = interactivityModeInherited == InteractivityMode.ALL || interactivityModeInherited == InteractivityMode.ALWAYS
+		get() = inheritedInteractivityMode == InteractivityMode.ALL || inheritedInteractivityMode == InteractivityMode.ALWAYS
 
 	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean {
 		return handlesInteraction(type, true) || handlesInteraction(type, false)
@@ -382,10 +359,7 @@ open class UiComponentImpl(
 
 	// Sizable properties
 	protected val _bounds = Bounds()
-	protected val _drawRegion = Box()
-	protected val _drawRegionCanvas = Rectangle()
-	protected val _previousDrawRegionScreen = IntRectangle()
-	protected val _drawRegionScreen = IntRectangle()
+	protected val _drawRegion = MinMax()
 
 	/**
 	 * The explicit width, as set by width(value)
@@ -431,25 +405,18 @@ open class UiComponentImpl(
 	override val canvasTransform: RectangleRo
 		get() = renderContext.canvasTransform
 
-	/**
-	 * @see RenderContext.cameraOverride
-	 */
 	var cameraOverride: CameraRo?
 		get() = _renderContext.cameraOverride
 		set(value) {
 			_renderContext.cameraOverride = value
-			invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 
 	/**
-	 * @see RenderContext.draws
+	 * Set to true if this component does drawing and should invalidate its redraw region.
 	 */
-	var draws: Boolean
-		get() = _renderContext.drawsSelf
-		set(value) {
-			_renderContext.drawsSelf = value
-			invalidate(ValidationFlags.RENDER_CONTEXT)
-		}
+	protected var draws = false
+
+	//
 
 	private val rayTmp = Ray()
 
@@ -466,7 +433,8 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
-				addNode(REDRAW_REGIONS, LAYOUT or RENDER_CONTEXT or VERTICES, 0, checkAllFound = false, onValidate = ::updateRedrawRegions)
+				addNode(BITMAP_CACHE, BITMAP_CACHE_DEPENDENCIES, 0, checkAllFound = false) {}
+				addNode(REDRAW_REGION, REDRAW_REGION_DEPENDENCIES, 0, checkAllFound = false, onValidate = ::updateRedrawRegion)
 			}
 		}
 
@@ -505,8 +473,9 @@ open class UiComponentImpl(
 		validate(ValidationFlags.STYLES)
 		if (focusTarget != null)
 			focusHighlighter?.unhighlight(focusTarget!!)
+		val newFocusTarget = focusHighlightDelegate ?: this
 		if (showFocusHighlight) {
-			focusTarget = focusHighlightDelegate ?: this
+			focusTarget = newFocusTarget
 			focusHighlighter = focusableStyle.highlighter
 			focusHighlighter?.highlight(focusTarget!!)
 		} else {
@@ -568,7 +537,6 @@ open class UiComponentImpl(
 	override var layoutInvalidatingFlags: Int = UiComponentRo.defaultLayoutInvalidatingFlags
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
-	final override var includeInRender: Boolean = true
 
 	override val isRendered: Boolean
 		get() {
@@ -650,11 +618,17 @@ open class UiComponentImpl(
 		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 	}
 
+	/**
+	 * If set, when the layout is validated, if there was no explicit width,
+	 * this value will be used instead.
+	 */
 	final override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
+	/**
+	 * If set, when the layout is validated, if there was no explicit height,
+	 * this height will be used instead.
+	 */
 	final override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
-
-	final override var baselineOverride: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
 	 * Does the same thing as setting width and height individually.
@@ -669,7 +643,7 @@ open class UiComponentImpl(
 		onSizeSet(oldW, oldH, width, height)
 		invalidate(ValidationFlags.LAYOUT)
 	}
-
+	
 	protected open fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {}
 
 	/**
@@ -696,8 +670,6 @@ open class UiComponentImpl(
 		val h = sC.height.clamp(explicitHeight ?: defaultHeight)
 		_bounds.set(w ?: 0f, h ?: 0f)
 		updateLayout(w, h, _bounds)
-		if (baselineOverride != null)
-			_bounds.baseline = baselineOverride!!
 		if (assertionsEnabled && (_bounds.width.isNaN() || _bounds.height.isNaN()))
 			throw Exception("Bounding measurements should not be NaN")
 	}
@@ -805,7 +777,7 @@ open class UiComponentImpl(
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
-		if (parent?.interactivityModeInherited == InteractivityMode.NONE)
+		if (parent?.inheritedInteractivityMode == InteractivityMode.NONE)
 			_inheritedInteractivityMode = InteractivityMode.NONE
 	}
 
@@ -883,9 +855,6 @@ open class UiComponentImpl(
 
 	override val invalidFlags: Int
 		get() = validation.invalidFlags
-
-	override val isValidating: Boolean
-		get() = validation.isValidating
 
 	//-----------------------------------------------
 	// Transformable
@@ -1094,49 +1063,21 @@ open class UiComponentImpl(
 	}
 
 	protected open fun updateRenderContext() {
-		_renderContext.invalidate() // Mark the context's cache as invalid
 	}
 
-	protected fun updateRedrawRegions() {
-		drawRegionScreenIsValid = false
-		if (_renderContext.parentContext.draws) {
-			// The parent is responsible for invalidating the redraw regions.
-			return
-		}
-		val redraw = renderContext.redraw
-		if (redraw.enabled) {
-			// Invalidate the previously drawn region
-			if (draws && isRendered)
-				renderContext.redraw.invalidate(_previousDrawRegionScreen)
-			// Invalidate the new draw region
-			if (draws) {
-				val drawRegionScreen = drawRegionScreen // Validates the new draw region.
-				renderContext.redraw.invalidate(drawRegionScreen)
-				_previousDrawRegionScreen.set(drawRegionScreen)
-			} else {
-				_previousDrawRegionScreen.clear()
-			}
-		}
-	}
+	private val redrawRegionTmp = MinMax()
+	private val redrawRegion = IntRectangle()
+	private val framebufferInfo = FramebufferInfo()
 
-	/**
-	 * Updates this component's local draw region.
-	 *
-	 * By default, this will be the same area as the [bounds] with `0f` depth.
-	 * This may be overridden to modify the area that is drawn to the screen.
-	 *
-	 * @param out The bounding box to set to the current draw region.
-	 */
-	protected open fun updateDrawRegionLocal(out: Box) {
-		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
-	}
-
-	protected open fun updateDrawRegionCanvas(out: Rectangle) {
-		val drawRegion = _drawRegion.inf()
-		updateDrawRegionLocal(drawRegion)
-		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
-			out.set(localToCanvas(drawRegion).clamp(renderContext.clipRegion))
-		}
+	protected open fun updateRedrawRegion() {
+		if (draws)
+			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
+		framebufferInfo.set(glState.framebuffer)
+		localToCanvas(redrawRegionTmp.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
+		redrawRegion.set(redrawRegionTmp)
+		redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
+		if (draws)
+			renderContext.redraw.invalidate(redrawRegion)
 	}
 
 	//-----------------------------------------------
@@ -1146,13 +1087,14 @@ open class UiComponentImpl(
 	final override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
-		check(!_invalidated.isDispatching) { "invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency." }
-
 		if (flagsInvalidated != 0) {
+			if (_invalidated.isDispatching) {
+				throw Exception("invalidated already dispatching. ${ValidationFlags.flagsToString(flagsInvalidated)}. Possible cyclic validation dependency.")
+			}
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
+			_invalidated.dispatch(this, flagsInvalidated)
 		}
-		_invalidated.dispatch(this, flagsInvalidated)
 		return flagsInvalidated
 	}
 
@@ -1166,39 +1108,48 @@ open class UiComponentImpl(
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout and properties.
 	 */
 	override fun validate(flags: Int) {
+		if (isDisposed) return
 		validation.validate(flags)
 	}
 
 	override fun update() = validate()
 
-	private var drawRegionScreenIsValid = false
-	final override val drawRegionCanvas: RectangleRo
-		get() {
-			if (!drawRegionScreenIsValid) {
-				drawRegionScreenIsValid = true
-				updateDrawRegionCanvas(_drawRegionCanvas.apply { clear() })
-			}
-			return _drawRegionCanvas
-		}
-
-	final override val drawRegionScreen: IntRectangleRo
-		get() = glState.framebuffer.canvasToScreen(drawRegionCanvas, _drawRegionScreen)
+	//-----------------------------------------------
+	// Renderable
+	//-----------------------------------------------
 
 	/**
-	 * True if this component is visible, has opacity, and passes a redraw check with the render context [RedrawRegions].
+	 * The local drawing region of this renderable component.
+	 * Use `localToCanvas` to convert this region to canvas coordinates.
+	 * The draw region is not used for a typical [render], but may be used for render filters or components that
+	 * need to set a region for a frame buffer.
+	 *
+	 * The draw region does not have a validation flag associated with it; invalidating any property will cause
+	 * the draw region to be recalculated upon the next request.
+	 *
+	 * @see renderContext
+	 * @see localToCanvas
 	 */
-	protected open val needsRedraw: Boolean
+	override val drawRegion: MinMaxRo
 		get() {
-			val renderContext = _renderContext
-			return (!renderContext.redraw.enabled ||
-					renderContext.parentContext.draws ||
-					renderContext.redraw.needsRedraw(drawRegionScreen)) &&
-					visible &&
-					colorTint.a > 0f
+			updateDrawRegion(_drawRegion)
+			return _drawRegion
 		}
 
-	override fun render() {
-		if (needsRedraw)
+	/**
+	 * Updates this component's draw region.
+	 *
+	 * By default, this will be the same area as the [bounds].
+	 * This may be overridden to modify the area that
+	 *
+	 * @param out The region that will be set as the [drawRegion].
+	 */
+	protected open fun updateDrawRegion(out: MinMax) {
+		out.set(0f, 0f, _bounds.width, _bounds.height)
+	}
+
+	final override fun render() {
+		if (colorTint.a > 0f && renderContext.redraw.needsRedraw(redrawRegion))
 			draw()
 	}
 
@@ -1253,6 +1204,9 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat = Quaternion()
+
+		private const val BITMAP_CACHE_DEPENDENCIES = (ValidationFlags.HIERARCHY_DESCENDING or ValidationFlags.RENDER_CONTEXT or ValidationFlags.INTERACTIVITY_MODE or ValidationFlags.REDRAW_REGION).inv()
+		private const val REDRAW_REGION_DEPENDENCIES = ValidationFlags.INTERACTIVITY_MODE.inv() // Everything but interactivity mode
 	}
 }
 
