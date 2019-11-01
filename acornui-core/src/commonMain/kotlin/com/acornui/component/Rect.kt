@@ -36,7 +36,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.*
 
-class Rect(
+open class Rect(
 		owner: Owned
 ) : ContainerImpl(owner) {
 
@@ -240,6 +240,7 @@ class Rect(
 					trn(margin.left, margin.top)
 				}
 			}
+			fillC.invalidateSize()
 
 			stroke.buildMesh {
 				if (topBorder > 0f && borderColors.top.a > 0f) {
@@ -395,6 +396,7 @@ class Rect(
 				}
 				trn(margin.left, margin.top)
 			}
+			strokeC.invalidateSize()
 
 			if (style.linearGradient != null) {
 				val linearGradient = style.linearGradient!!
@@ -464,6 +466,7 @@ class Rect(
 
 					transform(position = Vector3(margin.left + w * 0.5f, margin.top + h * 0.5f), rotation = Vector3(z = angle), origin = Vector3(len * 0.5f, thickness * 0.5f))
 				}
+				gradientC.invalidateSize()
 			}
 		}
 	}

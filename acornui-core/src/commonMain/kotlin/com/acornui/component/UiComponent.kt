@@ -1065,7 +1065,7 @@ open class UiComponentImpl(
 	protected open fun updateRenderContext() {
 	}
 
-	private val redrawRegionTmp = MinMax()
+	private val redrawRegionLocal = MinMax()
 	private val redrawRegion = IntRectangle()
 	private val framebufferInfo = FramebufferInfo()
 
@@ -1073,16 +1073,15 @@ open class UiComponentImpl(
 		if (draws)
 			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
 		framebufferInfo.set(glState.framebuffer)
-		if (visible && colorTint.a > 0f) {
-			localToCanvas(redrawRegionTmp.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
-			redrawRegion.set(redrawRegionTmp)
+		if (isRendered) {
+			localToCanvas(redrawRegionLocal.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
+			redrawRegion.set(redrawRegionLocal)
 			redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
 			if (draws)
 				renderContext.redraw.invalidate(redrawRegion)
 		} else {
 			redrawRegion.clear()
 		}
-
 	}
 
 	//-----------------------------------------------
