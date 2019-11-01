@@ -1073,11 +1073,16 @@ open class UiComponentImpl(
 		if (draws)
 			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
 		framebufferInfo.set(glState.framebuffer)
-		localToCanvas(redrawRegionTmp.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
-		redrawRegion.set(redrawRegionTmp)
-		redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
-		if (draws)
-			renderContext.redraw.invalidate(redrawRegion)
+		if (visible && colorTint.a > 0f) {
+			localToCanvas(redrawRegionTmp.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
+			redrawRegion.set(redrawRegionTmp)
+			redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
+			if (draws)
+				renderContext.redraw.invalidate(redrawRegion)
+		} else {
+			redrawRegion.clear()
+		}
+
 	}
 
 	//-----------------------------------------------
@@ -1149,7 +1154,7 @@ open class UiComponentImpl(
 	}
 
 	final override fun render() {
-		if (colorTint.a > 0f && renderContext.redraw.needsRedraw(redrawRegion))
+		if (visible && colorTint.a > 0f && renderContext.redraw.needsRedraw(redrawRegion))
 			draw()
 	}
 

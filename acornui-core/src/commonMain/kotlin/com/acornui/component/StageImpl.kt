@@ -60,7 +60,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			window.clearColor = it.bgColor
 		}
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
-		gl.enable(Gl20.STENCIL_TEST)
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 	}
@@ -138,8 +137,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override fun draw() {
 		gl.clearStencil(0)
 		gl.clear(Gl20.STENCIL_BUFFER_BIT)
-		gl.enable(Gl20.SCISSOR_TEST)
 		gl.clearStencil(1)
+		gl.enable(Gl20.SCISSOR_TEST)
 		renderContext.redraw.regions.forEach2 {
 			gl.scissor(it.x, it.y, it.width, it.height)
 			gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
@@ -152,23 +151,23 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 
 		// Draw redraw regions
 
-//		gl.clearColor(Color.RED)
-//		gl.enable(Gl20.SCISSOR_TEST)
-//		renderContext.redraw.regions.forEach2 {
-//			gl.scissor(it.x, it.y, it.width, 1)
-//			gl.clear(Gl20.COLOR_BUFFER_BIT)
-//
-//			gl.scissor(it.x, it.y, 1, it.height)
-//			gl.clear(Gl20.COLOR_BUFFER_BIT)
-//
-//			gl.scissor(it.right - 1, it.y, 1, it.height)
-//			gl.clear(Gl20.COLOR_BUFFER_BIT)
-//
-//			gl.scissor(it.x, it.bottom - 1, it.width, 1)
-//			gl.clear(Gl20.COLOR_BUFFER_BIT)
-//		}
-//		gl.disable(Gl20.SCISSOR_TEST)
-//		gl.clearColor(window.clearColor)
+		gl.clearColor(Color.RED)
+		gl.enable(Gl20.SCISSOR_TEST)
+		renderContext.redraw.regions.forEach2 {
+			gl.scissor(it.x, it.y, it.width, 1)
+			gl.clear(Gl20.COLOR_BUFFER_BIT)
+
+			gl.scissor(it.x, it.y, 1, it.height)
+			gl.clear(Gl20.COLOR_BUFFER_BIT)
+
+			gl.scissor(it.right - 1, it.y, 1, it.height)
+			gl.clear(Gl20.COLOR_BUFFER_BIT)
+
+			gl.scissor(it.x, it.bottom - 1, it.width, 1)
+			gl.clear(Gl20.COLOR_BUFFER_BIT)
+		}
+		gl.disable(Gl20.SCISSOR_TEST)
+		gl.clearColor(window.clearColor)
 
 		renderContext.redraw.clear()
 	}

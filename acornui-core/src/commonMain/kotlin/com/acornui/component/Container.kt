@@ -168,8 +168,7 @@ open class ContainerImpl(
 	override fun draw() {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		_children.forEach2 { child ->
-			if (child.visible)
-				child.render()
+			child.render()
 		}
 	}
 
