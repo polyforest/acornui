@@ -20,6 +20,8 @@ import com.acornui.Disposable
 import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * @author nbilyk
@@ -45,20 +47,33 @@ private class Tick private constructor() : Updatable, Clearable, Disposable {
 	private var currentFrame: Int = 0
 
 	/**
+	 * The desired amount of time between each tick.
+	 */
+	private var tickTime: Duration = 1.seconds / 60.0
+
+	/**
 	 * The callback to invoke, starting at [startFrame] and continues for [repetitions].
 	 */
 	private var callback: Disposable.() -> Unit = NOOP
 
+	private var accum = 0.0
+
 	override fun update(dT: Float) {
-		++currentFrame
-		if (currentFrame >= startFrame)
-			this.callback()
-		if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
-			dispose()
+		accum += dT
+		while (accum >= tickTime.inSeconds && isActive) {
+			accum -= tickTime.inSeconds
+			++currentFrame
+			if (currentFrame >= startFrame)
+				this.callback()
+			if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
+				dispose()
+			}
 		}
 	}
 
 	override fun clear() {
+		accum = 0.0
+		tickTime = 1.seconds / 60.0
 		startFrame = 1
 		repetitions = 1
 		currentFrame = 0
@@ -78,11 +93,12 @@ private class Tick private constructor() : Updatable, Clearable, Disposable {
 
 		private val pool = ClearableObjectPool { Tick() }
 
-		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
+		internal fun obtain(repetitions: Int = -1, startFrame: Int = 1, tickTime: Duration, callback: Disposable.() -> Unit): Disposable {
 			val e = pool.obtain()
-			e.callback = callback
 			e.repetitions = repetitions
 			e.startFrame = startFrame
+			e.tickTime = tickTime
+			e.callback = callback
 			e.isActive = true
 			e.start()
 			return e
@@ -91,13 +107,13 @@ private class Tick private constructor() : Updatable, Clearable, Disposable {
 }
 
 fun callLater(startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
-	return tick(1, startFrame, callback)
+	return tick(1, startFrame, 1.seconds / 60.0, callback)
 }
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
  */
-fun tick(repetitions: Int = -1, callback: Disposable.() -> Unit): Disposable = tick(repetitions, 1, callback)
+fun tick(repetitions: Int = -1, tickTime: Duration = 1.seconds / 60.0, callback: Disposable.() -> Unit): Disposable = tick(repetitions, 1, tickTime, callback)
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
@@ -108,8 +124,8 @@ fun tick(repetitions: Int = -1, callback: Disposable.() -> Unit): Disposable = t
  * disposable handle, from which this callback can be removed.
  * @return Returns a handle where upon disposal, the callback will be removed.
  */
-fun tick(repetitions: Int = -1, startFrame: Int = 1, callback: Disposable.() -> Unit): Disposable {
+fun tick(repetitions: Int = -1, startFrame: Int = 1, tickTime: Duration = 1.seconds / 60.0, callback: Disposable.() -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
 	require(startFrame > 0) { "startFrame must be greater than zero. "}
-	return Tick.obtain(repetitions, startFrame, callback)
+	return Tick.obtain(repetitions, startFrame, tickTime, callback)
 }
