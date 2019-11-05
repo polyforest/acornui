@@ -22,4 +22,5 @@ object MockRenderContext : RenderContextRo {
 	override val modelTransform: Matrix4Ro = Matrix4.IDENTITY
 	override val modelTransformInv: Matrix4Ro = Matrix4.IDENTITY
 	override val redraw: RedrawRegions = RedrawRegions.ALWAYS
+	override val draws: Boolean = false
 }

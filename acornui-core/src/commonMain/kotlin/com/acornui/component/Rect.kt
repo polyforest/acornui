@@ -340,7 +340,6 @@ open class Rect(
 						val v: Float
 						val u2: Float
 						val v2: Float
-						val pad: Float
 						if (texture != null) {
 							glState.setTexture(texture)
 							u = (bottomRightX - innerBottomRightX) / texture.widthPixels

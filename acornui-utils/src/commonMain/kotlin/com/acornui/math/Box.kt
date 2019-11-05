@@ -44,29 +44,85 @@ interface BoxRo {
 	/**
 	 * @param corners A list of 8 Vector3 objects that will be populated with the corners of this bounding box.
 	 */
-	fun getCorners(corners: List<Vector3>): List<Vector3>
+	fun getCorners(corners: List<Vector3>): List<Vector3> {
+		corners[0].set(min.x, min.y, min.z)
+		corners[1].set(max.x, min.y, min.z)
+		corners[2].set(max.x, max.y, min.z)
+		corners[3].set(min.x, max.y, min.z)
+		corners[4].set(min.x, min.y, max.z)
+		corners[5].set(max.x, min.y, max.z)
+		corners[6].set(max.x, max.y, max.z)
+		corners[7].set(min.x, max.y, max.z)
+		return corners
+	}
 
-	fun getCorner000(out: Vector3): Vector3
-	fun getCorner001(out: Vector3): Vector3
-	fun getCorner010(out: Vector3): Vector3
-	fun getCorner011(out: Vector3): Vector3
-	fun getCorner100(out: Vector3): Vector3
-	fun getCorner101(out: Vector3): Vector3
-	fun getCorner110(out: Vector3): Vector3
-	fun getCorner111(out: Vector3): Vector3
+	fun getCorner000(out: Vector3): Vector3 {
+		return out.set(min.x, min.y, min.z)
+	}
+
+	fun getCorner001(out: Vector3): Vector3 {
+		return out.set(min.x, min.y, max.z)
+	}
+
+	fun getCorner010(out: Vector3): Vector3 {
+		return out.set(min.x, max.y, min.z)
+	}
+
+	fun getCorner011(out: Vector3): Vector3 {
+		return out.set(min.x, max.y, max.z)
+	}
+
+	fun getCorner100(out: Vector3): Vector3 {
+		return out.set(max.x, min.y, min.z)
+	}
+
+	fun getCorner101(out: Vector3): Vector3 {
+		return out.set(max.x, min.y, max.z)
+	}
+
+	fun getCorner110(out: Vector3): Vector3 {
+		return out.set(max.x, max.y, min.z)
+	}
+
+	fun getCorner111(out: Vector3): Vector3 {
+		return out.set(max.x, max.y, max.z)
+	}
 
 	/**
 	 * Returns whether this bounding box is valid. This means that {@link #max} is greater than {@link #min}.
 	 * @return True in case the bounding box is valid, false otherwise
 	 */
-	fun isValid(): Boolean
+	fun isValid(): Boolean {
+		return min.x < max.x && min.y < max.y && min.z < max.z
+	}
+
 
 	/**
 	 * Returns whether the given bounding box is intersecting this bounding box (at least one point in).
 	 * @param b The bounding box
 	 * @return Whether the given bounding box is intersected
 	 */
-	fun intersects(b: BoxRo): Boolean
+	/**
+	 * Returns whether the given bounding box is intersecting this bounding box (at least one point in).
+	 * @param b The bounding box
+	 * @return Whether the given bounding box is intersected
+	 */
+	fun intersects(b: BoxRo): Boolean {
+		if (!isValid()) return false
+
+		// test using SAT (separating axis theorem)
+
+		val lX = abs(center.x - b.center.x)
+		val sumX = (dimensions.x * 0.5f) + (b.dimensions.x * 0.5f)
+
+		val lY = abs(center.y - b.center.y)
+		val sumY = (dimensions.y * 0.5f) + (b.dimensions.y * 0.5f)
+
+		val lZ = abs(center.z - b.center.z)
+		val sumZ = (dimensions.z * 0.5f) + (b.dimensions.z * 0.5f)
+
+		return (lX <= sumX && lY <= sumY && lZ <= sumZ)
+	}
 
 	/**
 	 * Calculates whether or not the given Ray intersects with this Box.
@@ -76,7 +132,45 @@ interface BoxRo {
 	 * this vector.
 	 * @return Returns true if the ray intersects with this box.
 	 */
-	fun intersects(r: RayRo, out: Vector3? = null): Boolean
+	fun intersects(r: RayRo, out: Vector3? = null): Boolean {
+		if (dimensions.x <= 0f || dimensions.y <= 0f) return false
+		if (dimensions.z == 0f) {
+			// Optimization for a common case is that this box is actually nothing more than a rectangle.
+			if (r.direction.z == 0f) return false
+			val m = (min.z - r.origin.z) * r.directionInv.z
+			if (m < 0) return false // Intersection (if there is one) is behind the ray.
+			val x = r.origin.x + m * r.direction.x
+			val y = r.origin.y + m * r.direction.y
+
+			val intersects = min.x <= x && max.x >= x && min.y <= y && max.y >= y
+			if (out != null && intersects) {
+				r.getEndPoint(m, out)
+			}
+			return intersects
+		}
+
+		val d = r.directionInv
+		val o = r.origin
+		val t1 = (min.x - o.x) * d.x
+		val t2 = (max.x - o.x) * d.x
+		val t3 = (min.y - o.y) * d.y
+		val t4 = (max.y - o.y) * d.y
+		val t5 = (min.z - o.z) * d.z
+		val t6 = (max.z - o.z) * d.z
+
+		val tMin = maxOf(minOf(t1, t2), minOf(t3, t4), minOf(t5, t6))
+		val tMax = minOf(maxOf(t1, t2), maxOf(t3, t4), maxOf(t5, t6))
+
+		// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us
+		// if tmin > tmax, ray doesn't intersect AABB
+		if (tMax < 0 || tMin > tMax) {
+			return false
+		}
+		if (out != null) {
+			r.getEndPoint(tMin, out)
+		}
+		return true
+	}
 
 	/**
 	 * Returns whether the given bounding box is contained in this bounding box.
@@ -225,15 +319,6 @@ class Box(
 		if (z > max.z) max.z = z
 		return this
 	}
-
-	/**
-	 * Returns whether this bounding box is valid. This means that {@link #max} is greater than {@link #min}.
-	 * @return True in case the bounding box is valid, false otherwise
-	 */
-	override fun isValid(): Boolean {
-		return min.x < max.x && min.y < max.y && min.z < max.z
-	}
-
 	/**
 	 * Extends this bounding box by the given bounding box.
 	 *
@@ -253,17 +338,15 @@ class Box(
 	 */
 	fun ext(bounds: BoxRo, transform: Matrix4Ro): Box {
 		val v = tmpVec3
-		val min = bounds.min
-		val max = bounds.max
-		ext(v.set(min.x, min.y, min.z).mul(transform))
-		ext(v.set(min.x, max.y, min.z).mul(transform))
-		ext(v.set(max.x, min.y, min.z).mul(transform))
-		ext(v.set(max.x, max.y, min.z).mul(transform))
-		if (min.z != max.z) {
-			ext(v.set(min.x, min.y, max.z).mul(transform))
-			ext(v.set(min.x, max.y, max.z).mul(transform))
-			ext(v.set(max.x, min.y, max.z).mul(transform))
-			ext(v.set(max.x, max.y, max.z).mul(transform))
+		ext(transform.prj(bounds.getCorner000(v)))
+		ext(transform.prj(bounds.getCorner100(v)))
+		ext(transform.prj(bounds.getCorner110(v)))
+		ext(transform.prj(bounds.getCorner010(v)))
+		if (bounds.depth != 0f) {
+			ext(transform.prj(bounds.getCorner001(v)))
+			ext(transform.prj(bounds.getCorner101(v)))
+			ext(transform.prj(bounds.getCorner111(v)))
+			ext(transform.prj(bounds.getCorner011(v)))
 		}
 		return this
 	}
@@ -340,76 +423,6 @@ class Box(
 		ext(transform.prj(tmpVec3.set(x1, y1, z1)))
 		ext(transform.prj(tmpVec3.set(x0, y1, z1)))
 		return this
-	}
-
-	/**
-	 * Returns whether the given bounding box is intersecting this bounding box (at least one point in).
-	 * @param b The bounding box
-	 * @return Whether the given bounding box is intersected
-	 */
-	override fun intersects(b: BoxRo): Boolean {
-		if (!isValid()) return false
-
-		// test using SAT (separating axis theorem)
-
-		val lX = abs(center.x - b.center.x)
-		val sumX = (dimensions.x * 0.5f) + (b.dimensions.x * 0.5f)
-
-		val lY = abs(center.y - b.center.y)
-		val sumY = (dimensions.y * 0.5f) + (b.dimensions.y * 0.5f)
-
-		val lZ = abs(center.z - b.center.z)
-		val sumZ = (dimensions.z * 0.5f) + (b.dimensions.z * 0.5f)
-
-		return (lX <= sumX && lY <= sumY && lZ <= sumZ)
-	}
-
-	/**
-	 * Calculates whether or not the given Ray intersects with this Box.
-	 *
-	 * @param r The ray to project towards this box.
-	 * @param out If provided, and if there's an intersection, the location of the intersection will be set on
-	 * this vector.
-	 * @return Returns true if the ray intersects with this box.
-	 */
-	override fun intersects(r: RayRo, out: Vector3?): Boolean {
-		if (dimensions.x <= 0f || dimensions.y <= 0f) return false
-		if (dimensions.z == 0f) {
-			// Optimization for a common case is that this box is actually nothing more than a rectangle.
-			if (r.direction.z == 0f) return false
-			val m = (min.z - r.origin.z) * r.directionInv.z
-			if (m < 0) return false // Intersection (if there is one) is behind the ray.
-			val x = r.origin.x + m * r.direction.x
-			val y = r.origin.y + m * r.direction.y
-
-			val intersects = min.x <= x && max.x >= x && min.y <= y && max.y >= y
-			if (out != null && intersects) {
-				r.getEndPoint(m, out)
-			}
-			return intersects
-		}
-
-		val d = r.directionInv
-		val o = r.origin
-		val t1 = (min.x - o.x) * d.x
-		val t2 = (max.x - o.x) * d.x
-		val t3 = (min.y - o.y) * d.y
-		val t4 = (max.y - o.y) * d.y
-		val t5 = (min.z - o.z) * d.z
-		val t6 = (max.z - o.z) * d.z
-
-		val tMin = maxOf(minOf(t1, t2), minOf(t3, t4), minOf(t5, t6))
-		val tMax = minOf(maxOf(t1, t2), maxOf(t3, t4), maxOf(t5, t6))
-
-		// if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behind us
-		// if tmin > tmax, ray doesn't intersect AABB
-		if (tMax < 0 || tMin > tMax) {
-			return false
-		}
-		if (out != null) {
-			r.getEndPoint(tMin, out)
-		}
-		return true
 	}
 
 	/**

@@ -385,11 +385,14 @@ class Rectangle(
 		return this
 	}
 
-	fun inflate(left: Float, top: Float, right: Float, bottom: Float) {
+	fun inflate(all: Float) = inflate(all, all, all, all)
+
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Rectangle {
 		x -= left
 		width += left + right
 		y -= top
 		height += top + bottom
+		return this
 	}
 
 	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
@@ -397,11 +400,12 @@ class Rectangle(
 	/**
 	 * Extends this rectangle to include the given coordinates.
 	 */
-	fun ext(x2: Float, y2: Float) {
+	fun ext(x2: Float, y2: Float): Rectangle {
 		if (x2 > x + width) width = x2 - x
 		if (x2 < x) x = x2
 		if (y2 > y + height) height = y2 - y
 		if (y2 < y) y = y2
+		return this
 	}
 
 	/**
@@ -423,11 +427,12 @@ class Rectangle(
 		return this
 	}
 
-	fun scl(scalar: Float) {
+	fun scl(scalar: Float): Rectangle {
 		x *= scalar
 		y *= scalar
 		width *= scalar
 		height *= scalar
+		return this
 	}
 
 	override fun equals(other: Any?): Boolean {

@@ -60,6 +60,7 @@ open class StaticMeshComponent(
 	private val colorTransformation = colorTransformation()
 
 	init {
+		draws = true
 		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateGlobalBoundingBox)
 	}
 
@@ -115,6 +116,11 @@ open class StaticMeshComponent(
 		val boundingBox = mesh?.boundingBox ?: return
 		if (explicitWidth == null) out.width = boundingBox.max.x
 		if (explicitHeight == null) out.height = boundingBox.max.y
+	}
+
+	override fun updateDrawRegion(out: Box) {
+		val boundingBox = mesh?.boundingBox ?: return
+		out.set(boundingBox)
 	}
 
 	override fun dispose() {
@@ -207,8 +213,7 @@ class StaticMesh(
 			mesh(batch) {
 				inner()
 			}
-			batch.flush()
-			batch.resetRenderCount()
+			batch.finish()
 			textures.clear()
 			for (i in 0..batch.drawCalls.lastIndex) {
 				// Keeps track of the textures used so we can reference count them.
@@ -238,7 +243,6 @@ class StaticMesh(
 			val z = if (c >= 3) it.get() else 0f
 			_boundingBox.ext(x, y, z)
 		}
-		_boundingBox.update()
 	}
 
 	override fun clear() = batch.clear()
@@ -249,10 +253,9 @@ class StaticMesh(
 		val vertexAttributes = vertexAttributes
 		val vertexSize = vertexAttributes.vertexSize
 		val positionOffset = vertexAttributes.getOffsetByUsage(VertexAttributeUsage.POSITION) ?: return false
+		val c = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION)!!.numComponents
 
-		vertexComponents.rewind()
-		indices.rewind()
-
+		// FIXME - [ERROR] java.lang.IllegalArgumentException: newPosition > limit: (852 > 843)
 		for (i in batch.drawCalls.lastIndex downTo 0) {
 			val drawCall = batch.drawCalls[i]
 			if (drawCall.count != 0) {
@@ -260,11 +263,11 @@ class StaticMesh(
 				if (drawCall.mode == Gl20.TRIANGLES) {
 					for (j in 0 until drawCall.count step 3) {
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
-						v0.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						v0.set(vertexComponents.get(), vertexComponents.get(), if (c >= 3) vertexComponents.get() else 0f)
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
-						v1.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						v1.set(vertexComponents.get(), vertexComponents.get(), if (c >= 3) vertexComponents.get() else 0f)
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
-						v2.set(vertexComponents.get(), vertexComponents.get(), vertexComponents.get())
+						v2.set(vertexComponents.get(), vertexComponents.get(), if (c >= 3) vertexComponents.get() else 0f)
 						if (localRay.intersectsTriangle(v0, v1, v2, intersection)) {
 							return true
 						}

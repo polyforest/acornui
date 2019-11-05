@@ -219,21 +219,25 @@ class IntRectangle(
 		return this.width >= width && this.height >= height
 	}
 
-	fun inflate(left: Int, top: Int, right: Int, bottom: Int) {
+	fun inflate(all: Int): IntRectangle = inflate(all, all, all, all)
+	
+	fun inflate(left: Int, top: Int, right: Int, bottom: Int): IntRectangle {
 		x -= left
 		width += left + right
 		y -= top
 		height += top + bottom
+		return this
 	}
 
 	/**
 	 * Extends this rectangle to include the given coordinates.
 	 */
-	fun ext(x2: Int, y2: Int) {
+	fun ext(x2: Int, y2: Int): IntRectangle {
 		if (x2 > x + width) width = x2 - x
 		if (x2 < x) x = x2
 		if (y2 > y + height) height = y2 - y
 		if (y2 < y) y = y2
+		return this
 	}
 
 	/**
@@ -255,11 +259,12 @@ class IntRectangle(
 		return this
 	}
 
-	fun scl(scalar: Int) {
+	fun scl(scalar: Int): IntRectangle {
 		x *= scalar
 		y *= scalar
 		width *= scalar
 		height *= scalar
+		return this
 	}
 
 	override fun equals(other: Any?): Boolean {

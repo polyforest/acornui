@@ -117,31 +117,45 @@ fun CanvasTransformableRo.localToCanvas(localCoord: Vector3): Vector3 {
  * Converts a bounding rectangle from local to canvas coordinates.
  */
 fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
-	val tmp1 =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-	val tmp2 =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
+	val minTmp =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
+	val maxTmp =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
 	val tmp =  Vector3.obtain()
 	minMax.clear()
-	localToCanvas(tmp.set(tmp1))
+	localToCanvas(tmp.set(minTmp))
 	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(tmp2.x, tmp1.y, 0f))
+	localToCanvas(tmp.set(maxTmp.x, minTmp.y, 0f))
 	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(tmp2))
+	localToCanvas(tmp.set(maxTmp))
 	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(tmp1.x, tmp2.y, 0f))
+	localToCanvas(tmp.set(minTmp.x, maxTmp.y, 0f))
 	minMax.ext(tmp.x, tmp.y)
-	Vector3.free(tmp1)
-	Vector3.free(tmp2)
+	Vector3.free(minTmp)
+	Vector3.free(maxTmp)
 	Vector3.free(tmp)
 	return minMax
 }
 
-//fun CanvasTransformableRo.localToScreen(local: MinMaxRo, out: IntRectangle): MinMax {
-//
-//}
-//
-//fun CanvasTransformableRo.canvasToScreen(canvas: MinMaxRo, out: IntRectangle): MinMax {
-//
-//}
+private val tmpVec3 = Vector3()
+
+/**
+ * Converts a bounding rectangle from local to canvas coordinates.
+ * @return Returns the [out]
+ */
+fun CanvasTransformableRo.localToCanvas(localBox: BoxRo, out: Box): Box {
+	val v = tmpVec3
+	out.inf()
+	out.ext(localToCanvas(localBox.getCorner000(v)))
+	out.ext(localToCanvas(localBox.getCorner100(v)))
+	out.ext(localToCanvas(localBox.getCorner110(v)))
+	out.ext(localToCanvas(localBox.getCorner010(v)))
+	if (localBox.depth != 0f) {
+		out.ext(localToCanvas(localBox.getCorner001(v)))
+		out.ext(localToCanvas(localBox.getCorner101(v)))
+		out.ext(localToCanvas(localBox.getCorner111(v)))
+		out.ext(localToCanvas(localBox.getCorner011(v)))
+	}
+	return out
+}
 
 /**
  * Converts a bounding rectangle from canvas to local coordinates.
@@ -165,24 +179,4 @@ fun CanvasTransformableRo.canvasToLocal(minMax: MinMax): MinMax {
 	Vector3.free(tmp1)
 	Vector2.free(tmp)
 	return minMax
-}
-
-private val minMaxTmp = MinMax()
-/**
- * Returns true if the local region intersects with the canvas region.
- */
-fun CanvasTransformableRo.localIntersectsCanvas(localRegion: MinMaxRo, canvasRegion: MinMaxRo): Boolean {
-	localToCanvas(minMaxTmp.set(localRegion))
-	return minMaxTmp.intersects(canvasRegion)
-}
-
-/**
- * Returns true if the draw region intersects with the canvas region.
- */
-fun CanvasTransformableRo.drawRegionIntersectsCanvas(element: UiComponent, canvasRegion: MinMaxRo): Boolean {
-	return localIntersectsCanvas(element.drawRegion, canvasRegion)
-}
-
-fun UiComponent.intersectsClipRegion(): Boolean {
-	return localIntersectsCanvas(drawRegion, renderContext.clipRegion)
 }

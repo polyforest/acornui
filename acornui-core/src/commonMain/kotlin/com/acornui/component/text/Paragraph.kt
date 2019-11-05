@@ -20,6 +20,7 @@ package com.acornui.component.text
 
 import com.acornui.collection.*
 import com.acornui.component.*
+import com.acornui.component.ValidationFlags.VERTICES
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
@@ -72,6 +73,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
+		// TODO: Make vertices depend on render context and make the vertices global coords.
 		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateVertices)
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
@@ -441,8 +443,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16
-		private const val VERTICES = 1 shl 17
-		private const val CHAR_STYLE = 1 shl 18
+		private const val CHAR_STYLE = 1 shl 17
 	}
 }
 

@@ -119,7 +119,6 @@ class DirectionalLightCamera {
 			view.prj(tmp) // Project with the light's direction.
 			bounds.ext(tmp)
 		}
-		bounds.update()
 
 		_combined.idt()
 		_combined.scl(2f / bounds.dimensions.x, 2f / bounds.dimensions.y, -2f / bounds.dimensions.z)

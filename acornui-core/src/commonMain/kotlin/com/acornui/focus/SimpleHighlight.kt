@@ -25,6 +25,7 @@ import com.acornui.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.math.Bounds
+import com.acornui.math.Box
 import com.acornui.math.MinMax
 import com.acornui.skins.Theme
 
@@ -80,7 +81,7 @@ open class SimpleHighlight(
 		}
 	}
 
-	override fun updateDrawRegion(out: MinMax) {
+	override fun updateDrawRegion(out: Box) {
 		super.updateDrawRegion(out)
 		val splits = highlight.region?.splits
 		if (splits != null) {

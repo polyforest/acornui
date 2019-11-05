@@ -56,6 +56,15 @@ interface RenderContextRo : CanvasTransformableRo {
 	 */
 	val redraw: RedrawRegions
 
+	/**
+	 * True if this component does drawing.
+	 *
+	 * Components where this is set to true will invalidate their redraw regions with the render context.
+	 * Any descendents of a container with draws == true will skip their region checks; that is, if the container
+	 * needs redrawing, the children need redrawing.
+	 */
+	val draws: Boolean
+
 	companion object : DKey<RenderContextRo> {
 
 		override fun factory(injector: Injector): RenderContextRo? = OrthographicRenderContext(injector)
@@ -72,8 +81,8 @@ fun RenderContextRo.cameraEquals(renderContext: RenderContextRo): Boolean {
 /**
  * The orthographic render context is a render context that sets its view projection to an orthographic projection with
  * the viewport set to the window.
- * This is the default render context used by the Stage or as the parent context for any components not on the display
- * graph.
+ * This is the default parent render context for any component without a parent, such as the Stage or components not
+ * on the display graph.
  */
 class OrthographicRenderContext(override val injector: Injector) : Scoped, RenderContextRo, Disposable {
 
@@ -137,6 +146,8 @@ class OrthographicRenderContext(override val injector: Injector) : Scoped, Rende
 	override val colorTint: ColorRo = Color.WHITE
 
 	override val redraw: RedrawRegions = RedrawRegionsImpl()
+
+	override var draws: Boolean = false
 
 	private fun validate() {
 		if (isValid) return
@@ -260,6 +271,10 @@ class RenderContext() : RenderContextRo, Clearable {
 	override val redraw: RedrawRegions
 		get() = redrawRegionsOverride ?: parentContext.redraw ?: RedrawRegions.NEVER
 
+	var drawsSelf = false
+	override val draws: Boolean
+		get() = drawsSelf || parentContext.draws
+
 	override fun clear() {
 		_parentContext = null
 		cameraOverride = null
@@ -333,6 +348,8 @@ class IdtProjectionContext : RenderContextRo, Clearable {
 	override val colorTint = Color.WHITE.copy()
 
 	override val redraw: RedrawRegions = RedrawRegions.ALWAYS
+
+	override var draws: Boolean = false
 
 	override fun clear() {
 		modelTransform.idt()

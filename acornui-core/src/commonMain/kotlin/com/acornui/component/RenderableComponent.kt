@@ -30,7 +30,7 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 
 	init {
 		draws = true
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
+		validation.addNode(ValidationFlags.VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -47,14 +47,6 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 	override fun draw() {
 		if (width <= 0f || height <= 0f) return
 		renderable?.render()
-	}
-
-	companion object {
-
-		/**
-		 * The validation flag for this component's vertices.
-		 */
-		const val VERTICES = ValidationFlags.RESERVED_1
 	}
 }
 

@@ -102,7 +102,7 @@ class StaticShaderBatchImpl(
 		val offset = if (lastDrawCall == null) 0 else lastDrawCall.offset + lastDrawCall.count
 		val count = indices.position - offset
 		if (count <= 0) return // Nothing to draw.
-
+		require(highestIndex < count + offset)
 		val drawCall = DrawElementsCall.obtain()
 		drawCall.offset = offset
 		drawCall.count = count
@@ -114,17 +114,27 @@ class StaticShaderBatchImpl(
 		needsUpload = true
 	}
 
+	fun finish() {
+		indices.mark()
+		indices.flip()
+		indices.reset()
+		vertexComponents.mark()
+		vertexComponents.flip()
+		vertexComponents.reset()
+		resetRenderCount()
+	}
+
 	override fun render() {
 		if (_drawCalls.isEmpty()) return
 		bind()
 		if (needsUpload) {
 			needsUpload = false
 
-			indices.flip()
+			indices.rewind()
 			gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, Gl20.DYNAMIC_DRAW) // Allocate
 			gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, Gl20.DYNAMIC_DRAW) // Upload
 
-			vertexComponents.flip()
+			vertexComponents.rewind()
 			gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, Gl20.DYNAMIC_DRAW) // Allocate
 			gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, Gl20.DYNAMIC_DRAW) // Upload
 		}
@@ -139,13 +149,12 @@ class StaticShaderBatchImpl(
 	}
 
 	override val highestIndex: Short
-		get() {
-			return _highestIndex
-		}
+		get() = _highestIndex
 
 	override fun putIndex(index: Short) {
 		indices.put(index)
-		if (index > _highestIndex) _highestIndex = index
+		if (index > _highestIndex)
+			_highestIndex = index
 	}
 
 	override fun putVertexComponent(value: Float) {

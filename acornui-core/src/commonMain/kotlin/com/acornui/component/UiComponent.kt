@@ -79,15 +79,22 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val visible: Boolean
 
 	/**
-	 * Set this to false to make this layout element not included in layout algorithms.
+	 * If false, layout containers should not position or size this element.
 	 */
 	val includeInLayout: Boolean
 
 	/**
-	 * Returns true if this component will be rendered. This will be true under the following conditions:
-	 * This component is on the stage.
-	 * No ancestor has [visible] false.
-	 * No ancestor has [alpha] <= 0f.
+	 * If false, containers should not render this element by default.
+	 * This is different from [visible] in that this component is expected to have its [UiComponent.render] method
+	 * manually called. This component will still invalidate its redraw regions.
+	 */
+	val includeInRender: Boolean
+
+	/**
+	 * Returns true if this component is active, visible, and has opacity.
+	 *
+	 * This will be true if this component and all its ancestors meet the conditions:
+	 * [isActive], [visible], [alpha] > 0f
 	 */
 	val isRendered: Boolean
 
@@ -184,6 +191,7 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var visible: Boolean
 
 	override var includeInLayout: Boolean
+	override var includeInRender: Boolean
 
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
@@ -202,15 +210,15 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var defaultHeight: Float?
 
 	/**
+	 * The local drawing region of this component. This is converted to screen coordinates when determining the
+	 * redraw areas.
+	 */
+	val drawRegion: BoxRo
+
+	/**
 	 * Updates this component, validating it and its children.
 	 */
 	fun update()
-
-	/**
-	 * The local drawing region of this component.
-	 * Use [localToCanvas] to convert this region to canvas coordinates.
-	 */
-	val drawRegion: MinMaxRo
 
 	/**
 	 * Renders this component.
@@ -315,7 +323,7 @@ open class UiComponentImpl(
 
 	// InteractiveElement properties
 	protected var _inheritedInteractivityMode = InteractivityMode.ALL
-	final override val inheritedInteractivityMode: InteractivityMode
+	final override val interactivityModeInherited: InteractivityMode
 		get() {
 			validate(ValidationFlags.INTERACTIVITY_MODE)
 			return _inheritedInteractivityMode
@@ -338,7 +346,7 @@ open class UiComponentImpl(
 		}
 
 	override val interactivityEnabled: Boolean
-		get() = inheritedInteractivityMode == InteractivityMode.ALL || inheritedInteractivityMode == InteractivityMode.ALWAYS
+		get() = interactivityModeInherited == InteractivityMode.ALL || interactivityModeInherited == InteractivityMode.ALWAYS
 
 	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean {
 		return handlesInteraction(type, true) || handlesInteraction(type, false)
@@ -359,7 +367,7 @@ open class UiComponentImpl(
 
 	// Sizable properties
 	protected val _bounds = Bounds()
-	protected val _drawRegion = MinMax()
+	protected val _drawRegion = Box()
 
 	/**
 	 * The explicit width, as set by width(value)
@@ -405,18 +413,25 @@ open class UiComponentImpl(
 	override val canvasTransform: RectangleRo
 		get() = renderContext.canvasTransform
 
+	/**
+	 * @see RenderContext.cameraOverride
+	 */
 	var cameraOverride: CameraRo?
 		get() = _renderContext.cameraOverride
 		set(value) {
 			_renderContext.cameraOverride = value
+			invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 
 	/**
-	 * Set to true if this component does drawing and should invalidate its redraw region.
+	 * @see RenderContext.draws
 	 */
-	protected var draws = false
-
-	//
+	var draws: Boolean
+		get() = _renderContext.drawsSelf
+		set(value) {
+			_renderContext.drawsSelf = value
+			invalidate(ValidationFlags.RENDER_CONTEXT)
+		}
 
 	private val rayTmp = Ray()
 
@@ -433,8 +448,7 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
-				addNode(BITMAP_CACHE, BITMAP_CACHE_DEPENDENCIES, 0, checkAllFound = false) {}
-				addNode(REDRAW_REGION, REDRAW_REGION_DEPENDENCIES, 0, checkAllFound = false, onValidate = ::updateRedrawRegion)
+				addNode(REDRAW_REGIONS, REDRAW_REGION_DEPENDENCIES, 0, checkAllFound = false, onValidate = ::updateRedrawRegions)
 			}
 		}
 
@@ -537,6 +551,7 @@ open class UiComponentImpl(
 	override var layoutInvalidatingFlags: Int = UiComponentRo.defaultLayoutInvalidatingFlags
 
 	final override var includeInLayout: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
+	final override var includeInRender: Boolean = true
 
 	override val isRendered: Boolean
 		get() {
@@ -777,7 +792,7 @@ open class UiComponentImpl(
 
 	protected open fun updateInheritedInteractivityMode() {
 		_inheritedInteractivityMode = _interactivityMode
-		if (parent?.inheritedInteractivityMode == InteractivityMode.NONE)
+		if (parent?.interactivityModeInherited == InteractivityMode.NONE)
 			_inheritedInteractivityMode = InteractivityMode.NONE
 	}
 
@@ -1065,23 +1080,38 @@ open class UiComponentImpl(
 	protected open fun updateRenderContext() {
 	}
 
-	private val redrawRegionLocal = MinMax()
-	private val redrawRegion = IntRectangle()
-	private val framebufferInfo = FramebufferInfo()
+	private val redrawRegionTmp = Box()
+	protected val redrawRegion = IntRectangle()
 
-	protected open fun updateRedrawRegion() {
+	protected open fun updateRedrawRegions() {
+		val drawRegion = _drawRegion.inf()
+		if (_renderContext.parentContext.draws)
+			return // The parent is responsible for invalidating the redraw regions.
 		if (draws)
 			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
-		framebufferInfo.set(glState.framebuffer)
-		if (isRendered) {
-			localToCanvas(redrawRegionLocal.set(drawRegion)).scl(framebufferInfo.scaleX, framebufferInfo.scaleY)
-			redrawRegion.set(redrawRegionLocal)
-			redrawRegion.y = framebufferInfo.height - redrawRegion.bottom
+		updateDrawRegion(drawRegion)
+
+		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
+			localToCanvas(drawRegion, redrawRegionTmp)
+			redrawRegion.canvasToScreen(redrawRegionTmp.clamp(renderContext.clipRegion), glState.framebuffer)
+			redrawRegion.inflate(1)
 			if (draws)
 				renderContext.redraw.invalidate(redrawRegion)
 		} else {
 			redrawRegion.clear()
 		}
+	}
+
+	/**
+	 * Updates this component's local draw region.
+	 *
+	 * By default, this will be the same area as the [bounds] with 0f depth.
+	 * This may be overridden to modify the area that is drawn to the screen.
+	 *
+	 * @param out The region that will be set as the [drawRegion].
+	 */
+	protected open fun updateDrawRegion(out: Box) {
+		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
 	}
 
 	//-----------------------------------------------
@@ -1134,26 +1164,22 @@ open class UiComponentImpl(
 	 * @see renderContext
 	 * @see localToCanvas
 	 */
-	override val drawRegion: MinMaxRo
+	override val drawRegion: BoxRo
 		get() {
-			updateDrawRegion(_drawRegion)
-			return _drawRegion
+			validate(ValidationFlags.REDRAW_REGIONS)
+			val d = _drawRegion
+			// After a REDRAW_REGIONS validation, the draw region may skip calculation if the parent has `draws` set.
+			// Because we're explicitly requesting the draw region, calculate it now.
+			if (!d.isValid())
+				updateDrawRegion(d)
+			return d
 		}
 
-	/**
-	 * Updates this component's draw region.
-	 *
-	 * By default, this will be the same area as the [bounds].
-	 * This may be overridden to modify the area that
-	 *
-	 * @param out The region that will be set as the [drawRegion].
-	 */
-	protected open fun updateDrawRegion(out: MinMax) {
-		out.set(0f, 0f, _bounds.width, _bounds.height)
-	}
-
-	final override fun render() {
-		if (visible && colorTint.a > 0f && renderContext.redraw.needsRedraw(redrawRegion))
+	override fun render() {
+		val renderContext = _renderContext
+		if (visible &&
+				colorTint.a > 0f &&
+				(renderContext.parentContext.draws || renderContext.redraw.needsRedraw(redrawRegion)))
 			draw()
 	}
 
@@ -1209,8 +1235,7 @@ open class UiComponentImpl(
 	companion object {
 		private val quat = Quaternion()
 
-		private const val BITMAP_CACHE_DEPENDENCIES = (ValidationFlags.HIERARCHY_DESCENDING or ValidationFlags.RENDER_CONTEXT or ValidationFlags.INTERACTIVITY_MODE or ValidationFlags.REDRAW_REGION).inv()
-		private const val REDRAW_REGION_DEPENDENCIES = ValidationFlags.INTERACTIVITY_MODE.inv() // Everything but interactivity mode
+		private const val REDRAW_REGION_DEPENDENCIES = ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT or ValidationFlags.VERTICES
 	}
 }
 
@@ -1226,4 +1251,18 @@ fun UiComponentRo.getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInterac
 	val first = out.firstOrNull()
 	arrayListPool.free(out)
 	return first
+}
+
+/**
+ * Takes the box in canvas coordinates (unscaled, yDown, floats), and converts it to screen coordinates
+ * (dpi scaled, yUp, ints)
+ */
+fun IntRectangle.canvasToScreen(box: BoxRo, framebufferInfo: FramebufferInfoRo): IntRectangle {
+	val sX = framebufferInfo.scaleX
+	val sY = framebufferInfo.scaleY
+	val newX = (box.min.x * sX).toInt()
+	val newY = (box.min.y * sY).toInt()
+	val newR = ceilInt(box.max.x * sX)
+	val newB = ceilInt(box.max.y * sY)
+	return set(newX, framebufferInfo.height - newB, newR - newX, newB - newY)
 }

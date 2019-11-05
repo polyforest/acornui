@@ -30,14 +30,16 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 
 	/**
 	 * If false, interaction will be blocked on this element.
-	 * This value is calculated based on the [inheritedInteractivityMode] property.
+	 * This value is calculated based on the [interactivityModeInherited] property.
 	 */
 	val interactivityEnabled: Boolean
 
 	/**
 	 * The inherited interactivity mode.
+	 * E.g. if an ancestor has [interactivityEnabled] == [InteractivityMode.NONE], this component's
+	 * [interactivityModeInherited] will be [InteractivityMode.NONE].
 	 */
-	val inheritedInteractivityMode: InteractivityMode
+	val interactivityModeInherited: InteractivityMode
 
 	/**
 	 * Determines how this element will block or accept interaction events.

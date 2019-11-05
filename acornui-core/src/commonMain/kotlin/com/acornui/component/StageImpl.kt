@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.Disposable
+import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
 import com.acornui.di.Injector
@@ -62,6 +63,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
+		gl.enable(Gl20.STENCIL_TEST)
 	}
 
 	private fun skinCheck() {

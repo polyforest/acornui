@@ -90,13 +90,15 @@ class ScrollRectImpl(
 		contents.moveTo(-x, -y)
 	}
 
+	private val clipRegion = MinMax()
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = explicitWidth ?: 100f
 		val h = explicitHeight ?: 100f
 		maskClip.setSize(w, h)
 		maskClip.setScaling(1f, 1f)
 		out.set(w, h)
-		_renderContext.clipRegionLocal = drawRegion
+		_renderContext.clipRegionLocal = clipRegion.set(0f, 0f, width, height)
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {

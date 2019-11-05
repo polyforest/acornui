@@ -168,7 +168,8 @@ open class ContainerImpl(
 	override fun draw() {
 		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		_children.forEach2 { child ->
-			child.render()
+			if (child.includeInRender)
+				child.render()
 		}
 	}
 
@@ -179,7 +180,7 @@ open class ContainerImpl(
 	private val rayTmp = Ray()
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
-		if (!visible || (onlyInteractive && inheritedInteractivityMode == InteractivityMode.NONE)) return out
+		if (!visible || (onlyInteractive && interactivityModeInherited == InteractivityMode.NONE)) return out
 		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
@@ -345,7 +346,7 @@ open class ContainerImpl(
 
 	companion object {
 
-		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING or ValidationFlags.BITMAP_CACHE
+		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING or ValidationFlags.REDRAW_REGIONS
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or

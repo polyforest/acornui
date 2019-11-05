@@ -231,8 +231,8 @@ class ValidationGraph(
 			// Cannot invalidate anything that is not dependent on the current node.
 			val currentNode = nodes[currentIndex]
 			val badFlags = flagsToInvalidate and (currentNode.dependencies and currentNode.flag.inv())
-			if (badFlags > 0) {
-				throw Exception("Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are dependencies of the current node: ${badFlags.toFlagsString()}")
+			check(badFlags <= 0) {
+				"Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are dependencies of the current node: ${badFlags.toFlagsString()}"
 			}
 		}
 		for (i in 0..nodes.lastIndex) {
