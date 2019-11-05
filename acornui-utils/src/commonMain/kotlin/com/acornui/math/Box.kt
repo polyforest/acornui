@@ -16,20 +16,33 @@
 
 package com.acornui.math
 
+import com.acornui.recycle.Clearable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
 
+@Serializable(with = BoxSerializer::class)
 interface BoxRo {
 
 	val min: Vector3Ro
 	val max: Vector3Ro
+
 	val center: Vector3Ro
 	val dimensions: Vector3Ro
+
 	val width: Float
+		get() = max.x - min.x
+
 	val height: Float
+		get() = max.y - min.y
+
 	val depth: Float
+		get() = max.z - min.z
 
 	/**
-	 * @param corners A list of 8 Vector 3 objects that will be populated with the corners of this bounding box.
+	 * @param corners A list of 8 Vector3 objects that will be populated with the corners of this bounding box.
 	 */
 	fun getCorners(corners: List<Vector3>): List<Vector3>
 
@@ -41,24 +54,6 @@ interface BoxRo {
 	fun getCorner101(out: Vector3): Vector3
 	fun getCorner110(out: Vector3): Vector3
 	fun getCorner111(out: Vector3): Vector3
-
-	/**
-	 * @param out The {@link Vector3} to receive the dimensions of this bounding box on all three axis.
-	 * @return The vector specified with the out argument
-	 */
-	fun getDimensions(out: Vector3): Vector3
-
-	/**
-	 * @param out The {@link Vector3} to receive the minimum values.
-	 * @return The vector specified with the out argument
-	 */
-	fun getMin(out: Vector3): Vector3
-
-	/**
-	 * @param out The {@link Vector3} to receive the maximum values.
-	 * @return The vector specified with the out argument
-	 */
-	fun getMax(out: Vector3): Vector3
 
 	/**
 	 * Returns whether this bounding box is valid. This means that {@link #max} is greater than {@link #min}.
@@ -110,111 +105,28 @@ interface BoxRo {
  *
  * @author badlogicgames@gmail.com, Xoppa
  */
+@Serializable(with = BoxSerializer::class)
 class Box(
-		override val min: Vector3 = Vector3(),
-		override val max: Vector3 = Vector3()
-) : BoxRo {
+		override val min: Vector3 = Vector3(0f),
+		override val max: Vector3 = Vector3(0f)
+) : BoxRo, Clearable {
 
 	private val _center: Vector3 = Vector3()
 	override val center: Vector3Ro
-		get() = _center
+		get() {
+			_center.set(min).add(max).scl(0.5f)
+			return _center
+		}
+
 	private val _dimensions: Vector3 = Vector3()
 	override val dimensions: Vector3Ro
-		get() = _dimensions
+		get() {
+			_dimensions.set(max).sub(min)
+			return _dimensions
+		}
 
 	init {
 		set(min, max)
-	}
-
-	/**
-	 * Updates the center and dimensions.
-	 */
-	fun update() {
-		_center.set(min).add(max).scl(0.5f)
-		_dimensions.set(max).sub(min)
-	}
-
-	override fun getCorners(corners: List<Vector3>): List<Vector3> {
-		corners[0].set(min.x, min.y, min.z)
-		corners[1].set(max.x, min.y, min.z)
-		corners[2].set(max.x, max.y, min.z)
-		corners[3].set(min.x, max.y, min.z)
-		corners[4].set(min.x, min.y, max.z)
-		corners[5].set(max.x, min.y, max.z)
-		corners[6].set(max.x, max.y, max.z)
-		corners[7].set(min.x, max.y, max.z)
-		return corners
-	}
-
-	override fun getCorner000(out: Vector3): Vector3 {
-		return out.set(min.x, min.y, min.z)
-	}
-
-	override fun getCorner001(out: Vector3): Vector3 {
-		return out.set(min.x, min.y, max.z)
-	}
-
-	override fun getCorner010(out: Vector3): Vector3 {
-		return out.set(min.x, max.y, min.z)
-	}
-
-	override fun getCorner011(out: Vector3): Vector3 {
-		return out.set(min.x, max.y, max.z)
-	}
-
-	override fun getCorner100(out: Vector3): Vector3 {
-		return out.set(max.x, min.y, min.z)
-	}
-
-	override fun getCorner101(out: Vector3): Vector3 {
-		return out.set(max.x, min.y, max.z)
-	}
-
-	override fun getCorner110(out: Vector3): Vector3 {
-		return out.set(max.x, max.y, min.z)
-	}
-
-	override fun getCorner111(out: Vector3): Vector3 {
-		return out.set(max.x, max.y, max.z)
-	}
-
-	/**
-	 * @param out The {@link Vector3} to receive the dimensions of this bounding box on all three axis.
-	 * @return The vector specified with the out argument
-	 */
-	override fun getDimensions(out: Vector3): Vector3 {
-		return out.set(dimensions)
-	}
-
-	override val width: Float
-		get() {
-			return dimensions.x
-		}
-
-	override val height: Float
-		get() {
-			return dimensions.y
-		}
-
-	override val depth: Float
-		get() {
-			return dimensions.z
-		}
-
-	/**
-	 * @param out The {@link Vector3} to receive the minimum values.
-	 * @return The vector specified with the out argument
-	 */
-	override fun getMin(out: Vector3): Vector3 {
-		return out.set(min)
-	}
-
-	/**
-	 * @param out The {@link Vector3} to receive the maximum values.
-	 * @return The vector specified with the out argument
-	 */
-	override fun getMax(out: Vector3): Vector3 {
-		return out.set(max)
 	}
 
 	/**
@@ -230,16 +142,11 @@ class Box(
 	/**
 	 * Sets the given minimum and maximum vector.
 	 *
-	 * @param minimum The minimum vector
-	 * @param maximum The maximum vector
+	 * @param min The minimum vector
+	 * @param max The maximum vector
 	 * @return This bounding box for chaining.
 	 */
-	fun set(minimum: Vector3Ro, maximum: Vector3Ro): Box {
-		min.set(if (minimum.x < maximum.x) minimum.x else maximum.x, if (minimum.y < maximum.y) minimum.y else maximum.y, if (minimum.z < maximum.z) minimum.z else maximum.z)
-		max.set(if (minimum.x > maximum.x) minimum.x else maximum.x, if (minimum.y > maximum.y) minimum.y else maximum.y, if (minimum.z > maximum.z) minimum.z else maximum.z)
-		update()
-		return this
-	}
+	fun set(min: Vector3Ro, max: Vector3Ro): Box = set(min.x, min.y, min.z, max.x, max.y, max.z)
 
 	/**
 	 * Sets the given minimum and maximum vector.
@@ -247,9 +154,8 @@ class Box(
 	 * @return This bounding box for chaining.
 	 */
 	fun set(minX: Float, minY: Float, minZ: Float, maxX: Float, maxY: Float, maxZ: Float): Box {
-		min.set(if (minX < maxX) minX else maxX, if (minY < maxY) minY else maxY, if (minZ < maxZ) minZ else maxZ)
-		max.set(if (minX > maxX) minX else maxX, if (minY > maxY) minY else maxY, if (minZ > maxZ) minZ else maxZ)
-		update()
+		min.set(minX, minY, minZ)
+		max.set(maxX, maxY, maxZ)
 		return this
 	}
 
@@ -263,7 +169,6 @@ class Box(
 		inf()
 		for (i in 0..points.lastIndex)
 			ext(points[i])
-		update()
 		return this
 	}
 
@@ -277,7 +182,6 @@ class Box(
 		inf()
 		for (i in 0..points.lastIndex)
 			ext(points[i])
-		update()
 		return this
 	}
 
@@ -289,9 +193,12 @@ class Box(
 	fun inf(): Box {
 		min.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
 		max.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY)
-		_center.set(0f, 0f, 0f)
-		_dimensions.set(0f, 0f, 0f)
 		return this
+	}
+
+	override fun clear() {
+		min.clear()
+		max.clear()
 	}
 
 	/**
@@ -358,7 +265,54 @@ class Box(
 			ext(v.set(max.x, min.y, max.z).mul(transform))
 			ext(v.set(max.x, max.y, max.z).mul(transform))
 		}
-		update()
+		return this
+	}
+
+	/**
+	 * Scales this value by the given scalars.
+	 */
+	fun scl(x: Float, y: Float): Box {
+		min.x *= x
+		min.y *= y
+		max.x *= x
+		max.y *= y
+		return this
+	}
+
+	/**
+	 * Scales this value by the given scalars.
+	 */
+	fun scl(x: Float, y: Float, z: Float): Box {
+		min.x *= x
+		min.y *= y
+		min.z *= z
+		max.x *= x
+		max.y *= y
+		max.z *= z
+		return this
+	}
+
+	/**
+	 * Increases this value by the given deltas.
+	 */
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Box {
+		min.x -= left
+		min.y -= top
+		max.x += right
+		max.y += bottom
+		return this
+	}
+
+	/**
+	 * Increases this value by the given deltas.
+	 */
+	fun inflate(left: Float, top: Float, front: Float, right: Float, bottom: Float, back: Float): Box {
+		min.x -= left
+		min.y -= top
+		min.z -= front
+		max.x += right
+		max.y += bottom
+		max.z += back
 		return this
 	}
 
@@ -385,7 +339,6 @@ class Box(
 		ext(transform.prj(tmpVec3.set(x1, y0, z1)))
 		ext(transform.prj(tmpVec3.set(x1, y1, z1)))
 		ext(transform.prj(tmpVec3.set(x0, y1, z1)))
-		update()
 		return this
 	}
 
@@ -481,6 +434,14 @@ class Box(
 		return min.x <= x && max.x >= x && min.y <= y && max.y >= y && min.z <= z && max.z >= z
 	}
 
+	fun clamp(clip: MinMaxRo): Box {
+		min.x = maxOf(min.x, clip.xMin)
+		min.y = maxOf(min.y, clip.yMin)
+		max.x = minOf(max.x, clip.xMax)
+		max.y = minOf(max.y, clip.yMax)
+		return this
+	}
+
 	override fun toString(): String {
 		return "[$min|$max]"
 	}
@@ -507,5 +468,21 @@ class Box(
 
 		private val tmpVec3 = Vector3()
 
+	}
+}
+
+@Serializer(forClass = MinMax::class)
+object BoxSerializer : KSerializer<Box> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Box")
+
+	override fun serialize(encoder: Encoder, obj: Box) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.min.x, obj.min.y, obj.min.z, obj.max.x, obj.max.y, obj.max.z))
+	}
+
+	override fun deserialize(decoder: Decoder): Box {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return Box().set(values[0], values[1], values[2], values[3], values[4], values[5])
 	}
 }

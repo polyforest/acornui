@@ -399,9 +399,9 @@ class Vector3 (
 	fun mul(matrix: Matrix4Ro): Vector3 {
 		val lMat = matrix.values
 		return set(
-				x * lMat[0] + y * lMat[4] + z * lMat[8] + lMat[12],
-				x * lMat[1] + y * lMat[5] + z * lMat[9] + lMat[13],
-				x * lMat[2] + y * lMat[6] + z * lMat[10] + lMat[14])
+				x * lMat[Matrix4.M00] + y * lMat[Matrix4.M01] + z * lMat[Matrix4.M02] + lMat[Matrix4.M03],
+				x * lMat[Matrix4.M10] + y * lMat[Matrix4.M11] + z * lMat[Matrix4.M12] + lMat[Matrix4.M13],
+				x * lMat[Matrix4.M20] + y * lMat[Matrix4.M21] + z * lMat[Matrix4.M22] + lMat[Matrix4.M23])
 	}
 
 	/**

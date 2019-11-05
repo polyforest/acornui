@@ -17,10 +17,15 @@
 package com.acornui.math
 
 import com.acornui.recycle.Clearable
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.ArrayListSerializer
+import kotlinx.serialization.internal.FloatSerializer
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A MinMax object represents a minimum and maximum cartesian point.
  */
+@Serializable(with = MinMaxSerializer::class)
 interface MinMaxRo : RectangleRo {
 
 	val xMin: Float
@@ -52,6 +57,7 @@ fun MinMaxRo.copy(xMin: Float = this.xMin,
 /**
  * A two dimensional minimum maximum range.
  */
+@Serializable(with = MinMaxSerializer::class)
 class MinMax(
 		override var xMin: Float = Float.POSITIVE_INFINITY,
 		override var yMin: Float = Float.POSITIVE_INFINITY,
@@ -219,5 +225,26 @@ class MinMax(
 
 	override fun toString(): String {
 		return "MinMax(xMin=$xMin, yMin=$yMin, xMax=$xMax, yMax=$yMax)"
+	}
+}
+
+@Serializer(forClass = MinMax::class)
+object MinMaxSerializer : KSerializer<MinMax> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("MinMax")
+
+	override fun serialize(encoder: Encoder, obj: MinMax) {
+		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.xMin, obj.yMin, obj.xMax, obj.yMax))
+	}
+
+	override fun deserialize(decoder: Decoder): MinMax {
+		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		return MinMax(
+				xMin = values[0],
+				yMin = values[1],
+				xMax = values[2],
+				yMax = values[3]
+		)
 	}
 }

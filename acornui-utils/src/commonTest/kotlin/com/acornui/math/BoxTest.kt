@@ -132,5 +132,11 @@ class BoxTest {
 		assertFalse(box.intersects(ray))
 	}
 
+	@Test fun clampMinMax() {
+		assertEquals(Box(), Box().clamp(MinMax(0f, 0f, 100f, 50f)))
+		assertEquals(Box(Vector3(10f, 0f, 0f), Vector3(80f, 50f, 20f)), Box(Vector3(), Vector3(100f, 50f, 20f)).clamp(MinMax(10f, -10f, 80f, 55f)))
+		assertEquals(Box(Vector3(0f, 10f, 0f), Vector3(100f, 40f, 20f)), Box(Vector3(), Vector3(100f, 50f, 20f)).clamp(MinMax(-10f, 10f, 110f, 40f)))
+	}
+
 }
 

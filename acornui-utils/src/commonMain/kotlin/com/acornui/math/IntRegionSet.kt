@@ -46,7 +46,7 @@ class IntRegionSet(
 	 * Any overlap will be eliminated.
 	 */
 	fun add(x: Int, y: Int, width: Int, height: Int) {
-		if (width == 0 || height == 0) return
+		if (width <= 0 || height <= 0) return
 		addInternal(obtain(x, y, width, height))
 	}
 

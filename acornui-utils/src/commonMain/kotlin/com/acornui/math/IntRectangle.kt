@@ -321,9 +321,9 @@ object IntRectangleSerializer : KSerializer<IntRectangle> {
  * E.g. if `x` was `2.8f`, x will be `2` If `right` was `10.1`, x will be `11`
  */
 fun IntRectangle.set(minMax: MinMaxRo): IntRectangle {
-	val newX = minMax.x.toInt()
-	val newY = minMax.y.toInt()
-	val newR = ceilInt(minMax.right)
-	val newB = ceilInt(minMax.bottom)
+	val newX = minMax.xMin.toInt()
+	val newY = minMax.yMin.toInt()
+	val newR = ceilInt(minMax.xMax)
+	val newB = ceilInt(minMax.yMax)
 	return set(newX, newY, newR - newX, newB - newY)
 }
