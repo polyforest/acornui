@@ -142,6 +142,8 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 			}
 		}
 		contents.customTransform = tmpMat
+
+		contents.colorTint = renderContext.colorTint
 	}
 
 	companion object {
