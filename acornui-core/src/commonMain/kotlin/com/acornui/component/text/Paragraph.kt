@@ -73,8 +73,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		// TODO: Make vertices depend on render context and make the vertices global coords.
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateVertices)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, dependents = 0, onValidate = ::updateVertices)
 		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
 	}
 
@@ -318,8 +317,10 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		val h = (if (allowClipping) explicitHeight else null) ?: Float.MAX_VALUE
 		val rightClip = w - padding.right
 		val bottomClip = h - padding.bottom
+		val tint = renderContext.colorTint
+		val transform = renderContext.modelTransform
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].validateVertices(leftClip, topClip, rightClip, bottomClip)
+			textElements[i].updateWorldVertices(transform, tint, leftClip, topClip, rightClip, bottomClip)
 		}
 	}
 
@@ -335,8 +336,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	private fun updateCharStyle() {
 		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
-			val selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
-			textElements[i].setSelected(selected)
+			textElements[i].selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
 		}
 	}
 
@@ -382,21 +382,21 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].renderBackground(clip, transform, tint)
+					textElements[j].renderBackground()
 				}
 			}
 			for (i in lineStart..lineEnd - 1) {
 				val line = _lines[i]
 				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].renderForeground(clip, transform, tint)
+					textElements[j].renderForeground()
 				}
 			}
 		} else {
 			for (i in 0..textElements.lastIndex) {
-				textElements[i].renderBackground(clip, transform, tint)
+				textElements[i].renderBackground()
 			}
 			for (i in 0..textElements.lastIndex) {
-				textElements[i].renderForeground(clip, transform, tint)
+				textElements[i].renderForeground()
 			}
 		}
 	}

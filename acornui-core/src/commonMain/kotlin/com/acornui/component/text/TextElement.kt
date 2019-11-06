@@ -133,7 +133,7 @@ interface TextElement : TextElementRo, Disposable {
 	/**
 	 * If set to true, this part will be rendered using the selected styling.
 	 */
-	fun setSelected(value: Boolean)
+	var selected: Boolean
 
 	/**
 	 * Finalizes the vertices for rendering.
@@ -142,18 +142,18 @@ interface TextElement : TextElementRo, Disposable {
 	 * @param rightClip The right position in canvas coordinate points for clipping.
 	 * @param bottomClip The bottom position in canvas coordinate points for clipping.
 	 */
-	fun validateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
+	fun updateWorldVertices(transform: Matrix4Ro, tint: ColorRo, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
 	/**
 	 * Renders the background, such as the selection color, underline, strikethrough, etc.
 	 * Background and foreground rendering is separated to reduce the number of draw calls.
 	 */
-	fun renderBackground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+	fun renderBackground()
 
 	/**
 	 * Renders the foreground, such as the glyph.
 	 */
-	fun renderForeground(clip: MinMaxRo, transform: Matrix4Ro, tint: ColorRo)
+	fun renderForeground()
 
 }
 
