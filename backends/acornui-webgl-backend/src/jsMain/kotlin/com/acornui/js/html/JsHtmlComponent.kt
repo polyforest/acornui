@@ -60,6 +60,7 @@ class JsHtmlComponent(
 			parentElement.removeChild(element)
 		element.style.display = "block"
 		element.style.opacity = "0"
+		component.concatenatedColorTint = Color.CLEAR
 		element.style.setProperty("position", "absolute")
 	}
 
@@ -81,6 +82,11 @@ class JsHtmlComponent(
 			component.element.innerHTML = value
 		}
 
+	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
+		super.colorTint(r, g, b, a)
+		println("Set c t $a")
+	}
+
 	override fun updateRenderContext() {
 		super.updateRenderContext()
 		var v = true
@@ -93,6 +99,9 @@ class JsHtmlComponent(
 			}
 		}
 		component.visible = v
+
+		component.concatenatedTransform = renderContext.modelTransform
+		component.concatenatedColorTint = renderContext.colorTint
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -101,8 +110,6 @@ class JsHtmlComponent(
 	}
 
 	override fun draw() {
-		component.concatenatedTransform = renderContext.modelTransform
-		component.concatenatedColorTint = renderContext.colorTint
 	}
 }
 
@@ -213,6 +220,7 @@ class DomComponent(
 		val str = value.a.toString()
 		if (element.style.opacity != str)
 			element.style.opacity = str
+		println("element.style.opacity ${element.style.opacity}")
 	}
 }
 
