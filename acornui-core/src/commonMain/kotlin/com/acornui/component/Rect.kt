@@ -17,7 +17,6 @@
 package com.acornui.component
 
 import com.acornui.component.drawing.rect
-import com.acornui.component.drawing.staticMesh
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.di.Owned
@@ -27,11 +26,8 @@ import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
+import com.acornui.math.*
 import com.acornui.math.PI
-import com.acornui.math.Pad
-import com.acornui.math.Vector3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.*
@@ -67,19 +63,13 @@ open class Rect(
 		val bottomLeftCorner = Sprite(glState)
 		val bottomLeftStrokeCorner = Sprite(glState)
 
-		val fill = staticMesh()
-		val gradient = staticMesh()
-		val stroke = staticMesh()
-		val fillC = staticMeshC {
-			mesh = fill
+		val fill = staticMeshC {
 			interactivityMode = InteractivityMode.NONE
 		}
-		val gradientC = staticMeshC {
-			mesh = gradient
+		val gradient = staticMeshC {
 			interactivityMode = InteractivityMode.NONE
 		}
-		val strokeC = staticMeshC {
-			mesh = stroke
+		val stroke = staticMeshC {
 			interactivityMode = InteractivityMode.NONE
 		}
 		val transform = Matrix4()
@@ -93,9 +83,9 @@ open class Rect(
 			simpleMode = it.borderRadii.isEmpty() && it.linearGradient == null
 			if (simpleMode) clearChildren(dispose = false)
 			else {
-				addChild(complexModeObj.fillC)
-				addChild(complexModeObj.gradientC)
-				addChild(complexModeObj.strokeC)
+				addChild(complexModeObj.fill)
+				addChild(complexModeObj.gradient)
+				addChild(complexModeObj.stroke)
 			}
 		}
 	}
@@ -110,10 +100,6 @@ open class Rect(
 		val corners = style.borderRadii
 
 		complexModeObj.apply {
-			fill.clear()
-			stroke.clear()
-			gradient.clear()
-
 			val topLeftX = fitSize(corners.topLeft.x, maxOf(corners.topRight.x, corners.bottomRight.x), w)
 			val topLeftY = fitSize(corners.topLeft.y, maxOf(corners.bottomLeft.y, corners.bottomRight.y), h)
 			val topRightX = fitSize(corners.topRight.x, maxOf(corners.topLeft.x, corners.bottomLeft.x), w)
@@ -240,7 +226,6 @@ open class Rect(
 					trn(margin.left, margin.top)
 				}
 			}
-			fillC.invalidateSize()
 
 			stroke.buildMesh {
 				if (topBorder > 0f && borderColors.top.a > 0f) {
@@ -347,7 +332,7 @@ open class Rect(
 							v = (bottomRightY - innerBottomRightY) / texture.heightPixels
 							v2 = this.v2
 						} else {
-							glState.setTexture(glState.whitePixel)
+							glState.setTexture(null)
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x = w - innerBottomRightX
@@ -378,7 +363,7 @@ open class Rect(
 							v = (bottomLeftY - innerBottomLeftY) / texture.heightPixels
 							v2 = this.v2
 						} else {
-							glState.setTexture(glState.whitePixel)
+							glState.setTexture(null)
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val y = h - innerBottomLeftY
@@ -395,7 +380,6 @@ open class Rect(
 				}
 				trn(margin.left, margin.top)
 			}
-			strokeC.invalidateSize()
 
 			if (style.linearGradient != null) {
 				val linearGradient = style.linearGradient!!
@@ -412,7 +396,7 @@ open class Rect(
 					putVertex(0f, 0f, 0f, colorTint = firstColor)
 					putVertex(0f, thickness, 0f, colorTint = firstColor)
 					val numColorStops = linearGradient.colorStops.size
-					for (i in 0..numColorStops - 1) {
+					for (i in 0 until numColorStops) {
 						val colorStop = linearGradient.colorStops[i]
 
 						if (colorStop.percent != null) {
@@ -433,7 +417,6 @@ open class Rect(
 								} else if (jColorStop.pixels != null) {
 									nextKnownJ = j
 									nextKnownPixel = maxOf(pixel, jColorStop.pixels)
-									break
 								}
 							}
 							pixel += (nextKnownPixel - pixel) / (1f + nextKnownJ.toFloat() - i.toFloat())
@@ -465,7 +448,6 @@ open class Rect(
 
 					transform(position = Vector3(margin.left + w * 0.5f, margin.top + h * 0.5f), rotation = Vector3(z = angle), origin = Vector3(len * 0.5f, thickness * 0.5f))
 				}
-				gradientC.invalidateSize()
 			}
 		}
 	}
@@ -557,11 +539,11 @@ open class Rect(
 			if (style.linearGradient != null) {
 				complexModeObj.apply {
 					StencilUtil.mask(glState.batch, gl, {
-						if (fillC.visible) fillC.render()
+						fill.render()
 					}) {
-						if (gradientC.visible) gradientC.render()
+						gradient.render()
 					}
-					if (strokeC.visible) strokeC.render()
+					stroke.render()
 				}
 			} else {
 				super.draw()

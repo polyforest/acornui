@@ -17,6 +17,7 @@
 package com.acornui.component.drawing
 
 import com.acornui.Disposable
+import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.di.Injector
 import com.acornui.di.Owned
@@ -92,6 +93,12 @@ open class StaticMeshComponent(
 		return true
 	}
 
+	fun buildMesh(inner: MeshRegion.() -> Unit) {
+		if (mesh == null) mesh = staticMesh()
+		mesh!!.buildMesh(inner)
+		invalidateSize()
+	}
+
 	override fun onActivated() {
 		super.onActivated()
 		mesh?.refInc()
@@ -104,6 +111,7 @@ open class StaticMeshComponent(
 
 	override fun draw() {
 		val mesh = mesh ?: return
+		val renderContext = renderContext
 		colorTransformation.tint(renderContext.colorTint)
 		glState.uniforms.useColorTransformation(colorTransformation) {
 			glState.uniforms.useCamera(renderContext, useModel = true) {
@@ -165,11 +173,10 @@ class StaticMesh(
 	private val glState = inject(GlState)
 
 	private val _boundingBox = Box()
-	val boundingBox: BoxRo
-		get() = _boundingBox
+	val boundingBox: BoxRo = _boundingBox
 
 	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
-	private val textures = ArrayList<TextureRo>()
+	private val textures = HashSet<TextureRo>()
 	private val oldTextures = ArrayList<TextureRo>()
 
 	init {
@@ -182,8 +189,8 @@ class StaticMesh(
 
 	fun refInc() {
 		if (refCount == 0) {
-			for (i in 0..textures.lastIndex) {
-				textures[i].refInc()
+			textures.forEach {
+				it.refInc()
 			}
 		}
 		refCount++
@@ -192,8 +199,8 @@ class StaticMesh(
 	fun refDec() {
 		refCount--
 		if (refCount == 0) {
-			for (i in 0..textures.lastIndex) {
-				textures[i].refDec()
+			textures.forEach {
+				it.refDec()
 			}
 		}
 	}
@@ -213,7 +220,7 @@ class StaticMesh(
 			mesh(batch) {
 				inner()
 			}
-			batch.finish()
+			batch.upload()
 			textures.clear()
 			for (i in 0..batch.drawCalls.lastIndex) {
 				// Keeps track of the textures used so we can reference count them.
@@ -222,11 +229,11 @@ class StaticMesh(
 					textures.add(texture)
 			}
 			if (refCount > 0) {
-				for (i in 0..textures.lastIndex) {
-					textures[i].refInc()
+				textures.forEach {
+					it.refInc()
 				}
-				for (i in 0..oldTextures.lastIndex) {
-					oldTextures[i].refDec()
+				oldTextures.forEach2 {
+					it.refDec()
 				}
 				oldTextures.clear()
 			}
@@ -255,7 +262,6 @@ class StaticMesh(
 		val positionOffset = vertexAttributes.getOffsetByUsage(VertexAttributeUsage.POSITION) ?: return false
 		val c = vertexAttributes.getAttributeByUsage(VertexAttributeUsage.POSITION)!!.numComponents
 
-		// FIXME - [ERROR] java.lang.IllegalArgumentException: newPosition > limit: (852 > 843)
 		for (i in batch.drawCalls.lastIndex downTo 0) {
 			val drawCall = batch.drawCalls[i]
 			if (drawCall.count != 0) {

@@ -20,7 +20,6 @@ package com.acornui.component.text
 
 import com.acornui.collection.*
 import com.acornui.component.*
-import com.acornui.component.ValidationFlags.VERTICES
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
@@ -73,8 +72,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, dependents = 0, onValidate = ::updateVertices)
-		validation.addNode(CHAR_STYLE, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateCharStyle)
+		validation.addNode(SELECTION, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateSelection)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = 0, onValidate = ::updateVertices)
+		validation.addNode(WORLD_VERTICES, dependencies = VERTICES or ValidationFlags.RENDER_CONTEXT, dependents = 0, onValidate = ::updateWorldVertices)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -317,10 +317,17 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		val h = (if (allowClipping) explicitHeight else null) ?: Float.MAX_VALUE
 		val rightClip = w - padding.right
 		val bottomClip = h - padding.bottom
-		val tint = renderContext.colorTint
-		val transform = renderContext.modelTransform
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].updateWorldVertices(transform, tint, leftClip, topClip, rightClip, bottomClip)
+			textElements[i].updateVertices(leftClip, topClip, rightClip, bottomClip)
+		}
+	}
+	
+	private fun updateWorldVertices() {
+		val textElements = _textElements
+		val transform = renderContext.modelTransform
+		val tint = renderContext.colorTint
+		for (i in 0..textElements.lastIndex) {
+			textElements[i].updateWorldVertices(transform, tint)
 		}
 	}
 
@@ -330,10 +337,10 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
 		selectionRangeStart = rangeStart
 		this.selection = selection
-		invalidate(CHAR_STYLE)
+		invalidate(SELECTION)
 	}
 
-	private fun updateCharStyle() {
+	private fun updateSelection() {
 		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
 			textElements[i].selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
@@ -443,7 +450,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	companion object {
 		private const val TEXT_ELEMENTS = 1 shl 16
-		private const val CHAR_STYLE = 1 shl 17
+		private const val SELECTION = 1 shl 17
+		private const val VERTICES = 1 shl 18
+		private const val WORLD_VERTICES = 1 shl 19
 	}
 }
 

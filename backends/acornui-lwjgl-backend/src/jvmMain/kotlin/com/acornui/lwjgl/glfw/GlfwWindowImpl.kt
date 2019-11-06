@@ -19,14 +19,14 @@ package com.acornui.lwjgl.glfw
 import com.acornui.GlConfig
 import com.acornui.WindowConfig
 import com.acornui.browser.Location
-import com.acornui.graphic.Window
 import com.acornui.gl.core.Gl20
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
-import com.acornui.lwjgl.browser.JvmLocation
+import com.acornui.graphic.Window
 import com.acornui.logging.Log
-import com.acornui.reflect.observable
-import com.acornui.signal.*
+import com.acornui.lwjgl.browser.JvmLocation
+import com.acornui.signal.Cancel
+import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import com.acornui.substringInRange
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
@@ -37,7 +37,6 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import kotlin.math.ceil
-import kotlin.properties.Delegates
 
 
 /**
@@ -53,26 +52,23 @@ class GlfwWindowImpl(
 	private val cancel = Cancel()
 	private val _closeRequested = Signal1<Cancel>()
 	override val closeRequested = _closeRequested.asRo()
+
 	private val _isActiveChanged = Signal1<Boolean>()
 	override val isActiveChanged = _isActiveChanged.asRo()
+
 	private val _isVisibleChanged = Signal1<Boolean>()
 	override val isVisibleChanged = _isVisibleChanged.asRo()
+
 	private val _sizeChanged = Signal2<Float, Float>()
 	override val sizeChanged = _sizeChanged.asRo()
+
 	private val _scaleChanged = Signal2<Float, Float>()
 	override val scaleChanged = _scaleChanged.asRo()
 
+	private val _refresh = Signal0()
+	override val refresh = _refresh.asRo()
+
 	val windowId: Long
-
-	private var _clearColor = Color.CLEAR.copy()
-
-	override var clearColor: ColorRo
-		get() = _clearColor
-		set(value) {
-			_clearColor.set(value)
-			gl.clearColor(value)
-			requestRender()
-		}
 
 	override val width: Float
 		get() = framebufferWidth / scaleX
@@ -113,16 +109,11 @@ class GlfwWindowImpl(
 		GLFWErrorCallback.createPrint(System.err).set()
 
 		// Initialize GLFW. Most GLFW functions will not work before doing this.
-		if (!glfwInit())
-			throw IllegalStateException("Unable to initialize GLFW")
+		check(glfwInit()) { "Unable to initialize GLFW" }
 
 		// Configure our window
-		glfwDefaultWindowHints() // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
-
-		if (glConfig.antialias)
-			glfwWindowHint(GLFW_SAMPLES, 4)
-
+		glfwWindowHint(GLFW_SAMPLES, if (glConfig.antialias) 4 else 1)
 		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL11.GL_TRUE)
 		glfwWindowHint(GLFW_RESIZABLE, GL11.GL_TRUE) // the window will be resizable
 
@@ -192,8 +183,6 @@ class GlfwWindowImpl(
 		// Make the window visible
 		glfwShowWindow(windowId)
 
-		clearColor = windowConfig.backgroundColor
-
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
 
@@ -236,6 +225,15 @@ class GlfwWindowImpl(
 				}
 			}
 		}
+
+		glfwSetWindowRefreshCallback(windowId) {
+			_refresh.dispatch()
+			requestRender()
+		}
+
+		// Clear as soon as possible to avoid a frame of black
+		gl.clearColor(windowConfig.backgroundColor)
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
 
 	private fun updateScale(scaleX: Float, scaleY: Float) {
@@ -243,22 +241,23 @@ class GlfwWindowImpl(
 		this.scaleY = scaleY
 		_scaleChanged.dispatch(scaleX, scaleY)
 		_sizeChanged.dispatch(width, height)
+		requestRender()
 	}
 
 	override var isVisible: Boolean = true
 		private set(value) {
 			field = value
+			requestRender()
 			_isVisibleChanged.dispatch(value)
 		}
 
 	override var isActive: Boolean = true
 		private set(value) {
 			field = value
+			requestRender()
 			_isActiveChanged.dispatch(value)
 		}
 	
-	override var useRedrawRegions: Boolean = true
-
 	override fun setSize(width: Float, height: Float) {
 		if (this.width == width && this.height == height) return // no-op
 		glfwSetWindowSize(windowId, ceil(width).toInt(), ceil(height).toInt())
@@ -357,6 +356,7 @@ class GlfwWindowImpl(
 		_sizeChanged.dispose()
 		_glfwWindowSizeChanged.dispose()
 		_scaleChanged.dispose()
+		_refresh.dispose()
 		_isVisibleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
 		glfwTerminate()

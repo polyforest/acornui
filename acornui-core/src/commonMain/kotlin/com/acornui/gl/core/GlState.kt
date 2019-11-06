@@ -156,14 +156,11 @@ class GlStateImpl(
 
 	private val _boundTextures: Array<TextureRo?> = Array(Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS) { null }
 
-	private var _batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
-
-	override var batch: ShaderBatch
-		get() = _batch
+	override var batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 		set(value) {
-			if (_batch == value) return
-			_batch.flush()
-			_batch = value
+			if (field == value) return
+			field.flush()
+			field = value
 		}
 
 	private val defaultWhitePixel by lazy {
@@ -203,7 +200,7 @@ class GlStateImpl(
 				gl.bindTexture(previous.target.value, null)
 			}
 		} else {
-			if (texture.textureHandle == null) throw Exception("Texture is not initialized. Use texture.refInc() before binding.")
+			checkNotNull(texture.textureHandle) { "Texture is not initialized. Use texture.refInc() before binding." }
 			gl.bindTexture(texture.target.value, texture.textureHandle!!)
 		}
 	}
@@ -284,7 +281,7 @@ class GlStateImpl(
 
 	override fun setViewport(x: Int, y: Int, width: Int, height: Int) {
 		if (_viewport.x == x && _viewport.y == y && _viewport.width == width && _viewport.height == height) return
-		_batch.flush()
+		batch.flush()
 		_viewport.set(x, y, width, height)
 		gl.viewport(x, y, width, height)
 	}

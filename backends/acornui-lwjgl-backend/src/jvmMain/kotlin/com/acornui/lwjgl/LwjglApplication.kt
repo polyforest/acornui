@@ -63,7 +63,6 @@ import com.acornui.persistence.Persistence
 import com.acornui.time.start
 import kotlinx.coroutines.GlobalScope
 import org.lwjgl.glfw.GLFW
-import org.lwjgl.glfw.GLFWWindowRefreshCallback
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -101,7 +100,7 @@ open class LwjglApplication : ApplicationBase() {
 		val owner = OwnedImpl(injector)
 		owner.initializeSpecialInteractivity()
 		owner.onReady()
-		LwjglApplicationRunner(owner.injector, _windowId).run()
+		LwjglApplicationRunner(owner.injector).run()
 		owner.dispose()
 		dispose()
 	}
@@ -238,24 +237,19 @@ open class LwjglApplication : ApplicationBase() {
 }
 
 private class LwjglApplicationRunner(
-		injector: Injector,
-		private val windowId: Long
+		injector: Injector
 ) : JvmApplicationRunner(injector) {
 
 	private val window = inject(Window)
 
-	private val refreshCallback = object : GLFWWindowRefreshCallback() {
-		override fun invoke(windowId: Long) {
-			// The window has been damaged.
-			window.requestRender()
-			tick(0f)
-		}
+	override fun run() {
+		window.refresh.add(::refreshHandler)
+		super.run()
+		window.refresh.remove(::refreshHandler)
 	}
 
-	override fun run() {
-		GLFW.glfwSetWindowRefreshCallback(windowId, refreshCallback)
-		super.run()
-		GLFW.glfwSetWindowRefreshCallback(windowId, null)
+	private fun refreshHandler() {
+		tick(0f)
 	}
 
 	override fun pollEvents() {

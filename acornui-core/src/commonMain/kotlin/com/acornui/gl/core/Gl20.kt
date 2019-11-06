@@ -1226,6 +1226,10 @@ interface Gl20 {
 	 * @param out The array to populate with the values.  This must be the expected size of the values.
 	 */
 	fun getParameterfv(pName: Int, out: FloatArray): FloatArray
+	fun getParameterfv(pName: Int, out: Color): Color {
+		val floats = getParameterfv(pName, FloatArray(4))
+		return out.set(floats[0], floats[1], floats[2], floats[3])
+	}
 
 	/**
 	 * Return the value for the passed pName given the passed program.
@@ -1281,10 +1285,16 @@ fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
  * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear
  * color.
  */
-fun Scoped.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
+fun Gl20.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
 	if (mask == 0) return
-	val gl = inject(Gl20)
-	gl.clearColor(color)
-	gl.clear(mask)
-	gl.clearColor(inject(Window).clearColor)
+	val previousColor = getParameterfv(Gl20.COLOR_CLEAR_VALUE, FloatArray(4))
+	val previousStencil = getParameteri(Gl20.STENCIL_CLEAR_VALUE)
+	val previousDepth = getParameterf(Gl20.DEPTH_CLEAR_VALUE)
+	clearColor(color)
+	clearStencil(0)
+	clearDepth(1f)
+	clear(mask)
+	clearColor(previousColor[0], previousColor[1], previousColor[2], previousColor[3])
+	clearStencil(previousStencil)
+	clearDepth(previousDepth)
 }

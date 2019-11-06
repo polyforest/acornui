@@ -38,14 +38,14 @@ class RepeatingTexture(
 	var filterMin: TextureMinFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR
 	var filterMag: TextureMagFilter = TextureMagFilter.LINEAR
 
-	override fun _setTexture(value: Texture?) {
+	override fun setTextureInternal(value: Texture?) {
 		if (value != null) {
 			value.filterMin = filterMin
 			value.filterMag = filterMag
 			value.wrapS = wrapS
 			value.wrapT = wrapT
 		}
-		super._setTexture(value)
+		super.setTextureInternal(value)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -23,7 +23,7 @@ import com.acornui.asset.loadTexture
 import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureRo
 import com.acornui.math.IntRectangleRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -56,19 +56,19 @@ class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(ow
 			cached = cachedGroup()
 			if (value != null) {
 				cached!!.cacheAsync(value) { loadTexture(value) }.then {
-					_setTexture(it)
+					setTextureInternal(it)
 				}
 			} else {
-				_setTexture(null)
+				setTextureInternal(null)
 			}
 		}
 
-	var texture: Texture?
+	var texture: TextureRo?
 		get() = renderable.texture
 		set(value) {
 			if (renderable.texture == value) return
 			path = null
-			_setTexture(value)
+			setTextureInternal(value)
 		}
 
 	val naturalWidth: Float
@@ -93,7 +93,7 @@ class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(ow
 	val splitBottom: Float
 		get() = renderable.splitBottom
 
-	private fun _setTexture(value: Texture?) {
+	private fun setTextureInternal(value: TextureRo?) {
 		if (renderable.texture == value) return
 		val oldTexture = renderable.texture
 		if (isActive) {

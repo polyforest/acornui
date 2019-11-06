@@ -156,7 +156,9 @@ open class InteractivityManagerImpl(
 	}
 
 	override fun init(root: StageRo) {
-		_assert(_root == null, "Already initialized.")
+		check(_root == null) {
+			"Already initialized"
+		}
 		_root = root
 		mouseInput.overCanvasChanged.add(::overCanvasChangedHandler)
 		mouseInput.mouseDown.add(::rawMouseDownHandler)

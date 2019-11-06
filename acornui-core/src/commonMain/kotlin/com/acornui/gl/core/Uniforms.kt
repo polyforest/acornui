@@ -427,7 +427,7 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 
 	override fun put(location: GlUniformLocationRef, value: Matrix2Ro) {
 		checkBound()
-		val existing = uniformsMat2.getOrPut(location) { Matrix2() }
+		val existing = uniformsMat2.getOrPut(location) { Matrix2(FloatArray(4)) }
 		if (existing != value) {
 			_changing.dispatch()
 			existing.set(value)
@@ -437,7 +437,7 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 
 	override fun put(location: GlUniformLocationRef, value: Matrix3Ro) {
 		checkBound()
-		val existing = uniformsMat3.getOrPut(location) { Matrix3() }
+		val existing = uniformsMat3.getOrPut(location) { Matrix3(FloatArray(9)) }
 		if (existing != value) {
 			_changing.dispatch()
 			existing.set(value)
@@ -447,7 +447,7 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
 
 	override fun put(location: GlUniformLocationRef, value: Matrix4Ro) {
 		checkBound()
-		val existing = uniformsMat4.getOrPut(location) { Matrix4() }
+		val existing = uniformsMat4.getOrPut(location) { Matrix4(FloatArray(16)) }
 		if (existing != value) {
 			_changing.dispatch()
 			existing.set(value)

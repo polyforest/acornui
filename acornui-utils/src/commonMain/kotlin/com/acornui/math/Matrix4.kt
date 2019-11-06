@@ -28,7 +28,7 @@ import kotlin.math.tan
 @Serializable(with = Matrix4Serializer::class)
 interface Matrix4Ro {
 
-	val mode: MatrixMode
+	val mode: Int
 
 	val values: FloatArray
 
@@ -163,10 +163,10 @@ class Matrix4() : Matrix4Ro {
 	}
 
 	@Transient
-	private var _mode: MatrixMode = MatrixMode.IDENTITY
+	private var _mode = MatrixMode.IDENTITY
 
 	@Transient
-	override val mode: MatrixMode
+	override val mode: Int
 		get() = _mode
 
 	init {
@@ -228,7 +228,7 @@ class Matrix4() : Matrix4Ro {
 				MatrixMode.FULL -> throw Exception("Unreachable")
 			}
 		} else {
-			for (i in 0..16 - 1) {
+			for (i in 0 until 16) {
 				values[i] = other.values[i]
 			}
 			_mode = other.mode
@@ -940,6 +940,7 @@ class Matrix4() : Matrix4Ro {
 						values[M10] * values[M01] * values[M22] * values[M33] +
 						values[M00] * values[M11] * values[M22] * values[M33]
 			}
+			else -> unknownModeError()
 		}
 	}
 
@@ -1078,7 +1079,7 @@ class Matrix4() : Matrix4Ro {
 		values[M00] *= x
 		values[M11] *= y
 		values[M22] *= z
-		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
+		if (_mode < MatrixMode.SCALE)
 			_mode = MatrixMode.SCALE
 		return this
 	}
@@ -1145,6 +1146,7 @@ class Matrix4() : Matrix4Ro {
 			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
 			MatrixMode.SCALE -> abs(values[M00])
 			MatrixMode.FULL -> sqrt(getScaleXSquared())
+			else -> unknownModeError()
 		}
 	}
 
@@ -1156,6 +1158,7 @@ class Matrix4() : Matrix4Ro {
 			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
 			MatrixMode.SCALE -> abs(values[M11])
 			MatrixMode.FULL -> sqrt(getScaleYSquared())
+			else -> unknownModeError()
 		}
 	}
 
@@ -1167,6 +1170,7 @@ class Matrix4() : Matrix4Ro {
 			MatrixMode.TRANSLATION, MatrixMode.IDENTITY -> 1f
 			MatrixMode.SCALE -> abs(values[M22])
 			MatrixMode.FULL -> sqrt(getScaleZSquared())
+			else -> unknownModeError()
 		}
 	}
 
@@ -1292,7 +1296,7 @@ class Matrix4() : Matrix4Ro {
 	 */
 	fun scale(scaleX: Float, scaleY: Float, scaleZ: Float): Matrix4 {
 		if (scaleX == 1f && scaleY == 1f && scaleZ == 1f) return this
-		if (_mode.ordinal < MatrixMode.SCALE.ordinal)
+		if (_mode < MatrixMode.SCALE)
 			_mode = MatrixMode.SCALE
 		tmpMat.idt()
 		tmpMat.scl(scaleX, scaleY, scaleZ)
@@ -1433,12 +1437,15 @@ class Matrix4() : Matrix4Ro {
 						values[M33] == other.values[M33]
 			}
 			MatrixMode.FULL -> values contentEquals other.values
+			else -> unknownModeError()
 		}
 	}
 
 	override fun hashCode(): Int {
 		return values.hashCode()
 	}
+
+	private fun unknownModeError(): Nothing = throw IllegalStateException("Unknown mode")
 
 	companion object {
 
@@ -1561,27 +1568,23 @@ class Matrix4() : Matrix4Ro {
 
 }
 
-enum class MatrixMode {
+object MatrixMode {
 
-	IDENTITY,
+	const val IDENTITY = 1
 
 	/**
 	 * Identity except for translation components. That is: M03, M13, and M23
 	 */
-	TRANSLATION,
+	const val TRANSLATION = 2
 
 	/**
 	 * Identity except for translation and scale components. That is: M03, M13, M23, M00, M11, M22, and M33
 	 */
-	SCALE,
+	const val SCALE = 3
 
-	FULL
+	const val FULL = 4
 }
 
-private fun maxOf(modeA: MatrixMode, modeB: MatrixMode): MatrixMode {
-	return if (modeA.ordinal > modeB.ordinal) modeA
-	else modeB
-}
 
 val Matrix4Ro.isIdentity: Boolean
 	get() = mode == MatrixMode.IDENTITY

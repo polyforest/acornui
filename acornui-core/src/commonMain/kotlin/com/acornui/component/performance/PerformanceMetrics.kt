@@ -49,9 +49,3 @@ inline fun PerformanceMetrics.measure(enabled: Boolean = true, block: () -> Unit
 		block()
 	}
 }
-
-var measureFramePerformanceEnabled = false
-var totalFrames = 0
-var totalDrawCalls = 0
-val updatePerformance = PerformanceMetrics()
-val renderPerformance = PerformanceMetrics()

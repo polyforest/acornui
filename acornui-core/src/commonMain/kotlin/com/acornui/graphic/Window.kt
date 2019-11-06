@@ -19,10 +19,6 @@ package com.acornui.graphic
 import com.acornui.Disposable
 import com.acornui.browser.Location
 import com.acornui.component.Stage
-import com.acornui.component.performance.measure
-import com.acornui.component.performance.measureFramePerformanceEnabled
-import com.acornui.component.performance.renderPerformance
-import com.acornui.component.performance.updatePerformance
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -75,6 +71,12 @@ interface Window : Disposable {
 	val scaleChanged: Signal<(Float, Float) -> Unit>
 
 	/**
+	 * Dispatched when the window needs to be redrawn, for example if the window has been exposed after having been
+	 * covered by another window.
+	 */
+	val refresh: Signal<() -> Unit>
+
+	/**
 	 * The width of the window, in points.
 	 */
 	val width: Float
@@ -106,21 +108,10 @@ interface Window : Disposable {
 	fun setSize(width: Float, height: Float)
 
 	/**
-	 * Sets the window's opaque background color.
-	 */
-	var clearColor: ColorRo
-
-	/**
 	 * If true, every frame will invoke a render. If false, only frames where [requestRender] has been called
 	 * will trigger a render.
 	 */
 	var continuousRendering: Boolean
-
-	/**
-	 * If true, there will be a pass before render invalidating screen regions. Only those regions will be cleared and
-	 * redrawn.
-	 */
-	var useRedrawRegions: Boolean
 
 	/**
 	 * True if a render and update has been requested, or if [continuousRendering] is true.
@@ -241,15 +232,11 @@ fun Scoped.exit() {
 
 fun Window.render(stage: Stage) {
 	if (shouldRender(true)) {
-		updatePerformance.measure(measureFramePerformanceEnabled) {
-			stage.update()
-		}
-		renderPerformance.measure(measureFramePerformanceEnabled) {
-			if (width > 0f && height > 0f) {
-				renderBegin()
-				stage.render()
-				renderEnd()
-			}
+		stage.update()
+		if (width > 0f && height > 0f) {
+			renderBegin()
+			stage.render()
+			renderEnd()
 		}
 	}
 }

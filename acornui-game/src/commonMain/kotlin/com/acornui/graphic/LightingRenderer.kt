@@ -127,9 +127,7 @@ class LightingRenderer(
 		directionalShadowMapShader.uniforms.setCamera(camera)
 		val uniforms = directionalShadowMapShader.uniforms
 		directionalShadowsFbo.begin()
-		val oldClearColor = window.clearColor
-		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
+		gl.clearAndReset(Color.BLUE, Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)  // Blue represents a z / w depth of 1.0. (The camera's far position)
 		if (directionalLight.color != Color.BLACK) {
 			glState.useScissor(1, 1, directionalShadowsFbo.widthPixels - 2, directionalShadowsFbo.heightPixels - 2) {
 				if (directionalLightCamera.update(directionalLight.direction, camera)) {
@@ -139,7 +137,6 @@ class LightingRenderer(
 			}
 		}
 		directionalShadowsFbo.end()
-		gl.clearColor(oldClearColor)
 	}
 
 
@@ -148,9 +145,8 @@ class LightingRenderer(
 		pointShadowMapShader.uniforms.setCamera(camera)
 		val uniforms = pointShadowMapShader.uniforms
 		val u_pointLightMvp = uniforms.getRequiredUniformLocation("u_pointLightMvp")
-		val oldClearColor = window.clearColor
-		gl.clearColor(Color.BLUE) // Blue represents a z / w depth of 1.0. (The camera's far position)
 		pointShadowsFbo.begin()
+		gl.clearAndReset(Color.BLUE, Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)  // Blue represents a z / w depth of 1.0. (The camera's far position)
 
 		for (i in 0..minOf(numShadowPointLights - 1, pointLights.lastIndex)) {
 			val pointLight = pointLights[i]
@@ -176,7 +172,6 @@ class LightingRenderer(
 			}
 		}
 		pointShadowsFbo.end()
-		gl.clearColor(oldClearColor)
 	}
 
 	private val u_directionalLightMvp = Matrix4()

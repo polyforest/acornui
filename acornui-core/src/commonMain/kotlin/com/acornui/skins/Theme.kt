@@ -35,11 +35,11 @@ import kotlinx.serialization.Serializable
 data class Theme(
 
 		/**
-		 * This will be set to the `backgroundColor` property in [com.acornui.config] window.
-		 * @see com.acornui.WindowConfig.backgroundColor
-		 * @see com.acornui.AppConfig
+		 * The window clear color.
+		 * If null, this will default to the [com.acornui.WindowConfig.backgroundColor] property.
 		 */
-		val bgColor: ColorRo = Color(0xf1f2f3ff),
+		val bgColor: ColorRo? = null,
+		
 		val panelBgColor: ColorRo = Color(0xe7edf1ff),
 
 		val fill: ColorRo = Color(0xf3f9faff),
@@ -105,6 +105,7 @@ data class Theme(
 		val atlasPath: String = "assets/uiskin/uiskin.json",
 
 		val bodyFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333333ff)),
+		val menuFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333366ff)),
 		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
 		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x27273aff))
 )

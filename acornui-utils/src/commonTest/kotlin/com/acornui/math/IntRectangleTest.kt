@@ -71,6 +71,9 @@ class IntRectangleTest {
 		assertFalse(IntRectangle(0, 0, 4, 2).intersects(IntRectangle(0, 2, 4, 2)))
 		assertTrue(IntRectangle(0, 0, 4, 2).intersects(IntRectangle(0, 1, 4, 2)))
 		assertTrue(IntRectangle(3, 0, 4, 2).intersects(IntRectangle(0, 0, 4, 2)))
+
+		assertTrue(IntRectangle(59, 59, 2136, 1193).intersects(IntRectangle(-1, -1, 2257, 1397)))
+		assertTrue(IntRectangle(-1, -1, 2257, 1397).intersects(IntRectangle(59, 59, 2136, 1193)))
 	}
 
 	@Test

@@ -16,13 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
+import com.acornui.graphic.*
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
@@ -90,8 +87,7 @@ class NinePatch(val glState: GlState) : BasicRenderable, Clearable {
 	private val normal = Vector3()
 	private val tint = Color()
 
-	@Suppress("RemoveExplicitTypeArguments") // Kotlin compiler bug
-	var texture: Texture? by Delegates.observable<Texture?>(null) {
+	var texture by Delegates.observable<TextureRo?>(null) {
 		_, _, _ ->
 		updateUv()
 	}

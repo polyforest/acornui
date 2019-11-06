@@ -136,13 +136,18 @@ interface TextElement : TextElementRo, Disposable {
 	var selected: Boolean
 
 	/**
-	 * Finalizes the vertices for rendering.
+	 * Calculates the vertices in local coordinate space.
 	 * @param leftClip The x position in canvas coordinate points for clipping.
 	 * @param topClip The y position in canvas coordinate points for clipping.
 	 * @param rightClip The right position in canvas coordinate points for clipping.
 	 * @param bottomClip The bottom position in canvas coordinate points for clipping.
 	 */
-	fun updateWorldVertices(transform: Matrix4Ro, tint: ColorRo, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
+	fun updateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
+
+	/**
+	 * Converts the local coordinates to global.
+	 */
+	fun updateWorldVertices(transform: Matrix4Ro, tint: ColorRo)
 
 	/**
 	 * Renders the background, such as the selection color, underline, strikethrough, etc.

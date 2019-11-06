@@ -279,10 +279,10 @@ class RenderContext() : RenderContextRo, Clearable {
 		colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 	}
 
-	var redrawRegionsOverride: RedrawRegions? = null
+	var redrawOverride: RedrawRegions? = null
 
 	override val redraw: RedrawRegions by prop {
-		redrawRegionsOverride ?: parentContext.redraw ?: RedrawRegions.NEVER
+		redrawOverride ?: parentContext.redraw ?: RedrawRegions.ALWAYS
 	}
 
 	var drawsSelf = false
@@ -303,7 +303,7 @@ class RenderContext() : RenderContextRo, Clearable {
 		colorTintOverride = null
 		modelTransformLocal.idt()
 		modelTransformOverride = null
-		redrawRegionsOverride = null
+		redrawOverride = null
 		invalidate()
 	}
 

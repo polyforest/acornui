@@ -25,6 +25,7 @@ import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureRo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
@@ -81,12 +82,12 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 			_path = value
 			cached?.dispose()
 			cached = cachedGroup()
-			_setTexture(null)
+			setTextureInternal(null)
 			if (value != null) {
 				cached!!.cacheAsync(value) {
 					loadTexture(value)
 				}.then {
-					_setTexture(it)
+					setTextureInternal(it)
 				} catch(errorHandler)
 			}
 		}
@@ -94,14 +95,14 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 	/**
 	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
 	 */
-	var texture: Texture?
-		get() = renderable.texture
+	var texture: Texture? = null
 		set(value) {
+			field = value
 			path = null
-			_setTexture(value)
+			setTextureInternal(value)
 		}
 
-	protected open fun _setTexture(value: Texture?) {
+	protected open fun setTextureInternal(value: Texture?) {
 		if (renderable.texture == value) return
 		val oldTexture = renderable.texture
 		if (isActive)

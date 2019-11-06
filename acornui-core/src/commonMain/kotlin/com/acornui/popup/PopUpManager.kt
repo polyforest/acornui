@@ -35,6 +35,7 @@ import com.acornui.input.interaction.clickHandledForAFrame
 import com.acornui.input.keyDown
 import com.acornui.isAncestorOf
 import com.acornui.math.Easing
+import com.acornui.math.IntRectangle
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Cancel
 import com.acornui.signal.addOnce

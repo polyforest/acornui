@@ -63,6 +63,9 @@ open class ContainerImpl(
 	protected val _children: MutableConcurrentList<UiComponent> = ChildrenList()
 	override val children: List<UiComponentRo> = _children
 
+	protected var childrenNeedValidation = true
+		private set
+
 	/**
 	 * Appends a child to the display children.
 	 */
@@ -159,7 +162,8 @@ open class ContainerImpl(
 	private val childrenUpdateIterator = _children.concurrentIterator()
 
 	override fun updateDrawRegionScreen(out: IntRectangle) {
-		if (draws) return super.updateDrawRegionScreen(out)
+		if (draws)
+			return super.updateDrawRegionScreen(out)
 		var minX = Int.MAX_VALUE
 		var minY = Int.MAX_VALUE
 		var maxX = 0
@@ -251,9 +255,6 @@ open class ContainerImpl(
 	protected val isValidatingLayout: Boolean
 		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
 				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
-
-	protected var childrenNeedValidation = true
-		private set
 
 	protected open fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
@@ -357,6 +358,7 @@ open class ContainerImpl(
 			element.disposed.add(::onChildDisposed)
 			if (isActive) element.activate()
 			element.invalidate(cascadingFlags)
+			childrenNeedValidation = true
 		}
 
 		private fun unconfigureChild(oldChild: UiComponent) {
@@ -366,6 +368,7 @@ open class ContainerImpl(
 			if (oldChild.isActive) oldChild.deactivate()
 			oldChild.invalidate(cascadingFlags)
 			oldChild.invalidateFocusOrderDeep()
+			childrenNeedValidation = true
 		}
 
 		override fun iterate(body: (UiComponent) -> Boolean) = list.iterate(body)

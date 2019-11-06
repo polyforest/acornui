@@ -20,11 +20,9 @@ package com.acornui.webgl
 
 import com.acornui.WindowConfig
 import com.acornui.browser.Location
-import com.acornui.graphic.Window
 import com.acornui.function.as1
 import com.acornui.gl.core.Gl20
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Window
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
@@ -40,7 +38,7 @@ import kotlin.math.ceil
 class WebGlWindowImpl(
 		private val canvas: HTMLCanvasElement,
 		config: WindowConfig,
-		private val gl: Gl20) : Window {
+		gl: Gl20) : Window {
 
 	private val cancel = Cancel()
 	private val _closeRequested = Signal1<Cancel>()
@@ -58,6 +56,9 @@ class WebGlWindowImpl(
 	private val _scaleChanged = Signal2<Float, Float>()
 	override val scaleChanged = _scaleChanged.asRo()
 
+	private val _refresh = Signal0()
+	override val refresh = _refresh.asRo()
+
 	override var width: Float = canvas.offsetWidth.toFloat()
 		private set
 
@@ -73,17 +74,7 @@ class WebGlWindowImpl(
 			"mozHidden" to "mozvisibilitychange",
 			"webkitHidden" to "webkitvisibilitychange",
 			"msHidden" to "msvisibilitychange")
-
-	private var _clearColor = Color.CLEAR.copy()
-
-	override var clearColor: ColorRo
-		get() = _clearColor
-		set(value) {
-			_clearColor.set(value)
-			gl.clearColor(value)
-			requestRender()
-		}
-
+	
 	private var scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
 
 	init {
@@ -101,8 +92,10 @@ class WebGlWindowImpl(
 
 		watchForVisibilityChanges()
 
-		clearColor = config.backgroundColor
+		// Clear as soon as possible to avoid a frame of black
+		gl.clearColor(config.backgroundColor)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+		
 		document.addEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
 		val oBU = window.onbeforeunload
 		window.onbeforeunload = { event ->
@@ -136,7 +129,7 @@ class WebGlWindowImpl(
 	// getExtension( 'WEBGL_lose_context' ).loseContext();
 	private fun webGlContextRestoredHandler() {
 		Log.info("WebGL context lost")
-		resizeHandler()
+		_refresh.dispatch()
 	}
 
 	private fun blurHandler() {
@@ -199,8 +192,6 @@ class WebGlWindowImpl(
 			_isActiveChanged.dispatch(value)
 		}
 
-	override var useRedrawRegions: Boolean = true
-	
 	override val framebufferWidth: Int
 		get() = ceil(width * scaleX).toInt()
 

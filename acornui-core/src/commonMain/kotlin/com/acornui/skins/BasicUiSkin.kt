@@ -100,7 +100,7 @@ open class BasicUiSkin(
 
 	protected open fun stageStyle() {
 		val stageStyle = StageStyle().apply {
-			bgColor = theme.bgColor
+			backgroundColor = theme.bgColor
 		}
 		target.addStyleRule(stageStyle)
 	}
@@ -167,12 +167,7 @@ open class BasicUiSkin(
 		val charStyle = CharStyle()
 		charStyle.selectable = false
 		target.addStyleRule(charStyle, withAncestor(ButtonImpl))
-
-		target.addStyleRule(charStyle { fontWeight = FontWeight.BOLD }, withAnyAncestor(
-				TextStyleTags.strong,
-				formLabelStyle,
-				TextStyleTags.heading
-		))
+		
 		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
 		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
 		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
@@ -268,7 +263,7 @@ open class BasicUiSkin(
 		target.addStyleRule(headingGroupStyle, HeadingGroup)
 	}
 
-	private fun ThemeFontVo.addStyles(files: Files, filter: StyleFilter = AlwaysFilter) {
+	protected fun ThemeFontVo.addStyles(files: Files, filter: StyleFilter = AlwaysFilter) {
 		target.addStyleRule(charStyle {
 			colorTint = color
 			fontFamily = family

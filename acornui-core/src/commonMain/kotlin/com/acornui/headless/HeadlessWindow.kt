@@ -17,8 +17,6 @@
 package com.acornui.headless
 
 import com.acornui.browser.Location
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -38,6 +36,7 @@ class HeadlessWindow : Window {
 	override val isVisible: Boolean = false
 	override val sizeChanged: Signal<(Float, Float) -> Unit> = emptySignal()
 	override val scaleChanged: Signal<(Float, Float) -> Unit> = emptySignal()
+	override val refresh: Signal<() -> Unit> = emptySignal()
 	override val width: Float = 1000f
 	override val height: Float = 1000f
 	override val framebufferWidth: Int = 0
@@ -48,14 +47,8 @@ class HeadlessWindow : Window {
 	private val closeCancel = Cancel()
 	private var closeIsRequested = false
 
-	override var useRedrawRegions: Boolean = true
-
 	override fun setSize(width: Float, height: Float) {
 	}
-
-	override var clearColor: ColorRo
-		get() = Color.CLEAR
-		set(value) {}
 
 	override var continuousRendering: Boolean = false
 

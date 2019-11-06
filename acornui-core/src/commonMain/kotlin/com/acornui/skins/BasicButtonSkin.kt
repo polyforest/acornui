@@ -30,6 +30,8 @@ private class BasicButtonSkin(
 	private val downShine: Rect
 
 	init {
+		defaultWidth = 100f
+		defaultHeight = 50f
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.STYLES, ::updateProperties)
 		fill = +rect {
 			style.apply {
@@ -291,3 +293,10 @@ private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerI
 }
 
 fun Owned.basicTabSkin(theme: Theme): ButtonSkin = BasicTabSkin(this, theme)
+
+class EmptyButtonSkin(owner: Owned) : UiComponentImpl(owner), ButtonSkin {
+	override var label: String = ""
+	override var buttonState: ButtonState = ButtonState.UP
+}
+
+fun Owned.emptyButtonSkin(): EmptyButtonSkin { return EmptyButtonSkin(this) }

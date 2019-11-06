@@ -31,11 +31,7 @@ class JsByteBuffer(private val bufferView: Uint8Array) : BufferBase(bufferView.l
 		bufferView[nextPosition()] = value
 	}
 
-	override val native: Any
-		get() {
-			return if (_limit == capacity) bufferView
-			else bufferView.subarray(0, _limit)
-		}
+	override val native: Any = bufferView
 
 	override val dataSize: Int = 1
 
@@ -87,11 +83,7 @@ class JsShortBuffer(private val bufferView: Uint16Array) : BufferBase(bufferView
 		bufferView[nextPosition()] = value
 	}
 
-	override val native: Any
-		get() {
-			return if (_limit == capacity) bufferView
-			else bufferView.subarray(0, _limit)
-		}
+	override val native: Any = bufferView
 }
 
 
@@ -107,11 +99,7 @@ class JsIntBuffer(private val bufferView: Uint32Array) : BufferBase(bufferView.l
 		bufferView[nextPosition()] = value
 	}
 
-	override val native: Any
-		get() {
-			return if (_limit == capacity) bufferView
-			else bufferView.subarray(0, _limit)
-		}
+	override val native: Any = bufferView
 }
 
 class JsFloatBuffer(private val bufferView: Float32Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Float> {
@@ -126,11 +114,7 @@ class JsFloatBuffer(private val bufferView: Float32Array) : BufferBase(bufferVie
 		bufferView[nextPosition()] = value
 	}
 
-	override val native: Any
-		get() {
-			return if (_limit == capacity) bufferView
-			else bufferView.subarray(0, _limit)
-		}
+	override val native: Any = bufferView
 }
 
 class JsDoubleBuffer(private val bufferView: Float64Array) : BufferBase(bufferView.length), NativeReadWriteBuffer<Double> {
@@ -145,9 +129,5 @@ class JsDoubleBuffer(private val bufferView: Float64Array) : BufferBase(bufferVi
 		bufferView[nextPosition()] = value
 	}
 
-	override val native: Any
-		get() {
-			return if (_limit == capacity) bufferView
-			else bufferView.subarray(0, _limit)
-		}
+	override val native: Any = bufferView
 }

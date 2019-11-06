@@ -59,8 +59,6 @@ class StaticShaderBatchImpl(
 	override val vertexComponents = resizableFloatBuffer()
 	private var _highestIndex: Short = -1
 
-	private var needsUpload = false
-
 	override fun resetRenderCount() {
 	}
 
@@ -111,34 +109,27 @@ class StaticShaderBatchImpl(
 		drawCall.premultipliedAlpha = glState.premultipliedAlpha
 		drawCall.mode = drawMode
 		_drawCalls.add(drawCall)
-		needsUpload = true
 	}
 
-	fun finish() {
-		indices.mark()
+	fun upload() {
+		flush()
+		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
+		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
 		indices.flip()
-		indices.reset()
-		vertexComponents.mark()
+		gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, Gl20.DYNAMIC_DRAW) // Allocate
+		gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, Gl20.DYNAMIC_DRAW) // Upload
+
 		vertexComponents.flip()
-		vertexComponents.reset()
-		resetRenderCount()
+		gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, Gl20.DYNAMIC_DRAW) // Allocate
+		gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, Gl20.DYNAMIC_DRAW) // Upload
+		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
+		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
 	}
 
 	override fun render() {
 		if (_drawCalls.isEmpty()) return
+		glState.batch.flush()
 		bind()
-		if (needsUpload) {
-			needsUpload = false
-
-			indices.rewind()
-			gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, Gl20.DYNAMIC_DRAW) // Allocate
-			gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, Gl20.DYNAMIC_DRAW) // Upload
-
-			vertexComponents.rewind()
-			gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, Gl20.DYNAMIC_DRAW) // Allocate
-			gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, Gl20.DYNAMIC_DRAW) // Upload
-		}
-
 		for (i in 0.._drawCalls.lastIndex) {
 			val drawCall = _drawCalls[i]
 			glState.setTexture(drawCall.texture ?: glState.whitePixel)

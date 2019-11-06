@@ -88,11 +88,14 @@ class CharElement private constructor() : TextElement, Clearable {
 	 * A cache of the vertex positions in world space.
 	 */
 	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val charVerticesWorld: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 	private val normalWorld = Vector3()
 
 	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val backgroundVerticesWorld: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	private val lineVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val lineVerticesWorld: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 
 	private val fontColorWorld = Color()
 	private val backgroundColorWorld = Color()
@@ -108,7 +111,7 @@ class CharElement private constructor() : TextElement, Clearable {
 
 	override var selected: Boolean = false
 
-	override fun updateWorldVertices(transform: Matrix4Ro, tint: ColorRo, leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
+	override fun updateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float) {
 		val style = style ?: return
 		val x = x
 		val y = y
@@ -120,14 +123,9 @@ class CharElement private constructor() : TextElement, Clearable {
 		val bgR = minOf(rightClip, x + width + kerning)
 		val bgB = minOf(bottomClip, y + lineHeight)
 
-		transform.rot(normalWorld.set(Vector3.NEG_Z)).nor()
-
 		visible = bgL < rightClip && bgT < bottomClip && bgR > leftClip && bgB > topClip
 		if (!visible)
 			return
-
-		fontColorWorld.set(if (selected) style.selectedTextColorTint else style.textColorTint).mul(tint)
-		backgroundColorWorld.set(if (selected) style.selectedBackgroundColor else style.backgroundColor).mul(tint)
 
 		val region = glyph.region
 		val textureW = glyph.texture.widthPixels.toFloat()
@@ -173,16 +171,16 @@ class CharElement private constructor() : TextElement, Clearable {
 		v2 = regionB / textureH
 
 		// Transform vertex coordinates from local to global
-		transform.prj(charVertices[0].set(charL, charT, 0f))
-		transform.prj(charVertices[1].set(charR, charT, 0f))
-		transform.prj(charVertices[2].set(charR, charB, 0f))
-		transform.prj(charVertices[3].set(charL, charB, 0f))
+		charVertices[0].set(charL, charT, 0f)
+		charVertices[1].set(charR, charT, 0f)
+		charVertices[2].set(charR, charB, 0f)
+		charVertices[3].set(charL, charB, 0f)
 
 		// Background vertices
-		transform.prj(backgroundVertices[0].set(bgL, bgT, 0f))
-		transform.prj(backgroundVertices[1].set(bgR, bgT, 0f))
-		transform.prj(backgroundVertices[2].set(bgR, bgB, 0f))
-		transform.prj(backgroundVertices[3].set(bgL, bgB, 0f))
+		backgroundVertices[0].set(bgL, bgT, 0f)
+		backgroundVertices[1].set(bgR, bgT, 0f)
+		backgroundVertices[2].set(bgR, bgB, 0f)
+		backgroundVertices[3].set(bgL, bgB, 0f)
 
 		if (style.underlined || style.strikeThrough) {
 			var lineL = x
@@ -198,10 +196,32 @@ class CharElement private constructor() : TextElement, Clearable {
 			var lineB = lineT + style.lineThickness
 			if (lineB > bottomClip) lineB = bottomClip
 
-			transform.prj(lineVertices[0].set(lineL, lineT, 0f))
-			transform.prj(lineVertices[1].set(lineR, lineT, 0f))
-			transform.prj(lineVertices[2].set(lineR, lineB, 0f))
-			transform.prj(lineVertices[3].set(lineL, lineB, 0f))
+			lineVertices[0].set(lineL, lineT, 0f)
+			lineVertices[1].set(lineR, lineT, 0f)
+			lineVertices[2].set(lineR, lineB, 0f)
+			lineVertices[3].set(lineL, lineB, 0f)
+		}
+	}
+
+	override fun updateWorldVertices(transform: Matrix4Ro, tint: ColorRo) {
+		val style = style ?: return
+
+		fontColorWorld.set(if (selected) style.selectedTextColorTint else style.textColorTint).mul(tint)
+		backgroundColorWorld.set(if (selected) style.selectedBackgroundColor else style.backgroundColor).mul(tint)
+		transform.rot(normalWorld.set(Vector3.NEG_Z)).nor()
+
+		for (i in 0..3) {
+			transform.prj(charVerticesWorld[i].set(charVertices[i]))
+		}
+
+		for (i in 0..3) {
+			transform.prj(backgroundVerticesWorld[i].set(backgroundVertices[i]))
+		}
+
+		if (style.underlined || style.strikeThrough) {
+			for (i in 0..3) {
+				transform.prj(lineVerticesWorld[i].set(lineVertices[i]))
+			}
 		}
 	}
 
@@ -212,19 +232,21 @@ class CharElement private constructor() : TextElement, Clearable {
 		val batch = glState.batch
 		val backgroundColorWorld = backgroundColorWorld
 		val fontColorWorld = fontColorWorld
+		val backgroundVerticesWorld = backgroundVerticesWorld
+		val normalWorld = normalWorld
 
 		if (backgroundColorWorld.a > 0f) {
 			batch.begin()
 			glState.setTexture(glState.whitePixel)
 			glState.blendMode(BlendMode.NORMAL, false)
 			// Top left
-			batch.putVertex(backgroundVertices[0], normalWorld, backgroundColorWorld, 0f, 0f)
+			batch.putVertex(backgroundVerticesWorld[0], normalWorld, backgroundColorWorld, 0f, 0f)
 			// Top right
-			batch.putVertex(backgroundVertices[1], normalWorld, backgroundColorWorld, 0f, 0f)
+			batch.putVertex(backgroundVerticesWorld[1], normalWorld, backgroundColorWorld, 0f, 0f)
 			// Bottom right
-			batch.putVertex(backgroundVertices[2], normalWorld, backgroundColorWorld, 0f, 0f)
+			batch.putVertex(backgroundVerticesWorld[2], normalWorld, backgroundColorWorld, 0f, 0f)
 			// Bottom left
-			batch.putVertex(backgroundVertices[3], normalWorld, backgroundColorWorld, 0f, 0f)
+			batch.putVertex(backgroundVerticesWorld[3], normalWorld, backgroundColorWorld, 0f, 0f)
 			batch.putQuadIndices()
 		}
 
@@ -232,15 +254,16 @@ class CharElement private constructor() : TextElement, Clearable {
 			batch.begin()
 			glState.setTexture(glState.whitePixel)
 			glState.blendMode(BlendMode.NORMAL, false)
+			val lineVerticesWorld = lineVerticesWorld
 
 			// Top left
-			batch.putVertex(lineVertices[0], normalWorld, fontColorWorld, 0f, 0f)
+			batch.putVertex(lineVerticesWorld[0], normalWorld, fontColorWorld, 0f, 0f)
 			// Top right
-			batch.putVertex(lineVertices[1], normalWorld, fontColorWorld, 0f, 0f)
+			batch.putVertex(lineVerticesWorld[1], normalWorld, fontColorWorld, 0f, 0f)
 			// Bottom right
-			batch.putVertex(lineVertices[2], normalWorld, fontColorWorld, 0f, 0f)
+			batch.putVertex(lineVerticesWorld[2], normalWorld, fontColorWorld, 0f, 0f)
 			// Bottom left
-			batch.putVertex(lineVertices[3], normalWorld, fontColorWorld, 0f, 0f)
+			batch.putVertex(lineVerticesWorld[3], normalWorld, fontColorWorld, 0f, 0f)
 			batch.putQuadIndices()
 		}
 
@@ -253,6 +276,8 @@ class CharElement private constructor() : TextElement, Clearable {
 		val batch = glState.batch
 		
 		val fontColorWorld = fontColorWorld
+		val normalWorld = normalWorld
+		val charVerticesWorld = charVerticesWorld
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f || fontColorWorld.a <= 0f) return // Nothing to draw
 		batch.begin()
 		glState.setTexture(glyph.texture)
@@ -260,22 +285,22 @@ class CharElement private constructor() : TextElement, Clearable {
 
 		if (glyph.isRotated) {
 			// Top left
-			batch.putVertex(charVertices[0], normalWorld, fontColorWorld, u2, v)
+			batch.putVertex(charVerticesWorld[0], normalWorld, fontColorWorld, u2, v)
 			// Top right
-			batch.putVertex(charVertices[1], normalWorld, fontColorWorld, u2, v2)
+			batch.putVertex(charVerticesWorld[1], normalWorld, fontColorWorld, u2, v2)
 			// Bottom right
-			batch.putVertex(charVertices[2], normalWorld, fontColorWorld, u, v2)
+			batch.putVertex(charVerticesWorld[2], normalWorld, fontColorWorld, u, v2)
 			// Bottom left
-			batch.putVertex(charVertices[3], normalWorld, fontColorWorld, u, v)
+			batch.putVertex(charVerticesWorld[3], normalWorld, fontColorWorld, u, v)
 		} else {
 			// Top left
-			batch.putVertex(charVertices[0], normalWorld, fontColorWorld, u, v)
+			batch.putVertex(charVerticesWorld[0], normalWorld, fontColorWorld, u, v)
 			// Top right
-			batch.putVertex(charVertices[1], normalWorld, fontColorWorld, u2, v)
+			batch.putVertex(charVerticesWorld[1], normalWorld, fontColorWorld, u2, v)
 			// Bottom right
-			batch.putVertex(charVertices[2], normalWorld, fontColorWorld, u2, v2)
+			batch.putVertex(charVerticesWorld[2], normalWorld, fontColorWorld, u2, v2)
 			// Bottom left
-			batch.putVertex(charVertices[3], normalWorld, fontColorWorld, u, v2)
+			batch.putVertex(charVerticesWorld[3], normalWorld, fontColorWorld, u, v2)
 		}
 		batch.putQuadIndices()
 	}

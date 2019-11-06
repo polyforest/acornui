@@ -23,7 +23,6 @@ import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 
 interface StageRo : ContainerRo, Focusable
@@ -47,7 +46,10 @@ class StageStyle : StyleBase() {
 
 	override val type = Companion
 
-	var bgColor: ColorRo by prop(Color.WHITE)
+	/**
+	 * If null, this will default to the [com.acornui.WindowConfig.backgroundColor] property.
+	 */
+	var backgroundColor: ColorRo? by prop(null)
 
 	companion object : StyleType<StageStyle>
 }

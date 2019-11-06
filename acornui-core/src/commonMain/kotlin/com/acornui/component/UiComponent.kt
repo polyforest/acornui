@@ -26,7 +26,9 @@ import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
 import com.acornui.function.as1
-import com.acornui.gl.core.*
+import com.acornui.gl.core.FramebufferInfoRo
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -105,6 +107,7 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 
 	/**
 	 * The render context used to render to the screen.
+	 * Requesting this property does not trigger a validation for [ValidationFlags.RENDER_CONTEXT].
 	 * @see UiComponent.render
 	 */
 	val renderContext: RenderContextRo
@@ -210,6 +213,11 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var defaultHeight: Float?
 
 	/**
+	 * If set, when the layout is validated, this baseline will be used instead of the measured value.
+	 */
+	var baselineOverride: Float?
+
+	/**
 	 * The drawing region in screen coordinates of this component.
 	 */
 	val drawRegionScreen: IntRectangleRo
@@ -268,6 +276,8 @@ open class UiComponentImpl(
 			throw DisposedException()
 		check(!_isActive) { "Already active" }
 		_isActive = true
+
+		invalidate(ValidationFlags.REDRAW_REGIONS)
 		_activated.dispatch(this)
 	}
 
@@ -279,7 +289,6 @@ open class UiComponentImpl(
 		check(_isActive) { "Not active" }
 		_isActive = false
 
-		// When deactivated, this component will not be updated; invalidate its last draw region.
 		if (draws)
 			renderContext.redraw.invalidate(_drawRegionScreen)
 		_deactivated.dispatch(this)
@@ -633,17 +642,11 @@ open class UiComponentImpl(
 		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
 	}
 
-	/**
-	 * If set, when the layout is validated, if there was no explicit width,
-	 * this value will be used instead.
-	 */
 	final override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
-	/**
-	 * If set, when the layout is validated, if there was no explicit height,
-	 * this height will be used instead.
-	 */
 	final override var defaultHeight: Float? by validationProp(null, ValidationFlags.LAYOUT)
+
+	final override var baselineOverride: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
 	 * Does the same thing as setting width and height individually.
@@ -658,7 +661,7 @@ open class UiComponentImpl(
 		onSizeSet(oldW, oldH, width, height)
 		invalidate(ValidationFlags.LAYOUT)
 	}
-	
+
 	protected open fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {}
 
 	/**
@@ -685,6 +688,8 @@ open class UiComponentImpl(
 		val h = sC.height.clamp(explicitHeight ?: defaultHeight)
 		_bounds.set(w ?: 0f, h ?: 0f)
 		updateLayout(w, h, _bounds)
+		if (baselineOverride != null)
+			_bounds.baseline = baselineOverride!!
 		if (assertionsEnabled && (_bounds.width.isNaN() || _bounds.height.isNaN()))
 			throw Exception("Bounding measurements should not be NaN")
 	}
@@ -1082,27 +1087,27 @@ open class UiComponentImpl(
 	}
 
 	protected fun updateRedrawRegions() {
-		_drawRegion.inf()
 		if (_renderContext.parentContext.draws) {
 			// The parent is responsible for invalidating the redraw regions.
 			_drawRegionScreen.clear()
 			return
 		}
+		// Invalidate the previously drawn region
 		if (draws)
-			renderContext.redraw.invalidate(_drawRegionScreen) // Invalidate the last area drawn.
+			renderContext.redraw.invalidate(_drawRegionScreen)
 		_drawRegionScreen.clear()
 		updateDrawRegionScreen(_drawRegionScreen)
-		if (draws && isRendered && _drawRegionScreen.isNotEmpty())
+		if (draws && isRendered)
 			renderContext.redraw.invalidate(_drawRegionScreen)
 	}
 
 	/**
 	 * Updates this component's local draw region.
 	 *
-	 * By default, this will be the same area as the [bounds] with 0f depth.
+	 * By default, this will be the same area as the [bounds] with `0f` depth.
 	 * This may be overridden to modify the area that is drawn to the screen.
 	 *
-	 * @param out The region that will be set as the [drawRegion].
+	 * @param out The bounding box to set to the current draw region.
 	 */
 	protected open fun updateDrawRegion(out: Box) {
 		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
@@ -1111,7 +1116,7 @@ open class UiComponentImpl(
 	private val redrawRegionTmp = Box()
 
 	protected open fun updateDrawRegionScreen(out: IntRectangle) {
-		val drawRegion = _drawRegion
+		val drawRegion = _drawRegion.inf()
 		updateDrawRegion(drawRegion)
 		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
 			localToCanvas(drawRegion, redrawRegionTmp)
@@ -1161,9 +1166,8 @@ open class UiComponentImpl(
 
 	override fun render() {
 		val renderContext = _renderContext
-		if (visible &&
-				colorTint.a > 0f &&
-				(renderContext.parentContext.draws || renderContext.redraw.needsRedraw(_drawRegionScreen)))
+		val needsRedraw = (renderContext.parentContext.draws || renderContext.redraw.needsRedraw(_drawRegionScreen))
+		if (needsRedraw && visible && colorTint.a > 0f)
 			draw()
 	}
 

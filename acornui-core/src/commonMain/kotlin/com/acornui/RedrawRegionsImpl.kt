@@ -23,6 +23,16 @@ import com.acornui.recycle.Clearable
 
 interface RedrawRegionsRo {
 
+	/**
+	 * True if redraw regions should be used.
+	 */
+	val enabled: Boolean
+
+	/**
+	 * True if the redraw regions should be shown for debugging purposes.
+	 */
+	val showRedrawRegions: Boolean
+
 	val regions: List<IntRectangleRo>
 
 	fun needsRedraw(region: IntRectangleRo): Boolean
@@ -30,6 +40,8 @@ interface RedrawRegionsRo {
 }
 
 interface RedrawRegions : RedrawRegionsRo, Clearable {
+
+	override var showRedrawRegions: Boolean
 
 	fun invalidate(x: Int, y: Int, width: Int, height: Int)
 	fun invalidate(region: IntRectangleRo) = invalidate(region.x, region.y, region.width, region.height)
@@ -41,25 +53,15 @@ interface RedrawRegions : RedrawRegionsRo, Clearable {
 		 */
 		val ALWAYS: RedrawRegions = object : RedrawRegions {
 
-			override val regions: List<IntRectangleRo> = emptyList()
+			override val enabled = false
+
+			override var showRedrawRegions: Boolean = false
+
+			override val regions = emptyList<IntRectangleRo>()
 
 			override fun invalidate(x: Int, y: Int, width: Int, height: Int) {}
 
 			override fun needsRedraw(region: IntRectangleRo): Boolean = true
-
-			override fun clear() {}
-		}
-
-		/**
-		 * An implementation that never recommends redraw.
-		 */
-		val NEVER: RedrawRegions = object : RedrawRegions {
-
-			override val regions: List<IntRectangleRo> = emptyList()
-
-			override fun invalidate(x: Int, y: Int, width: Int, height: Int) {}
-
-			override fun needsRedraw(region: IntRectangleRo): Boolean = false
 
 			override fun clear() {}
 		}
@@ -70,8 +72,10 @@ class RedrawRegionsImpl : RedrawRegions {
 
 	private var regionSet = IntRegionSet()
 
-	override val regions: List<IntRectangleRo>
-		get() = regionSet.regions
+	override val enabled = true
+	override var showRedrawRegions: Boolean = false
+
+	override val regions: List<IntRectangleRo> = regionSet.regions
 
 	/**
 	 * Marks a region as needing to be redrawn.
