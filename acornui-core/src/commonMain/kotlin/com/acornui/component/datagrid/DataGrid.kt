@@ -248,7 +248,7 @@ class DataGrid<RowData>(
 
 	private inner class DataGridTossScrollBinding : TossScrollModelBinding(tossScroller, hScrollModel, vScrollModel) {
 
-		override fun globalToModel(diffPoints: Vector2) {
+		override fun localToModel(diffPoints: Vector2) {
 			if (_totalRows <= 0) return
 			val firstRowHeight = _cellMetrics.rowHeights.first()
 			diffPoints.scl(1f / firstRowHeight)

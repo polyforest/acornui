@@ -40,6 +40,12 @@ interface FramebufferInfoRo {
 	 */
 	val scaleY: Float
 
+	/**
+	 * True if 0,0 is the top left of the framebuffer.
+	 */
+	val yDown: Boolean
+		get() = framebuffer != null
+
 	fun copy(): FramebufferInfo {
 		return FramebufferInfo(framebuffer, width, height, scaleX, scaleY)
 	}

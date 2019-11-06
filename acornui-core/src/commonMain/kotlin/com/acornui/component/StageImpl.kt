@@ -17,21 +17,31 @@
 package com.acornui.component
 
 import com.acornui.Disposable
-import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
+import com.acornui.component.layout.algorithm.canvasLayoutData
+import com.acornui.component.performance.measureFramePerformanceEnabled
+import com.acornui.component.performance.performanceMetricsWindow
+import com.acornui.component.performance.totalDrawCalls
+import com.acornui.component.performance.totalFrames
 import com.acornui.component.style.StyleableRo
 import com.acornui.di.Injector
 import com.acornui.di.OwnedImpl
 import com.acornui.di.inject
+import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.gl.core.Gl20
-import com.acornui.graphic.Color
+import com.acornui.input.Ascii
 import com.acornui.input.SoftKeyboardManager
+import com.acornui.input.interaction.drag
+import com.acornui.input.keyDown
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
+import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
+import com.acornui.popup.addPopUp
+import com.acornui.signal.addWithHandle
 import com.acornui.time.timer
 
 /**
@@ -64,6 +74,26 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
+
+		own(keyDown().addWithHandle {
+			if (it.ctrlKey && it.altKey && it.keyCode == Ascii.P) {
+				if (!it.handled && !it.defaultPrevented()) {
+					it.handled = true
+					val layoutData = canvasLayoutData {
+						top = 10f
+						left = 10f
+						width = 150f
+						height = 150f
+					}
+					addPopUp(PopUpInfo(performanceMetricsWindow {
+						drag().add { e ->
+							layoutData.left = e.position.x
+							layoutData.top = e.position.y
+						}
+					}, isModal = false, priority = 1f, dispose = true, layoutData = layoutData))
+				}
+			}
+		})
 	}
 
 	private fun skinCheck() {
@@ -120,7 +150,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		val w = window.width
 		val h = window.height
 		val softKeyboardH: Float = if (softKeyboardManager.isShowing) {
-			if (softKeyboardView == null) 
+			if (softKeyboardView == null)
 				softKeyboardView = addChild(softKeyboardManager.createView(this))
 			val keyboardView = softKeyboardView!!
 			keyboardView.setSize(w, null)
@@ -153,25 +183,30 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 
 		// Draw redraw regions
 
-		gl.clearColor(Color.RED)
-		gl.enable(Gl20.SCISSOR_TEST)
-		renderContext.redraw.regions.forEach2 {
-			gl.scissor(it.x, it.y, it.width, 1)
-			gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-			gl.scissor(it.x, it.y, 1, it.height)
-			gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-			gl.scissor(it.right - 1, it.y, 1, it.height)
-			gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-			gl.scissor(it.x, it.bottom - 1, it.width, 1)
-			gl.clear(Gl20.COLOR_BUFFER_BIT)
-		}
-		gl.disable(Gl20.SCISSOR_TEST)
-		gl.clearColor(window.clearColor)
+//		gl.clearColor(Color.RED)
+//		gl.enable(Gl20.SCISSOR_TEST)
+//		renderContext.redraw.regions.forEach2 {
+//			gl.scissor(it.x, it.y, it.width, 1)
+//			gl.clear(Gl20.COLOR_BUFFER_BIT)
+//
+//			gl.scissor(it.x, it.y, 1, it.height)
+//			gl.clear(Gl20.COLOR_BUFFER_BIT)
+//
+//			gl.scissor(it.right - 1, it.y, 1, it.height)
+//			gl.clear(Gl20.COLOR_BUFFER_BIT)
+//
+//			gl.scissor(it.x, it.bottom - 1, it.width, 1)
+//			gl.clear(Gl20.COLOR_BUFFER_BIT)
+//		}
+//		gl.disable(Gl20.SCISSOR_TEST)
+//		gl.clearColor(window.clearColor)
 
 		renderContext.redraw.clear()
+
+		if (measureFramePerformanceEnabled) {
+			totalFrames++
+			totalDrawCalls += glState.batch.renderCount
+		}
 	}
 
 	override fun dispose() {

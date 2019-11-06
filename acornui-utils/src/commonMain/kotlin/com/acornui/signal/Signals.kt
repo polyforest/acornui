@@ -77,7 +77,7 @@ fun <T : Any> Signal<T>.addOnce(handler: T) {
 /**
  * Adds a signal and creates a [Disposable] handle that, when invoked, will remove the handler.
  */
-fun <T : Any> Signal<T>.addWithHandle(handler: T, isOnce: Boolean = false): Disposable {
+fun <T : Any> Signal<T>.addWithHandle(isOnce: Boolean = false, handler: T): Disposable {
 	add(handler, isOnce)
 	return { remove(handler) }.toDisposable()
 }

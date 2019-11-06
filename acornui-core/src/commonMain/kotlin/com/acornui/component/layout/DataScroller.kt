@@ -205,7 +205,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			hScrollModel = if (isVertical) ScrollModelImpl() else scrollBar.scrollModel,
 			vScrollModel = if (!isVertical) ScrollModelImpl() else scrollBar.scrollModel) {
 
-		override fun globalToModel(diffPoints: Vector2) {
+		override fun localToModel(diffPoints: Vector2) {
 			if (contents.activeRenderers.isEmpty()) return
 			val aRIndex = contents.activeRenderers.sortedInsertionIndex(contents.visiblePosition) { index, it -> index.compareTo(it.index) } - 1
 			val renderer = contents.activeRenderers[aRIndex]

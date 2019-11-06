@@ -23,6 +23,7 @@ import com.acornui.collection.*
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.di.Owned
 import com.acornui.focus.invalidateFocusOrderDeep
+import com.acornui.math.IntRectangle
 import com.acornui.math.Ray
 import com.acornui.math.RayRo
 import kotlin.contracts.InvocationKind
@@ -157,11 +158,36 @@ open class ContainerImpl(
 
 	private val childrenUpdateIterator = _children.concurrentIterator()
 
+	override fun updateDrawRegionScreen(out: IntRectangle) {
+		if (draws) return super.updateDrawRegionScreen(out)
+		var minX = Int.MAX_VALUE
+		var minY = Int.MAX_VALUE
+		var maxX = 0
+		var maxY = 0
+		_children.forEach2 { child ->
+			val childR = child.drawRegionScreen
+			if (childR.isNotEmpty()) {
+				if (minX > childR.x) minX = childR.x
+				if (minY > childR.y) minY = childR.y
+				val r = childR.right
+				if (maxX < r) maxX = r
+				val b = childR.bottom
+				if (maxY < b) maxY = b
+			}
+		}
+		if (minX < maxX && minY < maxY) {
+			out.set(minX, minY, maxX - minX, maxY - minY)
+		}
+	}
+
 	override fun update() {
 		super.update()
-		childrenUpdateIterator.iterate {
-			it.update()
-			true
+		if (childrenNeedValidation) {
+			childrenNeedValidation = false
+			childrenUpdateIterator.iterate {
+				it.update()
+				true
+			}
 		}
 	}
 
@@ -226,6 +252,9 @@ open class ContainerImpl(
 		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
 				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
 
+	protected var childrenNeedValidation = true
+		private set
+
 	protected open fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
 			// A child has invalidated a flag marked as layout invalidating.
@@ -236,6 +265,7 @@ open class ContainerImpl(
 				invalidateSize()
 			}
 		}
+		childrenNeedValidation = true
 		invalidate(flagsInvalidated and bubblingFlags)
 	}
 

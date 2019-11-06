@@ -203,3 +203,25 @@ fun Float.nonZero(): Float {
 fun Double.nonZero(): Double {
 	return if (this == 0.0) Double.MIN_VALUE else this
 }
+
+// Nullable arithmetic
+
+operator fun Float?.plus(other: Float?): Float? {
+	if (this == null || other == null) return null
+	return this + other
+}
+
+operator fun Float?.minus(other: Float?): Float? {
+	if (this == null || other == null) return null
+	return this - other
+}
+
+operator fun Float?.times(other: Float?): Float? {
+	if (this == null || other == null) return null
+	return this * other
+}
+
+operator fun Float?.div(other: Float?): Float? {
+	if (this == null || other == null) return null
+	return this / other
+}

@@ -19,6 +19,7 @@ package com.acornui.component
 import com.acornui.Disposable
 import com.acornui.RedrawRegions
 import com.acornui.RedrawRegionsImpl
+import com.acornui.collection.forEach2
 import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
@@ -31,6 +32,8 @@ import com.acornui.gl.core.useCamera
 import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 interface RenderContextRo : CanvasTransformableRo {
 
@@ -170,10 +173,12 @@ class OrthographicRenderContext(override val injector: Injector) : Scoped, Rende
  * transformations, allows for a custom camera to be set, and has properties for external overrides.
  */
 class RenderContext() : RenderContextRo, Clearable {
-// TODO: Handle validation
+
 	constructor(initialParentContext: RenderContextRo?) : this() {
 		_parentContext = initialParentContext
 	}
+
+	private val allProps = ArrayList<CachedProp<*>>()
 
 	private var _parentContext: RenderContextRo? = null
 	override var parentContext: RenderContextRo
@@ -233,47 +238,61 @@ class RenderContext() : RenderContextRo, Clearable {
 	var modelTransformOverride: Matrix4Ro? = null
 
 	private val _modelTransform = Matrix4()
-	override val modelTransform: Matrix4Ro
-		get() = modelTransformOverride ?: _modelTransform.set(parentContext.modelTransform).mul(modelTransformLocal)
+	override val modelTransform: Matrix4Ro by prop {
+		modelTransformOverride ?: _modelTransform.set(parentContext.modelTransform).mul(modelTransformLocal)
+	}
 
 	private val _modelTransformInv by lazy { Matrix4() }
-	override val modelTransformInv: Matrix4Ro
-		get() = _modelTransformInv.set(modelTransform).inv()
+	override val modelTransformInv: Matrix4Ro by prop {
+		_modelTransformInv.set(modelTransform).inv()
+	}
 
-	override val viewProjectionTransform: Matrix4Ro
-		get() = cameraOverride?.combined ?: parentContext.viewProjectionTransform
+	override val viewProjectionTransform: Matrix4Ro by prop {
+		cameraOverride?.combined ?: parentContext.viewProjectionTransform
+	}
 
-	override val viewProjectionTransformInv: Matrix4Ro
-		get() = cameraOverride?.combinedInv ?: parentContext.viewProjectionTransformInv
+	override val viewProjectionTransformInv: Matrix4Ro by prop {
+		cameraOverride?.combinedInv ?: parentContext.viewProjectionTransformInv
+	}
 
-	override val viewTransform: Matrix4Ro
-		get() = cameraOverride?.view ?: parentContext.viewTransform
+	override val viewTransform: Matrix4Ro by prop {
+		cameraOverride?.view ?: parentContext.viewTransform
+	}
 
-	override val projectionTransform: Matrix4Ro
-		get() = cameraOverride?.projection ?: parentContext.projectionTransform
+	override val projectionTransform: Matrix4Ro by prop {
+		cameraOverride?.projection ?: parentContext.projectionTransform
+	}
 
-	override val canvasTransform: RectangleRo
-		get() = canvasTransformOverride ?: parentContext.canvasTransform
+
+	override val canvasTransform: RectangleRo by prop {
+		canvasTransformOverride ?: parentContext.canvasTransform
+	}
 
 	private val _clipRegionIntersection: MinMax = MinMax()
-	override val clipRegion: MinMaxRo
-		get() {
-			return clipRegionOverride ?: if (clipRegionLocal == null) parentContext.clipRegion
-			else localToCanvas(_clipRegionIntersection.set(clipRegionLocal!!)).intersection(parentContext.clipRegion)
-		}
+	override val clipRegion: MinMaxRo by prop {
+		clipRegionOverride ?: if (clipRegionLocal == null) parentContext.clipRegion
+		else localToCanvas(_clipRegionIntersection.set(clipRegionLocal!!)).intersection(parentContext.clipRegion)
+	}
 
 	private val _colorTint = Color()
-	override val colorTint: ColorRo
-		get() = colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
+	override val colorTint: ColorRo by prop {
+		colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
+	}
 
 	var redrawRegionsOverride: RedrawRegions? = null
 
-	override val redraw: RedrawRegions
-		get() = redrawRegionsOverride ?: parentContext.redraw ?: RedrawRegions.NEVER
+	override val redraw: RedrawRegions by prop {
+		redrawRegionsOverride ?: parentContext.redraw ?: RedrawRegions.NEVER
+	}
 
 	var drawsSelf = false
-	override val draws: Boolean
-		get() = drawsSelf || parentContext.draws
+	override val draws: Boolean by prop {
+		drawsSelf || parentContext.draws
+	}
+
+	fun invalidate() {
+		allProps.forEach2 { it.clear() }
+	}
 
 	override fun clear() {
 		_parentContext = null
@@ -285,6 +304,39 @@ class RenderContext() : RenderContextRo, Clearable {
 		modelTransformLocal.idt()
 		modelTransformOverride = null
 		redrawRegionsOverride = null
+		invalidate()
+	}
+
+	private fun <T> prop(calculator: () -> T) = CachedProp(calculator)
+
+	private class CachedProp<T>(
+			val calculator: () -> T
+	) : ReadOnlyProperty<RenderContext, T>, Clearable {
+
+		private var cachedIsSet = false
+		private var cached: T? = null
+
+		override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
+			if (!cachedIsSet) {
+				cachedIsSet = true
+				cached = calculator()
+			}
+			@Suppress("UNCHECKED_CAST")
+			return cached as T
+		}
+
+		override fun clear() {
+			cachedIsSet = false
+			cached = null
+		}
+
+		operator fun provideDelegate(
+				thisRef: RenderContext,
+				prop: KProperty<*>
+		): CachedProp<T> {
+			thisRef.allProps.add(this)
+			return this
+		}
 	}
 }
 

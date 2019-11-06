@@ -19,6 +19,10 @@ package com.acornui.graphic
 import com.acornui.Disposable
 import com.acornui.browser.Location
 import com.acornui.component.Stage
+import com.acornui.component.performance.measure
+import com.acornui.component.performance.measureFramePerformanceEnabled
+import com.acornui.component.performance.renderPerformance
+import com.acornui.component.performance.updatePerformance
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -237,13 +241,15 @@ fun Scoped.exit() {
 
 fun Window.render(stage: Stage) {
 	if (shouldRender(true)) {
-		stage.update()
-		if (width > 0f && height > 0f) {
-//			if (useRedrawRegions)
-//				stage.invalidateRedrawRegions()
-			renderBegin()
-			stage.render()
-			renderEnd()
+		updatePerformance.measure(measureFramePerformanceEnabled) {
+			stage.update()
+		}
+		renderPerformance.measure(measureFramePerformanceEnabled) {
+			if (width > 0f && height > 0f) {
+				renderBegin()
+				stage.render()
+				renderEnd()
+			}
 		}
 	}
 }

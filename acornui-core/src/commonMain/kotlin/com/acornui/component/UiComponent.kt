@@ -210,10 +210,9 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var defaultHeight: Float?
 
 	/**
-	 * The local drawing region of this component. This is converted to screen coordinates when determining the
-	 * redraw areas.
+	 * The drawing region in screen coordinates of this component.
 	 */
-	val drawRegion: BoxRo
+	val drawRegionScreen: IntRectangleRo
 
 	/**
 	 * Updates this component, validating it and its children.
@@ -282,7 +281,7 @@ open class UiComponentImpl(
 
 		// When deactivated, this component will not be updated; invalidate its last draw region.
 		if (draws)
-			renderContext.redraw.invalidate(redrawRegion)
+			renderContext.redraw.invalidate(_drawRegionScreen)
 		_deactivated.dispatch(this)
 	}
 
@@ -368,6 +367,7 @@ open class UiComponentImpl(
 	// Sizable properties
 	protected val _bounds = Bounds()
 	protected val _drawRegion = Box()
+	protected val _drawRegionScreen = IntRectangle()
 
 	/**
 	 * The explicit width, as set by width(value)
@@ -448,7 +448,7 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
-				addNode(REDRAW_REGIONS, REDRAW_REGION_DEPENDENCIES, 0, checkAllFound = false, onValidate = ::updateRedrawRegions)
+				addNode(REDRAW_REGIONS, LAYOUT or RENDER_CONTEXT or VERTICES, 0, checkAllFound = false, onValidate = ::updateRedrawRegions)
 			}
 		}
 
@@ -1078,28 +1078,22 @@ open class UiComponentImpl(
 	}
 
 	protected open fun updateRenderContext() {
+		_renderContext.invalidate() // Mark the context's cache as invalid
 	}
 
-	private val redrawRegionTmp = Box()
-	protected val redrawRegion = IntRectangle()
-
-	protected open fun updateRedrawRegions() {
-		val drawRegion = _drawRegion.inf()
-		if (_renderContext.parentContext.draws)
-			return // The parent is responsible for invalidating the redraw regions.
-		if (draws)
-			renderContext.redraw.invalidate(redrawRegion) // Invalidate the last area drawn.
-		updateDrawRegion(drawRegion)
-
-		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
-			localToCanvas(drawRegion, redrawRegionTmp)
-			redrawRegion.canvasToScreen(redrawRegionTmp.clamp(renderContext.clipRegion), glState.framebuffer)
-			redrawRegion.inflate(1)
-			if (draws)
-				renderContext.redraw.invalidate(redrawRegion)
-		} else {
-			redrawRegion.clear()
+	protected fun updateRedrawRegions() {
+		_drawRegion.inf()
+		if (_renderContext.parentContext.draws) {
+			// The parent is responsible for invalidating the redraw regions.
+			_drawRegionScreen.clear()
+			return
 		}
+		if (draws)
+			renderContext.redraw.invalidate(_drawRegionScreen) // Invalidate the last area drawn.
+		_drawRegionScreen.clear()
+		updateDrawRegionScreen(_drawRegionScreen)
+		if (draws && isRendered && _drawRegionScreen.isNotEmpty())
+			renderContext.redraw.invalidate(_drawRegionScreen)
 	}
 
 	/**
@@ -1114,6 +1108,18 @@ open class UiComponentImpl(
 		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
 	}
 
+	private val redrawRegionTmp = Box()
+
+	protected open fun updateDrawRegionScreen(out: IntRectangle) {
+		val drawRegion = _drawRegion
+		updateDrawRegion(drawRegion)
+		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
+			localToCanvas(drawRegion, redrawRegionTmp)
+			out.canvasToScreen(redrawRegionTmp.clamp(renderContext.clipRegion), glState.framebuffer)
+			out.inflate(1)
+		}
+	}
+
 	//-----------------------------------------------
 	// Validatable
 	//-----------------------------------------------
@@ -1121,14 +1127,14 @@ open class UiComponentImpl(
 	final override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
+		if (_invalidated.isDispatching) {
+			throw Exception("invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency.")
+		}
 		if (flagsInvalidated != 0) {
-			if (_invalidated.isDispatching) {
-				throw Exception("invalidated already dispatching. ${ValidationFlags.flagsToString(flagsInvalidated)}. Possible cyclic validation dependency.")
-			}
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
-			_invalidated.dispatch(this, flagsInvalidated)
 		}
+		_invalidated.dispatch(this, flagsInvalidated)
 		return flagsInvalidated
 	}
 
@@ -1142,44 +1148,22 @@ open class UiComponentImpl(
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout and properties.
 	 */
 	override fun validate(flags: Int) {
-		if (isDisposed) return
 		validation.validate(flags)
 	}
 
 	override fun update() = validate()
 
-	//-----------------------------------------------
-	// Renderable
-	//-----------------------------------------------
-
-	/**
-	 * The local drawing region of this renderable component.
-	 * Use `localToCanvas` to convert this region to canvas coordinates.
-	 * The draw region is not used for a typical [render], but may be used for render filters or components that
-	 * need to set a region for a frame buffer.
-	 *
-	 * The draw region does not have a validation flag associated with it; invalidating any property will cause
-	 * the draw region to be recalculated upon the next request.
-	 *
-	 * @see renderContext
-	 * @see localToCanvas
-	 */
-	override val drawRegion: BoxRo
+	override val drawRegionScreen: IntRectangleRo
 		get() {
 			validate(ValidationFlags.REDRAW_REGIONS)
-			val d = _drawRegion
-			// After a REDRAW_REGIONS validation, the draw region may skip calculation if the parent has `draws` set.
-			// Because we're explicitly requesting the draw region, calculate it now.
-			if (!d.isValid())
-				updateDrawRegion(d)
-			return d
+			return _drawRegionScreen
 		}
 
 	override fun render() {
 		val renderContext = _renderContext
 		if (visible &&
 				colorTint.a > 0f &&
-				(renderContext.parentContext.draws || renderContext.redraw.needsRedraw(redrawRegion)))
+				(renderContext.parentContext.draws || renderContext.redraw.needsRedraw(_drawRegionScreen)))
 			draw()
 	}
 
@@ -1234,8 +1218,6 @@ open class UiComponentImpl(
 
 	companion object {
 		private val quat = Quaternion()
-
-		private const val REDRAW_REGION_DEPENDENCIES = ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT or ValidationFlags.VERTICES
 	}
 }
 
@@ -1264,5 +1246,5 @@ fun IntRectangle.canvasToScreen(box: BoxRo, framebufferInfo: FramebufferInfoRo):
 	val newY = (box.min.y * sY).toInt()
 	val newR = ceilInt(box.max.x * sX)
 	val newB = ceilInt(box.max.y * sY)
-	return set(newX, framebufferInfo.height - newB, newR - newX, newB - newY)
+	return set(newX, if (framebufferInfo.yDown) newY else framebufferInfo.height - newB, newR - newX, newB - newY)
 }

@@ -56,23 +56,17 @@ private class Tick private constructor() : Updatable, Clearable, Disposable {
 	 */
 	private var callback: Disposable.() -> Unit = NOOP
 
-	private var accum = 0.0
 
 	override fun update(dT: Float) {
-		accum += dT
-		while (accum >= tickTime.inSeconds && isActive) {
-			accum -= tickTime.inSeconds
-			++currentFrame
-			if (currentFrame >= startFrame)
-				this.callback()
-			if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
-				dispose()
-			}
+		++currentFrame
+		if (currentFrame >= startFrame)
+			this.callback()
+		if (repetitions >= 0 && currentFrame - startFrame + 1 >= repetitions) {
+			dispose()
 		}
 	}
 
 	override fun clear() {
-		accum = 0.0
 		tickTime = 1.seconds / 60.0
 		startFrame = 1
 		repetitions = 1
@@ -126,6 +120,6 @@ fun tick(repetitions: Int = -1, tickTime: Duration = 1.seconds / 60.0, callback:
  */
 fun tick(repetitions: Int = -1, startFrame: Int = 1, tickTime: Duration = 1.seconds / 60.0, callback: Disposable.() -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
-	require(startFrame > 0) { "startFrame must be greater than zero. "}
+	require(startFrame > 0) { "startFrame must be greater than zero. " }
 	return Tick.obtain(repetitions, startFrame, tickTime, callback)
 }

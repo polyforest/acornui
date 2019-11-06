@@ -39,7 +39,7 @@ data class AppConfig(
 		/**
 		 * The target number of frames per second.
 		 */
-		val frameRate: Int = 50,
+		val frameRate: Int = 60,
 
 		/**
 		 * The location of the files.json file created by the AcornUI assets task.

@@ -91,6 +91,7 @@ class DragAttachment(
 	 */
 	val dragEnd = _dragEnd.asRo()
 
+	private val previousPosition = Vector2()
 	private val position = Vector2()
 	private val startPosition = Vector2()
 	private val startPositionLocal = Vector2()
@@ -137,6 +138,7 @@ class DragAttachment(
 			setIsWatchingMouse(true)
 			event.handled = true
 			startPosition.set(event.canvasX, event.canvasY)
+			previousPosition.set(startPosition)
 			position.set(startPosition)
 			startPositionLocal.set(event.localX, event.localY)
 			if (allowMouseDragStart()) {
@@ -177,6 +179,7 @@ class DragAttachment(
 			touchId = t.identifier
 			startPosition.set(t.canvasX, t.canvasY)
 			position.set(startPosition)
+			previousPosition.set(startPosition)
 			startPositionLocal.set(t.localX, t.localY)
 			if (allowTouchDragStart(event)) {
 				setIsDragging(true)
@@ -274,8 +277,10 @@ class DragAttachment(
 		dragEvent.startPosition.set(startPosition)
 		dragEvent.startPositionLocal.set(startPositionLocal)
 		dragEvent.position.set(position)
+		dragEvent.previousPosition.set(previousPosition)
 		dragEvent.fromTouch = isTouch
 		dragEvent.touchId = touchId
+		previousPosition.set(position)
 		signal.dispatch(dragEvent)
 	}
 
@@ -306,6 +311,7 @@ class DragAttachment(
 		stop()
 		startPosition.set(event.startPosition)
 		startPositionLocal.set(event.startPositionLocal)
+		previousPosition.set(event.previousPosition)
 		position.set(event.position)
 		isTouch = event.fromTouch
 		touchId = event.touchId
@@ -354,15 +360,24 @@ interface DragInteractionRo : InteractionEventRo {
 	val startPositionLocal: Vector2Ro
 
 	/**
+	 * The position of the last event (in canvas coordinates).
+	 */
+	val previousPosition: Vector2Ro
+
+	/**
 	 * The current position (in canvas coordinates).
 	 */
 	val position: Vector2Ro
 
 	/**
 	 * The current position, relative to the [target] element.
-	 * Note that this value is calculated, and not cached.
 	 */
 	val positionLocal: Vector2Ro
+
+	/**
+	 * The position change from the last event, relative to the [target] element.
+	 */
+	val positionLocalDelta: Vector2Ro
 
 	/**
 	 * True if initialized from a touch interaction, false if mouse.
@@ -381,24 +396,45 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 
 	override val startPositionLocal: Vector2 = Vector2()
 
+	override val previousPosition: Vector2 = Vector2()
 	override val position: Vector2 = Vector2()
 
+	private val _previousPositionLocal = Vector2()
 	private val _positionLocal = Vector2()
-
 	override val positionLocal: Vector2
 		get() {
-			return currentTarget.canvasToLocal(_positionLocal.set(position))
+			validate()
+			return _positionLocal
+		}
+
+	private val _positionLocalDelta = Vector2()
+	override val positionLocalDelta: Vector2Ro
+		get() {
+			validate()
+			return _positionLocalDelta
 		}
 
 	override var fromTouch: Boolean = false
 	override var touchId: Int = -1
 
+	private var isValid = false
+
 	override fun clear() {
 		super.clear()
 		startPosition.clear()
+		previousPosition.clear()
 		position.clear()
 		fromTouch = false
 		touchId = -1
+		isValid = false
+	}
+
+	fun validate() {
+//		if (isValid) return
+//		isValid = true
+		currentTarget.canvasToLocal(_positionLocal.set(position))
+		currentTarget.canvasToLocal(_previousPositionLocal.set(previousPosition))
+		_positionLocalDelta.set(_positionLocal).sub(_previousPositionLocal)
 	}
 
 	override fun toString(): String {

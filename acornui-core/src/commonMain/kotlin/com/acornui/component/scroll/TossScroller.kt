@@ -273,7 +273,7 @@ open class TossScrollModelBinding(
 
 	private fun tossHandler(event: DragInteractionRo) {
 		diff.set(event.positionLocal).sub(lastPositionLocal)
-		globalToModel(diff)
+		localToModel(diff)
 		hScrollModel.value -= diff.x
 		vScrollModel.value -= diff.y
 		lastPositionLocal.set(event.positionLocal)
@@ -282,7 +282,7 @@ open class TossScrollModelBinding(
 	/**
 	 * Converts points, in global coordinate space, to model.
 	 */
-	protected open fun globalToModel(diffPoints: Vector2) {
+	protected open fun localToModel(diffPoints: Vector2) {
 	}
 
 
