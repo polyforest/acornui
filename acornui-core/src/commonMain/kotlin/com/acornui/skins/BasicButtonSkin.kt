@@ -5,10 +5,13 @@ import com.acornui.component.layout.LayoutContainer
 import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.*
 import com.acornui.component.text.TextField
+import com.acornui.component.text.charStyle
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
 import com.acornui.di.Owned
+import com.acornui.function.as1
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.observableAndCall
 
@@ -103,23 +106,33 @@ fun Owned.basicButtonSkin(
 private class BasicLabelButtonSkin(
 		owner: Owned,
 		private val texture: ButtonSkin,
-		private val padding: PadRo
+		private val padding: PadRo,
+		val textColors: Map<ButtonState, ColorRo>
 ) : ContainerImpl(owner), ButtonSkin {
 
-	private val textField: TextField = text()
+	val charStyle = bind(charStyle())
+
+	private val textField: TextField = text {
+		charStyle.colorTint = Color.WHITE
+	}
 
 	init {
 		addChild(texture)
 		addChild(textField)
-
+		watch(charStyle, callback = ::refreshTextColor.as1)
 		textField.selectable = false
 		textField.flowStyle.horizontalAlign = FlowHAlign.CENTER
 	}
 
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
 		texture.buttonState = value
-		textField.styleTags.clear()
-		textField.styleTags.add(value.styleTag)
+		refreshTextColor()
+	}
+
+	private fun refreshTextColor() {
+		textField.colorTint = buttonState.fallbackWalk { state ->
+			textColors[state]
+		} ?: charStyle.colorTint
 	}
 
 	override var label: String by observableAndCall("") { value ->
@@ -138,8 +151,8 @@ private class BasicLabelButtonSkin(
 	}
 }
 
-fun Owned.basicLabelButtonSkin(texture: ButtonSkin, padding: PadRo): ButtonSkin = BasicLabelButtonSkin(this, texture, padding)
-fun Owned.basicLabelButtonSkin(theme: Theme): ButtonSkin = BasicLabelButtonSkin(this, basicButtonSkin(theme), theme.buttonPad)
+fun Owned.basicLabelButtonSkin(texture: ButtonSkin, padding: PadRo, textColors: Map<ButtonState, ColorRo>): ButtonSkin = BasicLabelButtonSkin(this, texture, padding, textColors)
+fun Owned.basicLabelButtonSkin(theme: Theme): ButtonSkin = BasicLabelButtonSkin(this, basicButtonSkin(theme), theme.buttonPad, mapOf(ButtonState.DISABLED to theme.textDisabledColor))
 
 /**
  * A typical implementation of a skin part for a labelable button state.
@@ -162,7 +175,6 @@ private class BasicCheckboxSkin(
 	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
 		box.buttonState = value
 		textField.styleTags.clear()
-		textField.styleTags.add(value.styleTag)
 	}
 
 	override var label: String by observableAndCall("") { value ->

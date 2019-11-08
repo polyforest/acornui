@@ -28,6 +28,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.Box
 import com.acornui.math.MinMax
 import com.acornui.skins.Theme
+import com.acornui.time.callLater
 
 interface HighlightView : UiComponent {
 	var highlighted: UiComponentRo?
@@ -50,7 +51,7 @@ open class SimpleHighlight(
 				field?.invalidated?.remove(::highlightedInvalidatedHandler)
 				field = value
 				field?.invalidated?.add(::highlightedInvalidatedHandler)
-				invalidate(ValidationFlags.LAYOUT)
+				invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
 			}
 		}
 
@@ -79,19 +80,15 @@ open class SimpleHighlight(
 			highlight.setSize(w, h)
 			highlight.moveTo(0f, 0f)
 		}
+		out.set(highlight.bounds)
 	}
 
-	override fun updateDrawRegion(out: Box) {
-		super.updateDrawRegion(out)
-		val splits = highlight.region?.splits
-		if (splits != null) {
-			// Rendering of this highlight extends beyond the bounds of this component.
-			out.inflate(splits[0], splits[1], splits[2], splits[3])
-		}
+	override fun updateRenderContext() {
+		_renderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
+		super.updateRenderContext()
 	}
 
 	override fun draw() {
-		_renderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
 		super.draw()
 	}
 
@@ -122,12 +119,17 @@ class SimpleFocusHighlighter(
 	)
 
 	override fun unhighlight(target: UiComponentRo) {
-		popUpManager.removePopUp(popUpInfo)
+		highlight.highlighted = null
+		callLater {
+			popUpManager.removePopUp(popUpInfo)
+		}
 	}
 
 	override fun highlight(target: UiComponentRo) {
 		highlight.highlighted = target
-		popUpManager.addPopUp(popUpInfo)
+		callLater {
+			popUpManager.addPopUp(popUpInfo)
+		}
 	}
 
 	override fun dispose() {

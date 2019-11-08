@@ -196,6 +196,8 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	override var includeInLayout: Boolean
 	override var includeInRender: Boolean
 
+	override var layoutInvalidatingFlags: Int
+
 	override var focusEnabled: Boolean
 	override var focusOrder: Float
 	override var isFocusContainer: Boolean
@@ -496,9 +498,8 @@ open class UiComponentImpl(
 		validate(ValidationFlags.STYLES)
 		if (focusTarget != null)
 			focusHighlighter?.unhighlight(focusTarget!!)
-		val newFocusTarget = focusHighlightDelegate ?: this
 		if (showFocusHighlight) {
-			focusTarget = newFocusTarget
+			focusTarget = focusHighlightDelegate ?: this
 			focusHighlighter = focusableStyle.highlighter
 			focusHighlighter?.highlight(focusTarget!!)
 		} else {
@@ -875,6 +876,9 @@ open class UiComponentImpl(
 
 	override val invalidFlags: Int
 		get() = validation.invalidFlags
+
+	override val isValidating: Boolean
+		get() = validation.isValidating
 
 	//-----------------------------------------------
 	// Transformable

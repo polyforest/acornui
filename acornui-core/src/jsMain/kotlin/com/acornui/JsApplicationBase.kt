@@ -22,7 +22,7 @@ import com.acornui.audio.AudioManagerImpl
 import com.acornui.component.Stage
 import com.acornui.di.*
 import com.acornui.graphic.Window
-import com.acornui.graphic.render
+import com.acornui.graphic.updateAndRender
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.logging.Log
@@ -154,7 +154,7 @@ abstract class JsApplicationRunnerBase(
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
 		FrameDriver.dispatch(dT)
-		appWindow.render(stage)
+		appWindow.updateAndRender(stage)
 	}
 
 	override fun stop() {

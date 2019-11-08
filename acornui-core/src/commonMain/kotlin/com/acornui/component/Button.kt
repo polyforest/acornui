@@ -119,10 +119,7 @@ open class ButtonImpl(
 	var indeterminate: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
 	protected open fun updateProperties() {
-		val previousState = _currentState
 		_currentState = ButtonState.calculateButtonState(mouseOrTouchState.isOver, mouseOrTouchState.isDown, toggled, indeterminate, disabled)
-		skin?.styleTags?.remove(previousState.styleTag)
-		skin?.styleTags?.add(_currentState.styleTag)
 		skin?.buttonState = _currentState
 		if (skin?.label != label)
 			skin?.label = label
@@ -185,8 +182,6 @@ enum class ButtonState(
 	INDETERMINATE_OVER(isOver = true, isIndeterminate = true),
 	INDETERMINATE_DOWN(isOver = true, isDown = true, isIndeterminate = true),
 	DISABLED();
-
-	val styleTag: StyleTag = styleTag()
 
 	val fallback: ButtonState?
 		get() = when (this) {

@@ -74,10 +74,7 @@ data class Theme(
 		val strokeThickness: Float = 1f,
 		val borderRadius: Float = 8f,
 
-		val textColor: ColorRo = Color(0x333333ff),
 		val textDisabledColor: ColorRo = Color(0x666666ff),
-		val headingColor: ColorRo = Color(0x333333ff),
-		val formLabelColor: ColorRo = Color(0x555555ff),
 
 		val selectableText: Boolean = false,
 

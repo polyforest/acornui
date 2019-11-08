@@ -17,10 +17,12 @@
 package com.acornui.component
 
 import com.acornui.Disposable
+import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
 import com.acornui.di.Injector
 import com.acornui.di.OwnedImpl
+import com.acornui.di.createScope
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
@@ -30,6 +32,7 @@ import com.acornui.graphic.Color
 import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
+import com.acornui.math.IntRectangle
 import com.acornui.popup.PopUpManager
 import com.acornui.time.timer
 
@@ -43,7 +46,9 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	final override val style = bind(StageStyle())
 	override var showWaitingForSkinMessage = true
 
-	private val popUpManagerView = inject(PopUpManager).view
+	private val popUpManager = inject(PopUpManager)
+	private val popUpManagerView: UiComponent
+
 	private val softKeyboardManager by SoftKeyboardManager
 	private var softKeyboardView: UiComponent? = null
 
@@ -55,8 +60,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
-
-		addChild(popUpManagerView)
+		popUpManagerView = addChild(popUpManager.init(createScope(Stage to this)))
+		popUpManagerView.layoutInvalidatingFlags = 0
 
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
@@ -104,6 +109,10 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
 		renderContext.redraw.invalidate(0, 0, w, h)
 		super.updateRenderContext()
+	}
+
+	override fun updateDrawRegionScreen(out: IntRectangle) {
+		out.set(0, 0, window.framebufferWidth, window.framebufferHeight)
 	}
 
 	//-------------------------------------------------------------

@@ -230,7 +230,7 @@ fun Scoped.exit() {
 	inject(Window).requestClose()
 }
 
-fun Window.render(stage: Stage) {
+fun Window.updateAndRender(stage: Stage) {
 	if (shouldRender(true)) {
 		stage.update()
 		if (width > 0f && height > 0f) {

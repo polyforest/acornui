@@ -41,6 +41,11 @@ interface Validatable {
 	val invalidFlags: Int
 
 	/**
+	 * True if this component is currently validating.
+	 */
+	val isValidating: Boolean
+
+	/**
 	 * Invalidates the given flag.
 	 * Returns a bit mask representing the flags newly invalidated.
 	 * Dispatches [invalidated] with the newly invalidated flags.
@@ -136,6 +141,12 @@ class ValidationGraph(
 			if (currentIndex == -1) return -1
 			return nodes[currentIndex].flag
 		}
+
+	/**
+	 * Returns true if this validation graph is currently validating via [validate].
+	 */
+	val isValidating: Boolean
+		get() = currentIndex != -1
 
 	private var _invalidFlags = 0
 	val invalidFlags: Int
