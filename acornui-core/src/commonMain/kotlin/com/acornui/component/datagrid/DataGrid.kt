@@ -313,7 +313,7 @@ class DataGrid<RowData>(
 	/**
 	 * @suppress
 	 */
-	internal val cache = DataGridCache(this)
+	internal val cache = own(DataGridCache(this))
 
 	private val rowIterator = RowLocation(this)
 

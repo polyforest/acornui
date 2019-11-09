@@ -81,7 +81,7 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 	/**
 	 * @suppress
 	 */
-	internal val displayGroupCaches: List<DataGridCache<RowData>.GroupCache>
+	internal val displayGroupCaches: List<GroupCache>
 		get() = if (grid.groups.isEmpty()) defaultGroupCache else groupCaches
 
 	override fun dispose() {
