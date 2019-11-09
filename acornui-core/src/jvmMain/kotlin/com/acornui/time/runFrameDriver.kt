@@ -23,13 +23,12 @@ import kotlin.time.Duration
 
 actual suspend fun loopWhile(frameTime: Duration, inner: (dT: Float) -> Boolean) = suspendCoroutine<Unit> { cont ->
 	val frameTimeMs = frameTime.toLongMilliseconds()
-	val maxFrameTime = frameTime.inSeconds.toFloat() * 3f
 	var lastFrameMs = nowMs()
 	var shouldContinue = inner(0f)
 	while (shouldContinue && cont.context.isActive) {
 		// Poll for window events. Input callbacks will be invoked at this time.
 		val now = nowMs()
-		val dT = ((now - lastFrameMs) / 1000f).coerceAtMost(maxFrameTime)
+		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
 		shouldContinue = inner(dT)
 		val sleepTime = lastFrameMs + frameTimeMs - nowMs()
