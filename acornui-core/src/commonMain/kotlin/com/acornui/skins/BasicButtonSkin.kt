@@ -9,7 +9,6 @@ import com.acornui.component.text.charStyle
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
 import com.acornui.di.Owned
-import com.acornui.function.as1
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -116,20 +115,20 @@ private class BasicLabelButtonSkin(
 		charStyle.colorTint = Color.WHITE
 	}
 
+	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+		texture.buttonState = value
+		refreshTextColor(value)
+	}
+
 	init {
 		addChild(texture)
 		addChild(textField)
-		watch(charStyle, callback = ::refreshTextColor.as1)
+		watch(charStyle) { refreshTextColor(buttonState) }
 		textField.selectable = false
 		textField.flowStyle.horizontalAlign = FlowHAlign.CENTER
 	}
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
-		texture.buttonState = value
-		refreshTextColor()
-	}
-
-	private fun refreshTextColor() {
+	private fun refreshTextColor(buttonState: ButtonState) {
 		textField.colorTint = buttonState.fallbackWalk { state ->
 			textColors[state]
 		} ?: charStyle.colorTint
@@ -311,4 +310,6 @@ class EmptyButtonSkin(owner: Owned) : UiComponentImpl(owner), ButtonSkin {
 	override var buttonState: ButtonState = ButtonState.UP
 }
 
-fun Owned.emptyButtonSkin(): EmptyButtonSkin { return EmptyButtonSkin(this) }
+fun Owned.emptyButtonSkin(): EmptyButtonSkin {
+	return EmptyButtonSkin(this)
+}
