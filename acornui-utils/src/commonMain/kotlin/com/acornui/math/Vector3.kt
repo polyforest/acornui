@@ -599,10 +599,10 @@ class Vector3 (
 		return this
 	}
 
-	fun random(): Vector3 {
-		x = Random.nextFloat() * 2f - 1f
-		y = Random.nextFloat() * 2f - 1f
-		z = Random.nextFloat() * 2f - 1f
+	fun random(random: Random = Random): Vector3 {
+		x = random.nextFloat() * 2f - 1f
+		y = random.nextFloat() * 2f - 1f
+		z = random.nextFloat() * 2f - 1f
 		return this
 	}
 

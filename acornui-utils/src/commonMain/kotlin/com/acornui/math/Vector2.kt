@@ -301,9 +301,9 @@ class Vector2(
 		return this
 	}
 
-	fun random(): Vector2 {
-		x = Random.nextFloat() * 2f - 1f
-		y = Random.nextFloat() * 2f - 1f
+	fun random(random: Random = Random): Vector2 {
+		x = random.nextFloat() * 2f - 1f
+		y = random.nextFloat() * 2f - 1f
 		return this
 	}
 
