@@ -260,29 +260,47 @@ fun kotlinMppRuntimeDependencies(project: Project, platform: String, compilation
 }
 
 fun Project.runJvmTask() {
-	val jvmArgs: String? by extra
-	tasks.register<JavaExec>("runJvm") {
+	tasks.register<RunJvmTask>("runJvm") {
+		debugMode = true
+		debug = true
+	}
+	tasks.register<RunJvmTask>("runJvmProd") {
+		debugMode = false
+		debug = false
+	}
+}
+
+open class RunJvmTask : JavaExec() {
+
+	init {
 		dependsOn("jvmAssemble")
 		group = "application"
-		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
+		val jvmTarget: KotlinTarget = project.kotlinExt.targets["jvm"]
 		val compilation =
 				jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
 
-		val classes = files(
+		val classes = project.files(
 				compilation.runtimeDependencyFiles,
 				compilation.output.allOutputs
 		)
 		classpath = classes
-		workingDir = acornui.appResources.resolve("jvm/allMain")
+		workingDir = project.acornui.appResources.resolve("jvm/allMain")
 		main =
-				"${rootProject.group}.${rootProject.name}.jvm.${rootProject.name.toCamelCase().capitalize()}JvmKt"
+				"${project.rootProject.group}.${project.rootProject.name}.jvm.${project.rootProject.name.toCamelCase().capitalize()}JvmKt"
 
 		@Suppress("INACCESSIBLE_TYPE")
-		this.jvmArgs = (jvmArgs?.split(" ") ?: listOf(
-				"-ea",
-				"-Ddebug=true"
-		)) + if (OperatingSystem.current() == OperatingSystem.MAC_OS) listOf("-XstartOnFirstThread") else emptyList()
+		this.jvmArgs = if (OperatingSystem.current() == OperatingSystem.MAC_OS) listOf("-XstartOnFirstThread") else emptyList()
 	}
+
+	var debugMode: Boolean = false
+		set(value) {
+			field = value
+			val debugArg = "-Ddebug=true"
+			jvmArgs = if (value)
+				jvmArgs!! + debugArg
+			else
+				jvmArgs!! - debugArg
+		}
 }
 
 fun Project.uberJarTask() {
