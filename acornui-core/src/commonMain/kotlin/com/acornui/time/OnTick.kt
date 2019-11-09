@@ -53,7 +53,7 @@ private class OnTick(
 	}
 
 	override fun dispose() {
-		remove()
+		stop()
 		component.activated.remove(componentActivatedHandler)
 		component.deactivated.remove(componentDeactivatedHandler)
 		component.disposed.remove(componentDisposedHandler)
