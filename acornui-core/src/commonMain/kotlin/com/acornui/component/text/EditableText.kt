@@ -180,14 +180,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.clipboardPaste().add {
 			if (editable && !it.defaultPrevented()) {
 				it.handled = true
-				launch {
-					val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
-					if (str != null) {
-						val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
-						replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
-						currentGroup = CommandGroup()
-						_input.dispatch()
-					}
+				val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
+				if (str != null) {
+					val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
+					replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
+					currentGroup = CommandGroup()
+					_input.dispatch()
 				}
 			}
 		}

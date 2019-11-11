@@ -132,7 +132,7 @@ private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 	private var jsEvent: ClipboardEvent? = null
 
 	@Suppress("UNCHECKED_CAST")
-	override suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
+	override fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
 		val jsEvent = jsEvent ?: return null
 		return when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {

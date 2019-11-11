@@ -75,7 +75,7 @@ class JvmClipboard(
 private class JvmPasteInteraction(private val windowId: Long) : InteractionEventBase(), PasteInteractionRo {
 
 	@Suppress("UNCHECKED_CAST")
-	override suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
+	override fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
 		return when (type) {
 			ClipboardItemType.PLAIN_TEXT -> {
 				GLFW.glfwGetClipboardString(windowId) as T

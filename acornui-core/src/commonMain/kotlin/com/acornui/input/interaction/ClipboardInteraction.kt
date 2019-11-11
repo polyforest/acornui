@@ -22,7 +22,7 @@ import com.acornui.input.InteractionType
 
 interface PasteInteractionRo : InteractionEventRo {
 
-	suspend fun <T : Any> getItemByType(type: ClipboardItemType<T>): T?
+	fun <T : Any> getItemByType(type: ClipboardItemType<T>): T?
 
 	companion object {
 		val PASTE = InteractionType<PasteInteractionRo>("paste")
