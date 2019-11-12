@@ -16,9 +16,12 @@
 
 package com.acornui.persistence
 
-import com.acornui.recycle.Clearable
 import com.acornui.Version
 import com.acornui.di.DKey
+import com.acornui.logging.Log
+import com.acornui.recycle.Clearable
+import com.acornui.serialization.jsonParse
+import kotlinx.serialization.DeserializationStrategy
 
 interface Persistence : Clearable {
 
@@ -53,4 +56,18 @@ interface Persistence : Clearable {
 	fun flush()
 
 	companion object : DKey<Persistence>
+}
+
+/**
+ * A utility method for retrieving an item from the persistence map and deserializing it.
+ * This will return null if there was an error in deserialization.
+ */
+fun <T> Persistence.getItem(key: String, deserializationStrategy: DeserializationStrategy<T>, errorHandler: (e: Throwable) -> Unit = Log::error): T? {
+	if (!containsItem(key)) return null
+	return try {
+		jsonParse(deserializationStrategy, getItem(key)!!)
+	} catch (e: Throwable) {
+		errorHandler(e)
+		null
+	}
 }
