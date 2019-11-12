@@ -107,15 +107,16 @@ object ValidationFlags {
 
 fun Validatable.invalidateSize() {
 	invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-	Unit
 }
 
 fun Validatable.invalidateLayout() {
 	invalidate(ValidationFlags.LAYOUT)
-	Unit
+}
+
+fun Validatable.invalidateDraw() {
+	invalidate(ValidationFlags.REDRAW_REGIONS)
 }
 
 fun Validatable.invalidateProperties() {
 	invalidate(ValidationFlags.PROPERTIES)
-	Unit
 }

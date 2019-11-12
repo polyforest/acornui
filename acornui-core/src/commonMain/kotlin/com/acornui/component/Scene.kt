@@ -20,6 +20,7 @@ package com.acornui.component
 
 import com.acornui.collection.forEach2
 import com.acornui.di.Owned
+import com.acornui.gl.core.useCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
 import com.acornui.graphic.Camera
 import com.acornui.graphic.OrthographicCamera
@@ -36,13 +37,20 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		set(value) {
 			field = value
 			cameraOverride = field
+			invalidate(ValidationFlags.LAYOUT)
 		}
 
 	init {
 		cameraOverride = camera
 		_renderContext.modelTransformOverride = Matrix4.IDENTITY
 		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
-		validation.addNode(1 shl 16, ValidationFlags.RENDER_CONTEXT or ValidationFlags.LAYOUT, ::updateCanvasTransform)
+		validation.addNode(CANVAS_TRANSFORM, dependencies = ValidationFlags.LAYOUT, dependents = ValidationFlags.RENDER_CONTEXT, onValidate = {})
+	}
+
+	override fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
+		// Don't invalidate the scene's size when a child's layout has invalidated.
+		childrenNeedValidation = true
+		invalidate(flagsInvalidated and bubblingFlags)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -58,7 +66,8 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	private val region = MinMax()
 	private val canvasTransformOverride = Rectangle()
 
-	protected open fun updateCanvasTransform() {
+	override fun updateRenderContext() {
+		super.updateRenderContext()
 		_renderContext.parentContext.localToCanvas(region.set(x, y, right, bottom).translate(-originX, -originY))
 		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
 				region.xMin,
@@ -66,14 +75,22 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 				region.width,
 				region.height
 		)
+		println("Update CT ${renderContext.canvasTransform}")
 	}
 
-	override fun draw() {
-		glState.useViewportFromCanvasTransform(renderContext.canvasTransform) {
-			super.draw()
+	override fun render() {
+		if (needsRedraw) {
+			glState.uniforms.useCamera(camera) {
+				glState.useViewportFromCanvasTransform(renderContext.canvasTransform) {
+					draw()
+				}
+			}
 		}
 	}
 
+	companion object {
+		private const val CANVAS_TRANSFORM = 1 shl 16
+	}
 }
 
 fun Owned.scene(init: ComponentInit<Scene>): Scene {

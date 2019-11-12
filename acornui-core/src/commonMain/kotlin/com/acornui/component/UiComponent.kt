@@ -1091,18 +1091,20 @@ open class UiComponentImpl(
 	}
 
 	protected fun updateRedrawRegions() {
+		drawRegionScreenIsValid = false
 		if (_renderContext.parentContext.draws) {
 			// The parent is responsible for invalidating the redraw regions.
-			_drawRegionScreen.clear()
 			return
 		}
-		// Invalidate the previously drawn region
-		if (draws)
-			renderContext.redraw.invalidate(_drawRegionScreen)
-		_drawRegionScreen.clear()
-		updateDrawRegionScreen(_drawRegionScreen)
-		if (draws && isRendered)
-			renderContext.redraw.invalidate(_drawRegionScreen)
+		val redraw = renderContext.redraw
+		if (redraw.enabled) {
+			// Invalidate the previously drawn region
+			if (draws && isRendered)
+				renderContext.redraw.invalidate(_drawRegionScreen)
+			// Invalidate the new draw region
+			if (draws)
+				renderContext.redraw.invalidate(drawRegionScreen) // Validates the new draw region.
+		}
 	}
 
 	/**
@@ -1162,16 +1164,31 @@ open class UiComponentImpl(
 
 	override fun update() = validate()
 
-	override val drawRegionScreen: IntRectangleRo
+	private var drawRegionScreenIsValid = false
+	final override val drawRegionScreen: IntRectangleRo
 		get() {
-			validate(ValidationFlags.REDRAW_REGIONS)
+			if (!drawRegionScreenIsValid) {
+				drawRegionScreenIsValid = true
+				updateDrawRegionScreen(_drawRegionScreen.apply { clear() })
+			}
 			return _drawRegionScreen
 		}
 
+	/**
+	 * True if this component is visible, has opacity, and passes a redraw check with the render context [RedrawRegions].
+	 */
+	protected open val needsRedraw: Boolean
+		get() {
+			val renderContext = _renderContext
+			return (!renderContext.redraw.enabled ||
+					renderContext.parentContext.draws ||
+					renderContext.redraw.needsRedraw(drawRegionScreen)) &&
+					visible &&
+					colorTint.a > 0f
+		}
+
 	override fun render() {
-		val renderContext = _renderContext
-		val needsRedraw = (renderContext.parentContext.draws || renderContext.redraw.needsRedraw(_drawRegionScreen))
-		if (needsRedraw && visible && colorTint.a > 0f)
+		if (needsRedraw)
 			draw()
 	}
 

@@ -25,10 +25,10 @@ import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
-import com.acornui.graphic.TextureRo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
+import com.acornui.recycle.Clearable
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -36,7 +36,7 @@ import kotlin.contracts.contract
  * A UiComponent representing a single Texture.
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
+open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), Clearable {
 
 	override val renderable: Sprite = Sprite(glState)
 
@@ -70,20 +70,18 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 
 	private var cached: CachedGroup? = null
 
-	private var _path: String? = null
-
 	/**
 	 * Loads a texture from the given path.
 	 */
-	var path: String?
-		get() = _path
+	var path: String? = null
 		set(value) {
-			if (_path == value) return
-			_path = value
+			if (field == value) return
+			field = value
+			texture = null
 			cached?.dispose()
-			cached = cachedGroup()
-			setTextureInternal(null)
+			cached = null
 			if (value != null) {
+				cached = cachedGroup()
 				cached!!.cacheAsync(value) {
 					loadTexture(value)
 				}.then {
@@ -156,8 +154,16 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner) {
 		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
-	override fun dispose() {
+	override fun clear() {
+		cached?.dispose()
+		cached = null
+		setTextureInternal(null)
 		path = null
+		texture = null
+	}
+
+	override fun dispose() {
+		clear()
 		super.dispose()
 	}
 

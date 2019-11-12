@@ -72,9 +72,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		validation.addNode(SELECTION, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = 0, onValidate = ::updateSelection)
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = 0, onValidate = ::updateVertices)
-		validation.addNode(WORLD_VERTICES, dependencies = VERTICES or ValidationFlags.RENDER_CONTEXT, dependents = 0, onValidate = ::updateWorldVertices)
+		validation.addNode(SELECTION, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateSelection)
+		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateVertices)
+		validation.addNode(WORLD_VERTICES, dependencies = VERTICES or ValidationFlags.RENDER_CONTEXT or SELECTION, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateWorldVertices)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -321,7 +321,14 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			textElements[i].updateVertices(leftClip, topClip, rightClip, bottomClip)
 		}
 	}
-	
+
+	private fun updateSelection() {
+		val textElements = _textElements
+		for (i in 0..textElements.lastIndex) {
+			textElements[i].selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
+		}
+	}
+
 	private fun updateWorldVertices() {
 		val textElements = _textElements
 		val transform = renderContext.modelTransform
@@ -338,13 +345,6 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		selectionRangeStart = rangeStart
 		this.selection = selection
 		invalidate(SELECTION)
-	}
-
-	private fun updateSelection() {
-		val textElements = _textElements
-		for (i in 0..textElements.lastIndex) {
-			textElements[i].selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
-		}
 	}
 
 	override fun toString(builder: StringBuilder) {

@@ -64,7 +64,6 @@ open class ContainerImpl(
 	override val children: List<UiComponentRo> = _children
 
 	protected var childrenNeedValidation = true
-		private set
 
 	/**
 	 * Appends a child to the display children.

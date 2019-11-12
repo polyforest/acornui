@@ -262,11 +262,6 @@ fun kotlinMppRuntimeDependencies(project: Project, platform: String, compilation
 fun Project.runJvmTask() {
 	tasks.register<RunJvmTask>("runJvm") {
 		debugMode = true
-		debug = true
-	}
-	tasks.register<RunJvmTask>("runJvmProd") {
-		debugMode = false
-		debug = false
 	}
 }
 

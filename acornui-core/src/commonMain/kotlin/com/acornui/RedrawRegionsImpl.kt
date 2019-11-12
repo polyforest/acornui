@@ -25,13 +25,10 @@ interface RedrawRegionsRo {
 
 	/**
 	 * True if redraw regions should be used.
+	 * An implementation may toggle this to false mid-update when a certain threshold of invalid regions has been 
+	 * passed. 
 	 */
 	val enabled: Boolean
-
-	/**
-	 * True if the redraw regions should be shown for debugging purposes.
-	 */
-	val showRedrawRegions: Boolean
 
 	val regions: List<IntRectangleRo>
 
@@ -40,8 +37,6 @@ interface RedrawRegionsRo {
 }
 
 interface RedrawRegions : RedrawRegionsRo, Clearable {
-
-	override var showRedrawRegions: Boolean
 
 	fun invalidate(x: Int, y: Int, width: Int, height: Int)
 	fun invalidate(region: IntRectangleRo) = invalidate(region.x, region.y, region.width, region.height)
@@ -54,8 +49,6 @@ interface RedrawRegions : RedrawRegionsRo, Clearable {
 		val ALWAYS: RedrawRegions = object : RedrawRegions {
 
 			override val enabled = false
-
-			override var showRedrawRegions: Boolean = false
 
 			override val regions = emptyList<IntRectangleRo>()
 
@@ -72,8 +65,8 @@ class RedrawRegionsImpl : RedrawRegions {
 
 	private var regionSet = IntRegionSet()
 
-	override val enabled = true
-	override var showRedrawRegions: Boolean = false
+	override val enabled: Boolean
+			get() = regions.size < 4
 
 	override val regions: List<IntRectangleRo> = regionSet.regions
 
@@ -88,6 +81,7 @@ class RedrawRegionsImpl : RedrawRegions {
 	 * Returns true if the region needs to be redrawn.
 	 */
 	override fun needsRedraw(region: IntRectangleRo): Boolean {
+		if (!enabled) return true
 		if (region.isEmpty()) return false
 		return regionSet.regions.any2 { it.intersects(region) }
 	}

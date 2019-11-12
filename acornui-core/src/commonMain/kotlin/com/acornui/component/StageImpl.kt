@@ -34,6 +34,7 @@ import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.IntRectangle
 import com.acornui.popup.PopUpManager
+import com.acornui.reflect.observable
 import com.acornui.time.timer
 
 /**
@@ -67,6 +68,18 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
+		
+		watch(style) {
+			useRedrawRegions = it.useRedrawRegions
+			showRedrawRegions = it.showRedrawRegions && it.useRedrawRegions
+		}
+	}
+	
+	private var showRedrawRegions = false
+	
+	private var useRedrawRegions: Boolean by observable(true) {
+		_renderContext.redrawOverride = if (it) null else RedrawRegions.ALWAYS 
+		invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	private fun skinCheck() {
@@ -174,7 +187,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 
 		// Draw redraw regions
 
-		if (redraw.showRedrawRegions) {
+		if (showRedrawRegions) {
 			gl.clearColor(Color.RED)
 			gl.enable(Gl20.SCISSOR_TEST)
 			redraw.regions.forEach2 {

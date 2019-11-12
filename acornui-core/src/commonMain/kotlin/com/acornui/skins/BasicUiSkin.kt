@@ -158,10 +158,7 @@ open class BasicUiSkin(
 			colorTint = theme.infoColor
 		}, withAncestor(TextStyleTags.info))
 
-		val charStyle = CharStyle()
-		charStyle.selectable = false
-		target.addStyleRule(charStyle, withAncestor(ButtonImpl))
-		
+		target.addStyleRule(charStyle { selectable = false }, withAncestor(ButtonImpl))
 		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
 		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
 		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
@@ -622,18 +619,14 @@ open class BasicUiSkin(
 
 		target.addStyleRule(dataGridStyle, DataGrid)
 
-		val bodyCharStyle = CharStyle()
-		bodyCharStyle.selectable = false
-		target.addStyleRule(bodyCharStyle, withAncestor(TextField) andThen withAncestor(DataGrid.BODY_CELL))
+		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) andThen withAncestor(DataGrid.BODY_CELL))
 
 		val headerFlowStyle = FlowLayoutStyle()
 		headerFlowStyle.horizontalAlign = FlowHAlign.CENTER
 		headerFlowStyle.multiline = false
 		target.addStyleRule(headerFlowStyle, withAncestor(TextField) andThen withAncestor(DataGrid.HEADER_CELL))
 
-		val groupHeaderCharStyle = CharStyle()
-		groupHeaderCharStyle.selectable = false
-		target.addStyleRule(groupHeaderCharStyle, withAncestor(TextField) andThen (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
+		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) andThen (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
 
 		val dataGridGroupHeaderStyle = DataGridGroupHeaderStyle()
 		dataGridGroupHeaderStyle.collapseButton = { collapseButton { toggleOnClick = false } }
@@ -689,9 +682,7 @@ open class BasicUiSkin(
 		horizontalLayoutStyle.verticalAlign = VAlign.MIDDLE
 		target.addStyleRule(horizontalLayoutStyle, withParent(DefaultTreeItemRenderer))
 
-		val charStyle = CharStyle()
-		charStyle.selectable = false
-		target.addStyleRule(charStyle, withParent(DefaultTreeItemRenderer))
+		target.addStyleRule(charStyle { selectable = false }, withParent(DefaultTreeItemRenderer))
 	}
 
 	protected open fun contextMenuStyle() {

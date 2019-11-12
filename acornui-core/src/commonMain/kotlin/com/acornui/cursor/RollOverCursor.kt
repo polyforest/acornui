@@ -29,8 +29,8 @@ import com.acornui.input.interaction.rollOver
  */
 class RollOverCursor(
 		private val target: UiComponentRo,
-		private val cursor: Cursor,
-		private val priority: Float = CursorPriority.ACTIVE) : Disposable {
+		var cursor: Cursor,
+		var priority: Float = CursorPriority.ACTIVE) : Disposable {
 
 	private val cursorManager = target.injectOptional(CursorManager)
 
@@ -83,6 +83,12 @@ fun UiComponentRo.clearCursor() {
 	removeAttachment<RollOverCursor>(RollOverCursor)?.dispose()
 }
 
-fun UiComponentRo.cursor(cursor: Cursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
-	return createOrReuseAttachment(RollOverCursor) { RollOverCursor(this, cursor, priority) }
+fun UiComponentRo.cursor(cursor: Cursor?, priority: Float = CursorPriority.ACTIVE): RollOverCursor? {
+	return if (cursor == null) {
+		clearCursor()
+		null
+	} else createOrReuseAttachment(RollOverCursor) { RollOverCursor(this, cursor, priority) }.also { 
+		it.cursor = cursor
+		it.priority = priority
+	}
 }

@@ -51,5 +51,17 @@ class StageStyle : StyleBase() {
 	 */
 	var backgroundColor: ColorRo? by prop(null)
 
+	/**
+	 * If true, only invalidated sections of the window will be cleared every frmae.
+	 * 
+	 * This should be set to false if the entire screen is subject to frequent changes.
+	 */
+	var useRedrawRegions: Boolean by prop(true)
+
+	/**
+	 * True if the redraw regions should be shown for debugging purposes.
+	 */
+	var showRedrawRegions: Boolean by prop(false)
+
 	companion object : StyleType<StageStyle>
 }

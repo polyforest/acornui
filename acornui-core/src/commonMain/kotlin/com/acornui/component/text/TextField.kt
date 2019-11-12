@@ -24,15 +24,16 @@ import com.acornui.component.style.Styleable
 import com.acornui.component.style.addStyleRule
 import com.acornui.cursor.RollOverCursor
 import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.clearCursor
+import com.acornui.cursor.cursor
 import com.acornui.di.Owned
 import com.acornui.di.inject
+import com.acornui.function.as2
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.clipboardCopy
-import com.acornui.input.interaction.ClipboardItemType
-import com.acornui.input.interaction.CopyInteractionRo
-import com.acornui.input.interaction.DragAttachment
-import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.*
+import com.acornui.input.mouseOver
 import com.acornui.math.Bounds
 import com.acornui.selection.Selectable
 import com.acornui.selection.SelectableComponent
@@ -107,12 +108,15 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 
 	private val selectionManager = inject(SelectionManager)
 
-	private var _selectionCursor: RollOverCursor? = null
-
 	/**
 	 * The Selectable target to use for the selection range.
 	 */
 	override var selectionTarget: Selectable = this
+		set(value) {
+			if (field == value) return
+			field = value
+			refreshSelection()
+		}
 
 	private val keyState by KeyState
 
@@ -132,20 +136,18 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 				cS.getFontAsync()?.await()
 				invalidateLayout()
 			}
-			refreshCursor()
+
 			if (cS.selectable) {
-				if (_drag == null) {
-					val d = DragAttachment(this, 0f)
-					d.drag.add(::dragHandler)
-					_drag = d
-				}
+				cursor(StandardCursors.IBEAM)
+				createOrReuseAttachment(DRAG_ATTACHMENT_KEY) { DragAttachment(this, 0f).apply {
+					drag.add(::dragHandler)
+				} }
 			} else {
-				_drag?.dispose()
-				_drag = null
+				clearCursor()
+				clearDragAttachment(DRAG_ATTACHMENT_KEY)
 			}
 		}
-		validation.addNode(SELECTION, dependencies = ValidationFlags.HIERARCHY_ASCENDING, onValidate = ::updateSelection)
-		selectionManager.selectionChanged.add(::selectionChangedHandler)
+		selectionManager.selectionChanged.add(::refreshSelection.as2)
 	}
 
 	/**
@@ -166,12 +168,6 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		newElement?.textField = this
 	}
 
-	private var _drag: DragAttachment? = null
-
-	private fun selectionChangedHandler(old: List<SelectionRange>, new: List<SelectionRange>) {
-		invalidate(SELECTION)
-	}
-
 	private fun dragHandler(event: DragInteractionRo) {
 		if (!charStyle.selectable) return
 		if (!event.handled) {
@@ -190,17 +186,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		val p2A = contents.getSelectionIndex(p2.x, p2.y)
 		return listOf(SelectionRange(selectionTarget, p1A, p2A))
 	}
-
-	private fun refreshCursor() {
-		if (charStyle.selectable) {
-			if (_selectionCursor == null)
-				_selectionCursor = RollOverCursor(this, StandardCursors.IBEAM)
-		} else {
-			_selectionCursor?.dispose()
-			_selectionCursor = null
-		}
-	}
-
+	
 	/**
 	 * Sets this text field's contents to a simple text flow.
 	 */
@@ -225,10 +211,6 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		set(value) {
 			text = value
 		}
-
-	private fun updateSelection() {
-		element?.setSelection(0, selectionManager.selection.filter { it.target == selectionTarget })
-	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val contents = element ?: return
@@ -255,13 +237,18 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		}
 	}
 
+	private var selection: List<SelectionRange> = emptyList()
+	private fun refreshSelection() {
+		val newSelection: List<SelectionRange> = selectionManager.selection.filter { it.target == selectionTarget }
+		if (newSelection != selection) {
+			selection = newSelection
+			element?.setSelection(0, newSelection)
+		}
+	}
+
 	override fun dispose() {
 		super.dispose()
-		_selectionCursor?.dispose()
-		_selectionCursor = null
-		selectionManager.selectionChanged.remove(::selectionChangedHandler)
-		_drag?.dispose()
-		_drag = null
+		selectionManager.selectionChanged.remove(::refreshSelection.as2)
 	}
 
 	override fun onActivated() {
@@ -290,7 +277,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 		get() = selectionManager.selection.firstOrNull { it.target == selectionTarget }
 
 	companion object {
-		const val SELECTION = 1 shl 16
+		val DRAG_ATTACHMENT_KEY = DragAttachment to 0
 	}
 }
 

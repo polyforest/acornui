@@ -285,37 +285,6 @@ fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 	return c
 }
 
-object CharStyleSerializer : To<CharStyle>, From<CharStyle> {
-
-	override fun CharStyle.write(writer: Writer) {
-		writer.styleProperty(this, ::fontFamily)?.string(fontFamily)
-		writer.styleProperty(this, ::fontWeight)?.string(fontWeight)
-		writer.styleProperty(this, ::fontStyle)?.string(fontStyle)
-		writer.styleProperty(this, ::fontSize)?.string(fontSize)
-		writer.styleProperty(this, ::underlined)?.bool(underlined)
-		writer.styleProperty(this, ::colorTint)?.color(colorTint)
-		writer.styleProperty(this, ::backgroundColor)?.color(backgroundColor)
-		writer.styleProperty(this, ::selectedColorTint)?.color(selectedColorTint)
-		writer.styleProperty(this, ::selectedBackgroundColor)?.color(selectedBackgroundColor)
-		writer.styleProperty(this, ::selectable)?.bool(selectable)
-	}
-
-	override fun read(reader: Reader): CharStyle {
-		val c = CharStyle()
-		reader.contains(c::fontFamily.name) { c.fontFamily = it.string()!! }
-		reader.contains(c::fontWeight.name) { c.fontWeight = it.string()!! }
-		reader.contains(c::fontStyle.name) { c.fontStyle = it.string()!! }
-		reader.contains(c::fontSize.name) { c.fontSize = it.string()!! }
-		reader.contains(c::underlined.name) { c.underlined = it.bool()!! }
-		reader.contains(c::colorTint.name) { c.colorTint = it.color()!! }
-		reader.contains(c::backgroundColor.name) { c.backgroundColor = it.color()!! }
-		reader.contains(c::selectedColorTint.name) { c.selectedColorTint = it.color()!! }
-		reader.contains(c::selectedBackgroundColor.name) { c.selectedBackgroundColor = it.color()!! }
-		reader.contains(c::selectable.name) { c.selectable = it.bool()!! }
-		return c
-	}
-}
-
 object FontWeight {
 	const val THIN = "thin"
 	const val EXTRA_LIGHT = "extra-light"
