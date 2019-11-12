@@ -80,8 +80,12 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 		get() = _overCanvas
 
 	// May no longer be needed in lwjgl 3.2.3 - glfw has platform inconsistencies for hdpi scaling.
-	private var glfwXToPoints: Float = 1f
-	private var glfwYToPoints: Float = 1f
+
+	private val glfwXToPoints: Float
+		get() = window.width / window.glfwWindowWidth
+
+	private val glfwYToPoints: Float
+		get() = window.height / window.glfwWindowHeight
 
 	private val mouseButtonCallback: GLFWMouseButtonCallback = object : GLFWMouseButtonCallback() {
 		override fun invoke(window: Long, button: Int, action: Int, mods: Int) {
@@ -147,15 +151,6 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 		GLFW.glfwSetCursorPosCallback(windowId, cursorPosCallback)
 		GLFW.glfwSetCursorEnterCallback(windowId, cursorEnterCallback)
 		GLFW.glfwSetScrollCallback(windowId, mouseWheelCallback)
-		window.scaleChanged.add(::updatePxToPt.as2)
-		window.sizeChanged.add(::updatePxToPt.as2)
-		window.glfwWindowSizeChanged.add(::updatePxToPt.as2)
-		updatePxToPt()
-	}
-
-	private fun updatePxToPt() {
-		glfwXToPoints = window.width / window.glfwWindowWidth
-		glfwYToPoints = window.height / window.glfwWindowHeight
 	}
 
 	override fun mouseIsDown(button: WhichButton): Boolean {
@@ -163,9 +158,6 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 	}
 
 	override fun dispose() {
-		window.scaleChanged.remove(::updatePxToPt.as2)
-		window.sizeChanged.remove(::updatePxToPt.as2)
-		window.glfwWindowSizeChanged.remove(::updatePxToPt.as2)
 		GLFW.glfwSetMouseButtonCallback(windowId, null)
 		GLFW.glfwSetCursorPosCallback(windowId, null)
 		GLFW.glfwSetCursorEnterCallback(windowId, null)
