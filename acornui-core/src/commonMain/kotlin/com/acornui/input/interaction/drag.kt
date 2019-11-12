@@ -450,8 +450,19 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 
 }
 
-fun UiComponentRo.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE): DragAttachment {
-	return createOrReuseAttachment(DragAttachment) { DragAttachment(this, affordance) }
+/**
+ * Disposes and removes the drag attachment with the given affordance.
+ */
+fun UiComponentRo.clearDragAttachment(key: Any = DragAttachment) {
+	getAttachment<DragAttachment>(key)?.dispose()
+}
+
+/**
+ * Creates or reuses a drag attachment with the given key.
+ * @see DragAttachment.affordance
+ */
+fun UiComponentRo.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE, key: Any = DragAttachment): DragAttachment {
+	return createOrReuseAttachment(key) { DragAttachment(this, affordance) }.also { it.affordance = affordance }
 }
 
 /**
