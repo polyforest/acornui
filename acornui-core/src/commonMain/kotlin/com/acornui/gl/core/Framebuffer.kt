@@ -230,8 +230,7 @@ class Framebuffer(
 		}
 		gl.deleteFramebuffer(framebufferHandle)
 	}
-
-
+	
 	/**
 	 * Configures a Camera to match the viewport used in this framebuffer.
 	 * This will set the viewport and positioning to 'see' the framebuffer.
@@ -278,9 +277,7 @@ class Framebuffer(
 			val extensions = gl.getSupportedExtensions()
 			return extensions.contains("GL_OES_packed_depth_stencil") || extensions.contains("GL_EXT_packed_depth_stencil")
 		}
-
 	}
-
 }
 
 class BufferTexture(gl: Gl20,
