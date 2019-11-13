@@ -163,15 +163,6 @@ interface RectangleRo {
 	val perimeter: Float
 		get() = 2 * (this.width + this.height)
 
-	fun reduce(padding: PadRo): Rectangle = reduce(padding.left, padding.top, padding.right, padding.bottom)
-
-	/**
-	 * Clips the sides of this rectangle by the given amounts, returning a new rectangle.
-	 */
-	fun reduce(left: Float, top: Float, right: Float, bottom: Float): Rectangle {
-		return Rectangle(x + left, y + left, width - left - right, height - top - bottom)
-	}
-
 	/**
 	 * Clamps a 2d vector to these bounds.
 	 */
@@ -181,6 +172,14 @@ interface RectangleRo {
 		if (value.x > right) value.x = right
 		if (value.y > bottom) value.y = bottom
 		return value
+	}
+
+	operator fun plus(value: PadRo): Rectangle {
+		return copy().inflate(value)
+	}
+
+	operator fun minus(value: PadRo): Rectangle {
+		return copy().reduce(value)
 	}
 
 	companion object {
@@ -385,8 +384,14 @@ class Rectangle(
 		return this
 	}
 
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 */
 	fun inflate(all: Float) = inflate(all, all, all, all)
 
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 */
 	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Rectangle {
 		x -= left
 		width += left + right
@@ -395,7 +400,33 @@ class Rectangle(
 		return this
 	}
 
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by the [pad] values.
+	 */
 	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 */
+	fun reduce(all: Float) = inflate(-all, -all, -all, -all)
+	
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 */
+	fun reduce(left: Float, top: Float, right: Float, bottom: Float) = inflate(-left, -top, -right, -bottom)
+
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by the [pad] values.
+	 */
+	fun reduce(pad: PadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+	
+	operator fun minusAssign(pad: PadRo) {
+		reduce(pad)
+	}
+
+	operator fun plusAssign(pad: PadRo) {
+		inflate(pad)
+	}
 
 	/**
 	 * Extends this rectangle to include the given coordinates.

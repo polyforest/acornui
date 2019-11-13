@@ -72,6 +72,14 @@ interface PadRo {
 		return height + top + bottom
 	}
 
+	operator fun plus(value: PadRo): Pad {
+		return copy().inflate(value)
+	}
+
+	operator fun minus(value: PadRo): Pad {
+		return copy().reduce(value)
+	}
+
 	fun toCssString(): String {
 		return "${top}px ${right}px ${bottom}px ${left}px"
 	}
@@ -124,14 +132,47 @@ class Pad(
 	}
 
 	/**
-	 * Inflates the padding by the given amount.
+	 * Expands all values [left], [top], [right], and [bottom] by the given amount.
 	 */
-	fun inflate(padding: PadRo): Pad {
-		left += padding.left
-		top += padding.top
-		right += padding.right
-		bottom += padding.bottom
+	fun inflate(all: Float) = inflate(all, all, all, all)
+
+	/**
+	 * Expands all values by [left], [top], [right], and [bottom]
+	 */
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Pad {
+		this.left += left
+		this.right += right
+		this.top += top
+		this.bottom += bottom
 		return this
+	}
+
+	/**
+	 * Expands all values [left], [top], [right], and [bottom] by the [pad] values.
+	 */
+	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Reduces all values [left], [top], [right], and [bottom] by the given amount.
+	 */
+	fun reduce(all: Float) = inflate(-all, -all, -all, -all)
+
+	/**
+	 * Reduces all values by [left], [top], [right], and [bottom]
+	 */
+	fun reduce(left: Float, top: Float, right: Float, bottom: Float) = inflate(-left, -top, -right, -bottom)
+
+	/**
+	 * Reduces all values by the [pad] values.
+	 */
+	fun reduce(pad: PadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+
+	operator fun minusAssign(pad: PadRo) {
+		reduce(pad)
+	}
+
+	operator fun plusAssign(pad: PadRo) {
+		inflate(pad)
 	}
 
 	/**

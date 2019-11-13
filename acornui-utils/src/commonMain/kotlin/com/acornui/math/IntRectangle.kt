@@ -24,7 +24,6 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.IntSerializer
 import kotlinx.serialization.internal.StringDescriptor
-import kotlin.math.floor
 
 /**
  * The read-only interface to [IntRectangle].
@@ -123,17 +122,16 @@ interface IntRectangleRo {
 	val perimeter: Int
 		get() = 2 * (this.width + this.height)
 
-	fun copy(x: Int = this.x, y: Int = this.y, width: Int = this.width, height: Int = this.height): IntRectangle {
-		return IntRectangle(x, y, width, height)
+	operator fun plus(value: IntPadRo): IntRectangle {
+		return copy().inflate(value)
 	}
 
-	fun reduce(padding: IntPadRo): IntRectangle = reduce(padding.left, padding.top, padding.right, padding.bottom)
+	operator fun minus(value: IntPadRo): IntRectangle {
+		return copy().reduce(value)
+	}
 
-	/**
-	 * Clips the sides of this rectangle by the given amounts, returning a new rectangle.
-	 */
-	fun reduce(left: Int, top: Int, right: Int, bottom: Int): IntRectangle {
-		return IntRectangle(x + left, y + left, width - left - right, height - top - bottom)
+	fun copy(x: Int = this.x, y: Int = this.y, width: Int = this.width, height: Int = this.height): IntRectangle {
+		return IntRectangle(x, y, width, height)
 	}
 }
 
@@ -219,8 +217,14 @@ class IntRectangle(
 		return this.width >= width && this.height >= height
 	}
 
-	fun inflate(all: Int): IntRectangle = inflate(all, all, all, all)
-	
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 */
+	fun inflate(all: Int) = inflate(all, all, all, all)
+
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 */
 	fun inflate(left: Int, top: Int, right: Int, bottom: Int): IntRectangle {
 		x -= left
 		width += left + right
@@ -229,6 +233,34 @@ class IntRectangle(
 		return this
 	}
 
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by the [pad] values.
+	 */
+	fun inflate(pad: IntPadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 */
+	fun reduce(all: Int) = inflate(-all, -all, -all, -all)
+
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 */
+	fun reduce(left: Int, top: Int, right: Int, bottom: Int) = inflate(-left, -top, -right, -bottom)
+
+	/**
+	 * Reduces all boundaries [x], [y], [right], and [bottom] by the [pad] values.
+	 */
+	fun reduce(pad: IntPadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+
+	operator fun minusAssign(pad: IntPadRo) {
+		reduce(pad)
+	}
+
+	operator fun plusAssign(pad: IntPadRo) {
+		inflate(pad)
+	}
+	
 	/**
 	 * Extends this rectangle to include the given coordinates.
 	 */

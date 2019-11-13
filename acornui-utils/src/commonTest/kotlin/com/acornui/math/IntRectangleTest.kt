@@ -88,6 +88,13 @@ class IntRectangleTest {
 		assertTrue(IntRectangle(3, 3, 4, 2).intersects(IntRectangle(0, 0, 4, 4), out))
 		assertEquals(IntRectangle(3, 3, 1, 1), out)
 	}
+
+	@Test
+	fun plusAssignPad() {
+		val r = IntRectangle(x = 1, y = 2, width = 3, height = 4)
+		r += IntPad(top = 3, right = 4, bottom =  5, left = 6)
+		assertEquals(IntRectangle(x = 1 - 6, y = 2 - 3, width = 3 + 4 + 6, height = 4 + 3 + 5), r)
+	}
 }
 
 @Serializable

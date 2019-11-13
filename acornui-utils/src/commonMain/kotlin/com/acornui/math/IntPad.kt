@@ -72,6 +72,14 @@ interface IntPadRo {
 		return height + top + bottom
 	}
 
+	operator fun plus(value: IntPadRo): IntPad {
+		return copy().inflate(value)
+	}
+
+	operator fun minus(value: IntPadRo): IntPad {
+		return copy().reduce(value)
+	}
+
 	fun toCssString(): String {
 		return "${top}px ${right}px ${bottom}px ${left}px"
 	}
@@ -121,6 +129,50 @@ class IntPad(
 		this.bottom = bottom
 		this.left = left
 		return this
+	}
+
+	/**
+	 * Expands all values [left], [top], [right], and [bottom] by the given amount.
+	 */
+	fun inflate(all: Int) = inflate(all, all, all, all)
+
+	/**
+	 * Expands all values by [left], [top], [right], and [bottom]
+	 */
+	fun inflate(left: Int, top: Int, right: Int, bottom: Int): IntPad {
+		this.left += left
+		this.right += right
+		this.top += top
+		this.bottom += bottom
+		return this
+	}
+
+	/**
+	 * Expands all values [left], [top], [right], and [bottom] by the [pad] values.
+	 */
+	fun inflate(pad: IntPadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Reduces all values [left], [top], [right], and [bottom] by the given amount.
+	 */
+	fun reduce(all: Int) = inflate(-all, -all, -all, -all)
+
+	/**
+	 * Reduces all values by [left], [top], [right], and [bottom]
+	 */
+	fun reduce(left: Int, top: Int, right: Int, bottom: Int) = inflate(-left, -top, -right, -bottom)
+
+	/**
+	 * Reduces all values by the [pad] values.
+	 */
+	fun reduce(pad: IntPadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+
+	operator fun minusAssign(pad: IntPadRo) {
+		reduce(pad)
+	}
+
+	operator fun plusAssign(pad: IntPadRo) {
+		inflate(pad)
 	}
 
 	override fun clear() {
