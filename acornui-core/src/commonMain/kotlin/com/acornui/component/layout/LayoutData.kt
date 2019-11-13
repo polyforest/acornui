@@ -17,6 +17,7 @@
 package com.acornui.component.layout
 
 import com.acornui.signal.Signal
+import com.acornui.signal.emptySignal
 
 /**
  * A class representing extra layout data, specific to use with LayoutAlgorithm objects.
@@ -29,3 +30,6 @@ interface LayoutData {
 	val changed: Signal<() -> Unit>
 }
 
+object NoopLayoutData : LayoutData {
+	override val changed: Signal<() -> Unit> = emptySignal()
+}
