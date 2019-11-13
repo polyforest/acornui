@@ -16,6 +16,8 @@
 
 package com.acornui.gl.core
 
+import com.acornui.recycle.Clearable
+
 interface FramebufferInfoRo {
 
 	val framebuffer: GlFramebufferRef?
@@ -58,16 +60,17 @@ data class FramebufferInfo(
 		override var scaleX: Float,
 		override var scaleY: Float
 
-) : FramebufferInfoRo {
+) : FramebufferInfoRo, Clearable {
 
 	constructor() : this(null, 0, 0, 1f, 1f)
 
-	fun set(value: FramebufferInfoRo) {
+	fun set(value: FramebufferInfoRo): FramebufferInfo {
 		framebuffer = value.framebuffer
 		width = value.width
 		height = value.height
 		scaleX = value.scaleX
 		scaleY = value.scaleY
+		return this
 	}
 
 	fun set(
@@ -76,12 +79,13 @@ data class FramebufferInfo(
 			height: Int,
 			scaleX: Float,
 			scaleY: Float
-	) {
+	): FramebufferInfo {
 		this.framebuffer = framebuffer
 		this.width = width
 		this.height = height
 		this.scaleX = scaleX
 		this.scaleY = scaleY
+		return this
 	}
 
 	fun equals(framebuffer: GlFramebufferRef?,
@@ -92,7 +96,7 @@ data class FramebufferInfo(
 		return this.framebuffer == framebuffer && this.width == width && this.height == height && this.scaleX == scaleX && this.scaleY == scaleY
 	}
 
-	fun clear() {
+	override fun clear() {
 		framebuffer = null
 		width = 0
 		height = 0

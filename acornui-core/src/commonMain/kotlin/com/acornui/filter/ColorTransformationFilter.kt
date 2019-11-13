@@ -20,6 +20,7 @@ import com.acornui.component.RenderContextRo
 import com.acornui.di.Owned
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.math.ColorTransformation
+import com.acornui.math.IntRectangleRo
 
 class ColorTransformationFilter(
 		owner: Owned,
@@ -29,16 +30,12 @@ class ColorTransformationFilter(
 		 */
 		val colorTransformation: ColorTransformation
 ) : RenderFilterBase(owner) {
-
-	override val shouldSkipFilter: Boolean
-		get() = !enabled || colorTransformation.isIdentity
-
-	override fun draw(renderContext: RenderContextRo) {
+	
+	override fun render(region: IntRectangleRo, inner: () -> Unit) {
 		glState.useColorTransformation(colorTransformation) {
-			contents?.render(renderContext)
+			inner()
 		}
 	}
-
 }
 
 fun Owned.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {

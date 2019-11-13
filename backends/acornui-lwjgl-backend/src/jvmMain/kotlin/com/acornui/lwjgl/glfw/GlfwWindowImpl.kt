@@ -45,7 +45,7 @@ import kotlin.math.ceil
 class GlfwWindowImpl(
 		windowConfig: WindowConfig,
 		private val glConfig: GlConfig,
-		private val gl: Gl20,
+		gl: Gl20,
 		debug: Boolean
 ) : Window {
 
@@ -186,7 +186,6 @@ class GlfwWindowImpl(
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
 
-
 		// Redraw when the window has been minimized / restored / etc.
 
 		glfwSetWindowIconifyCallback(windowId) { _, iconified ->
@@ -195,10 +194,12 @@ class GlfwWindowImpl(
 		}
 
 		glfwSetFramebufferSizeCallback(windowId) { _, width, height ->
+			println("fb size height ${height}")
 			updateFramebuffer(width, height)
 		}
 
 		glfwSetWindowSizeCallback(windowId) { _, width, height ->
+			println("window size height ${height}")
 			glfwWindowWidth = width
 			glfwWindowHeight = height
 			_glfwWindowSizeChanged.dispatch(width, height)
@@ -267,6 +268,7 @@ class GlfwWindowImpl(
 	private fun updateFramebuffer(framebufferWidth: Int, framebufferHeight: Int) {
 		this.framebufferWidth = framebufferWidth
 		this.framebufferHeight = framebufferHeight
+
 		requestRender()
 		_sizeChanged.dispatch(width, height)
 	}

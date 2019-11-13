@@ -16,25 +16,22 @@
 
 package com.acornui.filter
 
-import com.acornui.Renderable
 import com.acornui.async.disposeOnShutdown
+import com.acornui.ceilInt
 import com.acornui.component.ComponentInit
-import com.acornui.component.PaddedRenderable
-import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.di.Owned
-import com.acornui.di.inject
 import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
-import com.acornui.graphic.Window
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
+import com.acornui.math.IntPad
+import com.acornui.math.IntPadRo
+import com.acornui.math.IntRectangleRo
+import com.acornui.math.Matrix4
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.math.ceil
 
 open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
@@ -43,48 +40,38 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	var quality by bindable(BlurQuality.NORMAL)
 
-	private val gl by Gl20
-	private val window by Window
 	private val blurFramebufferA = own(resizeableFramebuffer())
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
 	private val sprite = Sprite(glState)
-	private val renderable = PaddedRenderable(sprite)
+	private val transform = Matrix4()
 
-	private val _drawPadding = Pad()
-	override val drawPadding: PadRo
+	private val _drawPadding = IntPad()
+	override val drawPadding: IntPadRo
 		get() {
-			val hPad = ceil(blurX * quality.passes)
-			val vPad = ceil(blurY * quality.passes)
+			val hPad = ceilInt(blurX * quality.passes * glState.framebuffer.scaleX)
+			val vPad = ceilInt(blurY * quality.passes * glState.framebuffer.scaleY)
 			return _drawPadding.set(top = vPad, right = hPad, bottom = vPad, left = hPad)
 		}
 
-	override val shouldSkipFilter: Boolean
-		get() = super.shouldSkipFilter || (blurX <= 0f && blurY <= 0f)
-
 	private val framebufferFilter = FramebufferFilter(this)
-
-	override var contents: Renderable?
-		get() = super.contents
-		set(value) {
-			super.contents = value
-			framebufferFilter.contents = value
-		}
 
 	init {
 		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	override fun draw(renderContext: RenderContextRo) {
-		if (!bitmapCacheIsValid)
-			drawToPingPongBuffers()
-		drawBlurToScreen(renderContext)
+	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+		drawToPingPongBuffers(region, inner)
+		drawBlurToScreen()
 	}
 
-	fun drawToPingPongBuffers() {
+	private val framebufferInfo = FramebufferInfo()
+
+	fun drawToPingPongBuffers(region: IntRectangleRo, inner: () -> Unit) {
+		val fB = framebufferInfo.set(glState.framebuffer)
+		val vY = fB.height - region.bottom
 		val framebufferFilter = framebufferFilter
-		framebufferFilter.drawPadding = drawPadding
-		framebufferFilter.drawToFramebuffer()
+		framebufferFilter.drawToFramebuffer(region, inner)
 		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
@@ -109,40 +96,37 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			for (i in 1..passes) {
 				val p = i.toFloat() / passes.toFloat()
 				blurFramebufferA.begin()
-				uniforms.put("u_dir", 0f, blurY * p * 0.25f * window.scaleY)
+				uniforms.put("u_dir", 0f, blurY * p * 0.25f * fB.scaleY)
 				glState.batch.putIdtQuad()
 				blurFramebufferA.end()
 				blurFramebufferB.begin()
 				glState.setTexture(blurFramebufferA.texture)
-				uniforms.put("u_dir", blurX * p * 0.25f * window.scaleX, 0f)
+				uniforms.put("u_dir", blurX * p * 0.25f * fB.scaleX, 0f)
 				glState.batch.putIdtQuad()
 				blurFramebufferB.end()
 				glState.setTexture(blurFramebufferB.texture)
 			}
 		}
 
-		val window = inject(Window)
-		blurFramebufferB.drawable(sprite)
-		sprite.setScaling(window.scaleX, window.scaleY)
-		setDrawPadding(renderable.padding)
-		renderable.setSize(null, null)
+		framebufferFilter.drawable(sprite)
+		sprite.texture = blurFramebufferB.texture
+		transform.setTranslation(region.x.toFloat() / fB.scaleX, vY.toFloat() / fB.scaleY)
+		sprite.updateWorldVertices(transform = transform)
 	}
 
-	fun drawBlurToScreen(renderContext: RenderContextRo) {
-		renderable.render(renderContext)
+	fun drawBlurToScreen() {
+		sprite.render()
 	}
 
-	fun drawOriginalToScreen(renderContext: RenderContextRo) {
-		framebufferFilter.drawToScreen(renderContext)
+	fun drawOriginalToScreen() {
+		framebufferFilter.drawToScreen()
 	}
 
 	/**
 	 * Configures a drawable to match what was last rendered.
 	 */
-	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
-		out.inner.set(sprite)
-		out.padding.set(renderable.padding)
-		return out
+	fun drawable(out: Sprite = Sprite(glState)): Sprite {
+		return out.set(sprite)
 	}
 
 	companion object {

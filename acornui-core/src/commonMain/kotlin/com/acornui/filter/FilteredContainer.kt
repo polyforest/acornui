@@ -18,58 +18,34 @@
 
 package com.acornui.filter
 
-import com.acornui.Renderable
+import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.collection.forEach2
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.FillLayoutContainer
+import com.acornui.component.UiComponent
+import com.acornui.component.ValidationFlags
 import com.acornui.di.Owned
 import com.acornui.di.own
-import com.acornui.function.as2
-import com.acornui.math.Bounds
-import com.acornui.math.BoundsRo
-import com.acornui.math.MinMaxRo
+import com.acornui.math.IntRectangle
+import com.acornui.math.IntRectangleRo
+import com.acornui.signal.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) {
 
-	/**
-	 * If there are render filters, inner renderable is set as the contents of the last render filter.
-	 */
-	private val innerRenderable: Renderable by lazy {
-
-		object : Renderable {
-
-			override val drawRegion: MinMaxRo
-				get() = super@FilteredContainer.drawRegion
-
-			override val bounds: BoundsRo
-				get() = super@FilteredContainer.bounds
-
-			override val explicitWidth: Float?
-				get() = super@FilteredContainer.explicitWidth
-
-			override val explicitHeight: Float?
-				get() = super@FilteredContainer.explicitHeight
-
-			@Suppress("RedundantOverride") // Erroneous warning
-			override fun setSize(width: Float?, height: Float?) {
-				super@FilteredContainer.setSize(width, height)
-			}
-
-			@Suppress("RedundantOverride") // Erroneous warning
-			override fun render(renderContext: RenderContextRo) {
-				super@FilteredContainer.render(renderContext)
-			}
-		}
-	}
-
-	private val _renderFilters = own(RenderFilterList(innerRenderable).apply {
-		changed.add {
-			invalidate(ValidationFlags.BITMAP_CACHE)
+	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
+		bind {
+			invalidate(ValidationFlags.REDRAW_REGIONS)
 		}
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
+
+	init {
+		draws = true
+		stage.style.useRedrawRegions = false
+	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
 		_renderFilters.add(this)
@@ -81,62 +57,27 @@ class FilteredContainer(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 		return this
 	}
 
-	override fun onInvalidated(flagsInvalidated: Int) {
-		super.onInvalidated(flagsInvalidated)
-		if (flagsInvalidated.containsFlag(ValidationFlags.BITMAP_CACHE)) {
-			invalidateBitmapCache()
+	override fun updateDrawRegionScreen(out: IntRectangle) {
+		super.updateDrawRegionScreen(out)
+		_renderFilters.forEach2 {
+			out += it.drawPadding
 		}
 	}
 
-	private fun invalidateBitmapCache() {
-		window.requestRender()
-		for (i in 0..renderFilters.lastIndex) {
-			renderFilters[i].invalidateBitmapCache()
-		}
+	override fun draw() {
+		draw(_renderFilters.lastIndex, drawRegionScreen)
 	}
-
-	override fun onActivated() {
-		super.onActivated()
-		window.scaleChanged.add(::invalidateBitmapCache.as2)
-	}
-
-	override fun onDeactivated() {
-		super.onDeactivated()
-		window.scaleChanged.remove(::invalidateBitmapCache.as2)
-	}
-
-	//-------------------------------------------
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		elementsToLayout.forEach2 { element ->
-			element.setSize(explicitWidth, explicitHeight)
-			element.moveTo(0f, 0f)
-			if (explicitWidth == null) {
-				if (element.right > out.width)
-					out.width = element.right
+	
+	private fun draw(filterIndex: Int, drawRegion: IntRectangleRo) {
+		if (filterIndex == -1)
+			super.draw()
+		else {
+			val filter = _renderFilters[filterIndex]
+			filter.render(drawRegion) {
+				draw(filterIndex - 1, drawRegion - filter.drawPadding)
 			}
-			if (explicitHeight == null) {
-				if (element.bottom > out.height)
-					out.height = element.bottom
-			}
-			if (element.baseline > out.baseline)
-				out.baseline = element.baseline
 		}
 	}
-
-	//-------------------------------------------
-	// Renderable
-	//-------------------------------------------
-
-	override val drawRegion: MinMaxRo
-		get() = _renderFilters.drawRegion
-
-	override fun render(renderContext: RenderContextRo) {
-		_renderFilters.render(renderContext)
-	}
-
-	override val bounds: BoundsRo
-		get() = _renderFilters.bounds
 }
 
 inline fun Owned.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {

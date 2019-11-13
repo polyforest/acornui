@@ -250,9 +250,9 @@ class Framebuffer(
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun sprite(sprite: Sprite = Sprite(glState)): Sprite {
+	fun drawable(sprite: Sprite = Sprite(glState)): Sprite {
 		return sprite.apply {
-			setUv(0f, 0f, 1f, 1f, false)
+			setUv(0f, 1f, 1f, 0f, false)
 			texture = this@Framebuffer.texture
 			setScaling(scaleX, scaleY)
 		}

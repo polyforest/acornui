@@ -361,6 +361,8 @@ inline fun GlState.useViewport(x: Int, y: Int, width: Int, height: Int, inner: (
 	IntRectangle.free(oldViewport)
 }
 
+inline fun GlState.useViewport(region: IntRectangleRo, inner: () -> Unit) = useViewport(region.x, region.y, region.width, region.height, inner)
+
 private val framebufferInfoTmp = FramebufferInfo()
 
 fun GlState.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: () -> Unit) {

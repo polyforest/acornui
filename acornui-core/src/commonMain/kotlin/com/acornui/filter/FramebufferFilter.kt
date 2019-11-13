@@ -17,25 +17,20 @@
 package com.acornui.filter
 
 import com.acornui.AppConfig
-import com.acornui.Renderable
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.Sprite
 import com.acornui.di.Owned
 import com.acornui.di.inject
-import com.acornui.di.own
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.clearAndReset
-import com.acornui.gl.core.resizeableFramebuffer
-import com.acornui.graphic.*
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
-import com.acornui.signal.Signal0
-import com.acornui.signal.bind
+import com.acornui.gl.core.*
+import com.acornui.graphic.Color
+import com.acornui.graphic.Texture
+import com.acornui.math.IntRectangleRo
+import com.acornui.math.Matrix4
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Creates a Framebuffer and provides utility to draw a [Renderable] object to it and then draw the frame buffer to the
- * screen.
+ * Draws a region to a frame buffer.
  */
 class FramebufferFilter(
 		owner: Owned,
@@ -43,81 +38,48 @@ class FramebufferFilter(
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
 
-	private val window by Window
-
-	private var _drawPadding: PadRo = Pad.EMPTY_PAD
-
-	/**
-	 * Extra padding when the contents are rendered to the frame buffer.
-	 * The values of this padding are ceiled in order to prevent rendering on a fraction of a pixel.
-	 */
-	override var drawPadding: PadRo
-		get() = _drawPadding
-		set(value) {
-			_drawPadding = value.copy().ceil()
-		}
-
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
-	var blendMode = BlendMode.NORMAL
-	var premultipliedAlpha = false
-
-	private val camera: Camera = orthographicCamera {
-		yDown(false)
-	}
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
-
-	private val framebufferRenderContext = CustomRenderContext(camera)
 
 	val texture: Texture
 		get() = framebuffer.texture
 
+	private val transform = Matrix4()
 	private val sprite = Sprite(glState)
-	private val renderable = PaddedRenderable(sprite)
 
-	override fun draw(renderContext: RenderContextRo) {
-		if (!bitmapCacheIsValid)
-			drawToFramebuffer()
-		drawToScreen(renderContext)
+	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+		drawToFramebuffer(region, inner)
+		drawToScreen()
 	}
 
-	fun drawToFramebuffer() {
-		val contents = contents ?: return
-		val drawRegion = drawRegion
+	private val framebufferInfo = FramebufferInfo()
 
-		val renderContext = framebufferRenderContext
-		val w = drawRegion.width
-		val h = drawRegion.height
-		camera.setViewport(w, h)
-		camera.moveToLookAtRect(drawRegion)
-		renderContext.clipRegion.set(drawRegion)
-		renderContext.canvasTransform.set(drawRegion)
-
-		framebuffer.setSize(w * window.scaleX, h * window.scaleY, window.scaleX, window.scaleY)
-
+	fun drawToFramebuffer(region: IntRectangleRo, inner: () -> Unit) {
+		val fB = framebufferInfo.set(glState.framebuffer)
+		val vY = fB.height - region.bottom
+		framebuffer.setSize(region.width, region.height, fB.scaleX, fB.scaleY)
 		framebuffer.begin()
-		clearAndReset(clearColor, clearMask)
-		glState.uniforms.useCamera(renderContext) {
-			contents.render(renderContext)
-		}
+		gl.clearAndReset(clearColor, clearMask)
+		glState.setViewport(-region.x, -vY, fB.width, fB.height)
+		inner()
+
 		framebuffer.end()
 		framebuffer.drawable(sprite)
-		setDrawPadding(renderable.padding)
-		renderable.setSize(null, null)
+		transform.setTranslation(region.x.toFloat() / fB.scaleX, vY.toFloat() / fB.scaleY)
+		sprite.updateWorldVertices(transform = transform)
 	}
 
-	fun drawToScreen(renderContext: RenderContextRo) {
-		renderable.render(renderContext)
+	fun drawToScreen() {
+		sprite.render()
 	}
 
 	/**
 	 * Configures a drawable to match what was last rendered.
 	 */
-	fun drawable(out: PaddedRenderable<Sprite> = PaddedRenderable(Sprite(glState))): PaddedRenderable<Sprite> {
-		out.inner.set(sprite)
-		out.padding.set(renderable.padding)
-		return out
+	fun drawable(out: Sprite = Sprite(glState)): Sprite {
+		return out.set(sprite)
 	}
 
 	override fun dispose() {
@@ -129,7 +91,7 @@ class FramebufferFilter(
 /**
  * A frame buffer filter will cache the render target as a bitmap.
  */
-inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter  {
+inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = FramebufferFilter(this)
 	b.init()

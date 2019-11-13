@@ -16,12 +16,11 @@
 
 package com.acornui.filter
 
-import com.acornui.component.RenderContextRo
 import com.acornui.di.Owned
-import com.acornui.di.inject
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useShader
+import com.acornui.math.IntRectangleRo
 
 /**
  * A filter that sets a custom shader.
@@ -40,12 +39,10 @@ class ShaderFilter(
 		var configure: (gl: Gl20, shader: ShaderProgram) -> Unit = { _, _ -> }
 ) : RenderFilterBase(owner) {
 
-	private val gl = inject(Gl20)
-
-	override fun draw(renderContext: RenderContextRo) {
+	override fun render(region: IntRectangleRo, inner: () -> Unit) {
 		glState.useShader(shader) {
 			configure(gl, shader)
-			contents?.render(renderContext)
+			inner()
 		}
 	}
 

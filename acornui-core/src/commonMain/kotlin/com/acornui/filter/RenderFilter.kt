@@ -16,14 +16,14 @@
 
 package com.acornui.filter
 
-import com.acornui.component.RenderContextRo
-import com.acornui.component.layout.Sizable
 import com.acornui.Disposable
-import com.acornui.Renderable
 import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
+import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
-import com.acornui.math.*
+import com.acornui.math.IntPad
+import com.acornui.math.IntPadRo
+import com.acornui.math.IntRectangleRo
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
@@ -32,82 +32,31 @@ import kotlin.properties.ReadWriteProperty
 /**
  * A render filter wraps the drawing of a component.
  */
-interface RenderFilter : Renderable, Observable {
+interface RenderFilter : Observable {
 
 	/**
-	 * The contents this render filter should wrap.
+	 * The buffer to add to the screen region to which this filter draws.
+	 * This should be scaled by the current frame buffer's scaling.
 	 */
-	var contents: Renderable?
-
-	/**
-	 * True if the bitmap cache is invalid and will be validated next render.
-	 */
-	val bitmapCacheIsValid: Boolean
-
-	/**
-	 * Marks any bitmap caches (if there are any) as invalid and need to be redrawn.
-	 */
-	fun invalidateBitmapCache()
+	val drawPadding: IntPadRo
+		get() = IntPad.EMPTY_PAD
+	
+	fun render(region: IntRectangleRo, inner: ()->Unit)
 
 }
 
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Sizable, Disposable {
+abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
 
 	protected val glState by GlState
-
-	final override var bitmapCacheIsValid = false
-		private set
+	protected val gl by Gl20
 
 	var enabled: Boolean by bindable(true)
-
-	/**
-	 * True if this filter should be skipped.
-	 */
-	protected open val shouldSkipFilter: Boolean
-		get() = !enabled
-
-	override var contents: Renderable? = null
-		set(value) {
-			if (value === this) throw Exception("Cannot set contents to self.")
-			field = value
-			invalidateBitmapCache()
-		}
-
-	override fun invalidateBitmapCache() {
-		bitmapCacheIsValid = false
-	}
-
-	/**
-	 * The padding this filter should inflate the [bounds] in order to calculate the [drawRegion].
-	 */
-	open val drawPadding: PadRo = Pad.EMPTY_PAD
-
-	override val bounds: BoundsRo
-		get() = contents?.bounds ?: Bounds.EMPTY_BOUNDS
-
-	private val _drawRegion = MinMax()
-
-	/**
-	 * @see Renderable.drawRegion
-	 */
-	override val drawRegion: MinMaxRo
-		get() = _drawRegion.set(contents?.drawRegion).inflate(drawPadding)
-
-	/**
-	 * Configures a padding object to represent the shift needed to draw a rasterized representation of the contents
-	 * in the contents coordinate space.
-	 */
-	protected fun setDrawPadding(padding: Pad) {
-		val drawRegion = drawRegion
-		val bounds = bounds
-		padding.set(drawRegion.yMin, bounds.width - drawRegion.xMax, bounds.height - drawRegion.yMax, drawRegion.xMin)
-	}
 
 	/**
 	 * When the property has changed, [changed] will be dispatched.
@@ -135,31 +84,8 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 		_changed.dispatch(this)
 	}
 
-	final override val explicitWidth: Float?
-		get() = contents?.explicitWidth
-
-	final override val explicitHeight: Float?
-		get() = contents?.explicitHeight
-
-	final override fun setSize(width: Float?, height: Float?) {
-		contents?.setSize(width, height)
-	}
-
-	final override fun render(renderContext: RenderContextRo) {
-		if (shouldSkipFilter) contents?.render(renderContext)
-		else draw(renderContext)
-		bitmapCacheIsValid = true
-	}
-
-	/**
-	 * Renders this filter.
-	 * This will only be called if [shouldSkipFilter] is false.
-	 */
-	protected abstract fun draw(renderContext: RenderContextRo)
-
 	override fun dispose() {
 		super.dispose()
-		contents = null
 		_changed.dispose()
 	}
 }
