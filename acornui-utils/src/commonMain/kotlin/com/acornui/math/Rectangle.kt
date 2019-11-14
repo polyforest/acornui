@@ -134,9 +134,8 @@ interface RectangleRo {
 	 * Calculates the aspect ratio ( width / height ) of this rectangle
 	 * @return the aspect ratio of this rectangle. Returns 0 if height is 0 to avoid NaN
 	 */
-	fun getAspectRatio(): Float {
-		return if (height == 0f) 0f else width / height
-	}
+	val aspectRatio: Float
+		get() = if (height == 0f) 0f else width / height
 
 	/**
 	 * Calculates the center of the rectangle. Results are located in the given Vector2
@@ -349,9 +348,9 @@ class Rectangle(
 	 * @return this rectangle for chaining
 	 */
 	fun fitOutside(rect: RectangleRo): Rectangle {
-		val ratio = getAspectRatio()
+		val ratio = aspectRatio
 
-		if (ratio > rect.getAspectRatio()) {
+		if (ratio > rect.aspectRatio) {
 			// Wider than tall
 			setSize(rect.height * ratio, rect.height)
 		} else {
@@ -370,9 +369,9 @@ class Rectangle(
 	 * @return this rectangle for chaining
 	 */
 	fun fitInside(rect: RectangleRo): Rectangle {
-		val ratio = getAspectRatio()
+		val ratio = aspectRatio
 
-		if (ratio < rect.getAspectRatio()) {
+		if (ratio < rect.aspectRatio) {
 			// Taller than wide
 			setSize(rect.height * ratio, rect.height)
 		} else {
@@ -385,12 +384,12 @@ class Rectangle(
 	}
 
 	/**
-	 * Expands all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 * Expands all boundaries [left], [top], [right], and [bottom] by the given amount.
 	 */
 	fun inflate(all: Float) = inflate(all, all, all, all)
 
 	/**
-	 * Expands all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 * Expands all boundaries [left], [top], [right], and [bottom] by the given values.
 	 */
 	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Rectangle {
 		x -= left
@@ -401,17 +400,17 @@ class Rectangle(
 	}
 
 	/**
-	 * Expands all boundaries [x], [y], [right], and [bottom] by the [pad] values.
+	 * Expands all boundaries [left], [top], [right], and [bottom] by the [pad] values.
 	 */
 	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
 
 	/**
-	 * Reduces all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 * Reduces all boundaries [left], [top], [right], and [bottom] by the given value.
 	 */
 	fun reduce(all: Float) = inflate(-all, -all, -all, -all)
 	
 	/**
-	 * Reduces all boundaries [x], [y], [right], and [bottom] by [left], [top], [right], and [bottom]
+	 * Reduces all boundaries [left], [top], [right], and [bottom] by the given values.
 	 */
 	fun reduce(left: Float, top: Float, right: Float, bottom: Float) = inflate(-left, -top, -right, -bottom)
 
