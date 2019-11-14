@@ -408,30 +408,6 @@ class Box(
 	}
 
 	/**
-	 * Increases this value by the given deltas.
-	 */
-	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Box {
-		min.x -= left
-		min.y -= top
-		max.x += right
-		max.y += bottom
-		return this
-	}
-
-	/**
-	 * Increases this value by the given deltas.
-	 */
-	fun inflate(left: Float, top: Float, front: Float, right: Float, bottom: Float, back: Float): Box {
-		min.x -= left
-		min.y -= top
-		min.z -= front
-		max.x += right
-		max.y += bottom
-		max.z += back
-		return this
-	}
-
-	/**
 	 * Multiplies the bounding box by the given matrix. This is achieved by multiplying the 8 corner points and then calculating
 	 * the minimum and maximum vectors from the transformed points.
 	 *
@@ -485,6 +461,68 @@ class Box(
 		max.x = minOf(max.x, clip.xMax)
 		max.y = minOf(max.y, clip.yMax)
 		return this
+	}
+
+	/**
+	 * Expands all boundaries [x], [y], [right], and [bottom] by the given amount.
+	 */
+	fun inflate(all: Float) = inflate(all, all, all, all, all, all)
+
+	/**
+	 * Increases this value by the given deltas.
+	 */
+	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Box {
+		min.x -= left
+		min.y -= top
+		max.x += right
+		max.y += bottom
+		return this
+	}
+
+	/**
+	 * Increases this value by the given deltas.
+	 */
+	fun inflate(left: Float, top: Float, front: Float, right: Float, bottom: Float, back: Float): Box {
+		min.x -= left
+		min.y -= top
+		min.z -= front
+		max.x += right
+		max.y += bottom
+		max.z += back
+		return this
+	}
+
+	/**
+	 * Expands all boundaries [left], [top], [right], and [bottom] by the [pad] values.
+	 */
+	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+
+	/**
+	 * Reduces all boundaries [left], [top], [right], and [bottom] by the given value.
+	 */
+	fun reduce(all: Float) = inflate(-all)
+
+	/**
+	 * Reduces all boundaries [left], [top], [right], and [bottom] by the given values.
+	 */
+	fun reduce(left: Float, top: Float, right: Float, bottom: Float) = inflate(-left, -top, -right, -bottom)
+
+	/**
+	 * Reduces all boundaries [left], [top], [front], [right], [bottom], and [back] by the given values.
+	 */
+	fun reduce(left: Float, top: Float, front: Float, right: Float, bottom: Float, back: Float): Box = inflate(-left, -top, -front, -right, -bottom, -back)
+
+	/**
+	 * Reduces all boundaries [left], [top], [right], and [bottom] by the [pad] values.
+	 */
+	fun reduce(pad: PadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+
+	operator fun minusAssign(pad: PadRo) {
+		reduce(pad)
+	}
+
+	operator fun plusAssign(pad: PadRo) {
+		inflate(pad)
 	}
 
 	override fun toString(): String {
