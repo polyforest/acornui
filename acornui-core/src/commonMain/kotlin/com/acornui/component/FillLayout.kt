@@ -44,14 +44,10 @@ class FillLayout : LayoutAlgorithm<NoopStyle, NoopLayoutData> {
 		elements.forEach2 { element ->
 			element.setSize(explicitWidth, explicitHeight)
 			element.moveTo(0f, 0f)
-			if (explicitWidth == null) {
-				if (element.right > out.width)
-					out.width = element.right
-			}
-			if (explicitHeight == null) {
-				if (element.bottom > out.height)
-					out.height = element.bottom
-			}
+			if (element.width > out.width)
+				out.width = element.width
+			if (element.height > out.height)
+				out.height = element.height
 			if (element.baseline > out.baseline)
 				out.baseline = element.baseline
 		}

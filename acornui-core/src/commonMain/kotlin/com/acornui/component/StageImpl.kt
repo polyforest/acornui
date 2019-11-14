@@ -33,6 +33,7 @@ import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.IntRectangle
+import com.acornui.math.Rectangle
 import com.acornui.popup.PopUpManager
 import com.acornui.reflect.observable
 import com.acornui.time.timer
@@ -124,8 +125,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		super.updateRenderContext()
 	}
 
-	override fun updateDrawRegionScreen(out: IntRectangle) {
-		out.set(0, 0, window.framebufferWidth, window.framebufferHeight)
+	override fun updateDrawRegionCanvas(out: Rectangle) {
+		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 
 	//-------------------------------------------------------------

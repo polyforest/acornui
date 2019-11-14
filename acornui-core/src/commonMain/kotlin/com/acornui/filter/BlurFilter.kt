@@ -26,10 +26,7 @@ import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
-import com.acornui.math.IntPad
-import com.acornui.math.IntPadRo
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4
+import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -46,11 +43,11 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val sprite = Sprite(glState)
 	private val transform = Matrix4()
 
-	private val _drawPadding = IntPad()
-	override val drawPadding: IntPadRo
+	private val _drawPadding = Pad()
+	override val drawPadding: PadRo
 		get() {
-			val hPad = ceilInt(blurX * quality.passes * glState.framebuffer.scaleX)
-			val vPad = ceilInt(blurY * quality.passes * glState.framebuffer.scaleY)
+			val hPad = blurX * quality.passes
+			val vPad = blurY * quality.passes
 			return _drawPadding.set(top = vPad, right = hPad, bottom = vPad, left = hPad)
 		}
 
@@ -60,16 +57,15 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+	override fun render(region: RectangleRo, inner: () -> Unit) {
 		drawToPingPongBuffers(region, inner)
 		drawBlurToScreen()
 	}
 
 	private val framebufferInfo = FramebufferInfo()
 
-	fun drawToPingPongBuffers(region: IntRectangleRo, inner: () -> Unit) {
+	fun drawToPingPongBuffers(region: RectangleRo, inner: () -> Unit) {
 		val fB = framebufferInfo.set(glState.framebuffer)
-		val vY = fB.height - region.bottom
 		val framebufferFilter = framebufferFilter
 		framebufferFilter.drawToFramebuffer(region, inner)
 		val textureToBlur = framebufferFilter.texture
@@ -110,7 +106,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 		framebufferFilter.drawable(sprite)
 		sprite.texture = blurFramebufferB.texture
-		transform.setTranslation(region.x.toFloat() / fB.scaleX, vY.toFloat() / fB.scaleY)
+		transform.setTranslation(region.x, region.y)
 		sprite.updateWorldVertices(transform = transform)
 	}
 

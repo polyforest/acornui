@@ -126,7 +126,7 @@ open class StaticMeshComponent(
 		if (explicitHeight == null) out.height = boundingBox.max.y
 	}
 
-	override fun updateDrawRegion(out: Box) {
+	override fun updateDrawRegionLocal(out: Box) {
 		val boundingBox = mesh?.boundingBox ?: return
 		out.set(boundingBox)
 	}

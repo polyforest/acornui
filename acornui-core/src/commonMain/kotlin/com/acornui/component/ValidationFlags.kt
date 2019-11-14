@@ -113,6 +113,10 @@ fun Validatable.invalidateLayout() {
 	invalidate(ValidationFlags.LAYOUT)
 }
 
+fun Validatable.invalidateRenderContext() {
+	invalidate(ValidationFlags.RENDER_CONTEXT)
+}
+
 fun Validatable.invalidateDraw() {
 	invalidate(ValidationFlags.REDRAW_REGIONS)
 }

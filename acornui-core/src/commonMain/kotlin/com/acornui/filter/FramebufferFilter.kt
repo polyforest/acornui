@@ -24,8 +24,7 @@ import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.Texture
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4
+import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -49,25 +48,26 @@ class FramebufferFilter(
 	private val transform = Matrix4()
 	private val sprite = Sprite(glState)
 
-	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+	override fun render(region: RectangleRo, inner: () -> Unit) {
 		drawToFramebuffer(region, inner)
 		drawToScreen()
 	}
 
 	private val framebufferInfo = FramebufferInfo()
+	private val viewport = IntRectangle()
 
-	fun drawToFramebuffer(region: IntRectangleRo, inner: () -> Unit) {
+	fun drawToFramebuffer(region: RectangleRo, inner: () -> Unit) {
 		val fB = framebufferInfo.set(glState.framebuffer)
-		val vY = fB.height - region.bottom
-		framebuffer.setSize(region.width, region.height, fB.scaleX, fB.scaleY)
+		fB.canvasToScreen(region, viewport)
+		framebuffer.setSize(region.width * fB.scaleX, region.height * fB.scaleY, fB.scaleX, fB.scaleY)
 		framebuffer.begin()
 		gl.clearAndReset(clearColor, clearMask)
-		glState.setViewport(-region.x, -vY, fB.width, fB.height)
+		glState.setViewport(-viewport.x, -viewport.y, fB.width, fB.height)
 		inner()
 
 		framebuffer.end()
 		framebuffer.drawable(sprite)
-		transform.setTranslation(region.x.toFloat() / fB.scaleX, vY.toFloat() / fB.scaleY)
+		transform.setTranslation(viewport.x.toFloat() / fB.scaleX, (fB.height - viewport.bottom.toFloat()) / fB.scaleY)
 		sprite.updateWorldVertices(transform = transform)
 	}
 

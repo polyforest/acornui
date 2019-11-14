@@ -18,6 +18,7 @@
 
 package com.acornui.filter
 
+import com.acornui.RedrawRegions
 import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.collection.forEach2
 import com.acornui.component.ComponentInit
@@ -26,8 +27,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.ValidationFlags
 import com.acornui.di.Owned
 import com.acornui.di.own
-import com.acornui.math.IntRectangle
-import com.acornui.math.IntRectangleRo
+import com.acornui.math.*
 import com.acornui.signal.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -44,7 +44,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 	init {
 		draws = true
-		stage.style.useRedrawRegions = false
 	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
@@ -57,18 +56,18 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 		return this
 	}
 
-	override fun updateDrawRegionScreen(out: IntRectangle) {
-		super.updateDrawRegionScreen(out)
+	override fun updateDrawRegionCanvas(out: Rectangle) {
+		super.updateDrawRegionCanvas(out)
 		_renderFilters.forEach2 {
 			out += it.drawPadding
 		}
 	}
 
 	override fun draw() {
-		draw(_renderFilters.lastIndex, drawRegionScreen)
+		draw(_renderFilters.lastIndex, drawRegionCanvas)
 	}
 	
-	private fun draw(filterIndex: Int, drawRegion: IntRectangleRo) {
+	private fun draw(filterIndex: Int, drawRegion: RectangleRo) {
 		if (filterIndex == -1)
 			super.draw()
 		else {

@@ -20,7 +20,7 @@ import com.acornui.di.Owned
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useShader
-import com.acornui.math.IntRectangleRo
+import com.acornui.math.RectangleRo
 
 /**
  * A filter that sets a custom shader.
@@ -39,7 +39,7 @@ class ShaderFilter(
 		var configure: (gl: Gl20, shader: ShaderProgram) -> Unit = { _, _ -> }
 ) : RenderFilterBase(owner) {
 
-	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+	override fun render(region: RectangleRo, inner: () -> Unit) {
 		glState.useShader(shader) {
 			configure(gl, shader)
 			inner()

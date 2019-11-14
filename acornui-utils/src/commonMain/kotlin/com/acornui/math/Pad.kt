@@ -73,11 +73,11 @@ interface PadRo {
 	}
 
 	operator fun plus(value: PadRo): Pad {
-		return copy().inflate(value)
+		return copy().add(value)
 	}
 
 	operator fun minus(value: PadRo): Pad {
-		return copy().reduce(value)
+		return copy().sub(value)
 	}
 
 	fun toCssString(): String {
@@ -107,6 +107,9 @@ class Pad(
 
 	constructor(all: Array<Float>) : this(all[0], all[1], all[2], all[3])
 
+	/**
+	 * Sets all values to the given float.
+	 */
 	fun set(all: Float): Pad {
 		top = all
 		bottom = all
@@ -115,6 +118,9 @@ class Pad(
 		return this
 	}
 
+	/**
+	 * Sets values to match [other].
+	 */
 	fun set(other: PadRo): Pad {
 		top = other.top
 		bottom = other.bottom
@@ -123,6 +129,9 @@ class Pad(
 		return this
 	}
 
+	/**
+	 * Sets values to the given values.
+	 */
 	fun set(top: Float = 0f, right: Float = 0f, bottom: Float = 0f, left: Float = 0f): Pad {
 		this.top = top
 		this.right = right
@@ -132,14 +141,14 @@ class Pad(
 	}
 
 	/**
-	 * Expands all values [left], [top], [right], and [bottom] by the given amount.
+	 * Adjusts all values [left], [top], [right], and [bottom] by the given amount.
 	 */
-	fun inflate(all: Float) = inflate(all, all, all, all)
+	fun add(all: Float) = add(all, all, all, all)
 
 	/**
-	 * Expands all values by [left], [top], [right], and [bottom]
+	 * Adjusts all values by [left], [top], [right], and [bottom]
 	 */
-	fun inflate(left: Float, top: Float, right: Float, bottom: Float): Pad {
+	fun add(left: Float, top: Float, right: Float, bottom: Float): Pad {
 		this.left += left
 		this.right += right
 		this.top += top
@@ -148,31 +157,31 @@ class Pad(
 	}
 
 	/**
-	 * Expands all values [left], [top], [right], and [bottom] by the [pad] values.
+	 * Adjusts all values [left], [top], [right], and [bottom] by the [pad] values.
 	 */
-	fun inflate(pad: PadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+	fun add(pad: PadRo) = add(pad.left, pad.top, pad.right, pad.bottom)
 
 	/**
-	 * Reduces all values [left], [top], [right], and [bottom] by the given amount.
+	 * Subtracts all values by the given amount.
 	 */
-	fun reduce(all: Float) = inflate(-all, -all, -all, -all)
+	fun sub(all: Float) = add(-all, -all, -all, -all)
 
 	/**
-	 * Reduces all values by [left], [top], [right], and [bottom]
+	 * Subtracts all values by [left], [top], [right], and [bottom]
 	 */
-	fun reduce(left: Float, top: Float, right: Float, bottom: Float) = inflate(-left, -top, -right, -bottom)
+	fun sub(left: Float, top: Float, right: Float, bottom: Float) = add(-left, -top, -right, -bottom)
 
 	/**
-	 * Reduces all values by the [pad] values.
+	 * Subtracts all values by the [pad] values.
 	 */
-	fun reduce(pad: PadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+	fun sub(pad: PadRo) = add(-pad.left, -pad.top, -pad.right, -pad.bottom)
 
 	operator fun minusAssign(pad: PadRo) {
-		reduce(pad)
+		sub(pad)
 	}
 
 	operator fun plusAssign(pad: PadRo) {
-		inflate(pad)
+		add(pad)
 	}
 
 	/**

@@ -75,7 +75,6 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 				region.width,
 				region.height
 		)
-		println("Update CT ${renderContext.canvasTransform}")
 	}
 
 	override fun render() {

@@ -101,7 +101,7 @@ class ResizeableFramebuffer(
 
 		if (newW > oldW || newH > oldH) {
 			framebuffer?.dispose()
-			framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW), maxOf(oldH, newH), hasDepth, hasStencil)
+			framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW, 1), maxOf(oldH, newH, 1), hasDepth, hasStencil)
 			framebuffer!!.setScaling(scaleX, scaleY)
 		}
 		framebuffer!!.setViewport(0, 0, widthInt, heightInt)

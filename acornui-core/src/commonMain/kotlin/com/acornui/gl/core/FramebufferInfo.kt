@@ -16,6 +16,10 @@
 
 package com.acornui.gl.core
 
+import com.acornui.ceilInt
+import com.acornui.math.BoxRo
+import com.acornui.math.IntRectangle
+import com.acornui.math.RectangleRo
 import com.acornui.recycle.Clearable
 
 interface FramebufferInfoRo {
@@ -103,4 +107,18 @@ data class FramebufferInfo(
 		scaleX = 1f
 		scaleY = 1f
 	}
+}
+
+	/**
+	 * Takes the box in canvas coordinates (unscaled, yDown, floats), and converts it to screen coordinates
+	 * (dpi scaled, yUp, ints)
+	 */
+fun FramebufferInfoRo.canvasToScreen(box: RectangleRo, out: IntRectangle): IntRectangle {
+	val sX = scaleX
+	val sY = scaleY
+	val newX = (box.x * sX).toInt()
+	val newY = (box.y * sY).toInt()
+	val newR = ceilInt(box.right * sX)
+	val newB = ceilInt(box.bottom * sY)
+	return out.set(newX, if (yDown) newY else height - newB, newR - newX, newB - newY)
 }

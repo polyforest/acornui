@@ -24,18 +24,39 @@ import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
 
 @Serializable(with = BoxSerializer::class)
-interface BoxRo {
+interface BoxRo : RectangleRo {
 
 	val min: Vector3Ro
 	val max: Vector3Ro
 
 	val center: Vector3Ro
 	val dimensions: Vector3Ro
+	
+	override val x: Float
+		get() = min.x
 
-	val width: Float
+	override val y: Float
+		get() = min.y
+
+	val z: Float
+		get() = min.z
+
+	override val right: Float
+		get() = max.x
+
+	override val bottom: Float
+		get() = max.y
+
+	val front: Float
+		get() = min.z
+	
+	val back: Float
+		get() = max.z
+
+	override val width: Float
 		get() = max.x - min.x
 
-	val height: Float
+	override val height: Float
 		get() = max.y - min.y
 
 	val depth: Float
@@ -45,6 +66,8 @@ interface BoxRo {
 	 * @param corners A list of 8 Vector3 objects that will be populated with the corners of this bounding box.
 	 */
 	fun getCorners(corners: List<Vector3>): List<Vector3> {
+		val min = min
+		val max = max
 		corners[0].set(min.x, min.y, min.z)
 		corners[1].set(max.x, min.y, min.z)
 		corners[2].set(max.x, max.y, min.z)
@@ -102,11 +125,6 @@ interface BoxRo {
 	 * @param b The bounding box
 	 * @return Whether the given bounding box is intersected
 	 */
-	/**
-	 * Returns whether the given bounding box is intersecting this bounding box (at least one point in).
-	 * @param b The bounding box
-	 * @return Whether the given bounding box is intersected
-	 */
 	fun intersects(b: BoxRo): Boolean {
 		if (!isValid()) return false
 
@@ -132,7 +150,7 @@ interface BoxRo {
 	 * this vector.
 	 * @return Returns true if the ray intersects with this box.
 	 */
-	fun intersects(r: RayRo, out: Vector3? = null): Boolean {
+	override fun intersects(r: RayRo, out: Vector3?): Boolean {
 		if (dimensions.x <= 0f || dimensions.y <= 0f) return false
 		if (dimensions.z == 0f) {
 			// Optimization for a common case is that this box is actually nothing more than a rectangle.
@@ -218,11 +236,7 @@ class Box(
 			_dimensions.set(max).sub(min)
 			return _dimensions
 		}
-
-	init {
-		set(min, max)
-	}
-
+	
 	/**
 	 * Sets the given bounding box.
 	 *
@@ -326,7 +340,25 @@ class Box(
 	 * @return This bounding box for chaining.
 	 */
 	fun ext(bounds: BoxRo): Box {
-		return set(min.set(minOf(min.x, bounds.min.x), minOf(min.y, bounds.min.y), minOf(min.z, bounds.min.z)), max.set(maxOf(max.x, bounds.max.x), maxOf(max.y, bounds.max.y), maxOf(max.z, bounds.max.z)))
+		return set(
+				minOf(x, bounds.x),
+				minOf(y, bounds.y),
+				minOf(z, bounds.z),
+				maxOf(right, bounds.right),
+				maxOf(bottom, bounds.bottom),
+				maxOf(back, bounds.back)
+		)
+	}
+	
+	fun ext(bounds: RectangleRo): Box {
+		return set(
+				minOf(min.x, bounds.x),
+				minOf(min.y, bounds.y),
+				min.z,
+				maxOf(max.x, bounds.right),
+				maxOf(max.y, bounds.bottom),
+				max.z
+		)
 	}
 
 	/**

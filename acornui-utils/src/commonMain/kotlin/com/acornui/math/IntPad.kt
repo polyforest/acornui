@@ -73,11 +73,11 @@ interface IntPadRo {
 	}
 
 	operator fun plus(value: IntPadRo): IntPad {
-		return copy().inflate(value)
+		return copy().add(value)
 	}
 
 	operator fun minus(value: IntPadRo): IntPad {
-		return copy().reduce(value)
+		return copy().sub(value)
 	}
 
 	fun toCssString(): String {
@@ -132,14 +132,14 @@ class IntPad(
 	}
 
 	/**
-	 * Expands all values [left], [top], [right], and [bottom] by the given amount.
+	 * Adjusts all values [left], [top], [right], and [bottom] by the given amount.
 	 */
-	fun inflate(all: Int) = inflate(all, all, all, all)
+	fun add(all: Int) = add(all, all, all, all)
 
 	/**
-	 * Expands all values by [left], [top], [right], and [bottom]
+	 * Adjusts all values by [left], [top], [right], and [bottom]
 	 */
-	fun inflate(left: Int, top: Int, right: Int, bottom: Int): IntPad {
+	fun add(left: Int, top: Int, right: Int, bottom: Int): IntPad {
 		this.left += left
 		this.right += right
 		this.top += top
@@ -148,31 +148,31 @@ class IntPad(
 	}
 
 	/**
-	 * Expands all values [left], [top], [right], and [bottom] by the [pad] values.
+	 * Increases all values [left], [top], [right], and [bottom] by the [pad] values.
 	 */
-	fun inflate(pad: IntPadRo) = inflate(pad.left, pad.top, pad.right, pad.bottom)
+	fun add(pad: IntPadRo) = add(pad.left, pad.top, pad.right, pad.bottom)
 
 	/**
-	 * Reduces all values [left], [top], [right], and [bottom] by the given amount.
+	 * Subtracts all values by the given amount.
 	 */
-	fun reduce(all: Int) = inflate(-all, -all, -all, -all)
+	fun sub(all: Int) = add(-all, -all, -all, -all)
 
 	/**
-	 * Reduces all values by [left], [top], [right], and [bottom]
+	 * Subtracts values by [left], [top], [right], and [bottom]
 	 */
-	fun reduce(left: Int, top: Int, right: Int, bottom: Int) = inflate(-left, -top, -right, -bottom)
+	fun sub(left: Int, top: Int, right: Int, bottom: Int) = add(-left, -top, -right, -bottom)
 
 	/**
-	 * Reduces all values by the [pad] values.
+	 * Adjusts all values by the negative [pad] values.
 	 */
-	fun reduce(pad: IntPadRo) = inflate(-pad.left, -pad.top, -pad.right, -pad.bottom)
+	fun sub(pad: IntPadRo) = add(-pad.left, -pad.top, -pad.right, -pad.bottom)
 
 	operator fun minusAssign(pad: IntPadRo) {
-		reduce(pad)
+		sub(pad)
 	}
 
 	operator fun plusAssign(pad: IntPadRo) {
-		inflate(pad)
+		add(pad)
 	}
 
 	override fun clear() {

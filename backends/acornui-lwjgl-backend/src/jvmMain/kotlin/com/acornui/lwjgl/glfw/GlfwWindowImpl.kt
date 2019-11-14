@@ -194,12 +194,10 @@ class GlfwWindowImpl(
 		}
 
 		glfwSetFramebufferSizeCallback(windowId) { _, width, height ->
-			println("fb size height ${height}")
 			updateFramebuffer(width, height)
 		}
 
 		glfwSetWindowSizeCallback(windowId) { _, width, height ->
-			println("window size height ${height}")
 			glfwWindowWidth = width
 			glfwWindowHeight = height
 			_glfwWindowSizeChanged.dispatch(width, height)

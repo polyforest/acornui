@@ -93,7 +93,7 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 					} else {
 						currentFrame++
 					}
-					window.requestRender()
+					invalidateDraw()
 				}
 			}
 		}

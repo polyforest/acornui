@@ -21,9 +21,7 @@ import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
-import com.acornui.math.IntPad
-import com.acornui.math.IntPadRo
-import com.acornui.math.IntRectangleRo
+import com.acornui.math.*
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
@@ -35,13 +33,17 @@ import kotlin.properties.ReadWriteProperty
 interface RenderFilter : Observable {
 
 	/**
-	 * The buffer to add to the screen region to which this filter draws.
-	 * This should be scaled by the current frame buffer's scaling.
+	 * The buffer to add to the region to which this filter draws.
+	 * This should be in canvas coordinates.
 	 */
-	val drawPadding: IntPadRo
-		get() = IntPad.EMPTY_PAD
-	
-	fun render(region: IntRectangleRo, inner: ()->Unit)
+	val drawPadding: PadRo
+		get() = Pad.EMPTY_PAD
+
+	/**
+	 * Renders the [inner] block using this filter.
+	 * @param region The canvas coordinates of the region (after padding) rendered.
+	 */
+	fun render(region: RectangleRo, inner: ()->Unit)
 
 }
 

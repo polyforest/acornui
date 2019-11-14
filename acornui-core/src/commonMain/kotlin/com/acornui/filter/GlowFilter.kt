@@ -16,7 +16,6 @@
 
 package com.acornui.filter
 
-import com.acornui.ceilInt
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.di.Owned
@@ -55,36 +54,31 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	 */
 	var offsetY by bindable(0f)
 
-	private val _offsetPadding = IntPad()
-	private val _drawPadding = IntPad()
-	override val drawPadding: IntPadRo
+	private val offsetPadding = Pad()
+	private val _drawPadding = Pad()
+	override val drawPadding: PadRo
 		get() {
-			val fB = glState.framebuffer
-			val offsetXInt = -ceilInt(offsetX * fB.scaleX)
-			val offsetYInt = -ceilInt(offsetY * fB.scaleY)
-			_offsetPadding.set(offsetXInt, offsetYInt, offsetXInt, offsetYInt)
-			return _drawPadding.set(blurFilter.drawPadding).inflate(_offsetPadding)
+			offsetPadding.set(maxOf(0f, -offsetY), maxOf(0f, offsetX), maxOf(0f, offsetY), maxOf(0f, -offsetX))
+			return _drawPadding.set(blurFilter.drawPadding).add(offsetPadding)
 		}
 
 	private val sprite = Sprite(glState)
 	private val transform = Matrix4()
-	
-	override fun render(region: IntRectangleRo, inner: () -> Unit) {
-		drawToFramebuffer(region - _offsetPadding, inner)
-		val fB = glState.framebuffer
-		val canvasX = region.x.toFloat() / fB.scaleX
-		val canvasY = (fB.height - region.bottom).toFloat() / fB.scaleY
+
+	override fun render(region: RectangleRo, inner: () -> Unit) {
+		val blurRegion = region - offsetPadding
+		drawToFramebuffer(blurRegion, inner)
 
 		glState.useColorTransformation(colorTransformation) {
 			blurFilter.drawable(sprite)
-			transform.setTranslation(canvasX, canvasY)
+			transform.setTranslation(blurRegion.x + offsetX, blurRegion.y + offsetY)
 			sprite.updateWorldVertices(transform = transform)
 			sprite.render()
 		}
 		blurFilter.drawOriginalToScreen()
 	}
 
-	fun drawToFramebuffer(region: IntRectangleRo, inner: () -> Unit) {
+	private fun drawToFramebuffer(region: RectangleRo, inner: () -> Unit) {
 		blurFilter.drawToPingPongBuffers(region, inner)
 	}
 

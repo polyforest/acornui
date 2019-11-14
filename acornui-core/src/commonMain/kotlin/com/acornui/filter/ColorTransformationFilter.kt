@@ -16,11 +16,10 @@
 
 package com.acornui.filter
 
-import com.acornui.component.RenderContextRo
 import com.acornui.di.Owned
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.math.ColorTransformation
-import com.acornui.math.IntRectangleRo
+import com.acornui.math.RectangleRo
 
 class ColorTransformationFilter(
 		owner: Owned,
@@ -31,7 +30,7 @@ class ColorTransformationFilter(
 		val colorTransformation: ColorTransformation
 ) : RenderFilterBase(owner) {
 	
-	override fun render(region: IntRectangleRo, inner: () -> Unit) {
+	override fun render(region: RectangleRo, inner: () -> Unit) {
 		glState.useColorTransformation(colorTransformation) {
 			inner()
 		}

@@ -81,12 +81,7 @@ class JsHtmlComponent(
 		set(value) {
 			component.element.innerHTML = value
 		}
-
-	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
-		super.colorTint(r, g, b, a)
-		println("Set c t $a")
-	}
-
+	
 	override fun updateRenderContext() {
 		super.updateRenderContext()
 		var v = true

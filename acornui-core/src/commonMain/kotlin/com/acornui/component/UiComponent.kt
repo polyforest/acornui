@@ -26,9 +26,9 @@ import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
 import com.acornui.function.as1
-import com.acornui.gl.core.FramebufferInfoRo
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
+import com.acornui.gl.core.canvasToScreen
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -220,7 +220,12 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var baselineOverride: Float?
 
 	/**
-	 * The drawing region in screen coordinates of this component.
+	 * The drawing region of this component in canvas coordinates.
+	 */
+	val drawRegionCanvas: RectangleRo
+
+	/**
+	 * The drawing region of this component in screen coordinates.
 	 */
 	val drawRegionScreen: IntRectangleRo
 
@@ -292,7 +297,7 @@ open class UiComponentImpl(
 		_isActive = false
 
 		if (draws)
-			renderContext.redraw.invalidate(_drawRegionScreen)
+			renderContext.redraw.invalidate(_previousDrawRegionScreen)
 		_deactivated.dispatch(this)
 	}
 
@@ -378,6 +383,8 @@ open class UiComponentImpl(
 	// Sizable properties
 	protected val _bounds = Bounds()
 	protected val _drawRegion = Box()
+	protected val _drawRegionCanvas = Rectangle()
+	protected val _previousDrawRegionScreen = IntRectangle()
 	protected val _drawRegionScreen = IntRectangle()
 
 	/**
@@ -1100,10 +1107,15 @@ open class UiComponentImpl(
 		if (redraw.enabled) {
 			// Invalidate the previously drawn region
 			if (draws && isRendered)
-				renderContext.redraw.invalidate(_drawRegionScreen)
+				renderContext.redraw.invalidate(_previousDrawRegionScreen)
 			// Invalidate the new draw region
-			if (draws)
-				renderContext.redraw.invalidate(drawRegionScreen) // Validates the new draw region.
+			if (draws) {
+				val drawRegionScreen = drawRegionScreen // Validates the new draw region.
+				renderContext.redraw.invalidate(drawRegionScreen)
+				_previousDrawRegionScreen.set(drawRegionScreen)
+			} else {
+				_previousDrawRegionScreen.clear()
+			}
 		}
 	}
 
@@ -1115,19 +1127,15 @@ open class UiComponentImpl(
 	 *
 	 * @param out The bounding box to set to the current draw region.
 	 */
-	protected open fun updateDrawRegion(out: Box) {
+	protected open fun updateDrawRegionLocal(out: Box) {
 		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
 	}
 
-	private val redrawRegionTmp = Box()
-
-	protected open fun updateDrawRegionScreen(out: IntRectangle) {
+	protected open fun updateDrawRegionCanvas(out: Rectangle) {
 		val drawRegion = _drawRegion.inf()
-		updateDrawRegion(drawRegion)
+		updateDrawRegionLocal(drawRegion)
 		if (isRendered && drawRegion.width > 0f && drawRegion.height > 0f) {
-			localToCanvas(drawRegion, redrawRegionTmp)
-			out.canvasToScreen(redrawRegionTmp.clamp(renderContext.clipRegion), glState.framebuffer)
-			out.inflate(1)
+			out.set(localToCanvas(drawRegion).clamp(renderContext.clipRegion))
 		}
 	}
 
@@ -1138,9 +1146,8 @@ open class UiComponentImpl(
 	final override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
-		if (_invalidated.isDispatching) {
-			throw Exception("invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency.")
-		}
+		check(!_invalidated.isDispatching) { "invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency." }
+
 		if (flagsInvalidated != 0) {
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
@@ -1165,14 +1172,17 @@ open class UiComponentImpl(
 	override fun update() = validate()
 
 	private var drawRegionScreenIsValid = false
-	final override val drawRegionScreen: IntRectangleRo
+	final override val drawRegionCanvas: RectangleRo
 		get() {
 			if (!drawRegionScreenIsValid) {
 				drawRegionScreenIsValid = true
-				updateDrawRegionScreen(_drawRegionScreen.apply { clear() })
+				updateDrawRegionCanvas(_drawRegionCanvas.apply { clear() })
 			}
-			return _drawRegionScreen
+			return _drawRegionCanvas
 		}
+
+	final override val drawRegionScreen: IntRectangleRo
+		get() = glState.framebuffer.canvasToScreen(drawRegionCanvas, _drawRegionScreen)
 
 	/**
 	 * True if this component is visible, has opacity, and passes a redraw check with the render context [RedrawRegions].
@@ -1258,18 +1268,4 @@ fun UiComponentRo.getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInterac
 	val first = out.firstOrNull()
 	arrayListPool.free(out)
 	return first
-}
-
-/**
- * Takes the box in canvas coordinates (unscaled, yDown, floats), and converts it to screen coordinates
- * (dpi scaled, yUp, ints)
- */
-fun IntRectangle.canvasToScreen(box: BoxRo, framebufferInfo: FramebufferInfoRo): IntRectangle {
-	val sX = framebufferInfo.scaleX
-	val sY = framebufferInfo.scaleY
-	val newX = (box.min.x * sX).toInt()
-	val newY = (box.min.y * sY).toInt()
-	val newR = ceilInt(box.max.x * sX)
-	val newB = ceilInt(box.max.y * sY)
-	return set(newX, if (framebufferInfo.yDown) newY else framebufferInfo.height - newB, newR - newX, newB - newY)
 }

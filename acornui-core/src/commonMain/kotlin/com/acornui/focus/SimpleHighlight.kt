@@ -16,17 +16,15 @@
 
 package com.acornui.focus
 
-import com.acornui.component.*
 import com.acornui.Disposable
+import com.acornui.component.*
 import com.acornui.di.Injector
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
+import com.acornui.math.Bounds
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
-import com.acornui.math.Bounds
-import com.acornui.math.Box
-import com.acornui.math.MinMax
 import com.acornui.skins.Theme
 import com.acornui.time.callLater
 
@@ -43,6 +41,11 @@ open class SimpleHighlight(
 	private val highlight = addChild(atlas(atlasPath, regionName))
 
 	/**
+	 * Overridden so that the parent render context doesn't get set to the parent.
+	 */
+	override var parent: ContainerRo? = null
+
+	/**
 	 * The target being highlighted.
 	 */
 	override var highlighted: UiComponentRo? = null
@@ -51,6 +54,7 @@ open class SimpleHighlight(
 				field?.invalidated?.remove(::highlightedInvalidatedHandler)
 				field = value
 				field?.invalidated?.add(::highlightedInvalidatedHandler)
+				_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
 				invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
 			}
 		}
@@ -58,6 +62,8 @@ open class SimpleHighlight(
 	private fun highlightedInvalidatedHandler(c: UiComponentRo, flags: Int) {
 		if (flags.containsFlag(ValidationFlags.LAYOUT))
 			invalidateLayout()
+		else if (flags.containsFlag(ValidationFlags.RENDER_CONTEXT))
+			invalidate(ValidationFlags.RENDER_CONTEXT)
 	}
 
 	init {
@@ -84,7 +90,6 @@ open class SimpleHighlight(
 	}
 
 	override fun updateRenderContext() {
-		_renderContext.parentContext = highlighted?.renderContext ?: defaultRenderContext
 		super.updateRenderContext()
 	}
 

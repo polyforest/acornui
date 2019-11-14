@@ -101,12 +101,18 @@ fun CanvasTransformableRo.getPickRay(canvasX: Float, canvasY: Float, out: Ray): 
 
 private val rayTmp = Ray()
 
+/**
+ * Converts a canvas coordinate to a local coordinate.
+ */
 fun CanvasTransformableRo.canvasToLocal(canvasCoord: Vector2): Vector2 {
 	globalToLocal(getPickRay(canvasCoord.x, canvasCoord.y, rayTmp))
 	rayToPlane(rayTmp, canvasCoord)
 	return canvasCoord
 }
 
+/**
+ * Converts a local coordinate to a global (world) coordinate.
+ */
 fun CanvasTransformableRo.localToCanvas(localCoord: Vector3): Vector3 {
 	localToGlobal(localCoord)
 	globalToCanvas(localCoord)
@@ -136,25 +142,27 @@ fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
 }
 
 private val tmpVec3 = Vector3()
+private val tmpBox = Box()
 
 /**
  * Converts a bounding rectangle from local to canvas coordinates.
- * @return Returns the [out]
+ * @return Returns the [localBox] after conversion.
  */
-fun CanvasTransformableRo.localToCanvas(localBox: BoxRo, out: Box): Box {
+fun CanvasTransformableRo.localToCanvas(localBox: Box): Box {
 	val v = tmpVec3
-	out.inf()
-	out.ext(localToCanvas(localBox.getCorner000(v)))
-	out.ext(localToCanvas(localBox.getCorner100(v)))
-	out.ext(localToCanvas(localBox.getCorner110(v)))
-	out.ext(localToCanvas(localBox.getCorner010(v)))
+	tmpBox.inf()
+	tmpBox.ext(localToCanvas(localBox.getCorner000(v)))
+	tmpBox.ext(localToCanvas(localBox.getCorner100(v)))
+	tmpBox.ext(localToCanvas(localBox.getCorner110(v)))
+	tmpBox.ext(localToCanvas(localBox.getCorner010(v)))
 	if (localBox.depth != 0f) {
-		out.ext(localToCanvas(localBox.getCorner001(v)))
-		out.ext(localToCanvas(localBox.getCorner101(v)))
-		out.ext(localToCanvas(localBox.getCorner111(v)))
-		out.ext(localToCanvas(localBox.getCorner011(v)))
+		tmpBox.ext(localToCanvas(localBox.getCorner001(v)))
+		tmpBox.ext(localToCanvas(localBox.getCorner101(v)))
+		tmpBox.ext(localToCanvas(localBox.getCorner111(v)))
+		tmpBox.ext(localToCanvas(localBox.getCorner011(v)))
 	}
-	return out
+	localBox.set(tmpBox)
+	return localBox
 }
 
 /**

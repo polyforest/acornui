@@ -52,9 +52,12 @@ class Sprite(val glState: GlState) : BasicRenderable, Clearable {
 		this.scaleY = scaleY
 	}
 
-	var texture by Delegates.observable<TextureRo?>(null) { _, _, _ ->
-		updateUv()
-	}
+	var texture: TextureRo? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			updateUv()
+		}
 
 	var blendMode: BlendMode = BlendMode.NORMAL
 	var premultipliedAlpha: Boolean = false
@@ -216,7 +219,6 @@ class Sprite(val glState: GlState) : BasicRenderable, Clearable {
 	 * @return Returns this sprite for chaining purposes.
 	 */
 	fun set(other: Sprite): Sprite {
-		texture = other.texture
 		region[0] = other.region[0]
 		region[1] = other.region[1]
 		region[2] = other.region[2]
@@ -227,6 +229,8 @@ class Sprite(val glState: GlState) : BasicRenderable, Clearable {
 		premultipliedAlpha = other.premultipliedAlpha
 		scaleX = other.scaleX
 		scaleY = other.scaleY
+		texture = other.texture
+		updateUv()
 		return this
 	}
 

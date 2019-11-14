@@ -23,9 +23,7 @@ import com.acornui.collection.*
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.di.Owned
 import com.acornui.focus.invalidateFocusOrderDeep
-import com.acornui.math.IntRectangle
-import com.acornui.math.Ray
-import com.acornui.math.RayRo
+import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
@@ -160,26 +158,11 @@ open class ContainerImpl(
 
 	private val childrenUpdateIterator = _children.concurrentIterator()
 
-	override fun updateDrawRegionScreen(out: IntRectangle) {
+	override fun updateDrawRegionCanvas(out: Rectangle) {
 		if (draws)
-			return super.updateDrawRegionScreen(out)
-		var minX = Int.MAX_VALUE
-		var minY = Int.MAX_VALUE
-		var maxX = 0
-		var maxY = 0
+			return super.updateDrawRegionCanvas(out)
 		_children.forEach2 { child ->
-			val childR = child.drawRegionScreen
-			if (childR.isNotEmpty()) {
-				if (minX > childR.x) minX = childR.x
-				if (minY > childR.y) minY = childR.y
-				val r = childR.right
-				if (maxX < r) maxX = r
-				val b = childR.bottom
-				if (maxY < b) maxY = b
-			}
-		}
-		if (minX < maxX && minY < maxY) {
-			out.set(minX, minY, maxX - minX, maxY - minY)
+			out.ext(child.drawRegionCanvas)
 		}
 	}
 
