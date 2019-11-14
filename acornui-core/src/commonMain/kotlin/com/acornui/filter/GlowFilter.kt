@@ -63,23 +63,24 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 		}
 
 	private val sprite = Sprite(glState)
+	private val translation = Vector2()
 	private val transform = Matrix4()
 
 	override fun render(region: RectangleRo, inner: () -> Unit) {
 		val blurRegion = region - offsetPadding
-		drawToFramebuffer(blurRegion, inner)
+		drawToFramebuffer(blurRegion, translation, inner)
 
 		glState.useColorTransformation(colorTransformation) {
 			blurFilter.drawable(sprite)
-			transform.setTranslation(blurRegion.x + offsetX, blurRegion.y + offsetY)
+			transform.setTranslation(translation.x + offsetX, translation.y + offsetY)
 			sprite.updateWorldVertices(transform = transform)
 			sprite.render()
 		}
 		blurFilter.drawOriginalToScreen()
 	}
 
-	private fun drawToFramebuffer(region: RectangleRo, inner: () -> Unit) {
-		blurFilter.drawToPingPongBuffers(region, inner)
+	private fun drawToFramebuffer(region: RectangleRo, translationOut: Vector2, inner: () -> Unit) {
+		blurFilter.drawToPingPongBuffers(region, translationOut, inner)
 	}
 
 	companion object {

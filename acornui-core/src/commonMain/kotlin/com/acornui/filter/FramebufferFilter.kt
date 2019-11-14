@@ -46,17 +46,18 @@ class FramebufferFilter(
 		get() = framebuffer.texture
 
 	private val transform = Matrix4()
+	private val translation = Vector2()
 	private val sprite = Sprite(glState)
 
 	override fun render(region: RectangleRo, inner: () -> Unit) {
-		drawToFramebuffer(region, inner)
+		drawToFramebuffer(region, translation, inner)
 		drawToScreen()
 	}
 
 	private val framebufferInfo = FramebufferInfo()
 	private val viewport = IntRectangle()
 
-	fun drawToFramebuffer(region: RectangleRo, inner: () -> Unit) {
+	fun drawToFramebuffer(region: RectangleRo, translationOut: Vector2, inner: () -> Unit) {
 		val fB = framebufferInfo.set(glState.framebuffer)
 		fB.canvasToScreen(region, viewport)
 		framebuffer.setSize(region.width * fB.scaleX, region.height * fB.scaleY, fB.scaleX, fB.scaleY)
@@ -67,7 +68,8 @@ class FramebufferFilter(
 
 		framebuffer.end()
 		framebuffer.drawable(sprite)
-		transform.setTranslation(viewport.x.toFloat() / fB.scaleX, (fB.height - viewport.bottom.toFloat()) / fB.scaleY)
+		translationOut.set(viewport.x.toFloat() / fB.scaleX, (fB.height - viewport.bottom.toFloat()) / fB.scaleY)
+		transform.setTranslation(translationOut.x, translationOut.y)
 		sprite.updateWorldVertices(transform = transform)
 	}
 

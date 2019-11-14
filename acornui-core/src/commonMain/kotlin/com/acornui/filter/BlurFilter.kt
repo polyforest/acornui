@@ -17,7 +17,6 @@
 package com.acornui.filter
 
 import com.acornui.async.disposeOnShutdown
-import com.acornui.ceilInt
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
@@ -41,6 +40,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	private val blurFramebufferB = own(resizeableFramebuffer())
 
 	private val sprite = Sprite(glState)
+	private val translation = Vector2()
 	private val transform = Matrix4()
 
 	private val _drawPadding = Pad()
@@ -58,16 +58,16 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	override fun render(region: RectangleRo, inner: () -> Unit) {
-		drawToPingPongBuffers(region, inner)
+		drawToPingPongBuffers(region, translation, inner)
 		drawBlurToScreen()
 	}
 
 	private val framebufferInfo = FramebufferInfo()
 
-	fun drawToPingPongBuffers(region: RectangleRo, inner: () -> Unit) {
+	fun drawToPingPongBuffers(region: RectangleRo, translationOut: Vector2, inner: () -> Unit) {
 		val fB = framebufferInfo.set(glState.framebuffer)
 		val framebufferFilter = framebufferFilter
-		framebufferFilter.drawToFramebuffer(region, inner)
+		framebufferFilter.drawToFramebuffer(region, translationOut, inner)
 		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
@@ -106,7 +106,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 
 		framebufferFilter.drawable(sprite)
 		sprite.texture = blurFramebufferB.texture
-		transform.setTranslation(region.x, region.y)
+		transform.setTranslation(translationOut.x, translationOut.y)
 		sprite.updateWorldVertices(transform = transform)
 	}
 

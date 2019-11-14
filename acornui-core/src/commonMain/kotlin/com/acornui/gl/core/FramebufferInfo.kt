@@ -116,9 +116,9 @@ data class FramebufferInfo(
 fun FramebufferInfoRo.canvasToScreen(box: RectangleRo, out: IntRectangle): IntRectangle {
 	val sX = scaleX
 	val sY = scaleY
-	val newX = (box.x * sX).toInt()
-	val newY = (box.y * sY).toInt()
-	val newR = ceilInt(box.right * sX)
-	val newB = ceilInt(box.bottom * sY)
+	val newX = (box.x * sX + 0.001f).toInt()
+	val newY = (box.y * sY + 0.001f).toInt()
+	val newR = ceilInt(box.right * sX - 0.001f)
+	val newB = ceilInt(box.bottom * sY - 0.001f)
 	return out.set(newX, if (yDown) newY else height - newB, newR - newX, newB - newY)
 }
