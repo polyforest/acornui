@@ -118,7 +118,7 @@ class Bounds(
 
 	companion object {
 
-		val EMPTY_BOUNDS = Bounds()
+		val EMPTY_BOUNDS: BoundsRo = Bounds()
 
 		private val pool = ClearableObjectPool { Bounds() }
 
