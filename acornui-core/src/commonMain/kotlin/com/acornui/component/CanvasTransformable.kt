@@ -145,7 +145,7 @@ private val tmpVec3 = Vector3()
 private val tmpBox = Box()
 
 /**
- * Converts a bounding rectangle from local to canvas coordinates.
+ * Converts a bounding box from local to canvas coordinates.
  * @return Returns the [localBox] after conversion.
  */
 fun CanvasTransformableRo.localToCanvas(localBox: Box): Box {
@@ -164,6 +164,23 @@ fun CanvasTransformableRo.localToCanvas(localBox: Box): Box {
 	localBox.set(tmpBox)
 	return localBox
 }
+
+/**
+ * Converts a bounding rectangle from local to canvas coordinates.
+ * @return Returns the [localRect] after conversion.
+ */
+fun CanvasTransformableRo.localToCanvas(localRect: Rectangle): Rectangle {
+	val v = tmpVec3
+	tmpBox.inf()
+	tmpBox.ext(localToCanvas(v.set(localRect.x, localRect.y, 0f)))
+	tmpBox.ext(localToCanvas(v.set(localRect.right, localRect.y, 0f)))
+	tmpBox.ext(localToCanvas(v.set(localRect.right, localRect.bottom, 0f)))
+	tmpBox.ext(localToCanvas(v.set(localRect.x, localRect.bottom, 0f)))
+	localRect.set(tmpBox)
+	return localRect
+}
+
+
 
 /**
  * Converts a bounding rectangle from canvas to local coordinates.

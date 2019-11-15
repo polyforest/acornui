@@ -262,3 +262,16 @@ object PadSerializer : KSerializer<Pad> {
 		)
 	}
 }
+
+operator fun Matrix4Ro.times(p: PadRo): Pad {
+	val tL = rot(Vector3(-p.left, -p.top, 0f))
+	val tR = rot(Vector3(p.right, -p.top, 0f))
+	val bR = rot(Vector3(p.right, p.bottom, 0f))
+	val bL = rot(Vector3(-p.left, p.bottom, 0f))
+	return Pad(
+			top = -minOf4(tL.y, tR.y, bR.y, bL.y),
+			right = maxOf4(tL.x, tR.x, bR.x, bL.x),
+			bottom = maxOf4(tL.y, tR.y, bR.y, bL.y),
+			left = -minOf4(tL.x, tR.x, bR.x, bL.x)
+	)
+}

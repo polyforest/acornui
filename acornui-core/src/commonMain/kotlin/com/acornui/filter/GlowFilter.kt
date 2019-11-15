@@ -45,42 +45,38 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	/**
-	 * The x offset to translate the rendering of the framebuffer.
+	 * The offset to translate the .
 	 */
-	var offsetX by bindable(0f)
+	var offset: Vector3Ro by bindable(Vector3.ZERO)
 
-	/**
-	 * The y offset to translate the rendering of the frame buffer.
-	 */
-	var offsetY by bindable(0f)
+	private val blurSprite = Sprite(glState)
 
-	private val offsetPadding = Pad()
-	private val _drawPadding = Pad()
-	override val drawPadding: PadRo
-		get() {
-			offsetPadding.set(maxOf(0f, -offsetY), maxOf(0f, offsetX), maxOf(0f, offsetY), maxOf(0f, -offsetX))
-			return _drawPadding.set(blurFilter.drawPadding).add(offsetPadding)
-		}
-
-	private val sprite = Sprite(glState)
-	private val translation = Vector2()
+	private val offsetWorld = Vector3()
 	private val transform = Matrix4()
 
-	override fun render(region: RectangleRo, inner: () -> Unit) {
-		val blurRegion = region - offsetPadding
-		drawToFramebuffer(blurRegion, translation, inner)
+	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		transform.rot(offsetWorld.set(offset))
+		val blurredRegion = blurFilter.updateWorldVertices(region, transform, tint)
+		blurFilter.drawable(blurSprite)
+		this.transform.set(blurFilter.transform).translate(offsetWorld)
+		blurSprite.updateWorldVertices(transform = this.transform, tint = tint)
+		return blurredRegion.copy().inflate(
+				top = maxOf(0f, -offsetWorld.y),
+				right = maxOf(0f, offsetWorld.x),
+				bottom = maxOf(0f, offsetWorld.y),
+				left = maxOf(0f, -offsetWorld.x))
+	}
 
+	override fun render(inner: () -> Unit) {
+		drawToFramebuffer(inner)
 		glState.useColorTransformation(colorTransformation) {
-			blurFilter.drawable(sprite)
-			transform.setTranslation(translation.x + offsetX, translation.y + offsetY)
-			sprite.updateWorldVertices(transform = transform)
-			sprite.render()
+			blurSprite.render()
 		}
 		blurFilter.drawOriginalToScreen()
 	}
 
-	private fun drawToFramebuffer(region: RectangleRo, translationOut: Vector2, inner: () -> Unit) {
-		blurFilter.drawToPingPongBuffers(region, translationOut, inner)
+	private fun drawToFramebuffer(inner: () -> Unit) {
+		blurFilter.drawToFramebuffer(inner)
 	}
 
 	companion object {
@@ -88,20 +84,17 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 }
 
-inline fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter  {
+inline fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
-	b.offsetX = 3f
-	b.offsetY = 3f
+	b.offset = Vector3(3f, 3f, 0f)
 	b.init()
 	return b
 }
 
-inline fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter  {
+inline fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
-	b.offsetX = 0f
-	b.offsetY = 0f
 	b.colorTransformation = colorTransformation {
 		tint(0f, 0f, 0f, color.a)
 		offset(color.r, color.g, color.b)

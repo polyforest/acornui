@@ -23,6 +23,7 @@ import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
 import com.acornui.math.*
 import kotlin.contracts.InvocationKind
@@ -45,32 +46,44 @@ class FramebufferFilter(
 	val texture: Texture
 		get() = framebuffer.texture
 
-	private val transform = Matrix4()
-	private val translation = Vector2()
 	private val sprite = Sprite(glState)
-
-	override fun render(region: RectangleRo, inner: () -> Unit) {
-		drawToFramebuffer(region, translation, inner)
-		drawToScreen()
-	}
 
 	private val framebufferInfo = FramebufferInfo()
 	private val viewport = IntRectangle()
 
-	fun drawToFramebuffer(region: RectangleRo, translationOut: Vector2, inner: () -> Unit) {
+	private val _transform = Matrix4()
+	
+	/**
+	 * When rendering to this frame buffer, the canvas region gets expanded out to the next pixel.
+	 * This translation matrix represents the canvas coordinate position of the [drawable].
+	 */
+	val transform: Matrix4Ro = _transform
+
+	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		// TODO: getting the scale off the gl state is strange here.
 		val fB = framebufferInfo.set(glState.framebuffer)
 		fB.canvasToScreen(region, viewport)
+		val newCanvasX = viewport.x.toFloat() / fB.scaleX
+		val newCanvasY = (fB.height - viewport.bottom.toFloat()) / fB.scaleY
+		this._transform.setTranslation(newCanvasX, newCanvasY)
 		framebuffer.setSize(region.width * fB.scaleX, region.height * fB.scaleY, fB.scaleX, fB.scaleY)
+		framebuffer.drawable(sprite)
+		sprite.updateWorldVertices(transform = this._transform, tint = tint)
+		return Rectangle(newCanvasX, newCanvasY, sprite.naturalWidth, sprite.naturalHeight)
+	}
+
+	override fun render(inner: () -> Unit) {
+		drawToFramebuffer(inner)
+		drawToScreen()
+	}
+
+	fun drawToFramebuffer(inner: () -> Unit) {
+		val fB = framebufferInfo.set(glState.framebuffer)
 		framebuffer.begin()
 		gl.clearAndReset(clearColor, clearMask)
 		glState.setViewport(-viewport.x, -viewport.y, fB.width, fB.height)
 		inner()
-
 		framebuffer.end()
-		framebuffer.drawable(sprite)
-		translationOut.set(viewport.x.toFloat() / fB.scaleX, (fB.height - viewport.bottom.toFloat()) / fB.scaleY)
-		transform.setTranslation(translationOut.x, translationOut.y)
-		sprite.updateWorldVertices(transform = transform)
 	}
 
 	fun drawToScreen() {
@@ -78,7 +91,8 @@ class FramebufferFilter(
 	}
 
 	/**
-	 * Configures a drawable to match what was last rendered.
+	 * Configures a drawable to match what was last rendered. The world vertices will not be updated.
+	 * @see transform
 	 */
 	fun drawable(out: Sprite = Sprite(glState)): Sprite {
 		return out.set(sprite)

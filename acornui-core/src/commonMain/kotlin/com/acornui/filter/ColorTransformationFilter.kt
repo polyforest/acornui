@@ -18,7 +18,9 @@ package com.acornui.filter
 
 import com.acornui.di.Owned
 import com.acornui.gl.core.useColorTransformation
+import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
+import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 
 class ColorTransformationFilter(
@@ -29,9 +31,16 @@ class ColorTransformationFilter(
 		 */
 		val colorTransformation: ColorTransformation
 ) : RenderFilterBase(owner) {
-	
-	override fun render(region: RectangleRo, inner: () -> Unit) {
-		glState.useColorTransformation(colorTransformation) {
+
+	private val colorTransformationWorld = ColorTransformation()
+
+	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		colorTransformationWorld.set(colorTransformation).mul(tint)
+		return region
+	}
+
+	override fun render(inner: () -> Unit) {
+		glState.useColorTransformation(colorTransformationWorld) {
 			inner()
 		}
 	}

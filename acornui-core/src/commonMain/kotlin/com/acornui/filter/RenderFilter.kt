@@ -21,7 +21,11 @@ import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.GlState
-import com.acornui.math.*
+import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.Pad
+import com.acornui.math.PadRo
+import com.acornui.math.RectangleRo
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal1
@@ -33,17 +37,20 @@ import kotlin.properties.ReadWriteProperty
 interface RenderFilter : Observable {
 
 	/**
-	 * The buffer to add to the region to which this filter draws.
-	 * This should be in canvas coordinates.
+	 * Updates the world vertices for any decorated components used in this filter's rendering.
+	 * @param region The inner region (before transformed padding) rendered. This will be in canvas coordinates.
+	 * @param transform The world transform of the filtered container. This should be used to transform padding,
+	 * offsets, or any other coordinates in local space.
+	 * @param tint The world color tint of the filtered container.
+	 * @return Returns the expanded draw region in canvas coordinates.
 	 */
-	val drawPadding: PadRo
-		get() = Pad.EMPTY_PAD
+	fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = region
 
 	/**
 	 * Renders the [inner] block using this filter.
-	 * @param region The canvas coordinates of the region (after padding) rendered.
+
 	 */
-	fun render(region: RectangleRo, inner: ()->Unit)
+	fun render(inner: () -> Unit)
 
 }
 

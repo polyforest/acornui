@@ -18,13 +18,9 @@
 
 package com.acornui.filter
 
-import com.acornui.RedrawRegions
 import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.collection.forEach2
-import com.acornui.component.ComponentInit
-import com.acornui.component.FillLayoutContainer
-import com.acornui.component.UiComponent
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.own
 import com.acornui.math.*
@@ -41,9 +37,12 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
+	private val framebufferFilter = FramebufferFilter(this)
 
 	init {
 		draws = true
+		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		validation.addNode(ValidationFlags.VERTICES, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateVertices)
 	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
@@ -56,24 +55,34 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 		return this
 	}
 
-	override fun updateDrawRegionCanvas(out: Rectangle) {
-		super.updateDrawRegionCanvas(out)
-		_renderFilters.forEach2 {
-			out += it.drawPadding
+	private var expandedDrawRegion: RectangleRo = RectangleRo.EMPTY
+
+	private fun updateVertices() {
+		var drawRegion: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
+		val model = _renderContext.modelTransform
+		val tint = _renderContext.colorTint
+		for (i in _renderFilters.lastIndex downTo 0) {
+			val renderFilter = _renderFilters[i]
+			drawRegion = renderFilter.updateWorldVertices(drawRegion, model, tint)
 		}
+		expandedDrawRegion = drawRegion
+	}
+
+	override fun updateDrawRegionCanvas(out: Rectangle) {
+		out.set(expandedDrawRegion)
 	}
 
 	override fun draw() {
-		draw(_renderFilters.lastIndex, drawRegionCanvas)
+		draw(_renderFilters.lastIndex)
 	}
 	
-	private fun draw(filterIndex: Int, drawRegion: RectangleRo) {
+	private fun draw(filterIndex: Int) {
 		if (filterIndex == -1)
 			super.draw()
 		else {
 			val filter = _renderFilters[filterIndex]
-			filter.render(drawRegion) {
-				draw(filterIndex - 1, drawRegion - filter.drawPadding)
+			filter.render {
+				draw(filterIndex - 1)
 			}
 		}
 	}

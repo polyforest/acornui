@@ -62,6 +62,11 @@ interface Matrix4Ro {
 	fun getTranslation(out: Vector3): Vector3
 
 	/**
+	 * Sets the provided [out] Vector2 with the xy translation of this Matrix
+	 */
+	fun getTranslation(out: Vector2): Vector2
+
+	/**
 	 * Gets the rotation of this matrix.
 	 * @param out The {@link Quaternion} to receive the rotation
 	 * @param normalizeAxes True to normalize the axes, necessary when the matrix might also include scaling.
@@ -1093,14 +1098,18 @@ class Matrix4() : Matrix4Ro {
 	override val translationZ: Float
 		get() = values[M23]
 
-	/**
-	 * Sets the provided position Vector3 with the translation of this Matrix
-	 */
 	override fun getTranslation(out: Vector3): Vector3 {
 		val values = values
 		out.x = values[M03]
 		out.y = values[M13]
 		out.z = values[M23]
+		return out
+	}
+
+	override fun getTranslation(out: Vector2): Vector2 {
+		val values = values
+		out.x = values[M03]
+		out.y = values[M13]
 		return out
 	}
 
