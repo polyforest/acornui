@@ -18,6 +18,7 @@ package com.acornui.signal
 
 import com.acornui.Disposable
 import com.acornui.function.*
+import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import com.acornui.toDisposable
 import kotlin.jvm.Synchronized
@@ -48,14 +49,13 @@ interface Signal<in T : Any> : Bindable {
 	 *
 	 * @param handler The callback that will be invoked when dispatch() is called on the signal.
 	 * @param isOnce A flag, where if true, will cause the handler to be removed immediately after the next dispatch.
-	 *
 	 */
 	fun add(handler: T, isOnce: Boolean)
 
 	/**
 	 * Removes the given handler from the list.
 	 *
-	 * If this signal is currently dispatching, the handler will be removed after the dispatch has finished.
+	 * If this signal is currently dispatching, the handler will no longer be invoked.
 	 */
 	fun remove(handler: T)
 
@@ -99,36 +99,18 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	protected val handlers = arrayListOf<T>()
 	protected val isOnces = arrayListOf<Boolean>()
 	protected var cursor = -1
+	protected var n = -1
 
-	/**
-	 * True if the signal has handlers.
-	 */
 	override fun isNotEmpty(): Boolean = handlers.isNotEmpty()
 
-	/**
-	 * True if the signal has no handlers.
-	 */
 	override fun isEmpty(): Boolean = handlers.isEmpty()
 
-	/**
-	 * Adds a handler to this signal.
-	 *
-	 * If this signal is currently dispatching, the added handler will not be dispatched until the next dispatch call.
-	 *
-	 * @param handler The callback that will be invoked when dispatch() is called on the signal.
-	 * @param isOnce A flag, where if true, will cause the handler to be removed immediately after the next dispatch.
-	 */
 	@Synchronized
 	override fun add(handler: T, isOnce: Boolean) {
 		handlers.add(handler)
 		isOnces.add(isOnce)
 	}
 
-	/**
-	 * Removes the given handler from the list.
-	 *
-	 * If this signal is currently dispatching, the handler will be removed after the dispatch has finished.
-	 */
 	@Synchronized
 	override fun remove(handler: T) {
 		val index = handlers.indexOf(handler)
@@ -143,6 +125,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 		}
 		handlers.removeAt(index)
 		isOnces.removeAt(index)
+		n--
 	}
 
 	/**
@@ -167,56 +150,24 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	@Synchronized
 	protected inline fun dispatch(executor: (T) -> Unit) {
 		if (cursor != -1)
-			throw Exception("This signal is currently dispatching.")
+			Log.error("This signal is currently dispatching.")
 		cursor = 0
-		try {
-			if (handlers.size <= 4) {
-				if (cursor < handlers.size) {
-					val isOnce1 = isOnces[cursor]
-					val handler1 = handlers[cursor]
-					if (isOnce1) removeAt(cursor)
-					executor(handler1)
-					cursor++
-				}
-				if (cursor < handlers.size) {
-					val isOnce2 = isOnces[cursor]
-					val handler2 = handlers[cursor]
-					if (isOnce2) removeAt(cursor)
-					executor(handler2)
-					cursor++
-				}
-				if (cursor < handlers.size) {
-					val isOnce3 = isOnces[cursor]
-					val handler3 = handlers[cursor]
-					if (isOnce3) removeAt(cursor)
-					executor(handler3)
-					cursor++
-				}
-				if (cursor < handlers.size) {
-					val isOnce4 = isOnces[cursor]
-					val handler4 = handlers[cursor]
-					if (isOnce4) removeAt(cursor)
-					executor(handler4)
-					cursor++
-				}
-			}
-			while (cursor < handlers.size) {
-				val isOnce = isOnces[cursor]
-				val handler = handlers[cursor]
-				if (isOnce) removeAt(cursor)
-				executor(handler)
-				cursor++
-			}
-		} catch(e: Throwable) {
-			throw e
-		} finally {
-			cursor = -1
+		n = handlers.size
+		while (cursor < n) {
+			val isOnce = isOnces[cursor]
+			val handler = handlers[cursor]
+			if (isOnce) removeAt(cursor)
+			executor(handler)
+			cursor++
 		}
+		cursor = -1
+		n = -1
 	}
 
 	override fun clear() {
 		handlers.clear()
 		isOnces.clear()
+		n = -1
 	}
 
 	override fun dispose() {
