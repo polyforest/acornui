@@ -170,7 +170,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 	override fun setSelectedItems(items: Set<E>, isUserInteraction: Boolean) {
 		if (isUserInteraction) {
 			val previousSelection = HashSet(_selection)
-			if (changing.isNotEmpty()) {
+			if (_changing.isNotEmpty()) {
 				_changing.dispatch(previousSelection, items, cancel.reset())
 				if (cancel.canceled) return
 			}
