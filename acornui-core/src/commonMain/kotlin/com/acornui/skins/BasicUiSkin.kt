@@ -34,19 +34,17 @@ import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import com.acornui.filter.BlurQuality
 import com.acornui.focus.FocusHighlighter
 import com.acornui.focus.FocusableStyle
 import com.acornui.focus.SimpleFocusHighlighter
 import com.acornui.focus.SimpleHighlight
+import com.acornui.graphic.Color
+import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.input.interaction.enableDownRepeat
 import com.acornui.io.file.Files
-import com.acornui.filter.FilteredContainer
-import com.acornui.filter.dropShadowFilter
-import com.acornui.filter.filtered
-import com.acornui.graphic.Color
-import com.acornui.input.SoftKeyboardView
 import com.acornui.math.*
 
 open class BasicUiSkin(
@@ -94,6 +92,7 @@ open class BasicUiSkin(
 		imageButtonStyle()
 		formStyle()
 		softKeyboardStyle()
+		dropShadowStyle()
 
 		WindowScalingAttachment.attach(target)
 	}
@@ -562,16 +561,11 @@ open class BasicUiSkin(
 		val dataScrollerStyle = DataScrollerStyle().apply {
 			padding = pad
 			background = {
-				filtered {
-					addShadowFilters()
-					+rect {
-						style.apply {
-							backgroundColor = theme.panelBgColor
-							borderThicknesses = pad
-							borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
-							borderColors = BorderColors(theme.stroke)
-						}
-					}
+				shadowRect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderThicknesses = pad
+					style.borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
+					style.borderColors = BorderColors(theme.stroke)
 				}
 			}
 			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
@@ -713,14 +707,11 @@ open class BasicUiSkin(
 
 		val calendarPanelStyle = PanelStyle().apply {
 			background = {
-				filtered {
-					addShadowFilters()
-					+rect {
-						style.backgroundColor = theme.panelBgColor
-						style.borderColors = BorderColors(theme.stroke)
-						style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
-						style.borderThicknesses = Pad(theme.strokeThickness)
-					}
+				shadowRect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
+					style.borderThicknesses = Pad(theme.strokeThickness)
 				}
 			}
 		}
@@ -772,14 +763,11 @@ open class BasicUiSkin(
 	protected open fun tooltipStyle() {
 		val tooltipStyle = PanelStyle().apply {
 			background = {
-				filtered {
-					addShadowFilters()
-					+rect {
-						style.backgroundColor = theme.panelBgColor
-						style.borderColors = BorderColors(theme.stroke)
-						style.borderRadii = Corners(theme.borderRadius)
-						style.borderThicknesses = Pad(theme.strokeThickness)
-					}
+				shadowRect {
+					style.backgroundColor = theme.panelBgColor
+					style.borderColors = BorderColors(theme.stroke)
+					style.borderRadii = Corners(theme.borderRadius)
+					style.borderThicknesses = Pad(theme.strokeThickness)
 				}
 			}
 		}
@@ -842,10 +830,17 @@ open class BasicUiSkin(
 		target.addStyleRule(panelStyle, SoftKeyboardView)
 	}
 
-	/**
-	 * Optionally adds shadow filters to drop-down and tool tip overlays.
-	 */
-	protected open fun FilteredContainer.addShadowFilters() {
-		+dropShadowFilter()
+	protected open fun dropShadowStyle() {
+		val dropShadowStyle = GlowBoxStyle().apply {
+			quality = BlurQuality.NORMAL
+			blurX = 3f
+			blurY = 3f
+			offset = Vector3(4f, 4f)
+			colorTransform = ColorTransformation().apply {
+				tint(Color(a = 0.3f))
+			}
+		}
+		target.addStyleRule(dropShadowStyle, shadowRectStyleTag)
 	}
+
 }
