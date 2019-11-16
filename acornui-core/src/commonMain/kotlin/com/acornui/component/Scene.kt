@@ -53,6 +53,10 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		invalidate(flagsInvalidated and bubblingFlags)
 	}
 
+	override fun updateTransform() {
+		// No need, the local transform is overridden.
+	}
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
 		camera.setViewport(out.width, out.height)
