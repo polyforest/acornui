@@ -450,7 +450,7 @@ private class DataScrollerSelection<E : Any>(
 
 	fun data(value: List<E?>?) {
 		val newData = value ?: emptyList()
-		retainAll(newData.filterNotNull())
+		retainAll(newData.filterNotNull(), isUserInteraction = false)
 		data = newData
 	}
 
@@ -479,7 +479,7 @@ private class DataScrollerHighlight<E : Any>(private val rowMap: Map<E, RowBackg
 
 	fun data(value: List<E?>?) {
 		val newData = value ?: emptyList()
-		retainAll(newData.filterNotNull())
+		retainAll(newData.filterNotNull(), isUserInteraction = false)
 		data = newData
 	}
 
