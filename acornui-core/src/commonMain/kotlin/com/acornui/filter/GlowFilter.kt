@@ -45,7 +45,7 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	/**
-	 * The offset to translate the .
+	 * The offset to translate the glow.
 	 */
 	var offset: Vector3Ro by bindable(Vector3.ZERO)
 
@@ -92,7 +92,7 @@ inline fun Owned.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFil
 	return b
 }
 
-inline fun Owned.glowFilter(color: ColorRo, init: ComponentInit<GlowFilter> = {}): GlowFilter {
+inline fun Owned.glowFilter(color: ColorRo = Color.WHITE, init: ComponentInit<GlowFilter> = {}): GlowFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
 	b.colorTransformation = colorTransformation {
