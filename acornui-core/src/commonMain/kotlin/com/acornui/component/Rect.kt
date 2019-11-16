@@ -568,7 +568,5 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 
 inline fun Owned.rect(init: ComponentInit<Rect> = {}): Rect {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val r = Rect(this)
-	r.init()
-	return r
+	return Rect(this).apply(init)
 }
