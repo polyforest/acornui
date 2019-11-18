@@ -147,7 +147,6 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	/**
 	 * Calls executor on each handler in this signal.
 	 */
-	@Synchronized
 	protected inline fun dispatch(executor: (T) -> Unit) {
 		if (cursor != -1)
 			Log.error("This signal is currently dispatching.")
@@ -176,6 +175,8 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 }
 
 class Signal0 : SignalBase<() -> Unit>() {
+
+	@Synchronized
 	fun dispatch() = dispatch { it() }
 
 	override fun addBinding(callback: () -> Unit) = add(callback)
@@ -185,6 +186,8 @@ class Signal0 : SignalBase<() -> Unit>() {
 }
 
 class Signal1<P1> : SignalBase<(P1) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1) = dispatch { it(p1) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as1)
@@ -194,6 +197,8 @@ class Signal1<P1> : SignalBase<(P1) -> Unit>() {
 }
 
 class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2) = dispatch { it(p1, p2) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as2)
@@ -203,6 +208,8 @@ class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
 }
 
 class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3) = dispatch { it(p1, p2, p3) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as3)
@@ -212,6 +219,8 @@ class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
 }
 
 class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4) = dispatch { it(p1, p2, p3, p4) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as4)
@@ -221,6 +230,8 @@ class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
 }
 
 class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5) = dispatch { it(p1, p2, p3, p4, p5) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as5)
@@ -230,6 +241,8 @@ class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
 }
 
 class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6) = dispatch { it(p1, p2, p3, p4, p5, p6) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as6)
@@ -239,6 +252,8 @@ class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> U
 }
 
 class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7) = dispatch { it(p1, p2, p3, p4, p5, p6, p7) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as7)
@@ -248,6 +263,8 @@ class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, 
 }
 
 class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as8)
@@ -257,6 +274,8 @@ class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, 
 }
 
 class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
+
+	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8, p9) }
 
 	override fun addBinding(callback: () -> Unit) = add(callback.as9)
