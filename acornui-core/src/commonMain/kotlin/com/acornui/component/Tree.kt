@@ -22,7 +22,6 @@ import com.acornui.ChildRo
 import com.acornui.ExperimentalAcorn
 import com.acornui.Parent
 import com.acornui.ParentRo
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.vGroup
 import com.acornui.component.style.StyleBase
@@ -101,10 +100,6 @@ class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeIt
 		return _root.findElement { it.data == node }?.toggled == true
 	}
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.set(_root.sizeConstraints)
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		_root.setSize(explicitWidth, explicitHeight)
 		out.set(_root.bounds)
@@ -151,7 +146,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val 
 		get() = _elements
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
 		cascadingFlags = cascadingFlags or ValidationFlags.PROPERTIES
 		styleTags.add(Companion)
 

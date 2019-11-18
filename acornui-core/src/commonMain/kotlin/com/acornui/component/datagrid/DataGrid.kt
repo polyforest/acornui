@@ -92,7 +92,7 @@ class DataGrid<RowData>(
 
 	val style = bind(DataGridStyle())
 
-	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.OFF, COLUMNS_WIDTHS_VALIDATION or ValidationFlags.SIZE_CONSTRAINTS)
+	var hScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.OFF, COLUMNS_WIDTHS_VALIDATION or ValidationFlags.LAYOUT)
 	var vScrollPolicy: ScrollPolicy by validationProp(ScrollPolicy.AUTO, COLUMNS_WIDTHS_VALIDATION)
 
 	/**
@@ -721,7 +721,7 @@ class DataGrid<RowData>(
 	 * Indicates that the column sizes are invalid.
 	 */
 	fun invalidateColumnWidths() {
-		invalidate(COLUMNS_WIDTHS_VALIDATION or ValidationFlags.SIZE_CONSTRAINTS)
+		invalidate(COLUMNS_WIDTHS_VALIDATION)
 	}
 
 	/**
@@ -789,16 +789,6 @@ class DataGrid<RowData>(
 
 	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
 		invalidate(COLUMNS_WIDTHS_VALIDATION)
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		if (hScrollPolicy == ScrollPolicy.OFF) {
-			var minW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
-			for (i in 0.._columns.lastIndex) {
-				minW += _columns[i].minWidth
-			}
-			out.width.min = minW
-		}
 	}
 
 	private val _columnWidths = ArrayList<Float>()

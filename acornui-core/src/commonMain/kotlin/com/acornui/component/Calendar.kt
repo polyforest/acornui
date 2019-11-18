@@ -270,7 +270,7 @@ open class Calendar(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(Companion)
-		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.SIZE_CONSTRAINTS, ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.LAYOUT, ::updateProperties)
 
 		own(userInfo.currentLocale.changed.bind {
 			// If the locale changes, the weekday headers and month names change.
@@ -539,12 +539,6 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 				}
 			}
 		}
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val pad = style.padding
-		out.width.min = pad.expandWidth(textField.minWidth)
-		out.height.min = pad.expandWidth(textField.minHeight)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

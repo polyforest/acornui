@@ -38,27 +38,6 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 	private val orderedElements = ArrayList<LayoutElement>()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		val padding = style.padding
-		val gap = style.gap
-
-		var minHeight = 0f
-		var minWidth = 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
-			val sC = element.sizeConstraints
-			val iMinHeight = sC.height.min
-			if (iMinHeight != null) minHeight = maxOf(iMinHeight, minHeight)
-			val iMinWidth = sC.width.min
-			if (iMinWidth != null) minWidth += iMinWidth
-		}
-		minHeight += padding.bottom + padding.top
-		minWidth += gap * elements.lastIndex + padding.left + padding.right
-		out.height.min = minHeight
-		out.width.min = minWidth
-	}
-
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		if (elements.isEmpty()) return
 		val padding = style.padding

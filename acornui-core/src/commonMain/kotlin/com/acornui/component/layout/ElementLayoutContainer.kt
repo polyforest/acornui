@@ -38,10 +38,6 @@ open class ElementLayoutContainer<S : Style, out U : LayoutData, E : UiComponent
 	val style: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth

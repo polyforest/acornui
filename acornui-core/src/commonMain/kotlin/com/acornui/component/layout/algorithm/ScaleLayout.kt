@@ -41,9 +41,6 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 
 	override fun createLayoutData() = ScaleLayoutData()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-	}
-
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		if (elements.isEmpty()) return
 		val size = Vector2.obtain()

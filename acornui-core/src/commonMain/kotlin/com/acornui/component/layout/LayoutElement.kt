@@ -17,6 +17,7 @@
 package com.acornui.component.layout
 
 import com.acornui.math.*
+import com.acornui.math.MathUtils.clamp
 
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 
@@ -44,35 +45,10 @@ interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 	 */
 	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean
 
-	/**
-	 * Returns the measured size constraints, bound by the explicit size constraints.
-	 */
-	val sizeConstraints: SizeConstraintsRo
-
-	/**
-	 * Returns the explicit size constraints.
-	 */
-	val explicitSizeConstraints: SizeConstraintsRo
-
-	/**
-	 * Returns the measured minimum width.
-	 */
-	val minWidth: Float?
-
-	/**
-	 * Returns the measured minimum height.
-	 */
-	val minHeight: Float?
-
-	/**
-	 * Returns the measured maximum width.
-	 */
-	val maxWidth: Float?
-
-	/**
-	 * Returns the maximum measured height.
-	 */
-	val maxHeight: Float?
+	val minWidth: Float
+	val minHeight: Float
+	val maxWidth: Float
+	val maxHeight: Float
 }
 
 private val tmpVec = Vector3()
@@ -85,11 +61,11 @@ private val tmpVec = Vector3()
 fun LayoutElementRo.intersectsGlobalRay(globalRay: RayRo): Boolean = intersectsGlobalRay(globalRay, tmpVec)
 
 fun LayoutElementRo.clampWidth(value: Float?): Float? {
-	return sizeConstraints.width.clamp(value)
+	return clamp(value, minWidth, maxWidth)
 }
 
 fun LayoutElementRo.clampHeight(value: Float?): Float? {
-	return sizeConstraints.height.clamp(value)
+	return clamp(value, minHeight, maxHeight)
 }
 /**
  * A LayoutElement is a Transformable component that can be used in layout algorithms.
@@ -98,26 +74,10 @@ fun LayoutElementRo.clampHeight(value: Float?): Float? {
  */
 interface LayoutElement : LayoutElementRo, BasicLayoutElement, Transformable {
 
-	/**
-	 * Sets the explicit minimum width.
-	 */
-	fun minWidth(value: Float?)
-
-	/**
-	 * Sets the explicit minimum height.
-	 */
-	fun minHeight(value: Float?)
-
-	/**
-	 * Sets the maximum measured width.
-	 */
-	fun maxWidth(value: Float?)
-
-	/**
-	 * Sets the maximum measured height.
-	 */
-	fun maxHeight(value: Float?)
-
+	override var minWidth: Float
+	override var minHeight: Float
+	override var maxWidth: Float
+	override var maxHeight: Float
 }
 
 interface BasicLayoutElementRo : SizableRo, PositionableRo {

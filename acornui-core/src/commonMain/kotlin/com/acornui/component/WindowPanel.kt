@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.component.text.text
@@ -91,17 +90,6 @@ open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner),
 		if (!cancel.canceled) {
 			_closed.dispatch(this)
 		}
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val padding = style.padding
-		val titleBarPadding = style.titleBarPadding
-		val cS = contents.sizeConstraints
-		val tCS = textField.sizeConstraints
-		out.width.min = padding.expandWidth(cS.width.min)
-		out.width.max = padding.expandWidth(cS.width.max)
-		out.height.min = (padding.expandHeight(cS.height.min) ?: 0f) + (titleBarPadding.expandHeight(tCS.height.min) ?: 0f)
-		out.set(contents.sizeConstraints)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -167,7 +166,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 
 	init {
-		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.SIZE_CONSTRAINTS, ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.LAYOUT, ::updateProperties)
 		isFocusContainer = true
 
 		styleTags.add(NumericStepper)
@@ -219,12 +218,6 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		textInput.text = formatter.format(value)
 		stepUpButton.disabled = value >= _max
 		stepDownButton.disabled = value <= _min
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.height.min = maxOf(textInput.minHeight
-				?: 0f, ((stepUpButton.height) + style.vGap + (stepDownButton.height)))
-		out.width.min = (textInput.minWidth ?: 0f) + style.hGap + maxOf((stepUpButton.width), (stepDownButton.width))
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -31,23 +31,6 @@ class CanvasLayout : LayoutAlgorithm<CanvasLayoutStyle, CanvasLayoutData> {
 
 	override val style = CanvasLayoutStyle()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		var minWidth = 0f
-		var minHeight = 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
-			val sC = element.sizeConstraints
-			val layoutData = element.layoutDataCast
-			minWidth = maxOf((sC.width.min ?: 0f) + (layoutData?.left ?: 0f) + (layoutData?.right
-					?: 0f) + (layoutData?.horizontalCenter ?: 0f), minWidth)
-			minHeight = maxOf((sC.height.min ?: 0f) + (layoutData?.top ?: 0f) + (layoutData?.bottom
-					?: 0f) + (layoutData?.verticalCenter ?: 0f), minHeight)
-		}
-		out.width.min = minWidth
-		out.height.min = minHeight
-	}
-
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		if (elements.isEmpty()) return
 

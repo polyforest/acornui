@@ -375,8 +375,8 @@ open class BasicUiSkin(
 					{
 						rect {
 							style.backgroundColor = Color(0f, 0f, 0f, 0.6f)
-							minWidth(size)
-							minHeight(size)
+							minWidth = size
+							minHeight = size
 						}
 					}
 				}

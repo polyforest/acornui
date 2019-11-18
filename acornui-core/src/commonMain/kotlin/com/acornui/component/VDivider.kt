@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.clampHeight
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
@@ -94,20 +93,6 @@ open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		if (_split == clamped) return
 		_split = clamped
 		invalidate(ValidationFlags.LAYOUT)
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		var mH: Float = 0f
-		if (_top != null) {
-			out.width.bound(_top!!.sizeConstraints.width)
-			mH += _top!!.minHeight ?: 0f
-		}
-		mH += _handle?.height ?: 0f
-		if (_bottom != null) {
-			out.width.bound(_bottom!!.sizeConstraints.width)
-			mH += _bottom!!.minHeight ?: 0f
-		}
-		out.height.min = mH
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

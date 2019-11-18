@@ -18,7 +18,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
@@ -88,7 +87,7 @@ open class ButtonImpl(
 			skin?.dispose()
 			skin = addChild(it.skin(this))
 		}
-		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
 	}
 
 	/**
@@ -140,14 +139,9 @@ open class ButtonImpl(
 			if (field != value) {
 				field = value
 				skin?.label = value
-				invalidateSize()
+				invalidateLayout()
 			}
 		}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		if (skin == null) return
-		out.set(skin!!.sizeConstraints)
-	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (skin != null) {

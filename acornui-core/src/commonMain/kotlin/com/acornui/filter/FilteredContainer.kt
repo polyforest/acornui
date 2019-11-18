@@ -32,7 +32,7 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
 		bind {
-			invalidate(ValidationFlags.REDRAW_REGIONS)
+			invalidate(ValidationFlags.VERTICES)
 		}
 	})
 

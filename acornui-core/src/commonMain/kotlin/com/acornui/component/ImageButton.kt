@@ -17,7 +17,6 @@
 package com.acornui.component
 
 import com.acornui.collection.addAll
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
@@ -52,7 +51,7 @@ class ImageButton(
 
 		cursor(StandardCursors.HAND)
 
-		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.SIZE_CONSTRAINTS, onValidate = ::updateProperties)
+		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
 	}
 
 	var disabled: Boolean by observable(false) {
@@ -83,11 +82,6 @@ class ImageButton(
 			return field
 		}
 		private set
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val element = element ?: return
-		out.set(element.sizeConstraints)
-	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val element = element ?: return

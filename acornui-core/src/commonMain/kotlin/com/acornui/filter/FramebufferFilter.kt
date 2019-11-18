@@ -59,19 +59,6 @@ class FramebufferFilter(
 	 */
 	val transform: Matrix4Ro = _transform
 
-	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		// TODO: getting the scale off the gl state is strange here.
-		val fB = framebufferInfo.set(glState.framebuffer)
-		fB.canvasToScreen(region, viewport)
-		val newCanvasX = viewport.x.toFloat() / fB.scaleX
-		val newCanvasY = (fB.height - viewport.bottom.toFloat()) / fB.scaleY
-		this._transform.setTranslation(newCanvasX, newCanvasY)
-		framebuffer.setSize(region.width * fB.scaleX, region.height * fB.scaleY, fB.scaleX, fB.scaleY)
-		framebuffer.drawable(sprite)
-		sprite.updateWorldVertices(transform = this._transform, tint = tint)
-		return Rectangle(newCanvasX, newCanvasY, sprite.naturalWidth, sprite.naturalHeight)
-	}
-
 	override fun render(inner: () -> Unit) {
 		drawToFramebuffer(inner)
 		drawToScreen()
@@ -84,6 +71,19 @@ class FramebufferFilter(
 		glState.setViewport(-viewport.x, -viewport.y, fB.width, fB.height)
 		inner()
 		framebuffer.end()
+	}
+
+	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		// TODO: getting the scale off the gl state is strange here.
+		val fB = framebufferInfo.set(glState.framebuffer)
+		fB.canvasToScreen(region, viewport)
+		val newCanvasX = viewport.x.toFloat() / fB.scaleX
+		val newCanvasY = (fB.height - viewport.bottom.toFloat()) / fB.scaleY
+		this._transform.setTranslation(newCanvasX, newCanvasY)
+		framebuffer.setSize(region.width * fB.scaleX, region.height * fB.scaleY, fB.scaleX, fB.scaleY)
+		framebuffer.drawable(sprite)
+		sprite.updateWorldVertices(transform = this._transform, tint = tint)
+		return Rectangle(newCanvasX, newCanvasY, sprite.naturalWidth, sprite.naturalHeight)
 	}
 
 	fun drawToScreen() {

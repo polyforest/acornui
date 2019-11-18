@@ -20,7 +20,6 @@ package com.acornui.component
 
 import com.acornui.Disposable
 import com.acornui.component.layout.HAlign
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayoutContainer
 import com.acornui.component.layout.algorithm.LayoutDataProvider
@@ -309,11 +308,6 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 				newSelectedTab.button.toggled = true
 			}
 		}
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.width.min = maxOf(tabBar.minWidth ?: 0f, contents.minWidth ?: 0f)
-		out.height.min = style.tabBarPadding.expandHeight(tabBar.minHeight ?: 0f) + (contents.minHeight ?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -123,8 +123,8 @@ open class ScrollArea<E : UiComponent>(
 
 		addChild(scrollRect)
 
-		hScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
-		vScrollBar.layoutInvalidatingFlags = ValidationFlags.SIZE_CONSTRAINTS
+		hScrollBar.layoutInvalidatingFlags = ValidationFlags.LAYOUT
+		vScrollBar.layoutInvalidatingFlags = ValidationFlags.LAYOUT
 		addChild(hScrollBar)
 		addChild(vScrollBar)
 
@@ -264,8 +264,8 @@ open class ScrollArea<E : UiComponent>(
 		}
 		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!! + 0.1f)
 		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!! + 0.1f)
-		val vScrollBarW = vScrollBar.minWidth ?: 0f
-		val hScrollBarH = hScrollBar.minHeight ?: 0f
+		val vScrollBarW = vScrollBar.naturalWidth
+		val hScrollBarH = hScrollBar.naturalHeight
 
 		if (needsHScrollBar && needsVScrollBar) {
 			// Needs both scroll bars.

@@ -19,7 +19,6 @@ package com.acornui.component.layout.algorithm
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.Style
 import com.acornui.math.Bounds
 
@@ -33,15 +32,6 @@ interface LayoutAlgorithm<S : Style, out T : LayoutData> : LayoutDataProvider<T>
 	 * The configuration properties this layout algorithm uses.
 	 */
 	val style: S
-
-	/**
-	 * Calculates the minimum and maximum dimensions of this layout.
-	 *
-	 * @param elements The list of layout entry objects to use in calculating the size constraints.
-	 * @param out This will be set to the  size constraints for the provided elements. This will describe the minimum,
-	 * and maximum dimensions for the laid out elements.
-	 */
-	fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints)
 
 	/**
 	 * Sizes and positions the given layout elements.

@@ -19,7 +19,7 @@ package com.acornui.component.scroll
 import com.acornui.component.ComponentInit
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.SizeConstraints
+import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Owned
@@ -48,12 +48,11 @@ open class VScrollBar(
 		return pY * (scrollModel.max - scrollModel.min) + scrollModel.min
 	}
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val stepUpButton = decrementButton!!
-		val stepDownButton = incrementButton!!
-		out.height.min = stepUpButton.height + stepDownButton.height
-		out.width.min = maxOf(stepUpButton.width, stepDownButton.width, track?.minWidth ?: 0f)
-	}
+	val naturalWidth: Float
+		get() {
+			validate(ValidationFlags.STYLES)
+			return maxOf(decrementButton!!.width, incrementButton!!.width)
+		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val stepUpButton = decrementButton!!

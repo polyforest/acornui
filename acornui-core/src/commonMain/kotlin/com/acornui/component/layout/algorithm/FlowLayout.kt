@@ -23,7 +23,6 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
@@ -51,16 +50,6 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 	 * The list of current lines. This is valid after a layout.
 	 */
 	val lines: List<LineInfoRo> = _lines
-
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		val padding = style.padding
-		var minWidth = 0f
-		for (i in 0..elements.lastIndex) {
-			minWidth = maxOf(minWidth, elements[i].minWidth ?: 0f)
-		}
-		out.width.min = minWidth + padding.left + padding.right
-	}
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val padding = style.padding

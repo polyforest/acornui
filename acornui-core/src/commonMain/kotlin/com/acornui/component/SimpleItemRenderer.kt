@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -56,11 +55,6 @@ open class SimpleItemRenderer<E : Any>(
 	init {
 		styleTags.add(Companion)
 		interactivityMode = InteractivityMode.NONE
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.width.min = style.padding.expandWidth(textField.minWidth ?: 0f)
-		out.height.min = style.padding.expandHeight(textField.minHeight?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

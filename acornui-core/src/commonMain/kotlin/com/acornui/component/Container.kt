@@ -235,8 +235,7 @@ open class ContainerImpl(
 	 * True if the current validation step is on layout or size constraints.
 	 */
 	protected val isValidatingLayout: Boolean
-		get() = validation.currentFlag == ValidationFlags.LAYOUT ||
-				validation.currentFlag == ValidationFlags.SIZE_CONSTRAINTS
+		get() = validation.currentFlag == ValidationFlags.LAYOUT
 
 	protected open fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
@@ -245,7 +244,7 @@ open class ContainerImpl(
 				// If we are currently within a layout validation, do not attempt another invalidation.
 				// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
 				// unless shouldLayout has just changed.
-				invalidateSize()
+				invalidateLayout()
 			}
 		}
 		childrenNeedValidation = true
@@ -281,14 +280,14 @@ open class ContainerImpl(
 			check(!isDisposed) { "This Container is disposed." }
 			check(!element.isDisposed) { "Added child is disposed." }
 			check(index >= 0 && index <= list.size) { "index is out of bounds." }
-			val maybeSizeConstraints = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
+			val maybeLayout = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.LAYOUT else 0
 			if (element.parent == this@ContainerImpl) {
 				// Reorder child.
 				val oldIndex = list.indexOf(element)
 				val newIndex = if (index > oldIndex) index - 1 else index
 				list.removeAt(oldIndex)
 				list.add(newIndex, element)
-				invalidate(bubblingFlags or maybeSizeConstraints)
+				invalidate(bubblingFlags or maybeLayout)
 				element.invalidateFocusOrderDeep()
 				return
 			} else {
@@ -297,9 +296,9 @@ open class ContainerImpl(
 
 			configureChild(element)
 			list.add(index, element)
-			invalidate(bubblingFlags or maybeSizeConstraints)
+			invalidate(bubblingFlags or maybeLayout)
 			if (!isValidatingLayout)
-				invalidateSize()
+				invalidateLayout()
 		}
 
 		override fun removeAt(index: Int): UiComponent {
@@ -309,7 +308,7 @@ open class ContainerImpl(
 			unconfigureChild(child)
 			invalidate(bubblingFlags)
 			if (!isValidatingLayout)
-				invalidateSize()
+				invalidateLayout()
 			return child
 		}
 
@@ -322,15 +321,15 @@ open class ContainerImpl(
 			check(!isDisposed) { "This Container is disposed." }
 			check(!element.isDisposed) { "Set child is disposed." }
 
-			val maybeSizeConstraints = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.SIZE_CONSTRAINTS else 0
+			val maybeLayout = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.LAYOUT else 0
 			val oldChild = list[index]
 			unconfigureChild(oldChild)
 			configureChild(element)
 			list[index] = element
 
-			invalidate(bubblingFlags or maybeSizeConstraints)
+			invalidate(bubblingFlags or maybeLayout)
 			if (!isValidatingLayout)
-				invalidateSize()
+				invalidateLayout()
 			return oldChild
 		}
 

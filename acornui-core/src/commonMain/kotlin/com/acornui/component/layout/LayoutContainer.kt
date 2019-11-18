@@ -164,10 +164,6 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 	protected val layoutStyle: S = bind(layoutAlgorithm.style)
 	final override fun createLayoutData(): U = layoutAlgorithm.createLayoutData()
 
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		layoutAlgorithm.calculateSizeConstraints(elementsToLayout, out)
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth

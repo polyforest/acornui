@@ -96,7 +96,7 @@ open class StaticMeshComponent(
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
 		if (mesh == null) mesh = staticMesh()
 		mesh!!.buildMesh(inner)
-		invalidateSize()
+		invalidateLayout()
 	}
 
 	override fun onActivated() {

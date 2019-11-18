@@ -125,8 +125,7 @@ class ValidationGraphTest {
 			ValidationFlags.apply {
 				addNode(STYLES) {}
 				addNode(PROPERTIES, STYLES) {}
-				addNode(SIZE_CONSTRAINTS, PROPERTIES) {}
-				addNode(LAYOUT, PROPERTIES or SIZE_CONSTRAINTS) {}
+				addNode(LAYOUT, PROPERTIES) {}
 				addNode(TRANSFORM) {}
 				addNode(RENDER_CONTEXT, TRANSFORM) {}
 				addNode(INTERACTIVITY_MODE) {}

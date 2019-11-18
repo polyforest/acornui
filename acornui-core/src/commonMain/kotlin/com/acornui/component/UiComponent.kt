@@ -21,7 +21,9 @@ package com.acornui.component
 import com.acornui.*
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.layout.*
+import com.acornui.component.layout.LayoutData
+import com.acornui.component.layout.Positionable
+import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
@@ -37,6 +39,7 @@ import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
 import com.acornui.input.MouseState
 import com.acornui.math.*
+import com.acornui.math.MathUtils.clamp
 import com.acornui.reflect.observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -332,10 +335,6 @@ open class UiComponentImpl(
 	protected val _scale = Vector3(1f, 1f, 1f)
 	protected val _origin = Vector3(0f, 0f, 0f)
 
-	// LayoutElement properties
-	protected val _explicitSizeConstraints = SizeConstraints()
-	protected val _sizeConstraints = SizeConstraints()
-
 	// InteractiveElement properties
 	protected var _inheritedInteractivityMode = InteractivityMode.ALL
 	final override val interactivityModeInherited: InteractivityMode
@@ -461,8 +460,7 @@ open class UiComponentImpl(
 				addNode(HIERARCHY_ASCENDING, ::updateHierarchyAscending)
 				addNode(HIERARCHY_DESCENDING, ::updateHierarchyDescending)
 				addNode(LAYOUT_ENABLED, ::updateLayoutEnabled)
-				addNode(SIZE_CONSTRAINTS, STYLES, ::validateSizeConstraints)
-				addNode(LAYOUT, SIZE_CONSTRAINTS, ::validateLayout)
+				addNode(LAYOUT, STYLES, ::validateLayout)
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM, ::updateRenderContext)
@@ -592,63 +590,10 @@ open class UiComponentImpl(
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
-	/**
-	 * Returns the measured size constraints, bound by the explicit size constraints.
-	 */
-	override val sizeConstraints: SizeConstraintsRo
-		get() {
-			validate(ValidationFlags.SIZE_CONSTRAINTS)
-			return _sizeConstraints
-		}
-
-	/**
-	 * Returns the explicit size constraints.
-	 */
-	override val explicitSizeConstraints: SizeConstraintsRo = _explicitSizeConstraints
-
-	override val minWidth: Float?
-		get() {
-			validate(ValidationFlags.SIZE_CONSTRAINTS)
-			return _sizeConstraints.width.min
-		}
-
-	override fun minWidth(value: Float?) {
-		_explicitSizeConstraints.width.min = value
-		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-	}
-
-	override val minHeight: Float?
-		get() {
-			validate(ValidationFlags.SIZE_CONSTRAINTS)
-			return _sizeConstraints.height.min
-		}
-
-	override fun minHeight(value: Float?) {
-		_explicitSizeConstraints.height.min = value
-		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-	}
-
-	override val maxWidth: Float?
-		get() {
-			validate(ValidationFlags.SIZE_CONSTRAINTS)
-			return _sizeConstraints.width.max
-		}
-
-	override fun maxWidth(value: Float?) {
-		_explicitSizeConstraints.width.max = value
-		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-	}
-
-	override val maxHeight: Float?
-		get() {
-			validate(ValidationFlags.SIZE_CONSTRAINTS)
-			return _sizeConstraints.height.max
-		}
-
-	override fun maxHeight(value: Float?) {
-		_explicitSizeConstraints.height.max = value
-		invalidate(ValidationFlags.SIZE_CONSTRAINTS)
-	}
+	override var minWidth: Float by validationProp(0f, ValidationFlags.LAYOUT)
+	override var minHeight: Float by validationProp(0f, ValidationFlags.LAYOUT)
+	override var maxWidth: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
+	override var maxHeight: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
 
 	final override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
@@ -673,27 +618,11 @@ open class UiComponentImpl(
 	protected open fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {}
 
 	/**
-	 * Do not call this directly, use [validate(ValidationFlags.SIZE_CONSTRAINTS)]
-	 */
-	private fun validateSizeConstraints() {
-		_sizeConstraints.clear()
-		updateSizeConstraints(_sizeConstraints)
-		_sizeConstraints.bound(_explicitSizeConstraints)
-	}
-
-	/**
-	 * Updates the measured size constraints object.
-	 */
-	protected open fun updateSizeConstraints(out: SizeConstraints) {
-	}
-
-	/**
 	 * Do not call this directly, use [validate(ValidationFlags.LAYOUT)]
 	 */
 	private fun validateLayout() {
-		val sC = sizeConstraints
-		val w = sC.width.clamp(explicitWidth ?: defaultWidth)
-		val h = sC.height.clamp(explicitHeight ?: defaultHeight)
+		val w = clamp(explicitWidth ?: defaultWidth, minWidth, maxWidth)
+		val h = clamp(explicitHeight ?: defaultHeight, minHeight, maxHeight)
 		_bounds.set(w ?: 0f, h ?: 0f)
 		updateLayout(w, h, _bounds)
 		if (baselineOverride != null)
@@ -1146,13 +1075,12 @@ open class UiComponentImpl(
 	final override fun invalidate(flags: Int): Int {
 		val flagsInvalidated: Int = validation.invalidate(flags)
 
-		check(!_invalidated.isDispatching) { "invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency." }
-
 		if (flagsInvalidated != 0) {
+			check(!_invalidated.isDispatching) { "invalidated already dispatching. Flags invalidated <${ValidationFlags.flagsToString(flags)}>. Possible cyclic validation dependency." }
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
+			_invalidated.dispatch(this, flagsInvalidated)
 		}
-		_invalidated.dispatch(this, flagsInvalidated)
 		return flagsInvalidated
 	}
 

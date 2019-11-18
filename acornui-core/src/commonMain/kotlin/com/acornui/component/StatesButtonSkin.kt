@@ -1,6 +1,5 @@
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.style.OptionalSkinPart
 import com.acornui.component.style.SkinPart
 import com.acornui.component.style.noSkin
@@ -44,7 +43,7 @@ class StatesButtonSkin(owner: Owned,
 			if (field != value) {
 				field = value
 				(currentSkinPart as? Labelable)?.label = (value)
-				invalidateSize()
+				invalidateLayout()
 			}
 		}
 
@@ -64,11 +63,6 @@ class StatesButtonSkin(owner: Owned,
 			if (newSkinPart != null) addChild(newSkinPart)
 			removeChild(previousSkinPart)
 		}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val currentSkinPart = currentSkinPart ?: return
-		out.set(currentSkinPart.sizeConstraints)
-	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val currentSkinPart = currentSkinPart ?: return

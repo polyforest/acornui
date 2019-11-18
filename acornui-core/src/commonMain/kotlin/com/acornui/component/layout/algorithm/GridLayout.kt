@@ -59,15 +59,6 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
 	private val orderedElements = ArrayList<LayoutElement>()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		var minWidth = 0f
-		for (i in 0..style.columns.lastIndex) {
-			val c = style.columns[i]
-			if (c.minWidth != null) minWidth += c.minWidth
-		}
-		out.width.min = minWidth
-	}
-
 	// TODO: can be private once unit tests support private methods
 	internal fun cellWalk(elements: List<LayoutElement>, props: GridLayoutStyle, callback: CellFilter) {
 		var colIndex = 0

@@ -33,13 +33,6 @@ class FillLayout : LayoutAlgorithm<NoopStyle, NoopLayoutData> {
 
 	override val style = NoopStyle()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		for (i in 0..elements.lastIndex) {
-			out.bound(elements[i].sizeConstraints)
-		}
-	}
-
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		elements.forEach2 { element ->
 			element.setSize(explicitWidth, explicitHeight)

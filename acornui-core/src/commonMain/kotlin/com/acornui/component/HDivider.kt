@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.clampWidth
 import com.acornui.component.style.StyleTag
 import com.acornui.cursor.StandardCursors
@@ -90,20 +89,6 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		if (_split == clamped) return
 		_split = clamped
 		invalidate(ValidationFlags.LAYOUT)
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		var mW = 0f
-		if (_left != null) {
-			out.height.bound(_left!!.sizeConstraints.height)
-			mW += _left!!.minWidth ?: 0f
-		}
-		mW += _handle?.width ?: 0f
-		if (_right != null) {
-			out.height.bound(_right!!.sizeConstraints.height)
-			mW += _right!!.minWidth ?: 0f
-		}
-		out.width.min = mW
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

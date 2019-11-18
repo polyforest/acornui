@@ -53,8 +53,10 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val offsetWorld = Vector3()
 	private val transform = Matrix4()
+	var hasUpdatedWorld = false
 
 	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		hasUpdatedWorld = true
 		transform.rot(offsetWorld.set(offset))
 		val blurredRegion = blurFilter.updateWorldVertices(region, transform, tint)
 		blurFilter.drawable(blurSprite)
@@ -68,6 +70,8 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	}
 
 	override fun render(inner: () -> Unit) {
+		if (!hasUpdatedWorld)
+			throw Exception("...")
 		drawToFramebuffer(inner)
 		glState.useColorTransformation(colorTransformation) {
 			blurSprite.render()

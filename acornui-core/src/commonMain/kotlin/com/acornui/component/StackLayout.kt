@@ -38,16 +38,6 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 
 	override val style = StackLayoutStyle()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		val padding = style.padding
-		for (i in 0..elements.lastIndex) {
-			out.bound(elements[i].sizeConstraints)
-		}
-		out.width.min = padding.expandWidth(out.width.min)
-		out.height.min = padding.expandHeight(out.height.min)
-	}
-
 	private val orderedElements = ArrayList<LayoutElement>()
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {

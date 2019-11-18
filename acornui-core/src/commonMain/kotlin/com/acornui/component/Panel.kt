@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
@@ -68,10 +67,6 @@ open class Panel(
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {
 		contents.removeElement(element)
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		out.set(contents.sizeConstraints)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

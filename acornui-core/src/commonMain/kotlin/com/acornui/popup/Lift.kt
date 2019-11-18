@@ -74,7 +74,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 					// If we are currently within a layout validation, do not attempt another invalidation.
 					// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
 					// unless shouldLayout has just changed.
-					invalidate(ValidationFlags.SIZE_CONSTRAINTS)
+					invalidate(ValidationFlags.LAYOUT)
 				}
 			}
 		}

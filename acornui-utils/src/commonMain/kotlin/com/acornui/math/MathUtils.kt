@@ -18,6 +18,7 @@
 
 package com.acornui.math
 
+import kotlin.jvm.JvmName
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -122,6 +123,14 @@ object MathUtils {
 	@Deprecated("Use kotlin.math.log", ReplaceWith("log(x, base)", imports = arrayOf("kotlin.math.log")))
 	fun log(x: Float, base: Float): Float {
 		return kotlin.math.log(x, base)
+	}
+
+	@JvmName("clampN")
+	inline fun <T : Comparable<T>> clamp(value: T?, min: T, max: T): T? {
+		if (value == null) return null
+		if (value <= min) return min
+		if (value >= max) return max
+		return value
 	}
 
 	inline fun <T : Comparable<T>> clamp(value: T, min: T, max: T): T {

@@ -35,11 +35,6 @@ import kotlin.jvm.JvmName
  *   +customLayout {
  *      val myLabel = +text("Hello")
  *
- *      updateSizeConstraintsCallback = { out ->
- *          out.width.min = 300f + 40f
- *          out.height.min = 40f + 30f
- *      }
- *
  *      updateLayoutCallback = { explicitWidth, explicitHeight, out ->
  *          myLabel.setSize(300f, 40f)
  *          myLabel.moveTo(40f, 30f)
@@ -52,12 +47,7 @@ open class CustomLayoutContainer<E : UiComponent>(
 		owner: Owned
 ) : ElementContainerImpl<E>(owner), Focusable {
 
-	var updateSizeConstraintsCallback: (out: SizeConstraints) -> Unit = { _ -> }
 	var updateLayoutCallback: (explicitWidth: Float?, explicitHeight: Float?, out: Bounds) -> Unit = { _, _, _ -> }
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		updateSizeConstraintsCallback(out)
-	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		updateLayoutCallback(explicitWidth, explicitHeight, out)

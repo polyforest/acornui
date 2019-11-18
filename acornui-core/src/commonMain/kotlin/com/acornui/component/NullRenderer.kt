@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.SizeConstraints
 import com.acornui.component.layout.spacer
 import com.acornui.component.style.SkinPart
 import com.acornui.component.style.StyleBase
@@ -50,12 +49,6 @@ class NullRenderer(
 			contents?.dispose()
 			contents = addChild(it.contents(this))
 		}
-	}
-
-	override fun updateSizeConstraints(out: SizeConstraints) {
-		val contents = contents ?: return
-		out.width.min = style.padding.expandWidth(contents.minWidth ?: 0f)
-		out.height.min = style.padding.expandHeight(contents.minHeight?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

@@ -38,27 +38,6 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 
 	private val orderedElements = ArrayList<LayoutElement>()
 
-	override fun calculateSizeConstraints(elements: List<LayoutElementRo>, out: SizeConstraints) {
-		if (elements.isEmpty()) return
-		val padding = style.padding
-		val gap = style.gap
-
-		var minWidth = 0f
-		var minHeight = 0f
-		for (i in 0..elements.lastIndex) {
-			val element = elements[i]
-			val sC = element.sizeConstraints
-			val iMinWidth = sC.width.min
-			if (iMinWidth != null) minWidth = maxOf(iMinWidth, minWidth)
-			val iMinHeight = sC.height.min
-			if (iMinHeight != null) minHeight += iMinHeight
-		}
-		minWidth += padding.left + padding.right
-		minHeight += gap * elements.lastIndex + padding.top + padding.bottom
-		out.width.min = minWidth
-		out.height.min = minHeight
-	}
-
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		if (elements.isEmpty()) return
 		val padding = style.padding
