@@ -198,8 +198,10 @@ data class LoadedAtlasRegion(val texture: Texture, val region: AtlasRegionData)
 suspend fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAtlasRegion {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val (page, region) = atlasData.findRegion(regionName)
-			?: throw Exception("Region '$regionName' not found in atlas $atlasPath.")
+			?: throw RegionNotFoundException(atlasPath, regionName)
 	val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 	return LoadedAtlasRegion(texture, region)
 }
+
+class RegionNotFoundException(val atlasPath: String, val regionName: String) : Exception("Region '$regionName' not found in atlas $atlasPath.")
 

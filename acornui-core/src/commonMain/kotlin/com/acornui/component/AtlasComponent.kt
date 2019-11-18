@@ -22,7 +22,6 @@ import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.async.async
 import com.acornui.async.catch
-import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.*
 import com.acornui.logging.Log
@@ -60,13 +59,15 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 		clear()
 		this.group = cachedGroup()
 		return async {
-			loadAndCacheAtlasRegion(atlasPath, regionName, group!!)
-		} then {
-			loadedRegion ->
+			val loadedRegion = try {
+				loadAndCacheAtlasRegion(atlasPath, regionName, group!!)
+			} catch (e: RegionNotFoundException) {
+				if (warnOnNotFound)
+					Log.warn(e)
+				throw e
+			}
 			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
-		} catch {
-			if (warnOnNotFound)
-				Log.warn("Region \"$regionName\" not found in atlas \"$atlasPath\".")
+			loadedRegion
 		}
 	}
 
