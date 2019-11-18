@@ -18,6 +18,7 @@
 
 package com.acornui.math
 
+import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.math.*
 import kotlin.random.Random
@@ -125,6 +126,7 @@ object MathUtils {
 		return kotlin.math.log(x, base)
 	}
 
+	@JsName("clampN")
 	@JvmName("clampN")
 	inline fun <T : Comparable<T>> clamp(value: T?, min: T, max: T): T? {
 		if (value == null) return null
