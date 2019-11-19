@@ -20,6 +20,7 @@ import com.acornui.Disposable
 import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
+import com.acornui.debug
 import com.acornui.di.Injector
 import com.acornui.di.OwnedImpl
 import com.acornui.di.createScope
@@ -29,11 +30,12 @@ import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Color
+import com.acornui.input.Ascii
 import com.acornui.input.SoftKeyboardManager
+import com.acornui.input.keyDown
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
-import com.acornui.math.IntRectangle
-import com.acornui.math.Rectangle
+import com.acornui.math.MinMax
 import com.acornui.popup.PopUpManager
 import com.acornui.reflect.observable
 import com.acornui.time.timer
@@ -73,6 +75,16 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		watch(style) {
 			useRedrawRegions = it.useRedrawRegions
 			showRedrawRegions = it.showRedrawRegions && it.useRedrawRegions
+		}
+		if (debug) {
+			keyDown().add {
+				if (it.altKey && it.ctrlKey && it.keyCode == Ascii.R) {
+					style.showRedrawRegions = !style.showRedrawRegions
+				}
+				if (it.metaKey && it.ctrlKey && it.keyCode == Ascii.R) {
+					style.useRedrawRegions = !style.useRedrawRegions
+				}
+			}
 		}
 	}
 	
@@ -125,7 +137,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		super.updateRenderContext()
 	}
 
-	override fun updateDrawRegionCanvas(out: Rectangle) {
+	override fun updateDrawRegionCanvas(out: MinMax) {
 		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 

@@ -445,12 +445,12 @@ class Rectangle(
 	 */
 	fun ext(rect: RectangleRo): Rectangle {
 		val minX = minOf(x, rect.x)
-		val maxX = maxOf(x + width, rect.x + rect.width)
+		val maxX = maxOf(right, rect.right)
 		x = minX
 		width = maxX - minX
 
 		val minY = minOf(y, rect.y)
-		val maxY = maxOf(y + height, rect.y + rect.height)
+		val maxY = maxOf(bottom, rect.bottom)
 		y = minY
 		height = maxY - minY
 

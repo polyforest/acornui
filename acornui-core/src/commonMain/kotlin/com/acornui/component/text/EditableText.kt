@@ -222,7 +222,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.touchStart().add { column = -1; resetCursorBlink() }
 		host.mouseDown().add { column = -1; resetCursorBlink() }
 
-		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, ::updateTextCursor)
+		validation.addNode(TEXT_CURSOR, ValidationFlags.LAYOUT, ValidationFlags.REDRAW_REGIONS, ::updateTextCursor)
 
 		selectionManager.selectionChanged.add(::selectionChangedHandler)
 

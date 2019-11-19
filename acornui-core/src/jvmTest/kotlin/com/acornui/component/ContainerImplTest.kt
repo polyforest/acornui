@@ -151,7 +151,7 @@ class ContainerImplTest {
 		object : ContainerImpl(HeadlessInjector.owner) {
 			init {
 				var updateCountA = 0
-				addChild(object : MockComponent("a") {
+				val childA = addChild(object : MockComponent("a") {
 					override fun update() {
 						super.update()
 						updateCountA++
@@ -173,13 +173,19 @@ class ContainerImplTest {
 				})
 
 				update()
-				assertEquals(updateCountA, 1)
-				assertEquals(updateCountB, 1)
-				assertEquals(updateCountC, 1)
+				assertEquals(1, updateCountA)
+				assertEquals(1, updateCountB)
+				assertEquals(1, updateCountC)
 				update()
-				assertEquals(updateCountA, 2)
-				assertEquals(updateCountB, 2)
-				assertEquals(updateCountC, 2)
+				// If no children have been invalidated, expect that update is skipped.
+				assertEquals(1, updateCountA)
+				assertEquals(1, updateCountB)
+				assertEquals(1, updateCountC)
+				childA.invalidate(-1) // Indicate that at least one child needs validation.
+				update()
+				assertEquals(2, updateCountA)
+				assertEquals(2, updateCountB)
+				assertEquals(2, updateCountC)
 			}
 		}
 	}
@@ -210,10 +216,12 @@ class ContainerImplTest {
 					}
 				})
 
+				update()
 				render()
 				assertEquals(drawCountA, 1)
 				assertEquals(drawCountB, 1)
 				assertEquals(drawCountC, 1)
+				update()
 				render()
 				assertEquals(drawCountA, 2)
 				assertEquals(drawCountB, 2)

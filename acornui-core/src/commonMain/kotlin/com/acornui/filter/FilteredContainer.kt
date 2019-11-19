@@ -19,7 +19,6 @@
 package com.acornui.filter
 
 import com.acornui.collection.WatchedElementsActiveList
-import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.own
@@ -68,7 +67,7 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 		expandedDrawRegion = drawRegion
 	}
 
-	override fun updateDrawRegionCanvas(out: Rectangle) {
+	override fun updateDrawRegionCanvas(out: MinMax) {
 		out.set(expandedDrawRegion)
 	}
 

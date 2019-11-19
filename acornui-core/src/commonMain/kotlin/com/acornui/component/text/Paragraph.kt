@@ -53,7 +53,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	 */
 	override val textElements: List<TextElementRo>
 		get() {
-			validate(TEXT_ELEMENTS)
+			validate(TextValidationFlags.TEXT_ELEMENTS)
 			return _textElements
 		}
 
@@ -65,16 +65,17 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		get() = flowStyle.multiline
 
 	private var bubblingFlags =
+			TextValidationFlags.TEXT_ELEMENTS or
 			ValidationFlags.HIERARCHY_ASCENDING or
 					ValidationFlags.LAYOUT
 
-	override var allowClipping: Boolean by validationProp(true, VERTICES)
+	override var allowClipping: Boolean by validationProp(true, TextValidationFlags.VERTICES)
 
 	init {
-		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		validation.addNode(SELECTION, dependencies = TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateSelection)
-		validation.addNode(VERTICES, dependencies = TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateVertices)
-		validation.addNode(WORLD_VERTICES, dependencies = VERTICES or ValidationFlags.RENDER_CONTEXT or SELECTION, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateWorldVertices)
+		validation.addNode(TextValidationFlags.TEXT_ELEMENTS, dependencies = 0, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
+		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateSelection)
+		validation.addNode(TextValidationFlags.VERTICES, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateVertices)
+		validation.addNode(TextValidationFlags.WORLD_VERTICES, dependencies = TextValidationFlags.VERTICES or ValidationFlags.RENDER_CONTEXT or TextValidationFlags.SELECTION, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateWorldVertices)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -344,7 +345,7 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
 		selectionRangeStart = rangeStart
 		this.selection = selection
-		invalidate(SELECTION)
+		invalidate(TextValidationFlags.SELECTION)
 	}
 
 	override fun toString(builder: StringBuilder) {
@@ -447,13 +448,13 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 			return oldElement
 		}
 	}
+}
 
-	companion object {
-		private const val TEXT_ELEMENTS = 1 shl 16
-		private const val SELECTION = 1 shl 17
-		private const val VERTICES = 1 shl 18
-		private const val WORLD_VERTICES = 1 shl 19
-	}
+object TextValidationFlags {
+	const val TEXT_ELEMENTS = 1 shl 16
+	const val SELECTION = 1 shl 17
+	const val VERTICES = 1 shl 18
+	const val WORLD_VERTICES = 1 shl 19
 }
 
 inline fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph  {

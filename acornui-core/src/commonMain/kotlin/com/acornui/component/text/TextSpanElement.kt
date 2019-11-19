@@ -113,9 +113,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 		get() = textParent
 
 	private val _elements = ArrayList<TextElement>()
-
-	override val elements: MutableList<TextElement>
-		get() = _elements
+	override val elements: MutableList<TextElement> = _elements
 
 	protected val styles = Styles(this)
 
@@ -182,6 +180,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 
 	protected var bubblingFlags =
+			TextValidationFlags.TEXT_ELEMENTS or
 			ValidationFlags.HIERARCHY_ASCENDING or
 					ValidationFlags.LAYOUT
 

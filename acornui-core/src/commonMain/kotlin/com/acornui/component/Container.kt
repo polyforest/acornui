@@ -157,8 +157,9 @@ open class ContainerImpl(
 	}
 
 	private val childrenUpdateIterator = _children.concurrentIterator()
+	private val vec3Tmp = Vector3()
 
-	override fun updateDrawRegionCanvas(out: Rectangle) {
+	override fun updateDrawRegionCanvas(out: MinMax) {
 		if (draws)
 			return super.updateDrawRegionCanvas(out)
 		_children.forEach2 { child ->
@@ -297,19 +298,16 @@ open class ContainerImpl(
 			configureChild(element)
 			list.add(index, element)
 			invalidate(bubblingFlags or maybeLayout)
-			if (!isValidatingLayout)
-				invalidateLayout()
 		}
 
 		override fun removeAt(index: Int): UiComponent {
 			check(!isDisposed) { "This Container is disposed." }
 
-			val child = list.removeAt(index)
-			unconfigureChild(child)
-			invalidate(bubblingFlags)
-			if (!isValidatingLayout)
-				invalidateLayout()
-			return child
+			val element = list.removeAt(index)
+			unconfigureChild(element)
+			val maybeLayout = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.LAYOUT else 0
+			invalidate(bubblingFlags or maybeLayout)
+			return element
 		}
 
 		override val size: Int
@@ -328,8 +326,6 @@ open class ContainerImpl(
 			list[index] = element
 
 			invalidate(bubblingFlags or maybeLayout)
-			if (!isValidatingLayout)
-				invalidateLayout()
 			return oldChild
 		}
 

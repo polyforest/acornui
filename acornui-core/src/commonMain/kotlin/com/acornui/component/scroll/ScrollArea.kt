@@ -116,7 +116,7 @@ open class ScrollArea<E : UiComponent>(
 
 	init {
 		styleTags.add(ScrollArea)
-		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, ::validateScroll)
+		validation.addNode(SCROLLING, ValidationFlags.LAYOUT, ValidationFlags.REDRAW_REGIONS, ::validateScroll)
 
 		styleTags.add(HBAR_STYLE)
 		styleTags.add(VBAR_STYLE)

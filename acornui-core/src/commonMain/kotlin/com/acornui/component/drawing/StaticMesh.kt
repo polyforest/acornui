@@ -62,7 +62,7 @@ open class StaticMeshComponent(
 
 	init {
 		draws = true
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ValidationFlags.REDRAW_REGIONS, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {

@@ -88,6 +88,9 @@ class MinMax(
 		return this
 	}
 
+	/**
+	 * Sets min to infinity and max to negative infinity.
+	 */
 	override fun clear() {
 		xMin = Float.POSITIVE_INFINITY
 		yMin = Float.POSITIVE_INFINITY
@@ -183,11 +186,12 @@ class MinMax(
 	}
 
 	/**
-	 * Expands this value to include the given [MinMaxRo].
+	 * Expands this value to include the given region only if the given region is not empty.
 	 */
-	fun ext(other: MinMaxRo): MinMax {
-		ext(other.xMin, other.yMin)
-		ext(other.xMax, other.yMax)
+	fun ext(other: RectangleRo): MinMax {
+		if (other.isEmpty()) return this
+		ext(other.x, other.y)
+		ext(other.right, other.bottom)
 		return this
 	}
 

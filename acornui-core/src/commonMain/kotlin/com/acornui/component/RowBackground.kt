@@ -48,7 +48,7 @@ open class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground
 	init {
 		styleTags.add(RowBackground)
 
-		validation.addNode(BACKGROUND_COLOR, ValidationFlags.STYLES, ::updateColor)
+		validation.addNode(BACKGROUND_COLOR, ValidationFlags.STYLES, ValidationFlags.REDRAW_REGIONS, ::updateColor)
 	}
 
 
