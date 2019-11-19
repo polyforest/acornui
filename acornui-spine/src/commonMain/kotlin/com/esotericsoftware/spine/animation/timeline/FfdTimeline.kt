@@ -79,7 +79,7 @@ class FfdTimeline(
 				}
 			} else {
 				vertices = FloatArray(vertexCount)
-				frameVertices.copyInto(vertices, frame.offset, 0, frameVertices.size + frame.offset - 1)
+				frameVertices.copyInto(vertices, frame.offset)
 				//
 				if (attachment is MeshAttachment) {
 					val meshVertices = attachment.data.vertices

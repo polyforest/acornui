@@ -52,7 +52,8 @@ fun <E> arrayCopy(src: Array<out E>,
 	}
 }
 
-@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos)"))
+//destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + srcPos)"))
 fun arrayCopy(src: FloatArray,
 					 srcPos: Int,
 					 dest: FloatArray,
@@ -71,7 +72,7 @@ fun arrayCopy(src: FloatArray,
 	}
 }
 
-@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + destPos)"))
+@Deprecated("Use kotlin copyInto methods", ReplaceWith("src.copyInto(dest, destPos, srcPos, length + srcPos)"))
 fun arrayCopy(src: IntArray,
 					 srcPos: Int,
 					 dest: IntArray,
