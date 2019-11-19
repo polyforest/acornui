@@ -18,8 +18,10 @@ package com.esotericsoftware.spine.component
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
+import com.acornui.component.invalidateDraw
 import com.acornui.component.useCamera
 import com.acornui.di.Owned
+import com.acornui.math.MinMax
 import com.acornui.time.onTick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -100,7 +102,11 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		for (i in 0.._children.lastIndex) {
 			_children[i].tick(tickTime)
 		}
-		window.requestRender()
+		invalidateDraw()
+	}
+
+	override fun updateDrawRegionCanvas(out: MinMax) {
+		out.set(_renderContext.clipRegion)
 	}
 
 	override fun draw() {
