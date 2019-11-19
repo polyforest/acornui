@@ -213,8 +213,8 @@ class ValidationGraph(
 				previousNode.addDependents(newNode.dependents)
 
 				// Do not allow cyclical dependencies:
-				if (insertIndex <= i) {
-					throw Exception("Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${dependents.toFlagsString()}")
+				check(insertIndex > i) {
+					"Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${dependents.toFlagsString()}"
 				}
 			}
 		}
@@ -222,10 +222,12 @@ class ValidationGraph(
 		_invalidFlags = _invalidFlags or newNode.flag
 		_allFlags = _allFlags or newNode.flag
 		if (checkAllFound) {
-			if (dependentsNotFound != 0)
-				throw Exception("validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found.")
-			if (dependenciesNotFound != 0)
-				throw Exception("validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found.")
+			check(dependentsNotFound == 0) {
+				"validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found."
+			}
+			check(dependenciesNotFound == 0) {
+				"validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found."
+			}
 		}
 	}
 
@@ -241,9 +243,9 @@ class ValidationGraph(
 		if (assertionsEnabled && currentIndex >= 0) {
 			// Cannot invalidate anything that is not dependent on the current node.
 			val currentNode = nodes[currentIndex]
-			val badFlags = flagsToInvalidate and (currentNode.dependencies and currentNode.flag.inv())
+			val badFlags = flagsToInvalidate and currentNode.dependents.inv()
 			check(badFlags <= 0) {
-				"Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are dependencies of the current node: ${badFlags.toFlagsString()}"
+				"Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are not dependents of the current node: ${badFlags.toFlagsString()}"
 			}
 		}
 		for (i in 0..nodes.lastIndex) {

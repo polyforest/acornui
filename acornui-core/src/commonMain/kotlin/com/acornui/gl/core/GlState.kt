@@ -348,6 +348,7 @@ inline fun GlState.useScissor(x: Int, y: Int, width: Int, height: Int, inner: ()
 	IntRectangle.free(oldScissor)
 }
 
+inline fun GlState.useScissor(region: IntRectangleRo, inner: () -> Unit) = useScissor(region.x, region.y, region.width, region.height, inner)
 
 /**
  * Temporarily uses a viewport, resetting to the old viewport after [inner].
@@ -419,7 +420,7 @@ fun Uniforms.getColorTransformation(out: ColorTransformation): ColorTransformati
 	return out
 }
 
-fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: ()->Unit) = uniforms.useColorTransformation(cT, inner)
+fun GlState.useColorTransformation(cT: ColorTransformationRo, inner: () -> Unit) = uniforms.useColorTransformation(cT, inner)
 
 fun Uniforms.setColorTransformation(value: ColorTransformationRo?) {
 	if (value == null) {
@@ -495,7 +496,7 @@ fun Uniforms.setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = 
 /**
  * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
  */
-fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro, inner: ()->Unit) {
+fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro, inner: () -> Unit) {
 	val previousViewProjection = Matrix4.obtain()
 	val previousViewTransform = Matrix4.obtain()
 	val previousModelTransform = Matrix4.obtain()

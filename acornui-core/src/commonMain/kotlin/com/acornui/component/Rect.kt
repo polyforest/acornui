@@ -20,10 +20,7 @@ import com.acornui.component.drawing.rect
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.di.Owned
-import com.acornui.gl.core.putIndex
-import com.acornui.gl.core.putQuadIndices
-import com.acornui.gl.core.putTriangleIndices
-import com.acornui.gl.core.putVertex
+import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.math.*

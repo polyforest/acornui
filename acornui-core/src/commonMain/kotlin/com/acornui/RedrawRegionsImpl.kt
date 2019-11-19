@@ -23,6 +23,13 @@ import com.acornui.recycle.Clearable
 
 interface RedrawRegionsRo {
 
+	/**
+	 * True if redraw regions should be used.
+	 * An implementation may toggle this to false mid-update when a certain threshold of invalid regions has been 
+	 * passed. 
+	 */
+	val enabled: Boolean
+
 	val regions: List<IntRectangleRo>
 
 	fun needsRedraw(region: IntRectangleRo): Boolean
@@ -41,25 +48,13 @@ interface RedrawRegions : RedrawRegionsRo, Clearable {
 		 */
 		val ALWAYS: RedrawRegions = object : RedrawRegions {
 
-			override val regions: List<IntRectangleRo> = emptyList()
+			override val enabled = false
+
+			override val regions = emptyList<IntRectangleRo>()
 
 			override fun invalidate(x: Int, y: Int, width: Int, height: Int) {}
 
 			override fun needsRedraw(region: IntRectangleRo): Boolean = true
-
-			override fun clear() {}
-		}
-
-		/**
-		 * An implementation that never recommends redraw.
-		 */
-		val NEVER: RedrawRegions = object : RedrawRegions {
-
-			override val regions: List<IntRectangleRo> = emptyList()
-
-			override fun invalidate(x: Int, y: Int, width: Int, height: Int) {}
-
-			override fun needsRedraw(region: IntRectangleRo): Boolean = false
 
 			override fun clear() {}
 		}
@@ -70,8 +65,10 @@ class RedrawRegionsImpl : RedrawRegions {
 
 	private var regionSet = IntRegionSet()
 
-	override val regions: List<IntRectangleRo>
-		get() = regionSet.regions
+	override val enabled: Boolean
+			get() = regions.size < 4
+
+	override val regions: List<IntRectangleRo> = regionSet.regions
 
 	/**
 	 * Marks a region as needing to be redrawn.
@@ -84,6 +81,7 @@ class RedrawRegionsImpl : RedrawRegions {
 	 * Returns true if the region needs to be redrawn.
 	 */
 	override fun needsRedraw(region: IntRectangleRo): Boolean {
+		if (!enabled) return true
 		if (region.isEmpty()) return false
 		return regionSet.regions.any2 { it.intersects(region) }
 	}

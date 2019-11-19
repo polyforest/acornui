@@ -76,6 +76,7 @@ class ScrollRectImpl(
 			maskClip.style.borderRadii = it.borderRadii
 			maskClip.style.margin = it.padding
 		}
+		_renderContext.clipRegionLocal = MinMax().inf()
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
@@ -90,15 +91,14 @@ class ScrollRectImpl(
 		contents.moveTo(-x, -y)
 	}
 
-	private val clipRegion = MinMax()
+	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
+		_renderContext.clipRegionLocal = MinMax(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
+		invalidateRenderContext()
+	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val w = explicitWidth ?: 100f
-		val h = explicitHeight ?: 100f
-		maskClip.setSize(w, h)
-		maskClip.setScaling(1f, 1f)
-		out.set(w, h)
-		_renderContext.clipRegionLocal = clipRegion.set(0f, 0f, width, height)
+		maskClip.setSize(explicitWidth, explicitHeight)
+		out.set(maskClip.bounds)
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
