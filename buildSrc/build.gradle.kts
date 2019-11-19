@@ -15,8 +15,7 @@
  */
 
 plugins {
-    id("org.gradle.kotlin.kotlin-dsl") version "1.2.11"
-//    `kotlin-dsl`
+    `kotlin-dsl`
     `maven-publish`
 }
 
@@ -31,7 +30,7 @@ kotlinDslPluginOptions {
 
 val kotlinVersion: String = "1.3.50"
 dependencies {
-    implementation(kotlin("gradle-plugin", version = kotlinVersion))
+    implementation(kotlin("gradle-plugin"))
     implementation(kotlin("serialization", version = kotlinVersion))
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
 }
