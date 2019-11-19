@@ -1,5 +1,3 @@
-import com.acornui.build.AcornDependencies
-
 /*
  * Copyright 2019 Poly Forest, LLC
  *
