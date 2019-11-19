@@ -23,7 +23,6 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 
 	private val fileTrees = mutableListOf<FileTree>()
 
-	@get:SkipWhenEmpty
 	@get:Incremental
 	@get:PathSensitive(PathSensitivity.RELATIVE)
 	@get:InputFiles

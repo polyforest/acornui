@@ -9,6 +9,7 @@ import com.acornui.toCamelCase
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.CopySpec
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
@@ -287,6 +288,7 @@ open class RunJvmTask : JavaExec() {
 		this.jvmArgs = if (OperatingSystem.current() == OperatingSystem.MAC_OS) listOf("-XstartOnFirstThread") else emptyList()
 	}
 
+	@Input
 	var debugMode: Boolean = false
 		set(value) {
 			field = value
