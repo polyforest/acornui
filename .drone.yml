@@ -3,7 +3,7 @@ name: default
 
 steps:
   - name: build-test-publish
-    image: gradle:jdk8
+    image: gradle:5.5-jdk8
     commands:
       - gradle build publish dokka --stacktrace --no-daemon
   - name: upload-reports
