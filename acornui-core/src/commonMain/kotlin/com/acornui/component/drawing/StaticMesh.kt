@@ -220,6 +220,7 @@ class StaticMesh(
 			mesh(batch) {
 				inner()
 			}
+			updateBoundingBox()
 			batch.upload()
 			textures.clear()
 			for (i in 0..batch.drawCalls.lastIndex) {
@@ -238,7 +239,6 @@ class StaticMesh(
 				oldTextures.clear()
 			}
 		}
-		updateBoundingBox()
 	}
 
 	private fun updateBoundingBox() {
