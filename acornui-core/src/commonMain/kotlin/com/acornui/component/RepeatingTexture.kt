@@ -49,7 +49,7 @@ class RepeatingTexture(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val t = texture ?: return
+		val t = renderable.texture ?: return
 		val tW = t.widthPixels.toFloat()
 		val tH = t.heightPixels.toFloat()
 		val w = explicitWidth ?: tW
