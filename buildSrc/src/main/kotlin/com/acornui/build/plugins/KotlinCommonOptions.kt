@@ -32,7 +32,7 @@ object KotlinCommonOptions {
 		val kotlinCoroutinesVersion: String by project.extra
 
 		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
-		project.pluginManager.apply("kotlinx-serialization")
+		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
 		project.extensions.configure<KotlinMultiplatformExtension> {
 			sourceSets {

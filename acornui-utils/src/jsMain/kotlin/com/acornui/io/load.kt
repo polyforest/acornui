@@ -38,8 +38,8 @@ suspend fun <T> load(
 	val httpRequest = XMLHttpRequest()
 	val c = CompletableDeferred<T>()
 	httpRequest.onprogress = { event ->
-		progress.loaded = Bandwidth.downBpsInv.seconds * event.loaded
-		progress.total = Bandwidth.downBpsInv.seconds * event.total
+		progress.loaded = Bandwidth.downBpsInv.seconds * event.loaded.toDouble()
+		progress.total = Bandwidth.downBpsInv.seconds * event.total.toDouble()
 		Unit
 	}
 

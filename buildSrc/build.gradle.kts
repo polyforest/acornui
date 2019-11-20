@@ -28,7 +28,7 @@ kotlinDslPluginOptions {
     experimentalWarning.set(false)
 }
 
-val kotlinVersion: String = "1.3.50"
+val kotlinVersion: String = "1.3.60"
 dependencies {
     implementation(kotlin("gradle-plugin"))
     implementation(kotlin("serialization", version = kotlinVersion))

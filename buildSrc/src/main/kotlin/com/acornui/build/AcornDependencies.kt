@@ -20,7 +20,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 
 object AcornDependencies {
 	val versionDefaults = mapOf(
-			"kotlinVersion" to "1.3.50",
+			"kotlinVersion" to "1.3.60",
 			"gdxVersion" to "1.9.8",
 			"lwjglVersion" to "3.2.2",
 			"jorbisVersion" to "0.0.17",
@@ -29,7 +29,7 @@ object AcornDependencies {
 			"dokkaVersion" to "0.9.18",
 			"kotlinLanguageVersion" to "1.3",
 			"kotlinJvmTarget" to "1.8",
-			"kotlinSerializationVersion" to "0.11.1",
+			"kotlinSerializationVersion" to "0.14.0",
 			"kotlinCoroutinesVersion" to "1.3.0-RC2"
 	)
 
