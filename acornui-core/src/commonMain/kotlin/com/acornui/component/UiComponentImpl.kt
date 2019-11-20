@@ -811,6 +811,10 @@ open class UiComponentImpl(
 	 * Do not call this directly, use [validate(ValidationFlags.TRANSFORM)]
 	 */
 	protected open fun updateTransform() {
+		if (_renderContext.modelTransformOverride != null) {
+			_renderContext.modelTransformLocal.idt()
+			return
+		}
 		val mat = _renderContext.modelTransformLocal
 		if (_customTransform != null) {
 			mat.set(_customTransform!!)

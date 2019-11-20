@@ -46,9 +46,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 	init {
 		draws = true
-		onTick {
-			tick(it)
-		}
+		onTick(::tick)
 	}
 
 	operator fun <P : SkeletonComponent> P.unaryPlus(): P {
@@ -97,7 +95,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		}
 	}
 
-	fun tick(tickTime: Float) {
+	private fun tick(tickTime: Float) {
 		if (isPaused) return
 		for (i in 0.._children.lastIndex) {
 			_children[i].tick(tickTime)
@@ -106,6 +104,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 	}
 
 	override fun updateDrawRegionCanvas(out: MinMax) {
+		// For now just have the whole screen
 		out.set(_renderContext.clipRegion)
 	}
 
