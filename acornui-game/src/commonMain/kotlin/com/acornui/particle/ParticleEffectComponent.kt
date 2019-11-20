@@ -30,6 +30,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMax
 import com.acornui.serialization.binaryParse
 import com.acornui.serialization.parseJson
 import com.acornui.time.onTick
@@ -47,13 +48,15 @@ class ParticleEffectComponent(
 
 	init {
 		interactivityMode = InteractivityMode.NONE
+		draws = true
+		onTick(::tick)
+	}
 
-		onTick {
-			val effect = _effect
-			if (effect != null) {
-				effect.update(it)
-				window.requestRender()
-			}
+	private fun tick(dT: Float) {
+		val effect = _effect
+		if (effect != null) {
+			effect.update(dT)
+			invalidateDraw()
 		}
 	}
 
@@ -104,6 +107,11 @@ class ParticleEffectComponent(
 
 	val effectInstance: ParticleEffectInstance?
 		get() = _effect?.effectInstance
+
+	override fun updateDrawRegionCanvas(out: MinMax) {
+		// For now just have the whole screen
+		out.set(_renderContext.clipRegion)
+	}
 
 	override fun draw() {
 		val effect = _effect ?: return
