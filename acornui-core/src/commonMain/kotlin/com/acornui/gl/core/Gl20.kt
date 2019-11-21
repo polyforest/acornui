@@ -1285,14 +1285,14 @@ fun Gl20.setScissor(x: Float, y: Float, width: Float, height: Float) {
  * Clears the current frame buffer with the given color and mask, then resets the clear color to the Window's clear
  * color.
  */
-fun Gl20.clearAndReset(color: ColorRo = Color.CLEAR, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
+fun Gl20.clearAndReset(color: ColorRo = Color.CLEAR, stencil: Int = 0, depth: Float = 1f, mask: Int = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT) {
 	if (mask == 0) return
 	val previousColor = getParameterfv(Gl20.COLOR_CLEAR_VALUE, FloatArray(4))
 	val previousStencil = getParameteri(Gl20.STENCIL_CLEAR_VALUE)
 	val previousDepth = getParameterf(Gl20.DEPTH_CLEAR_VALUE)
 	clearColor(color)
-	clearStencil(0)
-	clearDepth(1f)
+	clearStencil(stencil)
+	clearDepth(depth)
 	clear(mask)
 	clearColor(previousColor[0], previousColor[1], previousColor[2], previousColor[3])
 	clearStencil(previousStencil)
