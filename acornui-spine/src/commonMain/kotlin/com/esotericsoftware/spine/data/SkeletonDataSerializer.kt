@@ -245,7 +245,7 @@ object SlotDataSerializer : From<SlotData> {
 				boneName = reader.string("bone")!!,
 				color = Color.fromStr(reader.string("color") ?: "ffffffff"),
 				attachmentName = reader.string("attachment"),
-				blendMode = BlendMode.fromStr((reader.string("blend"))) ?: BlendMode.NORMAL
+				blendMode = BlendMode.fromStrOptional((reader.string("blend"))) ?: BlendMode.NORMAL
 		)
 	}
 }

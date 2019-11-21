@@ -18,7 +18,6 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -239,11 +238,11 @@ object MinMaxSerializer : KSerializer<MinMax> {
 			StringDescriptor.withName("MinMax")
 
 	override fun serialize(encoder: Encoder, obj: MinMax) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.xMin, obj.yMin, obj.xMax, obj.yMax))
+		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.xMin, obj.yMin, obj.xMax, obj.yMax))
 	}
 
 	override fun deserialize(decoder: Decoder): MinMax {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val values = decoder.decodeSerializableValue(FloatSerializer.list)
 		return MinMax(
 				xMin = values[0],
 				yMin = values[1],

@@ -18,6 +18,8 @@ package com.acornui.math
 
 import com.acornui.collection.scl
 import com.acornui.collection.sortedInsertionIndex
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -26,7 +28,9 @@ import kotlin.math.sqrt
 
 /**
  * Takes a linear value in the range of 0-1 and outputs an interpolated value.
+ * If using an interpolation with serialization, the interpolation must be registered with [Easing].
  */
+@Serializable(with = InterpolationSerializer::class)
 interface Interpolation {
 
 	/**
@@ -109,11 +113,8 @@ class ExpOut(value: Float, power: Float) : Exp(value, power) {
 //
 
 open class Elastic(val value: Float, val power: Float, bounces: Int, val scale: Float) : Interpolation {
-	val bounces: Float
 
-	init {
-		this.bounces = bounces * PI * (if (bounces % 2 == 0) 1f else -1f)
-	}
+	val bounces: Float = bounces * PI * (if (bounces % 2 == 0) 1f else -1f)
 
 	override fun apply(alpha: Float): Float {
 		var a = alpha
@@ -146,11 +147,7 @@ class ElasticOut(value: Float, power: Float, bounces: Int, scale: Float) : Elast
 
 open class Swing(scale: Float) : Interpolation {
 
-	private val scale: Float
-
-	init {
-		this.scale = scale * 2f
-	}
+	private val scale: Float = scale * 2f
 
 	override fun apply(alpha: Float): Float {
 		var a = alpha
@@ -497,7 +494,7 @@ object Easing {
 
 	val hermite: Interpolation = Hermite
 
-	private val registry = mutableMapOf(
+	private val _registry = mutableMapOf(
 			"stepped" to stepped,
 			"linear" to linear,
 
@@ -547,36 +544,46 @@ object Easing {
 			"hermite" to hermite
 	)
 
+	val registry: Map<String, Interpolation> = _registry
+
 	/**
 	 * Registers a named interpolation object, for use in serialization.
 	 */
 	fun registerInterpolation(name: String, value: Interpolation) {
-		registry[name] = value
+		_registry[name] = value
 	}
 
 	/**
 	 * Returns the interpolation object if there was one registered with the given name.
 	 */
-	fun fromString(name: String): Interpolation? {
-		return registry[name]
+	fun fromStrOptional(name: String): Interpolation? {
+		return _registry[name]
+	}
+
+	fun fromStr(name: String): Interpolation {
+		return _registry[name] ?: error("Interpolation \"$name\" not found.")
 	}
 
 	/**
-	 * Returns the name of the static interpolation value if it was registered.
+	 * Returns the name of the static interpolation value as it was registered via [registerInterpolation].
 	 */
-	fun toString(value: Interpolation?): String? {
-		if (value == null) return null
-		for (entry in registry) {
-			if (entry.value === value) return entry.key
-		}
-		return null
+	fun toString(value: Interpolation): String? {
+		return _registry.entries.firstOrNull { it.value === value }?.key
 	}
 
-	/**
-	 * Returns a list of the currently registered interpolations.
-	 */
-	fun getRegistered(): List<Interpolation> {
-		return registry.values.toList()
+}
+
+@Serializer(forClass = Interpolation::class)
+object InterpolationSerializer : KSerializer<Interpolation> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Interpolation")
+
+	override fun deserialize(decoder: Decoder): Interpolation {
+		return Easing.fromStr(decoder.decodeString())
 	}
 
+	override fun serialize(encoder: Encoder, obj: Interpolation) {
+		encoder.encodeString(Easing.toString(obj) ?: error("Interpolation was not registered"))
+	}
 }

@@ -19,11 +19,14 @@ package com.acornui.graphic
 import com.acornui.collection.copy
 import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.Gl20
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 
 
 /**
  * The blend mode determines how fragments are added to existing screen fragments.
  */
+@Serializable(with = BlendModeSerializer::class)
 open class BlendMode(
 
 		val source: Int,
@@ -58,7 +61,11 @@ open class BlendMode(
 			return registry.values.copy()
 		}
 
-		fun fromStr(name: String?): BlendMode? = registry[name]
+		fun fromStr(name: String?): BlendMode = registry[name] ?: error("Blend mode \"$name\" not found.")
+		fun fromStrOptional(name: String?): BlendMode? {
+			if (name == null) return null
+			return registry[name]
+		}
 
 		init {
 			register(NONE, NORMAL, ADDITIVE, MULTIPLY, INVERTED, SCREEN)
@@ -67,5 +74,20 @@ open class BlendMode(
 
 	open fun applyBlending(gl: Gl20, premultipliedAlpha: Boolean) {
 		gl.blendFunc(if (premultipliedAlpha) sourcePma else source, dest)
+	}
+}
+
+@Serializer(forClass = BlendMode::class)
+object BlendModeSerializer : KSerializer<BlendMode> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("BlendMode")
+
+	override fun deserialize(decoder: Decoder): BlendMode {
+		return BlendMode.fromStr(decoder.decodeString())
+	}
+
+	override fun serialize(encoder: Encoder, obj: BlendMode) {
+		encoder.encodeString(obj.name)
 	}
 }

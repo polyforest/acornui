@@ -22,7 +22,9 @@ package com.acornui.particle
 import com.acornui.collection.ArrayList
 import com.acornui.recycle.Clearable
 import com.acornui.graphic.Color
+import com.acornui.math.MathUtils
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.MathUtils.lerp
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
 import kotlin.math.ceil
@@ -187,10 +189,10 @@ class ParticleEmitterInstance(
 			}
 		}
 
-		val alpha = _currentTime * _durationInv
+		val emitterAlpha = _currentTime * _durationInv
 
-		emitter.emissionRate.apply(emissionRateValue, alpha)
-		emitter.particleLifeExpectancy.apply(lifeExpectancyValue, alpha)
+		emissionRateValue.apply(emitter.emissionRate, emitterAlpha)
+		lifeExpectancyValue.apply(emitter.particleLifeExpectancy, emitterAlpha)
 		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
 			accumulator += emissionRateValue.current * maxParticlesScale * tickTime
@@ -205,7 +207,7 @@ class ParticleEmitterInstance(
 			}
 		}
 
-		val alphaClamped = clamp(alpha, 0f, 1f)
+		val alphaClamped = clamp(emitterAlpha, 0f, 1f)
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active) {
@@ -271,8 +273,9 @@ class ParticleEmitterInstance(
 		_duration = emitter.duration.duration.getValue()
 		_durationInv = 1f / _duration
 		endTime = _duration + _delayAfter
-		emitter.emissionRate.reset(emissionRateValue)
-		emitter.particleLifeExpectancy.reset(lifeExpectancyValue)
+
+		emissionRateValue.reset(emitter.emissionRate)
+		lifeExpectancyValue.reset(emitter.particleLifeExpectancy)
 	}
 
 }
@@ -376,13 +379,13 @@ interface TimelineInstance {
 
 }
 
-fun timelineInstance(timeline: PropertyTimeline<*>): TimelineInstance {
-	return if (timeline.property == "color") ColorTimelineInstance(timeline as ColorTimeline)
-	else FloatTimelineInstance(timeline as FloatTimeline)
+fun timelineInstance(timeline: PropertyTimeline): TimelineInstance {
+	return if (timeline.property == "color") ColorTimelineInstance(timeline)
+	else FloatTimelineInstance(timeline)
 }
 
 class FloatTimelineInstance(
-		private val timeline: FloatTimeline
+		private val timeline: PropertyTimeline
 ) : TimelineInstance {
 
 	private val value = PropertyValue()
@@ -395,18 +398,18 @@ class FloatTimelineInstance(
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
 		if (timeline.timeline.isEmpty()) return
 		val previous = value.current
-		timeline.apply(value, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
+		value.apply(timeline, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
 		updater(particle, value.current - previous)
 	}
 
 	override fun reset(particle: Particle) {
-		timeline.reset(value)
+		value.reset(timeline)
 		updater(particle, value.current - offset)
 	}
 }
 
 class ColorTimelineInstance(
-		private val timeline: ColorTimeline
+		private val timeline: PropertyTimeline
 ) : TimelineInstance {
 
 	private val previous = Color.WHITE.copy()
@@ -414,15 +417,49 @@ class ColorTimelineInstance(
 
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
 		previous.set(value)
-		timeline.apply(value, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
+		value.applyFromTimeline(timeline, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
 		particle.colorTint.r += value.r - previous.r
 		particle.colorTint.g += value.g - previous.g
 		particle.colorTint.b += value.b - previous.b
+		particle.colorTint.a += value.a - previous.a
 	}
 
 	override fun reset(particle: Particle) {
 		value.set(Color.WHITE)
+		previous.set(Color.WHITE)
 		particle.colorTint.set(1f, 1f, 1f, particle.colorTint.a)
+	}
+}
+
+fun Color.applyFromTimeline(timeline: PropertyTimeline, alpha: Float) {
+	val indexB = minOf(0, timeline.getInsertionIndex(alpha))
+	if (indexB == -1) return
+	val indexA = maxOf(0, indexB - 1)
+	val timeA = timeline.getTime(indexA)
+	val timeB = timeline.getTime(indexB)
+
+	val hasAlpha = timeline.numComponents == 4
+	val valueR2 = timeline.getValue(indexB, 0)
+	val valueG2 = timeline.getValue(indexB, 1)
+	val valueB2 = timeline.getValue(indexB, 2)
+	val valueA2 = if (hasAlpha) timeline.getValue(indexB, 3) else 1f
+
+	if (timeB - timeA < MathUtils.FLOAT_ROUNDING_ERROR) {
+		r = valueR2
+		g = valueG2
+		b = valueB2
+		a = valueA2
+	} else {
+		val valueR1 = timeline.getValue(indexA, 0)
+		val valueG1 = timeline.getValue(indexA, 1)
+		val valueB1 = timeline.getValue(indexA, 2)
+		val valueA1 = if (hasAlpha) timeline.getValue(indexA, 3) else 1f
+
+		val valueAlpha = (alpha - timeA) / (timeB - timeA)
+		r = lerp(valueR1, valueR2, valueAlpha)
+		g = lerp(valueG1, valueG2, valueAlpha)
+		b = lerp(valueB1, valueB2, valueAlpha)
+		a = lerp(valueA1, valueA2, valueAlpha)
 	}
 }
 

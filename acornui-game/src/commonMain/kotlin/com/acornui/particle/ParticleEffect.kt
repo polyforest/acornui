@@ -17,13 +17,12 @@
 package com.acornui.particle
 
 import com.acornui.UidUtil
-import com.acornui.Version
 import com.acornui.graphic.BlendMode
-import com.acornui.serialization.*
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class ParticleEffect(
-		
+		val version: String = "0.4.0",
 		val emitters: List<ParticleEmitter>
 ) {
 	fun createInstance(maxParticlesScale: Float): ParticleEffectInstance {
@@ -36,6 +35,7 @@ data class ParticleEffect(
 	}
 }
 
+@Serializable
 data class ParticleEmitter(
 
 		val id: String = UidUtil.createUid(),
@@ -62,12 +62,12 @@ data class ParticleEmitter(
 		/**
 		 * The rate of emissions, in particles per second.
 		 */
-		val emissionRate: FloatTimeline,
+		val emissionRate: PropertyTimeline,
 
 		/**
 		 * Calculates the life of a newly created particle.
 		 */
-		val particleLifeExpectancy: FloatTimeline,
+		val particleLifeExpectancy: PropertyTimeline,
 
 		val blendMode: BlendMode,
 
@@ -83,13 +83,14 @@ data class ParticleEmitter(
 		/**
 		 * Timelines relative to the particle life.
 		 */
-		val propertyTimelines: List<PropertyTimeline<*>>
+		val propertyTimelines: List<PropertyTimeline>
 ) {
 	fun createInstance(maxParticlesScale: Float): ParticleEmitterInstance {
 		return ParticleEmitterInstance(this, maxParticlesScale)
 	}
 }
 
+@Serializable
 data class EmitterDuration(
 
 		/**
@@ -108,92 +109,8 @@ data class EmitterDuration(
 		val delayAfter: FloatRange
 )
 
+@Serializable
 data class ParticleImageEntry(
 		val time: Float,
 		val path: String
 )
-
-
-object ParticleEffectSerializer : From<ParticleEffect>, To<ParticleEffect> {
-
-	val serializationVersion = Version(0, 2, 0)
-
-	override fun read(reader: Reader): ParticleEffect {
-		val version = Version.fromStr(reader.string("version") ?: "0.2.0.0")
-		if (!version.isApiCompatible(serializationVersion)) throw Exception("Cannot read from version ${version.toVersionString()}")
-		return ParticleEffect(reader.arrayList("emitters", ParticleEmitterSerializer)!!)
-	}
-
-	override fun ParticleEffect.write(writer: Writer) {
-		writer.string("version", serializationVersion.toVersionString())
-		writer.array("emitters", emitters, ParticleEmitterSerializer)
-	}
-}
-
-object ParticleEmitterSerializer : From<ParticleEmitter>, To<ParticleEmitter> {
-
-	override fun read(reader: Reader): ParticleEmitter {
-		return ParticleEmitter(
-				name = reader.string("name")!!,
-				enabled = reader.bool("enabled") ?: true,
-				loops = reader.bool("loops") ?: true,
-				duration = reader.obj("duration", EmitterDurationVoSerializer)!!,
-				count = reader.int("count")!!,
-				emissionRate = reader.obj("emissionRate", FloatTimelineSerializer)!!,
-				particleLifeExpectancy = reader.obj("particleLifeExpectancy", FloatTimelineSerializer)!!,
-				blendMode = BlendMode.fromStr(reader.string("blendMode") ?: "normal")!!,
-				premultipliedAlpha = reader.bool("premultipliedAlpha") ?: false,
-				imageEntries = reader.arrayList("imageEntries", ParticleImageEntrySerializer)!!,
-				orientToForwardDirection = reader.bool("orientToForwardDirection") ?: false,
-				propertyTimelines = reader.arrayList("propertyTimelines", PropertyTimelineSerializer)!!
-		)
-	}
-
-	override fun ParticleEmitter.write(writer: Writer) {
-		writer.string("name", name)
-		writer.bool("enabled", enabled)
-		writer.bool("loops", loops)
-		writer.obj("duration", duration, EmitterDurationVoSerializer)
-		writer.int("count", count)
-		writer.obj("emissionRate", emissionRate, FloatTimelineSerializer)
-		writer.obj("particleLifeExpectancy", particleLifeExpectancy, FloatTimelineSerializer)
-		writer.string("blendMode", blendMode.name)
-		writer.bool("premultipliedAlpha", premultipliedAlpha)
-		writer.array("imageEntries", imageEntries, ParticleImageEntrySerializer)
-		writer.bool("orientToForwardDirection", orientToForwardDirection)
-		writer.array("propertyTimelines", propertyTimelines, PropertyTimelineSerializer)
-	}
-}
-
-object EmitterDurationVoSerializer : From<EmitterDuration>, To<EmitterDuration> {
-
-	override fun read(reader: Reader): EmitterDuration {
-		return EmitterDuration(
-				duration = reader.obj("duration", FloatRangeSerializer)!!,
-				delayBefore = reader.obj("delayBefore", FloatRangeSerializer)!!,
-				delayAfter = reader.obj("delayAfter", FloatRangeSerializer)!!
-
-		)
-	}
-
-	override fun EmitterDuration.write(writer: Writer) {
-		writer.obj("duration", duration, FloatRangeSerializer)
-		writer.obj("delayBefore", delayBefore, FloatRangeSerializer)
-		writer.obj("delayAfter", delayAfter, FloatRangeSerializer)
-	}
-}
-
-object ParticleImageEntrySerializer : From<ParticleImageEntry>, To<ParticleImageEntry> {
-
-	override fun read(reader: Reader): ParticleImageEntry {
-		return ParticleImageEntry(
-				time = reader.float("time")!!,
-				path = reader.string("path")!!
-		)
-	}
-
-	override fun ParticleImageEntry.write(writer: Writer) {
-		writer.string("path", path)
-		writer.float("time", time)
-	}
-}

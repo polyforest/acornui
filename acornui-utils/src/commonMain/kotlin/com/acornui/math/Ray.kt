@@ -28,7 +28,6 @@ import com.acornui.notCloseTo
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
 import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.sqrt
@@ -375,11 +374,11 @@ object RaySerializer : KSerializer<Ray> {
 	override fun serialize(encoder: Encoder, obj: Ray) {
 		val origin = obj.origin
 		val direction = obj.direction
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(origin.x, origin.y, origin.z, direction.x, direction.y, direction.z))
+		encoder.encodeSerializableValue(FloatSerializer.list, listOf(origin.x, origin.y, origin.z, direction.x, direction.y, direction.z))
 	}
 
 	override fun deserialize(decoder: Decoder): Ray {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val values = decoder.decodeSerializableValue(FloatSerializer.list)
 		return Ray().set(values[0], values[1], values[2], values[3], values[4], values[5])
 	}
 }

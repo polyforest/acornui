@@ -21,7 +21,6 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.IntSerializer
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -339,11 +338,11 @@ object IntRectangleSerializer : KSerializer<IntRectangle> {
 			StringDescriptor.withName("IntRectangle")
 
 	override fun serialize(encoder: Encoder, obj: IntRectangle) {
-		encoder.encodeSerializableValue(ArrayListSerializer(IntSerializer), listOf(obj.x, obj.y, obj.width, obj.height))
+		encoder.encodeSerializableValue(IntSerializer.list, listOf(obj.x, obj.y, obj.width, obj.height))
 	}
 
 	override fun deserialize(decoder: Decoder): IntRectangle {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(IntSerializer))
+		val values = decoder.decodeSerializableValue(IntSerializer.list)
 		return IntRectangle(
 				x = values[0],
 				y = values[1],

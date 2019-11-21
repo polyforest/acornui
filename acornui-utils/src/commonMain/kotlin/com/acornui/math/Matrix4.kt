@@ -18,7 +18,6 @@ package com.acornui.math
 
 import com.acornui.recycle.ObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
 import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
@@ -1605,11 +1604,11 @@ object Matrix4Serializer : KSerializer<Matrix4> {
 			StringDescriptor.withName("Matrix4")
 
 	override fun serialize(encoder: Encoder, obj: Matrix4) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), obj.values.asList())
+		encoder.encodeSerializableValue(FloatSerializer.list, obj.values.asList())
 	}
 
 	override fun deserialize(decoder: Decoder): Matrix4 {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val values = decoder.decodeSerializableValue(FloatSerializer.list)
 		return Matrix4(values)
 	}
 }

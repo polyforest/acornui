@@ -2,7 +2,6 @@ package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
 import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
@@ -106,11 +105,11 @@ object HsvSerializer : KSerializer<Hsv> {
 			StringDescriptor.withName("Hsv")
 	
 	override fun serialize(encoder: Encoder, obj: Hsv) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.h, obj.s, obj.v, obj.a))
+		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.h, obj.s, obj.v, obj.a))
 	}
 
 	override fun deserialize(decoder: Decoder): Hsv {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val values = decoder.decodeSerializableValue(FloatSerializer.list)
 		return Hsv(values[0], values[1], values[2], values[3])
 	}
 }

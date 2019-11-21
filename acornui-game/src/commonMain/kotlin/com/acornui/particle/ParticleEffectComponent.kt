@@ -29,13 +29,17 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
+import com.acornui.io.toByteArray
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
 import com.acornui.serialization.binaryParse
+import com.acornui.serialization.jsonParse
 import com.acornui.serialization.parseJson
 import com.acornui.time.onTick
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.json.Json
 
 class ParticleEffectComponent(
 		owner: Owned
@@ -174,9 +178,9 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
 		// Binary
-		binaryParse(loadBinary(pDataPath), ParticleEffectSerializer)
+		binaryParse(ParticleEffect.serializer(), loadBinary(pDataPath))
 	} else {
-		parseJson(loadText(pDataPath), ParticleEffectSerializer)
+		jsonParse(ParticleEffect.serializer(), loadText(pDataPath))
 	}
 	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
 }

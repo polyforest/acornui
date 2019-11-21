@@ -38,7 +38,7 @@ fun <T> toJson(value: T, factory: To<T>): String {
 }
 
 @PublishedApi
-internal val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false), context = dataModule)
+internal val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false))
 
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
 	return jsonx.parse(deserializer, jsonStr)

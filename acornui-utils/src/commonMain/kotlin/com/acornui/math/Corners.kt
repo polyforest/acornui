@@ -42,7 +42,7 @@ private object CornersSerializer2 : KSerializer<CornersRo> {
 	override val descriptor: SerialDescriptor = ListDescriptor("com.acornui.math.Corners", FloatDescriptor)
 
 	override fun deserialize(decoder: Decoder): Corners {
-		val arr = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val arr = decoder.decodeSerializableValue(FloatSerializer.list)
 		return when (arr.size) {
 			1 -> Corners(arr[0])
 			4 -> Corners(arr[0], arr[1], arr[2], arr[3])
@@ -76,9 +76,9 @@ private object CornersSerializer2 : KSerializer<CornersRo> {
 			}
 		}
 		when {
-			allEqual -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(first))
-			pairsEqual -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(list[0], list[2], list[4], list[6]))
-			else -> encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), list)
+			allEqual -> encoder.encodeSerializableValue(FloatSerializer.list, listOf(first))
+			pairsEqual -> encoder.encodeSerializableValue(FloatSerializer.list, listOf(list[0], list[2], list[4], list[6]))
+			else -> encoder.encodeSerializableValue(FloatSerializer.list, list)
 		}
 	}
 }

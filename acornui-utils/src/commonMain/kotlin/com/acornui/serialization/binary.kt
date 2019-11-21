@@ -379,10 +379,14 @@ fun <T> toBinary(value: T, factory: To<T>): ReadByteBuffer {
 	return BinarySerializer.write(value, factory)
 }
 
-private val cbor = Cbor(context = dataModule)
+private val cbor = Cbor()
 
 fun <T> binaryParse(deserializer: DeserializationStrategy<T>, binary: ByteArray): T {
 	return cbor.load(deserializer, binary)
+}
+
+fun <T> binaryParse(deserializer: DeserializationStrategy<T>, binary: ReadByteBuffer): T {
+	return cbor.load(deserializer, binary.toByteArray())
 }
 
 fun <T> binaryDump(serializer: SerializationStrategy<T>, value: T): ByteArray {

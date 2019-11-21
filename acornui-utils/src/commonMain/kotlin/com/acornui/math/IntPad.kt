@@ -18,7 +18,6 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.IntSerializer
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -214,11 +213,11 @@ object IntPadSerializer : KSerializer<IntPad> {
 			StringDescriptor.withName("IntPad")
 
 	override fun serialize(encoder: Encoder, obj: IntPad) {
-		encoder.encodeSerializableValue(ArrayListSerializer(IntSerializer), listOf(obj.top, obj.right, obj.bottom, obj.left))
+		encoder.encodeSerializableValue(IntSerializer.list, listOf(obj.top, obj.right, obj.bottom, obj.left))
 	}
 
 	override fun deserialize(decoder: Decoder): IntPad {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(IntSerializer))
+		val values = decoder.decodeSerializableValue(IntSerializer.list)
 		return IntPad(
 				top = values[0],
 				right = values[1],

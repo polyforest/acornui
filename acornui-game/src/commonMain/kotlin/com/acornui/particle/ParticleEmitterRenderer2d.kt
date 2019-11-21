@@ -16,8 +16,6 @@
 
 package com.acornui.particle
 
-import com.acornui.component.RenderContext
-import com.acornui.component.RenderContextRo
 import com.acornui.component.Sprite
 import com.acornui.LifecycleBase
 import com.acornui.di.Injector

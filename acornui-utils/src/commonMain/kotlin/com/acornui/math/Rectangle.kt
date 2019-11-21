@@ -21,7 +21,6 @@ package com.acornui.math
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.ArrayListSerializer
 import kotlinx.serialization.internal.FloatSerializer
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -503,11 +502,11 @@ object RectangleSerializer : KSerializer<Rectangle> {
 			StringDescriptor.withName("Rectangle")
 
 	override fun serialize(encoder: Encoder, obj: Rectangle) {
-		encoder.encodeSerializableValue(ArrayListSerializer(FloatSerializer), listOf(obj.x, obj.y, obj.width, obj.height))
+		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.x, obj.y, obj.width, obj.height))
 	}
 
 	override fun deserialize(decoder: Decoder): Rectangle {
-		val values = decoder.decodeSerializableValue(ArrayListSerializer(FloatSerializer))
+		val values = decoder.decodeSerializableValue(FloatSerializer.list)
 		return Rectangle(
 				x = values[0],
 				y = values[1],
