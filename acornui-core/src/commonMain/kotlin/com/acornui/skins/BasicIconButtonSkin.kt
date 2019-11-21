@@ -37,7 +37,7 @@ class BasicIconButtonSkin(
 		textField = addChild(text {
 			interactivityMode = InteractivityMode.NONE
 			visible = false
-		})
+		}) layout { widthPercent = 1f }
 	}
 
 	override var label: String = ""
