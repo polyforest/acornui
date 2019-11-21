@@ -16,13 +16,15 @@
 
 package com.acornui.js.html
 
-import com.acornui.component.*
+import com.acornui.component.BoxStyle
+import com.acornui.component.HtmlComponent
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.parentWalk
 import com.acornui.di.Owned
 import com.acornui.focus.Focusable
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.reflect.observable
 import com.acornui.signal.Cancel
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -38,8 +40,7 @@ class JsHtmlComponent(
 	private val component = DomComponent(element)
 	override val boxStyle = bind(BoxStyle())
 
-	private val focusedChangingHandler = {
-		oldFocusable: Focusable?, newFocusable: Focusable?, cancel: Cancel ->
+	private val focusedChangingHandler = { oldFocusable: Focusable?, newFocusable: Focusable?, cancel: Cancel ->
 		if (oldFocusable == this) {
 			cancel.cancel()
 		}
@@ -81,7 +82,12 @@ class JsHtmlComponent(
 		set(value) {
 			component.element.innerHTML = value
 		}
-	
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		component.setSize(explicitWidth, explicitHeight)
+		out.set(component.bounds)
+	}
+
 	override fun updateRenderContext() {
 		super.updateRenderContext()
 		var v = true
@@ -97,11 +103,6 @@ class JsHtmlComponent(
 
 		component.concatenatedTransform = renderContext.modelTransform
 		component.concatenatedColorTint = renderContext.colorTint
-	}
-
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		component.setSize(explicitWidth, explicitHeight)
-		out.set(component.bounds)
 	}
 
 	override fun draw() {
@@ -207,16 +208,27 @@ class DomComponent(
 	private val marginH: Float
 		get() = margin.top + margin.bottom
 
-	var concatenatedTransform: Matrix4Ro by observable(Matrix4.IDENTITY) { value ->
-		element.style.transform = "matrix3d(${value.values.joinToString(",")})"
-	}
+	private val _concatenatedTransform = Matrix4()
+	var concatenatedTransform: Matrix4Ro
+		get() = _concatenatedTransform
+		set(value) {
+			if (_concatenatedTransform != value) {
+				_concatenatedTransform.set(value)
+				element.style.transform = "matrix3d(${value.values.joinToString(",")})"
+			}
+		}
 
-	var concatenatedColorTint: ColorRo by observable(Color.WHITE) { value ->
-		val str = value.a.toString()
-		if (element.style.opacity != str)
-			element.style.opacity = str
-		println("element.style.opacity ${element.style.opacity}")
-	}
+	private val _concatenatedColorTint = Color.WHITE.copy()
+	var concatenatedColorTint: ColorRo
+		get() = _concatenatedColorTint
+		set(value) {
+			if (_concatenatedColorTint != value) {
+				_concatenatedColorTint.set(value)
+				val str = value.a.toString()
+				if (element.style.opacity != str)
+					element.style.opacity = str
+			}
+		}
 }
 
 fun CSSStyleDeclaration.userSelect(value: Boolean) {
