@@ -148,42 +148,6 @@ fun <K, E> List<E>.sortedInsertionIndex(element: K, fromIndex: Int = 0, toIndex:
 	var indexA = fromIndex
 	var indexB = toIndex
 
-	if (indexA < indexB) {
-		val midIndex = toIndex - 1
-		val comparison = comparator(element, this[midIndex])
-		if (comparison == 0) {
-			if (matchForwards) {
-				indexA = midIndex + 1
-			} else {
-				indexB = midIndex
-			}
-		} else if (comparison > 0) {
-			indexA = midIndex + 1
-		} else {
-			indexB = midIndex
-		}
-	} else {
-		return indexA
-	}
-
-	if (indexA < indexB) {
-		val midIndex = indexA
-		val comparison = comparator(element, this[midIndex])
-		if (comparison == 0) {
-			if (matchForwards) {
-				indexA = midIndex + 1
-			} else {
-				indexB = midIndex
-			}
-		} else if (comparison > 0) {
-			indexA = midIndex + 1
-		} else {
-			indexB = midIndex
-		}
-	} else {
-		return indexA
-	}
-
 	while (indexA < indexB) {
 		val midIndex = (indexA + indexB) ushr 1
 		val comparison = comparator(element, this[midIndex])
