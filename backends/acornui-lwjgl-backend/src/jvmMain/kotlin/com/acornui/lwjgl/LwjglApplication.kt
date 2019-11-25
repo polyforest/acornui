@@ -151,7 +151,7 @@ open class LwjglApplication : ApplicationBase() {
 		GlfwKeyInput(getWindowId())
 	}
 
-	private val audioManagerTask by task(AudioManager) {
+	private val audioManagerTask by task(AudioManager, isOptional = true) {
 		val audioManager = OpenAlAudioManager()
 		// Audio
 		try {
