@@ -18,10 +18,13 @@ package com.acornui.particle
 
 import com.acornui.Disposable
 import com.acornui.Updatable
-import com.acornui.async.globalAsync
 import com.acornui.asset.*
 import com.acornui.async.UI
-import com.acornui.component.*
+import com.acornui.async.globalAsync
+import com.acornui.component.InteractivityMode
+import com.acornui.component.Sprite
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.invalidateDraw
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -29,17 +32,13 @@ import com.acornui.gl.core.GlState
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
-import com.acornui.io.toByteArray
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
 import com.acornui.serialization.binaryParse
 import com.acornui.serialization.jsonParse
-import com.acornui.serialization.parseJson
 import com.acornui.time.onTick
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.serialization.cbor.Cbor
-import kotlinx.serialization.json.Json
 
 class ParticleEffectComponent(
 		owner: Owned

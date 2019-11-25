@@ -20,13 +20,11 @@ package com.acornui.particle
 
 
 import com.acornui.collection.ArrayList
-import com.acornui.recycle.Clearable
 import com.acornui.graphic.Color
-import com.acornui.math.MathUtils
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.MathUtils.lerp
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
+import com.acornui.recycle.Clearable
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.sin
@@ -81,7 +79,6 @@ class ParticleEffectInstance(
 			emitterInstances[i].reset()
 		}
 	}
-
 }
 
 class ParticleEmitterInstance(
@@ -191,8 +188,8 @@ class ParticleEmitterInstance(
 
 		val emitterAlpha = _currentTime * _durationInv
 
-		emissionRateValue.apply(emitter.emissionRate, emitterAlpha)
-		lifeExpectancyValue.apply(emitter.particleLifeExpectancy, emitterAlpha)
+		emissionRateValue.setCurrent(emitter.emissionRate, emitterAlpha)
+		lifeExpectancyValue.setCurrent(emitter.particleLifeExpectancy, emitterAlpha)
 		if (_currentTime < _duration && _currentTime > 0f) {
 			// Create new particles if the accumulator surpasses 1.
 			accumulator += emissionRateValue.current * maxParticlesScale * tickTime
@@ -398,7 +395,8 @@ class FloatTimelineInstance(
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
 		if (timeline.timeline.isEmpty()) return
 		val previous = value.current
-		value.apply(timeline, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
+		val time = if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped
+		value.setCurrent(timeline, time)
 		updater(particle, value.current - previous)
 	}
 
@@ -412,54 +410,25 @@ class ColorTimelineInstance(
 		private val timeline: PropertyTimeline
 ) : TimelineInstance {
 
-	private val previous = Color.WHITE.copy()
-	private val value = Color.WHITE.copy()
+	private val previous = FloatArray(3)
+	private val value = FloatArray(3)
 
 	override fun apply(particle: Particle, particleAlphaClamped: Float, emitterAlphaClamped: Float) {
-		previous.set(value)
-		value.applyFromTimeline(timeline, if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped)
-		particle.colorTint.r += value.r - previous.r
-		particle.colorTint.g += value.g - previous.g
-		particle.colorTint.b += value.b - previous.b
-		particle.colorTint.a += value.a - previous.a
+		value.copyInto(previous)
+
+		val time = if (timeline.useEmitterDuration) emitterAlphaClamped else particleAlphaClamped
+		timeline.getValuesAtTime(time, value)
+		particle.colorTint.r += value[0] - previous[0]
+		particle.colorTint.g += value[1] - previous[1]
+		particle.colorTint.b += value[2] - previous[2]
 	}
 
 	override fun reset(particle: Particle) {
-		value.set(Color.WHITE)
-		previous.set(Color.WHITE)
-		particle.colorTint.set(1f, 1f, 1f, particle.colorTint.a)
-	}
-}
-
-fun Color.applyFromTimeline(timeline: PropertyTimeline, alpha: Float) {
-	val indexB = minOf(0, timeline.getInsertionIndex(alpha))
-	if (indexB == -1) return
-	val indexA = maxOf(0, indexB - 1)
-	val timeA = timeline.getTime(indexA)
-	val timeB = timeline.getTime(indexB)
-
-	val hasAlpha = timeline.numComponents == 4
-	val valueR2 = timeline.getValue(indexB, 0)
-	val valueG2 = timeline.getValue(indexB, 1)
-	val valueB2 = timeline.getValue(indexB, 2)
-	val valueA2 = if (hasAlpha) timeline.getValue(indexB, 3) else 1f
-
-	if (timeB - timeA < MathUtils.FLOAT_ROUNDING_ERROR) {
-		r = valueR2
-		g = valueG2
-		b = valueB2
-		a = valueA2
-	} else {
-		val valueR1 = timeline.getValue(indexA, 0)
-		val valueG1 = timeline.getValue(indexA, 1)
-		val valueB1 = timeline.getValue(indexA, 2)
-		val valueA1 = if (hasAlpha) timeline.getValue(indexA, 3) else 1f
-
-		val valueAlpha = (alpha - timeA) / (timeB - timeA)
-		r = lerp(valueR1, valueR2, valueAlpha)
-		g = lerp(valueG1, valueG2, valueAlpha)
-		b = lerp(valueB1, valueB2, valueAlpha)
-		a = lerp(valueA1, valueA2, valueAlpha)
+		previous.fill(0f)
+		value.fill(0f)
+		particle.colorTint.r = 0f
+		particle.colorTint.g = 0f
+		particle.colorTint.b = 0f
 	}
 }
 

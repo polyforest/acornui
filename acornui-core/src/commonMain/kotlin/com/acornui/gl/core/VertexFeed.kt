@@ -99,7 +99,7 @@ fun IndexFeed.pushQuadIndices() = putQuadIndices()
 
 fun IndexFeed.putQuadIndices() {
 	val n = highestIndex + 1
-	putIndex(n + 0)
+	putIndex(n)
 	putIndex(n + 1)
 	putIndex(n + 2)
 	putIndex(n + 2)
@@ -107,9 +107,20 @@ fun IndexFeed.putQuadIndices() {
 	putIndex(n + 0)
 }
 
+fun IndexFeed.putQuadIndices(offset: Int) {
+	val n = highestIndex + 1
+	putIndex(n + offset)
+	putIndex(n + 1 + offset)
+	putIndex(n + 2 + offset)
+	putIndex(n + 2 + offset)
+	putIndex(n + 3 + offset)
+	putIndex(n + 0 + offset)
+}
+
+@Deprecated("Change front face instead")
 fun IndexFeed.putCcwQuadIndices() {
 	val n = highestIndex + 1
-	putIndex(n + 0)
+	putIndex(n)
 	putIndex(n + 3)
 	putIndex(n + 2)
 	putIndex(n + 2)
@@ -119,7 +130,7 @@ fun IndexFeed.putCcwQuadIndices() {
 
 fun IndexFeed.putTriangleIndices() {
 	val n = highestIndex + 1
-	putIndex(n + 0)
+	putIndex(n)
 	putIndex(n + 1)
 	putIndex(n + 2)
 }

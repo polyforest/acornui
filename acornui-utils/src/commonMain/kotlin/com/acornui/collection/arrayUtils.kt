@@ -222,3 +222,55 @@ fun IntArray.indexOfMin(): Int {
 	return minIndex
 }
 
+/**
+ * Creates a new array of the necessary capacity, inserting the new elements at the given position.
+ */
+fun FloatArray.add(index: Int, elements: FloatArray): FloatArray {
+	val newArr = FloatArray(size + elements.size)
+	copyInto(newArr, 0, 0, index)
+	elements.copyInto(newArr, index)
+	copyInto(newArr, index + elements.size, index)
+	return newArr
+}
+
+/**
+ * Creates a new array of the necessary capacity, removing [count] elements from the given position.
+ */
+fun FloatArray.remove(index: Int, count: Int): FloatArray {
+	val newArr = FloatArray(size - count)
+	copyInto(newArr, 0, 0, index)
+	copyInto(newArr, index, index + count)
+	return newArr
+}
+
+/**
+ * Searches this list or a sub-range for the insertion position of the given element, assuming this list is sorted
+ * in ascending order by the elements spaced [stride] apart.
+ *
+ * @param element The element for which to calculate the insertion index.
+ * @param stride The number of elements per set of numbers. For example if we have a float array of numbers such as:
+ * `[time0, r0, g0, b0, a0, time1, r1, g1, b1, a1, ..., timen, rn, gn, bn, an]` the stride would be 5 because there are
+ * 5 elements in each set.
+ * @param offset The offset within the set to use for comparison. Note: [fromIndex], [toIndex], and the return values
+ * are before the offset is added.
+ * Example: `[a0, b0, c0, a1, b1, c1, a2, b2, c2]`, assuming the `b` values are sorted in ascending order.
+ * `getInsertionIndex(element = b1, stride = 3, offset = 1, fromIndex = 0, toIndex = size)` will return 6, as that index
+ * represents the beginning of the first set where the `b` value (offset = 1) is greater than element.
+ *
+ * @param fromIndex The start of the range to search. This should be the beginning of a set, before [offset].
+ * @param toIndex The end of the range to search (exclusive). This should be the beginning of a set, before [offset].
+ * @return Returns the index of the beginning of the set where [element] is greater than the compared elements.
+ */
+fun FloatArray.getInsertionIndex(element: Float, stride: Int = 1, offset: Int = 0, fromIndex: Int = 0, toIndex: Int = size): Int {
+	var indexA = fromIndex / stride
+	var indexB = toIndex / stride
+	while (indexA < indexB) {
+		val midIndex = (indexA + indexB) ushr 1
+		if (element >= this[midIndex * stride + offset]) {
+			indexA = midIndex + 1
+		} else {
+			indexB = midIndex
+		}
+	}
+	return indexA * stride
+}

@@ -16,8 +16,6 @@
 
 package com.acornui.particle
 
-import com.acornui.math.MathUtils
-
 class PropertyValue(
 		var low: Float = 0f,
 		var high: Float = 0f,
@@ -37,21 +35,11 @@ class PropertyValue(
 		current = low
 	}
 
-	fun apply(timeline: PropertyTimeline, alpha: Float) {
-		val indexB = minOf(0, timeline.getInsertionIndex(alpha))
-		if (indexB == -1) return
-		val indexA = maxOf(0, indexB - 1)
-		val timeA = timeline.getTime(indexA)
-		val timeB = timeline.getTime(indexB)
-		val valueB = timeline.getValue(indexB, 0)
-
-		current = if (timeB - timeA < MathUtils.FLOAT_ROUNDING_ERROR) {
-			valueB * diff + low
-		} else {
-			val valueA = timeline.getValue(indexA, 0)
-			val valueAlpha = (alpha - timeA) / (timeB - timeA)
-			val valueValue = (valueB - valueA) * valueAlpha + valueA
-			valueValue * diff + low
-		}
+	/**
+	 * Sets the current value to the interpolated value from the given timeline.
+	 * It's assumed that the timeline has numComponents == 1
+	 */
+	fun setCurrent(timeline: PropertyTimeline, time: Float) {
+		current = timeline.getValueAtTime(time) * diff + low
 	}
 }
