@@ -2,11 +2,13 @@
 
 package com.acornui.build.plugins
 
-import com.acornui.build.plugins.util.*
+import com.acornui.build.plugins.util.appAssetsWebTasks
+import com.acornui.build.plugins.util.applicationResourceTasks
+import com.acornui.build.plugins.util.runJvmTask
+import com.acornui.build.plugins.util.uberJarTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
-import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.File
@@ -74,7 +76,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					for (os in oses) {
 						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
 						extensions.forEach {
-							implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion")
 							runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
 						}
 					}
