@@ -16,14 +16,10 @@
 
 package com.acornui.lwjgl.files
 
-import com.acornui.system.Platform
 import com.acornui.file.FileFilterGroup
 import com.acornui.file.FileIoManager
 import com.acornui.file.FileReader
-import com.acornui.io.NativeReadBuffer
-import com.acornui.io.NativeReadByteBuffer
-import com.acornui.io.byteBuffer
-import com.acornui.io.toByteArray
+import com.acornui.system.Platform
 import com.acornui.system.userInfo
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil.memAllocPointer
@@ -76,8 +72,8 @@ class JvmFileIoManager : FileIoManager {
 		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeText(text)
 	}
 
-	override fun saveBinary(data: NativeReadBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
-		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeBytes(data.toByteArray())
+	override fun saveBinary(data: ByteArray, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		pickFileForSave(fileFilterGroups, defaultFilename, defaultExtension)?.writeBytes(data)
 	}
 
 	private fun List<FileFilterGroup>.toFilterListStr(): String? {
@@ -136,8 +132,10 @@ class JvmFileReader(private val file: File) : FileReader {
 
 	override val name: String
 		get() = file.name
+	
 	override val size: Long
 		get() = file.length()
+	
 	override val lastModified: Long
 		get() = file.lastModified()
 
@@ -145,14 +143,7 @@ class JvmFileReader(private val file: File) : FileReader {
 		return file.readText()
 	}
 
-	override suspend fun readAsBinary(): NativeReadByteBuffer {
-		// TODO: There could be some utility here.
-		val bytes = file.readBytes()
-		val buffer = byteBuffer(bytes.size)
-		for (i in 0..bytes.lastIndex) {
-			buffer.put(bytes[i])
-		}
-		buffer.flip()
-		return buffer
+	override suspend fun readAsBinary(): ByteArray {
+		return file.readBytes()
 	}
 }

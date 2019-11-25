@@ -18,7 +18,6 @@ package com.acornui.file
 
 import com.acornui.Disposable
 import com.acornui.di.DKey
-import com.acornui.io.*
 
 /**
  * An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.
@@ -70,7 +69,7 @@ interface FileIoManager : Disposable {
 	 * (e.g. 'filename' -> 'filename.txt')
 	 * @see FileFilterGroup
 	 */
-	fun saveBinary(data: NativeReadBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
+	fun saveBinary(data: ByteArray, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
 	companion object : DKey<FileIoManager>
 }
@@ -101,21 +100,24 @@ interface FileReader {
 	 * Name of the file including aboslute path (JS excludes path for security purposes)
 	 */
 	val name: String
+	
 	/**
 	 * Size of the file in bytes
 	 */
 	val size: Long
+	
 	/**
 	 * Last date the file was modified as the number of milliseconds since the Unix Epoch
 	 */
 	val lastModified: Long
 
 	/**
-	 * Read file ([name]) from disk as a String
+	 * Read file from disk as a String
 	 */
 	suspend fun readAsString(): String
+	
 	/**
-	 * Read file ([name]) from disk binary
+	 * Read file from disk binary
 	 */
-	suspend fun readAsBinary(): NativeReadByteBuffer
+	suspend fun readAsBinary(): ByteArray
 }

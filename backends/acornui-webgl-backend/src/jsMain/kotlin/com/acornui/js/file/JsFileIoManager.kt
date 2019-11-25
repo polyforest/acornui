@@ -22,6 +22,7 @@ import com.acornui.file.FileReader
 import com.acornui.io.JsByteBuffer
 import com.acornui.io.NativeReadBuffer
 import com.acornui.io.NativeReadByteBuffer
+import com.acornui.io.toByteArray
 import com.acornui.js.html.hide
 import kotlinx.coroutines.CompletableDeferred
 import org.khronos.webgl.ArrayBuffer
@@ -118,8 +119,8 @@ class JsFileIoManager(private val root: HTMLElement) : FileIoManager {
 		saveData(text, defaultFilename)
 	}
 
-	override fun saveBinary(data: NativeReadBuffer<Byte>, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
-		saveData(data.native, defaultFilename)
+	override fun saveBinary(data: ByteArray, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
+		saveData(data, defaultFilename)
 	}
 
 	private fun saveData(data: Any, defaultFilename: String) {
@@ -166,7 +167,7 @@ class JsFileReader(val file: DomFile) : FileReader {
 		return c.await()
 	}
 
-	override suspend fun readAsBinary(): NativeReadByteBuffer {
+	override suspend fun readAsBinary(): ByteArray {
 		val c = CompletableDeferred<NativeReadByteBuffer>()
 		reader.onload = { _: Event ->
 			val byteBuffer = JsByteBuffer(Uint8Array(reader.result as ArrayBuffer))
@@ -176,6 +177,6 @@ class JsFileReader(val file: DomFile) : FileReader {
 			c.completeExceptionally(Exception(reader.error.toString()))
 		}
 		reader.readAsArrayBuffer(file)
-		return c.await()
+		return c.await().toByteArray()
 	}
 }
