@@ -181,8 +181,8 @@ open class OptionList<E : Any>(
 			val value = newSelection.firstOrNull()
 			textInput.text = if (value == null) "" else formatter.format(value)
 			focus()
-			close()
 			_changed.dispatch()
+			close()
 		}
 	}
 
