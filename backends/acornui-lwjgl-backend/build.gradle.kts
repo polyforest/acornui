@@ -33,9 +33,16 @@ kotlin {
 				val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 
 				implementation("$lwjglGroup:$lwjglName:$lwjglVersion")
-				extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
+				extensions.forEach { api("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
 				implementation("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
 				implementation("org.jcraft:jorbis:$jorbisVersion")
+
+				for (os in listOf("linux", "macos", "windows")) {
+					api("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
+					extensions.forEach {
+						api("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+					}
+				}
 			}
 		}
 		named("jvmTest") {

@@ -71,9 +71,8 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
 
-					val oses = listOf("linux", "macos", "windows")
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
-					for (os in oses) {
+					for (os in listOf("linux", "macos", "windows")) {
 						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
 						extensions.forEach {
 							runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
