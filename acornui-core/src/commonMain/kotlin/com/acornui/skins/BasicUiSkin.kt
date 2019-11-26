@@ -66,8 +66,8 @@ open class BasicUiSkin(
 		stageStyle()
 		iconStyle()
 		focusStyle()
-		textStyle()
 		textFontStyle()
+		textStyle()
 		panelStyle()
 		windowPanelStyle()
 		headingGroupStyle()
@@ -121,6 +121,19 @@ open class BasicUiSkin(
 		target.addStyleRule(focusableStyle)
 	}
 
+	protected open fun textFontStyle() {
+		val files = inject(Files)
+		BitmapFontRegistry.fontResolver = { request ->
+			globalAsync {
+				val fontFile = FontPathResolver.getPath(files, request) ?: throw Exception("Font not found: $request")
+				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
+			}
+		}
+		theme.bodyFont.addStyles(files)
+		theme.headingFont.addStyles(files, withAncestor(TextStyleTags.heading))
+		theme.formLabelFont.addStyles(files, withAncestor(formLabelStyle))
+	}
+
 	protected open fun textStyle() {
 		target.addStyleRule(charStyle { selectable = theme.selectableText }, not(withAncestor(TextInput) or withAncestor(TextArea)))
 		val textInputStyle = TextInputStyle().apply {
@@ -164,19 +177,6 @@ open class BasicUiSkin(
 		target.addStyleRule(charStyle { fontSize = FontSize.REGULAR }, withAncestor(TextStyleTags.regular))
 		target.addStyleRule(charStyle { fontSize = FontSize.LARGE }, withAncestor(TextStyleTags.large))
 		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_LARGE }, withAncestor(TextStyleTags.extraLarge))
-	}
-
-	protected open fun textFontStyle() {
-		val files = inject(Files)
-		BitmapFontRegistry.fontResolver = { request ->
-			globalAsync {
-				val fontFile = FontPathResolver.getPath(files, request) ?: throw Exception("Font not found: $request")
-				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
-			}
-		}
-		theme.bodyFont.addStyles(files)
-		theme.headingFont.addStyles(files, withAncestor(TextStyleTags.heading))
-		theme.formLabelFont.addStyles(files, withAncestor(formLabelStyle))
 	}
 
 	protected open fun panelStyle() {
@@ -265,7 +265,6 @@ open class BasicUiSkin(
 		target.addStyleRule(charStyle {
 			fontWeight = getStrongWeight(files)
 		}, filter and withAncestor(TextStyleTags.strong))
-
 
 		if (hasItalic(files))
 			target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis) and filter)
