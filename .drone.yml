@@ -5,7 +5,7 @@ steps:
   - name: build-test-publish
     image: gradle:6.0-jdk8
     commands:
-      - gradle build publish dokka --stacktrace --no-daemon
+      - gradle build publish dokka -x jsBrowserTest --stacktrace --no-daemon
   - name: upload-reports
     image: appleboy/drone-scp
     settings:
