@@ -32,6 +32,7 @@ class KotlinJsPlugin : Plugin<Project> {
 	}
 
 	companion object {
+
 		fun configure(project: Project) {
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				val kotlinVersion: String by project.extra

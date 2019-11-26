@@ -30,7 +30,7 @@ kotlinDslPluginOptions {
 
 val kotlinVersion: String = "1.3.60"
 dependencies {
-    implementation(kotlin("gradle-plugin"))
+    implementation(kotlin("gradle-plugin", version = kotlinVersion))
     implementation(kotlin("serialization", version = kotlinVersion))
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
 }

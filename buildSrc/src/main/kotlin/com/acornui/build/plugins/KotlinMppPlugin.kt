@@ -25,8 +25,15 @@ import org.gradle.api.Project
 class KotlinMppPlugin : Plugin<Project> {
 
 	override fun apply(project: Project) {
-		KotlinCommonOptions.configure(project)
-		KotlinJsPlugin.configure(project)
-		KotlinJvmPlugin.configure(project)
+		configure(project)
+	}
+
+	companion object {
+
+		fun configure(project: Project) {
+			KotlinCommonOptions.configure(project)
+			KotlinJsPlugin.configure(project)
+			KotlinJvmPlugin.configure(project)
+		}
 	}
 }
