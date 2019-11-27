@@ -529,9 +529,8 @@ class DataGrid<RowData>(
 				commitCellEditorValue()
 				disposeCellEditor()
 			}
-			if (editable) {
-				if (focusEnabledFilter(cell))
-					focusCell(cell)
+			if (editable && focusEnabledFilter(cell)) {
+				focusCell(cell)
 			}
 		}
 	}
