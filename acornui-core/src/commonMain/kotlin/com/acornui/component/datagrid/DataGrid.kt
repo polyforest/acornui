@@ -1049,7 +1049,7 @@ class DataGrid<RowData>(
 		val topRight = topRight
 		if (topRight != null) {
 			topRight.visible = vScrollBar.visible
-			topRight.setSize(vScrollBar.minWidth ?: 0f, headerCells.height)
+			topRight.setSize(vScrollBar.minWidth, headerCells.height)
 			topRight.setPosition(bodyW - topRight.width, 0f)
 		}
 		val headerDivider = this.headerDivider
