@@ -33,7 +33,7 @@ class RootPlugin : Plugin<Project> {
                     jcenter()
 
                     maven {
-                        url = uri("http://artifacts.acornui.com/mvn/")
+                        url = uri("https://artifacts.acornui.com/mvn/")
                     }
                 }
 

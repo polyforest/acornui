@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import java.io.File
 
 fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {
@@ -273,13 +274,12 @@ open class RunJvmTask : JavaExec() {
 		group = "application"
 		val jvmTarget: KotlinTarget = project.kotlinExt.targets["jvm"]
 		val compilation =
-				jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>
+				jvmTarget.compilations["main"] as KotlinJvmCompilation
 
-		val classes = project.files(
+		classpath = project.files(
 				compilation.runtimeDependencyFiles,
 				compilation.output.allOutputs
 		)
-		classpath = classes
 		workingDir = project.acornui.appResources.resolve("jvm/allMain")
 		main =
 				"${project.rootProject.group}.${project.rootProject.name}.jvm.${project.rootProject.name.toCamelCase().capitalize()}JvmKt"

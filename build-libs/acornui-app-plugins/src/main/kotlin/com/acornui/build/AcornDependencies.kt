@@ -18,6 +18,9 @@ package com.acornui.build
 
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
+/**
+ *
+ */
 object AcornDependencies {
 	val versionDefaults = mapOf(
 			"kotlinVersion" to "1.3.60",

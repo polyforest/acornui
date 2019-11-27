@@ -1,4 +1,3 @@
-import com.acornui.build.AcornDependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -35,8 +34,6 @@ subprojects {
 }
 
 allprojects {
-	AcornDependencies.addVersionProperties(extra)
-
 	repositories {
 		jcenter()
 	}

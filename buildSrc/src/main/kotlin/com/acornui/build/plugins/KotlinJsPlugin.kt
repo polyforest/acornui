@@ -24,7 +24,7 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 @Suppress("unused")
-class KotlinJsPlugin : Plugin<Project> {
+open class KotlinJsPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
 		KotlinCommonOptions.configure(target)

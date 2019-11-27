@@ -38,9 +38,9 @@ kotlin {
 				implementation("org.jcraft:jorbis:$jorbisVersion")
 
 				for (os in listOf("linux", "macos", "windows")) {
-					api("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
+					runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
 					extensions.forEach {
-						api("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+						runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
 					}
 				}
 			}

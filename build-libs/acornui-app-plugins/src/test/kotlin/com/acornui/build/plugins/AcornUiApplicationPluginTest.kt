@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
-
 package com.acornui.build.plugins
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import com.acornui.build.plugins.util.RunJvmTask
+import org.gradle.kotlin.dsl.extra
+import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Test
+import kotlin.test.assertTrue
 
-@Suppress("unused")
-open class KotlinMppPlugin : Plugin<Project> {
+class AcornUiApplicationPluginTest {
 
-	override fun apply(project: Project) {
-		configure(project)
-	}
-
-	companion object {
-
-		fun configure(project: Project) {
-			KotlinCommonOptions.configure(project)
-			KotlinJsPlugin.configure(project)
-			KotlinJvmPlugin.configure(project)
-		}
+	@Test fun addsRunJvmTask() {
+		val project = ProjectBuilder.builder().build()
+		project.extra["acornVersion"] = "test"
+		project.pluginManager.apply("com.acornui.root")
+		project.pluginManager.apply("com.acornui.app")
+		assertTrue(project.tasks.getByName("runJvm") is RunJvmTask)
 	}
 }

@@ -16,7 +16,7 @@ import java.io.File
 @Suppress("unused")
 open class AcornUiApplicationPlugin : Plugin<Project> {
 
-	internal val targets = listOf("js", "jvm")
+	private val targets = listOf("js", "jvm")
 
 	override fun apply(project: Project) {
 		project.pluginManager.apply("org.gradle.idea")
@@ -65,12 +65,13 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val jvmMain by getting {
 				dependencies {
-					implementation("com.acornui:acornui-lwjgl-backend")
+					api("com.acornui:acornui-lwjgl-backend")
 
 					val lwjglVersion: String by target.extra
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
 
+					// FIXME: I have no idea why this can't be in lwjgl-backend
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 					for (os in listOf("linux", "macos", "windows")) {
 						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
