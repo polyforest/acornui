@@ -101,6 +101,23 @@ data class Theme(
 
 		val atlasPath: String = "assets/uiskin/uiskin.json",
 
+		/**
+		 * A map of font size key [FontSize] to points.
+		 * The actual size chosen will be as follows:
+		 * - A size key matching the [FontSize] enumeration is set on [com.acornui.component.text.CharStyle].
+		 * - The point size value is retrieved from this map.
+		 * - The requested point size is multiplied by the [com.acornui.graphic.Window] dpi scaling to get the desired px.
+		 * - The next lower size from the available font is chosen. The sizes available are built in the font processor
+		 * from the settings.json within fonts_unprocessedFonts.
+		 */
+		val fontSizes: Map<String, Int> = mutableMapOf(
+				FontSize.EXTRA_SMALL to 10,
+				FontSize.SMALL to 14,
+				FontSize.REGULAR to 18,
+				FontSize.LARGE to 22,
+				FontSize.EXTRA_LARGE to 32
+		),
+
 		val bodyFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333333ff)),
 		val menuFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333366ff)),
 		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
@@ -152,16 +169,16 @@ data class ThemeFontVo(
 		val color: ColorRo
 ) {
 
-	fun getStrongWeight(files: Files): String {
+	fun getStrongWeight(theme: Theme, files: Files): String {
 		val index = FontWeight.values.indexOf(weight)
 		for (i in index + 1..FontWeight.values.lastIndex) {
 			val w = FontWeight.values[i]
-			val found = FontPathResolver.getPath(files, BitmapFontRequest(family, size, w, style, 1f))
+			val found = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, w, style, 1f))
 			if (found != null) return w
 		}
 		return weight
 	}
 
-	fun hasItalic(files: Files): Boolean = FontPathResolver.getPath(files, BitmapFontRequest(family, size, weight, FontStyle.ITALIC, 1f)) != null
-	fun hasWeight(files: Files, weight: String): Boolean = FontPathResolver.getPath(files, BitmapFontRequest(family, size, weight, style, 1f)) != null
+	fun hasItalic(theme: Theme, files: Files): Boolean = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, weight, FontStyle.ITALIC, 1f)) != null
+	fun hasWeight(theme: Theme, files: Files, weight: String): Boolean = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, weight, style, 1f)) != null
 }

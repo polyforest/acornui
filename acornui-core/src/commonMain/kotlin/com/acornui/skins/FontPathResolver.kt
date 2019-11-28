@@ -15,14 +15,6 @@ object FontPathResolver {
 
 	var fontsDir = "assets/fonts/"
 
-	var sizeToPtMap = mutableMapOf(
-			FontSize.EXTRA_SMALL to 10,
-			FontSize.SMALL to 14,
-			FontSize.REGULAR to 18,
-			FontSize.LARGE to 22,
-			FontSize.EXTRA_LARGE to 32
-	)
-
 	private val fileSizeRegex = Regex("""_(\d+)$""")
 
 	/**
@@ -37,7 +29,7 @@ object FontPathResolver {
 	/**
 	 * Returns the path to the font with the given characteristics.
 	 */
-	fun getPath(files: Files, request: BitmapFontRequest): FileEntry? {
+	fun getPath(theme: Theme, files: Files, request: BitmapFontRequest): FileEntry? {
 		val dir = files.getDir(fontsDir)?.getDir(request.family) ?: return null
 
 		val supportedSizes = supportedSizesCache.getOrPut(dir) {
@@ -50,7 +42,7 @@ object FontPathResolver {
 			foundSizes.toList().filter { it > 0 }.sorted()
 		}
 
-		val desiredPt = sizeToPtMap[request.size] ?: error("Unknown size: ${request.size}")
+		val desiredPt = theme.fontSizes[request.size] ?: error("Unknown size: ${request.size}")
 		val scaledSize = (desiredPt.toFloat() * request.fontPixelDensity).toInt()
 		val nearestSupportedIndex = MathUtils.clamp(supportedSizes.sortedInsertionIndex(scaledSize, matchForwards = false), 0, supportedSizes.lastIndex)
 		val nearestSize = supportedSizes[nearestSupportedIndex]

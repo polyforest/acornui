@@ -125,7 +125,7 @@ open class BasicUiSkin(
 		val files = inject(Files)
 		BitmapFontRegistry.fontResolver = { request ->
 			globalAsync {
-				val fontFile = FontPathResolver.getPath(files, request) ?: throw Exception("Font not found: $request")
+				val fontFile = FontPathResolver.getPath(theme, files, request) ?: throw Exception("Font not found: $request")
 				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
 			}
 		}
@@ -263,10 +263,10 @@ open class BasicUiSkin(
 		}, filter)
 
 		target.addStyleRule(charStyle {
-			fontWeight = getStrongWeight(files)
+			fontWeight = getStrongWeight(theme, files)
 		}, filter and withAncestor(TextStyleTags.strong))
 
-		if (hasItalic(files))
+		if (hasItalic(theme, files))
 			target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis) and filter)
 	}
 
