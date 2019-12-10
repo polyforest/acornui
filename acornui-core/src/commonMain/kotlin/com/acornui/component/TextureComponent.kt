@@ -25,6 +25,7 @@ import com.acornui.async.then
 import com.acornui.di.Owned
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureRo
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
@@ -72,6 +73,7 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), 
 
 	/**
 	 * Loads a texture from the given path.
+	 * When the texture is done loading, it can be accessed via [internalTexture].
 	 */
 	var path: String? = null
 		set(value) {
@@ -91,7 +93,8 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), 
 		}
 
 	/**
-	 * Sets the texture directly, as opposed to loading a Texture from the asset manager.
+	 * Sets the texture directly, as opposed to loading a Texture from [path].
+	 * [internalTexture]
 	 */
 	var texture: Texture? = null
 		set(value) {
@@ -110,6 +113,12 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), 
 			renderable.texture?.refInc()
 		invalidateLayout()
 	}
+
+	/**
+	 * Returns the texture rendered.
+	 */
+	val internalTexture: TextureRo?
+		get() = renderable.texture
 
 	/**
 	 * If true, the texture's region is rotated.
