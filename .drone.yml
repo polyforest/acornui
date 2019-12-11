@@ -3,9 +3,9 @@ name: default
 
 steps:
   - name: build-test-publish
-    image: gradle:6.0-jdk8
+    image: openjdk:8-jdk
     commands:
-      - gradle build publish dokka -x jsBrowserTest --stacktrace --no-daemon
+      - ./gradlew build publish -x jsBrowserTest --stacktrace
   - name: upload-reports
     image: appleboy/drone-scp
     settings:
