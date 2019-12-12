@@ -17,6 +17,7 @@
 package com.acornui.popup
 
 import com.acornui.Disposable
+import com.acornui.collection.addBefore
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
@@ -283,8 +284,13 @@ private class PopUpManagerView(owner: Owned) : ElementLayoutContainer<CanvasLayo
 	})
 
 	var modalIndex: Int by observable(-1) { value ->
-		addChild(maxOf(0, value), modalFillContainer) // Reorder the modal fill container.
-		showModal = value != -1
+		// Reorder the modal fill container and set its visibility.
+		if (value == -1) {
+			showModal = false
+		} else {
+			showModal = true
+			_children.addBefore(modalFillContainer, elements[value])
+		}
 	}
 
 	private var tween: Tween? = null
