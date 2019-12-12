@@ -105,7 +105,7 @@ inline fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.iconMap(regions.mapTo { key, value ->
-		key to atlas(atlasPath, value)
+		key to iconAtlas(atlasPath, value)
 	})
 	b.init()
 	return b
