@@ -69,9 +69,10 @@ suspend fun <T> Deferred<T>.awaitOrNull(): T? {
 }
 
 /**
- * If this deferred object [Deferred.isCompleted] the [Deferred.getCompleted] value will be returned. Otherwise, null.
+ * If this deferred object [Deferred.isCompleted] and has not completed exceptionally, the [Deferred.getCompleted] value
+ * will be returned. Otherwise, null.
  */
-fun <T> Deferred<T>.getCompletedOrNull(): T? = if (isCompleted) getCompleted() else null
+fun <T> Deferred<T>.getCompletedOrNull(): T? = if (isCompleted && getCompletionExceptionOrNull() == null) getCompleted() else null
 
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 	values.awaitAll()
