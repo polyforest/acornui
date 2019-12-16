@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ConvertTwoComparisonsToRangeCheck")
+
 package com.acornui.gl.core
 
 import com.acornui.Disposable
@@ -156,7 +158,7 @@ class GlStateImpl(
 
 	private var _activeTexture: Int = -1
 
-	private val _boundTextures: Array<TextureRo?> = Array(Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS) { null }
+	private val _boundTextures: Array<TextureRo?> = Array(maxTextureImageUnits) { null }
 
 	override var batch: ShaderBatch = ShaderBatchImpl(gl, this, uiVertexAttributes)
 		set(value) {
@@ -179,7 +181,7 @@ class GlStateImpl(
 		get() = _whitePixel ?: defaultWhitePixel
 
 	override fun activeTexture(value: Int) {
-		if (value < 0 || value >= maxTextureImageUnits) throw IllegalArgumentException("Texture index must be between 0 and ${maxTextureImageUnits - 1}")
+		require(value >= 0 && value < maxTextureImageUnits) { "Texture index must be between 0 and ${maxTextureImageUnits - 1}" }
 		if (_activeTexture == value) return
 		batch.flush()
 		_activeTexture = value
