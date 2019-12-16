@@ -25,12 +25,14 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.config
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
-import com.acornui.math.Vector2
-import com.acornui.math.Vector2Ro
+import com.acornui.math.*
+import com.acornui.math.MathUtils.clamp
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 import com.acornui.time.nowMs
 import com.acornui.time.tick
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * A toss scroller lets you grab a target component, and update [ScrollModelRo] objects by dragging it.
@@ -39,10 +41,11 @@ class TossScroller(
 		val target: UiComponent,
 
 		/**
-		 * Dampening affects how quickly the toss velocity will slow to a stop.
-		 * Make this number 0 &lt; dampening &lt; 1.  Where 1 will go forever, and 0 will prevent any momentum.
+		 *
 		 */
-		var dampening: Float = DEFAULT_DAMPENING,
+		var slowTime: Duration = DEFAULT_SLOW_TIME,
+
+		val slowEase: Interpolation = DEFAULT_SLOW_EASE,
 
 		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
 ) : Disposable {
@@ -73,12 +76,22 @@ class TossScroller(
 	val tossEnd: StoppableSignal<DragInteractionRo>
 		get() = _tossEnd
 
-	private val _velocity = Vector2()
+	/**
+	 * The velocity when the drag ended.
+	 */
+	private val velocityStart = Vector2()
 
 	/**
-	 * The current velocity of the toss.
+	 * The 0-1 range of the toss slow tween.
 	 */
-	val velocity: Vector2Ro = _velocity
+	private var slowAlpha = 0f
+
+	private val velocityCurrent = Vector2()
+
+	/**
+	 * The current velocity of the toss in points per second.
+	 */
+	val velocity: Vector2Ro = velocityCurrent
 
 	/**
 	 * Returns true if the user is currently interacting or if there is still momentum.
@@ -114,51 +127,34 @@ class TossScroller(
 
 	private val diff = Vector2()
 
-	private val dragStartHandler = { event: DragInteractionRo ->
-		stop()
-		startPosition.set(event.startPosition)
-		position.set(event.position)
-
-		clickPreventer = 5
-		clearHistory()
-		pushHistory()
-		startEnterFrame()
-		dispatchDragEvent(TOSS_START, _tossStart)
-		Unit
-	}
-
 	private fun pushHistory() {
-		historyPoints.add(Vector2.obtain().set(position.x, position.y))
+		historyPoints.add(position.copy())
 		historyTimes.add(nowMs())
 		if (historyPoints.size > MAX_HISTORY) {
-			Vector2.free(historyPoints.poll())
+			historyPoints.poll()
 			historyTimes.poll()
 		}
 	}
 
 	private fun startEnterFrame() {
 		if (_timer == null) {
-			_timer = tick {
+			_timer = tick { dT ->
 				if (dragAttachment.isDragging) {
 					// History is also added in an enter frame instead of the drag handler so that if the user stops dragging, the history reflects that.
 					pushHistory()
 				} else {
+					slowAlpha += dT / slowTime.inSeconds.toFloat()
+					val slowAlphaEased = slowEase.apply(clamp(slowAlpha, 0f, 1f))
 					if (clickPreventer > 0) clickPreventer--
-					_velocity.scl(dampening)
-					position.add(_velocity)
+					velocityCurrent.set(velocityStart).lerp(0f, 0f, slowAlphaEased)
+					position.add(velocityCurrent.x * dT, velocityCurrent.y * dT)
 					dispatchDragEvent(TOSS, _toss)
-					if (_velocity.isZero(0.1f)) {
+					if (slowAlpha >= 1f) {
 						stop()
 					}
 				}
 			}
 		}
-	}
-
-	private val dragHandler = { event: DragInteractionRo ->
-		position.set(event.position)
-		dispatchDragEvent(TOSS, _toss)
-		Unit
 	}
 
 	private fun dispatchDragEvent(type: InteractionType<DragInteraction>, signal: StoppableSignalImpl<DragInteraction>) {
@@ -171,36 +167,53 @@ class TossScroller(
 		signal.dispatch(event)
 	}
 
-	private val dragEndHandler = { event: DragInteractionRo ->
+	private fun clearHistory() {
+		historyPoints.clear()
+		historyTimes.clear()
+	}
+
+	init {
+		dragAttachment.dragStart.add(::dragStartHandler)
+		dragAttachment.drag.add(::dragHandler)
+		dragAttachment.dragEnd.add(::dragEndHandler)
+		target.click(isCapture = true).add(::clickHandler)
+	}
+
+	private fun dragStartHandler(event: DragInteractionRo) {
+		stop()
+		startPosition.set(event.startPosition)
+		position.set(event.position)
+
+		clickPreventer = 5
+		clearHistory()
+		pushHistory()
+		startEnterFrame()
+		dispatchDragEvent(TOSS_START, _tossStart)
+	}
+
+	private fun dragHandler(event: DragInteractionRo) {
+		position.set(event.position)
+		dispatchDragEvent(TOSS, _toss)
+	}
+
+	private fun dragEndHandler(event: DragInteractionRo) {
+		position.set(event.position)
 		pushHistory()
 		// Calculate the velocity.
 		if (historyPoints.size >= 2) {
 			diff.set(historyPoints.last()).sub(historyPoints.first())
 			val time = (historyTimes.last() - historyTimes.first()) * 0.001f
-			_velocity.set(diff.x / time, diff.y / time).scl(tickTime)
+			velocityCurrent.set(diff.x / time, diff.y / time)
+			velocityStart.set(velocityCurrent)
+			slowAlpha = 0f
 		}
 		clearHistory()
 	}
 
-	private fun clearHistory() {
-		for (i in 0..historyPoints.lastIndex) {
-			Vector2.free(historyPoints[i])
-		}
-		historyPoints.clear()
-		historyTimes.clear()
-	}
-
-	private val clickHandler = { event: ClickInteractionRo ->
+	private fun clickHandler(event: ClickInteractionRo) {
 		if (clickPreventer > 0) {
 			event.propagation.stopImmediatePropagation()
 		}
-	}
-
-	init {
-		dragAttachment.dragStart.add(dragStartHandler)
-		dragAttachment.drag.add(dragHandler)
-		dragAttachment.dragEnd.add(dragEndHandler)
-		target.click(isCapture = true).add(clickHandler)
 	}
 
 	/**
@@ -217,7 +230,7 @@ class TossScroller(
 		if (_timer != null) {
 			dispatchDragEvent(TOSS_END, _tossEnd)
 			clickPreventer = 0
-			_velocity.clear()
+			velocityCurrent.clear()
 			_timer?.dispose()
 			_timer = null
 			event.clear()
@@ -229,10 +242,10 @@ class TossScroller(
 		_tossStart.dispose()
 		_toss.dispose()
 		_tossEnd.dispose()
-		dragAttachment.dragStart.remove(dragStartHandler)
-		dragAttachment.drag.remove(dragHandler)
-		dragAttachment.dragEnd.remove(dragEndHandler)
-		target.click(isCapture = true).remove(clickHandler)
+		dragAttachment.dragStart.remove(::dragStartHandler)
+		dragAttachment.drag.remove(::dragHandler)
+		dragAttachment.dragEnd.remove(::dragEndHandler)
+		target.click(isCapture = true).remove(::clickHandler)
 	}
 
 	companion object {
@@ -241,7 +254,9 @@ class TossScroller(
 		val TOSS = InteractionType<DragInteraction>("toss")
 		val TOSS_END = InteractionType<DragInteraction>("tossEnd")
 
-		const val DEFAULT_DAMPENING: Float = 0.9f
+		val DEFAULT_SLOW_TIME = 0.8.seconds
+		val DEFAULT_SLOW_EASE = Easing.pow3Out
+
 		private const val MAX_HISTORY = 10
 
 		var minTossDistance: Float = 7f
@@ -292,8 +307,8 @@ open class TossScrollModelBinding(
 	}
 }
 
-fun UiComponent.enableTossScrolling(dampening: Float = TossScroller.DEFAULT_DAMPENING): TossScroller {
-	return createOrReuseAttachment(TossScroller) { TossScroller(this, dampening) }
+fun UiComponent.enableTossScrolling(slowTime: Duration = TossScroller.DEFAULT_SLOW_TIME, slowEase: Interpolation = TossScroller.DEFAULT_SLOW_EASE): TossScroller {
+	return createOrReuseAttachment(TossScroller) { TossScroller(this, slowTime, slowEase) }
 }
 
 fun UiComponent.disableTossScrolling() {

@@ -68,15 +68,6 @@ interface MouseState : Disposable {
 	 */
 	val touches: List<TouchRo>
 
-	/**
-	 * Sets the [out] vector to the current canvas position.
-	 * @return Returns the [out] vector.
-	 */
-	fun mousePosition(out: Vector2): Vector2 {
-		out.set(canvasX, canvasY)
-		return out
-	}
-
 	fun mouseIsDown(button: WhichButton): Boolean
 
 	companion object : DKey<MouseState>

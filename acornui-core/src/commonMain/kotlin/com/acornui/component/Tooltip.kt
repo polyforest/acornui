@@ -26,6 +26,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
 import com.acornui.di.*
 import com.acornui.function.as1
+import com.acornui.function.as2
 import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
@@ -193,7 +194,7 @@ class TooltipManagerImpl(override val injector: Injector) : TooltipManager, Scop
 			if (field != value) {
 				field = value
 				if (value) {
-					enterFrameHandle = tick(callback = ::frameHandler.as1)
+					enterFrameHandle = tick(callback = ::frameHandler.as2)
 				} else {
 					enterFrameHandle?.dispose()
 					enterFrameHandle = null

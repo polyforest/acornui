@@ -498,7 +498,7 @@ open class UiComponentImpl(
 	 * @return Returns the [out] vector.
 	 */
 	override fun mousePosition(out: Vector2): Vector2 {
-		canvasToLocal(mouseState.mousePosition(out))
+		canvasToLocal(out.set(mouseState.canvasX, mouseState.canvasY))
 		return out
 	}
 

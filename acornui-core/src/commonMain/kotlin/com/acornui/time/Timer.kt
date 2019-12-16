@@ -105,7 +105,7 @@ fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: ()
  * until disposal.
  * @param callback The function to call after every repetition.
  */
-fun timer(duration: Duration, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
+fun timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: () -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
-	return Timer.obtain(duration.inSeconds.toFloat(), repetitions, delay, callback)
+	return Timer.obtain(duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback)
 }

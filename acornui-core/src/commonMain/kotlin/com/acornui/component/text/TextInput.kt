@@ -29,7 +29,7 @@ import com.acornui.component.style.Styleable
 import com.acornui.di.Owned
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
-import com.acornui.function.as1
+import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.math.*
@@ -402,7 +402,7 @@ class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
 	private fun startScrollWatch(event: Any) {
 		mousePosition(startMouse)
 		_frameWatch?.dispose()
-		_frameWatch = tick(-1, callback = ::scrollWatcher.as1)
+		_frameWatch = tick(-1, callback = ::scrollWatcher.as2)
 		stage.mouseUp().add(::endScrollWatch)
 		stage.touchEnd().add(::endScrollWatch)
 	}

@@ -23,7 +23,7 @@ import com.acornui.component.canvasToLocal
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.di.inject
-import com.acornui.function.as1
+import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
@@ -102,16 +102,11 @@ class DragAttachment(
 		stop()
 	}
 
-	private val clickBlocker = { event: ClickInteractionRo ->
-		event.handled = true
-		event.preventDefault()
-	}
-
 	private fun setIsWatchingMouse(value: Boolean) {
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(-1, callback = ::enterFrameHandler.as1)
+			_enterFrame = tick(-1, callback = ::enterFrameHandler.as2)
 			stage.mouseMove().add(::stageMouseMoveHandler)
 			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
@@ -149,6 +144,7 @@ class DragAttachment(
 
 	private fun stageMouseUpHandler(event: MouseInteractionRo) {
 		event.handled = true
+		position.set(event.canvasX, event.canvasY)
 		setIsWatchingMouse(false)
 		setIsDragging(false)
 	}
@@ -208,7 +204,7 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(-1, callback = ::enterFrameHandler.as1)
+			_enterFrame = tick(-1, callback = ::enterFrameHandler.as2)
 			stage.touchMove().add(::stageTouchMoveHandler)
 			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {
@@ -228,6 +224,7 @@ class DragAttachment(
 		if (allowTouchEnd(event)) {
 			touchId = -1
 			event.handled = true
+			position.set(mouse.canvasX, mouse.canvasY)
 			setIsWatchingTouch(false)
 			setIsDragging(false)
 		}
@@ -238,7 +235,7 @@ class DragAttachment(
 	//--------------------------------------------------------------
 
 	private fun enterFrameHandler() {
-		mouse.mousePosition(position)
+		position.set(mouse.canvasX, mouse.canvasY)
 		if (_isDragging) {
 			dispatchDragEvent(DragInteraction.DRAG, _drag)
 		} else {
@@ -256,7 +253,7 @@ class DragAttachment(
 			if (dragEvent.defaultPrevented()) {
 				_isDragging = false
 			} else {
-				stage.click(isCapture = true).add(clickBlocker, true) // Set the next click to be marked as handled.
+				stage.click(isCapture = true).add(::clickBlocker, true) // Set the next click to be marked as handled.
 				dispatchDragEvent(DragInteraction.DRAG, _drag)
 			}
 		} else {
@@ -265,8 +262,13 @@ class DragAttachment(
 			}
 			dispatchDragEvent(DragInteraction.DRAG_END, _dragEnd)
 
-			callLater { stage.click(isCapture = true).remove(clickBlocker) }
+			callLater { stage.click(isCapture = true).remove(::clickBlocker) }
 		}
+	}
+
+	private fun clickBlocker(event: ClickInteractionRo) {
+		event.handled = true
+		event.preventDefault()
 	}
 
 	private fun dispatchDragEvent(type: InteractionType<DragInteractionRo>, signal: Signal1<DragInteractionRo>) {
