@@ -34,6 +34,7 @@ import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.Gl20CachedProperties
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
 import com.acornui.graphic.RgbData
@@ -109,7 +110,7 @@ open class LwjglApplication : ApplicationBase() {
 	 * Sets the [Gl20] dependency.
 	 */
 	protected open val glTask by task(Gl20) {
-		if (debug) JvmGl20Debug() else LwjglGl20()
+		Gl20CachedProperties(if (debug) JvmGl20Debug() else LwjglGl20())
 	}
 
 	/**

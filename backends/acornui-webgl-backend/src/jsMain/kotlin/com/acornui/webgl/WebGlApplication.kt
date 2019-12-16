@@ -30,6 +30,7 @@ import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.Gl20CachedProperties
 import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlStateImpl
 import com.acornui.graphic.RgbData
@@ -92,7 +93,7 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		WebGl20(context)
+		Gl20CachedProperties(if (debug) WebGl20Debug(context) else WebGl20(context))
 	}
 
 	override val windowTask by task(Window) {
