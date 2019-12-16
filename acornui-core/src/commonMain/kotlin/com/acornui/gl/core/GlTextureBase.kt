@@ -19,7 +19,7 @@ package com.acornui.gl.core
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.logging.Log
-import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.isPowerOfTwo
 
 /**
  * Textures are provided by the AssetManager. The Renderer implementation will cast the Texture to the back-end's
@@ -91,7 +91,7 @@ abstract class GlTextureBase(
 		gl.texParameteri(target.value, Gl20.TEXTURE_WRAP_T, wrapT.value)
 
 		if (filterMin.useMipMap) {
-			if (!supportsNpot() && (!MathUtils.isPowerOfTwo(widthPixels) || !MathUtils.isPowerOfTwo(heightPixels))) {
+			if (!supportsNpot() && (!isPowerOfTwo(widthPixels) || !isPowerOfTwo(heightPixels))) {
 				Log.warn("MipMaps cannot be generated for non power of two textures (${widthPixels}x$heightPixels)")
 				gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, TextureMinFilter.LINEAR.value)
 			} else {
