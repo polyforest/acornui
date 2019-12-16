@@ -147,6 +147,8 @@ class GlStateImpl(
 		window: Window
 ) : GlState, Disposable {
 
+	private val maxTextureImageUnits = gl.getParameteri(Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS)
+
 	/**
 	 * The default shader for this application.
 	 */
@@ -177,7 +179,7 @@ class GlStateImpl(
 		get() = _whitePixel ?: defaultWhitePixel
 
 	override fun activeTexture(value: Int) {
-		if (value < 0 || value >= Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS) throw IllegalArgumentException("Texture index must be between 0 and ${Gl20.MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1}")
+		if (value < 0 || value >= maxTextureImageUnits) throw IllegalArgumentException("Texture index must be between 0 and ${maxTextureImageUnits - 1}")
 		if (_activeTexture == value) return
 		batch.flush()
 		_activeTexture = value
