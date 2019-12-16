@@ -24,12 +24,9 @@
 package com.acornui.gl.core
 
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
-import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
 import kotlin.math.round
 
