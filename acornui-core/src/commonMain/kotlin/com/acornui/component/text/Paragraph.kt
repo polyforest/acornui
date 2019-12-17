@@ -330,12 +330,40 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 	}
 
+	private val tL = Vector3()
+	private val tR = Vector3()
+	private var lineStart: Int = -1
+	private var lineEnd: Int = -1
+
 	private fun updateWorldVertices() {
 		val textElements = _textElements
 		val transform = renderContext.modelTransform
 		val tint = renderContext.colorTint
 		for (i in 0..textElements.lastIndex) {
 			textElements[i].updateWorldVertices(transform, tint)
+		}
+
+		localToCanvas(tL.set(0f, 0f, 0f))
+		localToCanvas(tR.set(_bounds.width, 0f, 0f))
+
+		if (tL.y == tR.y) {
+			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
+			val clip = renderContext.clipRegion
+			val y = tL.y
+			if (tR.x < clip.xMin || tL.x > clip.xMax)
+				return
+			val scaleY = transform.getScaleY()
+			lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
+				viewPortY.compareTo(line.bottom / scaleY)
+			}
+			lineEnd = if (lineStart == -1) -1 else {
+				_lines.sortedInsertionIndex(clip.yMax - y) { viewPortBottom, line ->
+					viewPortBottom.compareTo(line.y / scaleY)
+				}
+			}
+		} else {
+			lineStart = 0
+			lineEnd = _lines.size
 		}
 	}
 
@@ -357,54 +385,25 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 	}
 
-	private val tL = Vector3()
-	private val tR = Vector3()
-
 	override fun draw() {
 		val tint = renderContext.colorTint
-		val clip = renderContext.clipRegion
-		val transform = renderContext.modelTransform
 		if (_lines.isEmpty() || tint.a <= 0f)
 			return
 		val textElements = _textElements
-		localToCanvas(tL.set(0f, 0f, 0f))
-		localToCanvas(tR.set(_bounds.width, 0f, 0f))
 
-		if (tL.y == tR.y) {
-			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
-			val y = tL.y
-			if (tR.x < clip.xMin || tL.x > clip.xMax)
-				return
-			val scaleY = transform.getScaleY()
-			val lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
-				viewPortY.compareTo(line.bottom / scaleY)
-			}
-			if (lineStart == -1)
-				return
-			val lineEnd = _lines.sortedInsertionIndex(clip.yMax - y) { viewPortBottom, line ->
-				viewPortBottom.compareTo(line.y / scaleY)
-			}
-			if (lineEnd <= lineStart)
-				return
+		if (lineEnd <= lineStart)
+			return
 
-			for (i in lineStart..lineEnd - 1) {
-				val line = _lines[i]
-				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].renderBackground()
-				}
+		for (i in lineStart..lineEnd - 1) {
+			val line = _lines[i]
+			for (j in line.startIndex..line.endIndex - 1) {
+				textElements[j].renderBackground()
 			}
-			for (i in lineStart..lineEnd - 1) {
-				val line = _lines[i]
-				for (j in line.startIndex..line.endIndex - 1) {
-					textElements[j].renderForeground()
-				}
-			}
-		} else {
-			for (i in 0..textElements.lastIndex) {
-				textElements[i].renderBackground()
-			}
-			for (i in 0..textElements.lastIndex) {
-				textElements[i].renderForeground()
+		}
+		for (i in lineStart..lineEnd - 1) {
+			val line = _lines[i]
+			for (j in line.startIndex..line.endIndex - 1) {
+				textElements[j].renderForeground()
 			}
 		}
 	}
