@@ -86,6 +86,7 @@ abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
 			thumb?.dispose()
 			thumb = addChild(it.thumb(this))
 			val thumb = thumb!!
+			thumb.focusEnabled = false
 			thumb.alpha = oldThumbAlpha
 			thumb.cursor(StandardCursors.HAND)
 			if (it.pageMode) {

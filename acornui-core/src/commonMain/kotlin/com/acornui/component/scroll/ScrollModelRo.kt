@@ -146,8 +146,7 @@ class ScrollModelImpl(
 
 	private fun bindable(initial: Float): ReadWriteProperty<Any?, Float> {
 		return Delegates.observable(initial) { _, old, new ->
-			if (new.isNaN())
-				throw Exception("Cannot set scroll model to NaN")
+			check(!new.isNaN()) { "Cannot set scroll model to NaN" }
 			if (old != new) _changed.dispatch(this)
 		}
 	}

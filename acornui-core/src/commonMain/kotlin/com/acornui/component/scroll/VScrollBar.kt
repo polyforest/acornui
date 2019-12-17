@@ -59,7 +59,7 @@ open class VScrollBar(
 		val stepDownButton = incrementButton!!
 		val track = track!!
 		val thumb = thumb!!
-		val minH = minHeight ?: 0f
+		val minH = minHeight
 		val h = explicitHeight ?: maxOf(minH, style.defaultSize)
 		val sUbh: Float = stepUpButton.height
 		val sDbh: Float = stepDownButton.height
@@ -72,7 +72,7 @@ open class VScrollBar(
 
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val thumbAvailable = maxTrack() - minTrack()
-		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minHeight ?: 0f))
+		thumb.visible = thumbAvailable > maxOf(1f, thumb.minHeight)
 		track.visible = thumb.visible
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE

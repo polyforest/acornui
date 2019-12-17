@@ -59,7 +59,7 @@ open class HScrollBar(
 		val stepDownButton = incrementButton!!
 		val track = track!!
 		val thumb = thumb!!
-		val minW = minWidth ?: 0f
+		val minW = minWidth
 		val w = explicitWidth ?: maxOf(minW, style.defaultSize)
 		val sUBW: Float = stepUpButton.width
 		val sDBW: Float = stepDownButton.width
@@ -72,7 +72,7 @@ open class HScrollBar(
 
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val thumbAvailable = maxTrack() - minTrack()
-		thumb.visible = thumbAvailable > maxOf(1f, (thumb.minWidth ?: 0f))
+		thumb.visible = thumbAvailable > maxOf(1f, thumb.minWidth)
 		track.visible = thumb.visible
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
 		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
