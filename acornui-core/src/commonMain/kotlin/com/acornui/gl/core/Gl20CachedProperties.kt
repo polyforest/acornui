@@ -28,6 +28,8 @@ import com.acornui.io.NativeReadBuffer
  */
 open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 
+	private val enabled = HashMap<Int, Boolean>()
+
 	private val parametersB = HashMap<Int, Boolean>()
 	private val parametersBv = HashMap<Int, BooleanArray>()
 
@@ -111,8 +113,7 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun checkFramebufferStatus(target: Int): Int {
-		val ret = wrapped.checkFramebufferStatus(target)
-		return ret
+		return wrapped.checkFramebufferStatus(target)
 	}
 
 	override fun clear(mask: Int) {
@@ -160,33 +161,27 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun createBuffer(): GlBufferRef {
-		val ret = wrapped.createBuffer()
-		return ret
+		return wrapped.createBuffer()
 	}
 
 	override fun createFramebuffer(): GlFramebufferRef {
-		val ret = wrapped.createFramebuffer()
-		return ret
+		return wrapped.createFramebuffer()
 	}
 
 	override fun createProgram(): GlProgramRef {
-		val ret = wrapped.createProgram()
-		return ret
+		return wrapped.createProgram()
 	}
 
 	override fun createRenderbuffer(): GlRenderbufferRef {
-		val ret = wrapped.createRenderbuffer()
-		return ret
+		return wrapped.createRenderbuffer()
 	}
 
 	override fun createShader(type: Int): GlShaderRef {
-		val ret = wrapped.createShader(type)
-		return ret
+		return wrapped.createShader(type)
 	}
 
 	override fun createTexture(): GlTextureRef {
-		val ret = wrapped.createTexture()
-		return ret
+		return wrapped.createTexture()
 	}
 
 	override fun cullFace(mode: Int) {
@@ -234,7 +229,7 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun disable(cap: Int) {
-		parametersB[cap] = false
+		enabled[cap] = false
 		wrapped.disable(cap)
 	}
 
@@ -251,7 +246,7 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun enable(cap: Int) {
-		parametersB[cap] = true
+		enabled[cap] = true
 		wrapped.enable(cap)
 	}
 
@@ -284,43 +279,35 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun getActiveAttrib(program: GlProgramRef, index: Int): GlActiveInfoRef {
-		val ret = wrapped.getActiveAttrib(program, index)
-		return ret
+		return wrapped.getActiveAttrib(program, index)
 	}
 
 	override fun getActiveUniform(program: GlProgramRef, index: Int): GlActiveInfoRef {
-		val ret = wrapped.getActiveUniform(program, index)
-		return ret
+		return wrapped.getActiveUniform(program, index)
 	}
 
 	override fun getAttachedShaders(program: GlProgramRef): Array<GlShaderRef> {
-		val ret = wrapped.getAttachedShaders(program)
-		return ret
+		return wrapped.getAttachedShaders(program)
 	}
 
 	override fun getAttribLocation(program: GlProgramRef, name: String): Int {
-		val ret = wrapped.getAttribLocation(program, name)
-		return ret
+		return wrapped.getAttribLocation(program, name)
 	}
 
 	override fun getError(): Int {
-		val ret = wrapped.getError()
-		return ret
+		return wrapped.getError()
 	}
 
 	override fun getProgramInfoLog(program: GlProgramRef): String? {
-		val ret = wrapped.getProgramInfoLog(program)
-		return ret
+		return wrapped.getProgramInfoLog(program)
 	}
 
 	override fun getShaderInfoLog(shader: GlShaderRef): String? {
-		val ret = wrapped.getShaderInfoLog(shader)
-		return ret
+		return wrapped.getShaderInfoLog(shader)
 	}
 
 	override fun getUniformLocation(program: GlProgramRef, name: String): GlUniformLocationRef? {
-		val ret = wrapped.getUniformLocation(program, name)
-		return ret
+		return wrapped.getUniformLocation(program, name)
 	}
 
 	override fun hint(target: Int, mode: Int) {
@@ -328,38 +315,31 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun isBuffer(buffer: GlBufferRef): Boolean {
-		val ret = wrapped.isBuffer(buffer)
-		return ret
+		return wrapped.isBuffer(buffer)
 	}
 
 	override fun isEnabled(cap: Int): Boolean {
-		val ret = wrapped.isEnabled(cap)
-		return ret
+		return enabled.getOrPut(cap) { wrapped.isEnabled(cap) }
 	}
 
 	override fun isFramebuffer(framebuffer: GlFramebufferRef): Boolean {
-		val ret = wrapped.isFramebuffer(framebuffer)
-		return ret
+		return wrapped.isFramebuffer(framebuffer)
 	}
 
 	override fun isProgram(program: GlProgramRef): Boolean {
-		val ret = wrapped.isProgram(program)
-		return ret
+		return wrapped.isProgram(program)
 	}
 
 	override fun isRenderbuffer(renderbuffer: GlRenderbufferRef): Boolean {
-		val ret = wrapped.isRenderbuffer(renderbuffer)
-		return ret
+		return wrapped.isRenderbuffer(renderbuffer)
 	}
 
 	override fun isShader(shader: GlShaderRef): Boolean {
-		val ret = wrapped.isShader(shader)
-		return ret
+		return wrapped.isShader(shader)
 	}
 
 	override fun isTexture(texture: GlTextureRef): Boolean {
-		val ret = wrapped.isTexture(texture)
-		return ret
+		return wrapped.isTexture(texture)
 	}
 
 	override fun lineWidth(width: Float) {
@@ -581,58 +561,47 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun getUniformb(program: GlProgramRef, location: GlUniformLocationRef): Boolean {
-		val ret = wrapped.getUniformb(program, location)
-		return ret
+		return wrapped.getUniformb(program, location)
 	}
 
 	override fun getUniformi(program: GlProgramRef, location: GlUniformLocationRef): Int {
-		val ret = wrapped.getUniformi(program, location)
-		return ret
+		return wrapped.getUniformi(program, location)
 	}
 
 	override fun getUniformiv(program: GlProgramRef, location: GlUniformLocationRef, out: IntArray): IntArray {
-		val ret = wrapped.getUniformiv(program, location, out)
-		return ret
+		return wrapped.getUniformiv(program, location, out)
 	}
 
 	override fun getUniformf(program: GlProgramRef, location: GlUniformLocationRef): Float {
-		val ret = wrapped.getUniformf(program, location)
-		return ret
+		return wrapped.getUniformf(program, location)
 	}
 
 	override fun getUniformfv(program: GlProgramRef, location: GlUniformLocationRef, out: FloatArray): FloatArray {
-		val ret = wrapped.getUniformfv(program, location, out)
-		return ret
+		return wrapped.getUniformfv(program, location, out)
 	}
 
 	override fun getVertexAttribi(index: Int, pName: Int): Int {
-		val ret = wrapped.getVertexAttribi(index, pName)
-		return ret
+		return wrapped.getVertexAttribi(index, pName)
 	}
 
 	override fun getVertexAttribb(index: Int, pName: Int): Boolean {
-		val ret = wrapped.getVertexAttribb(index, pName)
-		return ret
+		return wrapped.getVertexAttribb(index, pName)
 	}
 
 	override fun getTexParameter(target: Int, pName: Int): Int {
-		val ret = wrapped.getTexParameter(target, pName)
-		return ret
+		return wrapped.getTexParameter(target, pName)
 	}
 
 	override fun getShaderParameterb(shader: GlShaderRef, pName: Int): Boolean {
-		val ret = wrapped.getShaderParameterb(shader, pName)
-		return ret
+		return wrapped.getShaderParameterb(shader, pName)
 	}
 
 	override fun getShaderParameteri(shader: GlShaderRef, pName: Int): Int {
-		val ret = wrapped.getShaderParameteri(shader, pName)
-		return ret
+		return wrapped.getShaderParameteri(shader, pName)
 	}
 
 	override fun getRenderbufferParameter(target: Int, pName: Int): Int {
-		val ret = wrapped.getRenderbufferParameter(target, pName)
-		return ret
+		return wrapped.getRenderbufferParameter(target, pName)
 	}
 
 	override fun getParameterb(pName: Int): Boolean {
@@ -666,23 +635,19 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun getProgramParameterb(program: GlProgramRef, pName: Int): Boolean {
-		val ret = wrapped.getProgramParameterb(program, pName)
-		return ret
+		return wrapped.getProgramParameterb(program, pName)
 	}
 
 	override fun getProgramParameteri(program: GlProgramRef, pName: Int): Int {
-		val ret = wrapped.getProgramParameteri(program, pName)
-		return ret
+		return wrapped.getProgramParameteri(program, pName)
 	}
 
 	override fun getBufferParameter(target: Int, pName: Int): Int {
-		val ret = wrapped.getBufferParameter(target, pName)
-		return ret
+		return wrapped.getBufferParameter(target, pName)
 	}
 
 	override fun getFramebufferAttachmentParameteri(target: Int, attachment: Int, pName: Int): Int {
-		val ret = wrapped.getFramebufferAttachmentParameteri(target, attachment, pName)
-		return ret
+		return wrapped.getFramebufferAttachmentParameteri(target, attachment, pName)
 	}
 
 	override fun clearColor(color: ColorRo) {
@@ -690,7 +655,6 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun getSupportedExtensions(): List<String> {
-		val ret = wrapped.getSupportedExtensions()
-		return ret
+		return wrapped.getSupportedExtensions()
 	}
 }

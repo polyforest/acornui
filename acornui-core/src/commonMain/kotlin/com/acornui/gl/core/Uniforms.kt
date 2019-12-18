@@ -608,9 +608,6 @@ fun Uniforms.useColorTransformation(value: ColorTransformationRo?, inner: () -> 
 	ColorTransformation.free(cT)
 }
 
-private val mvp = Matrix4()
-private val tmpMat = Matrix3()
-
 fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, modelTransformOut: Matrix4) {
 	val uProjTrans = getUniformLocation(CommonShaderUniforms.U_PROJ_TRANS)
 	if (uProjTrans == null) {
@@ -628,6 +625,9 @@ fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, mo
 		get(it, modelTransformOut)
 	}
 }
+
+private val mvp = Matrix4()
+private val tmpMat = Matrix3()
 
 /**
  * Sets the model, view, and projection matrices.
