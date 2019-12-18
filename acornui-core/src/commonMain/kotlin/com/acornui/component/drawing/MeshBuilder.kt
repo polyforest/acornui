@@ -17,7 +17,6 @@
 package com.acornui.component.drawing
 
 import com.acornui.recycle.Clearable
-import com.acornui.recycle.ObjectPool
 import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
@@ -27,7 +26,7 @@ import com.acornui.math.*
 /**
  * A MeshRegion provides utility for writing to a mesh and optionally transforming that section of the mesh.
  */
-class MeshRegion private constructor() : Clearable, ShaderBatch {
+class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 
 	override val vertexComponentsCount: Int
 		get() = batch.vertexComponentsCount
@@ -37,53 +36,20 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 	/**
 	 * The vertex component buffer position where this region begins.
 	 */
-	var startVertexPosition: Int = 0
+	var startVertexPosition: Int = batch.vertexComponents.position
 		private set
 
 	/**
 	 * The index buffer position where this region begins.
 	 */
-	var startIndexPosition: Int = 0
+	var startIndexPosition: Int = batch.indices.position
 		private set
-
 
 	/**
 	 * The draw call list index where this region begins.
 	 */
-	var startDrawCallIndex: Int = 0
+	var startDrawCallIndex: Int = batch.drawCalls.size
 		private set
-
-	private var _batch: StaticShaderBatch? = null
-	val batch: StaticShaderBatch
-		get() = _batch ?: throw Exception("batch not set; this mesh region was not initialized.")
-
-	fun init(batch: StaticShaderBatch) {
-		this._batch = batch
-		this.startVertexPosition = batch.vertexComponents.position
-		this.startIndexPosition = batch.indices.position
-		this.startDrawCallIndex = batch.drawCalls.size
-	}
-
-	override val highestIndex: Short
-		get() = batch.highestIndex
-
-	override fun resetRenderCount() = batch.resetRenderCount()
-
-	override val renderCount: Int
-		get() = batch.renderCount
-
-	override fun begin(drawMode: Int) = batch.begin(drawMode)
-
-	override fun flush() = batch.flush()
-
-	override fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) = batch.putVertex(positionX, positionY, positionZ, normalX, normalY, normalZ, colorR, colorG, colorB, colorA, u, v)
-
-	override val vertexAttributes: VertexAttributes
-		get() = batch.vertexAttributes
-
-	override fun putIndex(index: Short) = batch.putIndex(index)
-
-	override fun putVertexComponent(value: Float) = batch.putVertexComponent(value)
 
 	/**
 	 * Transform the vertices by the given matrix, and the normals by the inverse-transpose of that matrix.
@@ -166,26 +132,10 @@ class MeshRegion private constructor() : Clearable, ShaderBatch {
 		}
 	}
 
-	override fun clear() {
-		_batch = null
-	}
-
 	companion object {
 		private val tmpMat = Matrix4()
 		private val tmpVec = Vector3()
 		private val tmpColor = Color()
-
-		private val pool = ObjectPool { MeshRegion() }
-
-		fun obtain(batch: StaticShaderBatch): MeshRegion {
-			val region = pool.obtain()
-			region.init(batch)
-			return region
-		}
-
-		fun free(region: MeshRegion) {
-			pool.free(region)
-		}
 	}
 }
 
@@ -320,16 +270,14 @@ enum class MeshIntersectionType {
 }
 
 
-fun mesh(batch: StaticShaderBatch, init: MeshRegion.() -> Unit = {}) {
-	val p = MeshRegion.obtain(batch)
+fun mesh(batch: ShaderBatch, init: MeshRegion.() -> Unit = {}) {
+	val p = MeshRegion(batch)
 	p.begin()
 	p.init()
-	MeshRegion.free(p)
 }
 
 fun MeshRegion.mesh(init: MeshRegion.() -> Unit = {}) {
-	val p = MeshRegion.obtain(batch)
+	val p = MeshRegion(batch)
 	p.begin()
 	p.init()
-	MeshRegion.free(p)
 }

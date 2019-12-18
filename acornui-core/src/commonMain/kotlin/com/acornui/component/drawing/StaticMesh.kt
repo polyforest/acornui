@@ -175,7 +175,7 @@ class StaticMesh(
 	private val _boundingBox = Box()
 	val boundingBox: BoxRo = _boundingBox
 
-	private val batch = StaticShaderBatchImpl(gl, glState, vertexAttributes)
+	private val batch = ShaderBatchImpl(gl, glState, vertexAttributes, isDynamic = false)
 	private val textures = HashSet<TextureRo>()
 	private val oldTextures = ArrayList<TextureRo>()
 
@@ -192,6 +192,7 @@ class StaticMesh(
 			textures.forEach {
 				it.refInc()
 			}
+			batch.upload()
 		}
 		refCount++
 	}
@@ -202,6 +203,7 @@ class StaticMesh(
 			textures.forEach {
 				it.refDec()
 			}
+			batch.delete()
 		}
 	}
 
@@ -211,6 +213,7 @@ class StaticMesh(
 	fun buildMesh(inner: MeshRegion.() -> Unit) {
 		if (refCount > 0) {
 			oldTextures.addAll(textures)
+			batch.delete()
 		}
 		glState.useBatch(batch) {
 			glState.setTexture(glState.whitePixel)
@@ -221,7 +224,6 @@ class StaticMesh(
 				inner()
 			}
 			updateBoundingBox()
-			batch.upload()
 			textures.clear()
 			for (i in 0..batch.drawCalls.lastIndex) {
 				// Keeps track of the textures used so we can reference count them.
@@ -230,6 +232,7 @@ class StaticMesh(
 					textures.add(texture)
 			}
 			if (refCount > 0) {
+				batch.upload()
 				textures.forEach {
 					it.refInc()
 				}

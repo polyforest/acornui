@@ -29,6 +29,7 @@ import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
 import com.acornui.input.Ascii
 import com.acornui.input.SoftKeyboardManager
@@ -193,7 +194,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			gl.clearStencil(1)
 			gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		}
-		glState.batch.resetRenderCount()
+		ShaderBatch.totalDrawCalls = 0
 		glState.uniforms.setCamera(renderContext, useModel = false)
 		super.draw()
 		glState.batch.flush()

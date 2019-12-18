@@ -16,29 +16,19 @@
 
 package com.acornui.gl.core
 
-import com.acornui.component.drawing.DrawElementsCallRo
+import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.io.ReadBuffer
 import com.acornui.io.ReadWriteBuffer
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
+import com.acornui.recycle.Clearable
 
 /**
  * A [ShaderBatch] writes to index and vertex buffers, handling when new draw calls need to be made.
  */
-interface ShaderBatch : VertexFeed, IndexFeed {
-
-	/**
-	 * Resets the number of times the batch has been flushed. This is typically done at the beginning of the frame.
-	 */
-	fun resetRenderCount()
-
-	/**
-	 * The number of times the batch has been flushed since the last [resetRenderCount]
-	 */
-	val renderCount: Int
+interface ShaderBatch : Clearable, VertexFeed, IndexFeed {
 
 	/**
 	 * Marks the beginning of a new batch. This will flush the batch if the buffers are past an internal threshold.
@@ -60,6 +50,36 @@ interface ShaderBatch : VertexFeed, IndexFeed {
 	 */
 	fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float)
 
+	/**
+	 * The indices written to this batch.
+	 */
+	val indices: ReadWriteBuffer<Short>
+
+	/**
+	 * The vertex components currently written to this batch.
+	 */
+	val vertexComponents: ReadWriteBuffer<Float>
+
+	/**
+	 * The draw calls to render.
+	 */
+	val drawCalls: MutableList<DrawElementsCall>
+
+	fun delete()
+
+	fun upload()
+
+	fun render()
+
+	companion object {
+
+		/**
+		 * Whenever a shader batch renders, the total number of draw calls is increased by the draw call count.
+		 * This will be reset to zero at the beginning of every frame.
+		 */
+		var totalDrawCalls = 0
+	}
+
 }
 
 // Utility methods for putting vertices.
@@ -80,22 +100,7 @@ fun ShaderBatch.putVertex(positionX: Float, positionY: Float, positionZ: Float, 
 	putVertex(positionX, positionY, positionZ, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
 }
 
-/**
- * A static shader batch keeps the buffers and draw calls for future renders.
- *
- * Flushing a static shader batch does not cause a draw call. Instead, a draw call is added to [drawCalls],
- * which will then be drawn on the next [render]
- */
-interface StaticShaderBatch : ShaderBatch {
-
-	val indices: ReadBuffer<Short>
-	val vertexComponents: ReadWriteBuffer<Float>
-	val drawCalls: List<DrawElementsCallRo>
-
-	fun render()
-}
-
-inline fun StaticShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, endPosition: Int = vertexComponentsCount, inner: (ReadWriteBuffer<Float>) -> Unit) {
+inline fun ShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, endPosition: Int = vertexComponentsCount, inner: (ReadWriteBuffer<Float>) -> Unit) {
 	val offset = vertexAttributes.getOffsetByUsage(usage) ?: return
 	val previousPosition = vertexComponents.position
 	var i = startPosition + offset

@@ -1,14 +1,11 @@
 package com.acornui.headless
 
+import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.VertexAttributes
+import com.acornui.io.ReadWriteBuffer
 
 object MockShaderBatch : ShaderBatch {
-
-	override fun resetRenderCount() {
-	}
-
-	override val renderCount: Int = 0
 
 	override fun begin(drawMode: Int) {
 	}
@@ -29,5 +26,21 @@ object MockShaderBatch : ShaderBatch {
 	override val highestIndex: Short = 0
 
 	override fun putIndex(index: Short) {
+	}
+
+	override val indices: ReadWriteBuffer<Short> = MockReadWriteBuffer()
+	override val vertexComponents: ReadWriteBuffer<Float> = MockReadWriteBuffer()
+	override val drawCalls: MutableList<DrawElementsCall> = ArrayList()
+
+	override fun delete() {
+	}
+
+	override fun upload() {
+	}
+
+	override fun render() {
+	}
+
+	override fun clear() {
 	}
 }
