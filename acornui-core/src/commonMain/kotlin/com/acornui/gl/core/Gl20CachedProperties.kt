@@ -234,6 +234,7 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun disable(cap: Int) {
+		parametersB[cap] = false
 		wrapped.disable(cap)
 	}
 
@@ -250,6 +251,7 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun enable(cap: Int) {
+		parametersB[cap] = true
 		wrapped.enable(cap)
 	}
 
@@ -389,6 +391,11 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun scissor(x: Int, y: Int, width: Int, height: Int) {
+		val p = parametersIv.getOrPut(Gl20.SCISSOR_BOX) { IntArray(4) }
+		p[0] = x
+		p[1] = y
+		p[2] = width
+		p[3] = height
 		wrapped.scissor(x, y, width, height)
 	}
 
@@ -565,6 +572,11 @@ open class Gl20CachedProperties(protected val wrapped: Gl20) : Gl20 {
 	}
 
 	override fun viewport(x: Int, y: Int, width: Int, height: Int) {
+		val p = parametersIv.getOrPut(Gl20.VIEWPORT) { IntArray(4) }
+		p[0] = x
+		p[1] = y
+		p[2] = width
+		p[3] = height
 		wrapped.viewport(x, y, width, height)
 	}
 

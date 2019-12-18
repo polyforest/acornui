@@ -73,7 +73,7 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 		if (!hasUpdatedWorld)
 			throw Exception("...")
 		drawToFramebuffer(inner)
-		glState.useColorTransformation(colorTransformation) {
+		glState.uniforms.useColorTransformation(colorTransformation) {
 			blurSprite.render()
 		}
 		blurFilter.drawOriginalToScreen()

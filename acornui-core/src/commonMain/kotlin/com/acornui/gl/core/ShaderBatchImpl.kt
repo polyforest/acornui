@@ -29,16 +29,17 @@ import com.acornui.io.resizableShortBuffer
  *
  * @author nbilyk
  */
-class ShaderBatchImpl(
+open class ShaderBatchImpl(
 		private val gl: Gl20,
 		private val glState: GlState,
-		override val vertexAttributes: VertexAttributes,
 
 		/**
 		 * If true, when this batch is flushed, the data will be uploaded to the gpu, rendered, then cleared.
 		 */
 		var isDynamic: Boolean = true
 ) : ShaderBatch, Disposable {
+
+	override val vertexAttributes: VertexAttributes = standardVertexAttributes
 
 	/**
 	 * One of [Gl20.DYNAMIC_DRAW], [Gl20.STATIC_DRAW], or [Gl20.STREAM_DRAW]
@@ -136,15 +137,19 @@ class ShaderBatchImpl(
 		vertexComponents.put(value)
 	}
 
-	/**
-	 * Converts the properties position, normal, colorTint, textureCoord into the expected vertex component order for
-	 * this batch.
-	 * @see vertexAttributes
-	 */
-	private val adapter = StandardAttributesAdapter(this)
-
 	override fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) {
-		adapter.putVertex(positionX, positionY, positionZ, normalX, normalY, normalZ, colorR, colorG, colorB, colorA, u, v)
+		vertexComponents.put(positionX)
+		vertexComponents.put(positionY)
+		vertexComponents.put(positionZ)
+		vertexComponents.put(normalX)
+		vertexComponents.put(normalY)
+		vertexComponents.put(normalZ)
+		vertexComponents.put(colorR)
+		vertexComponents.put(colorG)
+		vertexComponents.put(colorB)
+		vertexComponents.put(colorA)
+		vertexComponents.put(u)
+		vertexComponents.put(v)
 	}
 
 	/**
@@ -211,5 +216,5 @@ class ShaderBatchImpl(
 }
 
 fun Scoped.shaderBatch(vertexAttributes: VertexAttributes): ShaderBatchImpl {
-	return ShaderBatchImpl(inject(Gl20), inject(GlState), vertexAttributes)
+	return ShaderBatchImpl(inject(Gl20), inject(GlState))
 }

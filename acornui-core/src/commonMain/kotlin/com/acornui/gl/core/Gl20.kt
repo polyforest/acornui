@@ -918,6 +918,7 @@ interface Gl20 {
 	/**
 	 * Defines a rectangle, called the scissor box, in screen coordinates. The first two arguments, x and y, specify
 	 * the lower left corner of the box. width and height specify the width and height of the box.
+	 * To get the current scissor value, use `getParameterfv(Gl20.SCISSOR_BOX)`
 	 */
 	fun scissor(x: Int, y: Int, width: Int, height: Int)
 

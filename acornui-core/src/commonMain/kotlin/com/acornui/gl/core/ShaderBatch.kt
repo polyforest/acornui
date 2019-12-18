@@ -85,11 +85,11 @@ interface ShaderBatch : Clearable, VertexFeed, IndexFeed {
 // Utility methods for putting vertices.
 
 fun ShaderBatch.putVertex(position: Vector2Ro, z: Float = 0f, normal: Vector3Ro = Vector3.NEG_Z, colorTint: ColorRo = Color.WHITE, u: Float = 0f, v: Float = 0f) {
-	putVertex(position.x, position.y, z, normal, colorTint, u, v)
+	putVertex(position.x, position.y, z, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
 }
 
 fun ShaderBatch.putVertex(position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo) {
-	putVertex(position.x, position.y, position.z, normal, colorTint, 0f, 0f)
+	putVertex(position.x, position.y, position.z, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, 0f, 0f)
 }
 
 fun ShaderBatch.putVertex(position: Vector3Ro, normal: Vector3Ro = Vector3.NEG_Z, colorTint: ColorRo = Color.WHITE, u: Float = 0f, v: Float = 0f) {

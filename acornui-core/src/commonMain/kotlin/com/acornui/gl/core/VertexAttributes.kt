@@ -17,8 +17,6 @@
 package com.acornui.gl.core
 
 import com.acornui._assert
-import com.acornui.graphic.ColorRo
-import com.acornui.math.Vector3Ro
 
 class VertexAttributes(
 		val attributes: List<VertexAttribute>
@@ -90,108 +88,6 @@ class VertexAttributes(
 			if (attributeLocation == -1) continue
 			gl.disableVertexAttribArray(attributeLocation)
 		}
-	}
-}
-
-/**
- * An adapter that quickly converts vertex components expected in the [from] attributes, to the order of the vertex
- * components in the attributes required for the given [feed].
- * @param from The attribute order expected.  Attributes that do not exist here but do exist in [feed] attributes, will
- * be written as 0f.
- * @param feed The feed to put components into. The components are only guaranteed to be pushed at the end of every
- * full vertex.
- */
-class VertexAttributesAdapter(
-		private val from: VertexAttributes,
-		private var feed: VertexFeed
-) {
-
-	/**
-	 * Skip the temporary buffer for attributes that are an exact match.
-	 * This marks the attribute index.
-	 */
-	private var bufferStartIndex = 0
-
-	/**
-	 * Skip the temporary buffer for attributes that are an exact match.
-	 * This marks the attribute index.
-	 */
-	private var bufferStartComponentIndex = 0
-
-	init {
-		if (from === feed.vertexAttributes) {
-			bufferStartIndex = from.attributes.size
-			bufferStartComponentIndex = from.vertexSize
-		}
-		val fromAttribs = from.attributes
-		val toAttribs = feed.vertexAttributes.attributes
-		for (i in 0..minOf(fromAttribs.lastIndex, toAttribs.lastIndex)) {
-			if (fromAttribs[i] == toAttribs[i]) {
-				bufferStartIndex++
-				bufferStartComponentIndex += fromAttribs[i].numFloats
-			}
-			else break
-		}
-	}
-
-	private val buffer = FloatArray(from.vertexSize)
-	private var componentIndex = 0
-
-	fun putVertexComponent(value: Float) {
-		val vertexAttributes = feed.vertexAttributes
-		if (componentIndex >= bufferStartComponentIndex) {
-			buffer[componentIndex++] = value
-		} else {
-			feed.putVertexComponent(value)
-			componentIndex++
-		}
-		if (componentIndex >= from.vertexSize) {
-			// Flush vertex
-			for (i in bufferStartIndex..vertexAttributes.attributes.lastIndex) {
-				val attribute = vertexAttributes.attributes[i]
-				val fromOffset = from.getOffsetByUsage(attribute.usage)
-				val fromSize = from.getAttributeByUsage(attribute.usage)!!.numFloats
-				for (j in 0 until attribute.numFloats) {
-					if (fromOffset == null || j >= fromSize) {
-						feed.putVertexComponent(0f)
-					} else {
-						feed.putVertexComponent(buffer[fromOffset + j])
-					}
-				}
-			}
-			componentIndex = 0
-		}
-	}
-
-	private val VertexAttribute.numFloats: Int
-		get() = size shr 2
-}
-
-/**
- * A wrapper to an attribute adapter that allows pushing position, normal, colorTint, u, and v components to a
- * target vertex feed.
- */
-class StandardAttributesAdapter(feed: VertexFeed) {
-
-	private val adapter = VertexAttributesAdapter(standardVertexAttributes, feed)
-
-	fun putVertex(position: Vector3Ro, normal: Vector3Ro, colorTint: ColorRo, u: Float, v: Float) {
-		putVertex(position.x, position.y, position.z, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
-	}
-
-	fun putVertex(positionX: Float, positionY: Float, positionZ: Float, normalX: Float, normalY: Float, normalZ: Float, colorR: Float, colorG: Float, colorB: Float, colorA: Float, u: Float, v: Float) {
-		adapter.putVertexComponent(positionX)
-		adapter.putVertexComponent(positionY)
-		adapter.putVertexComponent(positionZ)
-		adapter.putVertexComponent(normalX)
-		adapter.putVertexComponent(normalY)
-		adapter.putVertexComponent(normalZ)
-		adapter.putVertexComponent(colorR)
-		adapter.putVertexComponent(colorG)
-		adapter.putVertexComponent(colorB)
-		adapter.putVertexComponent(colorA)
-		adapter.putVertexComponent(u)
-		adapter.putVertexComponent(v)
 	}
 }
 

@@ -40,7 +40,7 @@ class ColorTransformationFilter(
 	}
 
 	override fun render(inner: () -> Unit) {
-		glState.useColorTransformation(colorTransformationWorld) {
+		glState.uniforms.useColorTransformation(colorTransformationWorld) {
 			inner()
 		}
 	}
