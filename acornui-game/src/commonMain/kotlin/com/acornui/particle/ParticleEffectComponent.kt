@@ -28,7 +28,7 @@ import com.acornui.component.invalidateDraw
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
@@ -186,14 +186,14 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 
 suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
-	val glState = inject(GlState)
+	val gl = inject(CachedGl20)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 
-		val sprite = Sprite(glState)
+		val sprite = Sprite(gl)
 		sprite.blendMode = emitter.blendMode
 		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture

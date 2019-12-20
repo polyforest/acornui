@@ -18,7 +18,7 @@ package com.acornui.graphic
 
 import com.acornui.gl.core.*
 
-class LightingShaderWithNormalMap(gl: Gl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
+class LightingShaderWithNormalMap(gl: CachedGl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
@@ -208,26 +208,19 @@ void main() {
 
 """,
 		vertexAttributes = mapOf(
-VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
-VertexAttributeUsage.NORMAL to CommonShaderAttributes.A_NORMAL,
-VertexAttributeUsage.TANGENT to CommonShaderAttributes.A_TANGENT,
-VertexAttributeUsage.BITANGENT to CommonShaderAttributes.A_BITANGENT,
-VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
-VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
+VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION,
+VertexAttributeLocation.NORMAL to CommonShaderAttributes.A_NORMAL,
+VertexAttributeLocation.TANGENT to CommonShaderAttributes.A_TANGENT,
+VertexAttributeLocation.BITANGENT to CommonShaderAttributes.A_BITANGENT,
+VertexAttributeLocation.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+VertexAttributeLocation.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
 )) {
 
-	private var isFirst = true
-
-	override fun bind() {
-		super.bind()
-
-		if (isFirst) {
-			isFirst = false
-			// Poisson disk
-			uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
-			uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
-			uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
-			uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
-		}
+	override fun initUniforms(uniforms: Uniforms) {
+		// Poisson disk
+		uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
+		uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
+		uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
+		uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
 	}
 }

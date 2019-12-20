@@ -61,7 +61,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	}
 
 	fun transformVertices(value: Matrix4Ro) {
-		iterateVector3Attribute(VertexAttributeUsage.POSITION) {
+		iterateVector3Attribute(VertexAttributeLocation.POSITION) {
 			value.prj(it)
 		}
 	}
@@ -70,7 +70,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	 * Multiplies the normals by the given matrix.
 	 */
 	fun transformNormals(value: Matrix4Ro) {
-		iterateVector3Attribute(VertexAttributeUsage.NORMAL) {
+		iterateVector3Attribute(VertexAttributeLocation.NORMAL) {
 			value.rot(it).nor()
 		}
 	}
@@ -79,7 +79,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	 * Translate the vertices by the given deltas.
 	 */
 	fun trn(x: Float = 0f, y: Float = 0f, z: Float = 0f) {
-		iterateVector3Attribute(VertexAttributeUsage.POSITION) {
+		iterateVector3Attribute(VertexAttributeLocation.POSITION) {
 			it.add(x, y, z)
 		}
 	}
@@ -90,7 +90,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	fun scl(x: Float = 1f, y: Float = 1f, z: Float = 1f) {
 		if (x == y && x == z) {
 			// No need to manipulate the normals.
-			iterateVector3Attribute(VertexAttributeUsage.POSITION) {
+			iterateVector3Attribute(VertexAttributeLocation.POSITION) {
 				it.scl(x, y, z)
 			}
 		} else {
@@ -105,7 +105,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	 */
 	fun colorTransform(colorTint: ColorRo) {
 		val v = batch.vertexComponents
-		batch.iterateVertexAttribute(VertexAttributeUsage.COLOR_TINT, this.startVertexPosition) {
+		batch.iterateVertexAttribute(VertexAttributeLocation.COLOR_TINT, this.startVertexPosition) {
 			val r = v.get()
 			val g = v.get()
 			val b = v.get()

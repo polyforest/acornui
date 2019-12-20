@@ -65,13 +65,14 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
-		popUpManagerView = addChild(popUpManager.init(createScope(Stage to this)))
+		popUpManagerView = (popUpManager.init(createScope(Stage to this))) // TODO: Add addChild
 		popUpManagerView.layoutInvalidatingFlags = 0
 
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
+		gl.enable(Gl20.BLEND)
 		
 		watch(style) {
 			useRedrawRegions = it.useRedrawRegions
@@ -132,8 +133,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override fun updateRenderContext() {
 		val w = window.framebufferWidth
 		val h = window.framebufferHeight
-		glState.setViewport(0, 0, w, h)
-		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+		gl.viewport(0, 0, w, h)
+		gl.bindFramebuffer(null)
 		renderContext.redraw.invalidate(0, 0, w, h)
 		super.updateRenderContext()
 	}
@@ -192,12 +193,13 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			gl.disable(Gl20.SCISSOR_TEST)
 		} else {
 			gl.clearStencil(1)
+			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
 			gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		}
 		ShaderBatch.totalDrawCalls = 0
-		glState.uniforms.setCamera(renderContext, useModel = false)
+		gl.uniforms.setCamera(renderContext, useModel = false)
 		super.draw()
-		glState.batch.flush()
+		gl.batch.flush()
 
 		// Draw redraw regions
 

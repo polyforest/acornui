@@ -16,9 +16,10 @@
 
 package com.acornui.gl.core
 
-import com.acornui.component.drawing.DrawElementsCall
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.TextureRo
 import com.acornui.io.ReadWriteBuffer
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3
@@ -30,10 +31,15 @@ import com.acornui.recycle.Clearable
  */
 interface ShaderBatch : Clearable, VertexFeed, IndexFeed {
 
+	val whitePixel: TextureRo
+
 	/**
 	 * Marks the beginning of a new batch. This will flush the batch if the buffers are past an internal threshold.
+	 *
+	 * @param drawMode Possible values are: [Gl20.POINTS], [Gl20.LINE_STRIP], [Gl20.LINE_LOOP], [Gl20.LINES],
+	 * [Gl20.TRIANGLE_STRIP], [Gl20.TRIANGLE_FAN], or [Gl20.TRIANGLES].
 	 */
-	fun begin(drawMode: Int = Gl20.TRIANGLES)
+	fun begin(texture: TextureRo = whitePixel, blendMode: BlendMode = BlendMode.NORMAL, premultipliedAlpha: Boolean = false, drawMode: Int = Gl20.TRIANGLES)
 
 	/**
 	 * Flushes this batch.

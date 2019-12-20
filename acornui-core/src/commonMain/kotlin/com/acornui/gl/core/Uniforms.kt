@@ -16,29 +16,12 @@
 
 package com.acornui.gl.core
 
-import com.acornui.collection.stringMapOf
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal0
-import com.acornui.signal.emptySignal
-import kotlin.collections.HashMap
-import kotlin.collections.MutableMap
-import kotlin.collections.contentEquals
-import kotlin.collections.copyInto
-import kotlin.collections.fill
-import kotlin.collections.getOrPut
-import kotlin.collections.set
 
 interface Uniforms {
-
-	val changing: Signal<()->Unit>
-
-	val isBound: Boolean
-	fun bind()
-	fun unbind()
 
 	fun getUniformLocation(name: String): GlUniformLocationRef?
 
@@ -49,7 +32,8 @@ interface Uniforms {
 	/**
 	 * Return the uniform value at the given location for this program.
 	 */
-	fun getb(location: GlUniformLocationRef): Boolean = geti(location) > 0
+	fun getb(location: GlUniformLocationRef): Boolean
+
 	fun getb(name: String): Boolean = getb(getRequiredUniformLocation(name))
 	fun getbOptional(name: String): Boolean? {
 		val loc = getUniformLocation(name) ?: return null
@@ -60,6 +44,7 @@ interface Uniforms {
 	 * Return the uniform value at the given location for this program.
 	 */
 	fun geti(location: GlUniformLocationRef): Int
+
 	fun geti(name: String): Int = geti(getRequiredUniformLocation(name))
 	fun getiOptional(name: String): Int? {
 		val loc = getUniformLocation(name) ?: return null
@@ -72,6 +57,7 @@ interface Uniforms {
 	 * If the uniform has never been set, [out] will be populated with 0.
 	 */
 	fun get(location: GlUniformLocationRef, out: IntArray): IntArray
+
 	fun get(name: String, out: IntArray): IntArray = get(getRequiredUniformLocation(name), out)
 
 	/**
@@ -95,6 +81,7 @@ interface Uniforms {
 	 * Return the uniform value at the given location for this program.
 	 */
 	fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray
+
 	fun get(name: String, out: FloatArray): FloatArray = get(getRequiredUniformLocation(name), out)
 
 	/**
@@ -146,10 +133,6 @@ interface Uniforms {
 		return get(loc, out)
 	}
 
-	fun put(location: GlUniformLocationRef, v: FloatArray)
-	fun put(name: String, v: FloatArray) = put(getRequiredUniformLocation(name), v)
-	fun putOptional(name: String, v: FloatArray) = getUniformLocation(name)?.let { put(it, v) }
-
 	fun put(location: GlUniformLocationRef, x: Float)
 	fun put(name: String, x: Float) = put(getRequiredUniformLocation(name), x)
 	fun putOptional(name: String, x: Float) = getUniformLocation(name)?.let { put(it, x) }
@@ -165,10 +148,6 @@ interface Uniforms {
 	fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float)
 	fun put(name: String, x: Float, y: Float, z: Float, w: Float) = put(getRequiredUniformLocation(name), x, y, z, w)
 	fun putOptional(name: String, x: Float, y: Float, z: Float, w: Float) = getUniformLocation(name)?.let { put(it, x, y, z, w) }
-
-	fun put(location: GlUniformLocationRef, v: IntArray)
-	fun put(name: String, v: IntArray) = put(getRequiredUniformLocation(name), v)
-	fun putOptional(name: String, v: IntArray) = getUniformLocation(name)?.let { put(it, v) }
 
 	fun put(location: GlUniformLocationRef, x: Int)
 	fun put(name: String, x: Int) = put(getRequiredUniformLocation(name), x)
@@ -244,230 +223,91 @@ fun Uniforms.putOptional(name: String, v: Vector2Ro) = getUniformLocation(name)?
 	put(it, v.x, v.y)
 }
 
-class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Uniforms {
+class UniformsImpl(private val gl: CachedGl20) : Uniforms {
 
-	private val _changing = Signal0()
-	override val changing = _changing.asRo()
-
-	private val uniformLocationCache = stringMapOf<GlUniformLocationRef?>()
-
-	private val uniformsI = HashMap<GlUniformLocationRef, Int>()
-	private val uniformsIv = HashMap<GlUniformLocationRef, IntArray>()
-
-	private val uniformsF = HashMap<GlUniformLocationRef, Float>()
-	private val uniformsFv = HashMap<GlUniformLocationRef, FloatArray>()
-
-	private val uniformsMat2 = HashMap<GlUniformLocationRef, Matrix2>()
-	private val uniformsMat3 = HashMap<GlUniformLocationRef, Matrix3>()
-	private val uniformsMat4 = HashMap<GlUniformLocationRef, Matrix4>()
-
-	private var _isBound: Boolean = false
-	override val isBound: Boolean
-		get() = _isBound
-
-	override fun bind() {
-		_isBound = true
-	}
-
-	override fun unbind() {
-		_isBound = false
-	}
+	private val program: GlProgramRef
+		get() = gl.program ?: error("No shader program is bound.")
 
 	override fun getUniformLocation(name: String): GlUniformLocationRef? {
-		if (!uniformLocationCache.containsKey(name)) {
-			uniformLocationCache[name] = gl.getUniformLocation(program, name)
-		}
-		return uniformLocationCache[name]
+		return gl.getUniformLocation(program, name)
+	}
+
+	override fun getb(location: GlUniformLocationRef): Boolean {
+		return gl.getUniformb(program, location)
 	}
 
 	override fun geti(location: GlUniformLocationRef): Int {
-		return uniformsI[location] ?: 0
+		return gl.getUniformi(program, location)
 	}
 
 	override fun get(location: GlUniformLocationRef, out: IntArray): IntArray {
-		val v = uniformsIv[location] ?: return out.also { it.fill(0) }
-		return v.copyInto(out)
+		return gl.getUniformiv(program, location, out)
 	}
 
 	override fun getf(location: GlUniformLocationRef): Float {
-		return uniformsF[location] ?: 0f
+		return gl.getUniformf(program, location)
 	}
 
 	override fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray {
-		val v = uniformsFv[location] ?: return out.also { it.fill(0f) }
-		return v.copyInto(out)
+		return gl.getUniformfv(program, location, out)
 	}
 
 	override fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2 {
-		return out.set(uniformsMat2[location] ?: Matrix2.IDENTITY)
+		return gl.getUniformfv(program, location, out)
 	}
 
 	override fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3 {
-		return out.set(uniformsMat3[location] ?: Matrix3.IDENTITY)
+		return gl.getUniformfv(program, location, out)
 	}
 
 	override fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4 {
-		return out.set(uniformsMat4[location] ?: Matrix4.IDENTITY)
-	}
-
-	override fun put(location: GlUniformLocationRef, v: IntArray) {
-		checkBound()
-		require(v.size in 1..4)
-		val existing = uniformsIv.getOrPut(location) { IntArray(v.size) }
-		if (!existing.contentEquals(v)) {
-			_changing.dispatch()
-			v.copyInto(existing)
-			when (v.size) {
-				1 -> gl.uniform1iv(location, v)
-				2 -> gl.uniform2iv(location, v)
-				3 -> gl.uniform3iv(location, v)
-				4 -> gl.uniform4iv(location, v)
-			}
-		}
+		return gl.getUniformfv(program, location, out)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int) {
-		uniformsI.change(location, x) {
-			gl.uniform1i(location, x)
-		}
+		gl.uniform1i(location, x)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int) {
-		checkBound()
-		val existing = uniformsIv.getOrPut(location) { IntArray(2) }
-		if (existing[0] != x || existing[1] != y) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			gl.uniform2i(location, x, y)
-		}
+		gl.uniform2i(location, x, y)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
-		checkBound()
-		val existing = uniformsIv.getOrPut(location) { IntArray(3) }
-		if (existing[0] != x || existing[1] != y || existing[2] != z) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			existing[2] = z
-			gl.uniform3i(location, x, y, z)
-		}
+		gl.uniform3i(location, x, y, z)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
-		checkBound()
-		val existing = uniformsIv.getOrPut(location) { IntArray(4) }
-		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			existing[2] = z
-			existing[3] = w
-			gl.uniform4i(location, x, y, z, w)
-		}
-	}
-
-	override fun put(location: GlUniformLocationRef, v: FloatArray) {
-		checkBound()
-		require(v.size in 1..4)
-		val existing = uniformsFv.getOrPut(location) { FloatArray(v.size) }
-		if (!existing.contentEquals(v)) {
-			_changing.dispatch()
-			v.copyInto(existing)
-			when (v.size) {
-				1 -> gl.uniform1fv(location, v)
-				2 -> gl.uniform2fv(location, v)
-				3 -> gl.uniform3fv(location, v)
-				4 -> gl.uniform4fv(location, v)
-			}
-		}
+		gl.uniform4i(location, x, y, z, w)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float) {
-		uniformsF.change(location, x) {
-			gl.uniform1f(location, x)
-		}
+		gl.uniform1f(location, x)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float) {
-		checkBound()
-		val existing = uniformsFv.getOrPut(location) { FloatArray(2) }
-		if (existing[0] != x || existing[1] != y) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			gl.uniform2f(location, x, y)
-		}
+		gl.uniform2f(location, x, y)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
-		checkBound()
-		val existing = uniformsFv.getOrPut(location) { FloatArray(3) }
-		if (existing[0] != x || existing[1] != y || existing[2] != z) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			existing[2] = z
-			gl.uniform3f(location, x, y, z)
-		}
+		gl.uniform3f(location, x, y, z)
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
-		checkBound()
-		val existing = uniformsFv.getOrPut(location) { FloatArray(4) }
-		if (existing[0] != x || existing[1] != y || existing[2] != z || existing[3] != w) {
-			_changing.dispatch()
-			existing[0] = x
-			existing[1] = y
-			existing[2] = z
-			existing[3] = w
-			gl.uniform4f(location, x, y, z, w)
-		}
+		gl.uniform4f(location, x, y, z, w)
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix2Ro) {
-		checkBound()
-		val existing = uniformsMat2.getOrPut(location) { Matrix2(FloatArray(4)) }
-		if (existing != value) {
-			_changing.dispatch()
-			existing.set(value)
-			gl.uniformMatrix2fv(location, false, value.values)
-		}
+		gl.uniformMatrix2fv(location, value.values)
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix3Ro) {
-		checkBound()
-		val existing = uniformsMat3.getOrPut(location) { Matrix3(FloatArray(9)) }
-		if (existing != value) {
-			_changing.dispatch()
-			existing.set(value)
-			gl.uniformMatrix3fv(location, false, value.values)
-		}
+		gl.uniformMatrix3fv(location, value.values)
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix4Ro) {
-		checkBound()
-		val existing = uniformsMat4.getOrPut(location) { Matrix4(FloatArray(16)) }
-		if (existing != value) {
-			_changing.dispatch()
-			existing.set(value)
-			gl.uniformMatrix4fv(location, false, value.values)
-		}
+		gl.uniformMatrix4fv(location, value.values)
 	}
 
-	private fun checkBound() {
-		check(isBound) { "Shader must be bound" }
-	}
-
-	private inline fun <T> MutableMap<GlUniformLocationRef, T>.change(location: GlUniformLocationRef, newValue: T, onChanged: () -> Unit) {
-		checkBound()
-		if (this[location] != newValue) {
-			_changing.dispatch()
-			this[location] = newValue
-			onChanged()
-		}
-	}
 }
 
 /**
@@ -475,101 +315,57 @@ class UniformsImpl(private val gl: Gl20, private val program: GlProgramRef) : Un
  */
 object EmptyUniforms : Uniforms {
 
-	override val changing: Signal<() -> Unit> = emptySignal()
-
-	override val isBound: Boolean = false
-
-	override fun bind() {
-		throw UnsupportedOperationException()
-	}
-
-	override fun unbind() {
-		throw UnsupportedOperationException()
-	}
-
 	override fun getUniformLocation(name: String): GlUniformLocationRef? = null
 
-	override fun geti(location: GlUniformLocationRef): Int {
-		throw UnsupportedOperationException()
-	}
+	override fun getb(location: GlUniformLocationRef): Boolean = false
 
-	override fun get(location: GlUniformLocationRef, out: IntArray): IntArray {
-		throw UnsupportedOperationException()
-	}
+	override fun geti(location: GlUniformLocationRef): Int = 0
 
-	override fun getf(location: GlUniformLocationRef): Float {
-		throw UnsupportedOperationException()
-	}
+	override fun get(location: GlUniformLocationRef, out: IntArray): IntArray = out
 
-	override fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray {
-		throw UnsupportedOperationException()
-	}
+	override fun getf(location: GlUniformLocationRef): Float = 0f
 
-	override fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2 {
-		throw UnsupportedOperationException()
-	}
+	override fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray = out
 
-	override fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3 {
-		throw UnsupportedOperationException()
-	}
+	override fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2 = out
 
-	override fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4 {
-		throw UnsupportedOperationException()
-	}
+	override fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3 = out
 
-	override fun put(location: GlUniformLocationRef, v: FloatArray) {
-		throw UnsupportedOperationException()
-	}
+	override fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4 = out
 
 	override fun put(location: GlUniformLocationRef, x: Float) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
-		throw UnsupportedOperationException()
-	}
-
-	override fun put(location: GlUniformLocationRef, v: IntArray) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix2Ro) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix3Ro) {
-		throw UnsupportedOperationException()
 	}
 
 	override fun put(location: GlUniformLocationRef, value: Matrix4Ro) {
-		throw UnsupportedOperationException()
 	}
 }
-
 
 fun Uniforms.getColorTransformation(out: ColorTransformation): ColorTransformation? {
 	val useColorTransU = getUniformLocation(CommonShaderUniforms.U_USE_COLOR_TRANS) ?: return null
@@ -660,16 +456,13 @@ fun Uniforms.setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = 
  * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
  */
 fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, modelTransform: Matrix4Ro, inner: () -> Unit) {
-	val previousViewProjection = Matrix4.obtain()
-	val previousViewTransform = Matrix4.obtain()
-	val previousModelTransform = Matrix4.obtain()
+	val previousViewProjection = Matrix4()
+	val previousViewTransform = Matrix4()
+	val previousModelTransform = Matrix4()
 	getCamera(previousViewProjection, previousViewTransform, previousModelTransform)
 	setCamera(viewProjection, viewTransform, modelTransform)
 	inner()
 	setCamera(previousViewProjection, previousViewTransform, previousModelTransform)
-	Matrix4.free(previousViewProjection)
-	Matrix4.free(previousViewTransform)
-	Matrix4.free(previousModelTransform)
 }
 
 /**

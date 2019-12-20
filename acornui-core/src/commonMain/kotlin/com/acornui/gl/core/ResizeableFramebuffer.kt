@@ -16,16 +16,13 @@
 
 package com.acornui.gl.core
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.Sprite
 import com.acornui.Disposable
 import com.acornui.ceilInt
+import com.acornui.component.ComponentInit
+import com.acornui.component.Sprite
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
-import com.acornui.graphic.Camera
-import com.acornui.graphic.OrthographicCamera
 import com.acornui.graphic.Texture
-import com.acornui.graphic.yDown
 import com.acornui.math.MathUtils.nextPowerOfTwo
 
 /**
@@ -35,15 +32,13 @@ import com.acornui.math.MathUtils.nextPowerOfTwo
  * Note: There will be no backing texture until [setSize] has been called.
  */
 class ResizeableFramebuffer(
-		private val gl: Gl20,
-		private val glState: GlState,
+		private val gl: CachedGl20,
 		private val hasDepth: Boolean = false,
 		private val hasStencil: Boolean = false
 ) : Disposable {
 
 	constructor(injector: Injector, hasDepth: Boolean, hasStencil: Boolean) : this(
-			injector.inject(Gl20),
-			injector.inject(GlState),
+			injector.inject(CachedGl20),
 			hasDepth,
 			hasStencil
 	)
@@ -101,7 +96,7 @@ class ResizeableFramebuffer(
 
 		if (newW > oldW || newH > oldH) {
 			framebuffer?.dispose()
-			framebuffer = Framebuffer(gl, glState, maxOf(oldW, newW, 1), maxOf(oldH, newH, 1), hasDepth, hasStencil)
+			framebuffer = Framebuffer(gl, maxOf(oldW, newW, 1), maxOf(oldH, newH, 1), hasDepth, hasStencil)
 			framebuffer!!.setScaling(scaleX, scaleY)
 		}
 		framebuffer!!.setViewport(0, 0, widthInt, heightInt)
@@ -131,22 +126,11 @@ class ResizeableFramebuffer(
 	}
 
 	/**
-	 * Configures a Camera for rendering this frame buffer.
-	 * This will set the viewport and positioning to 'see' the frame buffer.
-	 *
-	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
-	 */
-	fun camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
-		framebuffer?.camera(camera)
-		return camera
-	}
-
-	/**
 	 * Configures a Sprite for rendering this frame buffer.
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun drawable(sprite: Sprite = Sprite(glState)): Sprite {
+	fun drawable(sprite: Sprite = Sprite(gl)): Sprite {
 		sprite.texture = framebuffer?.texture
 		val textureW = framebuffer?.widthPixels?.toFloat() ?: 0f
 		val textureH = framebuffer?.heightPixels?.toFloat() ?: 0f

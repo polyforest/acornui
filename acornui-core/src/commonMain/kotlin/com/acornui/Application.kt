@@ -23,6 +23,8 @@ import com.acornui.async.Work
 import com.acornui.async.applicationScopeKey
 import com.acornui.async.mainScope
 import com.acornui.di.*
+import com.acornui.gl.core.CachedGl20
+import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.io.file.Files
@@ -103,6 +105,13 @@ abstract class ApplicationBase : Application {
 
 	protected open val binaryLoader by task(Loaders.binaryLoader) {
 		BinaryLoader()
+	}
+	
+	protected open val defaultShader by task(dKey()) {
+		val gl = get(CachedGl20)
+		val defaultShader = DefaultShaderProgram(gl)
+		gl.useProgram(defaultShader.program)
+		defaultShader
 	}
 
 	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)

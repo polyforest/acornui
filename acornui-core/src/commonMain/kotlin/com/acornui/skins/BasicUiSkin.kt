@@ -56,6 +56,7 @@ open class BasicUiSkin(
 
 	open fun apply() {
 		target.styleRules.clear()
+		WindowScalingAttachment.attach(target)
 
 		target.addStyleRule(buttonStyle { basicLabelButtonSkin(theme) }, ButtonImpl)
 		target.addStyleRule(buttonStyle { basicCheckboxSkin(theme) }, CheckboxImpl)
@@ -93,8 +94,6 @@ open class BasicUiSkin(
 		formStyle()
 		softKeyboardStyle()
 		dropShadowStyle()
-
-		WindowScalingAttachment.attach(target)
 	}
 
 	protected open fun stageStyle() {

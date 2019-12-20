@@ -42,7 +42,7 @@ open class BlendMode(
 ) {
 
 	companion object {
-		val NONE = BlendMode(0, 0, 0, "none")
+		val NONE = BlendMode(Gl20.ZERO, Gl20.ZERO, Gl20.ONE, "none")
 		val NORMAL = BlendMode(Gl20.SRC_ALPHA, Gl20.ONE, Gl20.ONE_MINUS_SRC_ALPHA, "normal")
 		val ADDITIVE = BlendMode(Gl20.SRC_ALPHA, Gl20.ONE, Gl20.ONE, "additive")
 		val MULTIPLY = BlendMode(Gl20.DST_COLOR, Gl20.DST_COLOR, Gl20.ONE_MINUS_SRC_ALPHA, "multiply")
@@ -72,7 +72,7 @@ open class BlendMode(
 		}
 	}
 
-	open fun applyBlending(gl: Gl20, premultipliedAlpha: Boolean) {
+	open fun applyBlending(gl: Gl20, premultipliedAlpha: Boolean = false) {
 		gl.blendFunc(if (premultipliedAlpha) sourcePma else source, dest)
 	}
 }

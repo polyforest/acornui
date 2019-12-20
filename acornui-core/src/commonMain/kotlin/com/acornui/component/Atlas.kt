@@ -16,13 +16,13 @@
 
 package com.acornui.component
 
+import com.acornui.gl.core.CachedGl20
 import com.acornui.recycle.Clearable
 import com.acornui.graphic.*
-import com.acornui.gl.core.GlState
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 
-class Atlas(private val glState: GlState) : BasicRenderable, Clearable {
+class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
@@ -57,7 +57,7 @@ class Atlas(private val glState: GlState) : BasicRenderable, Clearable {
 		if (region.splits == null) {
 			ninePatch = null
 			if (sprite == null) {
-				sprite = Sprite(glState).apply {
+				sprite = Sprite(gl).apply {
 					blendMode = r.blendMode
 					premultipliedAlpha = r.premultipliedAlpha
 					setScaling(r.scaleX, r.scaleY)
@@ -68,7 +68,7 @@ class Atlas(private val glState: GlState) : BasicRenderable, Clearable {
 		} else {
 			sprite = null
 			if (ninePatch == null) {
-				ninePatch = NinePatch(glState).apply {
+				ninePatch = NinePatch(gl).apply {
 					blendMode = r.blendMode
 					premultipliedAlpha = r.premultipliedAlpha
 					setScaling(r.scaleX, r.scaleY)

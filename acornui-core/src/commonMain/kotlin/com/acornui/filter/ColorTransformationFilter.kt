@@ -34,13 +34,13 @@ class ColorTransformationFilter(
 
 	private val colorTransformationWorld = ColorTransformation()
 
-	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
 		colorTransformationWorld.set(colorTransformation).mul(tint)
-		return region
+		return regionCanvas
 	}
 
 	override fun render(inner: () -> Unit) {
-		glState.uniforms.useColorTransformation(colorTransformationWorld) {
+		gl.uniforms.useColorTransformation(colorTransformationWorld) {
 			inner()
 		}
 	}

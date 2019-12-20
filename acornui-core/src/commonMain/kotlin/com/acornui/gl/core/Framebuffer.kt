@@ -35,8 +35,7 @@ import com.acornui.system.userInfo
  * @author nbilyk
  */
 class Framebuffer(
-		private val gl: Gl20,
-		private val glState: GlState,
+		private val gl: CachedGl20,
 
 		/**
 		 * The width of the frame buffer, in pixels.
@@ -52,7 +51,7 @@ class Framebuffer(
 
 		hasStencil: Boolean = false,
 
-		val texture: Texture = BufferTexture(gl, glState, widthPixels, heightPixels)
+		val texture: Texture = BufferTexture(gl, widthPixels, heightPixels)
 ) : Disposable {
 
 	/**
@@ -86,7 +85,7 @@ class Framebuffer(
 				height: Int,
 				hasDepth: Boolean = false,
 				hasStencil: Boolean = false,
-				texture: Texture = BufferTexture(injector.inject(Gl20), injector.inject(GlState), width, height)) : this(injector.inject(Gl20), injector.inject(GlState), width, height, hasDepth, hasStencil, texture)
+				texture: Texture = BufferTexture(injector.inject(CachedGl20), width, height)) : this(injector.inject(CachedGl20), width, height, hasDepth, hasStencil, texture)
 
 	private var previousStencil: Boolean = false
 	private val framebufferHandle: GlFramebufferRef
@@ -128,20 +127,20 @@ class Framebuffer(
 
 		texture.refInc()
 		framebufferHandle = gl.createFramebuffer()
-		gl.bindFramebuffer(Gl20.FRAMEBUFFER, framebufferHandle)
+		gl.bindFramebuffer(framebufferHandle)
 		gl.framebufferTexture2D(Gl20.FRAMEBUFFER, Gl20.COLOR_ATTACHMENT0, Gl20.TEXTURE_2D, texture.textureHandle!!, 0)
 		if (this.hasDepth && this.hasStencil) {
 			depthStencilbufferHandle = gl.createRenderbuffer()
 			depthbufferHandle = null
 			stencilbufferHandle = null
-			gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthStencilbufferHandle)
+			gl.bindRenderbuffer(depthStencilbufferHandle)
 			gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_STENCIL, widthPixels, heightPixels)
 			gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, depthStencilbufferHandle)
 		} else {
 			depthStencilbufferHandle = null
 			if (this.hasDepth) {
 				depthbufferHandle = gl.createRenderbuffer()
-				gl.bindRenderbuffer(Gl20.RENDERBUFFER, depthbufferHandle)
+				gl.bindRenderbuffer(depthbufferHandle)
 				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.DEPTH_COMPONENT16, widthPixels, heightPixels)
 				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.DEPTH_ATTACHMENT, Gl20.RENDERBUFFER, depthbufferHandle)
 			} else {
@@ -149,7 +148,7 @@ class Framebuffer(
 			}
 			if (this.hasStencil) {
 				stencilbufferHandle = gl.createRenderbuffer()
-				gl.bindRenderbuffer(Gl20.RENDERBUFFER, stencilbufferHandle)
+				gl.bindRenderbuffer(stencilbufferHandle)
 				gl.renderbufferStorage(Gl20.RENDERBUFFER, Gl20.STENCIL_INDEX8, widthPixels, heightPixels)
 				gl.framebufferRenderbuffer(Gl20.FRAMEBUFFER, Gl20.STENCIL_ATTACHMENT, Gl20.RENDERBUFFER, stencilbufferHandle)
 			} else {
@@ -158,8 +157,8 @@ class Framebuffer(
 		}
 
 		val result = gl.checkFramebufferStatus(Gl20.FRAMEBUFFER)
-		gl.bindFramebuffer(Gl20.FRAMEBUFFER, null)
-		gl.bindRenderbuffer(Gl20.RENDERBUFFER, null)
+		gl.bindFramebuffer(null)
+		gl.bindRenderbuffer(null)
 
 		if (result != Gl20.FRAMEBUFFER_COMPLETE) {
 			delete()
@@ -185,26 +184,26 @@ class Framebuffer(
 		_viewport.set(x, y, width, height)
 	}
 
-	private var previousFramebuffer = FramebufferInfo()
-
-	private val previousViewport = IntRectangle()
+	private val previousViewport = IntArray(4)
+	private var previousFramebuffer: GlFramebufferRef? = null
 
 	fun begin() {
-		glState.batch.flush()
-		previousFramebuffer.set(glState.framebuffer)
-		glState.setFramebuffer(framebufferHandle, widthPixels, heightPixels, scaleX, scaleY)
-		previousViewport.set(glState.viewport)
-		glState.setViewport(_viewport)
+		gl.batch.flush()
+		previousFramebuffer = gl.framebuffer
+
+		gl.getParameteriv(Gl20.VIEWPORT, previousViewport)
+		gl.bindFramebuffer(framebufferHandle)
+		gl.viewport(_viewport)
 		previousStencil = gl.getParameterb(Gl20.STENCIL_TEST)
 		if (previousStencil)
 			gl.disable(Gl20.STENCIL_TEST)
 	}
 
 	fun end() {
-		glState.batch.flush()
-		glState.setFramebuffer(previousFramebuffer)
-		glState.setViewport(previousViewport)
-		previousFramebuffer.clear()
+		gl.batch.flush()
+		gl.bindFramebuffer(previousFramebuffer)
+		gl.viewport(previousViewport)
+		previousFramebuffer = null
 		if (previousStencil)
 			gl.enable(Gl20.STENCIL_TEST)
 	}
@@ -232,29 +231,15 @@ class Framebuffer(
 	}
 	
 	/**
-	 * Configures a Camera to match the viewport used in this framebuffer.
-	 * This will set the viewport and positioning to 'see' the framebuffer.
-	 *
-	 * @param camera The camera to configure. (A newly constructed Sprite is the default)
-	 */
-	fun camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
-		return camera.apply {
-			setViewport(_viewport.width.toFloat() / scaleX, _viewport.height.toFloat() / scaleY)
-			moveToLookAtRect(_viewport.x.toFloat() / scaleX, _viewport.y.toFloat() / scaleY, viewportWidth, viewportHeight)
-		}
-	}
-
-	/**
 	 * Configures a Sprite for rendering this framebuffer.
 	 *
 	 * @param sprite The sprite to configure. (A newly constructed Sprite is the default)
 	 */
-	fun drawable(sprite: Sprite = Sprite(glState)): Sprite {
-		return sprite.apply {
-			setUv(0f, 1f, 1f, 0f, false)
-			texture = this@Framebuffer.texture
-			setScaling(scaleX, scaleY)
-		}
+	fun drawable(sprite: Sprite = Sprite(gl)): Sprite {
+		sprite.setUv(0f, 1f, 1f, 0f, false)
+		sprite.texture = texture
+		sprite.setScaling(scaleX, scaleY)
+		return sprite
 	}
 
 	private var isDisposed = false
@@ -280,11 +265,24 @@ class Framebuffer(
 	}
 }
 
+/**
+ * Configures a Camera to match the viewport used in this framebuffer.
+ * This will set the viewport and positioning to 'see' the framebuffer.
+ *
+ * @param camera The camera to configure. (A newly constructed Sprite is the default)
+ */
+fun Framebuffer.camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
+	val viewport = viewport
+	return camera.apply {
+		setViewport(viewport.width.toFloat() / scaleX, viewport.height.toFloat() / scaleY)
+		moveToLookAtRect(viewport.x.toFloat() / scaleX, viewport.y.toFloat() / scaleY, viewportWidth, viewportHeight)
+	}
+}
+
 class BufferTexture(gl: Gl20,
-					glState: GlState,
 					override val widthPixels: Int = 0,
 					override val heightPixels: Int = 0
-) : GlTextureBase(gl, glState) {
+) : GlTextureBase(gl) {
 
 	override fun uploadTexture() {
 		gl.texImage2Db(target.value, 0, pixelFormat.value, widthPixels, heightPixels, 0, pixelFormat.value, pixelType.value, null)

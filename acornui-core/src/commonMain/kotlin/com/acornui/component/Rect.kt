@@ -51,14 +51,14 @@ open class Rect(
 	}
 
 	private inner class ComplexMode {
-		val topLeftCorner = Sprite(glState)
-		val topLeftStrokeCorner = Sprite(glState)
-		val topRightCorner = Sprite(glState)
-		val topRightStrokeCorner = Sprite(glState)
-		val bottomRightCorner = Sprite(glState)
-		val bottomRightStrokeCorner = Sprite(glState)
-		val bottomLeftCorner = Sprite(glState)
-		val bottomLeftStrokeCorner = Sprite(glState)
+		val topLeftCorner = Sprite(gl)
+		val topLeftStrokeCorner = Sprite(gl)
+		val topRightCorner = Sprite(gl)
+		val topRightStrokeCorner = Sprite(gl)
+		val bottomRightCorner = Sprite(gl)
+		val bottomRightStrokeCorner = Sprite(gl)
+		val bottomLeftCorner = Sprite(gl)
+		val bottomLeftStrokeCorner = Sprite(gl)
 
 		val fill = staticMeshC {
 			interactivityMode = InteractivityMode.NONE
@@ -262,13 +262,13 @@ open class Rect(
 						val u2: Float
 						val v2: Float
 						if (texture != null) {
-							glState.setTexture(texture)
+							batch.begin(texture)
 							u = this.u
 							u2 = (topLeftX - innerTopLeftX) / texture.widthPixels
 							v = this.v
 							v2 = (topLeftY - innerTopLeftY) / texture.heightPixels
 						} else {
-							glState.setTexture(glState.whitePixel)
+							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x2 = innerTopLeftX
@@ -293,13 +293,13 @@ open class Rect(
 						val u2: Float
 						val v2: Float
 						if (texture != null) {
-							glState.setTexture(texture)
+							batch.begin(texture)
 							u = (topRightX - innerTopRightX) / texture.widthPixels
 							u2 = this.u2
 							v = this.v
 							v2 = (topRightY - innerTopRightY) / texture.heightPixels
 						} else {
-							glState.setTexture(glState.whitePixel)
+							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x = w - innerTopRightX
@@ -323,13 +323,13 @@ open class Rect(
 						val u2: Float
 						val v2: Float
 						if (texture != null) {
-							glState.setTexture(texture)
+							batch.begin(texture)
 							u = (bottomRightX - innerBottomRightX) / texture.widthPixels
 							u2 = this.u2
 							v = (bottomRightY - innerBottomRightY) / texture.heightPixels
 							v2 = this.v2
 						} else {
-							glState.setTexture(null)
+							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val x = w - innerBottomRightX
@@ -354,13 +354,13 @@ open class Rect(
 						val u2: Float
 						val v2: Float
 						if (texture != null) {
-							glState.setTexture(texture)
+							batch.begin(texture)
 							u = this.u
 							u2 = (bottomLeftX - innerBottomLeftX) / texture.widthPixels
 							v = (bottomLeftY - innerBottomLeftY) / texture.heightPixels
 							v2 = this.v2
 						} else {
-							glState.setTexture(null)
+							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
 						}
 						val y = h - innerBottomLeftY
@@ -455,6 +455,7 @@ open class Rect(
 		val margin = style.margin
 		val w = margin.reduceWidth(_bounds.width)
 		val h = margin.reduceHeight(_bounds.height)
+
 		if (w <= 0f || h <= 0f || tint.a <= 0f) return
 		if (simpleMode) {
 			simpleModeObj.apply {
@@ -483,9 +484,7 @@ open class Rect(
 				fillColor.set(style.backgroundColor).mul(tint)
 				borderColors.set(style.borderColors).mul(tint)
 
-				val batch = glState.batch
-				glState.setTexture(glState.whitePixel)
-				glState.blendMode(BlendMode.NORMAL, false)
+				val batch = gl.batch
 				batch.begin()
 
 				val fillColor = fillColor
@@ -535,7 +534,7 @@ open class Rect(
 		} else {
 			if (style.linearGradient != null) {
 				complexModeObj.apply {
-					StencilUtil.mask(glState.batch, gl, {
+					StencilUtil.mask(gl.batch, gl, {
 						fill.render()
 					}) {
 						gradient.render()

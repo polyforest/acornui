@@ -33,10 +33,7 @@ import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.Gl20CachedProperties
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.GlStateImpl
+import com.acornui.gl.core.*
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -107,10 +104,10 @@ open class LwjglApplication : ApplicationBase() {
 	}
 
 	/**
-	 * Sets the [Gl20] dependency.
+	 * Sets the [CachedGl20] dependency.
 	 */
-	protected open val glTask by task(Gl20) {
-		Gl20CachedProperties(if (debug) JvmGl20Debug() else LwjglGl20())
+	protected open val glTask by task(CachedGl20) {
+		Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20())
 	}
 
 	/**
@@ -134,10 +131,6 @@ open class LwjglApplication : ApplicationBase() {
 			System.exit(1)
 		}
 		uncaughtExceptionHandler
-	}
-
-	protected open val glStateTask by task(GlState) {
-		GlStateImpl(get(Gl20), get(Window))
 	}
 
 	protected open val focusManagerTask by task(FocusManager) {
@@ -201,14 +194,13 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
 		val gl = get(Gl20)
-		val glState = get(GlState)
 
 		object : Loader<Texture> {
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
 			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
-				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
+				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
 	}

@@ -17,11 +17,8 @@
 package com.acornui.component
 
 import com.acornui.di.inject
+import com.acornui.gl.core.*
 import com.acornui.graphic.Window
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.ShaderBatch
-import com.acornui.gl.core.useScissor
 import com.acornui.math.IntRectangle
 import com.acornui.math.Vector3
 import kotlin.math.abs
@@ -81,27 +78,25 @@ fun UiComponentRo.scissorLocal(inner: () -> Unit) {
  * Note that this will not work properly for rotated components.
  */
 fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
-	val tmp = Vector3.obtain()
+	val tmp = Vector3()
 	localToCanvas(tmp.set(x, y, 0f))
 	val sX1 = tmp.x
 	val sY1 = tmp.y
 	localToCanvas(tmp.set(width, height, 0f))
 	val sX2 = tmp.x
 	val sY2 = tmp.y
-	Vector3.free(tmp)
 
+	val gl = inject(CachedGl20)
 	val window = inject(Window)
-	val glState = inject(GlState)
-	val intR = IntRectangle.obtain()
-	intR.set(glState.viewport)
+	val viewport = gl.getParameteriv(Gl20.VIEWPORT, IntArray(4))
+
 	val sX = window.scaleX
 	val sY = window.scaleY
-	glState.useScissor(
+	gl.useScissor(
 			(minOf(sX1, sX2) * sX).roundToInt(),
-			(intR.height - maxOf(sY1, sY2) * sY).roundToInt(),
+			(viewport[3] - maxOf(sY1, sY2) * sY).roundToInt(),
 			(abs(sX2 - sX1) * sX).roundToInt(),
 			(abs(sY2 - sY1) * sY).roundToInt(),
 			inner
 	)
-	IntRectangle.free(intR)
 }

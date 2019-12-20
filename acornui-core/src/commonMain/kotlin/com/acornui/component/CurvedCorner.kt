@@ -74,31 +74,22 @@ fun Scoped.createSmoothCorner(
 	val framebuffer = if (useCache && smoothCornerMap.containsKey(cacheKey)) {
 		smoothCornerMap[cacheKey]!!
 	} else {
-		val gl = inject(Gl20)
-		val glState = inject(GlState)
+		val gl = inject(CachedGl20)
+		val batch = gl.batch
 		if (curvedShader == null)
 			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
 		val framebuffer = framebuffer(ceil(cRX).toInt(), ceil(cRY).toInt())
-		val previousShader = glState.shader
 		val curvedShader = curvedShader!!
-		val uniforms = curvedShader.uniforms
-		glState.shader = curvedShader
-		framebuffer.begin()
-		gl.clearAndReset()
-		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-		glState.useViewport(0, 0, framebuffer.widthPixels, framebuffer.heightPixels) {
+		gl.useProgram(curvedShader.program) {
+			val uniforms = gl.uniforms
+			framebuffer.begin()
+			gl.clearAndReset()
 			uniforms.put("u_cornerRadius", cRX, cRY)
-
-			uniforms.getUniformLocation("u_strokeThickness")?.let {
-				uniforms.put(it, sX, sY)
-			}
-			glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-			val batch = glState.batch
-			batch.begin()
+			uniforms.putOptional("u_strokeThickness", sX, sY)
+			batch.begin(blendMode = BlendMode.NONE, premultipliedAlpha = false)
 			batch.putIdtQuad()
+			framebuffer.end()
 		}
-		framebuffer.end()
-		glState.shader = previousShader
 		if (useCache)
 			smoothCornerMap[cacheKey] = disposeOnShutdown(framebuffer)
 		framebuffer
@@ -132,7 +123,7 @@ fun Scoped.createSmoothCorner(
 	return spriteOut
 }
 
-private class CurvedRectShaderProgram(gl: Gl20) : ShaderProgramBase(
+private class CurvedRectShaderProgram(gl: CachedGl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 
 $DEFAULT_SHADER_HEADER
@@ -168,5 +159,5 @@ void main() {
 	if (a < 0.001) discard;
 	gl_FragColor = vec4(1.0, 1.0, 1.0, a);
 }""",
-		vertexAttributes = mapOf(VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION)
+		vertexAttributes = mapOf(VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION)
 )

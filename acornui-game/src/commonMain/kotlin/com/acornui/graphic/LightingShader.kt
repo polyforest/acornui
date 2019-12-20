@@ -36,7 +36,7 @@ float unpackFloat(const in vec4 rgba_depth) {
 }
 """
 
-class LightingShader(gl: Gl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
+class LightingShader(gl: CachedGl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
@@ -186,23 +186,16 @@ void main() {
 """
 ) {
 
-	private var isFirst = true
-
-	override fun bind() {
-		super.bind()
-
-		if (isFirst) {
-			isFirst = false
-			// Poisson disk
-			uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
-			uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
-			uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
-			uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
-		}
+	override fun initUniforms(uniforms: Uniforms) {
+		// Poisson disk
+		uniforms.put("poissonDisk[0]", -0.94201624f, -0.39906216f)
+		uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
+		uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
+		uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
 	}
 }
 
-class PointShadowShader(gl: Gl20) : ShaderProgramBase(
+class PointShadowShader(gl: CachedGl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
@@ -244,9 +237,13 @@ void main() {
 }
 
 """
-)
+) {
 
-class DirectionalShadowShader(gl: Gl20) : ShaderProgramBase(
+	override fun initUniforms(uniforms: Uniforms) {
+	}
+}
+
+class DirectionalShadowShader(gl: CachedGl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 $DEFAULT_SHADER_HEADER
 
@@ -283,11 +280,4 @@ void main() {
 }
 
 """
-) {
-
-	override fun bind() {
-		super.bind()
-		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0);  // set the fragment shader's texture to unit 0
-	}
-
-}
+)

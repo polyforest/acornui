@@ -19,19 +19,25 @@ package com.acornui.gl.core
 import com.acornui._assert
 import com.acornui.assertionsEnabled
 import com.acornui.Disposable
-import com.acornui.component.drawing.DrawElementsCall
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Color
+import com.acornui.graphic.TextureRo
+import com.acornui.graphic.rgbData
 import com.acornui.io.resizableFloatBuffer
 import com.acornui.io.resizableShortBuffer
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeAll
 
 /**
  *
  * @author nbilyk
  */
 open class ShaderBatchImpl(
-		private val gl: Gl20,
-		private val glState: GlState,
+
+		private val gl: CachedGl20,
 
 		/**
 		 * If true, when this batch is flushed, the data will be uploaded to the gpu, rendered, then cleared.
@@ -54,16 +60,23 @@ open class ShaderBatchImpl(
 	private var vertexComponentsBuffer: GlBufferRef? = null
 	private var indicesBuffer: GlBufferRef? = null
 
-	/**
-	 * The draw mode if no indices are supplied.
-	 * Possible values are: POINTS, LINE_STRIP, LINE_LOOP, LINES, TRIANGLE_STRIP, TRIANGLE_FAN, or TRIANGLES.
-	 */
-	private var drawMode: Int = Gl20.TRIANGLES
+	private var drawCall: DrawElementsCall = DrawElementsCall.obtain()
 
 	override val indices = resizableShortBuffer(2048)
 	override val vertexComponents = resizableFloatBuffer(4096)
 	override val drawCalls: MutableList<DrawElementsCall> = ArrayList()
 	private var _highestIndex: Short = -1
+
+	private val defaultWhitePixel by lazy {
+		rgbTexture(gl, rgbData(1, 1, hasAlpha = true) { setPixel(0, 0, Color.WHITE) }) {
+			filterMin = TextureMinFilter.NEAREST
+			filterMag = TextureMagFilter.NEAREST
+			refInc()
+		}
+	}
+
+	override val whitePixel: TextureRo
+		get() = if (drawCall.texture?.hasWhitePixel == true) drawCall.texture!! else defaultWhitePixel
 
 	override fun putIndex(index: Short) {
 		indices.put(index)
@@ -73,39 +86,45 @@ open class ShaderBatchImpl(
 	private fun bind() {
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-		vertexAttributes.bind(gl, glState.shader!!)
+		vertexAttributes.bind(gl)
 	}
 
 	private fun unbind() {
-		vertexAttributes.unbind(gl, glState.shader!!)
+		vertexAttributes.unbind(gl)
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
 		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
 	}
 
-	override fun begin(drawMode: Int) {
-		if (this.drawMode == drawMode) {
+	override fun begin(texture: TextureRo, blendMode: BlendMode, premultipliedAlpha: Boolean, drawMode: Int) {
+		if (drawCall.texture == texture &&
+				drawCall.blendMode == blendMode &&
+				drawCall.premultipiedAlpha == premultipliedAlpha &&
+				drawCall.drawMode == drawMode) {
+			// No change, flush only if we're nearing capacity
 			if (!isDynamic || highestIndex < Short.MAX_VALUE * 0.75f) return
-			flush()
-		} else {
-			flush()
-			this.drawMode = drawMode
 		}
+		// Needs a flush
+		flush()
+		drawCall.texture = texture
+		drawCall.blendMode = blendMode
+		drawCall.premultipiedAlpha = premultipliedAlpha
+		drawCall.drawMode = drawMode
 	}
 
 	override fun flush() {
 		val vertexComponentsL = vertexComponents.position
 		val indicesL = indices.position
 		if (vertexComponentsL == 0) {
-			_assert(indicesL == 0, "Indices pushed, but no vertices")
+			check(indicesL == 0) { "Indices pushed, but no vertices" }
 			return
 		}
 		if (assertionsEnabled) {
 			// If assertions are enabled, check that we have rational vertex and index counts.
 			val vertexSize = vertexAttributes.vertexSize
 			_assert(vertexComponentsL % vertexSize == 0, "vertexData size $vertexComponentsL not evenly divisible by vertexSize value $vertexSize")
-			if (drawMode == Gl20.LINES) {
+			if (drawCall.drawMode == Gl20.LINES) {
 				_assert(indicesL % 2 == 0, "indices size $indicesL not evenly divisible by 2")
-			} else if (drawMode == Gl20.TRIANGLES) {
+			} else if (drawCall.drawMode == Gl20.TRIANGLES) {
 				_assert(indicesL % 3 == 0, "indices size $indicesL not evenly divisible by 3")
 			}
 		}
@@ -114,14 +133,10 @@ open class ShaderBatchImpl(
 		val count = indices.position - offset
 		if (count <= 0) return // Nothing to draw.
 		require(highestIndex < count + offset)
-		val drawCall = DrawElementsCall.obtain()
 		drawCall.offset = offset
 		drawCall.count = count
-		drawCall.texture = glState.getTexture(0)
-		drawCall.blendMode = glState.blendMode
-		drawCall.premultipliedAlpha = glState.premultipliedAlpha
-		drawCall.mode = drawMode
 		drawCalls.add(drawCall)
+		drawCall = DrawElementsCall.obtain()
 
 		if (isDynamic) {
 			upload()
@@ -188,14 +203,16 @@ open class ShaderBatchImpl(
 	override fun render() {
 		require(vertexComponentsBuffer != null) { "StaticShaderBatch must be uploaded first." }
 		if (drawCalls.isEmpty()) return
-		glState.batch.flush()
+		gl.batch.flush()
 		ShaderBatch.totalDrawCalls += drawCalls.size
 		bind()
+		gl.activeTexture()
 		for (i in 0..drawCalls.lastIndex) {
 			val drawCall = drawCalls[i]
-			glState.setTexture(drawCall.texture ?: glState.whitePixel)
-			glState.blendMode(drawCall.blendMode, drawCall.premultipliedAlpha)
-			gl.drawElements(drawCall.mode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
+			val texture = drawCall.texture!!
+			gl.bindTexture(texture.target.value, texture.textureHandle!!)
+			drawCall.blendMode.applyBlending(gl, drawCall.premultipiedAlpha)
+			gl.drawElements(drawCall.drawMode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
 		}
 		unbind()
 	}
@@ -204,6 +221,7 @@ open class ShaderBatchImpl(
 		// Recycle the draw calls.
 		DrawElementsCall.freeAll(drawCalls)
 		drawCalls.clear()
+		drawCall.clear()
 		indices.clear()
 		vertexComponents.clear()
 		_highestIndex = -1
@@ -215,6 +233,44 @@ open class ShaderBatchImpl(
 	}
 }
 
-fun Scoped.shaderBatch(vertexAttributes: VertexAttributes): ShaderBatchImpl {
-	return ShaderBatchImpl(inject(Gl20), inject(GlState))
+fun Scoped.shaderBatch(): ShaderBatchImpl {
+	return ShaderBatchImpl(inject(CachedGl20))
+}
+
+
+
+class DrawElementsCall private constructor() : Clearable {
+
+	var texture: TextureRo? = null
+	var blendMode = BlendMode.NORMAL
+	var premultipiedAlpha = false
+	var drawMode = Gl20.TRIANGLES
+
+	var count = 0
+	var offset = 0
+
+	override fun clear() {
+		texture = null
+		blendMode = BlendMode.NORMAL
+		premultipiedAlpha = false
+		drawMode = Gl20.TRIANGLES
+		count = 0
+		offset = 0
+	}
+
+	companion object {
+		private val pool = ClearableObjectPool { DrawElementsCall() }
+
+		fun obtain(): DrawElementsCall {
+			return pool.obtain()
+		}
+
+		fun free(call: DrawElementsCall) {
+			pool.free(call)
+		}
+
+		fun freeAll(calls: List<DrawElementsCall>) {
+			pool.freeAll(calls)
+		}
+	}
 }

@@ -42,9 +42,9 @@ class VertexAttributes(
 		var offset = 0
 		for (i in 0..attributes.lastIndex) {
 			val attribute = attributes[i]
-			require(!attributeByUsage.containsKey(attribute.usage)) { "Cannot have two attributes with the same usage." }
-			attributeByUsage[attribute.usage] = attribute
-			offsetsByUsage[attribute.usage] = offset shr 2
+			require(!attributeByUsage.containsKey(attribute.index)) { "Cannot have two attributes with the same usage." }
+			attributeByUsage[attribute.index] = attribute
+			offsetsByUsage[attribute.index] = offset shr 2
 			offset += attribute.size
 		}
 		this.offsetsByUsage = offsetsByUsage
@@ -68,25 +68,19 @@ class VertexAttributes(
 		return attributeByUsage[usage]
 	}
 
-	fun bind(gl: Gl20, shaderProgram: ShaderProgram) {
+	fun bind(gl: Gl20) {
 		var offset = 0
 		for (i in 0..attributes.lastIndex) {
 			val attribute = attributes[i]
-			val attributeLocation = shaderProgram.getAttributeLocationByUsage(attribute.usage)
-			if (attributeLocation != -1) {
-				gl.enableVertexAttribArray(attributeLocation)
-				gl.vertexAttribPointer(attributeLocation, attribute.numComponents, attribute.type, attribute.normalized, stride, offset)
-			}
+			gl.enableVertexAttribArray(attribute.index)
+			gl.vertexAttribPointer(attribute.index, attribute.numComponents, attribute.type, attribute.normalized, stride, offset)
 			offset += attribute.size
 		}
 	}
 
-	fun unbind(gl: Gl20, shaderProgram: ShaderProgram) {
+	fun unbind(gl: Gl20) {
 		for (i in 0..attributes.lastIndex) {
-			val attribute = attributes[i]
-			val attributeLocation = shaderProgram.getAttributeLocationByUsage(attribute.usage)
-			if (attributeLocation == -1) continue
-			gl.disableVertexAttribArray(attributeLocation)
+			gl.disableVertexAttribArray(attributes[i].index)
 		}
 	}
 }
@@ -113,9 +107,9 @@ data class VertexAttribute(
 		val type: Int,
 
 		/**
-		 * How the property on the [Vertex] matches to the [ShaderProgram] attribute.
+		 * The index location of this attribute.
 		 */
-		val usage: Int
+		val index: Int
 ) {
 
 	/**
@@ -142,10 +136,9 @@ data class VertexAttribute(
 }
 
 /**
- * An enumeration of vertex attribute usages.
- * Custom vertex attribute usages should start at 16.
+ * An enumeration of vertex attribute locations.
  */
-object VertexAttributeUsage {
+object VertexAttributeLocation {
 	const val POSITION = 0
 	const val NORMAL = 1
 	const val COLOR_TINT = 2

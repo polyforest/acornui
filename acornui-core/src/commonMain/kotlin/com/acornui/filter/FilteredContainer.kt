@@ -22,7 +22,10 @@ import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.own
-import com.acornui.math.*
+import com.acornui.math.MinMax
+import com.acornui.math.MinMaxRo
+import com.acornui.math.Rectangle
+import com.acornui.math.RectangleRo
 import com.acornui.signal.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -36,7 +39,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
-	private val framebufferFilter = FramebufferFilter(this)
 
 	init {
 		draws = true
@@ -57,14 +59,14 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	private var expandedDrawRegion: RectangleRo = RectangleRo.EMPTY
 
 	private fun updateVertices() {
-		var drawRegion: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
+		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
 		val model = _renderContext.modelTransform
 		val tint = _renderContext.colorTint
 		for (i in _renderFilters.lastIndex downTo 0) {
 			val renderFilter = _renderFilters[i]
-			drawRegion = renderFilter.updateWorldVertices(drawRegion, model, tint)
+			drawRegionCanvas = renderFilter.updateWorldVertices(drawRegionCanvas, model, tint)
 		}
-		expandedDrawRegion = drawRegion
+		expandedDrawRegion = drawRegionCanvas
 	}
 
 	override fun updateDrawRegionCanvas(out: MinMax) {

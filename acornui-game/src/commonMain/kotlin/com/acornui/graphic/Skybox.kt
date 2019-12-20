@@ -72,8 +72,7 @@ class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner
 				negativeY,
 				positiveZ,
 				negativeZ,
-				gl,
-				glState
+				gl
 		)
 		cubeMap.filterMin = TextureMinFilter.LINEAR_MIPMAP_LINEAR
 		cubeMap.refInc()
@@ -156,10 +155,9 @@ class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner
 	override fun draw() {
 		// TODO: Should we account for this component's model transform?
 		val cubeMap = cubeMap ?: return
-		glState.setTexture(cubeMap)
-		glState.blendMode(BlendMode.NONE, premultipliedAlpha = false)
-		val previousShader = glState.shader
-		glState.shader = shader
+		val previousProgram = gl.program
+		gl.useProgram(shader.program)
+		gl.batch.begin(cubeMap, BlendMode.NONE)
 
 		if (modTag.set(camera.modTag)) {
 			viewProjection.idt()
@@ -173,22 +171,21 @@ class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner
 		gl.frontFace(Gl20.CW)
 		gl.cullFace(Gl20.BACK)
 
-		shader.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
+		gl.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, viewProjection)
 
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
-		val attributeLocation = shader.getAttributeLocationByUsage(VertexAttributeUsage.POSITION)
-		gl.enableVertexAttribArray(attributeLocation)
-		gl.vertexAttribPointer(attributeLocation, 3, Gl20.FLOAT, false, stride = 3 * 4, offset = 0)
+		gl.enableVertexAttribArray(VertexAttributeLocation.POSITION)
+		gl.vertexAttribPointer(VertexAttributeLocation.POSITION, 3, Gl20.FLOAT, false, stride = 3 * 4, offset = 0)
 		gl.drawArrays(Gl20.TRIANGLES, 0, vertices.size / 3)
-		glState.shader = previousShader
-		gl.disableVertexAttribArray(attributeLocation)
+		gl.useProgram(previousProgram)
+		gl.disableVertexAttribArray(VertexAttributeLocation.POSITION)
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
 
 		gl.disable(Gl20.CULL_FACE)
 	}
 }
 
-class SkyboxShader(gl: Gl20) : ShaderProgramBase(
+class SkyboxShader(gl: CachedGl20) : ShaderProgramBase(
 		gl,
 		vertexShaderSrc = """
 
@@ -221,11 +218,6 @@ void main() {
 
 """,
 		vertexAttributes = hashMapOf(
-				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION
-		)) {
-
-	override fun bind() {
-		super.bind()
-		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0)  // set the fragment shader's texture to unit 0
-	}
-}
+				VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION
+		)
+)

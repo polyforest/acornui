@@ -51,15 +51,15 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?) {
+	override fun bindFramebuffer(framebuffer: GlFramebufferRef?) {
 		before()
-		wrapped.bindFramebuffer(target, framebuffer)
+		wrapped.bindFramebuffer(framebuffer)
 		after()
 	}
 
-	override fun bindRenderbuffer(target: Int, renderbuffer: GlRenderbufferRef?) {
+	override fun bindRenderbuffer(renderbuffer: GlRenderbufferRef?) {
 		before()
-		wrapped.bindRenderbuffer(target, renderbuffer)
+		wrapped.bindRenderbuffer(renderbuffer)
 		after()
 	}
 
@@ -75,21 +75,9 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun blendEquation(mode: Int) {
-		before()
-		wrapped.blendEquation(mode)
-		after()
-	}
-
 	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
 		before()
 		wrapped.blendEquationSeparate(modeRgb, modeAlpha)
-		after()
-	}
-
-	override fun blendFunc(sfactor: Int, dfactor: Int) {
-		before()
-		wrapped.blendFunc(sfactor, dfactor)
 		after()
 	}
 
@@ -703,21 +691,21 @@ open class WrappedGl20(protected val wrapped: Gl20, private val before: () -> Un
 		after()
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, value: FloatArray) {
 		before()
-		wrapped.uniformMatrix2fv(location, transpose, value)
+		wrapped.uniformMatrix2fv(location, value)
 		after()
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, value: FloatArray) {
 		before()
-		wrapped.uniformMatrix3fv(location, transpose, value)
+		wrapped.uniformMatrix3fv(location, value)
 		after()
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, value: FloatArray) {
 		before()
-		wrapped.uniformMatrix4fv(location, transpose, value)
+		wrapped.uniformMatrix4fv(location, value)
 		after()
 	}
 

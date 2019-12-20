@@ -23,8 +23,14 @@ import com.acornui.math.Matrix4Ro
 
 interface BasicRenderable {
 
+	/**
+	 * This renderable's natural width, in points.
+	 */
 	val naturalWidth: Float
 
+	/**
+	 * This renderable's natural height, in points.
+	 */
 	val naturalHeight: Float
 
 	/**

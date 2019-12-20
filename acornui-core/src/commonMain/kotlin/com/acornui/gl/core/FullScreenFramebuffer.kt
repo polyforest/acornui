@@ -34,13 +34,12 @@ import com.acornui.graphic.ColorRo
  */
 class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean = false, hasStencil: Boolean = false) : Scoped, Disposable {
 
-	private val glState = inject(GlState)
 	private val window = inject(Window)
 	private val framebuffer = ResizeableFramebuffer(injector, hasDepth, hasStencil)
 
 	private val renderContext = IdtProjectionContext()
 
-	private val sprite = Sprite(glState).apply {
+	private val sprite = Sprite(inject(CachedGl20)).apply {
 		updateWorldVertices(2f, 2f)
 		renderContext.modelTransform.setTranslation(-1f, -1f, 0f)
 	}

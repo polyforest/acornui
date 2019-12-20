@@ -19,7 +19,7 @@ package com.acornui.filter
 import com.acornui.di.Owned
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
-import com.acornui.gl.core.useShader
+import com.acornui.gl.core.useProgram
 
 /**
  * A filter that sets a custom shader.
@@ -39,7 +39,7 @@ class ShaderFilter(
 ) : RenderFilterBase(owner) {
 
 	override fun render(inner: () -> Unit) {
-		glState.useShader(shader) {
+		gl.useProgram(shader.program) {
 			configure(gl, shader)
 			inner()
 		}

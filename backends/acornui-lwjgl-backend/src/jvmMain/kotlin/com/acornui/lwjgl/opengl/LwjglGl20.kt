@@ -52,14 +52,14 @@ open class LwjglGl20 : Gl20 {
 		else GL15.glBindBuffer(target, (buffer as JvmGlBuffer).o)
 	}
 
-	override fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?) {
-		if (framebuffer == null) EXTFramebufferObject.glBindFramebufferEXT(target, 0) // TODO: This might not work on iOS OpenGLES
-		else EXTFramebufferObject.glBindFramebufferEXT(target, (framebuffer as JvmGlFramebuffer).o)
+	override fun bindFramebuffer(framebuffer: GlFramebufferRef?) {
+		if (framebuffer == null) EXTFramebufferObject.glBindFramebufferEXT(Gl20.FRAMEBUFFER, 0)
+		else EXTFramebufferObject.glBindFramebufferEXT(Gl20.FRAMEBUFFER, (framebuffer as JvmGlFramebuffer).o)
 	}
 
-	override fun bindRenderbuffer(target: Int, renderbuffer: GlRenderbufferRef?) {
-		if (renderbuffer == null) EXTFramebufferObject.glBindRenderbufferEXT(target, 0)
-		else EXTFramebufferObject.glBindRenderbufferEXT(target, (renderbuffer as JvmGlRenderbuffer).o)
+	override fun bindRenderbuffer(renderbuffer: GlRenderbufferRef?) {
+		if (renderbuffer == null) EXTFramebufferObject.glBindRenderbufferEXT(Gl20.RENDERBUFFER, 0)
+		else EXTFramebufferObject.glBindRenderbufferEXT(Gl20.RENDERBUFFER, (renderbuffer as JvmGlRenderbuffer).o)
 	}
 
 	override fun bindTexture(target: Int, texture: GlTextureRef?) {
@@ -71,16 +71,8 @@ open class LwjglGl20 : Gl20 {
 		GL14.glBlendColor(red, green, blue, alpha)
 	}
 
-	override fun blendEquation(mode: Int) {
-		GL14.glBlendEquation(mode)
-	}
-
 	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
 		GL20.glBlendEquationSeparate(modeRgb, modeAlpha)
-	}
-
-	override fun blendFunc(sfactor: Int, dfactor: Int) {
-		GL11.glBlendFunc(sfactor, dfactor)
 	}
 
 	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
@@ -513,16 +505,16 @@ open class LwjglGl20 : Gl20 {
 		GL20.glUniform4iv((location as JvmGlUniformLocation).o, v)
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, transpose, value)
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, value: FloatArray) {
+		GL20.glUniformMatrix2fv((location as JvmGlUniformLocation).o, false, value)
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, transpose, value)
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, value: FloatArray) {
+		GL20.glUniformMatrix3fv((location as JvmGlUniformLocation).o, false, value)
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, transpose, value)
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, value: FloatArray) {
+		GL20.glUniformMatrix4fv((location as JvmGlUniformLocation).o, false, value)
 	}
 
 	override fun useProgram(program: GlProgramRef?) {

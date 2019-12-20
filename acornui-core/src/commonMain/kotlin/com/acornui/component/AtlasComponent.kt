@@ -44,7 +44,7 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 
 	private var texture: Texture? = null
 
-	override val renderable = Atlas(glState)
+	override val renderable = Atlas(gl)
 
 	private var group: CachedGroup? = null
 

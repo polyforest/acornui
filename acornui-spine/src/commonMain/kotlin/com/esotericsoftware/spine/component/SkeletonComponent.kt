@@ -76,8 +76,8 @@ open class SkeletonComponent(
 		skeleton.updateWorldTransform()
 	}
 
-	fun draw(glState: GlState, concatenatedColorTint: ColorRo) {
-		renderer.draw(loadedSkeleton, skeleton, glState, concatenatedColorTint)
+	fun draw(batch: ShaderBatch, concatenatedColorTint: ColorRo) {
+		renderer.draw(batch, loadedSkeleton, skeleton, concatenatedColorTint)
 	}
 
 	fun getSlotAtPosition(x: Float, y: Float): Slot? = getSlotAtPosition(x, y, skeleton)
@@ -161,16 +161,16 @@ open class SkeletonComponent(
 }
 
 val spineVertexAttributes: VertexAttributes = VertexAttributes(listOf(
-		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
-		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
-		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeLocation.POSITION),
+		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeLocation.COLOR_TINT),
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeLocation.TEXTURE_COORD))
 )
 
 object SpineVertexUtils {
 
-	val positionOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.POSITION)!!
-	val colorOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.COLOR_TINT)!!
-	val textureCoordOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeUsage.TEXTURE_COORD)!!
+	val positionOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeLocation.POSITION)!!
+	val colorOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeLocation.COLOR_TINT)!!
+	val textureCoordOffset = spineVertexAttributes.getOffsetByUsage(VertexAttributeLocation.TEXTURE_COORD)!!
 	val vertexSize = spineVertexAttributes.vertexSize
 
 	fun getPosition(vertexComponents: List<Float>, vertexIndex: Short, out: Vector2) {

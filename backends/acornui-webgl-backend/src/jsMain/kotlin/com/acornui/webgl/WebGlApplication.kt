@@ -29,10 +29,7 @@ import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.Gl20CachedProperties
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.GlStateImpl
+import com.acornui.gl.core.*
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -81,7 +78,7 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 		canvas
 	}
 
-	protected open val glTask by task(Gl20) {
+	protected open val glTask by task(CachedGl20) {
 		val glConfig = config().gl
 		val attributes = WebGLContextAttributes()
 		attributes.alpha = glConfig.alpha
@@ -93,7 +90,7 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		Gl20CachedProperties(if (debug) WebGl20Debug(context) else WebGl20(context))
+		Gl20CachedImpl(if (debug) WebGl20Debug(context) else WebGl20(context))
 	}
 
 	override val windowTask by task(Window) {
@@ -110,10 +107,6 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 				window.alert(message)
 		}
 		uncaughtExceptionHandler
-	}
-
-	protected open val glStateTask by task(GlState) {
-		GlStateImpl(get(Gl20), get(Window))
 	}
 
 	override val componentsTask by task(HtmlComponent.FACTORY_KEY) {
@@ -137,29 +130,27 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 	}
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
-		val gl = get(Gl20)
-		val glState = get(GlState)
+		val gl = get(CachedGl20)
 
 		object : Loader<Texture> {
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
 			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
-				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
+				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
 	}
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
-		val gl = get(Gl20)
-		val glState = get(GlState)
+		val gl = get(CachedGl20)
 
 		object : Loader<RgbData> {
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
 			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
-				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate).rgbData
+				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate).rgbData
 			}
 		}
 	}

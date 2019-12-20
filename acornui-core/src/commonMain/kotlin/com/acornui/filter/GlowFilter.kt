@@ -49,16 +49,16 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 	 */
 	var offset: Vector3Ro by bindable(Vector3.ZERO)
 
-	private val blurSprite = Sprite(glState)
+	private val blurSprite = Sprite(gl)
 
 	private val offsetWorld = Vector3()
 	private val transform = Matrix4()
 	var hasUpdatedWorld = false
 
-	override fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
 		hasUpdatedWorld = true
 		transform.rot(offsetWorld.set(offset))
-		val blurredRegion = blurFilter.updateWorldVertices(region, transform, tint)
+		val blurredRegion = blurFilter.updateWorldVertices(regionCanvas, transform, tint)
 		blurFilter.drawable(blurSprite)
 		this.transform.set(blurFilter.transform).translate(offsetWorld)
 		blurSprite.updateWorldVertices(transform = this.transform, tint = tint)
@@ -73,7 +73,7 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 		if (!hasUpdatedWorld)
 			throw Exception("...")
 		drawToFramebuffer(inner)
-		glState.uniforms.useColorTransformation(colorTransformation) {
+		gl.uniforms.useColorTransformation(colorTransformation) {
 			blurSprite.render()
 		}
 		blurFilter.drawOriginalToScreen()

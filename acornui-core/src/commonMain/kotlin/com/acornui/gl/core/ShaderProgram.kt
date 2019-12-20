@@ -17,28 +17,11 @@
 package com.acornui.gl.core
 
 import com.acornui.Disposable
-import com.acornui.collection.stringMapOf
 import com.acornui.system.userInfo
-import kotlin.collections.Map
-import kotlin.collections.listOf
-import kotlin.collections.mapOf
-import kotlin.collections.set
-
 
 interface ShaderProgram : Disposable {
 
 	val program: GlProgramRef
-
-	val uniforms: Uniforms
-
-	fun getAttributeLocationByUsage(usage: Int): Int
-	fun getAttributeLocation(name: String): Int
-
-	val isBound: Boolean
-	fun bind()
-	fun unbind()
-
-
 }
 
 object CommonShaderAttributes {
@@ -69,63 +52,41 @@ object CommonShaderUniforms {
  * @author nbilyk
  */
 abstract class ShaderProgramBase(
-		val gl: Gl20,
+		val gl: CachedGl20,
 		vertexShaderSrc: String,
 		fragmentShaderSrc: String,
-		private val vertexAttributes: Map<Int, String> = mapOf(
-				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
-				VertexAttributeUsage.NORMAL to CommonShaderAttributes.A_NORMAL,
-				VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
-				VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
+		val vertexAttributes: Map<Int, String> = mapOf(
+				VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION,
+				VertexAttributeLocation.NORMAL to CommonShaderAttributes.A_NORMAL,
+				VertexAttributeLocation.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+				VertexAttributeLocation.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0"
 		)
 ) : ShaderProgram {
 
-	private var _isBound: Boolean = false
-	override val isBound: Boolean
-		get() = _isBound
-
-	private val _program: GlProgramRef = gl.createProgram()
-	override val program: GlProgramRef = _program
+	final override var program: GlProgramRef = gl.createProgram()
+		private set
 
 	private val vertexShader: GlShaderRef
 	private val fragmentShader: GlShaderRef
-
-	private val attributeLocationCache = stringMapOf<Int>()
 
 	init {
 		// Create the shader program
 		vertexShader = compileShader(vertexShaderSrc, Gl20.VERTEX_SHADER)
 		fragmentShader = compileShader(fragmentShaderSrc, Gl20.FRAGMENT_SHADER)
-		gl.linkProgram(_program)
-		if (!gl.getProgramParameterb(_program, Gl20.LINK_STATUS)) {
+		for ((location, name) in vertexAttributes) {
+			gl.bindAttribLocation(program, location, name)
+		}
+		gl.linkProgram(program)
+		if (!gl.getProgramParameterb(program, Gl20.LINK_STATUS)) {
 			throw Exception("Could not link shader.")
 		}
-	}
 
-	override val uniforms: Uniforms = UniformsImpl(gl, _program)
-
-	override fun bind() {
-		_isBound = true
-		gl.useProgram(_program)
-		uniforms.bind()
-	}
-
-	override fun unbind() {
-		_isBound = false
-		gl.useProgram(null)
-		uniforms.unbind()
-	}
-
-	override fun getAttributeLocationByUsage(usage: Int): Int {
-		val name = vertexAttributes[usage] ?: return -1
-		return getAttributeLocation(name)
-	}
-
-	override fun getAttributeLocation(name: String): Int {
-		if (!attributeLocationCache.containsKey(name)) {
-			attributeLocationCache[name] = gl.getAttribLocation(_program, name)
+		gl.useProgram(program) {
+			gl.uniforms.putOptional(CommonShaderUniforms.U_TEXTURE, 0)
+			gl.uniforms.putOptional(CommonShaderUniforms.U_TEXTURE_NORMAL, 1)
+			@Suppress("LeakingThis")
+			initUniforms(gl.uniforms)
 		}
-		return attributeLocationCache[name]!!
 	}
 
 	private fun compileShader(shaderSrc: String, shaderType: Int): GlShaderRef {
@@ -137,15 +98,19 @@ abstract class ShaderProgramBase(
 			val log = gl.getShaderInfoLog(shader)
 			throw ShaderCompileException(log ?: "[Unknown]")
 		}
-		gl.attachShader(_program, shader)
+		gl.attachShader(program, shader)
 		return shader
 	}
 
+	protected open fun initUniforms(uniforms: Uniforms) {}
+
 	override fun dispose() {
 		val gl = gl
+		if (gl.program == program)
+			gl.useProgram(null)
 		gl.deleteShader(vertexShader)
 		gl.deleteShader(fragmentShader)
-		gl.deleteProgram(_program)
+		gl.deleteProgram(program)
 	}
 
 }
@@ -153,7 +118,7 @@ abstract class ShaderProgramBase(
 class ShaderCompileException(message: String) : Throwable(message)
 
 
-class DefaultShaderProgram(gl: Gl20) : ShaderProgramBase(
+class DefaultShaderProgram(gl: CachedGl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 
 $DEFAULT_SHADER_HEADER
@@ -195,29 +160,19 @@ void main() {
 	if (gl_FragColor.a < 0.01) discard;
 }""",
 		vertexAttributes = mapOf(
-				VertexAttributeUsage.POSITION to CommonShaderAttributes.A_POSITION,
-				VertexAttributeUsage.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
-				VertexAttributeUsage.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0")
+				VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION,
+				VertexAttributeLocation.COLOR_TINT to CommonShaderAttributes.A_COLOR_TINT,
+				VertexAttributeLocation.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD + "0")
 ) {
-
-	override fun bind() {
-		super.bind()
-		uniforms.put(CommonShaderUniforms.U_TEXTURE, 0)  // set the fragment shader's texture to unit 0
+	override fun initUniforms(uniforms: Uniforms) {
 	}
-
 }
 
-val uiVertexAttributes = VertexAttributes(listOf(
-		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
-		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
-		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
-)
-
 val standardVertexAttributes = VertexAttributes(listOf(
-		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.POSITION),
-		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeUsage.NORMAL),
-		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeUsage.COLOR_TINT),
-		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeUsage.TEXTURE_COORD))
+		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeLocation.POSITION),
+		VertexAttribute(3, false, Gl20.FLOAT, VertexAttributeLocation.NORMAL),
+		VertexAttribute(4, false, Gl20.FLOAT, VertexAttributeLocation.COLOR_TINT),
+		VertexAttribute(2, false, Gl20.FLOAT, VertexAttributeLocation.TEXTURE_COORD))
 )
 
 val DEFAULT_SHADER_HEADER: String

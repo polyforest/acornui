@@ -133,7 +133,7 @@ fun ModelTransformableRo.globalToLocal(minMax: MinMax): MinMax {
  * element's plane.
  * @return Returns true if the provided Ray intersects with this plane, or false if the Ray is parallel.
  */
-fun ModelTransformableRo.rayToPlane(ray: RayRo, out: Vector2): Boolean {
+fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
 	if (ray.direction.z == 0f) return false
 	val m = -ray.origin.z * ray.directionInv.z
 	out.x = ray.origin.x + m * ray.direction.x

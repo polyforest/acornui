@@ -17,7 +17,6 @@
 package com.acornui.lwjgl.opengl
 
 import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
 import com.acornui.gl.core.GlTextureBase
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
@@ -30,9 +29,8 @@ import kotlin.time.seconds
  * @author nbilyk
  */
 class JvmTexture(gl: Gl20,
-				 glState: GlState,
 				 private val _rgbData: RgbData
-) : GlTextureBase(gl, glState) {
+) : GlTextureBase(gl) {
 
 	var bytes: ByteBuffer? = JvmBufferUtil.wrap(_rgbData.bytes)
 
@@ -49,6 +47,6 @@ class JvmTexture(gl: Gl20,
 /**
  * Creates an http request, processing the results as a [Texture].
  */
-suspend fun loadTexture(gl: Gl20, glState: GlState, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000): Texture {
-	return JvmTexture(gl, glState, loadRgbData(requestData, progressReporter, initialTimeEstimate))
+suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000): Texture {
+	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate))
 }

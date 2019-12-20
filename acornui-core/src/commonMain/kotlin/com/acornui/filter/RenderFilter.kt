@@ -19,12 +19,10 @@ package com.acornui.filter
 import com.acornui.Disposable
 import com.acornui.di.Owned
 import com.acornui.di.OwnedImpl
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Window
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
 import com.acornui.math.RectangleRo
 import com.acornui.observe.Observable
 import com.acornui.reflect.observable
@@ -38,17 +36,16 @@ interface RenderFilter : Observable {
 
 	/**
 	 * Updates the world vertices for any decorated components used in this filter's rendering.
-	 * @param region The inner region (before transformed padding) rendered. This will be in canvas coordinates.
+	 * @param regionCanvas The inner region (before transformed padding) rendered. This will be in canvas coordinates.
 	 * @param transform The world transform of the filtered container. This should be used to transform padding,
 	 * offsets, or any other coordinates in local space.
 	 * @param tint The world color tint of the filtered container.
 	 * @return Returns the expanded draw region in canvas coordinates.
 	 */
-	fun updateWorldVertices(region: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = region
+	fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = regionCanvas
 
 	/**
 	 * Renders the [inner] block using this filter.
-
 	 */
 	fun render(inner: () -> Unit)
 
@@ -62,8 +59,14 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()
 
-	protected val glState by GlState
-	protected val gl by Gl20
+	protected val gl by CachedGl20
+	protected val window by Window
+
+	protected val scaleX: Float
+		get() = window.scaleX
+
+	protected val scaleY: Float
+		get() = window.scaleY
 
 	var enabled: Boolean by bindable(true)
 
