@@ -54,7 +54,15 @@ open class UiComponentImpl(
 		final override val owner: Owned
 ) : UiComponent {
 
-	final override val injector = owner.injector
+	/**
+	 * Returns a list of any additional dependencies to append to this component's dependency injection.
+	 * This method should not reference any properties on this object, as it will be invoked during
+	 * construction.
+	 * @see createScope
+	 */
+	protected open fun getAdditionalDependencies(): List<DependencyPair<*>> = emptyList()
+
+	final override val injector = owner.injector + getAdditionalDependencies()
 
 	//---------------------------------------------------------
 	// Lifecycle
@@ -109,10 +117,7 @@ open class UiComponentImpl(
 	// Common dependencies
 	protected val window by Window
 
-	@Deprecated("use mouseState", ReplaceWith("mouseState"), DeprecationLevel.ERROR)
-	protected val mouse by MouseState
 	protected val mouseState by MouseState
-
 	protected val interactivity by InteractivityManager
 	protected val gl by CachedGl20
 	protected val stage by Stage

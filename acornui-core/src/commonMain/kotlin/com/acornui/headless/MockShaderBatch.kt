@@ -9,6 +9,8 @@ import com.acornui.io.ReadWriteBuffer
 
 object MockShaderBatch : ShaderBatch {
 
+	override val isDynamic: Boolean = false
+
 	override val whitePixel: TextureRo = MockTexture
 
 	override fun begin(texture: TextureRo, blendMode: BlendMode, premultipliedAlpha: Boolean, drawMode: Int) {

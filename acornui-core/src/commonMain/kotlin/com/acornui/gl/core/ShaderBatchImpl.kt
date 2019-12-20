@@ -42,7 +42,7 @@ open class ShaderBatchImpl(
 		/**
 		 * If true, when this batch is flushed, the data will be uploaded to the gpu, rendered, then cleared.
 		 */
-		var isDynamic: Boolean = true
+		override var isDynamic: Boolean = true
 ) : ShaderBatch, Disposable {
 
 	override val vertexAttributes: VertexAttributes = standardVertexAttributes
@@ -101,7 +101,7 @@ open class ShaderBatchImpl(
 				drawCall.premultipiedAlpha == premultipliedAlpha &&
 				drawCall.drawMode == drawMode) {
 			// No change, flush only if we're nearing capacity
-			if (!isDynamic || highestIndex < Short.MAX_VALUE * 0.75f) return
+			if (highestIndex < Short.MAX_VALUE * 0.75f) return
 		}
 		// Needs a flush
 		flush()

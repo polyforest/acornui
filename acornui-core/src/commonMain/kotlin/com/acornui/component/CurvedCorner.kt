@@ -56,7 +56,7 @@ fun Scoped.createSmoothCorner(
 		strokeThicknessY: Float? = null,
 		flipX: Boolean = false,
 		flipY: Boolean = false,
-		spriteOut: Sprite,
+		spriteOut: Sprite = Sprite(inject(CachedGl20)),
 		useCache: Boolean = true
 ): Sprite {
 	val window = inject(Window)

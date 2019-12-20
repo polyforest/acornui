@@ -20,6 +20,7 @@ import com.acornui.AppConfig
 import com.acornui.Version
 import com.acornui.asset.Loaders
 import com.acornui.component.HtmlComponent
+import com.acornui.component.Stage
 import com.acornui.debug
 import com.acornui.di.Owned
 import com.acornui.di.dKey
@@ -166,6 +167,6 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 	}
 }
 
-suspend fun webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit) {
+suspend fun webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
 	WebGlApplication(rootId).start(appConfig, onReady)
 }

@@ -24,16 +24,20 @@ import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
+import com.acornui.component.Stage
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.cursor.CursorManager
-import com.acornui.di.*
+import com.acornui.di.Owned
+import com.acornui.di.own
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
-import com.acornui.gl.core.*
+import com.acornui.gl.core.CachedGl20
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.Gl20CachedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -92,14 +96,14 @@ open class LwjglApplication : ApplicationBase() {
 		println("LWJGL Version: ${LwjglVersion.getVersion()}")
 	}
 
-	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
-		val injector = createInjector()
-		val owner = OwnedImpl(injector)
-		owner.initializeSpecialInteractivity()
-		owner.onReady()
-		LwjglApplicationRunner(owner.injector).run()
-		owner.dispose()
+		val stage = createStage(createInjector())
+		initializeSpecialInteractivity(stage)
+		stage.onReady()
+
+		LwjglApplicationRunner(stage).run()
+		stage.dispose()
 		dispose()
 	}
 
@@ -216,11 +220,12 @@ open class LwjglApplication : ApplicationBase() {
 		}
 	}
 
-	protected open fun Owned.initializeSpecialInteractivity() {
-		own(JvmClickDispatcher(injector))
-		own(FakeFocusMouse(injector))
-		own(UndoDispatcher(injector))
-		own(ContextMenuManager(injector))
+	protected open fun initializeSpecialInteractivity(owner: Owned) {
+		val injector = owner.injector
+		owner.own(JvmClickDispatcher(injector))
+		owner.own(FakeFocusMouse(injector))
+		owner.own(UndoDispatcher(injector))
+		owner.own(ContextMenuManager(injector))
 	}
 
 	override fun dispose() {
@@ -230,10 +235,8 @@ open class LwjglApplication : ApplicationBase() {
 }
 
 private class LwjglApplicationRunner(
-		injector: Injector
-) : JvmApplicationRunner(injector) {
-
-	private val window = inject(Window)
+		stage: Stage
+) : JvmApplicationRunner(stage) {
 
 	override fun run() {
 		window.refresh.add(::refreshHandler)
@@ -251,6 +254,6 @@ private class LwjglApplicationRunner(
 	}
 }
 
-suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit) {
+suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
 	LwjglApplication().start(appConfig, onReady)
 }

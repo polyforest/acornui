@@ -42,7 +42,7 @@ open class BlendMode(
 ) {
 
 	companion object {
-		val NONE = BlendMode(Gl20.ZERO, Gl20.ZERO, Gl20.ONE, "none")
+		val NONE = BlendMode(Gl20.ONE, Gl20.ONE, Gl20.ZERO, "none")
 		val NORMAL = BlendMode(Gl20.SRC_ALPHA, Gl20.ONE, Gl20.ONE_MINUS_SRC_ALPHA, "normal")
 		val ADDITIVE = BlendMode(Gl20.SRC_ALPHA, Gl20.ONE, Gl20.ONE, "additive")
 		val MULTIPLY = BlendMode(Gl20.DST_COLOR, Gl20.DST_COLOR, Gl20.ONE_MINUS_SRC_ALPHA, "multiply")

@@ -23,10 +23,9 @@ import com.acornui.ApplicationBase
 import com.acornui.JvmApplicationRunner
 import com.acornui.asset.Loaders
 import com.acornui.async.uiThread
+import com.acornui.component.Stage
 import com.acornui.di.Injector
 import com.acornui.di.InjectorImpl
-import com.acornui.di.Owned
-import com.acornui.di.OwnedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
 import kotlin.time.Duration
@@ -42,13 +41,13 @@ open class JvmHeadlessApplication : ApplicationBase() {
 		uiThread = Thread.currentThread()
 	}
 
-	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
-		val injector = createInjector()
-		val owner = OwnedImpl(injector)
-		owner.onReady()
-		JvmApplicationRunner(owner.injector).run()
-		owner.dispose()
+
+		val stage = createStage(createInjector())
+		stage.onReady()
+		JvmApplicationRunner(stage).run()
+		stage.dispose()
 		dispose()
 	}
 

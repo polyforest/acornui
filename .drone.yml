@@ -23,12 +23,8 @@ steps:
       rm: true
       when:
         branch:
-        - master
-        event:
-        - push
-        status:
-          - success
-          - failure
+          - master
+        status: [ success, failure ]
   - name: upload-artifacts
     image: appleboy/drone-scp
     settings:
@@ -44,3 +40,24 @@ steps:
       target: ~/artifacts.acornui.com/mvn
       source:
         - build/artifacts
+      when:
+        branch:
+          - master
+  - name: slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: SLACK_ACORNBOT_WEBHOOK
+      channel: acorn-bot
+      template: >
+        {{#success build.status}}
+          build {{build.number}} succeeded. Good job.
+        {{else}}
+          build {{build.number}} failed. Fix me please.
+        {{/success}}
+      when:
+        status: [ success, failure ]
+
+trigger:
+  event:
+    - push

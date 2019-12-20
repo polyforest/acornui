@@ -31,6 +31,11 @@ import com.acornui.recycle.Clearable
  */
 interface ShaderBatch : Clearable, VertexFeed, IndexFeed {
 
+	/**
+	 * True if this shader batch uploads, renders, and clears as it flushes.
+	 */
+	val isDynamic: Boolean
+
 	val whitePixel: TextureRo
 
 	/**

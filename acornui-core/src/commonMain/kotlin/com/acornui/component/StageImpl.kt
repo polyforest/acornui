@@ -21,13 +21,11 @@ import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
 import com.acornui.debug
-import com.acornui.di.Injector
-import com.acornui.di.OwnedImpl
-import com.acornui.di.createScope
-import com.acornui.di.inject
+import com.acornui.di.*
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
+import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
@@ -45,6 +43,8 @@ import com.acornui.time.timer
  * @author nbilyk
  */
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
+
+	override fun getAdditionalDependencies(): List<DependencyPair<*>> = listOf(Stage to this)
 
 	private val defaultBackgroundColor = gl.getParameterfv(Gl20.COLOR_CLEAR_VALUE, Color())
 
@@ -65,7 +65,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
-		popUpManagerView = (popUpManager.init(createScope(Stage to this))) // TODO: Add addChild
+		popUpManagerView = addChild(popUpManager.init(this))
 		popUpManagerView.layoutInvalidatingFlags = 0
 
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
@@ -73,7 +73,10 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
 		gl.enable(Gl20.BLEND)
-		
+		try {
+			gl.useProgram(DefaultShaderProgram(gl).program)
+		} catch (e: Throwable) {}
+
 		watch(style) {
 			useRedrawRegions = it.useRedrawRegions
 			showRedrawRegions = it.showRedrawRegions && it.useRedrawRegions

@@ -53,6 +53,7 @@ interface Injector {
 }
 
 operator fun Injector.plus(dependenciesList: List<DependencyPair<*>>): Injector {
+	if (dependenciesList.isEmpty()) return this
 	return InjectorImpl(this, dependenciesList)
 }
 

@@ -24,7 +24,6 @@ import com.acornui.component.StageImpl
 import com.acornui.di.dKey
 import com.acornui.di.inject
 import com.acornui.gl.core.CachedGl20
-import com.acornui.gl.core.Gl20
 import com.acornui.graphic.exit
 import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput

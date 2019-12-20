@@ -188,6 +188,7 @@ class Framebuffer(
 	private var previousFramebuffer: GlFramebufferRef? = null
 
 	fun begin() {
+		check(gl.batch.isDynamic) { "Framebuffer not expecting a static batch."}
 		gl.batch.flush()
 		previousFramebuffer = gl.framebuffer
 

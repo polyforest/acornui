@@ -18,8 +18,6 @@ package com.acornui
 
 import com.acornui.async.isUiThread
 import com.acornui.component.Stage
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.graphic.Window
 import com.acornui.graphic.updateAndRender
@@ -30,11 +28,11 @@ import kotlinx.coroutines.runBlocking
 import kotlin.time.seconds
 
 open class JvmApplicationRunner(
-		override val injector: Injector
-) : Scoped {
+		protected val stage: Stage
+) {
 
-	private val window = inject(Window)
-	private val stage = inject(Stage)
+	protected val window = stage.inject(Window)
+	protected val appConfig = stage.inject(AppConfig)
 
 	open fun run() = runBlocking {
 		check(isUiThread()) { "JvmApplicationRunner must be run in the main UI thread. "}
@@ -42,7 +40,7 @@ open class JvmApplicationRunner(
 		stage.activate()
 
 		// The window has been damaged.
-		loopWhile(inject(AppConfig).frameTime.toDouble().seconds) { dT ->
+		loopWhile(appConfig.frameTime.toDouble().seconds) { dT ->
 			pollEvents()
 			tick(dT)
 			!window.isCloseRequested()
