@@ -80,7 +80,7 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	override fun render() {
 		if (needsRedraw) {
 			gl.uniforms.useCamera(camera) {
-				gl.useViewportFromCanvasTransform(renderContext.canvasTransform) {
+				gl.useViewportFromCanvasTransform(renderContext.canvasTransform, window.scaleX, window.scaleY) {
 					draw()
 				}
 			}

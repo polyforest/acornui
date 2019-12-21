@@ -20,6 +20,8 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureRo
 import com.acornui.math.*
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.round
 
 fun Gl20.scissor(x: Float, y: Float, width: Float, height: Float) {
@@ -76,17 +78,17 @@ inline fun Gl20.useViewport(x: Int, y: Int, width: Int, height: Int, inner: () -
 
 inline fun Gl20.useViewport(region: IntRectangleRo, inner: () -> Unit) = useViewport(region.x, region.y, region.width, region.height, inner)
 
-private val framebufferInfoTmp = FramebufferInfo()
+private val viewport = IntArray(4)
 
-fun Gl20.useViewportFromCanvasTransform(canvasTransform: RectangleRo, inner: () -> Unit) {
-//	framebufferInfoTmp.set(framebuffer)
-//	useViewport(
-//			floor(canvasTransform.x * framebufferInfoTmp.scaleX).toInt(),
-//			floor((framebufferInfoTmp.height - canvasTransform.bottom * framebufferInfoTmp.scaleY)).toInt(),
-//			ceil(canvasTransform.width * framebufferInfoTmp.scaleX).toInt(),
-//			ceil(canvasTransform.height * framebufferInfoTmp.scaleY).toInt(),
-//			inner
-//	)
+fun Gl20.useViewportFromCanvasTransform(canvasTransform: RectangleRo, scaleX: Float, scaleY: Float, inner: () -> Unit) {
+	getParameteriv(Gl20.VIEWPORT, viewport)
+	useViewport(
+			floor(canvasTransform.x * scaleX).toInt(),
+			floor((viewport[3] - canvasTransform.bottom * scaleY)).toInt(),
+			ceil(canvasTransform.width * scaleX).toInt(),
+			ceil(canvasTransform.height * scaleY).toInt(),
+			inner
+	)
 }
 
 /**
