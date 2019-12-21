@@ -161,6 +161,14 @@ class IntRectangle(
 		return this
 	}
 
+	fun set(arr: IntArray): IntRectangle {
+		x = arr[0]
+		y = arr[1]
+		width = arr[2]
+		height = arr[3]
+		return this
+	}
+
 	/**
 	 * Sets this Rectangle to 0,0,0,0
 	 */

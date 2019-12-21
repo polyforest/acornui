@@ -88,13 +88,13 @@ fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, 
 
 	val gl = inject(CachedGl20)
 	val window = inject(Window)
-	val viewport = gl.getParameteriv(Gl20.VIEWPORT, IntArray(4))
+	val viewport = gl.getViewport()
 
 	val sX = window.scaleX
 	val sY = window.scaleY
 	gl.useScissor(
 			(minOf(sX1, sX2) * sX).roundToInt(),
-			(viewport[3] - maxOf(sY1, sY2) * sY).roundToInt(),
+			(viewport.height - maxOf(sY1, sY2) * sY).roundToInt(),
 			(abs(sX2 - sX1) * sX).roundToInt(),
 			(abs(sY2 - sY1) * sY).roundToInt(),
 			inner

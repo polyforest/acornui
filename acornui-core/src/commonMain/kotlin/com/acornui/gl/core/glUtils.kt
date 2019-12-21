@@ -111,9 +111,13 @@ inline fun CachedGl20.useBatch(b: ShaderBatch, inner: () -> Unit) {
 	batch = previousBatch
 }
 
+private val tmpIntArray4 = IntArray(4)
+
+fun Gl20.getViewport(out: IntRectangle = IntRectangle()): IntRectangle = out.set(getParameteriv(Gl20.VIEWPORT, tmpIntArray4))
 fun Gl20.viewport(value: IntArray) = viewport(value[0], value[1], value[2], value[3])
 fun Gl20.viewport(value: IntRectangleRo) = viewport(value.x, value.y, value.width, value.height)
 
+fun Gl20.getScissor(out: IntRectangle = IntRectangle()): IntRectangle = out.set(getParameteriv(Gl20.SCISSOR_BOX, tmpIntArray4))
 fun Gl20.scissor(value: IntArray) = scissor(value[0], value[1], value[2], value[3])
 fun Gl20.scissor(value: IntRectangleRo) = scissor(value.x, value.y, value.width, value.height)
 

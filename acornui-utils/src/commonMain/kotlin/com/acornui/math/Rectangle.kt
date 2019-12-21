@@ -249,6 +249,14 @@ class Rectangle(
 		return set(x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat())
 	}
 
+	fun set(arr: FloatArray): Rectangle {
+		x = arr[0]
+		y = arr[1]
+		width = arr[2]
+		height = arr[3]
+		return this
+	}
+
 	/**
 	 * Sets this rectangle to match the given [minMax] region.
 	 */
