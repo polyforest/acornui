@@ -49,9 +49,16 @@ class CharElement private constructor() : TextElement, Clearable {
 	private val style: CharElementStyleRo?
 		get() = parentSpan?.charElementStyle
 
+	private var glyphCacheIsSet = false
+	private var glyphCache: Glyph? = null
 	val glyph: Glyph?
 		get() {
-			return style?.font?.getCompletedOrNull()?.getGlyphSafe(char)
+			if (glyphCacheIsSet) return glyphCache
+			if (style?.font?.isCompleted == true) {
+				glyphCacheIsSet = true
+				glyphCache =  style?.font?.getCompletedOrNull()?.getGlyphSafe(char)
+			}
+			return glyphCache
 		}
 
 	override var x = 0f
@@ -312,6 +319,8 @@ class CharElement private constructor() : TextElement, Clearable {
 		v2 = 0f
 		visible = false
 		kerning = 0f
+		glyphCacheIsSet = false
+		glyphCache = null
 	}
 
 	companion object {
