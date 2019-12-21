@@ -20,7 +20,17 @@ import com.acornui.gl.core.*
 import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
 
-object MockGl20 : Gl20 {
+object MockGl20 : CachedGl20 {
+
+	override val changeCount: Int = 0
+	override var batch: ShaderBatch = MockShaderBatch
+
+	override val program: GlProgramRef? = null
+	override val framebuffer: GlFramebufferRef? = null
+	override val renderbuffer: GlRenderbufferRef? = null
+
+	override val uniforms: Uniforms = EmptyUniforms
+
 	override fun activeTexture(texture: Int) {
 	}
 
@@ -33,10 +43,10 @@ object MockGl20 : Gl20 {
 	override fun bindBuffer(target: Int, buffer: GlBufferRef?) {
 	}
 
-	override fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?) {
+	override fun bindFramebuffer(framebuffer: GlFramebufferRef?) {
 	}
 
-	override fun bindRenderbuffer(target: Int, renderbuffer: GlRenderbufferRef?) {
+	override fun bindRenderbuffer(renderbuffer: GlRenderbufferRef?) {
 	}
 
 	override fun bindTexture(target: Int, texture: GlTextureRef?) {
@@ -45,13 +55,7 @@ object MockGl20 : Gl20 {
 	override fun blendColor(red: Float, green: Float, blue: Float, alpha: Float) {
 	}
 
-	override fun blendEquation(mode: Int) {
-	}
-
 	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
-	}
-
-	override fun blendFunc(sfactor: Int, dfactor: Int) {
 	}
 
 	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
@@ -109,7 +113,7 @@ object MockGl20 : Gl20 {
 
 	override fun createRenderbuffer(): GlRenderbufferRef = object : GlRenderbufferRef {}
 
-	override fun createShader(type: Int): GlShaderRef  = object : GlShaderRef {}
+	override fun createShader(type: Int): GlShaderRef = object : GlShaderRef {}
 
 	override fun createTexture(): GlTextureRef = object : GlTextureRef {}
 
@@ -326,13 +330,13 @@ object MockGl20 : Gl20 {
 	override fun uniform4iv(location: GlUniformLocationRef, v: IntArray) {
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, value: FloatArray) {
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, value: FloatArray) {
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, value: FloatArray) {
 	}
 
 	override fun useProgram(program: GlProgramRef?) {

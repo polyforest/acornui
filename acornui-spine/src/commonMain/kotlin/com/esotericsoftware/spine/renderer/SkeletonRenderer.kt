@@ -31,13 +31,13 @@
 
 package com.esotericsoftware.spine.renderer
 
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.ColorRo
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.component.LoadedSkeleton
 
 interface SkeletonRenderer {
-	fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedColorTint: ColorRo)
+	fun draw(batch: ShaderBatch, loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, concatenatedColorTint: ColorRo)
 }
 
 

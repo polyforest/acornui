@@ -31,7 +31,7 @@
 package com.esotericsoftware.spine.renderer
 
 import com.acornui.graphic.Texture
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.putIndex
 import com.acornui.graphic.ColorRo
 import com.esotericsoftware.spine.Skeleton
@@ -49,7 +49,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 
 	private val quadTriangles = shortArrayOf(0, 1, 2, 2, 3, 0)
 
-	override fun draw(loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, glState: GlState, concatenatedColorTint: ColorRo) {
+	override fun draw(batch: ShaderBatch, loadedSkeleton: LoadedSkeleton, skeleton: Skeleton, concatenatedColorTint: ColorRo) {
 		val skin = skeleton.currentSkin ?: skeleton.defaultSkin ?: return // No skin to render.
 		val loadedSkin = loadedSkeleton.loadedSkins[skin.data.name] ?: return // Skin not loaded.
 
@@ -92,7 +92,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				rootBone.rotation = oldRotation + bone.worldRotationX
 				attachmentSkeleton.updateWorldTransform()
 
-				draw(loadedSkeleton, attachmentSkeleton, glState, concatenatedColorTint)
+				draw(batch, loadedSkeleton, attachmentSkeleton, concatenatedColorTint)
 
 				attachmentSkeleton.setPosition(0f, 0f)
 				rootBone.scaleX = oldScaleX
@@ -100,10 +100,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 				rootBone.rotation = oldRotation
 			}
 			if (texture != null) {
-				val batch = glState.batch
-				glState.blendMode(slot.data.blendMode, premultipliedAlpha = false)
-				glState.setTexture(texture)
-				batch.begin()
+				batch.begin(texture, slot.data.blendMode, premultipliedAlpha = false)
 				run {
 					val v = vertices!!
 					var j = 0

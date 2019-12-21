@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.*
@@ -26,14 +26,13 @@ import com.acornui.math.RectangleRo
 import com.acornui.math.Vector3
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
-import kotlin.properties.Delegates
 
 /**
  * A Sprite represents a Quad region of a Texture. It can be drawn.
  *
  * @author nbilyk
  */
-class Sprite(val glState: GlState) : BasicRenderable, Clearable {
+class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	/**
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
@@ -185,10 +184,8 @@ class Sprite(val glState: GlState) : BasicRenderable, Clearable {
 		val tint = tint
 		val normalWorld = normal
 
-		val batch = glState.batch
-		glState.setTexture(texture)
-		glState.blendMode(blendMode, premultipliedAlpha)
-		batch.begin()
+		val batch = gl.batch
+		batch.begin(texture = texture!!, blendMode = blendMode, premultipliedAlpha = premultipliedAlpha)
 
 		if (isRotated) {
 			// Top left

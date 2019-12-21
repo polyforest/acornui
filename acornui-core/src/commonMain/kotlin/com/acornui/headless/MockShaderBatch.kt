@@ -1,13 +1,19 @@
 package com.acornui.headless
 
-import com.acornui.component.drawing.DrawElementsCall
+import com.acornui.gl.core.DrawElementsCall
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.VertexAttributes
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.TextureRo
 import com.acornui.io.ReadWriteBuffer
 
 object MockShaderBatch : ShaderBatch {
 
-	override fun begin(drawMode: Int) {
+	override val isDynamic: Boolean = false
+
+	override val whitePixel: TextureRo = MockTexture
+
+	override fun begin(texture: TextureRo, blendMode: BlendMode, premultipliedAlpha: Boolean, drawMode: Int) {
 	}
 
 	override fun flush() {

@@ -22,7 +22,11 @@ import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
 import com.acornui.async.applicationScopeKey
 import com.acornui.async.mainScope
+import com.acornui.component.Stage
+import com.acornui.component.StageImpl
 import com.acornui.di.*
+import com.acornui.gl.core.CachedGl20
+import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.io.file.Files
@@ -39,7 +43,7 @@ import kotlinx.coroutines.cancel
  */
 interface Application {
 	
-	suspend fun start(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit)
+	suspend fun start(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit)
 }
 
 /**
@@ -104,6 +108,8 @@ abstract class ApplicationBase : Application {
 	protected open val binaryLoader by task(Loaders.binaryLoader) {
 		BinaryLoader()
 	}
+
+	protected open fun createStage(injector: Injector): Stage = StageImpl(injector)
 
 	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 

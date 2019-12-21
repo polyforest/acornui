@@ -27,7 +27,7 @@ import com.acornui.collection.forEach2
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.*
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
@@ -186,7 +186,6 @@ data class LoadedAnimation(
 }
 
 suspend fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAnimation {
-	val glState = inject(GlState)
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
 	for (page in atlasData.pages) {
@@ -205,7 +204,7 @@ suspend fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, gr
 		val (region, page) = regions[i] ?: continue
 		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
 		if (!textures.contains(texture)) textures.add(texture)
-		val atlas = Atlas(glState)
+		val atlas = Atlas(inject(CachedGl20))
 		atlas.setRegionAndTexture(texture, region)
 		frames.add(atlas)
 	}

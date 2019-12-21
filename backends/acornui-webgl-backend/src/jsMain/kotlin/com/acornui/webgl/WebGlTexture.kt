@@ -35,9 +35,8 @@ import kotlin.time.Duration
  * @author nbilyk
  */
 class WebGlTexture(
-		gl: Gl20,
-		glState: GlState
-) : GlTextureBase(gl, glState) {
+		gl: CachedGl20
+) : GlTextureBase(gl) {
 
 	val image = document.createElement("img") as HTMLImageElement
 
@@ -53,13 +52,12 @@ class WebGlTexture(
 
 	private val _rgbData by lazy {
 		// Creates a temporary frame buffer, draws the image to that, uses gl readPixels to get the data, then disposes.
-		val batch = glState.batch
+		val batch = gl.batch
 		refInc()
-		val framebuffer = Framebuffer(gl, glState, widthPixels, heightPixels, false, false)
+		val framebuffer = Framebuffer(gl, widthPixels, heightPixels, false, false)
 		framebuffer.begin()
-		glState.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, Matrix4.IDENTITY)
-		glState.setTexture(this)
-		glState.blendMode(BlendMode.NORMAL, false)
+		gl.uniforms.put(CommonShaderUniforms.U_PROJ_TRANS, Matrix4.IDENTITY)
+		batch.begin(this)
 		batch.putVertex(-1f, -1f, 0f, u = 0f, v = 0f)
 		batch.putVertex(1f, -1f, 0f, u = 1f, v = 0f)
 		batch.putVertex(1f, 1f, 0f, u = 1f, v = 1f)
@@ -89,8 +87,7 @@ class WebGlTexture(
  * Creates an http request, processing the results as a [Texture].
  */
 suspend fun loadTexture(
-		gl: Gl20,
-		glState: GlState,
+		gl: CachedGl20,
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
 		initialTimeEstimate: Duration
@@ -98,7 +95,7 @@ suspend fun loadTexture(
 	// TODO: handle progress reporter
 	val completion = CompletableDeferred<Texture>()
 	val path = requestData.toUrlStr()
-	val jsTexture = WebGlTexture(gl, glState)
+	val jsTexture = WebGlTexture(gl)
 	if (js("URL.prototype != undefined") == true) {
 		// Not supported in IE
 		if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {

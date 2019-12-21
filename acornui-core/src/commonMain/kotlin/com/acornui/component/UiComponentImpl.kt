@@ -24,9 +24,7 @@ import com.acornui.component.style.*
 import com.acornui.di.*
 import com.acornui.focus.*
 import com.acornui.function.as1
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.canvasToScreen
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -56,7 +54,15 @@ open class UiComponentImpl(
 		final override val owner: Owned
 ) : UiComponent {
 
-	final override val injector = owner.injector
+	/**
+	 * Returns a list of any additional dependencies to append to this component's dependency injection.
+	 * This method should not reference any properties on this object, as it will be invoked during
+	 * construction.
+	 * @see createScope
+	 */
+	protected open fun getAdditionalDependencies(): List<DependencyPair<*>> = emptyList()
+
+	final override val injector = owner.injector + getAdditionalDependencies()
 
 	//---------------------------------------------------------
 	// Lifecycle
@@ -111,13 +117,9 @@ open class UiComponentImpl(
 	// Common dependencies
 	protected val window by Window
 
-	@Deprecated("use mouseState", ReplaceWith("mouseState"), DeprecationLevel.ERROR)
-	protected val mouse by MouseState
 	protected val mouseState by MouseState
-
 	protected val interactivity by InteractivityManager
-	protected val gl by Gl20
-	protected val glState by GlState
+	protected val gl by CachedGl20
 	protected val stage by Stage
 
 	// Validatable Properties
@@ -836,18 +838,18 @@ open class UiComponentImpl(
 	}
 
 	protected open fun updateRedrawRegions() {
-		updateDrawRegionCanvas(_drawRegionCanvas.inf())
-		val drawRegionScreen = glState.framebuffer.canvasToScreen(drawRegionCanvas, _drawRegionScreen)
-		val redraw = renderContext.redraw
-		if (redraw.enabled) {
-			// Invalidate the previously drawn region
-			renderContext.redraw.invalidate(previousDrawRegionScreen)
-			previousDrawRegionScreen.clear()
-			// Invalidate the new draw region
-			if (draws && !parentDraws && visible && alpha > 0f) {
-				renderContext.redraw.invalidate(drawRegionScreen)
-			}
-		}
+//		updateDrawRegionCanvas(_drawRegionCanvas.inf())
+//		val drawRegionScreen = glState.framebuffer.canvasToScreen(drawRegionCanvas, _drawRegionScreen)
+//		val redraw = renderContext.redraw
+//		if (redraw.enabled) {
+//			// Invalidate the previously drawn region
+//			renderContext.redraw.invalidate(previousDrawRegionScreen)
+//			previousDrawRegionScreen.clear()
+//			// Invalidate the new draw region
+//			if (draws && !parentDraws && visible && alpha > 0f) {
+//				renderContext.redraw.invalidate(drawRegionScreen)
+//			}
+//		}
 	}
 
 	/**
@@ -920,11 +922,8 @@ open class UiComponentImpl(
 	 */
 	protected open val needsRedraw: Boolean
 		get() {
-			val renderContext = _renderContext
-			return (renderContext.parentContext.draws ||
-					renderContext.redraw.needsRedraw(drawRegionScreen)) &&
-					visible &&
-					colorTint.a > 0f
+//			val renderContext = _renderContext
+			return visible && colorTint.a > 0f
 		}
 
 	override fun render() {

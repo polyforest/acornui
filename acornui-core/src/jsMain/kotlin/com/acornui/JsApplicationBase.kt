@@ -59,15 +59,15 @@ abstract class JsApplicationBase : ApplicationBase() {
 		}
 	}
 
-	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
 		contentLoad()
-		val owner = OwnedImpl(createInjector())
-		PendingDisposablesRegistry.register(owner)
-		initializeSpecialInteractivity(owner)
-		owner.onReady()
+		val stage = createStage(createInjector())
+		PendingDisposablesRegistry.register(stage)
+		initializeSpecialInteractivity(stage)
+		stage.onReady()
 
-		frameDriver = initializeFrameDriver(owner.injector)
+		frameDriver = initializeFrameDriver(stage)
 		frameDriver!!.start()
 	}
 
@@ -81,8 +81,8 @@ abstract class JsApplicationBase : ApplicationBase() {
 		}
 	}
 
-	protected open suspend fun initializeFrameDriver(injector: Injector): JsApplicationRunner {
-		return if (userInfo.isBrowser) JsBrowserApplicationRunnerImpl(injector) else JsNodeApplicationRunnerImpl(injector)
+	protected open suspend fun initializeFrameDriver(stage: Stage): JsApplicationRunner {
+		return if (userInfo.isBrowser) JsBrowserApplicationRunnerImpl(stage) else JsNodeApplicationRunnerImpl(stage)
 	}
 
 	protected open val audioManagerTask by task(AudioManager) {
@@ -130,12 +130,11 @@ interface JsApplicationRunner {
 }
 
 abstract class JsApplicationRunnerBase(
-		override val injector: Injector
-) : JsApplicationRunner, Scoped {
+		protected val stage: Stage
+) : JsApplicationRunner {
 
 	private var lastFrameMs: Long = 0L
-	protected val stage = inject(Stage)
-	protected val appWindow = inject(Window)
+	protected val appWindow = stage.inject(Window)
 
 	private var isRunning: Boolean = false
 
@@ -165,7 +164,7 @@ abstract class JsApplicationRunnerBase(
 }
 
 
-class JsBrowserApplicationRunnerImpl(injector: Injector) : JsApplicationRunnerBase(injector), Scoped {
+class JsBrowserApplicationRunnerImpl(stage: Stage) : JsApplicationRunnerBase(stage) {
 
 	private val tickCallback = { _: Double ->
 		tick()
@@ -188,7 +187,7 @@ class JsBrowserApplicationRunnerImpl(injector: Injector) : JsApplicationRunnerBa
 }
 
 
-class JsNodeApplicationRunnerImpl(injector: Injector) : JsApplicationRunnerBase(injector), Scoped {
+class JsNodeApplicationRunnerImpl(stage: Stage) : JsApplicationRunnerBase(stage) {
 
 	private val tickCallback = {
 		tick()

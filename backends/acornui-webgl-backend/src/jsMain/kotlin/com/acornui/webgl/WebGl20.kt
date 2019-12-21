@@ -42,12 +42,12 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.bindBuffer(target, (buffer as? WebGlBufferRef)?.o)
 	}
 
-	override fun bindFramebuffer(target: Int, framebuffer: GlFramebufferRef?) {
-		context.bindFramebuffer(target, (framebuffer as? WebGlFramebufferRef)?.o)
+	override fun bindFramebuffer(framebuffer: GlFramebufferRef?) {
+		context.bindFramebuffer(Gl20.FRAMEBUFFER, (framebuffer as? WebGlFramebufferRef)?.o)
 	}
 
-	override fun bindRenderbuffer(target: Int, renderbuffer: GlRenderbufferRef?) {
-		context.bindRenderbuffer(target, (renderbuffer as? WebGlRenderbufferRef)?.o)
+	override fun bindRenderbuffer(renderbuffer: GlRenderbufferRef?) {
+		context.bindRenderbuffer(Gl20.RENDERBUFFER, (renderbuffer as? WebGlRenderbufferRef)?.o)
 	}
 
 	override fun bindTexture(target: Int, texture: GlTextureRef?) {
@@ -58,16 +58,8 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.blendColor(red, green, blue, alpha)
 	}
 
-	override fun blendEquation(mode: Int) {
-		context.blendEquation(mode)
-	}
-
 	override fun blendEquationSeparate(modeRgb: Int, modeAlpha: Int) {
 		context.blendEquationSeparate(modeRgb, modeAlpha)
-	}
-
-	override fun blendFunc(sfactor: Int, dfactor: Int) {
-		context.blendFunc(sfactor, dfactor)
 	}
 
 	override fun blendFuncSeparate(srcRgb: Int, dstRgb: Int, srcAlpha: Int, dstAlpha: Int) {
@@ -477,16 +469,16 @@ class WebGl20(private val context: WebGLRenderingContext) : Gl20 {
 		context.uniform4iv((location as WebGlUniformLocationRef).o, v.native)
 	}
 
-	override fun uniformMatrix2fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		context.uniformMatrix2fv((location as WebGlUniformLocationRef).o, transpose, value.native)
+	override fun uniformMatrix2fv(location: GlUniformLocationRef, value: FloatArray) {
+		context.uniformMatrix2fv((location as WebGlUniformLocationRef).o, false, value.native)
 	}
 
-	override fun uniformMatrix3fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		context.uniformMatrix3fv((location as WebGlUniformLocationRef).o, transpose, value.native)
+	override fun uniformMatrix3fv(location: GlUniformLocationRef, value: FloatArray) {
+		context.uniformMatrix3fv((location as WebGlUniformLocationRef).o, false, value.native)
 	}
 
-	override fun uniformMatrix4fv(location: GlUniformLocationRef, transpose: Boolean, value: FloatArray) {
-		context.uniformMatrix4fv((location as WebGlUniformLocationRef).o, transpose, value.native)
+	override fun uniformMatrix4fv(location: GlUniformLocationRef, value: FloatArray) {
+		context.uniformMatrix4fv((location as WebGlUniformLocationRef).o, false, value.native)
 	}
 
 	override fun useProgram(program: GlProgramRef?) {

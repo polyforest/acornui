@@ -33,7 +33,7 @@ import kotlin.contracts.contract
  */
 class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(owner) {
 
-	override val renderable: NinePatch = NinePatch(glState)
+	override val renderable: NinePatch = NinePatch(gl)
 
 	private var cached: CachedGroup? = null
 

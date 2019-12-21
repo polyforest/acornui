@@ -25,7 +25,7 @@ import com.acornui.async.getCompletedOrNull
 import com.acornui.collection.forEach2
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.recycle.ObjectPool
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -107,7 +107,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 
 	override var textParent: TextNodeRo? = null
 
-	private lateinit var glState: GlState
+	private lateinit var gl: CachedGl20
 
 	override val styleParent: StyleableRo?
 		get() = textParent
@@ -209,7 +209,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 
 	fun char(char: Char): TextElement {
-		return CharElement.obtain(char, glState)
+		return CharElement.obtain(char, gl)
 	}
 
 	operator fun String?.unaryPlus() {
@@ -246,16 +246,16 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	companion object {
 		private val pool = ObjectPool { TextSpanElementImpl() }
 
-		fun obtain(glState: GlState): TextSpanElementImpl {
+		fun obtain(gl: CachedGl20): TextSpanElementImpl {
 			val s = pool.obtain()
-			s.glState = glState
+			s.gl = gl
 			return s
 		}
 	}
 }
 
 fun Scoped.span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
-	val s = TextSpanElementImpl.obtain(inject(GlState))
+	val s = TextSpanElementImpl.obtain(inject(CachedGl20))
 	s.init()
 	return s
 }

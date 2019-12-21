@@ -21,13 +21,11 @@ import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
 import com.acornui.debug
-import com.acornui.di.Injector
-import com.acornui.di.OwnedImpl
-import com.acornui.di.createScope
-import com.acornui.di.inject
+import com.acornui.di.*
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
+import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
@@ -45,6 +43,8 @@ import com.acornui.time.timer
  * @author nbilyk
  */
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
+
+	override fun getAdditionalDependencies(): List<DependencyPair<*>> = listOf(Stage to this)
 
 	private val defaultBackgroundColor = gl.getParameterfv(Gl20.COLOR_CLEAR_VALUE, Color())
 
@@ -65,14 +65,18 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
 		focusManager.init(this)
-		popUpManagerView = addChild(popUpManager.init(createScope(Stage to this)))
+		popUpManagerView = addChild(popUpManager.init(this))
 		popUpManagerView.layoutInvalidatingFlags = 0
 
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
 		gl.stencilFunc(Gl20.EQUAL, 1, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
-		
+		gl.enable(Gl20.BLEND)
+		try {
+			gl.useProgram(DefaultShaderProgram(gl).program)
+		} catch (e: Throwable) {}
+
 		watch(style) {
 			useRedrawRegions = it.useRedrawRegions
 			showRedrawRegions = it.showRedrawRegions && it.useRedrawRegions
@@ -132,8 +136,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	override fun updateRenderContext() {
 		val w = window.framebufferWidth
 		val h = window.framebufferHeight
-		glState.setViewport(0, 0, w, h)
-		glState.setFramebuffer(null, w, h, window.scaleX, window.scaleY)
+		gl.viewport(0, 0, w, h)
+		gl.bindFramebuffer(null)
 		renderContext.redraw.invalidate(0, 0, w, h)
 		super.updateRenderContext()
 	}
@@ -192,12 +196,13 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 			gl.disable(Gl20.SCISSOR_TEST)
 		} else {
 			gl.clearStencil(1)
+			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
 			gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		}
 		ShaderBatch.totalDrawCalls = 0
-		glState.uniforms.setCamera(renderContext, useModel = false)
+		gl.uniforms.setCamera(renderContext, useModel = false)
 		super.draw()
-		glState.batch.flush()
+		gl.batch.flush()
 
 		// Draw redraw regions
 

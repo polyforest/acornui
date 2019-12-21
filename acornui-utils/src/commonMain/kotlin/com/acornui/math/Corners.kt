@@ -140,42 +140,31 @@ class Corners() : CornersRo, Clearable {
 	}
 
 	fun set(all: Float): Corners {
-		topLeft.set(all, all)
-		topRight.set(all, all)
-		bottomRight.set(all, all)
-		bottomLeft.set(all, all)
+		val allClamped = maxOf(0f, all)
+		topLeft.set(allClamped, allClamped)
+		topRight.set(allClamped, allClamped)
+		bottomRight.set(allClamped, allClamped)
+		bottomLeft.set(allClamped, allClamped)
 		return this
 	}
 
 	fun set(other: CornersRo): Corners {
-		topLeft.set(other.topLeft)
-		topRight.set(other.topRight)
-		bottomRight.set(other.bottomRight)
-		bottomLeft.set(other.bottomLeft)
-		return this
+		return set(other.topLeft.x, other.topLeft.y, other.topRight.x, other.topRight.y, other.bottomRight.x, other.bottomRight.y, other.bottomLeft.x, other.bottomRight.y)
 	}
 
 	fun set(topLeft: Float = 0f, topRight: Float = 0f, bottomRight: Float = 0f, bottomLeft: Float = 0f): Corners {
-		this.topLeft.set(topLeft, topLeft)
-		this.topRight.set(topRight, topRight)
-		this.bottomRight.set(bottomRight, bottomRight)
-		this.bottomLeft.set(bottomLeft, bottomLeft)
-		return this
-	}
-
-	fun set(topLeftX: Float, topLeftY: Float, topRightX: Float, topRightY: Float, bottomRightX: Float, bottomRightY: Float, bottomLeftX: Float, bottomLeftY: Float): Corners {
-		this.topLeft.set(topLeftX, topLeftY)
-		this.topRight.set(topRightX, topRightY)
-		this.bottomRight.set(bottomRightX, bottomRightY)
-		this.bottomLeft.set(bottomLeftX, bottomLeftY)
-		return this
+		return set(topLeft, topLeft, topRight, topRight, bottomRight, bottomRight, bottomLeft, bottomLeft)
 	}
 
 	fun set(topLeft: Vector2Ro, topRight: Vector2Ro, bottomRight: Vector2Ro, bottomLeft: Vector2Ro): Corners {
-		this.topLeft.set(topLeft)
-		this.topRight.set(topRight)
-		this.bottomRight.set(bottomRight)
-		this.bottomLeft.set(bottomLeft)
+		return set(topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRight.x, bottomRight.y, bottomLeft.x, bottomRight.y)
+	}
+
+	fun set(topLeftX: Float, topLeftY: Float, topRightX: Float, topRightY: Float, bottomRightX: Float, bottomRightY: Float, bottomLeftX: Float, bottomLeftY: Float): Corners {
+		this.topLeft.set(maxOf(0f, topLeftX), maxOf(0f, topLeftY))
+		this.topRight.set(maxOf(0f, topRightX), maxOf(0f, topRightY))
+		this.bottomRight.set(maxOf(0f, bottomRightX), maxOf(0f, bottomRightY))
+		this.bottomLeft.set(maxOf(0f, bottomLeftX), maxOf(0f, bottomLeftY))
 		return this
 	}
 

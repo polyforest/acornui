@@ -23,7 +23,7 @@ import com.acornui.component.Stage
 import com.acornui.component.StageImpl
 import com.acornui.di.dKey
 import com.acornui.di.inject
-import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.exit
 import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput
@@ -46,7 +46,7 @@ class JvmHeadlessApplicationTest {
 		JvmHeadlessApplication().start(appConfig) {
 			assertTrue(inject(Files) is FilesImpl)
 			assertTrue(inject(Stage) is StageImpl)
-			assertEquals(inject(Gl20), MockGl20)
+			assertEquals(inject(CachedGl20), MockGl20)
 			assertEquals(inject(MouseInput), MockMouseInput)
 			assertEquals(inject(KeyInput), MockKeyInput)
 			assertTrue(inject(Loaders.textLoader) is TextLoader)

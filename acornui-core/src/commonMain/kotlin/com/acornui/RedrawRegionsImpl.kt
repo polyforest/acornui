@@ -38,8 +38,15 @@ interface RedrawRegionsRo {
 
 interface RedrawRegions : RedrawRegionsRo, Clearable {
 
+	/**
+	 * Invalidates the redraw region, in screen coordinates.
+	 */
 	fun invalidate(x: Int, y: Int, width: Int, height: Int)
-	fun invalidate(region: IntRectangleRo) = invalidate(region.x, region.y, region.width, region.height)
+
+	/**
+	 * Invalidates the redraw region, in screen coordinates.
+	 */
+	fun invalidate(screenRegion: IntRectangleRo) = invalidate(screenRegion.x, screenRegion.y, screenRegion.width, screenRegion.height)
 
 	companion object {
 

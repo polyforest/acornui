@@ -27,8 +27,7 @@ import com.acornui.math.MathUtils.isPowerOfTwo
  * @author nbilyk
  */
 abstract class GlTextureBase(
-		protected val gl: Gl20,
-		protected val glState: GlState
+		protected val gl: Gl20
 ) : Texture {
 
 	/**
@@ -81,8 +80,10 @@ abstract class GlTextureBase(
 	 */
 	open fun create(unit: Int = 0) {
 		if (textureHandle != null) return
-		textureHandle = gl.createTexture()
-		glState.setTexture(this, unit)
+		val textureHandle = gl.createTexture()
+		this.textureHandle = textureHandle
+		gl.activeTexture(Gl20.TEXTURE0 + unit)
+		gl.bindTexture(target.value, textureHandle)
 
 		uploadTexture()
 		gl.texParameteri(target.value, Gl20.TEXTURE_MAG_FILTER, filterMag.value)
@@ -140,7 +141,8 @@ abstract class GlTextureBase(
 	 */
 	open fun delete() {
 		if (textureHandle == null) return
-		glState.unsetTexture(this)
+		gl.activeTexture()
+		gl.bindTexture(target.value, null)
 		gl.deleteTexture(textureHandle!!)
 		textureHandle = null
 	}

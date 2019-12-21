@@ -24,19 +24,20 @@ import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
+import com.acornui.component.Stage
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.cursor.CursorManager
-import com.acornui.di.*
+import com.acornui.di.Owned
+import com.acornui.di.own
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
+import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.Gl20CachedProperties
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.GlStateImpl
+import com.acornui.gl.core.Gl20CachedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -95,22 +96,22 @@ open class LwjglApplication : ApplicationBase() {
 		println("LWJGL Version: ${LwjglVersion.getVersion()}")
 	}
 
-	override suspend fun start(appConfig: AppConfig, onReady: Owned.() -> Unit) {
+	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
-		val injector = createInjector()
-		val owner = OwnedImpl(injector)
-		owner.initializeSpecialInteractivity()
-		owner.onReady()
-		LwjglApplicationRunner(owner.injector).run()
-		owner.dispose()
+		val stage = createStage(createInjector())
+		initializeSpecialInteractivity(stage)
+		stage.onReady()
+
+		LwjglApplicationRunner(stage).run()
+		stage.dispose()
 		dispose()
 	}
 
 	/**
-	 * Sets the [Gl20] dependency.
+	 * Sets the [CachedGl20] dependency.
 	 */
-	protected open val glTask by task(Gl20) {
-		Gl20CachedProperties(if (debug) JvmGl20Debug() else LwjglGl20())
+	protected open val glTask by task(CachedGl20) {
+		Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20())
 	}
 
 	/**
@@ -134,10 +135,6 @@ open class LwjglApplication : ApplicationBase() {
 			System.exit(1)
 		}
 		uncaughtExceptionHandler
-	}
-
-	protected open val glStateTask by task(GlState) {
-		GlStateImpl(get(Gl20), get(Window))
 	}
 
 	protected open val focusManagerTask by task(FocusManager) {
@@ -201,14 +198,13 @@ open class LwjglApplication : ApplicationBase() {
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
 		val gl = get(Gl20)
-		val glState = get(GlState)
 
 		object : Loader<Texture> {
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
 			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
-				return loadTexture(gl, glState, requestData, progressReporter, initialTimeEstimate)
+				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
 	}
@@ -224,11 +220,12 @@ open class LwjglApplication : ApplicationBase() {
 		}
 	}
 
-	protected open fun Owned.initializeSpecialInteractivity() {
-		own(JvmClickDispatcher(injector))
-		own(FakeFocusMouse(injector))
-		own(UndoDispatcher(injector))
-		own(ContextMenuManager(injector))
+	protected open fun initializeSpecialInteractivity(owner: Owned) {
+		val injector = owner.injector
+		owner.own(JvmClickDispatcher(injector))
+		owner.own(FakeFocusMouse(injector))
+		owner.own(UndoDispatcher(injector))
+		owner.own(ContextMenuManager(injector))
 	}
 
 	override fun dispose() {
@@ -238,10 +235,8 @@ open class LwjglApplication : ApplicationBase() {
 }
 
 private class LwjglApplicationRunner(
-		injector: Injector
-) : JvmApplicationRunner(injector) {
-
-	private val window = inject(Window)
+		stage: Stage
+) : JvmApplicationRunner(stage) {
 
 	override fun run() {
 		window.refresh.add(::refreshHandler)
@@ -259,6 +254,6 @@ private class LwjglApplicationRunner(
 	}
 }
 
-suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Owned.() -> Unit) {
+suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
 	LwjglApplication().start(appConfig, onReady)
 }

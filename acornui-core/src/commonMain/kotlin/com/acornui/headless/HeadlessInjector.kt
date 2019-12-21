@@ -20,8 +20,7 @@ import com.acornui.asset.Loaders
 import com.acornui.component.RenderContextRo
 import com.acornui.di.*
 import com.acornui.focus.FocusManager
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.io.byteBuffer
@@ -51,8 +50,7 @@ object HeadlessInjector {
 				InteractivityManager to MockInteractivityManager,
 				RenderContextRo to MockRenderContext,
 				FocusManager to MockFocusManager,
-				Gl20 to MockGl20,
-				GlState to MockGlState
+				CachedGl20 to MockGl20
 		))
 	}
 }

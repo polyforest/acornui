@@ -17,7 +17,6 @@
 package com.acornui.graphic
 
 
-import com.acornui.graphic.Texture
 import com.acornui.gl.core.*
 import com.acornui.logging.Log
 import com.acornui.math.MathUtils
@@ -36,9 +35,8 @@ class CubeMap(
 		negativeZ: Texture,
 
 		gl: Gl20,
-		glState: GlState,
 		private val writeMode: Boolean = false
-) : GlTextureBase(gl, glState) {
+) : GlTextureBase(gl) {
 
 	private val sides = arrayOf(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ)
 

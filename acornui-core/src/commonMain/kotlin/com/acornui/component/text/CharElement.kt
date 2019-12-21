@@ -17,10 +17,9 @@
 package com.acornui.component.text
 
 import com.acornui.async.getCompletedOrNull
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
@@ -38,11 +37,11 @@ import kotlin.math.floor
  */
 class CharElement private constructor() : TextElement, Clearable {
 
+	lateinit var gl: CachedGl20
+
 	private val _bounds = Bounds()
 	override val bounds: BoundsRo
 		get() = _bounds.set(explicitWidth ?: advanceX, lineHeight, parentSpan?.baseline ?: 0f)
-
-	private lateinit var glState: GlState
 
 	override var char: Char = CHAR_PLACEHOLDER
 	override var parentSpan: TextSpanElementRo<TextElementRo>? = null
@@ -170,7 +169,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		u2 = regionR / textureW
 		v2 = regionB / textureH
 
-		// Transform vertex coordinates from local to global
+		// Glyph vertices
 		charVertices[0].set(charL, charT, 0f)
 		charVertices[1].set(charR, charT, 0f)
 		charVertices[2].set(charR, charB, 0f)
@@ -228,8 +227,7 @@ class CharElement private constructor() : TextElement, Clearable {
 	override fun renderBackground() {
 		if (!visible) return
 		val style = style ?: return
-		val glState = glState
-		val batch = glState.batch
+		val batch = gl.batch
 		val backgroundColorWorld = backgroundColorWorld
 		val fontColorWorld = fontColorWorld
 		val backgroundVerticesWorld = backgroundVerticesWorld
@@ -237,8 +235,6 @@ class CharElement private constructor() : TextElement, Clearable {
 
 		if (backgroundColorWorld.a > 0f) {
 			batch.begin()
-			glState.setTexture(glState.whitePixel)
-			glState.blendMode(BlendMode.NORMAL, false)
 			// Top left
 			batch.putVertex(backgroundVerticesWorld[0], normalWorld, backgroundColorWorld, 0f, 0f)
 			// Top right
@@ -252,8 +248,6 @@ class CharElement private constructor() : TextElement, Clearable {
 
 		if (style.underlined || style.strikeThrough && fontColorWorld.a > 0f) {
 			batch.begin()
-			glState.setTexture(glState.whitePixel)
-			glState.blendMode(BlendMode.NORMAL, false)
 			val lineVerticesWorld = lineVerticesWorld
 
 			// Top left
@@ -272,16 +266,13 @@ class CharElement private constructor() : TextElement, Clearable {
 	override fun renderForeground() {
 		if (!visible) return
 		val glyph = glyph ?: return
-		val glState = glState
-		val batch = glState.batch
+		val batch = gl.batch
 		
 		val fontColorWorld = fontColorWorld
 		val normalWorld = normalWorld
 		val charVerticesWorld = charVerticesWorld
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f || fontColorWorld.a <= 0f) return // Nothing to draw
-		batch.begin()
-		glState.setTexture(glyph.texture)
-		glState.blendMode(BlendMode.NORMAL, glyph.premultipliedAlpha)
+		batch.begin(glyph.texture, premultipliedAlpha = glyph.premultipliedAlpha)
 
 		if (glyph.isRotated) {
 			// Top left
@@ -327,10 +318,10 @@ class CharElement private constructor() : TextElement, Clearable {
 		private const val CHAR_PLACEHOLDER = 'a'
 		private val pool = ClearableObjectPool { CharElement() }
 
-		internal fun obtain(char: Char, glState: GlState): CharElement {
+		internal fun obtain(char: Char, gl: CachedGl20): CharElement {
 			val c = pool.obtain()
 			c.char = char
-			c.glState = glState
+			c.gl = gl
 			return c
 		}
 	}

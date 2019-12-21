@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.gl.core.GlState
+import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.*
@@ -28,7 +28,7 @@ import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.properties.Delegates
 
-class NinePatch(val glState: GlState) : BasicRenderable, Clearable {
+class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	var isRotated: Boolean = false
 		private set
@@ -276,11 +276,8 @@ class NinePatch(val glState: GlState) : BasicRenderable, Clearable {
 		val tint = tint
 		val normal = normal
 
-		glState.setTexture(texture)
-		glState.blendMode(blendMode, premultipliedAlpha)
-
-		val batch = glState.batch
-		batch.begin()
+		val batch = gl.batch
+		batch.begin(texture = texture, blendMode = blendMode, premultipliedAlpha = premultipliedAlpha)
 
 		if (isRotated) {
 			val splitLeftV = splitLeft / texture.heightPixels

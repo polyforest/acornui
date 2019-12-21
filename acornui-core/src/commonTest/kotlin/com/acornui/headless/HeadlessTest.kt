@@ -30,6 +30,7 @@ import com.acornui.test.runTest
 import com.acornui.time.start
 import com.acornui.time.timer
 import com.acornui.tween.tweenX
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.seconds
 

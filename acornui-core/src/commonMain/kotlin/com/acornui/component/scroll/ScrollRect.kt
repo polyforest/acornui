@@ -107,7 +107,7 @@ class ScrollRectImpl(
 
 	override fun draw() {
 		if (maskClip.visible) {
-			StencilUtil.mask(glState.batch, gl, {
+			StencilUtil.mask(gl.batch, gl, {
 				maskClip.render()
 			}) {
 				if (contents.visible)

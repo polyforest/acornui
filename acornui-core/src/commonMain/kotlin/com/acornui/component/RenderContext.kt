@@ -25,10 +25,7 @@ import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.function.as2
-import com.acornui.gl.core.GlState
-import com.acornui.gl.core.Uniforms
-import com.acornui.gl.core.setCamera
-import com.acornui.gl.core.useCamera
+import com.acornui.gl.core.*
 import com.acornui.graphic.*
 import com.acornui.math.*
 import com.acornui.recycle.Clearable
@@ -340,38 +337,6 @@ class RenderContext() : RenderContextRo, Clearable {
 	}
 }
 
-///**
-// * CustomRenderContext is a render context that isn't hierarchical. It expects a camera for the view and projection
-// * matrices, and explicitly set canvas, model, and color transforms.
-// */
-//class CustomRenderContext(var camera: CameraRo) : RenderContextRo {
-//
-//	override val parentContext: RenderContextRo? = null
-//
-//	override val clipRegion = MinMax()
-//	override val colorTint = Color.WHITE.copy()
-//
-//	override val viewProjectionTransform: Matrix4Ro
-//		get() = camera.combined
-//
-//	override val viewProjectionTransformInv: Matrix4Ro
-//		get() = camera.combinedInv
-//
-//	override val viewTransform: Matrix4Ro
-//		get() = camera.view
-//
-//	override val projectionTransform: Matrix4Ro
-//		get() = camera.projection
-//
-//	override val canvasTransform = Rectangle()
-//
-//	override val modelTransform = Matrix4()
-//
-//	private val _modelTransformInv by lazy { Matrix4() }
-//	override val modelTransformInv: Matrix4Ro
-//		get() = _modelTransformInv.set(modelTransform).inv()
-//}
-
 /**
  * IdtProjectionContext is a render context where the model/view/projection transformations are the identity matrix.
  */
@@ -410,7 +375,7 @@ class IdtProjectionContext : RenderContextRo, Clearable {
 }
 
 /**
- * Sets the camera on this [GlState] using this the given [renderContext].
+ * Sets the camera uniforms using the given [renderContext].
  */
 fun Uniforms.setCamera(renderContext: RenderContextRo, useModel: Boolean = false) {
 	if (useModel) setCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform)
@@ -418,7 +383,8 @@ fun Uniforms.setCamera(renderContext: RenderContextRo, useModel: Boolean = false
 }
 
 /**
- * Sets the camera on this [GlState] using this the given [renderContext].
+ * Sets the camera uniforms using the given [renderContext], calls [inner], then sets the camera back to what it
+ * previously was.
  */
 fun Uniforms.useCamera(renderContext: RenderContextRo, useModel: Boolean = false, inner: () -> Unit) {
 	if (useModel) useCamera(renderContext.viewProjectionTransform, renderContext.viewTransform, renderContext.modelTransform, inner)

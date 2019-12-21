@@ -39,7 +39,7 @@ import kotlin.contracts.contract
  */
 open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), Clearable {
 
-	override val renderable: Sprite = Sprite(glState)
+	override val renderable: Sprite = Sprite(gl)
 
 	/**
 	 * Sets the dpi scaling on the Sprite.

@@ -19,7 +19,6 @@ package com.acornui.component
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.DKey
-import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.focus.Focusable
@@ -32,11 +31,7 @@ interface Stage : ElementContainer<UiComponent>, StageRo {
 	val style: StageStyle
 	var showWaitingForSkinMessage: Boolean
 
-	companion object : DKey<Stage> {
-		override fun factory(injector: Injector): Stage? {
-			return StageImpl(injector)
-		}
-	}
+	companion object : DKey<Stage>
 }
 
 val Scoped.stage: Stage
