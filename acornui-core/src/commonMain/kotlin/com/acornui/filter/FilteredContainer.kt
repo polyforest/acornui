@@ -22,7 +22,6 @@ import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.component.*
 import com.acornui.di.Owned
 import com.acornui.di.own
-import com.acornui.math.MinMax
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
 import com.acornui.math.RectangleRo
@@ -41,7 +40,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
 
 	init {
-		draws = true
 		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 		validation.addNode(ValidationFlags.VERTICES, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateVertices)
 	}
@@ -67,10 +65,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 			drawRegionCanvas = renderFilter.updateWorldVertices(drawRegionCanvas, model, tint)
 		}
 		expandedDrawRegion = drawRegionCanvas
-	}
-
-	override fun updateDrawRegionCanvas(out: MinMax) {
-		out.set(expandedDrawRegion)
 	}
 
 	override fun draw() {

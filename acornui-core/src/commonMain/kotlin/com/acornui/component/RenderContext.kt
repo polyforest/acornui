@@ -17,8 +17,6 @@
 package com.acornui.component
 
 import com.acornui.Disposable
-import com.acornui.RedrawRegions
-import com.acornui.RedrawRegionsImpl
 import com.acornui.collection.forEach2
 import com.acornui.di.DKey
 import com.acornui.di.Injector
@@ -50,20 +48,6 @@ interface RenderContextRo : CanvasTransformableRo {
 	 * The color multiplier for vertices.
 	 */
 	val colorTint: ColorRo
-
-	/**
-	 * The regions that should be redrawn in the next render.
-	 */
-	val redraw: RedrawRegions
-
-	/**
-	 * True if this component does drawing.
-	 *
-	 * Components where this is set to true will invalidate their redraw regions with the render context.
-	 * Any descendents of a container with draws == true will skip their region checks; that is, if the container
-	 * needs redrawing, the children need redrawing.
-	 */
-	val draws: Boolean
 
 	companion object : DKey<RenderContextRo> {
 
@@ -144,10 +128,6 @@ class OrthographicRenderContext(override val injector: Injector) : Scoped, Rende
 		}
 
 	override val colorTint: ColorRo = Color.WHITE
-
-	override val redraw: RedrawRegions = RedrawRegionsImpl()
-
-	override var draws: Boolean = false
 
 	private fun validate() {
 		if (isValid) return
@@ -276,17 +256,6 @@ class RenderContext() : RenderContextRo, Clearable {
 		colorTintOverride ?: _colorTint.set(parentContext.colorTint).mul(colorTintLocal).clamp()
 	}
 
-	var redrawOverride: RedrawRegions? = null
-
-	override val redraw: RedrawRegions by prop {
-		redrawOverride ?: parentContext.redraw ?: RedrawRegions.ALWAYS
-	}
-
-	var drawsSelf = false
-	override val draws: Boolean by prop {
-		drawsSelf || parentContext.draws
-	}
-
 	fun invalidate() {
 		allProps.forEach2 { it.clear() }
 	}
@@ -300,7 +269,6 @@ class RenderContext() : RenderContextRo, Clearable {
 		colorTintOverride = null
 		modelTransformLocal.idt()
 		modelTransformOverride = null
-		redrawOverride = null
 		invalidate()
 	}
 
@@ -363,10 +331,6 @@ class IdtProjectionContext : RenderContextRo, Clearable {
 	override val clipRegion: MinMaxRo = MinMax()
 
 	override val colorTint = Color.WHITE.copy()
-
-	override val redraw: RedrawRegions = RedrawRegions.ALWAYS
-
-	override var draws: Boolean = false
 
 	override fun clear() {
 		modelTransform.idt()

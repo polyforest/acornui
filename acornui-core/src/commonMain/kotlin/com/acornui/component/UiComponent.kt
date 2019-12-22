@@ -207,16 +207,6 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	var baselineOverride: Float?
 
 	/**
-	 * The drawing region of this component in canvas coordinates.
-	 */
-	val drawRegionCanvas: RectangleRo
-
-	/**
-	 * The drawing region of this component in screen coordinates.
-	 */
-	val drawRegionScreen: IntRectangleRo
-
-	/**
 	 * Updates this component, validating it and its children.
 	 */
 	fun update()

@@ -62,6 +62,7 @@ open class UiComponentImpl(
 	 */
 	protected open fun getAdditionalDependencies(): List<DependencyPair<*>> = emptyList()
 
+	@Suppress("LeakingThis")
 	final override val injector = owner.injector + getAdditionalDependencies()
 
 	//---------------------------------------------------------
@@ -91,8 +92,6 @@ open class UiComponentImpl(
 			throw DisposedException()
 		check(!_isActive) { "Already active" }
 		_isActive = true
-
-		invalidate(ValidationFlags.REDRAW_REGIONS)
 		_activated.dispatch(this)
 	}
 
@@ -103,11 +102,6 @@ open class UiComponentImpl(
 			throw DisposedException()
 		check(_isActive) { "Not active" }
 		_isActive = false
-
-		if (draws && !parentDraws) {
-			renderContext.redraw.invalidate(previousDrawRegionScreen)
-			previousDrawRegionScreen.clear()
-		}
 		_deactivated.dispatch(this)
 	}
 
@@ -184,10 +178,6 @@ open class UiComponentImpl(
 
 	// Sizable properties
 	protected val _bounds = Bounds()
-	protected val _drawRegion = Box()
-	protected val _drawRegionCanvas = MinMax()
-	protected val _drawRegionScreen = IntRectangle()
-	protected val previousDrawRegionScreen = IntRectangle()
 
 	/**
 	 * The explicit width, as set by width(value)
@@ -214,7 +204,6 @@ open class UiComponentImpl(
 
 	// Render context properties
 
-	// TODO: Make render context observable and invalidate render context flag on change.
 	protected val defaultRenderContext = inject(RenderContextRo)
 	protected val _renderContext = RenderContext(defaultRenderContext)
 	final override val renderContext: RenderContextRo = _renderContext
@@ -244,19 +233,6 @@ open class UiComponentImpl(
 			invalidate(ValidationFlags.RENDER_CONTEXT)
 		}
 
-	/**
-	 * @see RenderContext.draws
-	 */
-	var draws: Boolean
-		get() = _renderContext.drawsSelf
-		set(value) {
-			_renderContext.drawsSelf = value
-			invalidate(ValidationFlags.RENDER_CONTEXT)
-		}
-
-	private val parentDraws: Boolean
-		get() = _renderContext.parentContext.draws
-
 	private val rayTmp = Ray()
 
 	init {
@@ -271,7 +247,6 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
 				addNode(RENDER_CONTEXT, TRANSFORM or STYLES, ::updateRenderContext)
-				addNode(REDRAW_REGIONS, LAYOUT or RENDER_CONTEXT or VERTICES, 0, checkAllFound = false, onValidate = ::updateRedrawRegions)
 			}
 		}
 
@@ -837,21 +812,6 @@ open class UiComponentImpl(
 		_renderContext.invalidate() // Mark the context's cache as invalid
 	}
 
-	protected open fun updateRedrawRegions() {
-//		updateDrawRegionCanvas(_drawRegionCanvas.inf())
-//		val drawRegionScreen = glState.framebuffer.canvasToScreen(drawRegionCanvas, _drawRegionScreen)
-//		val redraw = renderContext.redraw
-//		if (redraw.enabled) {
-//			// Invalidate the previously drawn region
-//			renderContext.redraw.invalidate(previousDrawRegionScreen)
-//			previousDrawRegionScreen.clear()
-//			// Invalidate the new draw region
-//			if (draws && !parentDraws && visible && alpha > 0f) {
-//				renderContext.redraw.invalidate(drawRegionScreen)
-//			}
-//		}
-	}
-
 	/**
 	 * Updates this component's local draw region.
 	 *
@@ -862,14 +822,6 @@ open class UiComponentImpl(
 	 */
 	protected open fun updateDrawRegionLocal(out: Box) {
 		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
-	}
-
-	protected open fun updateDrawRegionCanvas(out: MinMax) {
-		val drawRegion = _drawRegion.inf()
-		updateDrawRegionLocal(drawRegion)
-		if (drawRegion.isNotEmpty()) {
-			out.set(localToCanvas(drawRegion).clamp(renderContext.clipRegion))
-		}
 	}
 
 	//-----------------------------------------------
@@ -905,33 +857,10 @@ open class UiComponentImpl(
 
 	override fun update() = validate()
 
-	final override val drawRegionCanvas: RectangleRo
-		get() {
-			validate(ValidationFlags.REDRAW_REGIONS)
-			return _drawRegionCanvas
-		}
-
-	final override val drawRegionScreen: IntRectangleRo
-		get() {
-			validate(ValidationFlags.REDRAW_REGIONS)
-			return _drawRegionScreen
-		}
-
-	/**
-	 * True if this component is visible, has opacity, and passes a redraw check with the render context [RedrawRegions].
-	 */
-	protected open val needsRedraw: Boolean
-		get() {
-//			val renderContext = _renderContext
-			return visible && colorTint.a > 0f
-		}
-
 	override fun render() {
 		if (validation.invalidFlags != 0)
 			Log.error("render $this with invalid flags ${ValidationFlags.flagsToString(validation.invalidFlags)}")
-		if (needsRedraw) {
-			if (draws && !parentDraws)
-				previousDrawRegionScreen.set(drawRegionScreen)
+		if (visible && colorTint.a > 0f) {
 			draw()
 		}
 	}

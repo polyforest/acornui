@@ -49,7 +49,6 @@ object ValidationFlags {
 
 	const val RENDER_CONTEXT: Int = 1 shl 8
 	const val VERTICES: Int = 1 shl 9
-	const val REDRAW_REGIONS: Int = 1 shl 10
 
 	const val RESERVED_1: Int = 1 shl 11
 	const val RESERVED_2: Int = 1 shl 12
@@ -74,7 +73,6 @@ object ValidationFlags {
 
 		RENDER_CONTEXT-> "RENDER_CONTEXT"
 		VERTICES -> "VERTICES"
-		REDRAW_REGIONS -> "REDRAW_REGION"
 
 		RESERVED_1 -> "RESERVED_1"
 		RESERVED_2 -> "RESERVED_2"
@@ -110,10 +108,6 @@ fun Validatable.invalidateLayout() {
 
 fun Validatable.invalidateRenderContext() {
 	invalidate(ValidationFlags.RENDER_CONTEXT)
-}
-
-fun Validatable.invalidateDraw() {
-	invalidate(ValidationFlags.REDRAW_REGIONS)
 }
 
 fun Validatable.invalidateProperties() {

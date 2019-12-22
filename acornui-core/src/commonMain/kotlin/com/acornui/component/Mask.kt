@@ -19,14 +19,13 @@ package com.acornui.component
 import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.Window
-import com.acornui.math.IntRectangle
 import com.acornui.math.Vector3
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 object StencilUtil {
 
-	var depth = 0 // Start at depth 0 instead of -1 because the stage reserves bit 1.
+	var depth = -1
 	private var maxDepth = -1
 
 	fun mask(batch: ShaderBatch, gl: Gl20, renderMask: () -> Unit, renderContents: () -> Unit) {

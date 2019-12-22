@@ -17,11 +17,12 @@
 package com.acornui.component
 
 import com.acornui.Disposable
-import com.acornui.RedrawRegions
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
-import com.acornui.debug
-import com.acornui.di.*
+import com.acornui.di.DependencyPair
+import com.acornui.di.Injector
+import com.acornui.di.OwnedImpl
+import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
@@ -29,14 +30,10 @@ import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
-import com.acornui.input.Ascii
 import com.acornui.input.SoftKeyboardManager
-import com.acornui.input.keyDown
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
-import com.acornui.math.MinMax
 import com.acornui.popup.PopUpManager
-import com.acornui.reflect.observable
 import com.acornui.time.timer
 
 /**
@@ -78,28 +75,10 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		} catch (e: Throwable) {}
 
 		watch(style) {
-			useRedrawRegions = it.useRedrawRegions
-			showRedrawRegions = it.showRedrawRegions && it.useRedrawRegions
-		}
-		if (debug) {
-			keyDown().add {
-				if (it.altKey && it.ctrlKey && it.keyCode == Ascii.R) {
-					style.showRedrawRegions = !style.showRedrawRegions
-				}
-				if (it.metaKey && it.ctrlKey && it.keyCode == Ascii.R) {
-					style.useRedrawRegions = !style.useRedrawRegions
-				}
-			}
+			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
 		}
 	}
 	
-	private var showRedrawRegions = false
-	
-	private var useRedrawRegions: Boolean by observable(true) {
-		_renderContext.redrawOverride = if (it) null else RedrawRegions.ALWAYS 
-		invalidate(ValidationFlags.RENDER_CONTEXT)
-	}
-
 	private fun skinCheck() {
 		if (showWaitingForSkinMessage && styleRules.isEmpty())
 			Log.debug("Awaiting skin...")
@@ -138,12 +117,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		val h = window.framebufferHeight
 		gl.viewport(0, 0, w, h)
 		gl.bindFramebuffer(null)
-		renderContext.redraw.invalidate(0, 0, w, h)
 		super.updateRenderContext()
-	}
-
-	override fun updateDrawRegionCanvas(out: MinMax) {
-		out.set(0f, 0f, _bounds.width, _bounds.height)
 	}
 
 	//-------------------------------------------------------------
@@ -182,50 +156,12 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	}
 
 	override fun draw() {
-		val redraw = renderContext.redraw
-		if (redraw.enabled) {
-			gl.clearStencil(0)
-			gl.clear(Gl20.STENCIL_BUFFER_BIT)
-			gl.clearStencil(1)
-			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
-			gl.enable(Gl20.SCISSOR_TEST)
-			redraw.regions.forEach2 {
-				gl.scissor(it.x, it.y, it.width, it.height)
-				gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-			}
-			gl.disable(Gl20.SCISSOR_TEST)
-		} else {
-			gl.clearStencil(1)
-			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
-			gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-		}
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+
 		ShaderBatch.totalDrawCalls = 0
 		gl.uniforms.setCamera(renderContext, useModel = false)
 		super.draw()
 		gl.batch.flush()
-
-		// Draw redraw regions
-
-		if (showRedrawRegions) {
-			gl.clearColor(Color.RED)
-			gl.enable(Gl20.SCISSOR_TEST)
-			redraw.regions.forEach2 {
-				gl.scissor(it.x, it.y, it.width, 1)
-				gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-				gl.scissor(it.x, it.y, 1, it.height)
-				gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-				gl.scissor(it.right - 1, it.y, 1, it.height)
-				gl.clear(Gl20.COLOR_BUFFER_BIT)
-
-				gl.scissor(it.x, it.bottom - 1, it.width, 1)
-				gl.clear(Gl20.COLOR_BUFFER_BIT)
-			}
-			gl.disable(Gl20.SCISSOR_TEST)
-			gl.clearColor(style.backgroundColor ?: defaultBackgroundColor)
-		}
-		redraw.clear()
 	}
 
 	override fun dispose() {

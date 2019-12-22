@@ -159,23 +159,15 @@ open class ContainerImpl(
 	private val childrenUpdateIterator = _children.concurrentIterator()
 	private val vec3Tmp = Vector3()
 
-	override fun updateDrawRegionCanvas(out: MinMax) {
-		if (draws)
-			return super.updateDrawRegionCanvas(out)
-		_children.forEach2 { child ->
-			out.ext(child.drawRegionCanvas)
-		}
-	}
-
 	override fun update() {
 		super.update()
-		if (childrenNeedValidation) {
-			childrenNeedValidation = false
+//		if (childrenNeedValidation) {
+	//			childrenNeedValidation = false
 			childrenUpdateIterator.iterate {
 				it.update()
 				true
 			}
-		}
+//		}
 	}
 
 	override fun draw() {
@@ -356,7 +348,7 @@ open class ContainerImpl(
 
 	companion object {
 
-		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING or ValidationFlags.REDRAW_REGIONS
+		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or

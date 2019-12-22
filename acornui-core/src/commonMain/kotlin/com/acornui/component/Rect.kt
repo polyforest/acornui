@@ -73,7 +73,6 @@ open class Rect(
 	}
 
 	init {
-		draws = true
 		defaultWidth = 100f
 		defaultHeight = 50f
 		watch(style) {

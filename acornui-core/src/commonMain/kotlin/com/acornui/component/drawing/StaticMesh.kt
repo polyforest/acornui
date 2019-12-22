@@ -58,8 +58,7 @@ open class StaticMeshComponent(
 	private val colorTransformation = colorTransformation()
 
 	init {
-		draws = true
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ValidationFlags.REDRAW_REGIONS, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {

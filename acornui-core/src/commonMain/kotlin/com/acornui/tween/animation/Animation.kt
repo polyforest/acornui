@@ -69,7 +69,6 @@ class AnimationInstance(
 	val tween: TimelineTween = timelineTween()
 
 	init {
-		draws = true // Animations have a lot of moving parts, more performant to just set one redraw region.
 		tween.loopAfter = true
 		for (i in libraryItem.timeline.layers.lastIndex downTo 0) {
 			val layer = libraryItem.timeline.layers[i]
@@ -86,7 +85,12 @@ class AnimationInstance(
 
 }
 
-private class LayerTween(override val duration: Float, layer: Layer, private val target: UiComponent, globalEasings: Map<String, AnimationEasing>) : TweenBase() {
+private class LayerTween(
+		override val duration: Float,
+		layer: Layer,
+		private val target: UiComponent,
+		globalEasings: Map<String, AnimationEasing>
+) : TweenBase() {
 
 	private val frames = ArrayList<KeyFrame>()
 

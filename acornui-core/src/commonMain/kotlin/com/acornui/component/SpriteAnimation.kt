@@ -76,7 +76,6 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		private set
 
 	init {
-		draws = true
 		onTick { dT ->
 			val loadedAnimation = animation
 			if (!paused && loadedAnimation != null) {
@@ -93,8 +92,8 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 					} else {
 						currentFrame++
 					}
-					invalidateDraw()
 				}
+				window.requestRender()
 			}
 		}
 	}

@@ -73,9 +73,9 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TextValidationFlags.TEXT_ELEMENTS, dependencies = 0, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateSelection)
-		validation.addNode(TextValidationFlags.VERTICES, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateVertices)
-		validation.addNode(TextValidationFlags.WORLD_VERTICES, dependencies = TextValidationFlags.VERTICES or ValidationFlags.RENDER_CONTEXT or TextValidationFlags.SELECTION, dependents = ValidationFlags.REDRAW_REGIONS, onValidate = ::updateWorldVertices)
+		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, onValidate = ::updateSelection)
+		validation.addNode(TextValidationFlags.VERTICES, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.LAYOUT, onValidate = ::updateVertices)
+		validation.addNode(TextValidationFlags.WORLD_VERTICES, dependencies = TextValidationFlags.VERTICES or ValidationFlags.RENDER_CONTEXT or TextValidationFlags.SELECTION, onValidate = ::updateWorldVertices)
 	}
 
 	override val lines: List<LineInfoRo>

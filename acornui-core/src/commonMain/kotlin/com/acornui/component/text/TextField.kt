@@ -124,7 +124,6 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 	private val _textContents = p { +_textSpan }
 
 	init {
-		draws = true
 		element = _textContents
 		// Add the styles as rules so that they cascade down into the text spans:
 		addStyleRule(flowStyle)

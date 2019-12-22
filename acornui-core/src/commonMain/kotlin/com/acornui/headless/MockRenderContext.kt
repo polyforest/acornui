@@ -1,6 +1,5 @@
 package com.acornui.headless
 
-import com.acornui.RedrawRegions
 import com.acornui.component.RenderContextRo
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -21,6 +20,4 @@ object MockRenderContext : RenderContextRo {
 	override val canvasTransform: RectangleRo = RectangleRo.EMPTY
 	override val modelTransform: Matrix4Ro = Matrix4.IDENTITY
 	override val modelTransformInv: Matrix4Ro = Matrix4.IDENTITY
-	override val redraw: RedrawRegions = RedrawRegions.ALWAYS
-	override val draws: Boolean = false
 }
