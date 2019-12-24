@@ -1426,6 +1426,7 @@ class Matrix4() : Matrix4Ro {
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
+		if (other == null) return false
 		other as Matrix4Ro
 		if (_mode != other.mode) return false
 		return when (_mode) {

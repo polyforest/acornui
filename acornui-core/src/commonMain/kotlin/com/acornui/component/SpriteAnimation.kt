@@ -133,10 +133,6 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		invalidateLayout()
 	}
 
-	init {
-		validation.addNode(VERTICES, ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val animation = animation ?: return
 		val w = explicitWidth ?: animation.frames.firstOrNull()?.naturalWidth ?: 0f
@@ -144,11 +140,12 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		out.set(w, h)
 	}
 
-	private fun updateWorldVertices() {
+	override fun updateGlobalVertices() {
+		super.updateGlobalVertices()
 		val animation = animation ?: return
 		if (width <= 0f || height <= 0f) return
 		animation.frames.forEach2 {
-			it.updateWorldVertices(width, height, renderContext.modelTransform, renderContext.colorTint)
+			it.updateGlobalVertices(width, height, transformGlobal, colorTintGlobal)
 		}
 	}
 

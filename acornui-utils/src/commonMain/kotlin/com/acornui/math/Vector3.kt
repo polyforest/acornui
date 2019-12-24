@@ -645,6 +645,7 @@ class Vector3 (
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
+		if (other == null) return false
 		other as Vector3Ro
 
 		if (x != other.x) return false

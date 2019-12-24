@@ -26,12 +26,12 @@ interface ModelTransformableRo {
 	/**
 	 * The transformation of local to global coordinates.
 	 */
-	val modelTransform: Matrix4Ro
+	val transformGlobal: Matrix4Ro
 
 	/**
 	 * The transformation of global to local coordinates.
 	 */
-	val modelTransformInv: Matrix4Ro
+	val transformGlobalInv: Matrix4Ro
 }
 
 /**
@@ -41,7 +41,7 @@ interface ModelTransformableRo {
  * @return Returns the coord
  */
 fun ModelTransformableRo.localToGlobal(localCoord: Vector3): Vector3 {
-	modelTransform.prj(localCoord)
+	transformGlobal.prj(localCoord)
 	return localCoord
 }
 
@@ -52,7 +52,7 @@ fun ModelTransformableRo.localToGlobal(localCoord: Vector3): Vector3 {
  * @return Returns the coord
  */
 fun ModelTransformableRo.globalToLocal(globalCoord: Vector3): Vector3 {
-	modelTransformInv.prj(globalCoord)
+	transformGlobalInv.prj(globalCoord)
 	return globalCoord
 }
 
@@ -63,7 +63,7 @@ fun ModelTransformableRo.globalToLocal(globalCoord: Vector3): Vector3 {
  * @return Returns the ray
  */
 fun ModelTransformableRo.localToGlobal(ray: Ray): Ray {
-	ray.mul(modelTransform)
+	ray.mul(transformGlobal)
 	return ray
 }
 
@@ -77,7 +77,7 @@ fun ModelTransformableRo.localToGlobal(ray: Ray): Ray {
  * @return Returns the ray
  */
 fun ModelTransformableRo.globalToLocal(ray: Ray): Ray {
-	ray.mul(modelTransformInv)
+	ray.mul(transformGlobalInv)
 	return ray
 }
 

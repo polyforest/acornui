@@ -305,7 +305,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 			val slot = drawOrder[i]
 			val attachment = slot.attachment
 			val vertices: List<Float>? = if (attachment is RegionAttachment) {
-				attachment.updateWorldVertices(slot)
+				attachment.updateGlobalVertices(slot)
 			} else if (attachment is MeshAttachment) {
 				attachment.updateWorldVertices(slot)
 			} else if (attachment is WeightedMeshAttachment) {

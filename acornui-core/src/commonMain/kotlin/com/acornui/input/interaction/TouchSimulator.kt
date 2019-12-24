@@ -27,7 +27,7 @@ import com.acornui.di.inject
 import com.acornui.input.*
 import com.acornui.graphic.Color
 import com.acornui.math.Vector2
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 
 class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 
@@ -68,7 +68,7 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 		}
 	}
 
-	private var isSimulating: Boolean by observable(false) { new ->
+	private var isSimulating: Boolean by afterChange(false) { new ->
 		if (new) {
 			startPosition.set(mouseState.canvasX, mouseState.canvasY)
 

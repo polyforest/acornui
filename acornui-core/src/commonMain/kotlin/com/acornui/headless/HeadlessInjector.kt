@@ -17,7 +17,6 @@
 package com.acornui.headless
 
 import com.acornui.asset.Loaders
-import com.acornui.component.RenderContextRo
 import com.acornui.di.*
 import com.acornui.focus.FocusManager
 import com.acornui.gl.core.CachedGl20
@@ -48,7 +47,6 @@ object HeadlessInjector {
 				Loaders.textLoader to MockLoader(""),
 				Loaders.textureLoader to MockLoader(MockTexture),
 				InteractivityManager to MockInteractivityManager,
-				RenderContextRo to MockRenderContext,
 				FocusManager to MockFocusManager,
 				CachedGl20 to MockGl20
 		))

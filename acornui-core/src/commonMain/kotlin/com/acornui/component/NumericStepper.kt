@@ -32,7 +32,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.fractionDigits
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal1
 import com.acornui.text.NumberFormatter
 import com.acornui.text.numberFormatter
@@ -58,14 +58,14 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	/**
 	 * Sets the step size of the up and down buttons.
 	 */
-	var step: Float by observable(1f) {
+	var step: Float by afterChange(1f) {
 		refreshFormatter()
 	}
 
 	/**
 	 * Sets the smallest fraction the user can set as a value.
 	 */
-	var minStep: Float by observable(0.01f) {
+	var minStep: Float by afterChange(0.01f) {
 		refreshFormatter()
 	}
 
@@ -73,7 +73,7 @@ class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	 * When stepping, offset is added before rounding to the nearest [step].
 	 * Setting this will also set the formatter fraction digits.
 	 */
-	var offset: Float by observable(0f) {
+	var offset: Float by afterChange(0f) {
 		refreshFormatter()
 	}
 

@@ -88,7 +88,7 @@ open class SkeletonComponent(
 			val slot = drawOrder[i]
 			val attachment = slot.attachment
 			if (attachment is RegionAttachment) {
-				val vertices = attachment.updateWorldVertices(slot)
+				val vertices = attachment.updateGlobalVertices(slot)
 				val triangles = quadTriangles
 				if (intersects(x, y, vertices, triangles)) return slot
 			} else if (attachment is MeshAttachment) {

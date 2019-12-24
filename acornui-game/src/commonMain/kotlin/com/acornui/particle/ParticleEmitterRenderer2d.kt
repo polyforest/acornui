@@ -84,7 +84,7 @@ class ParticleEmitterRenderer2d(
 		}
 		transform.mulLeft(emitterTransform)
 		tint.set(emitterTint).mul(colorTint)
-		sprite.updateWorldVertices(transform = transform, tint = tint)
+		sprite.updateGlobalVertices(transform = transform, tint = tint)
 		sprite.render()
 	}
 

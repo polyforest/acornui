@@ -127,23 +127,23 @@ class Bootstrap(
 		}
 	}
 
-	class BootTaskProperty<S, T : Any>(
+	class BootTaskProperty<R, T : Any>(
 			private val bootstrap: Bootstrap,
 			private val dKey: DKey<T>,
 			private val timeout: Float,
 			private val isOptional: Boolean,
 			private val work: Work<T>
-	) : ReadOnlyProperty<S, Work<T>> {
+	) : ReadOnlyProperty<R, Work<T>> {
 
 		operator fun provideDelegate(
-				thisRef: S,
+				thisRef: R,
 				prop: KProperty<*>
-		): ReadOnlyProperty<S, Work<T>> {
+		): ReadOnlyProperty<R, Work<T>> {
 			bootstrap.task(prop.name, dKey, timeout, isOptional, work)
 			return this
 		}
 
-		override fun getValue(thisRef: S, property: KProperty<*>): Work<T> {
+		override fun getValue(thisRef: R, property: KProperty<*>): Work<T> {
 			return work
 		}
 	}

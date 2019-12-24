@@ -14,7 +14,7 @@ import com.acornui.di.Owned
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import com.acornui.reflect.observableAndCall
+import com.acornui.reflect.afterChangeWithInit
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -48,7 +48,7 @@ class BasicIconButtonSkin(
 			textField.visible = value.isNotEmpty()
 		}
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		texture.buttonState = value
 	}
 

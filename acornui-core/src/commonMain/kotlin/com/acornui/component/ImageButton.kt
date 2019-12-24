@@ -29,7 +29,7 @@ import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.math.Bounds
 import com.acornui.math.colorTransformation
 import com.acornui.math.grayscale
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 
 /**
  * A button that tints a single element (typically a white image).
@@ -54,7 +54,7 @@ class ImageButton(
 		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
 	}
 
-	var disabled: Boolean by observable(false) {
+	var disabled: Boolean by afterChange(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 		invalidateProperties()

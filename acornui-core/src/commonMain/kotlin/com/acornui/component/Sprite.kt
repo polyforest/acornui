@@ -167,7 +167,7 @@ class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 			} / scaleY
 		}
 
-	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateGlobalVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
 		if (texture == null) return // Nothing to draw
 		val vertices = vertices
 		this.tint.set(tint)
@@ -182,29 +182,29 @@ class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 	override fun render() {
 		if (texture == null) return // Nothing to draw
 		val tint = tint
-		val normalWorld = normal
+		val normalGlobal = normal
 
 		val batch = gl.batch
 		batch.begin(texture = texture!!, blendMode = blendMode, premultipliedAlpha = premultipliedAlpha)
 
 		if (isRotated) {
 			// Top left
-			batch.putVertex(vertices[0], normalWorld, tint, u2, v)
+			batch.putVertex(vertices[0], normalGlobal, tint, u2, v)
 			// Top right
-			batch.putVertex(vertices[1], normalWorld, tint, u2, v2)
+			batch.putVertex(vertices[1], normalGlobal, tint, u2, v2)
 			// Bottom right
-			batch.putVertex(vertices[2], normalWorld, tint, u, v2)
+			batch.putVertex(vertices[2], normalGlobal, tint, u, v2)
 			// Bottom left
-			batch.putVertex(vertices[3], normalWorld, tint, u, v)
+			batch.putVertex(vertices[3], normalGlobal, tint, u, v)
 		} else {
 			// Top left
-			batch.putVertex(vertices[0], normalWorld, tint, u, v)
+			batch.putVertex(vertices[0], normalGlobal, tint, u, v)
 			// Top right
-			batch.putVertex(vertices[1], normalWorld, tint, u2, v)
+			batch.putVertex(vertices[1], normalGlobal, tint, u2, v)
 			// Bottom right
-			batch.putVertex(vertices[2], normalWorld, tint, u2, v2)
+			batch.putVertex(vertices[2], normalGlobal, tint, u2, v2)
 			// Bottom left
-			batch.putVertex(vertices[3], normalWorld, tint, u, v2)
+			batch.putVertex(vertices[3], normalGlobal, tint, u, v2)
 		}
 		batch.putQuadIndices()
 	}

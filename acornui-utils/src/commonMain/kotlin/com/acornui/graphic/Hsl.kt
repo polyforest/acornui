@@ -83,7 +83,8 @@ class Hsl(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is HslRo) return false
+		if (other == null) return false
+		other as HslRo
 		if (h != other.h) return false
 		if (s != other.s) return false
 		if (l != other.l) return false

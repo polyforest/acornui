@@ -21,7 +21,7 @@ package com.acornui.graphic
 import com.acornui.math.*
 import com.acornui.observe.ModTagImpl
 import com.acornui.observe.ModTagRo
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.bind
 import com.acornui.signal.or
 import kotlin.properties.ReadWriteProperty
@@ -584,7 +584,7 @@ abstract class CameraBase : Camera {
 		_frustum.update(combinedInv)
 	}
 
-	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = observable(initial) {
+	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = afterChange(initial) {
 		dirty()
 	}
 

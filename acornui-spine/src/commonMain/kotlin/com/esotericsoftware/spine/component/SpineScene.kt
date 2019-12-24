@@ -101,8 +101,8 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 	override fun draw() {
 		val batch = gl.batch
-		gl.uniforms.useCamera(renderContext, useModel = true) {
-			val colorTint = renderContext.colorTint
+		gl.uniforms.useCamera(this, useModel = true) {
+			val colorTint = colorTintGlobal
 
 			for (i in 0.._children.lastIndex) {
 				_children[i].draw(batch, colorTint)

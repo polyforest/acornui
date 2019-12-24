@@ -32,9 +32,9 @@ interface TransformableRo : PositionableRo, ModelTransformableRo {
 
 	/**
 	 * If this is not null, this custom transformation matrix will be used. Note that if this is set, all properties
-	 * that would otherwise generate the transformation matrix are no longer applicable.
+	 * that would otherwise generate the local transformation matrix are no longer applicable.
 	 */
-	val customTransform: Matrix4Ro?
+	val transformOverride: Matrix4Ro?
 
 	val rotationX: Float
 
@@ -65,7 +65,10 @@ interface TransformableRo : PositionableRo, ModelTransformableRo {
  */
 interface Transformable : TransformableRo, Positionable {
 
-	override var customTransform: Matrix4Ro?
+	/**
+	 * Sets the custom local transformation.
+	 */
+	override var transformOverride: Matrix4Ro?
 
 	override var rotationX: Float
 

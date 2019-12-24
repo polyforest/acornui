@@ -51,26 +51,26 @@ open class GlowFilter(owner: Owned) : RenderFilterBase(owner) {
 
 	private val blurSprite = Sprite(gl)
 
-	private val offsetWorld = Vector3()
+	private val offsetGlobal = Vector3()
 	private val transform = Matrix4()
-	var hasUpdatedWorld = false
+	var hasUpdatedGlobal = false
 
-	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		hasUpdatedWorld = true
-		transform.rot(offsetWorld.set(offset))
-		val blurredRegion = blurFilter.updateWorldVertices(regionCanvas, transform, tint)
+	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		hasUpdatedGlobal = true
+		transform.rot(offsetGlobal.set(offset))
+		val blurredRegion = blurFilter.updateGlobalVertices(regionCanvas, transform, tint)
 		blurFilter.drawable(blurSprite)
-		this.transform.set(blurFilter.transform).translate(offsetWorld)
-		blurSprite.updateWorldVertices(transform = this.transform, tint = tint)
+		this.transform.set(blurFilter.transform).translate(offsetGlobal)
+		blurSprite.updateGlobalVertices(transform = this.transform, tint = tint)
 		return blurredRegion.copy().inflate(
-				top = maxOf(0f, -offsetWorld.y),
-				right = maxOf(0f, offsetWorld.x),
-				bottom = maxOf(0f, offsetWorld.y),
-				left = maxOf(0f, -offsetWorld.x))
+				top = maxOf(0f, -offsetGlobal.y),
+				right = maxOf(0f, offsetGlobal.x),
+				bottom = maxOf(0f, offsetGlobal.y),
+				left = maxOf(0f, -offsetGlobal.x))
 	}
 
 	override fun render(inner: () -> Unit) {
-		if (!hasUpdatedWorld)
+		if (!hasUpdatedGlobal)
 			throw Exception("...")
 		drawToFramebuffer(inner)
 		gl.uniforms.useColorTransformation(colorTransformation) {

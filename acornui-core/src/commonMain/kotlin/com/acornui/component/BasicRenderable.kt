@@ -36,7 +36,7 @@ interface BasicRenderable {
 	/**
 	 * Updates the world vertices based on the model transform and color tint.
 	 */
-	fun updateWorldVertices(width: Float = naturalWidth, height: Float = naturalHeight, transform: Matrix4Ro = Matrix4.IDENTITY, tint: ColorRo = Color.WHITE)
+	fun updateGlobalVertices(width: Float = naturalWidth, height: Float = naturalHeight, transform: Matrix4Ro = Matrix4.IDENTITY, tint: ColorRo = Color.WHITE)
 
 	/**
 	 * Renders this component.

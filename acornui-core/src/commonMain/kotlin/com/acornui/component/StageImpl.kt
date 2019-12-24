@@ -26,13 +26,13 @@ import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
-import com.acornui.gl.core.DefaultShaderProgram
-import com.acornui.gl.core.Gl20
-import com.acornui.gl.core.ShaderBatch
+import com.acornui.gl.core.*
 import com.acornui.graphic.Color
+import com.acornui.graphic.centerCamera
+import com.acornui.graphic.orthographicCamera
 import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
-import com.acornui.math.Bounds
+import com.acornui.math.*
 import com.acornui.popup.PopUpManager
 import com.acornui.time.timer
 
@@ -55,8 +55,24 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	private var softKeyboardView: UiComponent? = null
 
 	private var skinCheckTimer: Disposable? = null
+	private val cam = orthographicCamera(false)
+
+	private val _windowRegion = MinMax()
+
+	override val canvasClipRegion: MinMaxRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		canvasClipRegionOverride ?: _windowRegion
+	}
+
+	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		canvasTransformOverride ?: _windowRegion
+	}
+
+	override val viewProjectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.combined ?: parent?.viewProjectionTransform ?: Matrix4.IDENTITY
+	}
 
 	init {
+		cameraOverride = cam
 		skinCheckTimer = timer(5f, 10, callback = ::skinCheck)
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
@@ -66,9 +82,11 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		popUpManagerView.layoutInvalidatingFlags = 0
 
 		softKeyboardManager.changed.add(::invalidateLayout.as1)
-		gl.stencilFunc(Gl20.EQUAL, 1, -1)
+		gl.colorMask(true, true, true, true)
+		gl.stencilFunc(Gl20.EQUAL, 0, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
 		gl.enable(Gl20.STENCIL_TEST)
+
 		gl.enable(Gl20.BLEND)
 		try {
 			gl.useProgram(DefaultShaderProgram(gl).program)
@@ -94,7 +112,7 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 	 * This will update the viewport and framebuffer information.
 	 */
 	protected open fun windowChangedHandler() {
-		invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
+		invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEW_PROJECTION)
 	}
 
 	override fun onActivated() {
@@ -112,12 +130,15 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		window.refresh.remove(::windowChangedHandler)
 	}
 
-	override fun updateRenderContext() {
+	override fun updateViewProjection() {
+		super.updateViewProjection()
 		val w = window.framebufferWidth
 		val h = window.framebufferHeight
+		if (w <= 0f || h <= 0f) return
 		gl.viewport(0, 0, w, h)
 		gl.bindFramebuffer(null)
-		super.updateRenderContext()
+		_windowRegion.set(0f, 0f, window.width, window.height)
+		window.centerCamera(cam)
 	}
 
 	//-------------------------------------------------------------
@@ -157,9 +178,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 
 	override fun draw() {
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-
 		ShaderBatch.totalDrawCalls = 0
-		gl.uniforms.setCamera(renderContext, useModel = false)
+		gl.uniforms.setCamera(this)
 		super.draw()
 		gl.batch.flush()
 	}

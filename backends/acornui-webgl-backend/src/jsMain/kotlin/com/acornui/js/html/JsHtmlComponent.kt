@@ -88,8 +88,8 @@ class JsHtmlComponent(
 		out.set(component.bounds)
 	}
 
-	override fun updateRenderContext() {
-		super.updateRenderContext()
+	override fun updateViewProjection() {
+		super.updateViewProjection()
 		var v = true
 		parentWalk {
 			if (!it.visible) {
@@ -101,8 +101,8 @@ class JsHtmlComponent(
 		}
 		component.visible = v
 
-		component.concatenatedTransform = renderContext.modelTransform
-		component.concatenatedColorTint = renderContext.colorTint
+		component.concatenatedTransform = transformGlobal
+		component.concatenatedColorTint = colorTintGlobal
 	}
 
 	override fun draw() {

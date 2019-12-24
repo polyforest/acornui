@@ -28,32 +28,20 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 
 	protected abstract val renderable: T?
 
-	init {
-		validation.addNode(VERTICES, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.RENDER_CONTEXT, ::updateWorldVertices)
-	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = renderable ?: return
 		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
 	}
 
-	protected open fun updateWorldVertices() {
+	override fun updateGlobalVertices() {
+		super.updateGlobalVertices()
 		if (width <= 0f || height <= 0f) return
-		val renderContext = renderContext
-		renderable?.updateWorldVertices(width, height, renderContext.modelTransform, renderContext.colorTint)
+		renderable?.updateGlobalVertices(width, height, transformGlobal, colorTintGlobal)
 	}
 
 	override fun draw() {
 		if (width <= 0f || height <= 0f) return
 		renderable?.render()
-	}
-
-	companion object {
-
-		/**
-		 * The validation flag for this component's vertices.
-		 */
-		const val VERTICES = ValidationFlags.RESERVED_1
 	}
 }
 

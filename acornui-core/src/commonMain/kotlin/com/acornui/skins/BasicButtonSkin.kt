@@ -12,7 +12,7 @@ import com.acornui.di.Owned
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.reflect.observableAndCall
+import com.acornui.reflect.afterChangeWithInit
 
 private class BasicButtonSkin(
 		owner: Owned,
@@ -115,7 +115,7 @@ private class BasicLabelButtonSkin(
 		charStyle.colorTint = Color.WHITE
 	}
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		texture.buttonState = value
 		refreshTextColor(value)
 	}
@@ -134,7 +134,7 @@ private class BasicLabelButtonSkin(
 		} ?: charStyle.colorTint
 	}
 
-	override var label: String by observableAndCall("") { value ->
+	override var label: String by afterChangeWithInit("") { value ->
 		textField.label = value
 		texture.label = value
 	}
@@ -171,12 +171,12 @@ private class BasicCheckboxSkin(
 		}
 	}
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		box.buttonState = value
 		textField.styleTags.clear()
 	}
 
-	override var label: String by observableAndCall("") { value ->
+	override var label: String by afterChangeWithInit("") { value ->
 		textField.label = value
 		textField.visible = value.isNotEmpty()
 		box.label = value
@@ -208,7 +208,7 @@ private class BasicCheckboxBox(
 
 	override var label: String = ""
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		upState.visible = false
 		toggledState.visible = false
 		indeterminateState.visible = false
@@ -266,7 +266,7 @@ private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerI
 		toggled = addChild(basicIconButtonSkin(texture = basicButtonSkin(theme, corners, borderThickness)))
 	}
 
-	override var buttonState: ButtonState by observableAndCall(ButtonState.UP) { value ->
+	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		toggled.buttonState = value
 		notToggled.buttonState = value
 		toggled.visible = value.isToggled
@@ -285,7 +285,7 @@ private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerI
 		}
 	}
 
-	override var label: String by observableAndCall("") { value ->
+	override var label: String by afterChangeWithInit("") { value ->
 		toggled.label = value
 		notToggled.label = value
 	}

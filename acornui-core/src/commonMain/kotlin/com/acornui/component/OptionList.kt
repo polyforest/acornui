@@ -48,7 +48,7 @@ import com.acornui.math.Pad
 import com.acornui.popup.PopUpManager
 import com.acornui.popup.lift
 import com.acornui.recycle.Clearable
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
 import com.acornui.text.StringFormatter
@@ -149,7 +149,7 @@ open class OptionList<E : Any>(
 	/**
 	 * If false, the text input will not accept type input, and items may only be selected via the dropdown.
 	 */
-	var editable: Boolean by observable(true) {
+	var editable: Boolean by afterChange(true) {
 		textInput.editable = it
 		textInput.selectable = it
 		handCursor?.dispose()
@@ -159,7 +159,7 @@ open class OptionList<E : Any>(
 	/**
 	 * If true, this option list will use the CommonStyleTags.disabled style tag and have interactivity disabled.
 	 */
-	var disabled: Boolean by observable(false) {
+	var disabled: Boolean by afterChange(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 	}

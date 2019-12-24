@@ -18,7 +18,7 @@ package com.acornui.collection
 
 import com.acornui.Disposable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
@@ -99,7 +99,7 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 	 * If set, this list will be reduced to elements passing the given filter function.
 	 * Changing this will dispatch a [reset] signal.
 	 */
-	override var filter by observable<Filter<E>?>(null) {
+	override var filter by afterChange<Filter<E>?>(null) {
 		dirty()
 	}
 
@@ -108,14 +108,14 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 	 * Changing this will dispatch a [reset] signal.
 	 * Example: listView.sortComparator = { o1, o2 -> o1.compareTo(o2) }
 	 */
-	override var sortComparator by observable<SortComparator<E>?>(null) {
+	override var sortComparator by afterChange<SortComparator<E>?>(null) {
 		dirty()
 	}
 
 	/**
 	 * If true, this list view will be reversed.
 	 */
-	override var reversed: Boolean by observable(false) {
+	override var reversed: Boolean by afterChange(false) {
 		_reset.dispatch()
 	}
 

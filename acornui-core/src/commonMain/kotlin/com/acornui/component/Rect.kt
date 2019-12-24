@@ -21,7 +21,6 @@ import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
 import com.acornui.di.Owned
 import com.acornui.gl.core.*
-import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.math.*
 import com.acornui.math.PI
@@ -197,25 +196,25 @@ open class Rect(
 
 					if (topLeftCorner.texture != null) {
 						transform.setTranslation(fillPad.left, fillPad.top)
-						topLeftCorner.updateWorldVertices(transform = transform, tint = tint)
+						topLeftCorner.updateGlobalVertices(transform = transform, tint = tint)
 						topLeftCorner.render()
 					}
 
 					if (topRightCorner.texture != null) {
 						transform.setTranslation(w - topRightX, fillPad.top)
-						topRightCorner.updateWorldVertices(transform = transform, tint = tint)
+						topRightCorner.updateGlobalVertices(transform = transform, tint = tint)
 						topRightCorner.render()
 					}
 
 					if (bottomRightCorner.texture != null) {
 						transform.setTranslation(w - bottomRightX, h - bottomRightY)
-						bottomRightCorner.updateWorldVertices(transform = transform, tint = tint)
+						bottomRightCorner.updateGlobalVertices(transform = transform, tint = tint)
 						bottomRightCorner.render()
 					}
 
 					if (bottomLeftCorner.texture != null) {
 						transform.setTranslation(fillPad.left, h - bottomLeftY)
-						bottomLeftCorner.updateWorldVertices(transform = transform, tint = tint)
+						bottomLeftCorner.updateGlobalVertices(transform = transform, tint = tint)
 						bottomLeftCorner.render()
 					}
 
@@ -449,8 +448,8 @@ open class Rect(
 	}
 
 	override fun draw() {
-		val tint = renderContext.colorTint
-		val transform = renderContext.modelTransform
+		val tint = colorTintGlobal
+		val transform = transformGlobal
 		val margin = style.margin
 		val w = margin.reduceWidth(_bounds.width)
 		val h = margin.reduceHeight(_bounds.height)

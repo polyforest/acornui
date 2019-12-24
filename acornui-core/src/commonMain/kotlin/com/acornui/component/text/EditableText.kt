@@ -17,7 +17,6 @@
 package com.acornui.component.text
 
 import com.acornui.async.getCompletedOrNull
-import com.acornui.async.launch
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
@@ -38,7 +37,7 @@ import com.acornui.math.MathUtils
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.commander
 import com.acornui.mvc.invokeCommand
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.repeat2
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
@@ -63,7 +62,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val _changed = own(Signal0())
 	val changed = _changed.asRo()
 
-	var editable by observable(true) {
+	var editable by afterChange(true) {
 		textCursor.visible = it
 	}
 

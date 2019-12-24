@@ -183,7 +183,8 @@ class IntPad(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is IntPadRo) return false
+		if (other == null) return false
+		other as IntPadRo
 
 		if (top != other.top) return false
 		if (right != other.right) return false

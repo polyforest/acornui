@@ -106,7 +106,7 @@ class ParticleEffectComponent(
 
 	override fun draw() {
 		val effect = _effect ?: return
-		effect.render(renderContext.modelTransform, renderContext.colorTint)
+		effect.render(transformGlobal, colorTintGlobal)
 	}
 
 	override fun dispose() {

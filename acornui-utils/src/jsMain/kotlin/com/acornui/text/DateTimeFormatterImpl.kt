@@ -19,7 +19,7 @@ package com.acornui.text
 
 import com.acornui.collection.copy
 import com.acornui.i18n.Locale
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.system.userInfo
 import com.acornui.text.DateTimeFormatStyle.*
 import com.acornui.time.Date
@@ -99,7 +99,7 @@ actual class DateTimeFormatter : StringFormatter<DateRo> {
 	 * Invalidates the formatter when the value has changed.
 	 */
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return observable(initial) {
+		return afterChange(initial) {
 			_formatter = null
 		}
 	}

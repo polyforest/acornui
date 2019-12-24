@@ -904,6 +904,7 @@ class Quaternion(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
+		if (other == null) return false
 		other as QuaternionRo
 		if (x != other.x) return false
 		if (y != other.y) return false

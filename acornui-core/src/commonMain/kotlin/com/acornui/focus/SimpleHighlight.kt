@@ -54,16 +54,17 @@ open class SimpleHighlight(
 				field?.invalidated?.remove(::highlightedInvalidatedHandler)
 				field = value
 				field?.invalidated?.add(::highlightedInvalidatedHandler)
-				_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
-				invalidate(ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT)
+//				_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
+				// TODO: Put this back together
+				invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEW_PROJECTION)
 			}
 		}
 
 	private fun highlightedInvalidatedHandler(c: UiComponentRo, flags: Int) {
 		if (flags.containsFlag(ValidationFlags.LAYOUT))
 			invalidateLayout()
-		else if (flags.containsFlag(ValidationFlags.RENDER_CONTEXT))
-			invalidate(ValidationFlags.RENDER_CONTEXT)
+		else if (flags.containsFlag(ValidationFlags.VIEW_PROJECTION))
+			invalidate(ValidationFlags.VIEW_PROJECTION)
 	}
 
 	init {
@@ -87,14 +88,6 @@ open class SimpleHighlight(
 			highlight.moveTo(0f, 0f)
 		}
 		out.set(highlight.bounds)
-	}
-
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-	}
-
-	override fun draw() {
-		super.draw()
 	}
 
 	override fun dispose() {

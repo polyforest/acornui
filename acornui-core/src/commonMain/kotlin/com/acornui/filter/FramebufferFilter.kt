@@ -56,11 +56,11 @@ class FramebufferFilter(
 	 */
 	val transform: Matrix4Ro = _transform
 
-	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
 		_transform.setTranslation(regionCanvas.x, regionCanvas.y)
 		framebuffer.setSize(regionCanvas.width * scaleX, regionCanvas.height * scaleY, scaleX, scaleY)
 		framebuffer.drawable(sprite)
-		sprite.updateWorldVertices(transform = _transform, tint = tint)
+		sprite.updateGlobalVertices(transform = _transform, tint = tint)
 		return Rectangle(regionCanvas.x, regionCanvas.y, sprite.naturalWidth, sprite.naturalHeight)
 	}
 

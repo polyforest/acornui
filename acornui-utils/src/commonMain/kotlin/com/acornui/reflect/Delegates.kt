@@ -21,10 +21,9 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * Similar to Delegates.observable, except vetoes when oldValue == newValue and onChange only takes newValue as a
- * parameter.
+ * Invokes [afterChange] if setting this property
  */
-inline fun <T> observable(initialValue: T, crossinline afterChange: (newValue: T) -> Unit):
+inline fun <T> afterChange(initialValue: T, crossinline afterChange: (newValue: T) -> Unit):
 		ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
 
 	override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean {
@@ -35,18 +34,20 @@ inline fun <T> observable(initialValue: T, crossinline afterChange: (newValue: T
 }
 
 /**
- * [observable] Except also invokes the [onChange] callback with [initialValue]
+ * Similar to Delegates.observable, except vetoes when oldValue == newValue and onChange only takes newValue as a
+ * parameter.
+ * [afterChange] is invoked when the delegate is set, and immediately with [initialValue].
  */
-inline fun <T> observableAndCall(initialValue: T, crossinline onChange: (newValue: T) -> Unit):
+inline fun <T> afterChangeWithInit(initialValue: T, crossinline afterChange: (newValue: T) -> Unit):
 		ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
 
 	override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean {
 		return oldValue != newValue
 	}
 
-	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(newValue)
+	override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = afterChange(newValue)
 
 	init {
-		onChange(initialValue)
+		afterChange(initialValue)
 	}
 }

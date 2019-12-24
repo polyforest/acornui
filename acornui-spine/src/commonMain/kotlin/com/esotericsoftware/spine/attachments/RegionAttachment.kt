@@ -58,12 +58,12 @@ open class RegionAttachment(
 	private val color: Color = Color()
 
 	// TL, TR, BR, BL
-	private val worldVertices = ArrayList(vertexSize * 4) { 0f }
+	private val globalVertices = ArrayList(vertexSize * 4) { 0f }
 	private val offset = FloatArray(8)
 
 	init {
 		val page = this.page
-		val vertices = this.worldVertices
+		val vertices = this.globalVertices
 		val bounds = region.bounds
 		val pageW = page.width.toFloat()
 		val pageH = page.height.toFloat()
@@ -139,12 +139,12 @@ open class RegionAttachment(
 	}
 
 	/**
-	 * @return The updated world vertices.
+	 * @return The updated global (world) vertices.
 	 */
-	open fun updateWorldVertices(slot: Slot): List<Float> {
+	open fun updateGlobalVertices(slot: Slot): List<Float> {
 		val skeleton = slot.skeleton
 
-		val vertices = this.worldVertices
+		val vertices = this.globalVertices
 		val offset = this.offset
 		val bone = slot.bone
 		val x = skeleton.x + bone.worldX

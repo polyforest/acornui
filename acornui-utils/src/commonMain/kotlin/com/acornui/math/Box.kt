@@ -530,7 +530,7 @@ class Box(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-
+		if (other == null) return false
 		other as BoxRo
 
 		if (min != other.min) return false

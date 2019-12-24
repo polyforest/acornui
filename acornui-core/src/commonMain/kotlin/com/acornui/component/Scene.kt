@@ -40,11 +40,22 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 			invalidate(ValidationFlags.LAYOUT)
 		}
 
+	private val _canvasTransform = MinMax()
+
+	/**
+	 * The canvas transformation for the scene will be based on
+	 */
+	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.DRAW_REGION) {
+		canvasTransformOverride ?: run {
+			parent?.localToCanvas(_canvasTransform.set(x, y, right, bottom).translate(-originX, -originY))
+			_canvasTransform
+		}
+	}
+
 	init {
 		cameraOverride = camera
-		_renderContext.modelTransformOverride = Matrix4.IDENTITY
-		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
-		validation.addNode(CANVAS_TRANSFORM, dependencies = ValidationFlags.LAYOUT, dependents = ValidationFlags.RENDER_CONTEXT, onValidate = {})
+		transformGlobalOverride = Matrix4.IDENTITY
+		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 	}
 
 	override fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
@@ -63,32 +74,14 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	private val region = MinMax()
-	private val canvasTransformOverride = Rectangle()
-
-	override fun updateRenderContext() {
-		super.updateRenderContext()
-		_renderContext.parentContext.localToCanvas(region.set(x, y, right, bottom).translate(-originX, -originY))
-		_renderContext.canvasTransformOverride = canvasTransformOverride.set(
-				region.xMin,
-				region.yMin,
-				region.width,
-				region.height
-		)
-	}
-
 	override fun render() {
 		if (visible && colorTint.a > 0f) {
 			gl.uniforms.useCamera(camera) {
-				gl.useViewportFromCanvasTransform(renderContext.canvasTransform, window.scaleX, window.scaleY) {
+				gl.useViewportFromCanvasTransform(canvasTransform, window.scaleX, window.scaleY) {
 					draw()
 				}
 			}
 		}
-	}
-
-	companion object {
-		private const val CANVAS_TRANSFORM = 1 shl 16
 	}
 }
 

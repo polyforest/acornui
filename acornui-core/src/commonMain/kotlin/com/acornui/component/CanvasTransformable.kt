@@ -17,10 +17,13 @@
 package com.acornui.component
 
 import com.acornui.gl.core.Framebuffer
+import com.acornui.gl.core.Uniforms
+import com.acornui.gl.core.setCamera
+import com.acornui.gl.core.useCamera
 import com.acornui.graphic.yDown
 import com.acornui.math.*
 
-interface CanvasTransformableRo : ModelTransformableRo {
+interface CameraTransformableRo {
 
 	/**
 	 * The transformation of clip coordinates to global coordinates.
@@ -55,6 +58,9 @@ interface CanvasTransformableRo : ModelTransformableRo {
 	 * The top left of the canvas is 0,0 and the bottom right is the canvas width and height, in points, not pixels.
 	 */
 	val canvasTransform: RectangleRo
+}
+
+interface CanvasTransformableRo : CameraTransformableRo, ModelTransformableRo {
 }
 
 /**
@@ -203,6 +209,30 @@ fun CanvasTransformableRo.canvasToLocal(minMax: MinMax): MinMax {
 	Vector3.free(tmp1)
 	Vector2.free(tmp)
 	return minMax
+}
+
+/**
+ * Returns true if the camera and viewport match.
+ */
+fun CanvasTransformableRo.cameraEquals(renderContext: CanvasTransformableRo): Boolean {
+	return viewProjectionTransform == renderContext.viewProjectionTransform && canvasTransform == renderContext.canvasTransform
+}
+
+/**
+ * Sets the camera uniforms using the given [component].
+ */
+fun Uniforms.setCamera(component: CanvasTransformableRo, useModel: Boolean = false) {
+	if (useModel) setCamera(component.viewProjectionTransform, component.viewTransform, component.transformGlobal)
+	else setCamera(component.viewProjectionTransform, component.viewTransform, Matrix4.IDENTITY)
+}
+
+/**
+ * Sets the camera uniforms using the given [component], calls [inner], then sets the camera back to what it
+ * previously was.
+ */
+fun Uniforms.useCamera(component: CanvasTransformableRo, useModel: Boolean = false, inner: () -> Unit) {
+	if (useModel) useCamera(component.viewProjectionTransform, component.viewTransform, component.transformGlobal, inner)
+	else useCamera(component.viewProjectionTransform, component.viewTransform, Matrix4.IDENTITY, inner)
 }
 
 //fun CanvasTransformableRo.localToScreen(bounds: RectangleRo, out: IntRectangle): IntRectangle {

@@ -39,7 +39,7 @@ import com.acornui.isAncestorOf
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.recycle.Clearable
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce
@@ -283,7 +283,7 @@ private class PopUpManagerView(owner: Owned) : ElementLayoutContainer<CanvasLayo
 		}
 	})
 
-	var modalIndex: Int by observable(-1) { value ->
+	var modalIndex: Int by afterChange(-1) { value ->
 		// Reorder the modal fill container and set its visibility.
 		if (value == -1) {
 			showModal = false
@@ -294,7 +294,7 @@ private class PopUpManagerView(owner: Owned) : ElementLayoutContainer<CanvasLayo
 	}
 
 	private var tween: Tween? = null
-	private var showModal: Boolean by observable(false) { value ->
+	private var showModal: Boolean by afterChange(false) { value ->
 		val s = popUpManagerStyle
 		if (value) {
 			tween?.complete()

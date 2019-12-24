@@ -190,7 +190,7 @@ open class ContainerImpl(
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
 			if ((returnAll || out.isEmpty())) {
 				_children.forEachReversed2 { child ->
-					val childRayCache = if (child.renderContext.cameraEquals(renderContext)) ray else null
+					val childRayCache = if (child.cameraEquals(this)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
 					// Continue iterating if we haven't found an intersecting child yet, or if returnAll is true.
 					returnAll || out.isEmpty()
@@ -352,8 +352,10 @@ open class ContainerImpl(
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
-				ValidationFlags.INTERACTIVITY_MODE or
-				ValidationFlags.RENDER_CONTEXT
+				ValidationFlags.INHERITED_PROPERTIES or
+				ValidationFlags.TRANSFORM or
+				ValidationFlags.COLOR_TINT or
+				ValidationFlags.VIEW_PROJECTION
 	}
 }
 

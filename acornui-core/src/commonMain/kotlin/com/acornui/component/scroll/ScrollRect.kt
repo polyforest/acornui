@@ -71,12 +71,14 @@ class ScrollRectImpl(
 			return _contentBounds
 		}
 
+	private val clipRegion = MinMax(0f, 0f, 0f, 0f)
+
 	init {
 		watch(style) {
 			maskClip.style.borderRadii = it.borderRadii
 			maskClip.style.margin = it.padding
 		}
-		_renderContext.clipRegionLocal = MinMax().inf()
+		clipRegionLocal = clipRegion
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
@@ -92,8 +94,7 @@ class ScrollRectImpl(
 	}
 
 	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
-		_renderContext.clipRegionLocal = MinMax(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
-		invalidateRenderContext()
+		clipRegionLocal = clipRegion.set(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

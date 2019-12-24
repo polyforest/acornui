@@ -73,9 +73,8 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 
 	init {
 		validation.addNode(TextValidationFlags.TEXT_ELEMENTS, dependencies = 0, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
-		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, onValidate = ::updateSelection)
-		validation.addNode(TextValidationFlags.VERTICES, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.LAYOUT, onValidate = ::updateVertices)
-		validation.addNode(TextValidationFlags.WORLD_VERTICES, dependencies = TextValidationFlags.VERTICES or ValidationFlags.RENDER_CONTEXT or TextValidationFlags.SELECTION, onValidate = ::updateWorldVertices)
+		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.VERTICES_GLOBAL, onValidate = ::updateSelection)
+		validation.addNode(TextValidationFlags.VERTICES, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.LAYOUT, dependents = ValidationFlags.VERTICES_GLOBAL, onValidate = ::updateVertices)
 	}
 
 	override val lines: List<LineInfoRo>
@@ -330,40 +329,13 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 	}
 
-	private val tL = Vector3()
-	private val tR = Vector3()
-	private var lineStart: Int = -1
-	private var lineEnd: Int = -1
-
-	private fun updateWorldVertices() {
+	override fun updateGlobalVertices() {
+		super.updateGlobalVertices()
 		val textElements = _textElements
-		val transform = renderContext.modelTransform
-		val tint = renderContext.colorTint
+		val transform = transformGlobal
+		val tint = colorTintGlobal
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].updateWorldVertices(transform, tint)
-		}
-
-		localToCanvas(tL.set(0f, 0f, 0f))
-		localToCanvas(tR.set(_bounds.width, 0f, 0f))
-
-		if (tL.y == tR.y) {
-			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
-			val clip = renderContext.clipRegion
-			val y = tL.y
-			if (tR.x < clip.xMin || tL.x > clip.xMax)
-				return
-			val scaleY = transform.getScaleY()
-			lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
-				viewPortY.compareTo(line.bottom / scaleY)
-			}
-			lineEnd = if (lineStart == -1) -1 else {
-				_lines.sortedInsertionIndex(clip.yMax - y) { viewPortBottom, line ->
-					viewPortBottom.compareTo(line.y / scaleY)
-				}
-			}
-		} else {
-			lineStart = 0
-			lineEnd = _lines.size
+			textElements[i].updateGlobalVertices(transform, tint)
 		}
 	}
 
@@ -385,8 +357,36 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 	}
 
+	private val tL = Vector3()
+	private val tR = Vector3()
+
 	override fun draw() {
-		val tint = renderContext.colorTint
+		val lineStart: Int
+		val lineEnd: Int
+		localToCanvas(tL.set(0f, 0f, 0f))
+		localToCanvas(tR.set(_bounds.width, 0f, 0f))
+
+		if (tL.y == tR.y) {
+			// This text field is axis aligned, we can check against the viewport without a matrix inversion.
+			val clip = canvasClipRegion
+			val y = tL.y
+			if (tR.x < clip.xMin || tL.x > clip.xMax)
+				return
+			val scaleY = transform.getScaleY()
+			lineStart = _lines.sortedInsertionIndex(clip.yMin - y) { viewPortY, line ->
+				viewPortY.compareTo(line.bottom / scaleY)
+			}
+			lineEnd = if (lineStart == -1) -1 else {
+				_lines.sortedInsertionIndex(clip.yMax - y) { viewPortBottom, line ->
+					viewPortBottom.compareTo(line.y / scaleY)
+				}
+			}
+		} else {
+			lineStart = 0
+			lineEnd = _lines.size
+		}
+
+		val tint = colorTintGlobal
 		if (_lines.isEmpty() || tint.a <= 0f)
 			return
 		val textElements = _textElements
@@ -453,7 +453,6 @@ object TextValidationFlags {
 	const val TEXT_ELEMENTS = 1 shl 16
 	const val SELECTION = 1 shl 17
 	const val VERTICES = 1 shl 18
-	const val WORLD_VERTICES = 1 shl 19
 }
 
 inline fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph  {

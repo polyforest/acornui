@@ -46,9 +46,9 @@ class PaddedRenderable<T : BasicRenderable>(
 
 	private val innerTransform = Matrix4()
 
-	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateGlobalVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
 		innerTransform.set(transform).translate(padding.left, padding.top, 0f)
-		inner.updateWorldVertices(padding.reduceWidth(width), padding.reduceHeight(height), innerTransform, tint)
+		inner.updateGlobalVertices(padding.reduceWidth(width), padding.reduceHeight(height), innerTransform, tint)
 	}
 
 	override fun render() {

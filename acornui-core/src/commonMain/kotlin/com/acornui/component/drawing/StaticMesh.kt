@@ -58,13 +58,13 @@ open class StaticMeshComponent(
 	private val colorTransformation = colorTransformation()
 
 	init {
-		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateGlobalBoundingBox)
+		validation.addNode(GLOBAL_BOUNDING_BOX, ValidationFlags.VERTICES_GLOBAL, ::updateGlobalBoundingBox)
 	}
 
 	private fun updateGlobalBoundingBox() {
 		val mesh = mesh
 		if (mesh != null) {
-			globalBoundingBox.set(mesh.boundingBox).mul(modelTransform)
+			globalBoundingBox.set(mesh.boundingBox).mul(transformGlobal)
 		} else {
 			globalBoundingBox.inf()
 		}
@@ -107,10 +107,9 @@ open class StaticMeshComponent(
 
 	override fun draw() {
 		val mesh = mesh ?: return
-		val renderContext = renderContext
-		colorTransformation.tint(renderContext.colorTint)
+		colorTransformation.tint(colorTintGlobal)
 		gl.uniforms.useColorTransformation(colorTransformation) {
-			gl.uniforms.useCamera(renderContext, useModel = true) {
+			gl.uniforms.useCamera(this, useModel = true) {
 				mesh.render()
 			}
 		}

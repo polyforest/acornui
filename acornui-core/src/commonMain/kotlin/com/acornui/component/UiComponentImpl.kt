@@ -16,7 +16,9 @@
 
 package com.acornui.component
 
-import com.acornui.*
+import com.acornui.Disposable
+import com.acornui.DisposedException
+import com.acornui.assertionsEnabled
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
 import com.acornui.component.layout.intersectsGlobalRay
@@ -26,6 +28,7 @@ import com.acornui.focus.*
 import com.acornui.function.as1
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.CameraRo
+import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
 import com.acornui.input.InteractionEventRo
@@ -34,7 +37,8 @@ import com.acornui.input.InteractivityManager
 import com.acornui.input.MouseState
 import com.acornui.logging.Log
 import com.acornui.math.*
-import com.acornui.reflect.observable
+import com.acornui.nonZero
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
@@ -109,6 +113,7 @@ open class UiComponentImpl(
 	}
 
 	// Common dependencies
+
 	protected val window by Window
 
 	protected val mouseState by MouseState
@@ -117,6 +122,7 @@ open class UiComponentImpl(
 	protected val stage by Stage
 
 	// Validatable Properties
+
 	private val _invalidated = own(Signal2<UiComponent, Int>())
 	final override val invalidated = _invalidated.asRo()
 
@@ -127,20 +133,21 @@ open class UiComponentImpl(
 	protected var validation: ValidationGraph
 
 	// Transformable properties
+
 	protected val _position = Vector3(0f, 0f, 0f)
 	protected val _rotation = Vector3(0f, 0f, 0f)
 	protected val _scale = Vector3(1f, 1f, 1f)
 	protected val _origin = Vector3(0f, 0f, 0f)
 
 	// InteractiveElement properties
-	protected var _inheritedInteractivityMode = InteractivityMode.ALL
+	private var _inheritedInteractivityMode = InteractivityMode.ALL
 	final override val interactivityModeInherited: InteractivityMode
 		get() {
-			validate(ValidationFlags.INTERACTIVITY_MODE)
+			validate(ValidationFlags.INHERITED_PROPERTIES)
 			return _inheritedInteractivityMode
 		}
 
-	protected var _interactivityMode: InteractivityMode = InteractivityMode.ALL
+	private var _interactivityMode: InteractivityMode = InteractivityMode.ALL
 	final override var interactivityMode: InteractivityMode
 		get() = _interactivityMode
 		set(value) {
@@ -152,7 +159,7 @@ open class UiComponentImpl(
 					else -> {
 					}
 				}
-				invalidate(ValidationFlags.INTERACTIVITY_MODE)
+				invalidate(ValidationFlags.INHERITED_PROPERTIES)
 			}
 		}
 
@@ -172,11 +179,11 @@ open class UiComponentImpl(
 	private val _attachments = HashMap<Any, Any>()
 
 	// ChildRo properties
-	override var parent by observable<ContainerRo?>(null) { value ->
-		_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
-	}
+
+	override var parent: ContainerRo? = null
 
 	// Sizable properties
+
 	protected val _bounds = Bounds()
 
 	/**
@@ -193,47 +200,75 @@ open class UiComponentImpl(
 	final override var explicitHeight: Float? = null
 		private set
 
-
 	// Focusable properties
+
 	protected val focusManager by FocusManager
-	final override var focusEnabled by observable(false) { _ -> invalidateFocusOrder() }
-	final override var focusDelegate by observable<UiComponentRo?>(null) { _ -> invalidateFocusOrder() }
-	final override var focusOrder by observable(0f) { _ -> invalidateFocusOrder() }
-	final override var isFocusContainer by observable(false) { _ -> invalidateFocusOrderDeep() }
-	final override var focusEnabledChildren by observable(false) { _ -> invalidateFocusOrderDeep() }
+	final override var focusEnabled by afterChange(false) { _ -> invalidateFocusOrder() }
+	final override var focusDelegate by afterChange<UiComponentRo?>(null) { _ -> invalidateFocusOrder() }
+	final override var focusOrder by afterChange(0f) { _ -> invalidateFocusOrder() }
+	final override var isFocusContainer by afterChange(false) { _ -> invalidateFocusOrderDeep() }
+	final override var focusEnabledChildren by afterChange(false) { _ -> invalidateFocusOrderDeep() }
 
-	// Render context properties
-
-	protected val defaultRenderContext = inject(RenderContextRo)
-	protected val _renderContext = RenderContext(defaultRenderContext)
-	final override val renderContext: RenderContextRo = _renderContext
-
-	override val viewProjectionTransformInv: Matrix4Ro
-		get() = renderContext.viewProjectionTransformInv
-
-	override val viewProjectionTransform: Matrix4Ro
-		get() = renderContext.viewProjectionTransform
-
-	override val viewTransform: Matrix4Ro
-		get() = renderContext.viewTransform
-
-	override val projectionTransform: Matrix4Ro
-		get() = renderContext.projectionTransform
-
-	override val canvasTransform: RectangleRo
-		get() = renderContext.canvasTransform
+	// View projection properties
 
 	/**
-	 * @see RenderContext.cameraOverride
+	 * If set, [viewTransform], [projectionTransform], [viewProjectionTransform], and [viewProjectionTransformInv]
+	 * matrices will be calculated based on this camera.
 	 */
-	var cameraOverride: CameraRo?
-		get() = _renderContext.cameraOverride
-		set(value) {
-			_renderContext.cameraOverride = value
-			invalidate(ValidationFlags.RENDER_CONTEXT)
-		}
+	var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
 
-	private val rayTmp = Ray()
+	/**
+	 * If set, the [canvasClipRegion] value won't be calculated as the intersection of [clipRegionLocal] and the parent
+	 * context's clip region; it will be this explicit value.
+	 */
+	var clipRegionGlobalOverride: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
+
+	override val viewProjectionTransformInv: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.combinedInv ?: parent?.viewProjectionTransformInv ?: Matrix4.IDENTITY
+	}
+
+	override val viewProjectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.combined ?: parent?.viewProjectionTransform ?: Matrix4.IDENTITY
+	}
+
+	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.view ?: parent?.viewTransform ?: Matrix4.IDENTITY
+	}
+
+	override val projectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.projection ?: parent?.projectionTransform ?: Matrix4.IDENTITY
+	}
+
+	/**
+	 * The clip region, in local coordinates.
+	 * If set, this will transform to canvas coordinates and [canvasClipRegion] will be the intersection of the
+	 * parent clip region and this region.
+	 */
+	protected var clipRegionLocal: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.DRAW_REGION) { it?.copy() }
+
+	/**
+	 * If set, [canvasClipRegion] will be set to this, and not the intersection of [clipRegionLocal] and the
+	 * parent clipping.
+	 */
+	var canvasClipRegionOverride: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.DRAW_REGION) { it?.copy() }
+
+	private val _clipRegionIntersection = MinMax()
+	override val canvasClipRegion: MinMaxRo by validationProp(ValidationFlags.DRAW_REGION) {
+		canvasClipRegionOverride ?: run {
+			val parentClipRegion = parent?.canvasClipRegion ?: MinMaxRo.NEGATIVE_INFINITY
+			if (clipRegionLocal == null) parentClipRegion
+			else localToCanvas(_clipRegionIntersection.set(clipRegionLocal!!)).intersection(parentClipRegion)
+		}
+	}
+
+	/**
+	 * If set, [canvasTransform] will use this explicit value.
+	 */
+	var canvasTransformOverride: RectangleRo? by validationProp<RectangleRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
+
+	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		canvasTransformOverride ?: parent?.canvasTransform ?: RectangleRo.EMPTY
+	}
 
 	init {
 		owner.disposed.add(::dispose.as1)
@@ -245,8 +280,11 @@ open class UiComponentImpl(
 				addNode(LAYOUT, STYLES, ::validateLayout)
 				addNode(HIERARCHY_ASCENDING, LAYOUT, ::updateHierarchyAscending)
 				addNode(TRANSFORM, ::updateTransform)
-				addNode(INTERACTIVITY_MODE, ::updateInheritedInteractivityMode)
-				addNode(RENDER_CONTEXT, TRANSFORM or STYLES, ::updateRenderContext)
+				addNode(COLOR_TINT, ::updateColorTint)
+				addNode(INHERITED_PROPERTIES, ::updateInheritedProperties)
+				addNode(VERTICES_GLOBAL, LAYOUT or TRANSFORM or COLOR_TINT, ::updateGlobalVertices)
+				addNode(VIEW_PROJECTION, ::updateViewProjection)
+				addNode(DRAW_REGION, LAYOUT or TRANSFORM or VIEW_PROJECTION, ::updateDrawRegion)
 			}
 		}
 
@@ -260,7 +298,7 @@ open class UiComponentImpl(
 	// UiComponent
 	//-----------------------------------------------
 
-	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED or ValidationFlags.RENDER_CONTEXT)
+	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
 	//-----------------------------------------------
 	// Focusable
@@ -274,9 +312,9 @@ open class UiComponentImpl(
 		}
 	}
 
-	override var focusHighlightDelegate: UiComponentRo? by observable(null, ::refreshFocusHighlight.as1)
+	override var focusHighlightDelegate: UiComponentRo? by afterChange(null, ::refreshFocusHighlight.as1)
 
-	override var showFocusHighlight by observable(false, ::refreshFocusHighlight.as1)
+	override var showFocusHighlight by afterChange(false, ::refreshFocusHighlight.as1)
 
 	private var focusTarget: UiComponentRo? = null
 	private var focusHighlighter: FocusHighlighter? = null
@@ -491,30 +529,48 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	/**
-	 * The color tint of this component.
+	 * The calculated [colorTint] value will be this value multiplied by the parent context's color tint, unless
+	 * [colorTintGlobalOverride] is set.
+	 */
+	private val _colorTint: Color = Color.WHITE.copy()
+
+	/**
+	 * If set, the [colorTintGlobal] value won't be calculated as the multiplication of [colorTint] and the parent
+	 * context's global color tint; it will be this explicit value.
+	 */
+	var colorTintGlobalOverride: ColorRo? by validationProp<ColorRo?>(null, ValidationFlags.COLOR_TINT) { it?.copy() }
+
+	/**
+	 * The local color tint of this component.
 	 *
-	 * To get the multiplied (global) color tint, see [renderContext]
-	 * The final pixel color value for the default shader is `renderContext.colorTint * pixel`
+	 * To get the multiplied (global) color tint, see [colorTintGlobal]
+	 * The final pixel color value for the default shader is `colorTintGlobal * pixel`
 	 */
 	override var colorTint: ColorRo
-		get() = _renderContext.colorTintLocal
+		get() = _colorTint
 		set(value) {
-			if (_renderContext.colorTintLocal == value) return
-			colorTint(value.r, value.g, value.b, value.a)
+			if (_colorTint == value) return
+			_colorTint.set(value)
+			invalidate(ValidationFlags.COLOR_TINT)
 		}
 
 	override fun colorTint(r: Float, g: Float, b: Float, a: Float) {
-		_renderContext.colorTintLocal.set(r, g, b, a)
-		invalidate(ValidationFlags.RENDER_CONTEXT)
+		_colorTint.set(r, g, b, a)
+		invalidate(ValidationFlags.COLOR_TINT)
 	}
+
+	private val _colorTintGlobal = Color()
 
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
 	 */
-	final override val concatenatedColorTint: ColorRo
-		get() = renderContext.colorTint
+	final override val colorTintGlobal: ColorRo
+		get() {
+			validate(ValidationFlags.COLOR_TINT)
+			return _colorTintGlobal
+		}
 
-	protected open fun updateInheritedInteractivityMode() {
+	protected open fun updateInheritedProperties() {
 		_inheritedInteractivityMode = _interactivityMode
 		if (parent?.interactivityModeInherited == InteractivityMode.NONE)
 			_inheritedInteractivityMode = InteractivityMode.NONE
@@ -527,6 +583,8 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 	// Interactivity utility methods
 	//-----------------------------------------------
+
+	private val rayTmp = Ray()
 
 	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
 		if (!visible || (onlyInteractive && !interactivityEnabled)) return out
@@ -604,6 +662,8 @@ open class UiComponentImpl(
 
 	override var snapToPixel: Boolean = Positionable.defaultSnapToPixel
 
+	private val _transformLocal = Matrix4()
+
 	/**
 	 * This component's transformation matrix.
 	 * Responsible for positioning, scaling, rotation, etc.
@@ -614,16 +674,11 @@ open class UiComponentImpl(
 	override val transform: Matrix4Ro
 		get() {
 			validate(ValidationFlags.TRANSFORM)
-			return _renderContext.modelTransformLocal
+			return _transformLocal
 		}
 
-	private var _customTransform: Matrix4Ro? = null
-	override var customTransform: Matrix4Ro?
-		get() = _customTransform
-		set(value) {
-			_customTransform = value
-			invalidate(ValidationFlags.TRANSFORM)
-		}
+	override var transformOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
+	var transformGlobalOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
 
 	override var rotationX: Float
 		get() = _rotation.x
@@ -689,8 +744,11 @@ open class UiComponentImpl(
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
-	override val position: Vector3Ro
+	override var position: Vector3Ro
 		get() = _position
+		set(value) {
+			setPosition(value.x, value.y, value.z)
+		}
 
 	/**
 	 * Does the same thing as setting width and height individually.
@@ -770,49 +828,27 @@ open class UiComponentImpl(
 		return
 	}
 
+	private val _transformGlobal = Matrix4()
+
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
-	final override val modelTransform: Matrix4Ro
-		get() = renderContext.modelTransform
+	final override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
+		_transformGlobal
+	}
+
+	private val _transformGlobalInv = Matrix4()
 
 	/**
 	 * Returns the inverse concatenated transformation matrix.
 	 */
-	final override val modelTransformInv: Matrix4Ro
-		get() = renderContext.modelTransformInv
-
-	/**
-	 * Applies all operations to the transformation matrix.
-	 * Do not call this directly, use [validate(ValidationFlags.TRANSFORM)]
-	 */
-	protected open fun updateTransform() {
-		if (_renderContext.modelTransformOverride != null) {
-			_renderContext.modelTransformLocal.idt()
-			return
-		}
-		val mat = _renderContext.modelTransformLocal
-		if (_customTransform != null) {
-			mat.set(_customTransform!!)
-			return
-		}
-		mat.idt()
-		mat.trn(_position)
-		if (!_rotation.isZero()) {
-			quat.setEulerAngles(_rotation.x, _rotation.y, _rotation.z)
-			mat.rotate(quat)
-		}
-		mat.scale(_scale)
-		if (!_origin.isZero())
-			mat.translate(-_origin.x, -_origin.y, -_origin.z)
-	}
-
-	protected open fun updateRenderContext() {
-		_renderContext.invalidate() // Mark the context's cache as invalid
+	final override val transformGlobalInv: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
+		_transformGlobalInv.set(transformGlobal).inv()
 	}
 
 	/**
+	 * *This is reserved for future use*
 	 * Updates this component's local draw region.
 	 *
 	 * By default, this will be the same area as the [bounds] with `0f` depth.
@@ -823,6 +859,41 @@ open class UiComponentImpl(
 	protected open fun updateDrawRegionLocal(out: Box) {
 		out.set(0f, 0f, 0f, _bounds.width, _bounds.height, 0f)
 	}
+
+	/**
+	 * Applies all operations to the transformation matrix.
+	 * Do not call this directly, use [validate(ValidationFlags.TRANSFORM)]
+	 */
+	protected open fun updateTransform() {
+		val mat = _transformLocal
+		if (transformOverride != null) {
+			mat.set(transformOverride!!)
+		} else {
+			mat.idt()
+			mat.trn(_position)
+			if (!_rotation.isZero()) {
+				quat.setEulerAngles(_rotation.x, _rotation.y, _rotation.z)
+				mat.rotate(quat)
+			}
+			mat.scale(_scale)
+			if (!_origin.isZero())
+				mat.translate(-_origin.x, -_origin.y, -_origin.z)
+		}
+
+		if (transformGlobalOverride != null) _transformGlobal.set(transformGlobalOverride!!)
+		else _transformGlobal.set(parent?.transformGlobal ?: Matrix4.IDENTITY).mul(mat)
+	}
+
+	protected open fun updateColorTint() {
+		if (colorTintGlobalOverride != null) _colorTintGlobal.set(colorTintGlobalOverride!!)
+		else _colorTintGlobal.set(parent?.colorTintGlobal ?: Color.WHITE).mul(_colorTint).clamp()
+	}
+
+	protected open fun updateGlobalVertices() {}
+
+	protected open fun updateViewProjection() {}
+
+	protected open fun updateDrawRegion() {}
 
 	//-----------------------------------------------
 	// Validatable

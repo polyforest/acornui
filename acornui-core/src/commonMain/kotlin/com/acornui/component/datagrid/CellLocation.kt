@@ -93,7 +93,8 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is CellLocationRo<*>) return false
+		if (other == null) return false
+		other as CellLocationRo<*>
 		if (position != other.position) return false
 		if (columnIndex != other.columnIndex) return false
 		return true

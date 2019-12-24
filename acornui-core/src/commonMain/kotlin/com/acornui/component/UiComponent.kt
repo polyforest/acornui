@@ -27,9 +27,8 @@ import com.acornui.component.style.Styleable
 import com.acornui.component.style.StyleableRo
 import com.acornui.di.Owned
 import com.acornui.focus.Focusable
-import com.acornui.math.IntRectangleRo
+import com.acornui.math.MinMaxRo
 import com.acornui.math.RayRo
-import com.acornui.math.RectangleRo
 import com.acornui.signal.Signal
 
 @DslMarker
@@ -93,11 +92,11 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	val layoutInvalidatingFlags: Int
 
 	/**
-	 * The render context used to render to the screen.
-	 * Requesting this property does not trigger a validation for [ValidationFlags.RENDER_CONTEXT].
-	 * @see UiComponent.render
+	 * The clipping region, in canvas coordinates.
+	 * This is used to early-out on rendering if the render contents is outside of this region.
+	 * This is not done automatically; it is the responsibility of the component.
 	 */
-	val renderContext: RenderContextRo
+	val canvasClipRegion: MinMaxRo
 
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.LAYOUT or

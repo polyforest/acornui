@@ -37,7 +37,7 @@ import com.acornui.math.Pad
 import com.acornui.popup.PopUpManager
 import com.acornui.popup.lift
 import com.acornui.recycle.Clearable
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal0
 import com.acornui.text.*
 import com.acornui.time.Date
@@ -121,7 +121,7 @@ open class DatePicker(
 	/**
 	 * If false, the date picker will not accept type input, and dates may only be selected via the dropdown.
 	 */
-	var editable: Boolean by observable(true) {
+	var editable: Boolean by afterChange(true) {
 		textInput.editable = it
 		textInput.selectable = it
 		handCursor?.dispose()
@@ -131,7 +131,7 @@ open class DatePicker(
 	/**
 	 * If true, this date picker will use the CommonStyleTags.disabled style tag and have interactivity disabled.
 	 */
-	var disabled: Boolean by observable(false) {
+	var disabled: Boolean by afterChange(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 	}

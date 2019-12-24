@@ -27,7 +27,7 @@ import com.acornui.focus.Focusable
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.skins.Theme
@@ -99,7 +99,7 @@ open class ButtonImpl(
 		_toggledChanged.dispatch(this)
 	}
 
-	override var disabled: Boolean by observable(false) {
+	override var disabled: Boolean by afterChange(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 		invalidateProperties()

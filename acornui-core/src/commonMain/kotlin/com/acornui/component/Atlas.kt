@@ -138,11 +138,11 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	private val drawableTransform = Matrix4()
 
-	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateGlobalVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
 		val drawable = drawable ?: return
 		updatePadding(width, height)
 		drawableTransform.set(transform).translate(totalPadLeft, totalPadTop, 0f)
-		drawable.updateWorldVertices(width - totalPadLeft - totalPadRight, height - totalPadBottom - totalPadTop, drawableTransform, tint)
+		drawable.updateGlobalVertices(width - totalPadLeft - totalPadRight, height - totalPadBottom - totalPadTop, drawableTransform, tint)
 	}
 
 	private fun updatePadding(width: Float, height: Float) {

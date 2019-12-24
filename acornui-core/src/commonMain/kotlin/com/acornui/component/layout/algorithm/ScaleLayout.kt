@@ -153,19 +153,6 @@ open class ScaleLayoutData : BasicLayoutData() {
 
 open class ScaleBoxLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<ScaleLayoutStyle, ScaleLayoutData, E>(owner, ScaleLayout())
 
-@Deprecated("Renamed to scaleGroup", ReplaceWith("this.scaleGroup(init)"), DeprecationLevel.ERROR)
-@JvmName("scaleBoxT")
-inline fun <E : UiComponent> Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return scaleGroup(init)
-}
-
-@Deprecated("Renamed to scaleGroup", ReplaceWith("this.scaleGroup(init)"), DeprecationLevel.ERROR)
-inline fun Owned.scaleBox(init: ComponentInit<ScaleBoxLayoutContainer<UiComponent>> = {}): ScaleBoxLayoutContainer<UiComponent> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return scaleGroup<UiComponent>(init)
-}
-
 @JvmName("scaleGroupT")
 inline fun <E : UiComponent> Owned.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }

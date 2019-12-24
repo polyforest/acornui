@@ -127,8 +127,8 @@ class ValidationGraphTest {
 				addNode(PROPERTIES, STYLES) {}
 				addNode(LAYOUT, PROPERTIES) {}
 				addNode(TRANSFORM) {}
-				addNode(RENDER_CONTEXT, TRANSFORM) {}
-				addNode(INTERACTIVITY_MODE) {}
+				addNode(VIEW_PROJECTION, TRANSFORM) {}
+				addNode(INHERITED_PROPERTIES) {}
 				addNode(HIERARCHY_ASCENDING, PROPERTIES) {}
 				addNode(HIERARCHY_DESCENDING, PROPERTIES) {}
 			}

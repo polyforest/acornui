@@ -207,7 +207,7 @@ class MinMax(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-
+		if (other == null) return false
 		other as MinMaxRo
 
 		if (xMin != other.xMin) return false

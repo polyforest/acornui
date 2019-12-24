@@ -25,7 +25,7 @@ import com.acornui.graphic.Window
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 import com.acornui.observe.Observable
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal1
 import kotlin.properties.ReadWriteProperty
 
@@ -42,7 +42,7 @@ interface RenderFilter : Observable {
 	 * @param tint The world color tint of the filtered container.
 	 * @return Returns the expanded draw region in canvas coordinates.
 	 */
-	fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = regionCanvas
+	fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = regionCanvas
 
 	/**
 	 * Renders the [inner] block using this filter.
@@ -73,7 +73,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	/**
 	 * When the property has changed, [changed] will be dispatched.
 	 */
-	protected fun <T> bindable(initial: T, inner: (T) -> Unit = {}): ReadWriteProperty<Any?, T> = observable(initial) {
+	protected fun <T> bindable(initial: T, inner: (T) -> Unit = {}): ReadWriteProperty<Any?, T> = afterChange(initial) {
 		inner(it)
 		notifyChanged()
 	}
@@ -83,7 +83,7 @@ abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, 
 	 * Additionally, [inner] will be invoked immediately with the initial value.
 	 */
 	protected fun <T> bindableAndCall(initial: T, inner: (T) -> Unit): ReadWriteProperty<Any?, T> {
-		return observable(initial) {
+		return afterChange(initial) {
 			inner(it)
 			notifyChanged()
 		}.also { inner(initial) }

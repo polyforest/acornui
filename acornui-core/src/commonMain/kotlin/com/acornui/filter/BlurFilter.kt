@@ -57,14 +57,14 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 	val transform: Matrix4Ro
 		get() = framebufferFilter.transform
 
-	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
 		transform.rot(blurDirX.set(blurX, 0f, 0f))
 		transform.rot(blurDirY.set(0f, blurY, 0f))
 		val xPad = maxOf(abs(blurDirX.x), abs(blurDirY.x))
 		val yPad = maxOf(abs(blurDirX.y), abs(blurDirY.y))
 		val expandedRegion = regionCanvas + Pad(yPad, xPad, yPad, xPad)
 		val framebufferFilter = framebufferFilter
-		val framebufferRegion = framebufferFilter.updateWorldVertices(expandedRegion, transform, tint)
+		val framebufferRegion = framebufferFilter.updateGlobalVertices(expandedRegion, transform, tint)
 		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
@@ -76,7 +76,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 		
 		framebufferFilter.drawable(sprite)
 		sprite.texture = blurFramebufferB.texture
-		sprite.updateWorldVertices(transform = framebufferFilter.transform, tint = tint)
+		sprite.updateGlobalVertices(transform = framebufferFilter.transform, tint = tint)
 		return framebufferRegion
 	}
 

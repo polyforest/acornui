@@ -72,7 +72,7 @@ class Vertex(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-
+		if (other == null) return false
 		other as VertexRo
 
 		if (position != other.position) return false

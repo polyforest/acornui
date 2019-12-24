@@ -63,7 +63,7 @@ object SkeletonMeshRenderer : SkeletonRenderer {
 			val attachment = slot.attachment
 			var texture: Texture? = null
 			if (attachment is RegionAttachment) {
-				vertices = attachment.updateWorldVertices(slot)
+				vertices = attachment.updateGlobalVertices(slot)
 				triangles = quadTriangles
 				texture = loadedSkin.getTexture(attachment.page)
 			} else if (attachment is MeshAttachment) {

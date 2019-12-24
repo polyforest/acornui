@@ -16,12 +16,15 @@
 
 package com.acornui.component
 
+import com.acornui.Mutable
 import com.acornui.assertionsEnabled
 import com.acornui.math.MathUtils
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * A component that has an invalidate/validate cycle.
@@ -33,7 +36,7 @@ interface Validatable {
 	/**
 	 * Dispatched when this component has been invalidated.
 	 */
-	val invalidated: Signal<(Validatable, Int) -> Unit>
+	val invalidated: Signal<(Validatable, flags: Int) -> Unit>
 
 	/**
 	 * The currently invalid flags.
@@ -331,8 +334,50 @@ fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToStri
 	return v
 }
 
-fun <T> Validatable.validationProp(initialValue: T, flags: Int): ReadWriteProperty<Any, T> {
-	return observable(initialValue) {
-		invalidate(flags)
+
+fun <T> Validatable.validationProp(initialValue: T, flags: Int, copy: (T) -> T): ReadWriteProperty<Validatable, T> {
+	return object : ReadWriteProperty<Validatable, T> {
+		private var backingValue: T = copy(initialValue)
+		override fun getValue(thisRef: Validatable, property: KProperty<*>): T = backingValue
+		override fun setValue(thisRef: Validatable, property: KProperty<*>, value: T) {
+			if (value == backingValue) return // no-op
+			backingValue = copy(value)
+			invalidate(flags)
+		}
+	}
+}
+
+
+fun <T> Validatable.validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> =
+		afterChange(initialValue) { invalidate(flags) }
+
+fun <R : Validatable, T> validationProp(flag: Int, getter: () -> T) = ValidatedProperty<R, T>(flag, getter)
+
+class ValidatedProperty<in R : Validatable, T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<R, T> {
+
+	private var cachedIsValid = false
+	private var cached: T? = null
+
+	override fun getValue(thisRef: R, property: KProperty<*>): T {
+		if (!cachedIsValid) {
+			cachedIsValid = true
+			thisRef.validate(flag)
+			cached = calculator()
+		}
+		@Suppress("UNCHECKED_CAST")
+		return cached as T
+	}
+
+	operator fun provideDelegate(
+			thisRef: R,
+			prop: KProperty<*>
+	): ValidatedProperty<R, T> {
+		thisRef.invalidated.add { validatable, flags ->
+			if (flags and flag > 0) {
+				cachedIsValid = false
+				cached = null
+			}
+		}
+		return this
 	}
 }

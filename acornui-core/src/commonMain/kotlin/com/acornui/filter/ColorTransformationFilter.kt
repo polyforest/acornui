@@ -32,15 +32,15 @@ class ColorTransformationFilter(
 		val colorTransformation: ColorTransformation
 ) : RenderFilterBase(owner) {
 
-	private val colorTransformationWorld = ColorTransformation()
+	private val colorTransformationGlobal = ColorTransformation()
 
-	override fun updateWorldVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		colorTransformationWorld.set(colorTransformation).mul(tint)
+	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+		colorTransformationGlobal.set(colorTransformation).mul(tint)
 		return regionCanvas
 	}
 
 	override fun render(inner: () -> Unit) {
-		gl.uniforms.useColorTransformation(colorTransformationWorld) {
+		gl.uniforms.useColorTransformation(colorTransformationGlobal) {
 			inner()
 		}
 	}

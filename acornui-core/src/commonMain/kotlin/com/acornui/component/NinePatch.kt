@@ -225,7 +225,7 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		splitBottom = 0f
 	}
 
-	override fun updateWorldVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateGlobalVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
 		val vertices = vertices
 		transform.rot(normal.set(Vector3.NEG_Z)).nor()
 		this.tint.set(tint)

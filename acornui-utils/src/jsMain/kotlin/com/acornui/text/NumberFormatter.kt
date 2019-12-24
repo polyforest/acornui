@@ -18,7 +18,7 @@ package com.acornui.text
 
 import com.acornui.collection.copy
 import com.acornui.i18n.Locale
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.system.userInfo
 import kotlin.properties.ReadWriteProperty
 
@@ -69,7 +69,7 @@ actual class NumberFormatter actual constructor() : StringFormatter<Number?>, St
 	}
 
 	private fun <T> watched(initial: T): ReadWriteProperty<Any?, T> {
-		return observable(initial) {
+		return afterChange(initial) {
 			formatter = null
 		}
 	}

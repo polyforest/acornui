@@ -79,7 +79,8 @@ class Hsv(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is HsvRo) return false
+		if (other == null) return false
+		other as HsvRo
 
 		if (h != other.h) return false
 		if (s != other.s) return false

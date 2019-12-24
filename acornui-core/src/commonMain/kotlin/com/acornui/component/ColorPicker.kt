@@ -35,7 +35,7 @@ import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown
 import com.acornui.math.*
 import com.acornui.popup.lift
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.toInt
@@ -130,7 +130,7 @@ open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
 		blurred().add(::close)
 	}
 
-	private var isOpen by observable(false) {
+	private var isOpen by afterChange(false) {
 		if (it) {
 			addChild(colorPaletteLift)
 		} else {
@@ -211,7 +211,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	/**
 	 * If true, there will be a slider input for the color's value component in the HSV color.
 	 */
-	var showValuePicker by observable(true) {
+	var showValuePicker by afterChange(true) {
 		valueRect.visible = it
 		valueIndicator?.visible = it
 		invalidateLayout()
@@ -220,7 +220,7 @@ class ColorPalette(owner: Owned) : ContainerImpl(owner) {
 	/**
 	 * If true, there will be a slider input for the color's alpha.
 	 */
-	var showAlphaPicker by observable(true) {
+	var showAlphaPicker by afterChange(true) {
 		alphaRect.visible = it
 		alphaGrid.visible = it
 		alphaIndicator?.visible = it

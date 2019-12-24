@@ -39,7 +39,7 @@ import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.reflect.observable
+import com.acornui.reflect.afterChange
 import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.DateTimeFormatStyle
@@ -444,17 +444,17 @@ open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), Calend
 		selectable = false
 	})
 
-	override var toggled: Boolean by observable(false) {
+	override var toggled: Boolean by afterChange(false) {
 		refreshColor()
 	}
 
-	override var disabled: Boolean by observable(false) {
+	override var disabled: Boolean by afterChange(false) {
 		interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		disabledTag = it
 		refreshColor()
 	}
 
-	private var isInActiveMonth: Boolean by observable(false) {
+	private var isInActiveMonth: Boolean by afterChange(false) {
 		if (it) {
 			styleTags.remove(INACTIVE)
 			styleTags.add(ACTIVE)

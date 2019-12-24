@@ -28,7 +28,7 @@ interface ColorTransformableRo {
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
 	 */
-	val concatenatedColorTint: ColorRo
+	val colorTintGlobal: ColorRo
 
 }
 

@@ -108,7 +108,6 @@ private class LayerTween(
 
 	init {
 		target.visible = false
-		target.customTransform = transform
 		for (keyFrame in layer.keyFrames) {
 			val props = ArrayList(PROPS.size) {
 				val dataProp = keyFrame.props[PROPS[it]]
@@ -166,8 +165,8 @@ private class LayerTween(
 		transform.scale(scale)
 
 		transform.translate(-origin.x, -origin.y, -origin.z)
-		target.invalidate(ValidationFlags.TRANSFORM)
 
+		target.transformOverride = transform
 		target.colorTint = color
 
 	}

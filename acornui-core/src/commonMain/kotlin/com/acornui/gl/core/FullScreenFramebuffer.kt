@@ -17,7 +17,6 @@
 package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.IdtProjectionContext
 import com.acornui.component.Sprite
 import com.acornui.Disposable
 import com.acornui.di.Injector
@@ -26,8 +25,8 @@ import com.acornui.di.inject
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Window
 import com.acornui.function.as2
-import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
@@ -37,11 +36,12 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	private val window = inject(Window)
 	private val framebuffer = ResizeableFramebuffer(injector, hasDepth, hasStencil)
 
-	private val renderContext = IdtProjectionContext()
+	private val transform = Matrix4().apply {
+		setTranslation(-1f, -1f, 0f)
+	}
 
 	private val sprite = Sprite(inject(CachedGl20)).apply {
-		updateWorldVertices(2f, 2f)
-		renderContext.modelTransform.setTranslation(-1f, -1f, 0f)
+		updateGlobalVertices(2f, 2f, transform)
 	}
 
 	var blendMode: BlendMode
@@ -90,11 +90,14 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 		end()
 	}
 
+	fun colorTint(tint: ColorRo) {
+		sprite.updateGlobalVertices(2f, 2f, transform, tint)
+	}
+
 	/**
 	 * Renders the frame buffer to the screen.
 	 */
-	fun render(colorTint: ColorRo = Color.WHITE) {
-		renderContext.colorTint.set(colorTint)
+	fun render() {
 		sprite.render()
 	}
 

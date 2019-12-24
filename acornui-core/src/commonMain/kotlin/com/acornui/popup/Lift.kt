@@ -20,7 +20,6 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.di.Owned
 import com.acornui.function.as2
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Vector2
@@ -58,14 +57,17 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 
 	var highlightFocused = false
 
-	private val contents = LiftStack(this)
+	private val contents = stack {
+		includeInLayout = false // So the pop up manager doesn't attempt to lay out the contents.
+	}
 
 	val style = contents.style
 
 	init {
 		isFocusContainer = true
+		interactivityMode = InteractivityMode.NONE // The elements are interactive but this Lift component is virtual. 
 
-		validation.addNode(CONTENTS_TRANSFORM, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateContentsTransform)
+		validation.addNode(CONTENTS_TRANSFORM, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM, ::updateContentsTransform)
 
 		contents.invalidated.add { child, flagsInvalidated ->
 			if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
@@ -78,8 +80,6 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 				}
 			}
 		}
-
-
 	}
 
 	override fun onActivated() {
@@ -118,7 +118,7 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 	private val points = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
 
 	private fun updateContentsTransform() {
-		tmpMat.set(modelTransform)
+		tmpMat.set(transformGlobal)
 		if (constrainToStage) {
 			val w = window.width
 			val h = window.height
@@ -141,9 +141,12 @@ class Lift(owner: Owned) : ElementContainerImpl<UiComponent>(owner), LayoutDataP
 				}
 			}
 		}
-		contents.customTransform = tmpMat
+		contents.transformGlobalOverride = tmpMat
+	}
 
-		contents.colorTint = renderContext.colorTint
+	override fun updateColorTint() {
+		super.updateColorTint()
+		contents.colorTintGlobalOverride = colorTintGlobal
 	}
 
 	companion object {

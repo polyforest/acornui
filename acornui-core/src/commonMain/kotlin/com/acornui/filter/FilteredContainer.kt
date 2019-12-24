@@ -33,15 +33,14 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
 		bind {
-			invalidate(ValidationFlags.VERTICES)
+			invalidate(VERTICES)
 		}
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
 
 	init {
-		_renderContext.clipRegionOverride = MinMaxRo.POSITIVE_INFINITY
-		validation.addNode(ValidationFlags.VERTICES, ValidationFlags.LAYOUT or ValidationFlags.RENDER_CONTEXT, ::updateVertices)
+		clipRegionGlobalOverride = MinMaxRo.POSITIVE_INFINITY
 	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
@@ -56,13 +55,14 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 	private var expandedDrawRegion: RectangleRo = RectangleRo.EMPTY
 
-	private fun updateVertices() {
+	override fun updateGlobalVertices() {
+		super.updateGlobalVertices()
 		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
-		val model = _renderContext.modelTransform
-		val tint = _renderContext.colorTint
+		val model = transformGlobal
+		val tint = colorTintGlobal
 		for (i in _renderFilters.lastIndex downTo 0) {
 			val renderFilter = _renderFilters[i]
-			drawRegionCanvas = renderFilter.updateWorldVertices(drawRegionCanvas, model, tint)
+			drawRegionCanvas = renderFilter.updateGlobalVertices(drawRegionCanvas, model, tint)
 		}
 		expandedDrawRegion = drawRegionCanvas
 	}
@@ -80,6 +80,10 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 				draw(filterIndex - 1)
 			}
 		}
+	}
+
+	companion object {
+		const val VERTICES = 1 shl 16
 	}
 }
 
