@@ -44,11 +44,13 @@ import com.acornui.js.html.JsHtmlComponent
 import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
 import com.acornui.logging.Log
+import com.acornui.system.userInfo
 import com.acornui.uncaughtExceptionHandler
 import org.khronos.webgl.WebGLContextAttributes
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
+import kotlin.browser.window
 import kotlin.dom.clear
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -91,7 +93,7 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		Gl20CachedImpl(if (debug) WebGl20Debug(context) else WebGl20(context))
+		Gl20CachedImpl(if (glDebug) WebGl20Debug(context) else WebGl20(context))
 	}
 
 	override val windowTask by task(Window) {
@@ -169,4 +171,13 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 
 suspend fun webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
 	WebGlApplication(rootId).start(appConfig, onReady)
+}
+
+/**
+ * A flag for enabling getError() gl checks.
+ * This is separate from [debug] because of the extremely high performance cost.
+ */
+val glDebug: Boolean by lazy {
+	if (!userInfo.isBrowser) false
+	else window.location.search.contains(Regex("""[&?]glDebug=(true|1)"""))
 }
