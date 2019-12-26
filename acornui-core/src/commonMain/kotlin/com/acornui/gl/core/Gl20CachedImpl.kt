@@ -826,11 +826,6 @@ class Gl20CachedImpl(protected val wrapped: Gl20) : CachedGl20 {
 		return wrapped.getFramebufferAttachmentParameteri(target, attachment, pName)
 	}
 
-	override fun clearColor(color: ColorRo) {
-		changeCount++
-		wrapped.clearColor(color)
-	}
-
 	override fun getSupportedExtensions(): List<String> = supportedExtensionsCache
 
 	override var batch: ShaderBatch = ShaderBatchImpl(this)
