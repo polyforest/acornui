@@ -60,7 +60,6 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	override fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
 		// Don't invalidate the scene's size when a child's layout has invalidated.
-		childrenNeedValidation = true
 		invalidate(flagsInvalidated and bubblingFlags)
 	}
 

@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.Mutable
 import com.acornui.assertionsEnabled
 import com.acornui.math.MathUtils
 import com.acornui.reflect.afterChange
@@ -59,12 +58,14 @@ interface Validatable {
 	fun invalidate(flags: Int): Int
 
 	/**
-	 * Validates the specified flags for this component.
+	 * Validates the specified flags for this component during a validation cycle.
 	 *
 	 * @param flags A bit mask for which flags to validate. (Use -1 to validate all)
 	 * Example: validate(ValidationFlags.LAYOUT or ValidationFlags.PROPERTIES) to validate both layout an properties.
+	 *
+	 * @return Returns the flags actually validated.
 	 */
-	fun validate(flags: Int = -1)
+	fun validate(flags: Int = -1): Int
 
 }
 
@@ -247,14 +248,14 @@ class ValidationGraph(
 			// Cannot invalidate anything that is not dependent on the current node.
 			val currentNode = nodes[currentIndex]
 			val badFlags = flagsToInvalidate and currentNode.dependents.inv()
-			check(badFlags <= 0) {
+			check(badFlags == 0) {
 				"Cannot invalidate ${flags.toFlagsString()} while validating ${currentNode.flag.toFlagString()}; The following invalidated flags are not dependents of the current node: ${badFlags.toFlagsString()}"
 			}
 		}
 		for (i in 0..nodes.lastIndex) {
 			val n = nodes[i]
 			if (!n.isValid) continue
-			if (flagsToInvalidate and n.flag > 0) {
+			if (flagsToInvalidate and n.flag != 0) {
 				n.isValid = false
 				flagsToInvalidate = flagsToInvalidate or n.dependents
 				flagsInvalidated = flagsInvalidated or n.flag
@@ -324,7 +325,7 @@ class ValidationGraph(
  * ```
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun Int.containsFlag(flag: Int): Boolean {
+inline infix fun Int.containsFlag(flag: Int): Boolean {
 	return this and flag == flag
 }
 
@@ -360,9 +361,9 @@ class ValidatedProperty<in R : Validatable, T>(private val flag: Int, private va
 
 	override fun getValue(thisRef: R, property: KProperty<*>): T {
 		if (!cachedIsValid) {
-			cachedIsValid = true
 			thisRef.validate(flag)
 			cached = calculator()
+			cachedIsValid = true
 		}
 		@Suppress("UNCHECKED_CAST")
 		return cached as T
@@ -372,11 +373,10 @@ class ValidatedProperty<in R : Validatable, T>(private val flag: Int, private va
 			thisRef: R,
 			prop: KProperty<*>
 	): ValidatedProperty<R, T> {
+		cachedIsValid = false
 		thisRef.invalidated.add { validatable, flags ->
-			if (flags and flag > 0) {
+			if (flags containsFlag flag)
 				cachedIsValid = false
-				cached = null
-			}
 		}
 		return this
 	}

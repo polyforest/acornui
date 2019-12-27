@@ -24,6 +24,7 @@ import com.acornui.test.assertListEquals
 import org.junit.Test
 
 import org.junit.Assert.*
+import kotlin.test.Ignore
 
 class ContainerImplTest {
 
@@ -146,8 +147,9 @@ class ContainerImplTest {
 		}
 	}
 
+	@Ignore("No-op children validation currently inactive")
 	@Test
-	fun update() {
+	fun noopChildrenUpdate() {
 		object : ContainerImpl(HeadlessInjector.owner) {
 			init {
 				var updateCountA = 0

@@ -61,9 +61,9 @@ open class SimpleHighlight(
 		}
 
 	private fun highlightedInvalidatedHandler(c: UiComponentRo, flags: Int) {
-		if (flags.containsFlag(ValidationFlags.LAYOUT))
+		if (flags containsFlag ValidationFlags.LAYOUT)
 			invalidateLayout()
-		else if (flags.containsFlag(ValidationFlags.VIEW_PROJECTION))
+		else if (flags containsFlag ValidationFlags.VIEW_PROJECTION)
 			invalidate(ValidationFlags.VIEW_PROJECTION)
 	}
 

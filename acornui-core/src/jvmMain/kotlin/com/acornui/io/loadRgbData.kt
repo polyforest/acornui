@@ -18,6 +18,7 @@ package com.acornui.io
 
 import com.acornui.async.UI
 import com.acornui.graphic.RgbData
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.io.ByteArrayInputStream
@@ -31,6 +32,8 @@ suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressR
 	return load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
 		try {
 			createImageData(inputStream)
+		} catch (e: CancellationException) {
+			throw e
 		} catch (e: Throwable) {
 			throw Exception("Could not load image at path \"${requestData.toUrlStr()}\"", e)
 		}

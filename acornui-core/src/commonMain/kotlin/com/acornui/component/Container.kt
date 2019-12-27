@@ -23,7 +23,9 @@ import com.acornui.collection.*
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.di.Owned
 import com.acornui.focus.invalidateFocusOrderDeep
-import com.acornui.math.*
+import com.acornui.math.Ray
+import com.acornui.math.RayRo
+import com.acornui.math.Vector3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
@@ -60,8 +62,6 @@ open class ContainerImpl(
 
 	protected val _children: MutableConcurrentList<UiComponent> = ChildrenList()
 	override val children: List<UiComponentRo> = _children
-
-	protected var childrenNeedValidation = true
 
 	/**
 	 * Appends a child to the display children.
@@ -161,13 +161,10 @@ open class ContainerImpl(
 
 	override fun update() {
 		super.update()
-//		if (childrenNeedValidation) {
-	//			childrenNeedValidation = false
-			childrenUpdateIterator.iterate {
-				it.update()
-				true
-			}
-//		}
+		childrenUpdateIterator.iterate {
+			it.update()
+			true
+		}
 	}
 
 	override fun draw() {
@@ -240,7 +237,6 @@ open class ContainerImpl(
 				invalidateLayout()
 			}
 		}
-		childrenNeedValidation = true
 		invalidate(flagsInvalidated and bubblingFlags)
 	}
 
@@ -327,7 +323,6 @@ open class ContainerImpl(
 			element.disposed.add(::onChildDisposed)
 			if (isActive) element.activate()
 			element.invalidate(cascadingFlags)
-			childrenNeedValidation = true
 		}
 
 		private fun unconfigureChild(oldChild: UiComponent) {
@@ -337,7 +332,6 @@ open class ContainerImpl(
 			if (oldChild.isActive) oldChild.deactivate()
 			oldChild.invalidate(cascadingFlags)
 			oldChild.invalidateFocusOrderDeep()
-			childrenNeedValidation = true
 		}
 
 		override fun iterate(body: (UiComponent) -> Boolean) = list.iterate(body)

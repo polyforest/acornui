@@ -18,7 +18,6 @@ package com.acornui.lwjgl.opengl
 
 import com.acornui.gl.core.WrappedGl20
 import org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION
 
@@ -26,9 +25,9 @@ import org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION
  * @author nbilyk
  */
 class JvmGl20Debug : WrappedGl20(LwjglGl20(), {}, {
-	val errorCode = GL11.glGetError()
+	val errorCode = glGetError()
 
-	if (errorCode != GL11.GL_NO_ERROR) {
+	if (errorCode != GL_NO_ERROR) {
 		throw Exception("GL ERROR: code: $errorCode ${getErrorString(errorCode)}")
 	}
 }

@@ -80,15 +80,6 @@ suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 }
 
 /**
- * Acorn conventions use seconds, not milliseconds.
- * @see kotlinx.coroutines.delay
- */
-@Deprecated("Use Duration", ReplaceWith("delay(timeSeconds.toDouble().seconds)", "kotlin.time.seconds"))
-suspend fun delay(timeSeconds: Float) {
-	delay((timeSeconds * 1000f).toLong())
-}
-
-/**
  * @see kotlinx.coroutines.delay
  */
 suspend fun delay(time: Duration) {
