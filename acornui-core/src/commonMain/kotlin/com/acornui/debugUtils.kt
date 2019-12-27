@@ -28,7 +28,7 @@ fun debugWhyCantSee(target: UiComponent) {
 }
 
 private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {
-	target.stage.validate()
+	target.stage.update()
 	var canSee = true
 
 	target.parentWalk {

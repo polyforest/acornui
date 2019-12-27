@@ -37,10 +37,10 @@ interface Validatable {
 	 */
 	val invalidated: Signal<(Validatable, flags: Int) -> Unit>
 
-	/**
-	 * The currently invalid flags.
-	 */
-	val invalidFlags: Int
+//	/**
+//	 * The currently invalid flags.
+//	 */
+//	val invalidFlags: Int
 
 	/**
 	 * True if this component is currently validating.
@@ -92,6 +92,7 @@ private class ValidationNode(
 ) {
 
 	var isValid: Boolean = false
+	var validatedCount = 0
 
 	/**
 	 * Adds the given dependency bit flags.
@@ -131,6 +132,7 @@ class ValidationGraph(
 ) {
 
 	private val nodes = ArrayList<ValidationNode>()
+	private val nodesMap = HashMap<Int, ValidationNode>()
 
 	/**
 	 * The current node being validated.
@@ -223,6 +225,7 @@ class ValidationGraph(
 			}
 		}
 		nodes.add(insertIndex, newNode)
+		nodesMap[newNode.flag] = newNode
 		_invalidFlags = _invalidFlags or newNode.flag
 		_allFlags = _allFlags or newNode.flag
 		if (checkAllFound) {
@@ -287,6 +290,7 @@ class ValidationGraph(
 			val n = nodes[i]
 			if (!n.isValid && flagsToValidate and n.dependents > 0) {
 				n.onValidate()
+				n.validatedCount++
 				n.isValid = true
 				flagsToValidate = flagsToValidate or n.dependencies
 				flagsValidated = flagsValidated or n.flag
@@ -299,6 +303,10 @@ class ValidationGraph(
 
 	fun isValid(flag: Int): Boolean {
 		return _invalidFlags and flag == 0
+	}
+
+	fun getValidatedCount(flag: Int): Int {
+		return (nodesMap[flag] ?: error("Unknown flag $flag")).validatedCount
 	}
 
 	private fun Int.toFlagsString(): String {
@@ -333,51 +341,4 @@ fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToStri
 	val v = ValidationGraph(toFlagString)
 	v.init()
 	return v
-}
-
-
-fun <T> Validatable.validationProp(initialValue: T, flags: Int, copy: (T) -> T): ReadWriteProperty<Validatable, T> {
-	return object : ReadWriteProperty<Validatable, T> {
-		private var backingValue: T = copy(initialValue)
-		override fun getValue(thisRef: Validatable, property: KProperty<*>): T = backingValue
-		override fun setValue(thisRef: Validatable, property: KProperty<*>, value: T) {
-			if (value == backingValue) return // no-op
-			backingValue = copy(value)
-			invalidate(flags)
-		}
-	}
-}
-
-
-fun <T> Validatable.validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> =
-		afterChange(initialValue) { invalidate(flags) }
-
-fun <R : Validatable, T> validationProp(flag: Int, getter: () -> T) = ValidatedProperty<R, T>(flag, getter)
-
-class ValidatedProperty<in R : Validatable, T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<R, T> {
-
-	private var cachedIsValid = false
-	private var cached: T? = null
-
-	override fun getValue(thisRef: R, property: KProperty<*>): T {
-		if (!cachedIsValid) {
-			thisRef.validate(flag)
-			cached = calculator()
-			cachedIsValid = true
-		}
-		@Suppress("UNCHECKED_CAST")
-		return cached as T
-	}
-
-	operator fun provideDelegate(
-			thisRef: R,
-			prop: KProperty<*>
-	): ValidatedProperty<R, T> {
-		cachedIsValid = false
-		thisRef.invalidated.add { validatable, flags ->
-			if (flags containsFlag flag)
-				cachedIsValid = false
-		}
-		return this
-	}
 }

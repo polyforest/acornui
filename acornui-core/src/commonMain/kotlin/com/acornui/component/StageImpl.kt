@@ -130,15 +130,6 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		window.refresh.remove(::windowChangedHandler)
 	}
 
-	final override var isUpdating: Boolean = false
-		private set
-
-	override fun update() {
-		isUpdating = true
-		super.update()
-		isUpdating = false
-	}
-
 	override fun updateViewProjection() {
 		super.updateViewProjection()
 		val w = window.framebufferWidth
@@ -180,14 +171,8 @@ open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiCompone
 		out.set(w, h)
 	}
 
-	final override var isRendering: Boolean = false
-		private set
-
 	override fun render() {
-		// The stage shouldn't check if it needs redrawing.
-		isRendering = true
 		draw()
-		isRendering = false
 	}
 
 	override fun draw() {

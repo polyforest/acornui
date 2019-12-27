@@ -43,6 +43,9 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
 import kotlin.properties.Delegates
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * The base for every AcornUi component.
@@ -650,7 +653,7 @@ open class UiComponentImpl(
 	// Validatable properties
 	//-----------------------------------------------
 
-	override val invalidFlags: Int
+	protected val invalidFlags: Int
 		get() = validation.invalidFlags
 
 	override val isValidating: Boolean
@@ -916,8 +919,7 @@ open class UiComponentImpl(
 	protected open fun onInvalidated(flagsInvalidated: Int) {
 	}
 
-	override fun validate(flags: Int): Int {
-		if (!stage.isUpdating) return 0
+	final override fun validate(flags: Int): Int {
 		return validation.validate(flags)
 	}
 
@@ -980,6 +982,42 @@ open class UiComponentImpl(
 			(i as? Disposable)?.dispose()
 		}
 		_attachments.clear()
+	}
+
+
+	protected fun <T> validationProp(initialValue: T, flags: Int, copy: (T) -> T): ReadWriteProperty<Validatable, T> {
+		return object : ReadWriteProperty<Validatable, T> {
+			private var backingValue: T = copy(initialValue)
+			override fun getValue(thisRef: Validatable, property: KProperty<*>): T = backingValue
+			override fun setValue(thisRef: Validatable, property: KProperty<*>, value: T) {
+				if (value == backingValue) return // no-op
+				backingValue = copy(value)
+				invalidate(flags)
+			}
+		}
+	}
+
+
+	protected fun <T> validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> =
+			afterChange(initialValue) { invalidate(flags) }
+
+	protected fun <T> validationProp(flag: Int, getter: () -> T) = ValidatedProperty(flag, getter)
+
+	protected inner class ValidatedProperty<T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<UiComponentImpl, T> {
+
+		private var lastValidatedCount = -1
+		private var cached: T? = null
+
+		override fun getValue(thisRef: UiComponentImpl, property: KProperty<*>): T {
+			validate(flag)
+			val c = validation.getValidatedCount(flag)
+			if (lastValidatedCount != c) {
+				cached = calculator()
+				lastValidatedCount = c
+			}
+			@Suppress("UNCHECKED_CAST")
+			return cached as T
+		}
 	}
 
 	companion object {

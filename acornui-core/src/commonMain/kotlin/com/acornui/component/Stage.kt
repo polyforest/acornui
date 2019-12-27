@@ -31,16 +31,6 @@ interface Stage : ElementContainer<UiComponent>, StageRo {
 	val style: StageStyle
 	var showWaitingForSkinMessage: Boolean
 
-	/**
-	 * Returns true if the stage is currently in the update() phase.
-	 */
-	val isUpdating: Boolean
-
-	/**
-	 * Returns true if the stage is currently in the render() phase.
-	 */
-	val isRendering: Boolean
-
 	companion object : DKey<Stage>
 }
 
