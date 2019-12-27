@@ -19,8 +19,8 @@
 package com.acornui.headless
 
 import com.acornui.AppConfig
-import com.acornui.di.Owned
+import com.acornui.component.Stage
 import kotlin.jvm.JvmName
 
-expect suspend fun headlessApplication(appConfig: AppConfig, onReady: Owned.() -> Unit)
-suspend fun headlessApplication(onReady: Owned.() -> Unit) = headlessApplication(AppConfig(assetsManifestPath = null), onReady)
+expect suspend fun headlessApplication(appConfig: AppConfig, onReady: Stage.() -> Unit)
+suspend fun headlessApplication(onReady: Stage.() -> Unit) = headlessApplication(AppConfig(assetsManifestPath = null), onReady)
