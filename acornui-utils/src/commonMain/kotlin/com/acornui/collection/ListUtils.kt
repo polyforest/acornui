@@ -91,12 +91,6 @@ fun <T> List<T>.copyInto(destination: MutableList<T>, destinationOffset: Int = 0
 	return destination
 }
 
-fun <E> List<E>.copy(): MutableList<E> {
-	val newList = ArrayList<E>(size)
-	copyInto(newList)
-	return newList
-}
-
 fun <E> Collection<E>.copy(): MutableList<E> {
 	val newList = ArrayList<E>(size)
 	newList.addAll(this)

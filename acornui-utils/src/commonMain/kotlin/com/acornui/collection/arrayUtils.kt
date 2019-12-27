@@ -121,16 +121,16 @@ fun <E> MutableList<E>.unshift(element: E) {
  * Shifts this list so that [delta] becomes the new zero.
  *
  * E.g. if this list is   [0, 1, 2, 3, 4, 5] shift(3) will change the list to be [3, 4, 5, 0, 1, 2].
- *
  */
 fun <E> MutableList<E>.shiftAll(delta: Int) {
 	if (delta == 0) return
-	var delta2 = delta
-	if (delta2 < 0)
-		delta2 += size
+	var offset = -delta
+	if (offset < 0)
+		offset += size
+	check(offset >= 0) { "delta cannot be less than -size" }
 	val copy = copy()
-	arrayCopy(copy, delta2, this, 0, size - delta2)
-	arrayCopy(copy, 0, this, size - delta2, delta2)
+	copy.copyInto(destination = this, destinationOffset = 0, startIndex = size - offset, endIndex = size)
+	copy.copyInto(destination = this, destinationOffset = offset, startIndex = 0, endIndex = size - offset)
 }
 
 @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND") fun <T> List<T>.peek(): T? {
