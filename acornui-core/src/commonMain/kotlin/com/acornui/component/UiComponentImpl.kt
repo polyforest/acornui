@@ -653,10 +653,10 @@ open class UiComponentImpl(
 	// Validatable properties
 	//-----------------------------------------------
 
-	protected val invalidFlags: Int
+	final override val invalidFlags: Int
 		get() = validation.invalidFlags
 
-	override val isValidating: Boolean
+	final override val isValidating: Boolean
 		get() = validation.isValidating
 
 	//-----------------------------------------------

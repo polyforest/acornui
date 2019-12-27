@@ -37,10 +37,10 @@ interface Validatable {
 	 */
 	val invalidated: Signal<(Validatable, flags: Int) -> Unit>
 
-//	/**
-//	 * The currently invalid flags.
-//	 */
-//	val invalidFlags: Int
+	/**
+	 * The currently invalid flags.
+	 */
+	val invalidFlags: Int
 
 	/**
 	 * True if this component is currently validating.
