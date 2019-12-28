@@ -19,7 +19,6 @@ package com.acornui.cursor
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.Disposable
-import com.acornui.component.mouseIsOver
 import com.acornui.di.injectOptional
 import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.rollOut
