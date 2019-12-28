@@ -73,19 +73,21 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 	private val wheelEvent = WheelInteraction()
 
 	private var _overCanvas: Boolean = false
-	private var _canvasX: Float = 0f
-	private var _canvasY: Float = 0f
-
+	
 	var linePixelSize = 24f
 	var pagePixelSize = 24f * 200f
 
 	private val downMap = HashMap<WhichButton, Boolean>()
 
-	override val canvasX: Float
-		get() = _canvasX
+	override var touchX: Float = 0f
+		private set
+	override var touchY: Float = 0f
+		private set
 
-	override val canvasY: Float
-		get() = _canvasY
+	override var mouseX: Float = 0f
+		private set
+	override var mouseY: Float = 0f
+		private set
 
 	override val touches: List<TouchRo>
 		get() = touchEvent.touches
@@ -170,8 +172,8 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 			wheelEvent.canvasX = jsEvent.pageX.toFloat() - canvas.offsetLeft.toFloat()
 			wheelEvent.canvasY = jsEvent.pageY.toFloat() - canvas.offsetTop.toFloat()
 			wheelEvent.button = getWhichButton(jsEvent.button.toInt())
-			_canvasX = wheelEvent.canvasX
-			_canvasY = wheelEvent.canvasY
+			mouseX = wheelEvent.canvasX
+			mouseY = wheelEvent.canvasY
 
 			val m = if (jsEvent.deltaMode == WheelEvent.DOM_DELTA_PAGE) pagePixelSize else if (jsEvent.deltaMode == WheelEvent.DOM_DELTA_LINE) linePixelSize else 1f
 			wheelEvent.deltaX = m * jsEvent.deltaX.toFloat()
@@ -206,16 +208,16 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 		mouseEvent.canvasX = jsEvent.clientX.toFloat() - canvas.offsetLeft.toFloat()
 		mouseEvent.canvasY = jsEvent.clientY.toFloat() - canvas.offsetTop.toFloat()
 		mouseEvent.button = getWhichButton(jsEvent.button.toInt())
-		_canvasX = mouseEvent.canvasX
-		_canvasY = mouseEvent.canvasY
+		mouseX = mouseEvent.canvasX
+		mouseY = mouseEvent.canvasY
 	}
 
 	private fun populateTouchEvent(jsEvent: TouchEvent) {
 		touchEvent.clear()
 		touchEvent.set(jsEvent)
-		val firstTouch = touchEvent.touches.firstOrNull() ?: return
-		_canvasX = firstTouch.canvasX
-		_canvasY = firstTouch.canvasY
+		val firstTouch = touchEvent.touches.firstOrNull()
+		touchX = firstTouch?.canvasX ?: -1f
+		touchY = firstTouch?.canvasY ?: -1f
 	}
 
 	private fun TouchInteraction.set(jsEvent: TouchEvent) {

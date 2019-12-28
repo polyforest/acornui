@@ -31,7 +31,7 @@ import com.acornui.signal.StoppableSignalImpl
  * where a roll over will only dispatch for the specific target.
  * @author nbilyk
  */
-private class MouseOverChangedAttachment(
+private class RollOverAttachment(
 		private val target: UiComponentRo,
 		private val isCapture: Boolean) : Disposable {
 
@@ -76,12 +76,12 @@ private class MouseOverChangedAttachment(
  */
 fun UiComponentRo.rollOver(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
-		MouseOverChangedAttachment(this, isCapture = isCapture)
+		RollOverAttachment(this, isCapture = isCapture)
 	}.over
 }
 
 fun UiComponentRo.rollOut(isCapture: Boolean = false): StoppableSignal<MouseInteractionRo> {
 	return createOrReuseAttachment("MouseOverChanged_$isCapture") {
-		MouseOverChangedAttachment(this, isCapture = isCapture)
+		RollOverAttachment(this, isCapture = isCapture)
 	}.out
 }

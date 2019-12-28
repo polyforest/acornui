@@ -21,6 +21,7 @@ import com.acornui.component.Stage
 import com.acornui.component.atlas
 import com.acornui.component.layout.moveTo
 import com.acornui.Disposable
+import com.acornui.component.mousePosition
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
@@ -70,7 +71,7 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 
 	private var isSimulating: Boolean by afterChange(false) { new ->
 		if (new) {
-			startPosition.set(mouseState.canvasX, mouseState.canvasY)
+			startPosition.set(mouseState.mouseX, mouseState.mouseY)
 
 			handle.moveTo(stage.mousePosition(startPosition))
 			stage.addElement(handle)
@@ -85,7 +86,7 @@ class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
 			stage.mouseMove(true).add(::mouseMoveHandler)
 		} else {
 			// Remove any currently active touches.
-			position.set(mouseState.canvasX, mouseState.canvasY)
+			position.set(mouseState.mouseX, mouseState.mouseY)
 			fakeTouchEvent.clear()
 			fakeTouchEvent.type = TouchInteractionRo.TOUCH_END
 			populateTouches()

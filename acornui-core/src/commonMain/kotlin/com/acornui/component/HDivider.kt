@@ -40,7 +40,7 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	private var _split: Float = 0.5f
 
-	private val _mouse = Vector2()
+	private val dragTmp = Vector2()
 
 	init {
 		styleTags.add(HDivider)
@@ -59,8 +59,9 @@ open class HDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	private fun dividerDragHandler(event: DragInteractionRo) {
-		mousePosition(_mouse)
-		split(_mouse.x / width)
+//		mousePosition(dragTmp)
+		event.position
+		split(dragTmp.x / width)
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {

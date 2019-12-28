@@ -18,7 +18,6 @@
 
 package com.acornui.input
 
-import com.acornui._assert
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.StageRo
@@ -31,7 +30,6 @@ import com.acornui.recycle.ClearableObjectPool
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 import com.acornui.time.nowMs
-
 
 // TODO: possibly add a re-validation when the HIERARCHY has been invalidated. (use case: when an element has moved out from underneath the mouse)
 /**
@@ -57,10 +55,9 @@ open class InteractivityManagerImpl(
 
 	private val overTargets = ArrayList<UiComponentRo>()
 
-
 	private fun overCanvasChangedHandler(overCanvas: Boolean) {
 		if (!overCanvas)
-			overTarget(null)
+			mouseOverTarget(null)
 	}
 
 	private fun rawTouchStartHandler(event: TouchInteractionRo) {
@@ -72,7 +69,7 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun rawTouchMoveHandler(event: TouchInteractionRo) {
-		overTarget(touchHandler(TouchInteractionRo.TOUCH_MOVE, event))
+//		mouseOverTarget(touchHandler(TouchInteractionRo.TOUCH_MOVE, event))
 	}
 
 	private fun rawMouseDownHandler(event: MouseInteractionRo) {
@@ -84,7 +81,7 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun rawMouseMoveHandler(event: MouseInteractionRo) {
-		overTarget(mouseHandler(MouseInteractionRo.MOUSE_MOVE, event))
+		mouseOverTarget(mouseHandler(MouseInteractionRo.MOUSE_MOVE, event))
 	}
 
 	private fun rawWheelHandler(event: WheelInteractionRo) {
@@ -97,6 +94,11 @@ open class InteractivityManagerImpl(
 		wheelPool.free(wheel)
 	}
 
+	/**
+	 * Dispatches a mouse event of the given type with the target being the element under the mouse position or the
+	 * [root].
+	 * @return Returns the component the mouse is over, or null.
+	 */
 	private fun <T : MouseInteractionRo> mouseHandler(type: InteractionType<T>, event: MouseInteractionRo): UiComponentRo? {
 		val mouse = mousePool.obtain()
 		mouse.set(event)
@@ -109,6 +111,11 @@ open class InteractivityManagerImpl(
 		return ele
 	}
 
+	/**
+	 * Dispatches a touch event of the given type with the target being the element under the first touch point or the
+	 * [root].
+	 * @return Returns the component the first touch is over, or null.
+	 */
 	private fun touchHandler(type: InteractionType<TouchInteractionRo>, event: TouchInteractionRo): UiComponentRo? {
 		val touch = touchPool.obtain()
 		touch.set(event)
@@ -175,12 +182,12 @@ open class InteractivityManagerImpl(
 		keyInput.char.add(::charHandler)
 	}
 
-	private fun overTarget(target: UiComponentRo?) {
+	private fun mouseOverTarget(target: UiComponentRo?) {
 		val previousOverTarget = overTargets.firstOrNull()
 		if (target == previousOverTarget) return
 		val mouse = mousePool.obtain()
-		mouse.canvasX = mouseInput.canvasX
-		mouse.canvasY = mouseInput.canvasY
+		mouse.canvasX = mouseInput.mouseX
+		mouse.canvasY = mouseInput.mouseY
 		mouse.button = WhichButton.UNKNOWN
 		mouse.timestamp = nowMs()
 
@@ -261,7 +268,7 @@ open class InteractivityManagerImpl(
 	}
 
 	override fun dispose() {
-		overTarget(null)
+		mouseOverTarget(null)
 
 		val mouse = mouseInput
 		mouse.mouseDown.remove(::rawMouseDownHandler)

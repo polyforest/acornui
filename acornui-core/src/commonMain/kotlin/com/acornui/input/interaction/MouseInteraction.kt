@@ -78,8 +78,20 @@ interface MouseInteractionRo : InteractionEventRo {
 	}
 
 	companion object {
+
+		/**
+		 * Dispatched when a mouse button has been pressed down.
+		 */
 		val MOUSE_DOWN = InteractionType<MouseInteractionRo>("mouseDown")
+
+		/**
+		 * Dispatched when a mouse button has been released.
+		 */
 		val MOUSE_UP = InteractionType<MouseInteractionRo>("mouseUp")
+
+		/**
+		 * Dispatched when the mouse has moved.
+		 */
 		val MOUSE_MOVE = InteractionType<MouseInteractionRo>("mouseMove")
 
 		val MOUSE_OVER = InteractionType<MouseInteractionRo>("mouseOver")

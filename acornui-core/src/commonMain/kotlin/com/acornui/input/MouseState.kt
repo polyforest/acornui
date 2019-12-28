@@ -22,7 +22,6 @@ import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.TouchInteractionRo
 import com.acornui.input.interaction.TouchRo
 import com.acornui.input.interaction.WheelInteractionRo
-import com.acornui.math.Vector2
 import com.acornui.signal.Signal
 
 /**
@@ -56,12 +55,36 @@ interface MouseState : Disposable {
 	/**
 	 * The mouse x position relative to the canvas.
 	 */
+	@Deprecated("Use mouseX", ReplaceWith("mouseX"))
 	val canvasX: Float
+		get() = mouseX
+
+	/**
+	 * The mouse or first touch y position relative to the canvas.
+	 */
+	@Deprecated("Use mouseY", ReplaceWith("mouseY"))
+	val canvasY: Float
+		get() = mouseY
+
+	/**
+	 * The first touch x position relative to the canvas.
+	 */
+	val touchX: Float
+
+	/**
+	 * The first touch y position relative to the canvas.
+	 */
+	val touchY: Float
+
+	/**
+	 * The mouse x position relative to the canvas.
+	 */
+	val mouseX: Float
 
 	/**
 	 * The mouse y position relative to the canvas.
 	 */
-	val canvasY: Float
+	val mouseY: Float
 
 	/**
 	 * The current list of touch points.

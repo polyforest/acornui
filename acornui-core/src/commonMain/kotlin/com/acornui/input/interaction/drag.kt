@@ -51,13 +51,11 @@ class DragAttachment(
 	private var watchingTouch = false
 	private var touchId = -1
 
-	private var _isDragging = false
-
 	/**
 	 * The movement has passed the affordance, and is currently dragging.
 	 */
-	val isDragging: Boolean
-		get() = _isDragging
+	var isDragging: Boolean = false
+		private set
 
 	/**
 	 * Returns true if the user is currently interacting.
@@ -96,7 +94,7 @@ class DragAttachment(
 	private val startPosition = Vector2()
 	private val startPositionLocal = Vector2()
 	private var isTouch: Boolean = false
-	private var _enterFrame: Disposable? = null
+	private var enterFrameHandle: Disposable? = null
 
 	private fun targetDeactivatedHandler(c: LifecycleRo) {
 		stop()
@@ -106,12 +104,12 @@ class DragAttachment(
 		if (watchingMouse == value) return
 		watchingMouse = value
 		if (value) {
-			_enterFrame = tick(-1, callback = ::enterFrameHandler.as2)
+			enterFrameHandle = tick(-1, callback = ::enterFrameHandler.as2)
 			stage.mouseMove().add(::stageMouseMoveHandler)
 			stage.mouseUp().add(::stageMouseUpHandler)
 		} else {
-			_enterFrame?.dispose()
-			_enterFrame = null
+			enterFrameHandle?.dispose()
+			enterFrameHandle = null
 			stage.mouseMove().remove(::stageMouseMoveHandler)
 			stage.mouseUp().remove(::stageMouseUpHandler)
 		}
@@ -204,12 +202,12 @@ class DragAttachment(
 		if (watchingTouch == value) return
 		watchingTouch = value
 		if (value) {
-			_enterFrame = tick(-1, callback = ::enterFrameHandler.as2)
+			enterFrameHandle = tick(-1, callback = ::enterFrameHandler.as2)
 			stage.touchMove().add(::stageTouchMoveHandler)
 			stage.touchEnd().add(::stageTouchEndHandler)
 		} else {
-			_enterFrame?.dispose()
-			_enterFrame = null
+			enterFrameHandle?.dispose()
+			enterFrameHandle = null
 			stage.touchMove().remove(::stageTouchMoveHandler)
 			stage.touchEnd().remove(::stageTouchEndHandler)
 		}
@@ -224,7 +222,9 @@ class DragAttachment(
 		if (allowTouchEnd(event)) {
 			touchId = -1
 			event.handled = true
-			position.set(mouse.canvasX, mouse.canvasY)
+			val firstTouch = event.touches.firstOrNull()
+			if (firstTouch != null)
+				position.set(firstTouch.canvasX, firstTouch.canvasY)
 			setIsWatchingTouch(false)
 			setIsDragging(false)
 		}
@@ -235,23 +235,26 @@ class DragAttachment(
 	//--------------------------------------------------------------
 
 	private fun enterFrameHandler() {
-		position.set(mouse.canvasX, mouse.canvasY)
-		if (_isDragging) {
+		if (watchingTouch)
+			position.set(mouse.touchX, mouse.touchY)
+		else if (watchingMouse)
+			position.set(mouse.mouseX, mouse.mouseY)
+		if (isDragging) {
 			dispatchDragEvent(DragInteraction.DRAG, _drag)
 		} else {
-			if (!_isDragging && allowMouseDragStart()) {
+			if (!isDragging && allowMouseDragStart()) {
 				setIsDragging(true)
 			}
 		}
 	}
 
 	private fun setIsDragging(value: Boolean) {
-		if (_isDragging == value) return
-		_isDragging = value
+		if (isDragging == value) return
+		isDragging = value
 		if (value) {
 			dispatchDragEvent(DragInteraction.DRAG_START, _dragStart)
 			if (dragEvent.defaultPrevented()) {
-				_isDragging = false
+				isDragging = false
 			} else {
 				stage.click(isCapture = true).add(::clickBlocker, true) // Set the next click to be marked as handled.
 				dispatchDragEvent(DragInteraction.DRAG, _drag)

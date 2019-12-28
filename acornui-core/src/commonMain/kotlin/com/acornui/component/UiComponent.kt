@@ -26,9 +26,13 @@ import com.acornui.collection.arrayListPool
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.StyleableRo
 import com.acornui.di.Owned
+import com.acornui.di.inject
+import com.acornui.di.injectOptional
 import com.acornui.focus.Focusable
+import com.acornui.input.MouseState
 import com.acornui.math.MinMaxRo
 import com.acornui.math.RayRo
+import com.acornui.math.Vector2
 import com.acornui.signal.Signal
 
 @DslMarker
@@ -228,4 +232,35 @@ fun UiComponentRo.getChildUnderPoint(canvasX: Float, canvasY: Float, onlyInterac
 	val first = out.firstOrNull()
 	arrayListPool.free(out)
 	return first
+}
+
+/**
+ * Returns true if the current mouse position is over this component.
+ */
+fun UiComponentRo.mouseIsOver(): Boolean {
+	val mouseState = inject(MouseState)
+	if (!isActive || !mouseState.overCanvas) return false
+	val stage = injectOptional(Stage) ?: return false
+	val e = stage.getChildUnderPoint(mouseState.mouseX, mouseState.mouseY, onlyInteractive = true) ?: return false
+	return e.isDescendantOf(this)
+}
+
+/**
+ * Sets the [out] vector to the local mouse coordinates.
+ * @return Returns the [out] vector.
+ */
+fun UiComponentRo.mousePosition(out: Vector2): Vector2 {
+	val mouseState = inject(MouseState)
+	canvasToLocal(out.set(mouseState.mouseX, mouseState.mouseY))
+	return out
+}
+
+/**
+ * Sets the [out] vector to the first touch coordinates.
+ * @return Returns the [out] vector.
+ */
+fun UiComponentRo.touchPosition(out: Vector2): Vector2 {
+	val mouseState = inject(MouseState)
+	canvasToLocal(out.set(mouseState.touchX, mouseState.touchY))
+	return out
 }

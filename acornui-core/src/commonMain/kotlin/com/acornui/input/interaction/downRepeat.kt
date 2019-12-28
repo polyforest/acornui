@@ -29,7 +29,8 @@ import com.acornui.time.nowMs
 import com.acornui.time.timer
 
 class DownRepeat(
-		private val target: UiComponentRo) : Disposable {
+		private val target: UiComponentRo
+) : Disposable {
 
 	private val mouseState = target.inject(MouseState)
 	private val stage = target.stage
@@ -40,32 +41,33 @@ class DownRepeat(
 
 	private var repeatTimer: Disposable? = null
 
+	private val mouseDownRepeat = MouseInteraction()
+
 	init {
 	}
 
-	private val repeatWaitHandler = {
-		val m = mouseState
-		MOUSE_DOWN_REPEAT.clear()
-		MOUSE_DOWN_REPEAT.type = MouseInteractionRo.MOUSE_DOWN
-		MOUSE_DOWN_REPEAT.canvasX = m.canvasX
-		MOUSE_DOWN_REPEAT.canvasY = m.canvasY
-		MOUSE_DOWN_REPEAT.button = WhichButton.LEFT
-		MOUSE_DOWN_REPEAT.timestamp = nowMs()
-		MOUSE_DOWN_REPEAT.localize(target)
-		interactivity.dispatch(target, MOUSE_DOWN_REPEAT, useCapture = false, useBubble = false)
+	private fun mouseRepeatHandler() {
+		val e = mouseDownRepeat
+		e.clear()
+		e.type = MouseInteractionRo.MOUSE_DOWN
+		e.isFabricated = true
+		e.canvasX = mouseState.mouseX
+		e.canvasY = mouseState.mouseY
+		e.button = WhichButton.LEFT
+		e.timestamp = nowMs()
+		e.localize(target)
+		interactivity.dispatch(target, e, useCapture = false, useBubble = false)
 	}
 
-	private val mouseDownHandler = {
-		event: MouseInteractionRo ->
-		if (event !== MOUSE_DOWN_REPEAT) {
+	private fun mouseDownHandler(event: MouseInteractionRo) {
+		if (event !== mouseDownRepeat) {
 			repeatTimer?.dispose()
-			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, repeatWaitHandler)
-			stage.mouseUp().add(rawMouseUpHandler, true)
+			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, ::mouseRepeatHandler)
+			stage.mouseUp().add(::rawMouseUpHandler, true)
 		}
 	}
 
-	private val rawMouseUpHandler = {
-		event: MouseInteractionRo ->
+	private fun rawMouseUpHandler(event: MouseInteractionRo) {
 		if (event.button == WhichButton.LEFT) {
 			repeatTimer?.dispose()
 			repeatTimer = null
@@ -73,20 +75,18 @@ class DownRepeat(
 	}
 
 	init {
-		target.mouseDown().add(mouseDownHandler)
+		target.mouseDown().add(::mouseDownHandler)
 	}
 
 	override fun dispose() {
 		style.dispose()
-		target.mouseDown().remove(mouseDownHandler)
-		stage.mouseUp().remove(rawMouseUpHandler)
+		target.mouseDown().remove(::mouseDownHandler)
+		stage.mouseUp().remove(::rawMouseUpHandler)
 		repeatTimer?.dispose()
 		repeatTimer = null
 	}
 
-	companion object {
-		private val MOUSE_DOWN_REPEAT = MouseInteraction()
-	}
+	companion object
 }
 
 /**

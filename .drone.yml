@@ -2,10 +2,20 @@ kind: pipeline
 name: default
 
 steps:
-  - name: build-test-publish
+  - name: build
     image: openjdk:8-jdk
     commands:
-      - ./gradlew build publish -x jsBrowserTest --stacktrace
+      - ./gradlew publish -x jsBrowserTest --stacktrace
+  - name: slack-notify-if-build-failure
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: SLACK_ACORNBOT_WEBHOOK
+      channel: acorn-bot
+      template: >
+        Build {{build.number}} failed. Fix me please.
+      when:
+        status: [ failure ]
   - name: upload-reports
     image: appleboy/drone-scp
     settings:
@@ -43,7 +53,7 @@ steps:
       when:
         branch:
           - master
-  - name: slack
+  - name: slack-notify
     image: plugins/slack
     settings:
       webhook:
@@ -51,9 +61,9 @@ steps:
       channel: acorn-bot
       template: >
         {{#success build.status}}
-          build {{build.number}} succeeded. Good job.
+          Build {{build.number}} succeeded. W00t W00t!
         {{else}}
-          build {{build.number}} failed. Fix me please.
+          Build {{build.number}} upload failed. Fix me please.
         {{/success}}
       when:
         status: [ success, failure ]

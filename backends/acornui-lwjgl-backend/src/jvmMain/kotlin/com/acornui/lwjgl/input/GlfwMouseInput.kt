@@ -16,9 +16,6 @@
 
 package com.acornui.lwjgl.input
 
-import com.acornui.function.as2
-import com.acornui.function.as3
-import com.acornui.graphic.Window
 import com.acornui.input.MouseInput
 import com.acornui.input.WhichButton
 import com.acornui.input.interaction.*
@@ -60,19 +57,21 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 
 	private val mouseEvent = MouseInteraction()
 	private val wheelEvent = WheelInteraction()
-	private var _canvasX: Float = 0f
-	private var _canvasY: Float = 0f
 	private var _overCanvas: Boolean = false
 
 	private val downMap = HashMap<WhichButton, Boolean>()
 
 	val scrollSpeed = 24f
 
-	override val canvasX: Float
-		get() = _canvasX
+	override var touchX: Float = 0f
+		private set
+	override var touchY: Float = 0f
+		private set
 
-	override val canvasY: Float
-		get() = _canvasY
+	override var mouseX: Float = 0f
+		private set
+	override var mouseY: Float = 0f
+		private set
 
 	override val touches: List<TouchRo> = emptyList()
 
@@ -90,8 +89,8 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 	private val mouseButtonCallback: GLFWMouseButtonCallback = object : GLFWMouseButtonCallback() {
 		override fun invoke(window: Long, button: Int, action: Int, mods: Int) {
 			mouseEvent.clear()
-			mouseEvent.canvasX = _canvasX
-			mouseEvent.canvasY = _canvasY
+			mouseEvent.canvasX = mouseX
+			mouseEvent.canvasY = mouseY
 			mouseEvent.button = getWhichButton(button)
 			mouseEvent.timestamp = nowMs()
 			if (mouseEvent.button != WhichButton.UNKNOWN) {
@@ -112,12 +111,12 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 	private val cursorPosCallback: GLFWCursorPosCallback = object : GLFWCursorPosCallback() {
 		override fun invoke(windowId: Long, xpos: Double, ypos: Double) {
 			if (mouseMove.isDispatching) return
-			_canvasX = (xpos * glfwXToPoints).toFloat()
-			_canvasY = (ypos * glfwYToPoints).toFloat()
+			mouseX = (xpos * glfwXToPoints).toFloat()
+			mouseY = (ypos * glfwYToPoints).toFloat()
 
 			mouseEvent.clear()
-			mouseEvent.canvasX = _canvasX
-			mouseEvent.canvasY = _canvasY
+			mouseEvent.canvasX = mouseX
+			mouseEvent.canvasY = mouseY
 			mouseEvent.button = WhichButton.UNKNOWN
 			mouseEvent.timestamp = nowMs()
 			_mouseMove.dispatch(mouseEvent)
@@ -136,8 +135,8 @@ class GlfwMouseInput(private val windowId: Long, val window: GlfwWindowImpl) : M
 		override fun invoke(window: Long, xoffset: Double, yoffset: Double) {
 			if (mouseWheel.isDispatching) return
 			wheelEvent.clear()
-			wheelEvent.canvasX = _canvasX
-			wheelEvent.canvasY = _canvasY
+			wheelEvent.canvasX = mouseX
+			wheelEvent.canvasY = mouseY
 			wheelEvent.button = WhichButton.UNKNOWN
 			wheelEvent.timestamp = nowMs()
 			wheelEvent.deltaX = scrollSpeed * -xoffset.toFloat()

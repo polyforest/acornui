@@ -55,17 +55,6 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 
 	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false): StoppableSignal<T>?
 
-	/**
-	 * Sets the [out] vector to the local mouse coordinates.
-	 * @return Returns the [out] vector.
-	 */
-	fun mousePosition(out: Vector2): Vector2
-
-	/**
-	 * Returns true if the mouse is currently over this element.
-	 */
-	fun mouseIsOver(): Boolean
-
 	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean = false)
 
 	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false)

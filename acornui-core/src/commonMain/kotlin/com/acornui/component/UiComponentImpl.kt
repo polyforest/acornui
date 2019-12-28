@@ -350,7 +350,7 @@ open class UiComponentImpl(
 	}
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		val bounds = _bounds // Accessing _bounds instead of bounds to avoid a validation.
+		val bounds = bounds
 		val topLeft = Vector3.obtain()
 		val topRight = Vector3.obtain()
 		val bottomRight = Vector3.obtain()
@@ -509,22 +509,6 @@ open class UiComponentImpl(
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> removeAttachment(key: Any): T? {
 		return _attachments.remove(key) as T?
-	}
-
-	/**
-	 * Sets the [out] vector to the local mouse coordinates.
-	 * @return Returns the [out] vector.
-	 */
-	override fun mousePosition(out: Vector2): Vector2 {
-		canvasToLocal(out.set(mouseState.canvasX, mouseState.canvasY))
-		return out
-	}
-
-	override fun mouseIsOver(): Boolean {
-		if (!isActive || !mouseState.overCanvas) return false
-		val stage = owner.injectOptional(Stage) ?: return false
-		val e = stage.getChildUnderPoint(mouseState.canvasX, mouseState.canvasY, onlyInteractive = true) ?: return false
-		return e.isDescendantOf(this)
 	}
 
 	//-----------------------------------------------
@@ -835,7 +819,6 @@ open class UiComponentImpl(
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
-	 * Do not modify this matrix directly, it will be overwritten on a TRANSFORM validation.
 	 */
 	final override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
 		_transformGlobal
@@ -1001,9 +984,9 @@ open class UiComponentImpl(
 	protected fun <T> validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> =
 			afterChange(initialValue) { invalidate(flags) }
 
-	protected fun <T> validationProp(flag: Int, getter: () -> T) = ValidatedProperty(flag, getter)
+	protected fun <T> validationProp(flag: Int, getter: () -> T) = ValidationProperty(flag, getter)
 
-	protected inner class ValidatedProperty<T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<UiComponentImpl, T> {
+	protected inner class ValidationProperty<T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<UiComponentImpl, T> {
 
 		private var lastValidatedCount = -1
 		private var cached: T? = null

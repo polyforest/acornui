@@ -30,8 +30,10 @@ object MockMouseInput : MouseInput {
 	override val touchMode: Boolean = false
 	override val overCanvasChanged: Signal<(Boolean) -> Unit> = emptySignal()
 	override val overCanvas: Boolean = false
-	override val canvasX: Float = 0f
-	override val canvasY: Float = 0f
+	override val mouseX: Float = 0f
+	override val mouseY: Float = 0f
+	override val touchX: Float = 0f
+	override val touchY: Float = 0f
 	override val touches: List<TouchRo> = emptyList()
 
 	override val touchStart: Signal<(TouchInteractionRo) -> Unit> = emptySignal()

@@ -18,12 +18,8 @@ package com.acornui.component
 
 import com.acornui.assertionsEnabled
 import com.acornui.math.MathUtils
-import com.acornui.reflect.afterChange
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
-import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * A component that has an invalidate/validate cycle.
