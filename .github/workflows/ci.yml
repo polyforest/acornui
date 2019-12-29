@@ -20,10 +20,10 @@ jobs:
         arguments: build publish -x jsBrowserTest --stacktrace
     - name: Bundle test reports
       if: always()
-      run: tar -cvf reports.tar **/build/reports
+      run: mkdir -p build/reports && cp -r --parents **/build/reports build/reports
     - name: Upload test reports
       uses: actions/upload-artifact@v1
       if: always()
       with:
-        name: upload-test-reports
-        path: reports.tar
+        name: test-reports-${{ matrix.os }}
+        path: build/reports
