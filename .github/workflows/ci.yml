@@ -20,10 +20,10 @@ jobs:
         arguments: build publish -x jsBrowserTest --stacktrace
     - name: Bundle test reports
       if: always()
-      run: zip reports **/build/reports/**/*.*
+      run: tar -cvf reports.tar **/build/reports
     - name: Upload test reports
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: upload-test-reports
-        path: reports.zip
+        path: reports.tar
