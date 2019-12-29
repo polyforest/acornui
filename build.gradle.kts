@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-
-
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -18,11 +14,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
  * limitations under the License.
  */
 
-val kotlinJvmTarget: String by extra
-val kotlinLanguageVersion: String by extra
-
 plugins {
-	kotlin("multiplatform")
 	`maven-publish`
 	id("org.jetbrains.dokka")
 }
@@ -36,30 +28,6 @@ subprojects {
 allprojects {
 	repositories {
 		jcenter()
-	}
-
-	tasks.withType<KotlinCompile> {
-		kotlinOptions {
-			languageVersion = kotlinLanguageVersion
-			apiVersion = kotlinLanguageVersion
-		}
-	}
-
-	// Inter-project dependencies are not expressed as project(id) because at the time of writing, IDEA cannot handle
-	// multi-platform composite builds.  (KT-30285) So as a workaround, projects needing to work alongside acorn code
-	// will include acorn libraries individually via include() and not includeBuild().
-	configurations.all {
-		resolutionStrategy.dependencySubstitution.all {
-			requested.let { r ->
-				if (r is ModuleComponentSelector && r.group.startsWith("com.acornui")) {
-					arrayOf("", "tools:", "backends:", "build-libs:").firstNotNullResult {
-						findProject(":$it${r.module}")
-					}?.let { targetProject ->
-						useTarget(targetProject)
-					}
-				}
-			}
-		}
 	}
 
 	publishing {

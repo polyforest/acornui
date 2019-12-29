@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package com.acornui.particle
 
-import com.acornui.asset.loadText
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 

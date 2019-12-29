@@ -42,7 +42,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 				js {
 					browser()
-					nodejs()
+//					nodejs()
 					
 					compilations.all {
 						kotlinOptions {
@@ -82,7 +82,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 							implementation(kotlin("test-js", version = kotlinVersion))
 							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
-							implementation(npm("xmlhttprequest", "1.8.0"))
+//							implementation(npm("xmlhttprequest", "1.8.0"))
 						}
 					}
 				}

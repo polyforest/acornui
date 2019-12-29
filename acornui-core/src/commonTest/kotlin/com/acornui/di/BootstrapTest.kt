@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_VARIABLE")
+
 package com.acornui.di
 
 import com.acornui.async.delay

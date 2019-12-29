@@ -15,14 +15,8 @@
  */
 
 plugins {
-//	id("org.gradle.kotlin.kotlin-dsl") version "1.2.11"
-	`kotlin-dsl`
+	`java-gradle-plugin`
 	`maven-publish`
-	id("kotlinx-serialization")
-}
-
-kotlinDslPluginOptions {
-	experimentalWarning.set(false)
 }
 
 val kotlinVersion: String by extra
@@ -34,25 +28,16 @@ dependencies {
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-	testImplementation(kotlin("test"))
-	testImplementation(kotlin("test-junit"))
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
-	implementation("com.acornui:acornui-utils:$version")
-	implementation("com.acornui:acornui-core:$version")
-	implementation("com.acornui:acornui-lwjgl-backend:$version")
+	implementation(project(":acornui-utils"))
+	implementation(project(":acornui-core"))
+	implementation(project(":backends:acornui-lwjgl-backend"))
 
-	compile(rootProject.files("buildSrc/build/classes"))
-}
+	implementation(rootProject.files("buildSrc/build/classes"))
 
-kotlin {
-	sourceSets {
-		main {
-			// This is gross, but as far as I know there's no way to publish plugins from the buildSrc project,
-			// and this is less gross than duplicating code.
-			kotlin.srcDirs(rootProject.file("buildSrc/src/main/kotlin"))
-		}
-	}
+	testImplementation(kotlin("test", version = kotlinVersion))
+	testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
 
 gradlePlugin {

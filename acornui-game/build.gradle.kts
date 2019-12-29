@@ -22,13 +22,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("com.acornui:acornui-core:$version")
-                implementation("com.acornui:acornui-utils:$version")
+                implementation(project(":acornui-core"))
+                implementation(project(":acornui-utils"))
             }
         }
         commonTest {
             dependencies {
-                implementation("com.acornui:acornui-test-utils:$version")
+                implementation(project(":acornui-test-utils"))
             }
         }
     }

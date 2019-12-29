@@ -33,6 +33,9 @@ dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
     implementation(kotlin("serialization", version = kotlinVersion))
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
+
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 }
 
 gradlePlugin {

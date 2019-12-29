@@ -85,7 +85,7 @@ class NavigationManagerTest {
 		}, isOnce = true)
 		m.pop()
 		val shouldNotChange = {
-			event: NavEvent ->
+			_: NavEvent ->
 			fail("Should not have changed")
 		}
 		m.changed.add(shouldNotChange)
@@ -119,7 +119,7 @@ class NavigationManagerTest {
 	@Test fun concurrentPath() {
 		val m = NavigationManagerImpl()
 		m.changed.add({
-			event ->
+			_ ->
 			m.path(listOf(NavNode("test2")))
 		}, isOnce = true)
 

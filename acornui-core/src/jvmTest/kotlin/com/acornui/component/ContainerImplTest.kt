@@ -21,9 +21,9 @@ import com.acornui.component.layout.spacer
 import com.acornui.headless.HeadlessInjector
 import com.acornui.headless.MockComponent
 import com.acornui.test.assertListEquals
-import org.junit.Test
 
-import org.junit.Assert.*
+import kotlin.test.*
+import kotlin.test.Test
 import kotlin.test.Ignore
 
 class ContainerImplTest {

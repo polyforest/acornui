@@ -1,6 +1,6 @@
 package com.acornui.io.file
 
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

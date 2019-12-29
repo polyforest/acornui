@@ -16,10 +16,27 @@
 
 rootProject.name = "acornui"
 
+pluginManagement {
+	val kotlinVersion: String by extra
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
+	}
+	resolutionStrategy {
+		eachPlugin {
+			when {
+				requested.id.namespace == "org.jetbrains.kotlin" ->
+					useVersion(kotlinVersion)
+			}
+		}
+	}
+}
+
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
 include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
 include("tools:acornui-texture-packer", "tools:gdx-font-processor")
-include("build-libs:acornui-app-plugins")
 include("skins:basic")
+
+include("acornui-gradle-plugins")
 
 enableFeaturePreview("GRADLE_METADATA")

@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-plugins {
-	id("com.acornui.kotlin-mpp")
-}
+package com.acornui.build.plugins
 
-kotlin {
-	sourceSets {
-		commonMain {
-			dependencies {
-				implementation(project(":acornui-core"))
-				implementation(project(":acornui-utils"))
-			}
-		}
-		named("jvmMain") {
-			dependencies {
-				implementation(project(":backends:acornui-lwjgl-backend"))
-			}
-		}
+import com.acornui.build.plugins.util.RunJvmTask
+import org.gradle.kotlin.dsl.extra
+import org.gradle.testfixtures.ProjectBuilder
+import kotlin.test.Test
+import kotlin.test.assertTrue
+
+class AcornUiApplicationPluginTest {
+
+	@Test fun addsRunJvmTask() {
+		val project = ProjectBuilder.builder().build()
+		project.extra["acornVersion"] = "test"
+		project.pluginManager.apply("com.acornui.root")
+		project.pluginManager.apply("com.acornui.app")
+		assertTrue(project.tasks.getByName("runJvm") is RunJvmTask)
 	}
 }

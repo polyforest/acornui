@@ -1,6 +1,6 @@
 package com.acornui.font
 
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 
 class ProcessFontsKtTest {

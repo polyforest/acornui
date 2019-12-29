@@ -91,7 +91,7 @@ class GridLayoutTest {
 
 		val positions = ArrayList<Pair<Int, Int>>()
 		layout.cellWalk(list, style) {
-			element, rowIndex, colIndex ->
+			_, rowIndex, colIndex ->
 			positions.add(Pair(rowIndex, colIndex))
 		}
 
@@ -102,7 +102,7 @@ class GridLayoutTest {
 
 	private fun createSpacers(n: Int): MutableList<LayoutElement> {
 		val list = ArrayList<LayoutElement>()
-		for (i in 0..n-1) {
+		for (i in 0 until n) {
 			list.add(spacer("[Spacer $i]"))
 		}
 		return list

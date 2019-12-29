@@ -26,7 +26,7 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 
-                implementation("com.acornui:acornui-utils:$version")
+                implementation(project(":acornui-utils"))
             }
         }
         named("jvmMain") {

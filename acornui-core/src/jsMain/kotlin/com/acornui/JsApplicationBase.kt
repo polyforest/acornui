@@ -55,7 +55,7 @@ abstract class JsApplicationBase : ApplicationBase() {
 
 		if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
 			println("Requiring XMLHttpRequest")
-			js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
+//			js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 		}
 	}
 
