@@ -32,11 +32,12 @@ pluginManagement {
 	}
 }
 
-include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
-include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
-include("tools:acornui-texture-packer", "tools:gdx-font-processor")
-include("skins:basic")
+include("acornui-utils") // TEMPORARY, testing github actions
+//include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
+//include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
+//include("tools:acornui-texture-packer", "tools:gdx-font-processor")
+//include("skins:basic")
 
-include("acornui-gradle-plugins")
+//include("acornui-gradle-plugins")
 
 enableFeaturePreview("GRADLE_METADATA")
