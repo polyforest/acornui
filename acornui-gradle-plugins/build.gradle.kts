@@ -15,8 +15,8 @@
  */
 
 plugins {
-	`java-gradle-plugin`
 	`maven-publish`
+	`kotlin-dsl`
 }
 
 val kotlinVersion: String by extra
@@ -38,6 +38,16 @@ dependencies {
 
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
+}
+
+kotlin {
+	sourceSets {
+		main {
+			// This is gross, but as far as I know there's no way to publish plugins from the buildSrc project,
+			// and this is less gross than duplicating code.
+			kotlin.srcDirs(rootProject.file("buildSrc/src/main/kotlin"))
+		}
+	}
 }
 
 gradlePlugin {
