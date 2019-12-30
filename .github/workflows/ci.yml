@@ -27,7 +27,7 @@ jobs:
       if: always()
       with:
         name: test-reports-${{ matrix.os }}
-        path: build/reports
+        path: build/reports/${{ matrix.os }}
     - name: Upload artifacts
       uses: appleboy/scp-action@v0.0.5
       if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
