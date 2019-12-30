@@ -28,3 +28,12 @@ jobs:
       with:
         name: test-reports-${{ matrix.os }}
         path: build/reports
+    - name: Upload artifacts
+      uses: appleboy/scp-action@master
+      with:
+        host: bandbox.dreamhost.com
+        username: ${{ secrets.BANDBOX_FTP_USERNAME }}
+        password: ${{ secrets.BANDBOX_FTP_PASSWORD }}
+        source: "build/artifacts"
+        target: "~/artifacts.acornui.com/mvn"
+        strip_components: 2
