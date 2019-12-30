@@ -18,12 +18,14 @@ package com.acornui.time
 
 import com.acornui.test.assertClose
 import com.acornui.test.runTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.MonoClock
 import kotlin.time.seconds
 
 class ScheduleTest {
 
+	@Ignore
 	@Test
 	fun scheduleTest() = runTest(4.seconds) {
 		var isDone = false
