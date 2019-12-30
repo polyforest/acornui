@@ -20,14 +20,14 @@ jobs:
         arguments: build publish -x jsBrowserTest --stacktrace
     - name: Bundle test reports
       if: always()
-      run: mkdir -p build/reports && cp -rp **/build/reports build/reports
+      run: mkdir -p build/reports/${{ matrix.os }} && cp -r --parent **/build/reports build/reports//${{ matrix.os }}
       shell: bash
     - name: Upload test reports
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: test-reports-${{ matrix.os }}
-        path: build/reports
+        path: build/reports/${{ matrix.os }}
     - name: Upload artifacts
       uses: appleboy/scp-action@v0.0.5
       if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
