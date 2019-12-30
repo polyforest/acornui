@@ -30,6 +30,7 @@ jobs:
         path: build/reports
     - name: Upload artifacts
       uses: appleboy/scp-action@master
+      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
       with:
         host: bandbox.dreamhost.com
         username: ${{ secrets.BANDBOX_FTP_USERNAME }}
