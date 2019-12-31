@@ -25,6 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 fun Project.createRuntimeKotlinClasspath(compilationName: String, configure: KotlinDependencyHandler.() -> Unit): FileCollection {
 	return (kotlinExt.targets.getByName("jvm").compilations.create(compilationName) {
-		dependencies(configure)
+		it.dependencies(configure)
 	} as KotlinCompilationToRunnableFiles<KotlinCommonOptions>).runtimeDependencyFiles
 }

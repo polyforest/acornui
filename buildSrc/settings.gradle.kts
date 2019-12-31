@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package com.acornui.build.plugins
+pluginManagement {
 
-import com.acornui.build.plugins.util.RunJvmTask
-import org.gradle.kotlin.dsl.extra
-import org.gradle.testfixtures.ProjectBuilder
-import kotlin.test.Test
-import kotlin.test.assertTrue
+	val props = java.util.Properties()
+	props.load(file("../gradle.properties").inputStream())
 
-class AcornUiApplicationPluginTest {
-
-	@Test fun addsRunJvmTask() {
-		val project = ProjectBuilder.builder().build()
-		project.extra["acornVersion"] = "test"
-		project.pluginManager.apply("com.acornui.root")
-		project.pluginManager.apply("com.acornui.app")
-		assertTrue(project.tasks.getByName("runJvm") is RunJvmTask)
+	val kotlinVersion: String by props
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
+	}
+	resolutionStrategy {
+		eachPlugin {
+			when {
+				requested.id.namespace == "org.jetbrains.kotlin" ->
+					useVersion(kotlinVersion)
+			}
+		}
 	}
 }

@@ -17,29 +17,27 @@
 package com.acornui.build
 
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import java.util.*
 
 /**
  *
  */
 object AcornDependencies {
-	val versionDefaults = mapOf(
-			"kotlinVersion" to "1.3.61",
-			"gdxVersion" to "1.9.8",
-			"lwjglVersion" to "3.2.2",
-			"jorbisVersion" to "0.0.17",
-			"jlayerVersion" to "1.0.2",
 
-			"dokkaVersion" to "0.9.18",
-			"kotlinLanguageVersion" to "1.3",
-			"kotlinJvmTarget" to "1.8",
-			"kotlinSerializationVersion" to "0.14.0",
-			"kotlinCoroutinesVersion" to "1.3.0-RC2"
-	)
+	private val props: Properties
+
+	init {
+		val iS = AcornDependencies::class.java.classLoader.getResourceAsStream("acornDependencies.txt")
+		props = Properties()
+		props.load(iS)
+	}
 
 	fun addVersionProperties(extra: ExtraPropertiesExtension) {
-		for (version in versionDefaults) {
-			if (!extra.has(version.key))
-				extra[version.key] = version.value
+		for (entry in props.entries) {
+			val key = entry.key.toString()
+			val value = entry.value.toString()
+			if (!extra.has(key))
+				extra[key] = value
 		}
 	}
 }

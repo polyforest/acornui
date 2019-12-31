@@ -83,9 +83,9 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 					}
 
 			val writeManifest = tasks.register("${target}WriteResourcesManifest") {
-				dependsOn(processAcornResources)
-				onlyIfDidWork(processAcornResources)
-				doLast {
+				it.dependsOn(processAcornResources)
+				it.onlyIfDidWork(processAcornResources)
+				it.doLast {
 					val assetsDir = processedResourcesAllMain.resolve("assets")
 					if (assetsDir.exists()) {
 						val manifest = ManifestUtil.createManifest(assetsDir, processedResourcesAllMain)
@@ -105,12 +105,12 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 			}
 
 			val assemblePlatform = tasks.register("${target}Assemble") {
-				group = "build"
-				dependsOn(processResources, "compileKotlin$platformCapitalized")
+				it.group = "build"
+				it.dependsOn(processResources, "compileKotlin$platformCapitalized")
 			}
 
 			tasks.named("assemble") {
-				dependsOn(assemblePlatform)
+				it.dependsOn(assemblePlatform)
 			}
 		}
 	}
@@ -182,7 +182,7 @@ fun Project.appAssetsWebTasks() {
 	}
 
 	tasks.named("assemble") {
-		dependsOn(webAssemble, webProdAssemble)
+		it.dependsOn(webAssemble, webProdAssemble)
 	}
 
 	val jsDce = tasks.register<DceTask>("jsDce") {
@@ -307,8 +307,8 @@ fun Project.uberJarTask() {
 		archiveBaseName.set("${project.name}-uber")
 		val mainClass = tasks.getByName<JavaExec>("runJvm").main
 		manifest {
-			attributes["Implementation-Version"] = project.version.toString()
-			attributes["Main-Class"] = mainClass
+			it.attributes["Implementation-Version"] = project.version.toString()
+			it.attributes["Main-Class"] = mainClass
 		}
 		val jvmTarget: KotlinTarget = kotlinExt.targets["jvm"]
 		val compilation = jvmTarget.compilations["main"] as KotlinCompilationToRunnableFiles<KotlinCommonOptions>

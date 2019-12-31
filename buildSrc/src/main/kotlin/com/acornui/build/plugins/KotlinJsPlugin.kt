@@ -45,7 +45,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 //					nodejs()
 					
 					compilations.all {
-						kotlinOptions {
+						it.kotlinOptions {
 							moduleKind = "umd"
 							sourceMap = true
 							sourceMapEmbedSources = "always"
@@ -54,9 +54,9 @@ open class KotlinJsPlugin : Plugin<Project> {
 					}
 				}
 
-				targets.all {
-					compilations.all {
-						kotlinOptions {
+				targets.all { target ->
+					target.compilations.all { compilation ->
+						compilation.kotlinOptions {
 							languageVersion = kotlinLanguageVersion
 							apiVersion = kotlinLanguageVersion
 						}
@@ -65,7 +65,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 				sourceSets {
 					all {
-						languageSettings.progressiveMode = true
+						it.languageSettings.progressiveMode = true
 					}
 
 					val jsMain by getting {

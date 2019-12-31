@@ -1,0 +1,10 @@
+kotlinVersion=${kotlinVersion}
+gdxVersion=${gdxVersion}
+lwjglVersion=${lwjglVersion}
+jorbisVersion=${jorbisVersion}
+jlayerVersion=${jlayerVersion}
+dokkaVersion=${dokkaVersion}
+kotlinLanguageVersion=${kotlinLanguageVersion}
+kotlinJvmTarget=${kotlinJvmTarget}
+kotlinSerializationVersion=${kotlinSerializationVersion}
+kotlinCoroutinesVersion=${kotlinCoroutinesVersion}

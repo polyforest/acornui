@@ -27,6 +27,7 @@ subprojects {
 
 allprojects {
 	repositories {
+		gradlePluginPortal()
 		jcenter()
 	}
 

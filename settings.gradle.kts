@@ -18,15 +18,17 @@ rootProject.name = "acornui"
 
 pluginManagement {
 	val kotlinVersion: String by extra
+	val dokkaVersion: String by extra
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 	}
 	resolutionStrategy {
 		eachPlugin {
+			val id = requested.id
 			when {
-				requested.id.namespace == "org.jetbrains.kotlin" ->
-					useVersion(kotlinVersion)
+				id.namespace == "org.jetbrains.kotlin" -> useVersion(kotlinVersion)
+				id.id == "org.jetbrains.dokka" -> useVersion(dokkaVersion)
 			}
 		}
 	}
@@ -37,6 +39,4 @@ include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
 include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 include("skins:basic")
 
-include("acornui-gradle-plugins")
-
-enableFeaturePreview("GRADLE_METADATA")
+include("gradle-app-plugins")

@@ -14,28 +14,48 @@
  * limitations under the License.
  */
 
+import java.util.Properties
+
 plugins {
-    `kotlin-dsl`
     `maven-publish`
+    `java-gradle-plugin`
+    kotlin("jvm")
 }
+
+val props = Properties()
+props.load(projectDir.resolve("../gradle.properties").inputStream())
+version = props["version"]!!
 
 repositories {
     jcenter()
     gradlePluginPortal()
 }
 
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
+val kotlinVersion: String by props
+val dokkaVersion: String by props
+
+dependencies {
+    compileOnly(gradleKotlinDsl())
+    compileOnly(gradleApi())
+    implementation(kotlin("gradle-plugin", version = kotlinVersion))
+    implementation(kotlin("gradle-plugin-api", version = kotlinVersion))
+    implementation(kotlin("serialization", version = kotlinVersion))
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+
+    testImplementation(gradleKotlinDsl())
+    testImplementation(gradleTestKit())
+    testImplementation(kotlin("test", version = kotlinVersion))
+    testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
 
-val kotlinVersion: String = "1.3.61"
-dependencies {
-    implementation(kotlin("gradle-plugin", version = kotlinVersion))
-    implementation(kotlin("serialization", version = kotlinVersion))
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:0.9.18")
-
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit"))
+kotlin {
+    target {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = JavaVersion.VERSION_1_8.toString()
+            }
+        }
+    }
 }
 
 gradlePlugin {

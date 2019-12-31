@@ -16,23 +16,21 @@
 
 package com.acornui.build.plugins
 
+import com.acornui.build.plugins.util.RunJvmTask
+import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import org.gradle.kotlin.dsl.*
 
-class KotlinMppPluginTest {
+class AcornUiApplicationPluginTest {
 
-	@Test
-	fun apply() {
+	@Test fun addsRunJvmTask() {
 		val project = ProjectBuilder.builder().build()
-		project.extra["kotlinVersion"] = "1.3.61"
-		project.extra["kotlinCoroutinesVersion"] = "1.3.0-RC"
-		project.extra["kotlinSerializationVersion"] = "0.14.0"
-		project.extra["kotlinLanguageVersion"] = "1.3"
-		project.extra["kotlinJvmTarget"] = "1.8"
-		project.pluginManager.apply(KotlinMppPlugin::class.java)
-		assertTrue(project.extensions.getByName("kotlin") is KotlinMultiplatformExtension)
+		project.extra["acornVersion"] = "test"
+		project.pluginManager.apply("com.acornui.root")
+		project.pluginManager.apply("com.acornui.app")
+		assertTrue(project.tasks.getByName("runJvm") is RunJvmTask)
+		assertNotNull(project.plugins.findPlugin("org.jetbrains.kotlin.multiplatform"))
 	}
 }

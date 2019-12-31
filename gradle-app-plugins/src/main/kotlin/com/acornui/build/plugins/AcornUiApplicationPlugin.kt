@@ -45,7 +45,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {
 		js {
 			compilations.all {
-				kotlinOptions {
+				it.kotlinOptions {
 					main = "call"
 				}
 			}
@@ -53,7 +53,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 		sourceSets {
 			all {
-				languageSettings.progressiveMode = true
+				it.languageSettings.progressiveMode = true
 			}
 
 			val commonMain by getting {

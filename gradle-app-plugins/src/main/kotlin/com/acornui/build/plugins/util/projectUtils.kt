@@ -13,15 +13,15 @@ fun Project.preventSnapshotDependencyCaching() {
     allprojects {
         configurations.all {
             // Gradle has a bug where snapshots aren't marked as changing when their versions are dynamically applied.
-            resolutionStrategy {
-                cacheChangingModulesFor(0, TimeUnit.SECONDS)
-                cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
+            it.resolutionStrategy {
+                it.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+                it.cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
             }
             dependencies {
                 components {
-                    all {
-                        if (id.version.endsWith("-SNAPSHOT")) {
-                            isChanging = true
+                    it.all {
+                        if (it.id.version.endsWith("-SNAPSHOT")) {
+                            it.isChanging = true
                         }
                     }
                 }

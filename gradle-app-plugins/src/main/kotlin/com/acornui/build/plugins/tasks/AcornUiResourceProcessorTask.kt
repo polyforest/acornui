@@ -64,7 +64,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 	fun execute(inputChanges: InputChanges) {
 
 		val directoriesToProcess = mutableMapOf<String, MutableSet<DirectoryToProcessEntry>>()
-		directoriesToProcess += processors.map { it.key to mutableSetOf() }
+		directoriesToProcess += processors.map { it.key to mutableSetOf<DirectoryToProcessEntry>() }
 
 		inputChanges.getFileChanges(sources).forEach { change ->
 			val relPath = change.normalizedPath
@@ -173,7 +173,7 @@ fun Project.createBitmapFontGeneratorConfig() {
 	val acornVersion: String by extra
 	val gdxVersion: String by extra
 	configurations.create("bitmapFontGenerator") {
-		dependencies.apply {
+		it.dependencies.apply {
 			add(project.dependencies.create("com.acornui:gdx-font-processor:$acornVersion"))
 			add(project.dependencies.create("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"))
 			add(project.dependencies.create("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"))
