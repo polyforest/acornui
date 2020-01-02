@@ -108,6 +108,8 @@ class Bounds(
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		other as BoundsRo
+		if (x != other.x) return false
+		if (y != other.y) return false
 		if (width != other.width) return false
 		if (height != other.height) return false
 		if (baseline != other.baseline) return false
@@ -116,13 +118,15 @@ class Bounds(
 
 	override fun hashCode(): Int {
 		var result = width.hashCode()
+		result = 31 * result + y.hashCode()
+		result = 31 * result + x.hashCode()
 		result = 31 * result + height.hashCode()
 		result = 31 * result + baseline.hashCode()
 		return result
 	}
 
 	override fun toString(): String {
-		return "Bounds(width=$width, height=$height, baseline=$baseline)"
+		return "Bounds(x=$x, y=$y, width=$width, height=$height, baseline=$baseline)"
 	}
 
 	companion object {

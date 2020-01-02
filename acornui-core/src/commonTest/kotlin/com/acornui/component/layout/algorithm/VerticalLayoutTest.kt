@@ -38,7 +38,7 @@ class VerticalLayoutTest {
 		assertEquals(0f, list[0].y)
 		assertEquals(5f + gap, list[1].y)
 		assertEquals(5f + 3f + gap * 2, list[2].y)
-		assertEquals(Bounds(28f, 5f + 3f + 29f + gap * 2, baseline = 5f), size)
+		assertEquals(Bounds(width = 28f, height = 5f + 3f + 29f + gap * 2, baseline = 5f), size)
 	}
 
 	@Test fun padding() {
@@ -54,7 +54,7 @@ class VerticalLayoutTest {
 		assertEquals(0f + 7f, list[0].y)
 		assertEquals(5f + gap + 7f, list[1].y)
 		assertEquals(5f + 3f + gap * 2 + 7f, list[2].y)
-		assertEquals(Bounds(28f + 6f + 8f, 5f + 3f + 29f + gap * 2 + 7f + 9f, baseline = 12f), size)
+		assertEquals(Bounds(width = 28f + 6f + 8f, height = 5f + 3f + 29f + gap * 2 + 7f + 9f, baseline = 12f), size)
 	}
 
 //	@Test fun percentWidth() {
