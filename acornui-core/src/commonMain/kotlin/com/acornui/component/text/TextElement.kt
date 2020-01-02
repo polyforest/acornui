@@ -147,7 +147,7 @@ interface TextElement : TextElementRo, Disposable {
 	/**
 	 * Converts the local coordinates to global.
 	 */
-	fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo)
+	fun updateVerticesGlobal(transform: Matrix4Ro, tint: ColorRo)
 
 	/**
 	 * Renders the background, such as the selection color, underline, strikethrough, etc.

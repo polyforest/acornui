@@ -83,22 +83,35 @@ interface LayoutElement : LayoutElementRo, BasicLayoutElement, Transformable {
 interface BasicLayoutElementRo : SizableRo, PositionableRo {
 
 	/**
-	 * The right boundary (x + width)
+	 * The left boundary (x + bounds.left)
 	 */
-	val right: Float
-		get() = x + width
+	val left: Float
+		get() = x + bounds.left
 
 	/**
-	 * The bottom boundary (y + height)
+	 * The top boundary (y + bounds.top)
+	 */
+	val top: Float
+		get() = y + bounds.top
+
+
+	/**
+	 * The right boundary (x + bounds.right)
+	 */
+	val right: Float
+		get() = x + bounds.right
+
+	/**
+	 * The bottom boundary (y + bounds.bottom)
 	 */
 	val bottom: Float
-		get() = y + height
+		get() = y + bounds.bottom
 
 	/**
 	 * The y value representing the baseline + y position.
 	 */
 	val baselineY: Float
-		get() = y + bounds.baseline
+		get() = y + bounds.baselineY
 
 	/**
 	 * The layout data to be used in layout algorithms.

@@ -329,13 +329,13 @@ class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<
 		}
 	}
 
-	override fun updateGlobalVertices() {
-		super.updateGlobalVertices()
+	override fun updateVerticesGlobal() {
+		super.updateVerticesGlobal()
 		val textElements = _textElements
 		val transform = transformGlobal
 		val tint = colorTintGlobal
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].updateGlobalVertices(transform, tint)
+			textElements[i].updateVerticesGlobal(transform, tint)
 		}
 	}
 

@@ -209,7 +209,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		}
 	}
 
-	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateVerticesGlobal(transform: Matrix4Ro, tint: ColorRo) {
 		val style = style ?: return
 
 		fontColorGlobal.set(if (selected) style.selectedTextColorTint else style.textColorTint).mul(tint)

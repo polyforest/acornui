@@ -140,8 +140,8 @@ class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
 		out.set(w, h)
 	}
 
-	override fun updateGlobalVertices() {
-		super.updateGlobalVertices()
+	override fun updateVerticesGlobal() {
+		super.updateVerticesGlobal()
 		val animation = animation ?: return
 		if (width <= 0f || height <= 0f) return
 		animation.frames.forEach2 {

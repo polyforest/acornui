@@ -97,7 +97,8 @@ class VirtualVerticalLayout : VirtualLayoutAlgorithm<VirtualVerticalLayoutStyle,
 	override fun measure(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElementRo>, props: VirtualVerticalLayoutStyle, out: Bounds) {
 		val padding = props.padding
 		super.measure(explicitWidth, explicitHeight, elements, props, out)
-		out.add(padding.right, padding.bottom)
+		out.width += padding.right
+		out.height += padding.bottom
 	}
 
 	override fun shouldShowRenderer(explicitWidth: Float?, explicitHeight: Float?, element: LayoutElementRo, props: VirtualVerticalLayoutStyle): Boolean {

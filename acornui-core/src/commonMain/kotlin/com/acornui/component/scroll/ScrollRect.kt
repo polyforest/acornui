@@ -21,6 +21,7 @@ import com.acornui.component.layout.Positionable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Owned
+import com.acornui.graphic.CameraRo
 import com.acornui.graphic.Color
 import com.acornui.math.*
 import kotlin.contracts.InvocationKind
@@ -47,6 +48,8 @@ class ScrollRectImpl(
 ) : ElementContainerImpl<UiComponent>(owner), ScrollRect {
 
 	override val style = bind(ScrollRectStyle())
+
+	private var scroll = Vector2()
 
 	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val maskClip = addChild(rect {
@@ -78,8 +81,11 @@ class ScrollRectImpl(
 			maskClip.style.borderRadii = it.borderRadii
 			maskClip.style.margin = it.padding
 		}
-		clipRegionLocal = clipRegion
 	}
+
+	override var cameraOverride: CameraRo?
+		get() = null
+		set(_) { throw UnsupportedOperationException("Cannot override the camera on ScrollRect.") }
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
 		contents.addElement(newIndex, element)
@@ -89,34 +95,47 @@ class ScrollRectImpl(
 		contents.removeElement(element)
 	}
 
-	override fun scrollTo(x: Float, y: Float) {
-		contents.moveTo(-x, -y)
+	private val _viewTransform = Matrix4()
+	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		_viewTransform.set(parent?.viewTransform ?: Matrix4.IDENTITY).translate(-_bounds.x, -_bounds.y)
 	}
 
-	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
-		clipRegionLocal = clipRegion.set(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
+	override fun scrollTo(x: Float, y: Float) {
+//		contents.moveTo(-x, -y)
+		scroll.set(x, y)
+		_bounds.x = x
+		_bounds.y = y
+		clipRegionLocal = clipRegion.set(_bounds)
+		invalidateViewProjection()
 	}
+
+//	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
+//		// TODO:
+////		clipRegionLocal = clipRegion.set(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
+//	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		maskClip.setSize(explicitWidth, explicitHeight)
-		out.set(maskClip.bounds)
+		out.set(scroll.x, scroll.y, maskClip.width, maskClip.height, maskClip.baseline)
+		clipRegionLocal = clipRegion.set(out)
 	}
 
-	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-		return maskClip.intersectsGlobalRay(globalRay, intersection)
+	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
+		return super.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, rayCache)
 	}
+
+	//	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
+//		return true
+////		return maskClip.intersectsGlobalRay(globalRay, intersection)
+//	}
 
 	override fun draw() {
-		if (maskClip.visible) {
-			StencilUtil.mask(gl.batch, gl, {
-				maskClip.render()
-			}) {
-				if (contents.visible)
-					contents.render()
-			}
-		} else {
-			if (contents.visible)
+		StencilUtil.mask(gl.batch, gl, {
+			maskClip.render()
+		}) {
+			gl.uniforms.useCamera(this) {
 				contents.render()
+			}
 		}
 	}
 }
@@ -138,7 +157,7 @@ class ScrollRectStyle : StyleBase() {
 	companion object : StyleType<ScrollRectStyle>
 }
 
-inline fun Owned.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl  {
+inline fun Owned.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = ScrollRectImpl(this)
 	s.init()

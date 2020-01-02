@@ -144,4 +144,5 @@ fun rayToPlane(ray: RayRo, out: Vector2): Boolean {
 /**
  * Converts a coordinate from this Transformable's coordinate space to the target coordinate space.
  */
+@Deprecated("This method doesn't account for changes in camera, use localToCanvas / canvasToLocal")
 fun ModelTransformableRo.convertCoord(coord: Vector3, targetCoordSpace: ModelTransformableRo): Vector3 = targetCoordSpace.globalToLocal(localToGlobal(coord))

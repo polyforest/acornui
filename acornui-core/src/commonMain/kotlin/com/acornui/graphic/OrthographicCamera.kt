@@ -45,8 +45,7 @@ class OrthographicCamera : CameraBase() {
 	override fun updateViewProjection() {
 		_projection.setToOrtho(zoom * -viewportWidth * 0.5f, zoom * viewportWidth * 0.5f, zoom * -viewportHeight * 0.5f, zoom * viewportHeight * 0.5f, near, far)
 		_view.setToLookAt(position, tmp.set(position).add(direction), up)
-		_combined.set(_projection)
-		_combined.mul(_view)
+		_combined.set(_projection).mul(_view)
 	}
 
 	override fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling) {

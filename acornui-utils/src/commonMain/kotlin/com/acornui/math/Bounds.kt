@@ -22,19 +22,18 @@ import com.acornui.recycle.Clearable
 /**
  * A read-only interface to a [Bounds] object.
  */
-interface BoundsRo {
-
-	val width: Float
-
-	val height: Float
+interface BoundsRo : RectangleRo {
 
 	/**
 	 * The height until the first line of text's baseline, or the height if there is no text.
 	 */
 	val baseline: Float
 
-	fun isEmpty(): Boolean
-	fun isNotEmpty(): Boolean
+	/**
+	 * The baseline + y
+	 */
+	val baselineY: Float
+		get() = baseline + y
 
 	fun copy(width: Float = this.width, height: Float = this.height): Bounds {
 		return Bounds(width, height)
@@ -42,43 +41,51 @@ interface BoundsRo {
 }
 
 class Bounds(
+		override var x: Float = 0f,
+		override var y: Float = 0f,
 		override var width: Float = 0f,
 		override var height: Float = 0f,
 		override var baseline: Float = height
 ) : Clearable, BoundsRo {
 
 	fun set(v: BoundsRo): Bounds {
+		x = v.x
+		y = v.y
 		width = v.width
 		height = v.height
 		baseline = v.baseline
 		return this
 	}
 
-	fun add(wD: Float, hD: Float): Bounds {
-		this.width += wD
-		this.height += hD
-		return this
-	}
+	fun set(width: Float, height: Float, baseline: Float = height): Bounds = set(0f, 0f, width, height, baseline)
 
-	fun set(width: Float, height: Float, baseline: Float = height): Bounds {
+	fun set(x: Float, y: Float, width: Float, height: Float, baseline: Float): Bounds {
+		this.x = x
+		this.y = y
 		this.width = width
 		this.height = height
 		this.baseline = baseline
 		return this
 	}
 
+	/**
+	 * Sets the dimensions to the maximum of the existing or provided dimensions.
+	 */
 	fun ext(width: Float, height: Float) {
 		if (width > this.width) this.width = width
 		if (height > this.height) this.height = height
 	}
 
+	/**
+	 * Sets the dimensions to the maximum of the existing or provided dimensions.
+	 */
 	fun ext(width: Float, height: Float, baseline: Float) {
 		ext(width, height)
 		if (baseline > this.baseline) this.baseline = baseline
 	}
 
 	override fun isEmpty(): Boolean {
-		return width == 0f && height == 0f && baseline == 0f
+		return width == 0f && height == 0f
 	}
 
 	override fun isNotEmpty(): Boolean {
@@ -86,6 +93,8 @@ class Bounds(
 	}
 
 	override fun clear() {
+		x = 0f
+		y = 0f
 		width = 0f
 		height = 0f
 		baseline = 0f

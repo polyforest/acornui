@@ -218,28 +218,24 @@ open class UiComponentImpl(
 	 * If set, [viewTransform], [projectionTransform], [viewProjectionTransform], and [viewProjectionTransformInv]
 	 * matrices will be calculated based on this camera.
 	 */
-	var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
+	open var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
 
-	/**
-	 * If set, the [canvasClipRegion] value won't be calculated as the intersection of [clipRegionLocal] and the parent
-	 * context's clip region; it will be this explicit value.
-	 */
-	var clipRegionGlobalOverride: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
-
+	private val _viewProjectionTransformInv = Matrix4()
 	override val viewProjectionTransformInv: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.combinedInv ?: parent?.viewProjectionTransformInv ?: Matrix4.IDENTITY
+		_viewProjectionTransformInv.set(viewProjectionTransform).inv()
 	}
 
+	private val _viewProjectionTransform = Matrix4()
 	override val viewProjectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.combined ?: parent?.viewProjectionTransform ?: Matrix4.IDENTITY
-	}
-
-	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.view ?: parent?.viewTransform ?: Matrix4.IDENTITY
+		_viewProjectionTransform.set(projectionTransform).mul(viewTransform)
 	}
 
 	override val projectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
 		cameraOverride?.projection ?: parent?.projectionTransform ?: Matrix4.IDENTITY
+	}
+
+	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		cameraOverride?.view ?: parent?.viewTransform ?: Matrix4.IDENTITY
 	}
 
 	/**
@@ -285,7 +281,7 @@ open class UiComponentImpl(
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(COLOR_TINT, ::updateColorTint)
 				addNode(INHERITED_PROPERTIES, ::updateInheritedProperties)
-				addNode(VERTICES_GLOBAL, LAYOUT or TRANSFORM or COLOR_TINT, ::updateGlobalVertices)
+				addNode(VERTICES_GLOBAL, LAYOUT or TRANSFORM or COLOR_TINT, ::updateVerticesGlobal)
 				addNode(VIEW_PROJECTION, ::updateViewProjection)
 				addNode(DRAW_REGION, LAYOUT or TRANSFORM or VIEW_PROJECTION, ::updateDrawRegion)
 			}
@@ -351,27 +347,20 @@ open class UiComponentImpl(
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		val bounds = bounds
-		val topLeft = Vector3.obtain()
-		val topRight = Vector3.obtain()
-		val bottomRight = Vector3.obtain()
-		val bottomLeft = Vector3.obtain()
-		topLeft.clear()
-		topRight.set(bounds.width, 0f, 0f)
-		bottomRight.set(bounds.width, bounds.height, 0f)
-		bottomLeft.set(0f, bounds.height, 0f)
+		val topLeft = Vector3()
+		val topRight = Vector3()
+		val bottomRight = Vector3()
+		val bottomLeft = Vector3()
+		topLeft.set(bounds.left, bounds.top, 0f)
+		topRight.set(bounds.right, bounds.top, 0f)
+		bottomRight.set(bounds.right, bounds.bottom, 0f)
+		bottomLeft.set(bounds.left, bounds.bottom, 0f)
 		localToGlobal(topLeft)
 		localToGlobal(topRight)
 		localToGlobal(bottomRight)
 		localToGlobal(bottomLeft)
-
-		val intersects = globalRay.intersectsTriangle(topLeft, topRight, bottomRight, intersection) ||
+		return globalRay.intersectsTriangle(topLeft, topRight, bottomRight, intersection) ||
 				globalRay.intersectsTriangle(topLeft, bottomLeft, bottomRight, intersection)
-
-		Vector3.free(topLeft)
-		Vector3.free(topRight)
-		Vector3.free(bottomRight)
-		Vector3.free(bottomLeft)
-		return intersects
 	}
 
 	/**
@@ -815,7 +804,7 @@ open class UiComponentImpl(
 		return
 	}
 
-	private val _transformGlobal = Matrix4()
+	protected val _transformGlobal = Matrix4()
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
@@ -875,7 +864,7 @@ open class UiComponentImpl(
 		else _colorTintGlobal.set(parent?.colorTintGlobal ?: Color.WHITE).mul(_colorTint).clamp()
 	}
 
-	protected open fun updateGlobalVertices() {}
+	protected open fun updateVerticesGlobal() {}
 
 	protected open fun updateViewProjection() {}
 

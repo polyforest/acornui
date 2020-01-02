@@ -576,8 +576,7 @@ abstract class CameraBase : Camera {
 	protected abstract fun updateViewProjection()
 
 	protected open fun updateInvCombined() {
-		_combinedInv.set(_combined)
-		_combinedInv.inv()
+		_combinedInv.set(_combined).inv()
 	}
 
 	protected open fun updateFrustum() {

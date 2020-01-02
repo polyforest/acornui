@@ -40,7 +40,7 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
 
 	init {
-		clipRegionGlobalOverride = MinMaxRo.POSITIVE_INFINITY
+		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
@@ -55,8 +55,8 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 	private var expandedDrawRegion: RectangleRo = RectangleRo.EMPTY
 
-	override fun updateGlobalVertices() {
-		super.updateGlobalVertices()
+	override fun updateVerticesGlobal() {
+		super.updateVerticesGlobal()
 		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
 		val model = transformGlobal
 		val tint = colorTintGlobal

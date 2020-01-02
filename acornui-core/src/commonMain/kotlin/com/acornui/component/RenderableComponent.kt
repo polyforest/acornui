@@ -33,8 +33,8 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
 	}
 
-	override fun updateGlobalVertices() {
-		super.updateGlobalVertices()
+	override fun updateVerticesGlobal() {
+		super.updateVerticesGlobal()
 		if (width <= 0f || height <= 0f) return
 		renderable?.updateGlobalVertices(width, height, transformGlobal, colorTintGlobal)
 	}
