@@ -14,7 +14,10 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
@@ -56,7 +59,7 @@ fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: It
 								val fromProject = rootProject.allprojects.find { file.startsWith(it.buildDir) }
 								if (fromProject == null) {
 									project.zipTree(file).matching {
-										include("assets/**")
+										it.include("assets/**")
 									}
 								} else {
 									val c = fromProject.getRunnableCompilation(target, compilationName)
@@ -127,8 +130,8 @@ fun Project.getRunnableCompilation(target: String, compilationName: String): Abs
 private fun Sync.addCombinedJsResources(project: Project) {
 	val combinedResourcesDir = project.acornui.appResources.resolve("js/allMain")
 	from(combinedResourcesDir) {
-		filesMatching(replaceVersionStrPatterns) {
-			filter { line ->
+		it.filesMatching(replaceVersionStrPatterns) { fileCopyDetails ->
+			fileCopyDetails.filter { line ->
 				replaceVersionWithModTime(line, combinedResourcesDir)
 			}
 		}
@@ -148,36 +151,37 @@ fun Project.appAssetsWebTasks() {
 		into(acornui.www)
 
 		from(kotlinMppRuntimeDependencies(project, "js")) {
-			include("*.js", "*.js.map")
-			into(acornui.jsLibPath)
+			it.include("*.js", "*.js.map")
+			it.into(acornui.jsLibPath)
 		}
 
 		addCombinedJsResources(project)
 
 		doLast {
-			File(acornui.www.resolve(acornui.jsLibPath), "files.js").writeText(
-					"var manifest = " + File(
-							acornui.www,
-							"assets/files.json"
-					).readText()
+			File(acornui.www.resolve(acornui.jsLibPath), "files.js")
+					.writeText("var manifest = " + File(acornui.www, "assets/files.json").readText()
 			)
 		}
 	}
 
 	val webProdAssemble = tasks.register<Sync>("webProdAssemble") {
-		dependsOn(assembleJs)
+		dependsOn(webAssemble)
 		group = "build"
 
 		into(acornui.wwwProd)
 		addCombinedJsResources(project)
 
-		finalizedBy("jsDce", "jsOptimize")
+		finalizedBy("filesJsonProd", "jsDce", "jsOptimize")
+	}
 
-		doLast {
-			File(
-					acornui.wwwProd.resolve(acornui.jsLibPath),
-					"files.js"
-			).writeText("var manifest = " + File(acornui.wwwProd, "assets/files.json").readText())
+	tasks.register("filesJsonProd") {
+		it.doLast {
+			val str = "var manifest = " + File(acornui.wwwProd, "assets/files.json").readText()
+			val f = File(File(acornui.wwwProd, acornui.jsLibPath), "files.js")
+
+			println("path ${f.absolutePath} ${f.parentFile.exists()}")
+			f.createNewFile()
+			f.writeText(str)
 		}
 	}
 
