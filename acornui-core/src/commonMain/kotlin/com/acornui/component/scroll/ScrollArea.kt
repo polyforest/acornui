@@ -204,7 +204,7 @@ open class ScrollArea<E : UiComponent>(
 	private val tmpBounds = MinMax()
 
 	fun scrollTo(target: UiComponentRo, pad: PadRo = Pad(10f)) {
-		tmpBounds.set(0f, 0f, target.width, target.height)
+		tmpBounds.set(target.bounds)
 		target.localToCanvas(tmpBounds)
 		canvasToLocal(tmpBounds)
 		tmpBounds.xMin += hScrollModel.value
