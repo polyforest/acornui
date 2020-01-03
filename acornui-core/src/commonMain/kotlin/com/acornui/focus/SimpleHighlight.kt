@@ -22,7 +22,11 @@ import com.acornui.di.Injector
 import com.acornui.di.Owned
 import com.acornui.di.Scoped
 import com.acornui.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.skins.Theme
@@ -45,6 +49,18 @@ open class SimpleHighlight(
 	 */
 	override var parent: ContainerRo? = null
 
+	override val viewProjectionTransform: Matrix4Ro
+		get() = highlighted?.viewProjectionTransform ?: Matrix4.IDENTITY
+
+	override val viewTransform: Matrix4Ro
+		get() = highlighted?.viewTransform ?: Matrix4.IDENTITY
+
+	override val transformGlobal: Matrix4Ro
+		get() = highlighted?.transformGlobal ?: Matrix4.IDENTITY
+
+//	override val colorTintGlobal: ColorRo
+//		get() = highlighted?.colorTintGlobal ?: Color.WHITE
+
 	/**
 	 * The target being highlighted.
 	 */
@@ -60,11 +76,10 @@ open class SimpleHighlight(
 			}
 		}
 
+	private val delegatedFlags = ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.VIEW_PROJECTION
+
 	private fun highlightedInvalidatedHandler(c: UiComponentRo, flags: Int) {
-		if (flags containsFlag ValidationFlags.LAYOUT)
-			invalidateLayout()
-		else if (flags containsFlag ValidationFlags.VIEW_PROJECTION)
-			invalidate(ValidationFlags.VIEW_PROJECTION)
+		invalidate(flags and delegatedFlags)
 	}
 
 	init {

@@ -540,7 +540,7 @@ open class UiComponentImpl(
 	/**
 	 * The color multiplier of this component and all ancestor color tints multiplied together.
 	 */
-	final override val colorTintGlobal: ColorRo
+	override val colorTintGlobal: ColorRo
 		get() {
 			validate(ValidationFlags.COLOR_TINT)
 			return _colorTintGlobal
@@ -809,7 +809,7 @@ open class UiComponentImpl(
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 */
-	final override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
+	override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
 		_transformGlobal
 	}
 
