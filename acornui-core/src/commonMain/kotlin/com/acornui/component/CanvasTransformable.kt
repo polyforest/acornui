@@ -126,25 +126,25 @@ fun CanvasTransformableRo.localToCanvas(localCoord: Vector3): Vector3 {
 	return localCoord
 }
 
+private val tmp1 = Vector3()
+private val tmp2 = Vector3()
+private val tmp3 = Vector3()
+
 /**
  * Converts a bounding rectangle from local to canvas coordinates.
  */
 fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
-	val minTmp =  Vector3.obtain().set(minMax.xMin, minMax.yMin, 0f)
-	val maxTmp =  Vector3.obtain().set(minMax.xMax, minMax.yMax, 0f)
-	val tmp =  Vector3.obtain()
+	val minTmp =  tmp1.set(minMax.xMin, minMax.yMin, 0f)
+	val maxTmp =  tmp2.set(minMax.xMax, minMax.yMax, 0f)
 	minMax.clear()
-	localToCanvas(tmp.set(minTmp))
-	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(maxTmp.x, minTmp.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(maxTmp))
-	minMax.ext(tmp.x, tmp.y)
-	localToCanvas(tmp.set(minTmp.x, maxTmp.y, 0f))
-	minMax.ext(tmp.x, tmp.y)
-	Vector3.free(minTmp)
-	Vector3.free(maxTmp)
-	Vector3.free(tmp)
+	localToCanvas(tmp3.set(minTmp))
+	minMax.ext(tmp3.x, tmp3.y)
+	localToCanvas(tmp3.set(maxTmp.x, minTmp.y, 0f))
+	minMax.ext(tmp3.x, tmp3.y)
+	localToCanvas(tmp3.set(maxTmp))
+	minMax.ext(tmp3.x, tmp3.y)
+	localToCanvas(tmp3.set(minTmp.x, maxTmp.y, 0f))
+	minMax.ext(tmp3.x, tmp3.y)
 	return minMax
 }
 

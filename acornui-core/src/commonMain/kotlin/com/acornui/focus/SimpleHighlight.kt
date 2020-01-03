@@ -55,6 +55,9 @@ open class SimpleHighlight(
 	override val viewTransform: Matrix4Ro
 		get() = highlighted?.viewTransform ?: Matrix4.IDENTITY
 
+	override val projectionTransform: Matrix4Ro
+		get() = highlighted?.projectionTransform ?: Matrix4.IDENTITY
+
 	override val transformGlobal: Matrix4Ro
 		get() = highlighted?.transformGlobal ?: Matrix4.IDENTITY
 
@@ -103,6 +106,12 @@ open class SimpleHighlight(
 			highlight.moveTo(0f, 0f)
 		}
 		out.set(highlight.bounds)
+	}
+
+	override fun draw() {
+		gl.uniforms.useCamera(this) {
+			super.draw()
+		}
 	}
 
 	override fun dispose() {
