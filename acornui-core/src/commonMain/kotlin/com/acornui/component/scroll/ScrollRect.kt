@@ -69,10 +69,7 @@ class ScrollRectImpl(
 
 	private val _contentBounds = Rectangle()
 	override val contentBounds: RectangleRo
-		get() {
-			_contentBounds.set(contents.x, contents.y, contents.width, contents.height)
-			return _contentBounds
-		}
+		get() = _contentBounds.set(contents.left, contents.top, contents.width, contents.height)
 
 	private val clipRegion = MinMax(0f, 0f, 0f, 0f)
 
@@ -101,33 +98,21 @@ class ScrollRectImpl(
 	}
 
 	override fun scrollTo(x: Float, y: Float) {
-//		contents.moveTo(-x, -y)
-		scroll.set(x, y)
+		if (contentsSnapToPixel)
+			scroll.set(MathUtils.offsetRound(x), MathUtils.offsetRound(y))
+		else
+			scroll.set(x, y)
 		_bounds.x = x
 		_bounds.y = y
 		clipRegionLocal = clipRegion.set(_bounds)
 		invalidateViewProjection()
 	}
 
-//	override fun onSizeSet(oldWidth: Float?, oldHeight: Float?, newWidth: Float?, newHeight: Float?) {
-//		// TODO:
-////		clipRegionLocal = clipRegion.set(0f, 0f, newWidth ?: 0f, newHeight ?: 0f)
-//	}
-
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		maskClip.setSize(explicitWidth, explicitHeight)
 		out.set(scroll.x, scroll.y, maskClip.width, maskClip.height, maskClip.baseline)
 		clipRegionLocal = clipRegion.set(out)
 	}
-
-	override fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo?): MutableList<UiComponentRo> {
-		return super.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, rayCache)
-	}
-
-	//	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
-//		return true
-////		return maskClip.intersectsGlobalRay(globalRay, intersection)
-//	}
 
 	override fun draw() {
 		StencilUtil.mask(gl.batch, gl, {
