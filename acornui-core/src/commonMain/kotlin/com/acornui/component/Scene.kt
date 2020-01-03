@@ -19,6 +19,8 @@
 package com.acornui.component
 
 import com.acornui.collection.forEach2
+import com.acornui.component.ValidationFlags.LAYOUT
+import com.acornui.component.ValidationFlags.VIEW_PROJECTION
 import com.acornui.di.Owned
 import com.acornui.gl.core.useCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
@@ -56,6 +58,7 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 		cameraOverride = camera
 		transformGlobalOverride = Matrix4.IDENTITY
 		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		validation.addNode(1 shl 16, LAYOUT, VIEW_PROJECTION) {} // Update layout changes camera
 	}
 
 	override fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {

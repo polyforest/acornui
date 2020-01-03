@@ -184,34 +184,33 @@ class LightingRenderer(
 		gl.useProgram(lightingShader.program)
 		gl.uniforms.apply {
 			// Prepare uniforms.
-			useCamera(camera) {
-				put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
-				put("u_directionalShadowMap", directionalShadowUnit)
-				for (i in 0..numShadowPointLights - 1) {
-					put("u_pointLightShadowMaps[$i]", pointShadowUnit + i)
-				}
-
-				pointLightUniforms(pointLights)
-				gl.bindTexture(directionalShadowsFbo.texture, directionalShadowUnit)
-				put("u_directionalLightMvp", u_directionalLightMvp.set(bias).mul(directionalLightCamera.combined))
-
-				getUniformLocation("u_shadowsEnabled")?.let {
-					put(it, if (allowShadows) 1 else 0)
-				}
-				put("u_ambient", ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
-				put("u_directional", directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
-				getUniformLocation("u_directionalLightDir")?.let {
-					put(it, directionalLight.direction)
-				}
-
-				BlendMode.NORMAL.applyBlending(gl)
-				val previousBatch = gl.batch
-				gl.batch = lightingBatch
-				println("2...")
-				renderWorld()
-				gl.batch = previousBatch
-				gl.useProgram(previousProgram)
+			put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
+			put("u_directionalShadowMap", directionalShadowUnit)
+			for (i in 0..numShadowPointLights - 1) {
+				put("u_pointLightShadowMaps[$i]", pointShadowUnit + i)
 			}
+
+			pointLightUniforms(pointLights)
+			gl.bindTexture(directionalShadowsFbo.texture, directionalShadowUnit)
+			put("u_directionalLightMvp", u_directionalLightMvp.set(bias).mul(directionalLightCamera.combined))
+
+			getUniformLocation("u_shadowsEnabled")?.let {
+				put(it, if (allowShadows) 1 else 0)
+			}
+			put("u_ambient", ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
+			put("u_directional", directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
+			getUniformLocation("u_directionalLightDir")?.let {
+				put(it, directionalLight.direction)
+			}
+
+			BlendMode.NORMAL.applyBlending(gl)
+			val previousBatch = gl.batch
+			gl.batch = lightingBatch
+			useCamera(camera) {
+				renderWorld()
+			}
+			gl.batch = previousBatch
+			gl.useProgram(previousProgram)
 		}
 	}
 
