@@ -18,10 +18,6 @@ jobs:
       uses: eskatos/gradle-command-action@v1
       with:
         arguments: build publish -x jsBrowserTest --stacktrace
-    - name: Bundle test reports
-      if: always()
-      run: mkdir -p build/reports && cp -r **/build/reports build/reports
-      shell: bash
     - name: Upload test reports
       uses: actions/upload-artifact@v1
       if: always()

@@ -38,6 +38,14 @@ allprojects {
 			}
 		}
 	}
+	tasks {
+		withType<Test> {
+			this.testLogging {
+				this.showStandardStreams = true
+			}
+			this.reports.html.destination = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
+		}
+	}
 }
 
 tasks {
