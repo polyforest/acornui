@@ -97,6 +97,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 		for (i in 0.._children.lastIndex) {
 			_children[i].tick(tickTime)
 		}
+		window.requestRender()
 	}
 
 	override fun draw() {
