@@ -26,6 +26,7 @@ subprojects {
 }
 
 allprojects {
+
 	repositories {
 		gradlePluginPortal()
 		jcenter()
@@ -38,12 +39,18 @@ allprojects {
 			}
 		}
 	}
-	tasks {
-		withType<Test> {
-			this.testLogging {
-				this.showStandardStreams = true
+
+	afterEvaluate {
+		tasks {
+			withType<TestReport> {
+				this.destinationDir = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
 			}
-			this.reports.html.destination = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
+			withType<Test> {
+				this.testLogging {
+					this.showStandardStreams = true
+				}
+				this.reports.html.destination = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
+			}
 		}
 	}
 }
