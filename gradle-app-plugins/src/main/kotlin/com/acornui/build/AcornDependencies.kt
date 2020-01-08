@@ -20,7 +20,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import java.util.*
 
 /**
- *
+ * Applies the dependency version properties set in acornDependencies.txt
  */
 object AcornDependencies {
 

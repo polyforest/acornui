@@ -19,7 +19,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 	private val targets = listOf("js", "jvm")
 
 	override fun apply(project: Project) {
-		project.pluginManager.apply("org.gradle.idea")
 		project.pluginManager.apply("com.acornui.kotlin-mpp")
 
 		project.extensions.create<AcornUiApplicationExtension>("acornui").apply {

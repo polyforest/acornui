@@ -31,7 +31,6 @@ dependencies {
 	compileOnly(gradleApi())
 	implementation(kotlin("compiler", version = kotlinVersion))
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
-//	implementation(kotlin("gradle-plugin-api", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
@@ -39,7 +38,6 @@ dependencies {
 	implementation(project(":acornui-utils"))
 	implementation(project(":acornui-core"))
 	implementation(project(":backends:acornui-lwjgl-backend"))
-	implementation(rootProject.files("buildSrc/build/libs/buildSrc-$version.jar")) //
 
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))
@@ -50,14 +48,6 @@ val kotlinLanguageVersion: String by project.extra
 val kotlinJvmTarget: String by project.extra
 
 kotlin {
-
-	sourceSets {
-		main {
-			// This is gross, but as far as I know there's no way to publish plugins from the buildSrc project,
-			// and this is less gross than duplicating code.
-			kotlin.srcDirs(rootProject.file("buildSrc/src/main/kotlin"))
-		}
-	}
 
 	target {
 		compilations.all {
@@ -78,6 +68,7 @@ gradlePlugin {
 			displayName = "Root project plugin for a multi-module Acorn UI application."
 			description = "Configuration of a root project for a multi-module Acorn UI application."
 		}
+
 		create("app") {
 			id = "com.acornui.app"
 			implementationClass = "com.acornui.build.plugins.AcornUiApplicationPlugin"
@@ -91,12 +82,14 @@ gradlePlugin {
 			displayName = "Kotlin multi-platform configuration for Acorn UI"
 			description = "Configures an Acorn UI library project for Kotlin multi-platform."
 		}
+
 		create("kotlinJvm") {
 			id = "com.acornui.kotlin-jvm"
 			implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
 			displayName = "Kotlin jvm configuration for Acorn UI"
 			description = "Configures an Acorn UI library project for Kotlin jvm."
 		}
+
 		create("kotlinJs") {
 			id = "com.acornui.kotlin-js"
 			implementationClass = "com.acornui.build.plugins.KotlinJsPlugin"

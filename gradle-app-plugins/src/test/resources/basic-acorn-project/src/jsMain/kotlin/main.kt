@@ -1,5 +1,7 @@
+import com.acornui.collection.stringMapOf
+
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +16,8 @@
  * limitations under the License.
  */
 
-pluginManagement {
-
-	val props = java.util.Properties()
-	props.load(file("../gradle.properties").inputStream())
-
-	val kotlinVersion: String by props
-	repositories {
-		mavenLocal()
-		gradlePluginPortal()
-
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
-		}
-	}
-	resolutionStrategy {
-		eachPlugin {
-			when {
-				requested.id.namespace == "org.jetbrains.kotlin" ->
-					useVersion(kotlinVersion)
-			}
-		}
-	}
+fun main() {
+	println("Hello World")
+	val t = stringMapOf("a" to "Test", "b" to "Test2")
+	println(t["a"])
 }

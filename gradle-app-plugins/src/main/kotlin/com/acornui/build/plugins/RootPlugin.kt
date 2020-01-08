@@ -25,7 +25,9 @@ class RootPlugin : Plugin<Project> {
 			it.repositories {
 				mavenLocal()
 				jcenter()
-
+				maven { mavenArtifactRepository ->
+					mavenArtifactRepository.url = it.uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+				}
 				maven { mavenArtifactRepository ->
 					mavenArtifactRepository.url = it.uri("http://artifacts.acornui.com/mvn/")
 				}

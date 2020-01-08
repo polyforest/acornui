@@ -1,7 +1,9 @@
 package com.acornui.build.plugins.util
 
 import com.acornui.build.plugins.acornui
-import com.acornui.build.plugins.tasks.*
+import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
+import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
+import com.acornui.build.plugins.tasks.createPackTexturesConfig
 import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.ManifestUtil
 import com.acornui.serialization.jsonStringify
@@ -14,16 +16,14 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File
 
 fun Project.applicationResourceTasks(targets: Iterable<String>, compilations: Iterable<String>) {
@@ -140,70 +140,81 @@ private fun Sync.addCombinedJsResources(project: Project) {
 
 fun Project.appAssetsWebTasks() {
 
-	val assembleJs = tasks.named("jsAssemble")
+//	val assembleJs = tasks.named("jsAssemble")
+//
+//	// Register the assembleWeb task that builds the www directory.
+//
+//	val webAssemble = tasks.register<Sync>("webAssemble") {
+//		dependsOn(assembleJs)
+//		group = "build"
+//
+//		into(acornui.www)
+//
+//		from(kotlinMppRuntimeDependencies(project, "js")) {
+//			it.include("*.js", "*.js.map")
+//			it.into(acornui.jsLibPath)
+//		}
+//
+//		addCombinedJsResources(project)
+//
+//		doLast {
+//			File(acornui.www.resolve(acornui.jsLibPath), "files.js")
+//					.writeText("var manifest = " + File(acornui.www, "assets/files.json").readText()
+//			)
+//		}
+//	}
+//
+//	val webProdAssemble = tasks.register<Sync>("webProdAssemble") {
+//		dependsOn(webAssemble)
+//		group = "build"
+//
+//		into(acornui.wwwProd)
+//		addCombinedJsResources(project)
+//
+//		finalizedBy("filesJsonProd", "jsDce", "jsOptimize")
+//	}
+//
+//	tasks.register("filesJsonProd") {
+//		it.doLast {
+//			val str = "var manifest = " + File(acornui.wwwProd, "assets/files.json").readText()
+//			val f = File(File(acornui.wwwProd, acornui.jsLibPath), "files.js")
+//
+//			println("path ${f.absolutePath} ${f.parentFile.exists()}")
+//			f.createNewFile()
+//			f.writeText(str)
+//		}
+//	}
+//
+//	tasks.named("assemble") {
+//		it.dependsOn(webAssemble, webProdAssemble)
+//	}
+//
+//	val jsDce = tasks.register<DceTask>("jsDce") {
+//		val prodLibDir = acornui.wwwProd.resolve(acornui.jsLibPath)
+//		source.from(kotlinMppRuntimeDependencies(project, "js"))
+//		outputDir.set(prodLibDir)
+//
+//		doLast {
+//			project.delete(fileTree(prodLibDir).include("*.map"))
+//		}
+//	}
+//
+//	tasks.register<KotlinJsMonkeyPatcherTask>("jsOptimize") {
+//		shouldRunAfter(jsDce)
+//		sourceDir.set(acornui.wwwProd.resolve(acornui.jsLibPath))
+//	}
 
-	// Register the assembleWeb task that builds the www directory.
+	this.kotlinExt.apply {
 
-	val webAssemble = tasks.register<Sync>("webAssemble") {
-		dependsOn(assembleJs)
-		group = "build"
+//		sourceSets {
+//			val jsMain by getting {
+//				dependencies {
+//					compileOnly(npm("uglifyjs-webpack-plugin", version = "2.2.0"))
+//				}
+//			}
+//		}
 
-		into(acornui.www)
-
-		from(kotlinMppRuntimeDependencies(project, "js")) {
-			it.include("*.js", "*.js.map")
-			it.into(acornui.jsLibPath)
-		}
-
-		addCombinedJsResources(project)
-
-		doLast {
-			File(acornui.www.resolve(acornui.jsLibPath), "files.js")
-					.writeText("var manifest = " + File(acornui.www, "assets/files.json").readText()
-			)
-		}
 	}
-
-	val webProdAssemble = tasks.register<Sync>("webProdAssemble") {
-		dependsOn(webAssemble)
-		group = "build"
-
-		into(acornui.wwwProd)
-		addCombinedJsResources(project)
-
-		finalizedBy("filesJsonProd", "jsDce", "jsOptimize")
-	}
-
-	tasks.register("filesJsonProd") {
-		it.doLast {
-			val str = "var manifest = " + File(acornui.wwwProd, "assets/files.json").readText()
-			val f = File(File(acornui.wwwProd, acornui.jsLibPath), "files.js")
-
-			println("path ${f.absolutePath} ${f.parentFile.exists()}")
-			f.createNewFile()
-			f.writeText(str)
-		}
-	}
-
-	tasks.named("assemble") {
-		it.dependsOn(webAssemble, webProdAssemble)
-	}
-
-	val jsDce = tasks.register<DceTask>("jsDce") {
-		val prodLibDir = acornui.wwwProd.resolve(acornui.jsLibPath)
-		source.from(kotlinMppRuntimeDependencies(project, "js"))
-		outputDir.set(prodLibDir)
-
-		doLast {
-			project.delete(fileTree(prodLibDir).include("*.map"))
-		}
-	}
-
-	tasks.register<KotlinJsMonkeyPatcherTask>("jsOptimize") {
-		shouldRunAfter(jsDce)
-		sourceDir.set(acornui.wwwProd.resolve(acornui.jsLibPath))
-	}
-
 }
 
 // https://kotlinlang.slack.com/archives/C3PQML5NU/p1548431040452500?thread_ts=1548348039.408400&cid=C3PQML5NU
@@ -274,7 +285,7 @@ fun Project.runJvmTask() {
 open class RunJvmTask : JavaExec() {
 
 	init {
-		dependsOn("jvmAssemble")
+		dependsOn("jvmMainClasses")
 		group = "application"
 		val jvmTarget: KotlinTarget = project.kotlinExt.targets["jvm"]
 		val compilation =

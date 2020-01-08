@@ -22,6 +22,9 @@ pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
+		maven {
+			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+		}
 	}
 	resolutionStrategy {
 		eachPlugin {
