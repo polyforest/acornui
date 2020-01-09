@@ -47,8 +47,11 @@ dependencies {
 val kotlinLanguageVersion: String by project.extra
 val kotlinJvmTarget: String by project.extra
 
-kotlin {
+java {
+	withSourcesJar()
+}
 
+kotlin {
 	target {
 		compilations.all {
 			kotlinOptions {
