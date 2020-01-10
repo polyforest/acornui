@@ -15,13 +15,13 @@
  */
 
 @file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
-
 package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 
 @Suppress("unused")
 open class KotlinJsPlugin : Plugin<Project> {
@@ -33,6 +33,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 	companion object {
 
+		@UseExperimental(ExperimentalDistributionDsl::class)
 		fun configure(project: Project) {
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				val kotlinVersion: String by project.extra
@@ -41,11 +42,19 @@ open class KotlinJsPlugin : Plugin<Project> {
 				val kotlinCoroutinesVersion: String by project.extra
 
 				js {
-					browser()
+					browser {
+						distribution {
+							// Assume project is a library, not an application, by default.
+							directory = null
+						}
+						webpackTask {
+							enabled = false
+						}
+					}
 //					nodejs()
 					
 					compilations.all {
-						it.kotlinOptions {
+						kotlinOptions {
 							moduleKind = "umd"
 							sourceMap = true
 							sourceMapEmbedSources = "always"
@@ -54,9 +63,9 @@ open class KotlinJsPlugin : Plugin<Project> {
 					}
 				}
 
-				targets.all { target ->
-					target.compilations.all { compilation ->
-						compilation.kotlinOptions {
+				targets.all {
+					compilations.all {
+						kotlinOptions {
 							languageVersion = kotlinLanguageVersion
 							apiVersion = kotlinLanguageVersion
 						}
@@ -65,7 +74,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 				sourceSets {
 					all {
-						it.languageSettings.progressiveMode = true
+						languageSettings.progressiveMode = true
 					}
 
 					val jsMain by getting {

@@ -16,11 +16,27 @@
 * limitations under the License.
 */
 
+import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
+
 plugins {
 	`maven-publish`
 	`java-gradle-plugin`
 	kotlin("jvm")
 }
+
+buildscript {
+	val kotlinVersion: String by extra
+	dependencies {
+		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+	}
+}
+apply(plugin = "kotlin-sam-with-receiver")
+
+samWithReceiver {
+	annotation("org.gradle.api.HasImplicitReceiver")
+}
+
+fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
 
 val kotlinVersion: String by extra
 val kotlinSerializationVersion: String by extra
@@ -52,6 +68,9 @@ java {
 }
 
 kotlin {
+	sourceSets.all {
+		languageSettings.useExperimentalAnnotation("kotlin.Experimental")
+	}
 	target {
 		compilations.all {
 			kotlinOptions {

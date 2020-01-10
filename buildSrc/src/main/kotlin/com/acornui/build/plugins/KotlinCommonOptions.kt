@@ -35,7 +35,7 @@ object KotlinCommonOptions {
 		project.extensions.configure<KotlinMultiplatformExtension> {
 			sourceSets {
 				all {
-					it.languageSettings.apply {
+					languageSettings.apply {
 						enableLanguageFeature("InlineClasses")
 						useExperimentalAnnotation("kotlin.Experimental")
 						useExperimentalAnnotation("kotlin.time.ExperimentalTime")

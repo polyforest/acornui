@@ -2,7 +2,9 @@
 
 package com.acornui.build.plugins.tasks
 
-import com.acornui.build.plugins.util.createRuntimeKotlinClasspath
+import com.acornui.build.plugins.util.jvmCompilation
+import com.acornui.build.plugins.util.jvm
+import com.acornui.build.plugins.util.kotlinExt
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.*
@@ -17,33 +19,28 @@ import org.gradle.work.InputChanges
 import java.io.File
 import javax.inject.Inject
 
-lateinit var packTexturesClasspath: FileCollection
+open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
-open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private val objects: ObjectFactory) : DefaultTask() {
-
-	private val fileTrees = mutableListOf<FileTree>()
-
-	@get:Incremental
-	@get:PathSensitive(PathSensitivity.RELATIVE)
-	@get:InputFiles
-	val sources: FileCollection
-		get() = fileTrees.reduce(FileTree::plus)
+	@Incremental
+	@PathSensitive(PathSensitivity.RELATIVE)
+	@InputFiles
+	val sources: ConfigurableFileCollection = objects.fileCollection()
 
 	/**
 	 * Adds the given file tree to the list of sources.
 	 */
 	fun from(tree: FileTree): AcornUiResourceProcessorTask {
-		fileTrees.add(tree)
+		sources.from(tree)
 		return this
 	}
 
 	fun from(source: File): AcornUiResourceProcessorTask {
-		from(objects.fileCollection().from(source).asFileTree)
+		sources.from(source)
 		return this
 	}
 
 	fun from(sources: Iterable<File>): AcornUiResourceProcessorTask {
-		sources.map { from(it) }
+		this.sources.from(sources)
 		return this
 	}
 
@@ -134,7 +131,8 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(private
 				getExecActionFactory().newJavaExecAction().apply {
 					main = "com.acornui.texturepacker.PackAssetsKt"
 					args = listOf(it.sourceDir.absolutePath, it.destinationDir.parentFile.absolutePath, suffix)
-					classpath = packTexturesClasspath
+					val jvmTarget = project.kotlinExt.targets.jvm
+					classpath = jvmTarget.compilations.getByName("packTextures").runtimeDependencyFiles
 					maxHeapSize = "3g"
 					execute()
 				}
@@ -173,7 +171,7 @@ fun Project.createBitmapFontGeneratorConfig() {
 	val acornVersion: String by extra
 	val gdxVersion: String by extra
 	configurations.create("bitmapFontGenerator") {
-		it.dependencies.apply {
+		dependencies.apply {
 			add(project.dependencies.create("com.acornui:gdx-font-processor:$acornVersion"))
 			add(project.dependencies.create("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"))
 			add(project.dependencies.create("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"))
@@ -183,7 +181,7 @@ fun Project.createBitmapFontGeneratorConfig() {
 
 fun Project.createPackTexturesConfig() {
 	val acornVersion: String by extra
-	packTexturesClasspath = createRuntimeKotlinClasspath("packTextures") {
+	jvmCompilation("packTextures") {
 		runtimeOnly("com.acornui:acornui-texture-packer:$acornVersion")
 	}
 }

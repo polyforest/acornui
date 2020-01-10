@@ -15,12 +15,30 @@
  */
 
 import java.util.Properties
+import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
+import org.gradle.kotlin.dsl.java as javax
 
 plugins {
     `maven-publish`
     `java-gradle-plugin`
     kotlin("jvm")
 }
+
+buildscript {
+    val props = java.util.Properties()
+    props.load(projectDir.resolve("../gradle.properties").inputStream())
+    val kotlinVersion: String by props
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+    }
+}
+apply(plugin = "kotlin-sam-with-receiver")
+
+samWithReceiver {
+    annotation("org.gradle.api.HasImplicitReceiver")
+}
+
+fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
 
 val props = Properties()
 props.load(projectDir.resolve("../gradle.properties").inputStream())
@@ -52,6 +70,9 @@ dependencies {
 }
 
 kotlin {
+    sourceSets.all {
+        languageSettings.useExperimentalAnnotation("kotlin.Experimental")
+    }
     target {
         compilations.all {
             kotlinOptions {

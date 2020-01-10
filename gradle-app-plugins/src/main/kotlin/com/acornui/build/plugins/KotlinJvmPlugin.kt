@@ -44,7 +44,7 @@ open class KotlinJvmPlugin : Plugin<Project> {
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				jvm {
 					compilations.all {
-						it.kotlinOptions {
+						kotlinOptions {
 							jvmTarget = kotlinJvmTarget
 							languageVersion = kotlinLanguageVersion
 							apiVersion = kotlinLanguageVersion
@@ -53,7 +53,7 @@ open class KotlinJvmPlugin : Plugin<Project> {
 				}
 				sourceSets {
 					all {
-						it.languageSettings.progressiveMode = true
+						languageSettings.progressiveMode = true
 					}
 
 					val jvmMain by getting {
@@ -75,9 +75,9 @@ open class KotlinJvmPlugin : Plugin<Project> {
 				}
 			}
 
-			project.afterEvaluate { p ->
-				p.tasks.withType(Test::class.java).configureEach {
-					it.jvmArgs("-ea")
+			project.afterEvaluate {
+				tasks.withType(Test::class.java).configureEach {
+					jvmArgs("-ea")
 				}
 			}
 		}

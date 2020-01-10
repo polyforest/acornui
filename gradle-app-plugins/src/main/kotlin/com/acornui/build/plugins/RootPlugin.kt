@@ -4,11 +4,10 @@ package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.*
-import org.gradle.language.jvm.tasks.ProcessResources
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -21,37 +20,28 @@ class RootPlugin : Plugin<Project> {
 
 		target.pluginManager.apply("org.jetbrains.dokka")
 
-		target.allprojects { project ->
+		target.allprojects {
 			AcornDependencies.addVersionProperties(project.extra)
-			project.repositories {
+			repositories {
 				mavenLocal()
 				jcenter()
-				maven { mavenArtifactRepository ->
-					mavenArtifactRepository.url = project.uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+				maven {
+					url = project.uri("https://dl.bintray.com/kotlin/kotlin-dev/")
 				}
-				maven { mavenArtifactRepository ->
-					mavenArtifactRepository.url = project.uri("http://artifacts.acornui.com/mvn/")
+				maven {
+					url = project.uri("http://artifacts.acornui.com/mvn/")
 				}
 			}
 
-			project.configurations.all { configuration ->
-				configuration.resolutionStrategy { resolutionStrategy ->
-					resolutionStrategy.eachDependency { dependencyResolveDetails ->
+			project.configurations.all {
+				resolutionStrategy {
+					eachDependency {
 						when {
-							dependencyResolveDetails.requested.group.startsWith("com.acornui") -> {
-								dependencyResolveDetails.useVersion(acornVersion)
+							requested.group.startsWith("com.acornui") -> {
+								useVersion(acornVersion)
 							}
 						}
 					}
-				}
-			}
-
-			project.tasks.withType<ProcessResources>().configureEach { task: ProcessResources ->
-				task.filteringCharset = "UTF-8"
-				task.filesMatching(target.acornuiRoot.textFilePatterns) { fileCopyDetails ->
-					val props = HashMap<String, String>()
-					project.properties.forEach { props[it.key.toString()] = it.value.toString() }
-					fileCopyDetails.filter(ReplaceTokens::class, "tokens" to props)
 				}
 			}
 		}
