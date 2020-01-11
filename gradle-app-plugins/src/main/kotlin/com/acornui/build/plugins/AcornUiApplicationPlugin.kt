@@ -8,36 +8,24 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.testing.karma.processWebpackName
 import java.io.File
 
 @Suppress("unused")
 open class AcornUiApplicationPlugin : Plugin<Project> {
 
-	private val targets = listOf("js", "jvm")
-
 	override fun apply(project: Project) {
-		project.pluginManager.apply("com.acornui.kotlin-mpp")
-
 		project.extensions.create<AcornUiApplicationExtension>("acornuiApp").apply {
-			appResources = project.buildDir.resolve("processedResources")
 			www = project.buildDir.resolve("www")
 			wwwProd = project.buildDir.resolve("wwwProd")
 		}
+		KotlinMppPlugin.configure(project)
 		project.extensions.configure(multiPlatformConfig(project))
 
 		project.addResourceProcessingTasks()
-//		project.applicationResourceTasks(targets, listOf("main"))
 		project.appAssetsWebTasks()
 		project.runJvmTask()
 		project.addUberJarTask()
 
-//		project.tasks.named<Delete>("clean") {
-//			doLast {
-//				delete(project.acornuiApp.www)
-//				delete(project.acornuiApp.wwwProd)
-//			}
-//		}
 	}
 
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {
@@ -103,7 +91,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 open class AcornUiApplicationExtension {
 
-	lateinit var appResources: File
 	lateinit var www: File
 	lateinit var wwwProd: File
 

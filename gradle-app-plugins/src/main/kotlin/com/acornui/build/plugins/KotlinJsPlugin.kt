@@ -43,11 +43,8 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 				js {
 					browser {
-						distribution {
-							// Assume project is a library, not an application, by default.
-							directory = null
-						}
 						webpackTask {
+							// Assume project is a library, not an application, by default.
 							enabled = false
 						}
 					}

@@ -44,6 +44,11 @@ class RootPlugin : Plugin<Project> {
 					}
 				}
 			}
+
+			tasks.findByPath("jsBrowserDistribution")?.let {
+				// In Kotlin 1.3.70 this isn't ready yet, it will be overridden in application projects.
+				it.enabled = false
+			}
 		}
 	}
 }

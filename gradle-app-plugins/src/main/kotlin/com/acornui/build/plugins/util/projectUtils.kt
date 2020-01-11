@@ -10,8 +10,10 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import java.util.concurrent.TimeUnit
 
@@ -34,6 +36,14 @@ fun Project.preventSnapshotDependencyCaching() {
 			}
 		}
 	}
+}
+
+fun Project.getRunnableCompilation(target: String, compilationName: String): AbstractKotlinCompilationToRunnableFiles<*> {
+	val unconfiguredDepError = "Target platform \"$target\" was not found for $displayName. Ensure that this dependency applies a kotlin multiplatform plugin."
+	val kotlinTarget: KotlinTarget = project.kotlinExt.targets.named(target).orNull
+			?: error(unconfiguredDepError)
+	return (kotlinTarget.compilations.named(compilationName).orNull
+			?: error(unconfiguredDepError)) as AbstractKotlinCompilationToRunnableFiles<*>
 }
 
 val Project.kotlinExt: KotlinMultiplatformExtension
