@@ -67,9 +67,12 @@ class AcornUiApplicationPluginTest {
 				.withArguments("build")
 				.withPluginClasspath()
 				.build()
-//		assertTrue(File(testProjectDir.root, "build/distributions/basic-acorn-project.js").exists())
 
-//		assertEquals(SUCCESS, result.task(":jsBrowserWebpack")!!.outcome)
+		assertTrue(File(testProjectDir.root, "build/wwwProd/index.html").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas.json").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas0.png").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/basic-acorn-project-production.js").exists())
+
 		assertEquals(SUCCESS, result.task(":build")!!.outcome)
 	}
 }

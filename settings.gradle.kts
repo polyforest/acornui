@@ -45,5 +45,3 @@ include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 //include("skins:basic")
 
 include("gradle-app-plugins")
-
-includeBuild("skins")

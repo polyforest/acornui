@@ -20,10 +20,10 @@ import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
 import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
 import com.acornui.build.plugins.tasks.createPackTexturesConfig
 import com.acornui.build.plugins.util.addResourceProcessingTasks
-import java.util.*
+import org.gradle.kotlin.dsl.java as javaExt // KT-35888
 
 plugins {
-	java
+	id("org.gradle.java")
 	`maven-publish`
 }
 
@@ -31,13 +31,12 @@ buildscript {
 	val props = java.util.Properties()
 	props.load(projectDir.resolve("../gradle.properties").inputStream())
 	val version = props["version"]!!
-	println("version $version")
 	dependencies {
 		classpath("com.acornui:gradle-app-plugins:$version")
 	}
 }
 
-val props = Properties()
+val props = java.util.Properties()
 props.load(projectDir.resolve("../gradle.properties").inputStream())
 version = props["version"]!!
 
@@ -46,7 +45,7 @@ subprojects {
 	com.acornui.build.AcornDependencies.addVersionProperties(extra)
 	apply<JavaPlugin>()
 	apply<MavenPublishPlugin>()
-	java {
+	javaExt {
 		sourceCompatibility = JavaVersion.VERSION_1_6
 		targetCompatibility = JavaVersion.VERSION_1_6
 	}
@@ -75,10 +74,11 @@ subprojects {
 //	createBitmapFontGeneratorConfig()
 //	createPackTexturesConfig()
 
-	val processAcornResources = tasks.create<AcornUiResourceProcessorTask>("processAcornResources") {
-		from(file("resources"))
-		into(buildDir.resolve("processedResources"))
-	}
+//	val processAcornResources = tasks.create<AcornUiResourceProcessorTask>("processAcornResources") {
+//		from(file("resources"))
+//		into(buildDir.resolve("processedResources"))
+//	}
+
 //	tasks.named<ProcessResources>("processResources") {
 ////		dependsOn(processAcornResources)
 //		enabled = false

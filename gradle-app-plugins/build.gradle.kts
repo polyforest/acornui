@@ -30,6 +30,7 @@ buildscript {
 		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
 	}
 }
+
 apply(plugin = "kotlin-sam-with-receiver")
 
 samWithReceiver {
@@ -58,6 +59,8 @@ dependencies {
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
+
+	implementation("com.acornui:gradle-kotlin-plugins:$version")
 }
 
 val kotlinLanguageVersion: String by project.extra

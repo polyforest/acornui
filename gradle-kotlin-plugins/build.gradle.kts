@@ -43,6 +43,7 @@ fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Uni
 val props = Properties()
 props.load(projectDir.resolve("../gradle.properties").inputStream())
 version = props["version"]!!
+group = props["group"]!!
 
 repositories {
     jcenter()
