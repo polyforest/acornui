@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+pluginManagement {
 
-package com.acornui.build.plugins
+	val props = java.util.Properties()
+	props.load(file("../gradle.properties").inputStream())
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+	val kotlinVersion: String by props
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
 
-@Suppress("unused")
-open class KotlinMppPlugin : Plugin<Project> {
-
-	override fun apply(project: Project) {
-		configure(project)
+		maven {
+			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+		}
 	}
-
-	companion object {
-
-		fun configure(project: Project) {
-			KotlinCommonOptions.configure(project)
-			KotlinJsPlugin.configure(project)
-			KotlinJvmPlugin.configure(project)
+	resolutionStrategy {
+		eachPlugin {
+			when {
+				requested.id.namespace == "org.jetbrains.kotlin" ->
+					useVersion(kotlinVersion)
+			}
 		}
 	}
 }
+
+include("basic")

@@ -18,7 +18,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 			www = project.buildDir.resolve("www")
 			wwwProd = project.buildDir.resolve("wwwProd")
 		}
-		KotlinMppPlugin.configure(project)
+		project.pluginManager.apply("com.acornui.kotlin-mpp")
 		project.extensions.configure(multiPlatformConfig(project))
 
 		project.addResourceProcessingTasks()

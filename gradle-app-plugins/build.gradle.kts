@@ -97,27 +97,6 @@ gradlePlugin {
 			displayName = "Acorn UI Multi-Platform Application"
 			description = "Configuration of an Acorn UI Application."
 		}
-
-		create("kotlinMpp") {
-			id = "com.acornui.kotlin-mpp"
-			implementationClass = "com.acornui.build.plugins.KotlinMppPlugin"
-			displayName = "Kotlin multi-platform configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin multi-platform."
-		}
-
-		create("kotlinJvm") {
-			id = "com.acornui.kotlin-jvm"
-			implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
-			displayName = "Kotlin jvm configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin jvm."
-		}
-
-		create("kotlinJs") {
-			id = "com.acornui.kotlin-js"
-			implementationClass = "com.acornui.build.plugins.KotlinJsPlugin"
-			displayName = "Kotlin js configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin js."
-		}
 	}
 }
 

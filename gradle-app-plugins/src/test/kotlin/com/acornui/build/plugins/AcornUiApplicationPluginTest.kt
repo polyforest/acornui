@@ -16,7 +16,7 @@
 
 package com.acornui.build.plugins
 
-import com.acornui.build.plugins.util.RunJvmTask
+import com.acornui.build.plugins.tasks.RunJvmTask
 import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
@@ -27,9 +27,11 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import org.gradle.testkit.runner.TaskOutcome.*
 import org.junit.Before
+import org.junit.Ignore
 import java.io.File
 import kotlin.test.assertEquals
 
+@Ignore
 class AcornUiApplicationPluginTest {
 
 	@Rule
