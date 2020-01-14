@@ -123,7 +123,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 
 	private val packedExtensions = arrayOf("json", "png")
 
-	private fun packAssets(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
+	private fun packAcornAssets(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
 		entries.forEach {
 			if (it.sourceDir.exists()) {
 				logger.lifecycle("Packing assets: " + it.sourceDir.path)
@@ -148,7 +148,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 		}
 	}
 
-	private fun processFonts(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
+	private fun processBitmapFonts(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
 		entries.forEach {
 			it.destinationDir.deleteRecursively()
 			if (it.sourceDir.exists()) {

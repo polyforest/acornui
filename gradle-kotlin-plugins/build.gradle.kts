@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 import java.util.Properties
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.gradle.kotlin.dsl.java as javax
@@ -81,6 +83,12 @@ kotlin {
             }
         }
     }
+}
+
+javax {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 gradlePlugin {

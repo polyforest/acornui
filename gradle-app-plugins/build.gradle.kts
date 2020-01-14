@@ -68,6 +68,8 @@ val kotlinJvmTarget: String by project.extra
 
 java {
 	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 kotlin {

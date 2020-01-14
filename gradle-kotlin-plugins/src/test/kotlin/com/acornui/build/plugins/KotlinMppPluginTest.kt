@@ -28,7 +28,7 @@ class KotlinMppPluginTest {
 	fun apply() {
 		val project = ProjectBuilder.builder().build()
 		project.extra["kotlinVersion"] = "1.3.61"
-		project.extra["kotlinCoroutinesVersion"] = "1.3.0-RC"
+		project.extra["kotlinCoroutinesVersion"] = "1.3.3"
 		project.extra["kotlinSerializationVersion"] = "0.14.0"
 		project.extra["kotlinLanguageVersion"] = "1.3"
 		project.extra["kotlinJvmTarget"] = "1.8"

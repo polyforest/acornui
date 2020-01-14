@@ -17,6 +17,13 @@
 plugins {
 	`maven-publish`
 	id("org.jetbrains.dokka")
+
+	// Necessary to avoid the warning:
+	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
+	// break the build."
+	kotlin("jvm") apply false
+	kotlin("js") apply false
+	kotlin("multiplatform") apply false
 }
 
 subprojects {

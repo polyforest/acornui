@@ -35,17 +35,19 @@ fun main(args: Array<String>) {
 	packAssets(srcDir, destDir, unpackedSuffix)
 }
 
-fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String) = runBlocking {
-	headlessApplication(AppConfig(manifest = ManifestUtil.createManifest(srcDir, File("./")))) {
-		val files = inject(Files)
-		val rel = srcDir.absoluteFile.toRelativeString(File(".").absoluteFile)
-		val dirEntry = files.getDir(rel)
-				?: error("Could not resolve directory from manifest. \n\tRelative path: $rel\n\tsrcDir: ${srcDir.absolutePath}")
-
+fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked") = runBlocking {
+	headlessApplication(AppConfig(manifest = FilesManifest(emptyList()))) {
 		val atlasName = srcDir.name.removeSuffix(unpackedSuffix)
+		val packer = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader))
 		globalLaunch {
-			val packedData = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader)).pack(dirEntry, quiet = true)
+			val packedData = packer.pack(collectSrcPaths(srcDir), quiet = true)
 			writeAtlas("$atlasName.json", "$atlasName{0}", packedData, destDir)
 		}.exitOnCompletion()
 	}
+}
+
+fun collectSrcPaths(srcDir: File): List<Path> {
+	val out = ArrayList<Path>()
+	out.addAll(srcDir.walkTopDown().map { Path(it.path) })
+	return out
 }

@@ -34,6 +34,7 @@ import com.acornui.io.file.FilesImpl
 import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
 import com.acornui.serialization.jsonParse
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -115,7 +116,7 @@ abstract class ApplicationBase : Application {
 
 	protected open fun dispose() {
 		Log.debug("Application disposing")
-		applicationScope.cancel("Application exiting")
+		applicationScope.cancel(CancellationException("Application exiting"))
 		PendingDisposablesRegistry.disposeAll()
 		bootstrap.dispose()
 	}
