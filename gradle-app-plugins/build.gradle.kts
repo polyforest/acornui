@@ -55,6 +55,8 @@ dependencies {
 	implementation(project(":acornui-utils"))
 	implementation(project(":acornui-core"))
 	implementation(project(":backends:acornui-lwjgl-backend"))
+	implementation(project(":tools:acornui-texture-packer"))
+	implementation(project(":tools:gdx-font-processor"))
 
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))

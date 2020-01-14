@@ -26,6 +26,11 @@ kotlin {
 				implementation(project(":acornui-utils"))
 			}
 		}
+		commonTest {
+			dependencies {
+				implementation(project(":acornui-test-utils"))
+			}
+		}
 		named("jvmMain") {
 			dependencies {
 				implementation(project(":backends:acornui-lwjgl-backend"))

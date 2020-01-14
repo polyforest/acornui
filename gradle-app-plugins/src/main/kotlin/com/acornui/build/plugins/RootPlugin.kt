@@ -6,7 +6,6 @@ import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.*
 
 @Suppress("unused")
@@ -21,7 +20,7 @@ class RootPlugin : Plugin<Project> {
 		target.pluginManager.apply("org.jetbrains.dokka")
 
 		target.allprojects {
-			AcornDependencies.addVersionProperties(project.extra)
+			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
 				mavenLocal()
 				jcenter()

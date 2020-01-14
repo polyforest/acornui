@@ -8,7 +8,6 @@
   "compressionQuality": 0.9,
   "maxDirectoryDepth": 10,
   "packAlgorithm": "BEST",
-  "pot": true,
   "stripWhitespace": true,
   "algorithmSettings" : {
     "allowRotation": true,

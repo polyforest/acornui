@@ -18,12 +18,12 @@ package com.acornui.texturepacker
 
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
-import com.acornui.async.exitOnCompletion
 import com.acornui.async.globalLaunch
 import com.acornui.di.inject
+import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
-import com.acornui.io.file.Files
-import com.acornui.io.file.ManifestUtil
+import com.acornui.io.file.FilesManifest
+import com.acornui.io.file.Path
 import com.acornui.texturepacker.writer.writeAtlas
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -42,7 +42,8 @@ fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked"
 		globalLaunch {
 			val packedData = packer.pack(collectSrcPaths(srcDir), quiet = true)
 			writeAtlas("$atlasName.json", "$atlasName{0}", packedData, destDir)
-		}.exitOnCompletion()
+			exit()
+		}
 	}
 }
 

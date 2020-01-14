@@ -2,16 +2,12 @@
 
 package com.acornui.build.plugins.tasks
 
-import com.acornui.build.plugins.util.jvmCompilation
-import com.acornui.build.plugins.util.jvm
-import com.acornui.build.plugins.util.kotlinExt
+import com.acornui.font.processFonts
+import com.acornui.texturepacker.packAssets
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.process.internal.ExecActionFactory
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
@@ -55,7 +51,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	@get:OutputDirectory
 	val outputDir: DirectoryProperty = objects.directoryProperty()
 
-	private val processors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAssets, "_unprocessedFonts" to ::processFonts)
+	private val processors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
 
 	@TaskAction
 	fun execute(inputChanges: InputChanges) {
@@ -126,17 +122,8 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	private fun packAcornAssets(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
 		entries.forEach {
 			if (it.sourceDir.exists()) {
-				logger.lifecycle("Packing assets: " + it.sourceDir.path)
-
-				getExecActionFactory().newJavaExecAction().apply {
-					main = "com.acornui.texturepacker.PackAssetsKt"
-					args = listOf(it.sourceDir.absolutePath, it.destinationDir.parentFile.absolutePath, suffix)
-					val jvmTarget = project.kotlinExt.targets.jvm
-					classpath = jvmTarget.compilations.getByName("packTextures").runtimeDependencyFiles
-					maxHeapSize = "3g"
-					execute()
-				}
-
+				logger.lifecycle("Packing assets: ${it.sourceDir.path} dest: ${it.destinationDir.parentFile} outputDir: $outputDir")
+				packAssets(it.sourceDir, it.destinationDir.parentFile, suffix)
 			} else {
 				logger.lifecycle("Removing assets: " + it.sourceDir.path)
 				val name = it.sourceDir.name.removeSuffix(suffix)
@@ -153,36 +140,11 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 			it.destinationDir.deleteRecursively()
 			if (it.sourceDir.exists()) {
 				logger.lifecycle("Processing fonts: " + it.sourceDir.path)
-				getExecActionFactory().newJavaExecAction().apply {
-					main = "com.acornui.font.ProcessFontsKt"
-					args = listOf(it.sourceDir.absolutePath, it.destinationDir.absolutePath)
-					classpath = project.configurations.getByName("bitmapFontGenerator")
-					maxHeapSize = "3g"
-					execute()
-				}
+				processFonts(it.sourceDir, it.destinationDir)
 			} else {
 				logger.lifecycle("Removing fonts: " + it.destinationDir.path)
 			}
 		}
-	}
-}
-
-fun Project.createBitmapFontGeneratorConfig() {
-	val acornVersion: String by extra
-	val gdxVersion: String by extra
-	configurations.create("bitmapFontGenerator") {
-		dependencies.apply {
-			add(project.dependencies.create("com.acornui:gdx-font-processor:$acornVersion"))
-			add(project.dependencies.create("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"))
-			add(project.dependencies.create("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"))
-		}
-	}
-}
-
-fun Project.createPackTexturesConfig() {
-	val acornVersion: String by extra
-	jvmCompilation("packTextures") {
-		runtimeOnly("com.acornui:acornui-texture-packer:$acornVersion")
 	}
 }
 

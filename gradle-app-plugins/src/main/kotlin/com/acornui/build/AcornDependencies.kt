@@ -32,7 +32,7 @@ object AcornDependencies {
 		props.load(iS)
 	}
 
-	fun addVersionProperties(extra: ExtraPropertiesExtension) {
+	fun putVersionProperties(extra: ExtraPropertiesExtension) {
 		for (entry in props.entries) {
 			val key = entry.key.toString()
 			val value = entry.value.toString()

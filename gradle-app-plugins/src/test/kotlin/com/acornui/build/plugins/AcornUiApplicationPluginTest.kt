@@ -20,29 +20,27 @@ import com.acornui.build.plugins.tasks.RunJvmTask
 import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import org.gradle.testkit.runner.TaskOutcome.*
-import org.junit.Before
-import org.junit.Ignore
-import java.io.File
-import kotlin.test.assertEquals
 
-@Ignore
 class AcornUiApplicationPluginTest {
 
 	@Rule
 	@JvmField
-//	var testProjectDir: TemporaryFolder = TemporaryFolder()
-	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
-		override fun after() {
-			println("TEMP: " + root.absolutePath)
-
-		}
-	}
+	var testProjectDir: TemporaryFolder = TemporaryFolder()
+//	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+//		override fun after() {
+//			println("TEMP: " + root.absolutePath)
+//
+//		}
+//	}
 
 	@Before
 	fun setup() {
@@ -64,7 +62,7 @@ class AcornUiApplicationPluginTest {
 	@Test fun jsBrowserWebpackTask() {
 		val result = GradleRunner.create()
 				.withProjectDir(testProjectDir.root)
-				.withArguments("build")
+				.withArguments("build", "--stacktrace")
 				.withPluginClasspath()
 				.build()
 

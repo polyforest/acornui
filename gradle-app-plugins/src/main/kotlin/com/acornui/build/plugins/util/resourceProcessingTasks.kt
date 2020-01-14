@@ -19,8 +19,6 @@
 package com.acornui.build.plugins.util
 
 import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
-import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
-import com.acornui.build.plugins.tasks.createPackTexturesConfig
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.named
@@ -33,9 +31,6 @@ import org.gradle.language.jvm.tasks.ProcessResources
  * need processing in this way.
  */
 fun Project.addResourceProcessingTasks() {
-	createBitmapFontGeneratorConfig()
-	createPackTexturesConfig()
-
 	kotlinExt.targets.all {
 		compilations.all {
 			val processResourcesName = disambiguateName("processResources")
