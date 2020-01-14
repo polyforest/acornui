@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import org.gradle.kotlin.dsl.*
+import kotlin.test.fail
 
 class KotlinMppPluginTest {
 

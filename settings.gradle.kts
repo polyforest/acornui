@@ -17,6 +17,7 @@
 rootProject.name = "acornui"
 
 pluginManagement {
+	val version: String by extra
 	val kotlinVersion: String by extra
 	val dokkaVersion: String by extra
 	repositories {
@@ -31,6 +32,7 @@ pluginManagement {
 			val id = requested.id
 			when {
 				id.namespace == "org.jetbrains.kotlin" -> useVersion(kotlinVersion)
+				id.namespace == "com.acornui" -> useVersion(version)
 				id.id == "org.jetbrains.dokka" -> useVersion(dokkaVersion)
 			}
 		}
@@ -45,3 +47,4 @@ include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 //include("skins:basic")
 
 include("gradle-app-plugins")
+includeBuild("skins")

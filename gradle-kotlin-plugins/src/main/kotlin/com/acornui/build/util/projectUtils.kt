@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,16 @@
 
 package com.acornui.build.util
 
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.Project
 
-inline fun <reified T : Task> TaskCollection<out Task>.maybeNamed(name: String, noinline configuration: T.() -> Unit) {
-	@Suppress("UNCHECKED_CAST")
-	(this as TaskCollection<T>).findByName(name) ?: return
-	named(name, T::class.java, configuration)
+/**
+ * Delegates lifecycle tasks for sub-projects.
+ */
+fun Project.delegateLifecycleTasksToSubProjects() {
+	for (taskName in listOf("clean", "assemble", "check", "build", "publish", "publishToMavenLocal")) {
+		rootProject.tasks.getByName(taskName) {
+			val t = tasks.findByName(taskName)
+			if (t != null) dependsOn(t)
+		}
+	}
 }

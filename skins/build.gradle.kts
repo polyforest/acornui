@@ -17,23 +17,14 @@
 */
 
 import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
-import com.acornui.build.plugins.tasks.createBitmapFontGeneratorConfig
-import com.acornui.build.plugins.tasks.createPackTexturesConfig
-import com.acornui.build.plugins.util.addResourceProcessingTasks
+import com.acornui.build.util.delegateLifecycleTasksToSubProjects
 import org.gradle.kotlin.dsl.java as javaExt // KT-35888
 
 plugins {
 	id("org.gradle.java")
+	id("com.acornui.root")
+	id("com.acornui.app") apply false
 	`maven-publish`
-}
-
-buildscript {
-	val props = java.util.Properties()
-	props.load(projectDir.resolve("../gradle.properties").inputStream())
-	val version = props["version"]!!
-	dependencies {
-		classpath("com.acornui:gradle-app-plugins:$version")
-	}
 }
 
 val props = java.util.Properties()
@@ -42,14 +33,9 @@ version = props["version"]!!
 
 subprojects {
 	extra["acornVersion"] = version
-	com.acornui.build.AcornDependencies.addVersionProperties(extra)
 	apply<JavaPlugin>()
 	apply<MavenPublishPlugin>()
-	javaExt {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-	}
-	group = "com.acornui.skins"
+	version = rootProject.version
 
 	sourceSets {
 		main {
@@ -59,29 +45,31 @@ subprojects {
 		}
 	}
 
-	publishing {
-		publications {
-			create<MavenPublication>("maven") {
-				groupId = group.toString()
-				artifactId = project.name
-				version = project.version.toString()
+	val processAcornResources = tasks.register<AcornUiResourceProcessorTask>("processAcornResources") {
+		from(file("resources"))
+		into(tasks.getByName<ProcessResources>("processResources").destinationDir)
+	}
 
+	tasks.getByName("processResources") {
+		dependsOn(processAcornResources)
+		enabled = false
+	}
+
+	delegateLifecycleTasksToSubProjects()
+
+	publishing {
+		repositories {
+			maven {
+				url = uri(rootProject.projectDir.resolve("../build/artifacts"))
+			}
+		}
+
+		publications {
+			create<MavenPublication>("default") {
 				from(components["java"])
+
 			}
 		}
 	}
-
-//	createBitmapFontGeneratorConfig()
-//	createPackTexturesConfig()
-
-//	val processAcornResources = tasks.create<AcornUiResourceProcessorTask>("processAcornResources") {
-//		from(file("resources"))
-//		into(buildDir.resolve("processedResources"))
-//	}
-
-//	tasks.named<ProcessResources>("processResources") {
-////		dependsOn(processAcornResources)
-//		enabled = false
-//	}
 }
 

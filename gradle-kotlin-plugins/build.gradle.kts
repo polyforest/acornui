@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.gradle.kotlin.dsl.java as javax
 
 plugins {
+    idea
     `maven-publish`
     `java-gradle-plugin`
     kotlin("jvm")
@@ -86,9 +87,17 @@ kotlin {
 }
 
 javax {
-    withSourcesJar()
+//    withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri(project.projectDir.resolve("../build/artifacts"))
+        }
+    }
 }
 
 gradlePlugin {

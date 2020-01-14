@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,14 @@ pluginManagement {
 	val props = java.util.Properties()
 	props.load(file("../gradle.properties").inputStream())
 
-	val kotlinVersion: String by props
+	val version: String by props
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 
+		maven {
+			url = uri("../build/artifacts")
+		}
 		maven {
 			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
 		}
@@ -31,8 +34,8 @@ pluginManagement {
 	resolutionStrategy {
 		eachPlugin {
 			when {
-				requested.id.namespace == "org.jetbrains.kotlin" ->
-					useVersion(kotlinVersion)
+				requested.id.namespace == "com.acornui" ->
+					useVersion(version)
 			}
 		}
 	}

@@ -1,3 +1,5 @@
+import com.acornui.build.util.delegateLifecycleTasksToSubProjects
+
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -15,8 +17,11 @@
  */
 
 plugins {
+	base
+	idea
 	`maven-publish`
 	id("org.jetbrains.dokka")
+	id("com.acornui.kotlin-mpp") apply false
 
 	// Necessary to avoid the warning:
 	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
@@ -27,12 +32,7 @@ plugins {
 }
 
 subprojects {
-	apply {
-		plugin("org.gradle.maven-publish")
-	}
-}
-
-allprojects {
+	apply<MavenPublishPlugin>()
 
 	repositories {
 		gradlePluginPortal()
@@ -50,16 +50,18 @@ allprojects {
 		}
 	}
 
+	delegateLifecycleTasksToSubProjects()
+
 	afterEvaluate {
 		tasks {
 			withType<TestReport> {
-				this.destinationDir = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
+				this.destinationDir = rootProject.buildDir.resolve("reports/${project.name}/")
 			}
 			withType<Test> {
 				this.testLogging {
 					this.showStandardStreams = true
 				}
-				this.reports.html.destination = rootProject.buildDir.resolve("reports/${this@allprojects.name}/")
+				this.reports.html.destination = rootProject.buildDir.resolve("reports/${project.name}/")
 			}
 		}
 	}
@@ -79,4 +81,12 @@ tasks {
 val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 	group = "publishing"
 	delete(rootProject.buildDir.resolve("artifacts"))
+}
+
+// Delegate lifecycle tasks for included builds.
+for (taskName in listOf("clean", "assemble", "check", "build", "publish", "publishToMavenLocal")) {
+	tasks.named(taskName) {
+		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
+		finalizedBy(gradle.includedBuild("skins").task(":basic:$taskName"))
+	}
 }
