@@ -157,7 +157,6 @@ data class AtlasRegionData(
 	/**
 	 * The original width of the image, before whitespace was stripped.
 	 */
-	@Transient
 	val originalWidth: Int
 		get() {
 			return if (isRotated)
@@ -169,7 +168,6 @@ data class AtlasRegionData(
 	/**
 	 * The original width of the image, before whitespace was stripped.
 	 */
-	@Transient
 	val originalHeight: Int
 		get() {
 			return if (isRotated)
@@ -181,14 +179,12 @@ data class AtlasRegionData(
 	/**
 	 * The packed width of the image, after whitespace was stripped.
 	 */
-	@Transient
 	val packedWidth: Int
 		get() = if (isRotated) bounds.height else bounds.width
 
 	/**
 	 * The packed height of the image, after whitespace was stripped.
 	 */
-	@Transient
 	val packedHeight: Int
 		get() = if (isRotated) bounds.width else bounds.height
 }
