@@ -54,11 +54,14 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	private val directoryProcessors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
 
 	/**
-	 * The file extensions to be considered text files and transform with [textFileProcessors]. (Lowercase)
+	 * The file extensions to be considered text files and transformed with [textFileProcessors]. (lowercase)
 	 */
 	var textFilePatterns = listOf("asp", "aspx", "cfm", "cshtml", "css", "go", "htm", "html", "json", "jsp", "jspx",
 			"php", "php3", "php4", "phtml", "rhtml", "txt", "properties")
 
+	/**
+	 * A list of processors to mutates text files.
+	 */
 	var textFileProcessors: List<TextFileProcessor> = listOf(TokenReplacementFileProcessor())
 
 	@TaskAction

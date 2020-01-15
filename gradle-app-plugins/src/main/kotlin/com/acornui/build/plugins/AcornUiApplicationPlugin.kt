@@ -25,7 +25,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		project.configureWebTasks()
 		project.configureRunJvmTask()
 		project.configureUberJarTask()
-
 	}
 
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {

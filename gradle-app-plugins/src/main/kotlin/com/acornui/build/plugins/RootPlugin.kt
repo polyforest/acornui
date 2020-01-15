@@ -12,8 +12,6 @@ import org.gradle.kotlin.dsl.*
 class RootPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		target.extensions.create<AcornUiRootExtension>("acornuiRoot")
-
 		val acornVersion: String by target.extra
 		target.preventSnapshotDependencyCaching()
 
@@ -51,16 +49,3 @@ class RootPlugin : Plugin<Project> {
 		}
 	}
 }
-
-
-open class AcornUiRootExtension {
-}
-
-fun Project.acornuiRoot(init: AcornUiRootExtension.() -> Unit) {
-	the<AcornUiRootExtension>().apply(init)
-}
-
-val Project.acornuiRoot
-	get() : AcornUiRootExtension {
-		return the()
-	}
