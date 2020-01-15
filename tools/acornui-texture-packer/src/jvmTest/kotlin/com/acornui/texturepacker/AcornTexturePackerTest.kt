@@ -20,11 +20,13 @@ import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.gl.core.TexturePixelType
+import com.acornui.graphic.TextureAtlasData
 import com.acornui.serialization.jsonParse
 import com.acornui.test.runTest
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
@@ -87,6 +89,9 @@ class AcornTexturePackerTest {
 		assertTrue(out.resolve("packTest1.json").exists())
 		assertTrue(out.resolve("packTest10.png").exists())
 		assertTrue(out.resolve("packTest11.png").exists())
+
+		val atlasData = jsonParse(TextureAtlasData.serializer(), out.resolve("packTest1.json").readText())
+		assertNotNull(atlasData.findRegion("part11.png"))
 	}
 
 }

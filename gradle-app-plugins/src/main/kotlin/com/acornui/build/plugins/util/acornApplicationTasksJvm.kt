@@ -31,13 +31,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 
-fun Project.runJvmTask() {
+fun Project.configureRunJvmTask() {
 	tasks.register<RunJvmTask>("runJvm") {
 		debugMode = true
 	}
 }
 
-fun Project.addUberJarTask() {
+fun Project.configureUberJarTask() {
 	tasks.register<Jar>("uberJar") {
 		dependsOn("jvmJar")
 		group = "build"

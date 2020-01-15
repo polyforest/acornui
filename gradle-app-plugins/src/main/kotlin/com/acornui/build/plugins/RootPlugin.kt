@@ -54,12 +54,6 @@ class RootPlugin : Plugin<Project> {
 
 
 open class AcornUiRootExtension {
-
-	/**
-	 * The ant-style patterns for which resource files will have token replacement.
-	 */
-	var textFilePatterns = listOf("asp", "aspx", "cfm", "cshtml", "css", "go", "htm", "html", "json", "jsp", "jspx",
-			"php", "php3", "php4", "phtml", "rhtml", "txt").map { "*.$it" }
 }
 
 fun Project.acornuiRoot(init: AcornUiRootExtension.() -> Unit) {

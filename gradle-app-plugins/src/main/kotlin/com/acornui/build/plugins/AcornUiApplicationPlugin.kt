@@ -21,10 +21,10 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		project.pluginManager.apply("com.acornui.kotlin-mpp")
 		project.extensions.configure(multiPlatformConfig(project))
 
-		project.addResourceProcessingTasks()
-		project.appAssetsWebTasks()
-		project.runJvmTask()
-		project.addUberJarTask()
+		project.configureResourceProcessingTasks()
+		project.configureWebTasks()
+		project.configureRunJvmTask()
+		project.configureUberJarTask()
 
 	}
 

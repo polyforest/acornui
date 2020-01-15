@@ -30,7 +30,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
  * This will automatically be added to Application projects, but modules must invoke this if they have resources that
  * need processing in this way.
  */
-fun Project.addResourceProcessingTasks() {
+fun Project.configureResourceProcessingTasks() {
 	kotlinExt.targets.all {
 		compilations.all {
 			val processResourcesName = disambiguateName("processResources")

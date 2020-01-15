@@ -59,7 +59,7 @@ class AcornUiApplicationPluginTest {
 		assertNotNull(project.plugins.findPlugin("org.jetbrains.kotlin.multiplatform"))
 	}
 
-	@Test fun jsBrowserWebpackTask() {
+	@Test fun basicAcornProject() {
 		val result = GradleRunner.create()
 				.withProjectDir(testProjectDir.root)
 				.withArguments("build", "--stacktrace")
@@ -72,5 +72,8 @@ class AcornUiApplicationPluginTest {
 		assertTrue(File(testProjectDir.root, "build/wwwProd/basic-acorn-project-production.js").exists())
 
 		assertEquals(SUCCESS, result.task(":build")!!.outcome)
+
+		// Expect token replacement
+		assertEquals("Replaced Token", File(testProjectDir.root, "build/wwwProd/assets/assetWithTokens.txt").readText())
 	}
 }

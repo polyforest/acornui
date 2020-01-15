@@ -36,10 +36,15 @@ class Path(v: String) : Comparable<Path> {
 	}
 
 	/**
-	 * Returns the number of '/' characters.
+	 * Returns the number of parts in the path.
+	 * e.g.
+	 * `Path("one/two/three").depth == 3`
+	 * `Path("one/two").depth == 2`
+	 * `Path("one").depth == 1`
+	 * `Path("").depth == 0`
 	 */
 	val depth: Int
-		get() = value.count { it == '/' }
+		get() = if (value.isEmpty()) 0 else value.count { it == '/' } + 1
 
 	fun resolve(child: String): Path = Path("$value/$child")
 

@@ -44,7 +44,6 @@ includeBuild("gradle-kotlin-plugins")
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
 include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
 include("tools:acornui-texture-packer", "tools:gdx-font-processor")
-//include("skins:basic")
 
 include("gradle-app-plugins")
 includeBuild("skins")

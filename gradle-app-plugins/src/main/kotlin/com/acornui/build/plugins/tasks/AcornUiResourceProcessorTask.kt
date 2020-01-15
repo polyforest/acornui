@@ -2,18 +2,18 @@
 
 package com.acornui.build.plugins.tasks
 
+import com.acornui.build.plugins.tasks.fileprocessors.TokenReplacementFileProcessor
 import com.acornui.font.processFonts
 import com.acornui.texturepacker.packAssets
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.process.internal.ExecActionFactory
+import org.gradle.kotlin.dsl.extra
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import java.io.File
-import javax.inject.Inject
 
 open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
@@ -51,13 +51,22 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	@get:OutputDirectory
 	val outputDir: DirectoryProperty = objects.directoryProperty()
 
-	private val processors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
+	private val directoryProcessors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
+
+	/**
+	 * The file extensions to be considered text files and transform with [textFileProcessors]. (Lowercase)
+	 */
+	var textFilePatterns = listOf("asp", "aspx", "cfm", "cshtml", "css", "go", "htm", "html", "json", "jsp", "jspx",
+			"php", "php3", "php4", "phtml", "rhtml", "txt", "properties")
+
+	var textFileProcessors: List<TextFileProcessor> = listOf(TokenReplacementFileProcessor())
 
 	@TaskAction
 	fun execute(inputChanges: InputChanges) {
-
 		val directoriesToProcess = mutableMapOf<String, MutableSet<DirectoryToProcessEntry>>()
-		directoriesToProcess += processors.map { it.key to mutableSetOf<DirectoryToProcessEntry>() }
+		directoriesToProcess += directoryProcessors.map { it.key to mutableSetOf<DirectoryToProcessEntry>() }
+
+		val properties = project.extra.properties.mapValues { it.value.toString() }
 
 		inputChanges.getFileChanges(sources).forEach { change ->
 			val relPath = change.normalizedPath
@@ -82,15 +91,22 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 						targetFile.deleteRecursively()
 				} else {
 					if (change.fileType != FileType.DIRECTORY) {
-						sourceFile.parentFile.mkdirs()
-						sourceFile.copyTo(targetFile, overwrite = true)
+						targetFile.parentFile.mkdirs()
+						if (textFileProcessors.isNotEmpty() && textFilePatterns.contains(targetFile.extension.toLowerCase())) {
+							var str = sourceFile.readText()
+							for (fileProcessor in textFileProcessors) {
+								str = fileProcessor.process(targetFile.path, str, properties)
+							}
+							targetFile.writeText(str)
+						} else {
+							sourceFile.copyTo(targetFile, overwrite = true)
+						}
 					}
 				}
 			}
 		}
 
-
-		processors.forEach { (suffix, processor) ->
+		directoryProcessors.forEach { (suffix, processor) ->
 			val directoryToProcess = directoriesToProcess[suffix]!!
 			if (directoryToProcess.isNotEmpty()) {
 				processor.invoke(suffix, directoryToProcess)
@@ -99,7 +115,7 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	}
 
 	private fun File.findSpecialFolder(): Pair<String, File>? {
-		val keys = processors.keys
+		val keys = directoryProcessors.keys
 		var p: File? = this
 		while (p != null) {
 			if (p.isDirectory) {
@@ -110,11 +126,6 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 			p = p.parentFile
 		}
 		return null
-	}
-
-	@Inject
-	protected open fun getExecActionFactory(): ExecActionFactory {
-		throw UnsupportedOperationException()
 	}
 
 	private val packedExtensions = arrayOf("json", "png")
@@ -154,3 +165,7 @@ data class DirectoryToProcessEntry(
 )
 
 typealias DirectoryProcessor = (suffix: String, entries: Iterable<DirectoryToProcessEntry>) -> Unit
+
+interface TextFileProcessor {
+	fun process(path: String, input: String, properties: Map<String, String>): String
+}
