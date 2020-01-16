@@ -35,5 +35,10 @@ kotlin {
 				runtimeOnly("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop")
 			}
 		}
+		named("jvmTest") {
+			dependencies {
+				implementation(project(":acornui-test-utils"))
+			}
+		}
 	}
 }

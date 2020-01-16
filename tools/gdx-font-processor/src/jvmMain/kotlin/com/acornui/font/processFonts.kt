@@ -82,13 +82,15 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 			}
 		}
 
-		// Write a fontSet descriptor
-		val fontSet = FontFamily(
-				family = folder.name.removeSuffix("_unprocessedFonts"),
-				sizes = settingsFinal.sizes,
-				fonts = fonts
-		)
-		fontSets.add(fontSet)
+		if (fonts.isNotEmpty()) {
+			// Write a fontSet descriptor
+			val fontSet = FontFamily(
+					family = folder.name.removeSuffix("_unprocessedFonts"),
+					sizes = settingsFinal.sizes,
+					fonts = fonts
+			)
+			fontSets.add(fontSet)
+		}
 	}
 	outputDir.resolve(fontsManifestFilename).writeText(jsonStringify(
 			FontsManifest.serializer(),

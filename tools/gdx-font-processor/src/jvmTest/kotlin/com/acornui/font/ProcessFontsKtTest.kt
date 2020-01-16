@@ -1,10 +1,19 @@
+@file:Suppress("MapGetWithNotNullAssertionOperator")
+
 package com.acornui.font
 
+import com.acornui.collection.copy
+import com.acornui.collection.removeFirst
+import com.acornui.component.text.FontStyle
+import com.acornui.component.text.FontWeight
 import com.acornui.component.text.FontsManifest
 import com.acornui.serialization.jsonParse
+import com.acornui.test.assertUnorderedListEquals
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.fail
 
 class ProcessFontsKtTest {
 
@@ -16,7 +25,24 @@ class ProcessFontsKtTest {
 		processFonts(input, output)
 
 		val fontsManifest = jsonParse(FontsManifest.serializer(), output.resolve("fonts.json").readText())
-		val fontsManifestExpected = jsonParse(FontsManifest.serializer(), """{"sets":{"fonts":{"family":"fonts","sizes":[36,44],"fonts":[]},"Roboto":{"family":"Roboto","sizes":[36,44],"fonts":[{"path":"Roboto/Roboto-Black_36.fnt","weight":"black","style":"normal","size":36},{"path":"Roboto/Roboto-Black_44.fnt","weight":"black","style":"normal","size":44},{"path":"Roboto/Roboto-BlackItalic_36.fnt","weight":"black","style":"italic","size":36},{"path":"Roboto/Roboto-BlackItalic_44.fnt","weight":"black","style":"italic","size":44}]},"Rubik":{"family":"Rubik","sizes":[36,44],"fonts":[{"path":"Rubik/Rubik-Regular_36.fnt","weight":"regular","style":"normal","size":36},{"path":"Rubik/Rubik-Regular_44.fnt","weight":"regular","style":"normal","size":44}]}}}""")
-		assertEquals(fontsManifestExpected, fontsManifest)
+		assertUnorderedListEquals(listOf("Rubik", "Roboto"), fontsManifest.sets.keys)
+
+		checkFonts(fontsManifest, listOf(36, 44), listOf(FontWeight.BLACK), listOf(FontStyle.NORMAL, FontStyle.ITALIC), "Roboto")
+		checkFonts(fontsManifest, listOf(36, 44), listOf(FontWeight.REGULAR), listOf(FontStyle.NORMAL), "Rubik")
+	}
+
+	private fun checkFonts(manifest: FontsManifest, expectedSizes: List<Int>, expectedWeights: List<String>, expectedStyles: List<String>, face: String) {
+		val remaining = manifest.sets[face]!!.fonts.copy()
+		for (expectedSize in expectedSizes) {
+			for (expectedWeight in expectedWeights) {
+				for (expectedStyle in expectedStyles) {
+					val found = remaining.removeFirst { it.weight == expectedWeight && it.style == expectedStyle && it.size == expectedSize }
+					assertNotNull(found, "Expected font <face: $face, weight: $expectedWeight, style: $expectedStyle, size: $expectedSize")
+				}
+			}
+		}
+		if (remaining.isNotEmpty()) {
+			fail("Unexpected fonts created $remaining")
+		}
 	}
 }
