@@ -32,7 +32,6 @@ pluginManagement {
 			val id = requested.id
 			when {
 				id.namespace == "org.jetbrains.kotlin" -> useVersion(kotlinVersion)
-				id.namespace == "com.acornui" -> useVersion(version)
 				id.id == "org.jetbrains.dokka" -> useVersion(dokkaVersion)
 			}
 		}
@@ -46,4 +45,3 @@ include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
 include("tools:acornui-texture-packer", "tools:gdx-font-processor")
 
 include("gradle-app-plugins")
-includeBuild("skins")

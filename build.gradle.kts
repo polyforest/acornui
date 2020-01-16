@@ -87,6 +87,6 @@ val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 for (taskName in listOf("clean", "assemble", "check", "build", "publish", "publishToMavenLocal")) {
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
-		finalizedBy(gradle.includedBuild("skins").task(":basic:$taskName"))
+//		finalizedBy(gradle.includedBuild("skins").task(":basic:$taskName"))
 	}
 }

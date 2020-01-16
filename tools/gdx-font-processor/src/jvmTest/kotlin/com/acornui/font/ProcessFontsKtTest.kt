@@ -10,8 +10,8 @@ class ProcessFontsKtTest {
 
 	@Test
 	fun process() {
-		val input = File("build/resources/test/fonts_unprocessedFonts")
-		val output = File("build/resources/test/out/fonts")
+		val input = File("build/processedResources/jvm/test/fonts_unprocessedFonts")
+		val output = File("build/processedResources/jvm/test/out/fonts")
 		output.deleteRecursively()
 		processFonts(input, output)
 
