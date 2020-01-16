@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-package com.acornui.asset
+package com.acornui.component.text
 
-import com.acornui.di.Scoped
-import com.acornui.serialization.jsonParse
-import kotlinx.coroutines.Deferred
-import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.Serializable
 
-fun <R : Any> Scoped.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): Deferred<R> {
-	return group.cacheAsync(path) {
-		jsonParse(deserializer, loadText(path))
-	}
-}
+@Serializable
+data class FontsManifest(
+		val sets: Map<String, FontFamily>
+)
+
+@Serializable
+data class FontFamily(
+
+		val family: String,
+		val sizes: List<Int>,
+		val fonts: List<Font>
+)
+
+@Serializable
+data class Font(
+		val path: String,
+		val weight: String,
+		val style: String,
+		val size: Int
+)

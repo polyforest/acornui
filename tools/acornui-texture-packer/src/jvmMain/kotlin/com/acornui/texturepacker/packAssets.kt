@@ -22,7 +22,6 @@ import com.acornui.async.globalLaunch
 import com.acornui.di.inject
 import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
-import com.acornui.io.file.FilesManifest
 import com.acornui.io.file.Path
 import com.acornui.texturepacker.writer.writeAtlas
 import kotlinx.coroutines.runBlocking
@@ -36,7 +35,7 @@ fun main(args: Array<String>) {
 }
 
 fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked") = runBlocking {
-	headlessApplication(AppConfig(manifest = FilesManifest(emptyList()))) {
+	headlessApplication(AppConfig()) {
 		val atlasName = srcDir.name.removeSuffix(unpackedSuffix)
 		val packer = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader))
 		globalLaunch {

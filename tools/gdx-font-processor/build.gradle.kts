@@ -17,32 +17,23 @@
 */
 
 plugins {
-	kotlin("jvm")
+	id("com.acornui.kotlin-jvm")
 }
 
-val gdxVersion: String by extra
-dependencies {
-	implementation(kotlin("stdlib"))
-	implementation(kotlin("stdlib-jdk8"))
-	implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
-	implementation("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
-	runtimeOnly("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
-	runtimeOnly("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop")
-
-	testImplementation(kotlin("test"))
-	testImplementation(kotlin("test-junit"))
-}
-
-publishing {
-	publications {
-		create<MavenPublication>("default") {
-			from(components["java"])
+kotlin {
+	sourceSets {
+		named("jvmMain") {
+			val gdxVersion: String by extra
+			dependencies {
+				implementation(kotlin("stdlib"))
+				implementation(kotlin("stdlib-jdk8"))
+				implementation(project(":acornui-utils"))
+				implementation(project(":acornui-core"))
+				implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
+				implementation("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
+				runtimeOnly("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
+				runtimeOnly("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop")
+			}
 		}
 	}
-}
-
-java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
 }

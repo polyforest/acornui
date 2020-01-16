@@ -17,7 +17,6 @@
 package com.acornui
 
 import com.acornui.asset.Loaders
-import com.acornui.asset.load
 import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
 import com.acornui.async.applicationScopeKey
@@ -25,15 +24,9 @@ import com.acornui.async.mainScope
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
 import com.acornui.di.*
-import com.acornui.gl.core.CachedGl20
-import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
-import com.acornui.io.file.Files
-import com.acornui.io.file.FilesImpl
-import com.acornui.io.file.FilesManifest
 import com.acornui.logging.Log
-import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -43,7 +36,7 @@ import kotlinx.coroutines.cancel
  * The common interface to all Acorn UI applications.
  */
 interface Application {
-	
+
 	suspend fun start(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit)
 }
 
@@ -82,24 +75,15 @@ abstract class ApplicationBase : Application {
 		bootstrap.awaitAll()
 	}
 
-	protected open val filesTask by task(Files) {
-		val config = config()
-		val manifest = config.manifest ?: if (config.assetsManifestPath == null) FilesManifest(emptyList())
-		else {
-			val manifestJson = get(Loaders.textLoader).load(config.rootPath + config.assetsManifestPath)
-			jsonParse(FilesManifest.serializer(), manifestJson)
-		}
-		FilesImpl(manifest)
-	}
-
 	protected open val versionTask by task(Version) {
-		// Copy the app config and set the build number.
-		val buildFile = get(Files).getFile("assets/build.txt")
-		val version = if (buildFile == null) Version(0, 0, 0) else {
-			val buildTimestamp = get(Loaders.textLoader).load(buildFile.path)
-			Version.fromStr(buildTimestamp)
-		}
-		version
+//		// Copy the app config and set the build number.
+//		val buildFile = get(Files).getFile("assets/build.txt")
+//		val version = if (buildFile == null) Version(0, 0, 0) else {
+//			val buildTimestamp = get(Loaders.textLoader).load(buildFile.path)
+//			Version.fromStr(buildTimestamp)
+//		}
+//		version
+		Version(0, 0, 0) // TODO
 	}
 
 	protected open val textLoader by task(Loaders.textLoader) {

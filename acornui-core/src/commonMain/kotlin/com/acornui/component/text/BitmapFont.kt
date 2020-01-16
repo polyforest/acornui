@@ -22,13 +22,12 @@ import com.acornui.async.UI
 import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.configure
-import com.acornui.io.file.Files
+import com.acornui.io.file.Path
 import com.acornui.isWhitespace2
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
@@ -141,9 +140,7 @@ class Glyph(
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
 suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
-	val files = inject(Files)
-	val fontFile = files.getFile(fontPath) ?: throw Exception("$fontPath not found.")
-	return loadFontFromDir(fontPath, fontFile.parent!!.path, group)
+	return loadFontFromDir(fontPath, Path(fontPath).parent.value, group)
 }
 
 /**
@@ -155,8 +152,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cached
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
 suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
-	val files = inject(Files)
-	val dir = files.getDir(imagesDir) ?: throw Exception("Directory not found: $imagesDir")
+	val dir = Path(imagesDir)
 	val bitmapFontData = group.cacheAsync(fontPath) {
 		AngelCodeParser.parse(loadText(fontPath))
 	}.await()
@@ -165,10 +161,9 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 	val pageTextureLoaders = ArrayList<Deferred<Texture>>()
 	for (i in 0 until n) {
 		val page = bitmapFontData.pages[i]
-		val imageFile = dir.getFile(page.imagePath)
-				?: throw Exception("Font image file not found: ${page.imagePath}")
-		pageTextureLoaders.add(group.cacheAsync(imageFile.path) {
-			configureFontTexture(loadTexture(imageFile.path))
+		val imageFile = dir.resolve(page.imagePath)
+		pageTextureLoaders.add(group.cacheAsync(imageFile.value) {
+			configureFontTexture(loadTexture(imageFile.value))
 		})
 	}
 	// Finished loading the font and all its textures.
@@ -209,8 +204,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 }
 
 suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
-	val files = inject(Files)
-	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
+	val atlasFile = Path(atlasPath)
 
 	val bitmapFontData = group.cacheAsync(fontKey) {
 		AngelCodeParser.parse(loadText(fontKey))
@@ -220,10 +214,9 @@ suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: 
 
 	for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
 		val atlasPageData = atlasData.pages[atlasPageIndex]
-		val textureEntry = atlasFile.siblingFile(atlasPageData.texturePath)
-				?: throw Exception("File not found: ${atlasPageData.texturePath} relative to: $atlasPath")
-		atlasPageTextures.add(group.cacheAsync(textureEntry.path) {
-			atlasPageData.configure(loadTexture(textureEntry.path))
+		val textureEntry = atlasFile.sibling(atlasPageData.texturePath)
+		atlasPageTextures.add(group.cacheAsync(textureEntry.value) {
+			atlasPageData.configure(loadTexture(textureEntry.value))
 		})
 	}
 
@@ -369,7 +362,7 @@ object BitmapFontRegistry : Clearable, Disposable {
 	lateinit var fontResolver: FontResolver
 
 	/**
-	 * Returns the font registered to the given style. Throws an exception if the font is not registered.
+	 * Returns the font registered to the given style. Logs an exception if the font is not registered.
 	 */
 	fun getFontAsync(request: BitmapFontRequest): Deferred<BitmapFont> {
 		return registry.getOrPut(request) {

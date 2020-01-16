@@ -30,7 +30,6 @@ import com.acornui.di.DKey
 import com.acornui.di.Injector
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import com.acornui.io.file.Files
 import com.acornui.removeBackslashes
 import com.acornui.replace2
 import com.acornui.observe.Observable
@@ -255,7 +254,6 @@ fun Scoped.loadBundleForLocale(locales: List<Locale>, bundleName: String, path: 
 
 private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String, fallbackPath: String, cachedGroup: CachedGroup) {
 	val i18n = inject(I18n)
-	val files = inject(Files)
 	for (localeToken in locale.toPathStrings()) {
 		val path2 = if (locale == I18n.UNDEFINED) {
 			fallbackPath.replace2("{bundleName}", bundleName)
@@ -264,14 +262,14 @@ private fun Scoped._loadBundle(locale: Locale, bundleName: String, path: String,
 		}
 
 		// Only try to load the locale if we know it to exist.
-		if (files.getFile(path2) != null) {
-			cachedGroup.cacheAsync(path2) {
-				PropertiesParser.parse(loadText(path2))
-			}.then {
-				i18n.setBundleValues(locale, bundleName, it)
-			}
-			break
+		// TODO
+
+		cachedGroup.cacheAsync(path2) {
+			PropertiesParser.parse(loadText(path2))
+		}.then {
+			i18n.setBundleValues(locale, bundleName, it)
 		}
+		break
 	}
 }
 
