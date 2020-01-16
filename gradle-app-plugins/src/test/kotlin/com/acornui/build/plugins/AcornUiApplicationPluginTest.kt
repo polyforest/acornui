@@ -34,13 +34,13 @@ class AcornUiApplicationPluginTest {
 
 	@Rule
 	@JvmField
-//	var testProjectDir: TemporaryFolder = TemporaryFolder()
-	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
-		override fun after() {
-			println("TEMP: " + root.absolutePath)
-
-		}
-	}
+	var testProjectDir: TemporaryFolder = TemporaryFolder()
+//	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+//		override fun after() {
+//			println("TEMP: " + root.absolutePath)
+//
+//		}
+//	}
 
 	@Before
 	fun setup() {
