@@ -2,15 +2,18 @@
 
 package com.acornui.build.plugins.tasks
 
-import com.acornui.build.plugins.tasks.fileprocessors.TokenReplacementFileProcessor
-import com.acornui.font.processFonts
-import com.acornui.texturepacker.packAssets
+import com.acornui.build.plugins.tasks.fileprocessor.BitmapFontsFileProcessor
+import com.acornui.build.plugins.tasks.fileprocessor.CopyFileProcessor
+import com.acornui.build.plugins.tasks.fileprocessor.PackTexturesFileProcessor
+import com.acornui.build.plugins.tasks.fileprocessor.TextFileProcessor
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileTree
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.extra
-import org.gradle.work.ChangeType
+import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import java.io.File
@@ -51,124 +54,28 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	@get:OutputDirectory
 	val outputDir: DirectoryProperty = objects.directoryProperty()
 
-	private val directoryProcessors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
+	@Nested
+	var fileProcessors: List<FileChangeProcessor> = arrayListOf(PackTexturesFileProcessor(), BitmapFontsFileProcessor(), TextFileProcessor(), CopyFileProcessor())
 
-	/**
-	 * The file extensions to be considered text files and transformed with [textFileProcessors]. (lowercase)
-	 */
-	var textFilePatterns = listOf("asp", "aspx", "cfm", "cshtml", "css", "go", "htm", "html", "json", "jsp", "jspx",
-			"php", "php3", "php4", "phtml", "rhtml", "txt", "properties")
-
-	/**
-	 * A list of processors to mutates text files.
-	 */
-	var textFileProcessors: List<TextFileProcessor> = listOf(TokenReplacementFileProcessor())
+//	private val directoryProcessors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
+	// [\w-_]+[-_]([a-z]{2}(?:-[A-Z]{2})?)\.properties
 
 	@TaskAction
 	fun execute(inputChanges: InputChanges) {
-		val directoriesToProcess = mutableMapOf<String, MutableSet<DirectoryToProcessEntry>>()
-		directoriesToProcess += directoryProcessors.map { it.key to mutableSetOf<DirectoryToProcessEntry>() }
-
-		val properties = project.extra.properties.mapValues { it.value.toString() }
+		val outputDir = outputDir.asFile.get()
+		val processorChanges = fileProcessors.map { ArrayList<FileChange>() }
 
 		inputChanges.getFileChanges(sources).forEach { change ->
-			val relPath = change.normalizedPath
-			if (relPath.isEmpty()) return@forEach
-			val sourceFile = change.file
-			val targetFile = outputDir.file(relPath).get().asFile
-
-			val found = change.file.findSpecialFolder()
-			if (found != null) {
-				val (suffix, foundSpecialFolder) = found
-				val specialFolderToFilePath = sourceFile.relativeTo(foundSpecialFolder).invariantSeparatorsPath
-				val specialFolderDest = outputDir.file(relPath.removeSuffix(specialFolderToFilePath)).get().asFile
-				val dest = specialFolderDest.parentFile.resolve(specialFolderDest.name.removeSuffix(suffix))
-
-				directoriesToProcess[suffix]!!.add(DirectoryToProcessEntry(
-						foundSpecialFolder,
-						dest
-				))
-			} else {
-				if (change.changeType == ChangeType.REMOVED || !sourceFile.exists()) {
-					if (targetFile.exists())
-						targetFile.deleteRecursively()
-				} else {
-					if (change.fileType != FileType.DIRECTORY) {
-						targetFile.parentFile.mkdirs()
-						if (textFileProcessors.isNotEmpty() && textFilePatterns.contains(targetFile.extension.toLowerCase())) {
-							var str = sourceFile.readText()
-							for (fileProcessor in textFileProcessors) {
-								str = fileProcessor.process(targetFile.path, str, properties)
-							}
-							targetFile.writeText(str)
-						} else {
-							sourceFile.copyTo(targetFile, overwrite = true)
-						}
-					}
+			for ((index, fileProcessor) in fileProcessors.withIndex()) {
+				if (fileProcessor.accepts(change, outputDir, this)) {
+					processorChanges[index].add(change)
+					break
 				}
 			}
 		}
-
-		directoryProcessors.forEach { (suffix, processor) ->
-			val directoryToProcess = directoriesToProcess[suffix]!!
-			if (directoryToProcess.isNotEmpty()) {
-				processor.invoke(suffix, directoryToProcess)
-			}
-		}
-	}
-
-	private fun File.findSpecialFolder(): Pair<String, File>? {
-		val keys = directoryProcessors.keys
-		var p: File? = this
-		while (p != null) {
-			if (p.isDirectory) {
-				val found = keys.find { p!!.name.endsWith(it) }
-				if (found != null)
-					return found to p
-			}
-			p = p.parentFile
-		}
-		return null
-	}
-
-	private val packedExtensions = arrayOf("json", "png")
-
-	private fun packAcornAssets(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
-		entries.forEach {
-			if (it.sourceDir.exists()) {
-				logger.lifecycle("Packing assets: ${it.sourceDir.path} dest: ${it.destinationDir.parentFile} outputDir: $outputDir")
-				packAssets(it.sourceDir, it.destinationDir.parentFile, suffix)
-			} else {
-				logger.lifecycle("Removing assets: " + it.sourceDir.path)
-				val name = it.sourceDir.name.removeSuffix(suffix)
-				it.destinationDir.parentFile.listFiles()?.forEach { child ->
-					if (child.name.startsWith(name) && packedExtensions.contains(child.extension.toLowerCase()))
-						child.delete()
-				}
-			}
-		}
-	}
-
-	private fun processBitmapFonts(suffix: String, entries: Iterable<DirectoryToProcessEntry>) {
-		entries.forEach {
-			it.destinationDir.deleteRecursively()
-			if (it.sourceDir.exists()) {
-				logger.lifecycle("Processing fonts: " + it.sourceDir.path)
-				processFonts(it.sourceDir, it.destinationDir)
-			} else {
-				logger.lifecycle("Removing fonts: " + it.destinationDir.path)
-			}
+		for ((index, fileProcessor) in fileProcessors.withIndex()) {
+			fileProcessor.process(processorChanges[index], outputDir, this)
 		}
 	}
 }
 
-data class DirectoryToProcessEntry(
-		val sourceDir: File,
-		val destinationDir: File
-)
-
-typealias DirectoryProcessor = (suffix: String, entries: Iterable<DirectoryToProcessEntry>) -> Unit
-
-interface TextFileProcessor {
-	fun process(path: String, input: String, properties: Map<String, String>): String
-}

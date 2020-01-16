@@ -34,13 +34,13 @@ class AcornUiApplicationPluginTest {
 
 	@Rule
 	@JvmField
-	var testProjectDir: TemporaryFolder = TemporaryFolder()
-//	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
-//		override fun after() {
-//			println("TEMP: " + root.absolutePath)
-//
-//		}
-//	}
+//	var testProjectDir: TemporaryFolder = TemporaryFolder()
+	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+		override fun after() {
+			println("TEMP: " + root.absolutePath)
+
+		}
+	}
 
 	@Before
 	fun setup() {
@@ -64,6 +64,8 @@ class AcornUiApplicationPluginTest {
 				.withProjectDir(testProjectDir.root)
 				.withArguments("build", "--stacktrace")
 				.withPluginClasspath()
+				.forwardStdOutput(System.out.bufferedWriter())
+				.forwardStdError(System.err.bufferedWriter())
 				.build()
 
 		assertTrue(File(testProjectDir.root, "build/wwwProd/index.html").exists())

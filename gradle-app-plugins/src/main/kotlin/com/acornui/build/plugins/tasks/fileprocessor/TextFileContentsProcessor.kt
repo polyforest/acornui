@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-package com.acornui.build.plugins.tasks.fileprocessors
+package com.acornui.build.plugins.tasks.fileprocessor
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-
-class TokenReplacementFileProcessorTest {
-
-	@Test fun process() {
-		val filter = TokenReplacementFileProcessor()
-		val source = """Testing @one@ 
-			|@two@
-			|@three@
-		""".trimMargin()
-
-		val expected = """Testing Fish 
-			|@two@
-			|Cats
-		""".trimMargin()
-		val out = filter.process("path", source, mapOf("one" to "Fish", "three" to "Cats"))
-		assertEquals(expected, out)
-	}
+interface TextFileContentsProcessor {
+	fun process(path: String, input: String, properties: Map<String, String>): String
 }

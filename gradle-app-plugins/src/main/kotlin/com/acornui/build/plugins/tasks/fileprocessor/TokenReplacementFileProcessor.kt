@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.acornui.build.plugins.tasks.fileprocessors
+package com.acornui.build.plugins.tasks.fileprocessor
 
-import com.acornui.build.plugins.tasks.TextFileProcessor
-
-class TokenReplacementFileProcessor(val tokenStart: String = "@", val tokenEnd: String = "@") : TextFileProcessor {
+class TokenReplacementFileProcessor(val tokenStart: String = "@", val tokenEnd: String = "@") : TextFileContentsProcessor {
 
 	private val regex = Regex("""@([a-zA-Z]+)@""")
 
