@@ -18,9 +18,9 @@ package com.acornui.io.file
 
 class Path(v: String) : Comparable<Path> {
 
-	constructor(baseDir: String, child: String) : this("${baseDir.trim('/')}/${child.trim('/')}")
+	constructor(baseDir: String, child: String) : this("${baseDir.trimEnd('/')}/${child.trim('/')}")
 
-	val value: String = v.replace('\\', '/').trim('/')
+	val value: String = v.replace('\\', '/').trimEnd('/')
 
 	val name: String
 		get() = value.substringAfterLast('/')

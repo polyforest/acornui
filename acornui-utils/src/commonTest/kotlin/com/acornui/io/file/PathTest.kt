@@ -41,4 +41,13 @@ class PathTest {
 		assertEquals(1, Path("one").depth)
 		assertEquals(0, Path("").depth)
 	}
+
+	@Test
+	fun shouldNotRemoveFirstSlash() {
+		val path = Path("/src/test")
+		assertEquals("/src/test", path.value)
+
+		val path2 = Path("/src/", "test/")
+		assertEquals("/src/test", path2.value)
+	}
 }

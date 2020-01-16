@@ -34,20 +34,19 @@ class AcornUiApplicationPluginTest {
 
 	@Rule
 	@JvmField
-	var testProjectDir: TemporaryFolder = TemporaryFolder()
-//	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+//	var testProjectDir: TemporaryFolder = TemporaryFolder()
+	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+
+		override fun before() {
+			super.before()
+			val projectDir = File("build/resources/test/basic-acorn-project/")
+			require(projectDir.exists()) { "Could not find directory: ${projectDir.absolutePath}"}
+			projectDir.copyRecursively(root, overwrite = true)
+		}
+
 //		override fun after() {
 //			println("TEMP: " + root.absolutePath)
-//
 //		}
-//	}
-
-	@Before
-	fun setup() {
-		val projectDir = File("build/resources/test/basic-acorn-project/")
-		assertTrue(projectDir.exists())
-		projectDir.copyRecursively(testProjectDir.root, overwrite = true)
-
 	}
 
 	@Test fun addsRunJvmTask() {
@@ -68,12 +67,13 @@ class AcornUiApplicationPluginTest {
 				.forwardStdError(System.err.bufferedWriter())
 				.build()
 
+		assertEquals(SUCCESS, result.task(":build")!!.outcome)
+
 		assertTrue(File(testProjectDir.root, "build/wwwProd/index.html").exists())
 		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas.json").exists())
 		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas0.png").exists())
 		assertTrue(File(testProjectDir.root, "build/wwwProd/basic-acorn-project-production.js").exists())
 
-		assertEquals(SUCCESS, result.task(":build")!!.outcome)
 
 		// Expect token replacement
 		assertEquals("Replaced Token", File(testProjectDir.root, "build/wwwProd/assets/assetWithTokens.txt").readText())

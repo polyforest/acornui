@@ -38,6 +38,12 @@ class LoadKtTest {
 		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request, progressReporter).toByteArray()))
 	}
 
+	@Test
+	fun shouldNotRemoveFirstSlash() {
+		val request = "/src/test".toUrlRequestData()
+		assertEquals("/src/test", request.url)
+	}
+
 	@Serializable
 	private data class TestData(val text: String)
 }
