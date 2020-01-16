@@ -18,7 +18,6 @@ package com.acornui.texturepacker
 
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
-import com.acornui.async.globalLaunch
 import com.acornui.di.inject
 import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
@@ -38,7 +37,7 @@ fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked"
 	headlessApplication(AppConfig()) {
 		val atlasName = srcDir.name.removeSuffix(unpackedSuffix)
 		val packer = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader))
-		globalLaunch {
+		runBlocking {
 			val packedData = packer.pack(collectSrcPaths(srcDir), quiet = true)
 			writeAtlas("$atlasName.json", "$atlasName{0}", packedData, destDir)
 			exit()
