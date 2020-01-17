@@ -57,9 +57,6 @@ open class AcornUiResourceProcessorTask @javax.inject.Inject constructor(objects
 	@Nested
 	var fileProcessors: List<FileChangeProcessor> = arrayListOf(PackTexturesFileProcessor(), BitmapFontsFileProcessor(), TextFileProcessor(), CopyFileProcessor())
 
-//	private val directoryProcessors: Map<String, DirectoryProcessor> = mapOf("_unpacked" to ::packAcornAssets, "_unprocessedFonts" to ::processBitmapFonts)
-	// [\w-_]+[-_]([a-z]{2}(?:-[A-Z]{2})?)\.properties
-
 	@TaskAction
 	fun execute(inputChanges: InputChanges) {
 		val outputDir = outputDir.asFile.get()
