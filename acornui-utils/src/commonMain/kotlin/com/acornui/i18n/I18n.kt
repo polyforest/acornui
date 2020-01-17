@@ -2,6 +2,8 @@ package com.acornui.i18n
 
 import com.acornui.logging.Log
 import com.acornui.text.getMonths
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * An object representing a locale key.
@@ -9,6 +11,7 @@ import com.acornui.text.getMonths
  *
  * @param value The locale key. E.g. en-US
  */
+@Serializable(with = LocaleSerializer::class)
 data class Locale(val value: String)
 
 val isI18nSupported: Boolean by lazy {
@@ -20,4 +23,19 @@ val isI18nSupported: Boolean by lazy {
 	}
 	if (!r) Log.warn("i18n is not supported for this platform.")
 	r
+}
+
+@Serializer(forClass = Locale::class)
+object LocaleSerializer : KSerializer<Locale> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("Locale")
+
+	override fun deserialize(decoder: Decoder): Locale {
+		return Locale(decoder.decodeString())
+	}
+
+	override fun serialize(encoder: Encoder, obj: Locale) {
+		encoder.encodeString(obj.value)
+	}
 }

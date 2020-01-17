@@ -39,8 +39,6 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 	 */
 	private val bundle: I18nBundleRo = inject(I18n).getBundle(bundleName)
 
-	private var bundleLoader = loadBundle(bundleName)
-
 	init {
 		bundle.changed.add(::bundleChangedHandler)
 	}
@@ -61,16 +59,8 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 
 	override fun dispose() {
 		bundle.changed.remove(::bundleChangedHandler)
-		bundleLoader.dispose()
 		_changed.dispose()
 	}
-}
-
-/**
- * Instantiates a bundle binding object.
- */
-fun Scoped.bundleBinding(bundleName: String): BundleBinding {
-	return BundleBinding(injector, bundleName)
 }
 
 /**

@@ -18,6 +18,7 @@ package com.acornui.asset
 
 import com.acornui.Disposable
 import com.acornui.DisposedException
+import com.acornui.async.applicationScope
 import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.collection.stringMapOf
 import com.acornui.di.DKey
@@ -26,10 +27,7 @@ import com.acornui.di.Scoped
 import com.acornui.di.inject
 import com.acornui.recycle.Clearable
 import com.acornui.time.tick
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Synchronized
 
@@ -110,6 +108,7 @@ open class CacheImpl(
 					cacheValue.deathTimer -= checkInterval
 					if (cacheValue.deathTimer < 0) {
 						cache.remove(cacheKey)
+						(cacheValue.value as? Job)?.cancel()
 						(cacheValue.value as? Disposable)?.dispose()
 						deathPoolIterator.remove()
 					}
@@ -179,61 +178,57 @@ private class CacheValue(
 	var refCount: Int = 0
 }
 
-interface CachedGroup : Disposable {
-
-	/**
-	 * The cache instance this group uses.
-	 */
-	val cache: Cache
-
-	/**
-	 * Adds a key to be tracked.
-	 */
-	fun add(key: String)
-
-}
-
-fun <T : Any> CachedGroup.cache(key: String, factory: () -> T): T {
-	val r = cache.cache(key, factory)
-	add(key)
-	return r
-}
-
-/**
- * Gets if exists or creates a deferred value for this group's [CachedGroup.cache].
- * Using the [GlobalScope] and provided [context], creates a [Deferred] object as the cache value for
- * the given [key].
- */
-fun <T : Any> CachedGroup.cacheAsync(key: String, context: CoroutineContext = Dispatchers.Default, factory: suspend () -> T): Deferred<T> {
-	val r = cache.cache(key) {
-		GlobalScope.async(context) {
-			factory()
-		}
-	}
-	add(key)
-	return r
-}
-
 /**
  * A caching group tracks a list of keys to refDec when the group is disposed.
  */
-class CachedGroupImpl(
-		override val cache: Cache
-) : CachedGroup {
+class CachedGroup(
+
+		/**
+		 * The cache instance this group uses.
+		 */
+		val cache: Cache,
+
+		/**
+		 * Adds a key to be tracked.
+		 */
+		private val scope: CoroutineScope
+) : Disposable {
 
 	private var isDisposed = false
 
 	private val keys = ArrayList<String>()
 
-	override fun add(key: String) {
-		if (isDisposed) {
-			// This group has been disposed, immediately refDec the key.
-			cache.refInc(key)
-			cache.refDec(key)
-		} else {
-			cache.refInc(key)
-			keys.add(key)
+	/**
+	 * Adds a key to be tracked.
+	 */
+	fun add(key: String) {
+		if (isDisposed) throw DisposedException()
+		if (keys.contains(key)) return
+		cache.refInc(key)
+		keys.add(key)
+	}
+
+	/**
+	 * Gets if exists or creates a deferred value for this group's [CachedGroup.cache].
+	 * Using the [GlobalScope] and provided [context], creates a [Deferred] object as the cache value for
+	 * the given [key].
+	 */
+	fun <T : Any> cacheAsync(key: String, context: CoroutineContext = Dispatchers.Default, factory: suspend () -> T): Deferred<T> {
+		if (isDisposed) throw DisposedException()
+		val r = cache.cache(key) {
+			scope.async(context) {
+				factory()
+			}
 		}
+		add(key)
+		return r
+	}
+
+	fun <T : Any> cache(key: String, factory: () -> T): T {
+		if (isDisposed) throw DisposedException()
+		val r = cache.cache(key, factory)
+		add(key)
+		return r
 	}
 
 	override fun dispose() {
@@ -244,6 +239,7 @@ class CachedGroupImpl(
 		}
 		keys.clear()
 	}
+
 }
 
 /**
@@ -251,5 +247,5 @@ class CachedGroupImpl(
  * given [cache].
  */
 fun Scoped.cachedGroup(cache: Cache = inject(Cache)): CachedGroup {
-	return CachedGroupImpl(cache)
+	return CachedGroup(cache, applicationScope)
 }

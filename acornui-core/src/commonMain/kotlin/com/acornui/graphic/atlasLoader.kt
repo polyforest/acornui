@@ -17,7 +17,6 @@
 package com.acornui.graphic
 
 import com.acornui.asset.CachedGroup
-import com.acornui.asset.cacheAsync
 import com.acornui.asset.loadTexture
 import com.acornui.di.Scoped
 import com.acornui.io.file.Path
