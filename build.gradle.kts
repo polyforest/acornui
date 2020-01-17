@@ -85,8 +85,15 @@ val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 
 // Delegate lifecycle tasks for included builds.
 for (taskName in listOf("clean", "assemble", "check", "build", "publish", "publishToMavenLocal")) {
+
+	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
+		dir = file("skins")
+		tasks = listOf(taskName)
+	}
+
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
-//		finalizedBy(gradle.includedBuild("skins").task(":basic:$taskName"))
+		finalizedBy(skinTask)
 	}
 }
+
