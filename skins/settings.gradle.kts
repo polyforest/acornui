@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+rootProject.name = "acornui-skins"
+
 pluginManagement {
 
 	val props = java.util.Properties()
@@ -23,7 +25,6 @@ pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
-
 		maven {
 			url = uri("../build/artifacts")
 		}

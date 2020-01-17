@@ -50,8 +50,6 @@ subprojects {
 		}
 	}
 
-	delegateLifecycleTasksToSubProjects()
-
 	afterEvaluate {
 		tasks {
 			withType<TestReport> {
@@ -83,17 +81,31 @@ val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 	delete(rootProject.buildDir.resolve("artifacts"))
 }
 
-// Delegate lifecycle tasks for included builds.
-for (taskName in listOf("clean", "assemble", "check", "build", "publish", "publishToMavenLocal")) {
+// All tasks depend on the common kotlin plugins
+tasks.all {
+	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publish"))
+}
 
-	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
-		dir = file("skins")
-		tasks = listOf(taskName)
-	}
-
+val projectProperties = project.gradle.startParameter.projectProperties
+for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
-		finalizedBy(skinTask)
+	}
+}
+
+// Publish skins when this project is published.
+for (taskName in listOf("publish", "publishToMavenLocal")) {
+	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
+		subprojects.forEach {
+			dependsOn(":${it.path}:$taskName")
+		}
+		dir = file("skins")
+		tasks = listOf("build", taskName)
+		buildName = "${taskName}Skins"
+		startParameter.projectProperties = projectProperties
+	}
+	tasks.named(taskName) {
+		dependsOn(skinTask)
 	}
 }
 
