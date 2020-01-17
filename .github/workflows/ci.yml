@@ -10,7 +10,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Setup java
+    - name: Gradle Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    - name: Setup Java
       uses: actions/setup-java@v1
       with:
         java-version: 8
@@ -18,17 +25,13 @@ jobs:
       uses: eskatos/gradle-command-action@v1
       with:
         arguments: build publish -x jsBrowserTest --stacktrace
-    - name: Bundle test reports
-      if: always()
-      run: mkdir -p build/reports && cp -r **/build/reports build/reports
-      shell: bash
-    - name: Upload test reports
+    - name: Upload Test Reports
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: test-reports-${{ matrix.os }}
         path: build/reports
-    - name: Upload artifacts
+    - name: Upload Artifacts
       uses: appleboy/scp-action@v0.0.5
       if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
       with:

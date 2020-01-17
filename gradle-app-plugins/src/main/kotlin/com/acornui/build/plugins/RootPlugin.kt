@@ -1,12 +1,12 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.repositories
+import org.gradle.kotlin.dsl.*
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -18,29 +18,33 @@ class RootPlugin : Plugin<Project> {
 		target.pluginManager.apply("org.jetbrains.dokka")
 
 		target.allprojects {
-			AcornDependencies.addVersionProperties(it.extra)
-
-//			it.pluginManager.apply("org.gradle.idea")
-
-			it.repositories {
+			AcornDependencies.putVersionProperties(project.extra)
+			repositories {
 				mavenLocal()
 				jcenter()
-
-				maven { mavenArtifactRepository ->
-					mavenArtifactRepository.url = it.uri("http://artifacts.acornui.com/mvn/")
+				maven {
+					url = project.uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+				}
+				maven {
+					url = project.uri("http://artifacts.acornui.com/mvn/")
 				}
 			}
 
-			it.configurations.all { configuration ->
-				configuration.resolutionStrategy { resolutionStrategy ->
-					resolutionStrategy.eachDependency { dependencyResolveDetails ->
+			project.configurations.all {
+				resolutionStrategy {
+					eachDependency {
 						when {
-							dependencyResolveDetails.requested.group.startsWith("com.acornui") -> {
-								dependencyResolveDetails.useVersion(acornVersion)
+							requested.group.startsWith("com.acornui") -> {
+								useVersion(acornVersion)
 							}
 						}
 					}
 				}
+			}
+
+			tasks.findByPath("jsBrowserDistribution")?.let {
+				// In Kotlin 1.3.70 this isn't ready yet, it will be overridden in application projects.
+				it.enabled = false
 			}
 		}
 	}

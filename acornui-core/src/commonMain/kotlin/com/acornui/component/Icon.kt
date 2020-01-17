@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.asset.cacheAsync
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
 import com.acornui.async.catch

@@ -29,8 +29,6 @@ import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
-import com.acornui.io.file.Files
-import com.acornui.io.file.FilesImpl
 import com.acornui.test.ExpectedException
 import com.acornui.test.runTest
 import kotlinx.coroutines.TimeoutCancellationException
@@ -40,11 +38,10 @@ import kotlin.time.seconds
 
 class JvmHeadlessApplicationTest {
 
-	private val appConfig = AppConfig(assetsManifestPath = null)
+	private val appConfig = AppConfig()
 
 	@Test fun start() = runBlocking {
 		JvmHeadlessApplication().start(appConfig) {
-			assertTrue(inject(Files) is FilesImpl)
 			assertTrue(inject(Stage) is StageImpl)
 			assertEquals(inject(CachedGl20), MockGl20)
 			assertEquals(inject(MouseInput), MockMouseInput)

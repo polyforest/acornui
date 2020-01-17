@@ -23,7 +23,6 @@ import com.acornui.component.text.FontStyle
 import com.acornui.component.text.FontWeight
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.io.file.Files
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlinx.serialization.Serializable
@@ -165,20 +164,8 @@ data class ThemeFontVo(
 		val family: String,
 		val size: String = FontSize.REGULAR,
 		val weight: String = FontWeight.REGULAR,
+		val strongWeight: String = FontWeight.MEDIUM,
+		val emphasisStyle: String = FontStyle.ITALIC,
 		val style: String = FontStyle.NORMAL,
 		val color: ColorRo
-) {
-
-	fun getStrongWeight(theme: Theme, files: Files): String {
-		val index = FontWeight.values.indexOf(weight)
-		for (i in index + 1..FontWeight.values.lastIndex) {
-			val w = FontWeight.values[i]
-			val found = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, w, style, 1f))
-			if (found != null) return w
-		}
-		return weight
-	}
-
-	fun hasItalic(theme: Theme, files: Files): Boolean = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, weight, FontStyle.ITALIC, 1f)) != null
-	fun hasWeight(theme: Theme, files: Files, weight: String): Boolean = FontPathResolver.getPath(theme, files, BitmapFontRequest(family, size, weight, style, 1f)) != null
-}
+)

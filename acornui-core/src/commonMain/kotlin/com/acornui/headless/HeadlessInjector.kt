@@ -23,7 +23,6 @@ import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.io.byteBuffer
-import com.acornui.io.file.Files
 
 object HeadlessInjector {
 
@@ -39,7 +38,6 @@ object HeadlessInjector {
 				Window to HeadlessWindow(),
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
-				Files to MockFiles,
 				Loaders.binaryLoader to MockLoader(byteBuffer(1)),
 				Loaders.musicLoader to MockLoader(MockMusic),
 				Loaders.rgbDataLoader to MockLoader(MockTexture.rgbData),

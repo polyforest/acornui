@@ -17,20 +17,15 @@
 package com.acornui.graphic
 
 import com.acornui.asset.CachedGroup
-import com.acornui.asset.cacheAsync
 import com.acornui.asset.loadTexture
 import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.io.file.Files
+import com.acornui.io.file.Path
 import kotlinx.coroutines.Deferred
 
 fun Scoped.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
-	val files = inject(Files)
-	val atlasFile = files.getFile(atlasPath) ?: throw Exception("File not found: $atlasPath")
-	val textureFile = atlasFile.siblingFile(page.texturePath)
-			?: throw Exception("File not found: ${page.texturePath} relative to: ${atlasFile.parent?.path}")
-
-	return group.cacheAsync(textureFile.path) {
-		page.configure(loadTexture(textureFile.path))
+	val atlasFile = Path(atlasPath)
+	val textureFile = atlasFile.sibling(page.texturePath)
+	return group.cacheAsync(textureFile.value) {
+		page.configure(loadTexture(textureFile.value))
 	}
 }

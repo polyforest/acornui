@@ -1,14 +1,11 @@
-@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE", "EXPERIMENTAL_API_USAGE")
 
 package com.acornui.build.plugins
 
-import com.acornui.build.plugins.util.appAssetsWebTasks
-import com.acornui.build.plugins.util.applicationResourceTasks
-import com.acornui.build.plugins.util.runJvmTask
-import com.acornui.build.plugins.util.uberJarTask
+import com.acornui.build.plugins.util.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
+import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.File
@@ -16,44 +13,43 @@ import java.io.File
 @Suppress("unused")
 open class AcornUiApplicationPlugin : Plugin<Project> {
 
-	private val targets = listOf("js", "jvm")
-
 	override fun apply(project: Project) {
-		project.pluginManager.apply("org.gradle.idea")
-		project.pluginManager.apply("com.acornui.kotlin-mpp")
-
-		project.extensions.create<AcornUiApplicationExtension>("acornui").apply {
-			appResources = project.buildDir.resolve("processedResources")
+		project.extensions.create<AcornUiApplicationExtension>("acornuiApp").apply {
 			www = project.buildDir.resolve("www")
 			wwwProd = project.buildDir.resolve("wwwProd")
 		}
+		project.pluginManager.apply(KotlinMppPlugin::class.java)
 		project.extensions.configure(multiPlatformConfig(project))
 
-		project.applicationResourceTasks(targets, listOf("main"))
-		project.appAssetsWebTasks()
-		project.runJvmTask()
-		project.uberJarTask()
-
-		project.tasks.named<Delete>("clean") {
-			doLast {
-				delete(project.acornui.www)
-				delete(project.acornui.wwwProd)
-			}
-		}
+		project.configureResourceProcessingTasks()
+		project.configureWebTasks()
+		project.configureRunJvmTask()
+		project.configureUberJarTask()
 	}
 
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {
 		js {
 			compilations.all {
-				it.kotlinOptions {
+				kotlinOptions {
 					main = "call"
+					metaInfo = false
+					sourceMap = true
+				}
+			}
+
+			browser {
+				webpackTask {
+					enabled = true
+					val baseConventions = project.convention.plugins["base"] as BasePluginConvention?
+					outputFileName =  baseConventions?.archivesBaseName + "-${mode.code}.js"
+					sourceMaps = true
 				}
 			}
 		}
 
 		sourceSets {
 			all {
-				it.languageSettings.progressiveMode = true
+				languageSettings.progressiveMode = true
 			}
 
 			val commonMain by getting {
@@ -84,6 +80,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val jsMain by getting {
 				dependencies {
+//					compileOnly(npm("html-webpack-plugin", version = "3.2.0"))
 					implementation("com.acornui:acornui-webgl-backend")
 				}
 			}
@@ -93,7 +90,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 open class AcornUiApplicationExtension {
 
-	lateinit var appResources: File
 	lateinit var www: File
 	lateinit var wwwProd: File
 
@@ -102,13 +98,14 @@ open class AcornUiApplicationExtension {
 	 * Relative to the [www] and [wwwProd] directories.
 	 */
 	var jsLibPath = "lib"
+
 }
 
-fun Project.acornui(init: AcornUiApplicationExtension.() -> Unit) {
+fun Project.acornuiApp(init: AcornUiApplicationExtension.() -> Unit) {
 	the<AcornUiApplicationExtension>().apply(init)
 }
 
-val Project.acornui
+val Project.acornuiApp
 	get() : AcornUiApplicationExtension {
 		return the()
 	}

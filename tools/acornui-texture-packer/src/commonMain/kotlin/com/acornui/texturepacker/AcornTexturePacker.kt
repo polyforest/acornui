@@ -25,7 +25,7 @@ import com.acornui.graphic.AtlasRegionData
 import com.acornui.graphic.Color
 import com.acornui.graphic.RgbData
 import com.acornui.io.Loader
-import com.acornui.io.file.Directory
+import com.acornui.io.file.Path
 import com.acornui.math.IntRectangle
 import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.Deferred
@@ -37,10 +37,13 @@ import kotlinx.coroutines.async
  */
 class AcornTexturePacker(private val textLoader: Loader<String>, private val rgbDataLoader: Loader<RgbData>) {
 
-	suspend fun pack(root: Directory, settingsFilename: String = "_packSettings.json", quiet: Boolean = false): PackedTextureData {
-		val settingsFile = root.getFile(settingsFilename) ?: throw Exception("$settingsFilename is missing")
-		val settings = jsonParse(TexturePackerSettingsData.serializer(), textLoader.load(settingsFile.path))
-		return pack(root, settings, quiet)
+	/**
+	 *
+	 */
+	suspend fun pack(relativePaths: List<Path>, settingsFilename: String = "_packSettings.json", quiet: Boolean = false): PackedTextureData {
+		val settingsFile: Path = relativePaths.firstOrNull { it.name == settingsFilename } ?: error("Could not find settings file with name $settingsFilename")
+		val settings = jsonParse(TexturePackerSettingsData.serializer(), textLoader.load(settingsFile.value))
+		return pack(loadImageSources(relativePaths, settings), settings, quiet, stripComponents = settingsFile.parent.depth)
 	}
 
 	/**
@@ -49,30 +52,26 @@ class AcornTexturePacker(private val textLoader: Loader<String>, private val rgb
 	 *
 	 * No files will be created in this step; use an atlas writer such as JvmTextureAtlasWriter to write to the filesystem.
 	 *
-	 * @param root  The root directory to recurse (up to settings.maxDirectoryDepth)
+	 * @param imageSources The list of image sources to pack.
 	 * @param settings The configuration variables to use when packing.
 	 */
-	suspend fun pack(root: Directory, settings: TexturePackerSettingsData, quiet: Boolean = false): PackedTextureData {
-		settings.validate()
-
+	fun pack(imageSources: List<SourceImageData>, settings: TexturePackerSettingsData, quiet: Boolean = false, stripComponents: Int = 0): PackedTextureData {
 		val packer: RectanglePacker = when (settings.packAlgorithm) {
 			TexturePackAlgorithm.BEST -> MaxRectsPacker(settings.algorithmSettings)
 			TexturePackAlgorithm.GREEDY -> GreedyRectanglePacker(settings.algorithmSettings)
 		}
 
-		val imageSources = loadImageSources(root, settings)
-
 		// Create an array of PackerRectangle objects from the sources.
 		val rectangles = Array(imageSources.size) {
 			val imageSource = imageSources[it]
-			PackerRectangleData(IntRectangle(0, 0, imageSource.rgbData.width, imageSource.rgbData.height), false, it, imageSource.path)
+			PackerRectangleData(IntRectangle(0, 0, imageSource.rgbData.width, imageSource.rgbData.height), false, it, imageSource.path.value)
 		}
 
 		// Calculate how the pages should be laid out.
 		val packedRectanglePages = packer.pack(ArrayIterator(rectangles), quiet)
 
 		// Create the image data for each page.
-		val packedPages = createPackedPages(imageSources, packedRectanglePages, settings)
+		val packedPages = createPackedPages(imageSources, packedRectanglePages, settings, stripComponents)
 
 		if (settings.algorithmSettings.addWhitePixel) {
 			for (packedPage in packedPages.pages) {
@@ -86,41 +85,39 @@ class AcornTexturePacker(private val textLoader: Loader<String>, private val rgb
 	 * Scours a given directory, populating a list of SourceImageData objects, which represent the bitmap data of an
 	 * image and its sibling metadata.
 	 */
-	private suspend fun loadImageSources(root: Directory, settings: TexturePackerSettingsData): ArrayList<SourceImageData> {
+	private suspend fun loadImageSources(relativePaths: List<Path>, settings: TexturePackerSettingsData): List<SourceImageData> {
 		val imageSources = ArrayList<SourceImageData>()
-		root.walkFilesTopDown(settings.maxDirectoryDepth).forEach {
-			fileEntry ->
-			if (fileEntry.hasExtension("png") || fileEntry.hasExtension("jpg")) {
-				val metadataFile = fileEntry.siblingFile(fileEntry.nameNoExtension + IMAGE_METADATA_EXTENSION)
-				val rgbLoader: Deferred<RgbData> = GlobalScope.async { rgbDataLoader.load(fileEntry.path) }
+		relativePaths.forEach { path ->
+			if (!path.hasExtension("png") && !path.hasExtension("jpg")) return@forEach
+			val metadataFile = path.sibling(path.nameNoExtension + IMAGE_METADATA_EXTENSION)
+			val rgbLoader: Deferred<RgbData> = GlobalScope.async { rgbDataLoader.load(path.value) }
 
-				// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
-				val metadata: ImageMetadata = if (metadataFile != null) {
-					jsonParse(ImageMetadata.serializer(), textLoader.load(metadataFile.path))
-				} else ImageMetadata()
+			// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
+			val metadata: ImageMetadata = if (relativePaths.contains(metadataFile)) {
+				jsonParse(ImageMetadata.serializer(), textLoader.load(metadataFile.value))
+			} else ImageMetadata()
 
-				var rgbData = rgbLoader.await()
-				val padding: List<Int>
-				if (settings.stripWhitespace && rgbData.hasAlpha) {
-					padding = rgbData.calculateWhitespace(settings.alphaThreshold)
-					if (padding.sum() > 0) {
-						// There is whitespace, strip it. Strip it good.
-						rgbData = rgbData.copySubRgbData(padding[0], padding[1], rgbData.width - padding[0] - padding[2], rgbData.height - padding[1] - padding[3])
-					}
-				} else {
-					padding = listOf(0, 0, 0, 0)
+			var rgbData = rgbLoader.await()
+			val padding: List<Int>
+			if (settings.stripWhitespace && rgbData.hasAlpha) {
+				padding = rgbData.calculateWhitespace(settings.alphaThreshold)
+				if (padding.sum() > 0) {
+					// There is whitespace, strip it. Strip it good.
+					rgbData = rgbData.copySubRgbData(padding[0], padding[1], rgbData.width - padding[0] - padding[2], rgbData.height - padding[1] - padding[3])
 				}
-				if (rgbData.width != 0 && rgbData.height != 0) {
-					val imageSource = SourceImageData(
-							path = fileEntry.path,
-							relativePath = root.relativePath(fileEntry),
-							rgbData = rgbData,
-							metadata = metadata,
-							padding = padding
-					)
-					imageSources.add(imageSource)
-				}
+			} else {
+				padding = listOf(0, 0, 0, 0)
 			}
+			if (rgbData.width != 0 && rgbData.height != 0) {
+				val imageSource = SourceImageData(
+						path = path,
+						rgbData = rgbData,
+						metadata = metadata,
+						padding = padding
+				)
+				imageSources.add(imageSource)
+			}
+
 		}
 		return imageSources
 	}
@@ -129,7 +126,7 @@ class AcornTexturePacker(private val textLoader: Loader<String>, private val rgb
 	 * Creates RgbData objects for each atlas page, populating them with the regions, and generates the atlas data
 	 * models.
 	 */
-	private fun createPackedPages(imageSources: List<SourceImageData>, packedRectanglePages: List<PackerPageData>, settings: TexturePackerSettingsData): PackedTextureData {
+	private fun createPackedPages(imageSources: List<SourceImageData>, packedRectanglePages: List<PackerPageData>, settings: TexturePackerSettingsData, stripComponents: Int): PackedTextureData {
 		return PackedTextureData(List(packedRectanglePages.size) {
 			val packedRectanglePage: PackerPageData = packedRectanglePages[it]
 
@@ -155,7 +152,7 @@ class AcornTexturePacker(private val textLoader: Loader<String>, private val rgb
 						val imageSource = imageSources[packerRegion.originalIndex]
 						AtlasRegionData(
 								bounds = IntRectangle(packerRegion.bounds.x, packerRegion.bounds.y, packerRegion.bounds.width - settings.algorithmSettings.paddingX, packerRegion.bounds.height - settings.algorithmSettings.paddingY),
-								name = imageSource.relativePath,
+								name = imageSource.path.stripComponents(stripComponents).value,
 								isRotated = packerRegion.isRotated,
 								splits = imageSource.metadata.splits,
 								padding = imageSource.padding
@@ -183,9 +180,8 @@ data class PackedTextureData(
 /**
  * A representation of the image bitmap data, and its corresponding metadata.
  */
-private data class SourceImageData(
-		val path: String,
-		val relativePath: String,
+data class SourceImageData(
+		val path: Path,
 		val rgbData: RgbData,
 		val metadata: ImageMetadata,
 		val padding: List<Int>)

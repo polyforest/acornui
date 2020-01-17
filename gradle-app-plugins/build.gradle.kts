@@ -16,11 +16,28 @@
 * limitations under the License.
 */
 
+import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
+
 plugins {
 	`maven-publish`
 	`java-gradle-plugin`
 	kotlin("jvm")
 }
+
+buildscript {
+	val kotlinVersion: String by extra
+	dependencies {
+		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+	}
+}
+
+apply(plugin = "kotlin-sam-with-receiver")
+
+samWithReceiver {
+	annotation("org.gradle.api.HasImplicitReceiver")
+}
+
+fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
 
 val kotlinVersion: String by extra
 val kotlinSerializationVersion: String by extra
@@ -31,7 +48,6 @@ dependencies {
 	compileOnly(gradleApi())
 	implementation(kotlin("compiler", version = kotlinVersion))
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
-//	implementation(kotlin("gradle-plugin-api", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
@@ -39,26 +55,29 @@ dependencies {
 	implementation(project(":acornui-utils"))
 	implementation(project(":acornui-core"))
 	implementation(project(":backends:acornui-lwjgl-backend"))
-	implementation(rootProject.files("buildSrc/build/libs/buildSrc-$version.jar")) //
+	implementation(project(":tools:acornui-texture-packer"))
+	implementation(project(":tools:gdx-font-processor"))
 
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
+
+	implementation("com.acornui:gradle-kotlin-plugins:$version")
 }
 
 val kotlinLanguageVersion: String by project.extra
 val kotlinJvmTarget: String by project.extra
 
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 kotlin {
-
-	sourceSets {
-		main {
-			// This is gross, but as far as I know there's no way to publish plugins from the buildSrc project,
-			// and this is less gross than duplicating code.
-			kotlin.srcDirs(rootProject.file("buildSrc/src/main/kotlin"))
-		}
+	sourceSets.all {
+		languageSettings.useExperimentalAnnotation("kotlin.Experimental")
 	}
-
 	target {
 		compilations.all {
 			kotlinOptions {
@@ -78,30 +97,12 @@ gradlePlugin {
 			displayName = "Root project plugin for a multi-module Acorn UI application."
 			description = "Configuration of a root project for a multi-module Acorn UI application."
 		}
+
 		create("app") {
 			id = "com.acornui.app"
 			implementationClass = "com.acornui.build.plugins.AcornUiApplicationPlugin"
 			displayName = "Acorn UI Multi-Platform Application"
 			description = "Configuration of an Acorn UI Application."
-		}
-
-		create("kotlinMpp") {
-			id = "com.acornui.kotlin-mpp"
-			implementationClass = "com.acornui.build.plugins.KotlinMppPlugin"
-			displayName = "Kotlin multi-platform configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin multi-platform."
-		}
-		create("kotlinJvm") {
-			id = "com.acornui.kotlin-jvm"
-			implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
-			displayName = "Kotlin jvm configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin jvm."
-		}
-		create("kotlinJs") {
-			id = "com.acornui.kotlin-js"
-			implementationClass = "com.acornui.build.plugins.KotlinJsPlugin"
-			displayName = "Kotlin js configuration for Acorn UI"
-			description = "Configures an Acorn UI library project for Kotlin js."
 		}
 	}
 }

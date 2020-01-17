@@ -20,7 +20,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import java.util.*
 
 /**
- *
+ * Applies the dependency version properties set in acornDependencies.txt
  */
 object AcornDependencies {
 
@@ -32,7 +32,7 @@ object AcornDependencies {
 		props.load(iS)
 	}
 
-	fun addVersionProperties(extra: ExtraPropertiesExtension) {
+	fun putVersionProperties(extra: ExtraPropertiesExtension) {
 		for (entry in props.entries) {
 			val key = entry.key.toString()
 			val value = entry.value.toString()

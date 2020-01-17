@@ -42,20 +42,6 @@ data class AppConfig(
 		val frameRate: Int = 60,
 
 		/**
-		 * The location of the files.json file created by the AcornUI assets task.
-		 * If this is set to null and [manifest] is null, the
-		 * [com.acornui.io.file.Files] will be empty.
-		 *
-		 * [manifest] takes precedence.
-		 */
-		val assetsManifestPath: String? = "assets/files.json",
-
-		/**
-		 * If set, the [assetsManifestPath] will be ignored and this manifest will be used.
-		 */
-		val manifest: FilesManifest? = null,
-
-		/**
 		 * The properties for the Window.
 		 */
 		val window: WindowConfig = WindowConfig(),

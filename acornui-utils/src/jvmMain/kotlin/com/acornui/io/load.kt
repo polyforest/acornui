@@ -76,7 +76,7 @@ suspend fun <T> load(
 			} finally {
 				con.disconnect()
 			}
-		} else if (con is JarURLConnection) {
+		} else {
 			con.connect()
 			result = process(con.inputStream!!)
 		}

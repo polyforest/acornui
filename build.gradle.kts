@@ -1,3 +1,5 @@
+import com.acornui.build.util.delegateLifecycleTasksToSubProjects
+
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -15,26 +17,49 @@
  */
 
 plugins {
+	base
+	idea
 	`maven-publish`
 	id("org.jetbrains.dokka")
+	id("com.acornui.kotlin-mpp") apply false
+
+	// Necessary to avoid the warning:
+	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
+	// break the build."
+	kotlin("jvm") apply false
+	kotlin("js") apply false
+	kotlin("multiplatform") apply false
 }
 
 subprojects {
-	apply {
-		plugin("org.gradle.maven-publish")
-	}
-}
+	apply<MavenPublishPlugin>()
 
-allprojects {
 	repositories {
 		gradlePluginPortal()
 		jcenter()
+		maven {
+			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+		}
 	}
 
 	publishing {
 		repositories {
 			maven {
 				url = uri(rootProject.buildDir.resolve("artifacts"))
+			}
+		}
+	}
+
+	afterEvaluate {
+		tasks {
+			withType<TestReport> {
+				this.destinationDir = rootProject.buildDir.resolve("reports/${project.name}/")
+			}
+			withType<Test> {
+				this.testLogging {
+					this.showStandardStreams = true
+				}
+				this.reports.html.destination = rootProject.buildDir.resolve("reports/${project.name}/")
 			}
 		}
 	}
@@ -55,3 +80,32 @@ val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
 	group = "publishing"
 	delete(rootProject.buildDir.resolve("artifacts"))
 }
+
+// All tasks depend on the common kotlin plugins
+tasks.all {
+	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publish"))
+}
+
+val projectProperties = project.gradle.startParameter.projectProperties
+for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
+	tasks.named(taskName) {
+		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
+	}
+}
+
+// Publish skins when this project is published.
+for (taskName in listOf("publish", "publishToMavenLocal")) {
+	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
+		subprojects.forEach {
+			dependsOn(":${it.path}:$taskName")
+		}
+		dir = file("skins")
+		tasks = listOf("build", taskName)
+		buildName = "${taskName}Skins"
+		startParameter.projectProperties = projectProperties
+	}
+	tasks.named(taskName) {
+		dependsOn(skinTask)
+	}
+}
+

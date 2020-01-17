@@ -33,7 +33,6 @@ import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.filter.BlurQuality
 import com.acornui.focus.FocusHighlighter
 import com.acornui.focus.FocusableStyle
@@ -44,7 +43,6 @@ import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.input.interaction.enableDownRepeat
-import com.acornui.io.file.Files
 import com.acornui.math.*
 
 open class BasicUiSkin(
@@ -121,16 +119,15 @@ open class BasicUiSkin(
 	}
 
 	protected open fun textFontStyle() {
-		val files = inject(Files)
 		BitmapFontRegistry.fontResolver = { request ->
 			globalAsync {
-				val fontFile = FontPathResolver.getPath(theme, files, request) ?: throw Exception("Font not found: $request")
-				loadFontFromDir(fontFile.path, fontFile.parent!!.path)
+				val fontFile = FontPathResolver.getPath(target, theme, request) ?: throw Exception("Font not found: $request")
+				loadFontFromDir(fontFile)
 			}
 		}
-		theme.bodyFont.addStyles(files)
-		theme.headingFont.addStyles(files, withAncestor(TextStyleTags.heading))
-		theme.formLabelFont.addStyles(files, withAncestor(formLabelStyle))
+		theme.bodyFont.addStyles()
+		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading))
+		theme.formLabelFont.addStyles(withAncestor(formLabelStyle))
 	}
 
 	protected open fun textStyle() {
@@ -252,7 +249,7 @@ open class BasicUiSkin(
 		target.addStyleRule(headingGroupStyle, HeadingGroup)
 	}
 
-	protected fun ThemeFontVo.addStyles(files: Files, filter: StyleFilter = AlwaysFilter) {
+	protected fun ThemeFontVo.addStyles(filter: StyleFilter = AlwaysFilter) {
 		target.addStyleRule(charStyle {
 			colorTint = color
 			fontFamily = family
@@ -261,12 +258,8 @@ open class BasicUiSkin(
 			fontStyle = style
 		}, filter)
 
-		target.addStyleRule(charStyle {
-			fontWeight = getStrongWeight(theme, files)
-		}, filter and withAncestor(TextStyleTags.strong))
-
-		if (hasItalic(theme, files))
-			target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis) and filter)
+		target.addStyleRule(charStyle { fontWeight = strongWeight }, filter and withAncestor(TextStyleTags.strong))
+		target.addStyleRule(charStyle { fontStyle = emphasisStyle }, filter and withAncestor(TextStyleTags.emphasis))
 	}
 
 	protected open fun themeRectStyle() {

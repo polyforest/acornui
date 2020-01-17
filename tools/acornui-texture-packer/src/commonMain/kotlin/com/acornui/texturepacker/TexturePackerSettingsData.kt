@@ -84,11 +84,7 @@ data class TexturePackerSettingsData(
 		val stripWhitespace: Boolean = true,
 
 		val algorithmSettings: PackerAlgorithmSettingsData = PackerAlgorithmSettingsData()
-) {
-
-	fun validate() {
-	}
-}
+)
 
 enum class TexturePackAlgorithm {
 	BEST,

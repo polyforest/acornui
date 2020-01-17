@@ -16,14 +16,38 @@
 
 package com.acornui.build.plugins
 
-import com.acornui.build.plugins.util.RunJvmTask
+import com.acornui.build.plugins.tasks.RunJvmTask
 import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Before
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AcornUiApplicationPluginTest {
+
+	@Rule
+	@JvmField
+//	var testProjectDir: TemporaryFolder = TemporaryFolder()
+	var testProjectDir: TemporaryFolder = object : TemporaryFolder() {
+
+		override fun before() {
+			super.before()
+			val projectDir = File("build/resources/test/basic-acorn-project/")
+			require(projectDir.exists()) { "Could not find directory: ${projectDir.absolutePath}"}
+			projectDir.copyRecursively(root, overwrite = true)
+		}
+
+//		override fun after() {
+//			println("TEMP: " + root.absolutePath)
+//		}
+	}
 
 	@Test fun addsRunJvmTask() {
 		val project = ProjectBuilder.builder().build()
@@ -32,5 +56,26 @@ class AcornUiApplicationPluginTest {
 		project.pluginManager.apply("com.acornui.app")
 		assertTrue(project.tasks.getByName("runJvm") is RunJvmTask)
 		assertNotNull(project.plugins.findPlugin("org.jetbrains.kotlin.multiplatform"))
+	}
+
+	@Test fun basicAcornProject() {
+		val result = GradleRunner.create()
+				.withProjectDir(testProjectDir.root)
+				.withArguments("build", "--stacktrace")
+				.withPluginClasspath()
+				.forwardStdOutput(System.out.bufferedWriter())
+				.forwardStdError(System.err.bufferedWriter())
+				.build()
+
+		assertEquals(SUCCESS, result.task(":build")!!.outcome)
+
+		assertTrue(File(testProjectDir.root, "build/wwwProd/index.html").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas.json").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas0.png").exists())
+		assertTrue(File(testProjectDir.root, "build/wwwProd/basic-acorn-project-production.js").exists())
+
+
+		// Expect token replacement
+		assertEquals("Replaced Token", File(testProjectDir.root, "build/wwwProd/assets/assetWithTokens.txt").readText())
 	}
 }

@@ -1,19 +1,17 @@
 package com.acornui.skins
 
+import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.text.BitmapFontRequest
-import com.acornui.component.text.FontSize
-import com.acornui.component.text.FontStyle
-import com.acornui.component.text.FontWeight
-import com.acornui.filterWithWords
-import com.acornui.io.file.Directory
-import com.acornui.io.file.FileEntry
-import com.acornui.io.file.Files
+import com.acornui.component.text.FontsManifest
+import com.acornui.di.Scoped
+import com.acornui.io.file.Path
 import com.acornui.math.MathUtils
 
 object FontPathResolver {
 
 	var fontsDir = "assets/fonts/"
+	var manifestFilename = "fonts.json"
 
 	private val fileSizeRegex = Regex("""_(\d+)$""")
 
@@ -24,35 +22,17 @@ object FontPathResolver {
 		fileSizeRegex.find(it)?.groups?.get(1)?.value?.toInt() ?: -1
 	}
 
-	private val supportedSizesCache = HashMap<Directory, List<Int>>()
-
 	/**
 	 * Returns the path to the font with the given characteristics.
 	 */
-	fun getPath(theme: Theme, files: Files, request: BitmapFontRequest): FileEntry? {
-		val dir = files.getDir(fontsDir)?.getDir(request.family) ?: return null
-
-		val supportedSizes = supportedSizesCache.getOrPut(dir) {
-			val foundSizes = mutableSetOf<Int>()
-			dir.files.values.forEach {
-				if (it.hasExtension("fnt")) {
-					foundSizes.add(sizeCheck(it.nameNoExtension))
-				}
-			}
-			foundSizes.toList().filter { it > 0 }.sorted()
-		}
-
+	suspend fun getPath(scope: Scoped, theme: Theme, request: BitmapFontRequest): String? {
+		val manifest = scope.loadAndCacheJsonAsync(FontsManifest.serializer(), Path(fontsDir, manifestFilename).value).await()
+		val set = manifest.sets[request.family] ?: return null
 		val desiredPt = theme.fontSizes[request.size] ?: error("Unknown size: ${request.size}")
 		val scaledSize = (desiredPt.toFloat() * request.fontPixelDensity).toInt()
-		val nearestSupportedIndex = MathUtils.clamp(supportedSizes.sortedInsertionIndex(scaledSize, matchForwards = false), 0, supportedSizes.lastIndex)
-		val nearestSize = supportedSizes[nearestSupportedIndex]
-
-		val matchedFont = dir.files.keys.filterWithWords(listOf(
-				if (request.style == FontStyle.NORMAL) "" else request.style,
-				nearestSize.toString(),
-				"fnt"
-		) + request.family.split("_") + if (request.weight == FontWeight.REGULAR && request.style != FontStyle.NORMAL) emptyList() else request.weight.split("-")).firstOrNull()
-				?: return null
-		return dir.getFile(matchedFont)
+		val nearestSupportedIndex = MathUtils.clamp(set.sizes.sortedInsertionIndex(scaledSize, matchForwards = false), 0, set.sizes.lastIndex)
+		val nearestSize = set.sizes[nearestSupportedIndex]
+		val found = set.fonts.find { it.size == nearestSize && it.style == request.style && it.weight == request.weight } ?: return null
+		return Path(fontsDir, found.path).value
 	}
 }
