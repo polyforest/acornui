@@ -414,17 +414,18 @@ class Clamp(val inner: Interpolation, val startAlpha: Float = 0f, val endAlpha: 
 }
 
 class Bezier(
-		points: List<Vector2Ro>
+		points: FloatArray
 ) : Interpolation {
 
 	private val segments: List<BezierSegment>
 
 	init {
-		val pts = listOf(Vector2()) + points + listOf(Vector2(1f, 1f))
+		val pts = floatArrayOf(0f, 0f) + points + floatArrayOf(1f, 1f)
+		check(pts.size >= 6) { "Invalid Bezier path." }
 
-		val segments = arrayListOf(BezierSegment(pts[0], pts[1], pts[2], pts[3]))
-		for (i in 3..pts.lastIndex - 3 step 3) {
-			segments.add(BezierSegment(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]))
+		val segments = ArrayList<BezierSegment>()
+		for (i in 0..pts.lastIndex - 6 step 6) {
+			segments.add(BezierSegment(pts, i))
 		}
 		this.segments = segments
 	}
@@ -434,7 +435,7 @@ class Bezier(
 		if (alpha >= 1f) return 1f
 
 		val segmentIndex = segments.sortedInsertionIndex(alpha, matchForwards = true, comparator = { time, segment ->
-			time.compareTo(segment.a.x)
+			time.compareTo(segment.aX)
 		}) - 1
 		val segment = segments[segmentIndex]
 		val eased = segment.getY(alpha)

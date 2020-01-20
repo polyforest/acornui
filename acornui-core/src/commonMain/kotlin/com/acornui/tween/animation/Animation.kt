@@ -40,21 +40,19 @@ interface SymbolInstance : UiComponent {
 
 class ImageInstance(
 		private val texture: TextureComponent,
-		override val libraryItem: ImageLibraryItem
+		override val libraryItem: LibraryItem.ImageLibraryItem
 ) : SymbolInstance, UiComponent by texture
 
 class CustomInstance(
 		private val component: UiComponent
 ) : SymbolInstance, UiComponent by component {
 
-	override val libraryItem = object : LibraryItem {
-		override val itemType = LibraryItemType.CUSTOM
-	}
+	override val libraryItem = LibraryItem.CustomLibraryItem
 }
 
 class AtlasInstance(
 		private val atlas: AtlasComponent,
-		override val libraryItem: AtlasLibraryItem
+		override val libraryItem: LibraryItem.AtlasLibraryItem
 ) : SymbolInstance, UiComponent by atlas
 
 /**
@@ -63,7 +61,7 @@ class AtlasInstance(
 class AnimationInstance(
 		owner: Owned,
 		val bundle: AnimationBundle,
-		override val libraryItem: AnimationLibraryItem
+		override val libraryItem: LibraryItem.AnimationLibraryItem
 ) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance, Updatable {
 
 	val tween: TimelineTween = timelineTween()
@@ -89,7 +87,7 @@ private class LayerTween(
 		override val duration: Float,
 		layer: Layer,
 		private val target: UiComponent,
-		globalEasings: Map<String, AnimationEasing>
+		globalEasings: Map<String, FloatArray>
 ) : TweenBase() {
 
 	private val frames = ArrayList<KeyFrame>()
@@ -121,10 +119,10 @@ private class LayerTween(
 							Log.warn("Easing not found: ${dataProp.easing}")
 							Easing.stepped
 						} else {
-							if (animEasing.points.isEmpty()) {
+							if (animEasing.isEmpty()) {
 								EasingCache(Easing.linear)
 							} else {
-								EasingCache(Bezier(animEasing.points))
+								EasingCache(Bezier(animEasing))
 							}
 						}
 					}
@@ -256,14 +254,11 @@ inline fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: St
 inline fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val libraryItem = bundle.library[libraryItemName] ?: throw Exception("library item not found with name: $libraryItemName")
-	val component = when (libraryItem.itemType) {
-		LibraryItemType.CUSTOM -> throw Exception("Cannot create a component with a custom library type.")
-		LibraryItemType.IMAGE -> ImageInstance(textureC((libraryItem as ImageLibraryItem).path), libraryItem)
-		LibraryItemType.ATLAS -> {
-			libraryItem as AtlasLibraryItem
-			AtlasInstance(atlas(libraryItem.atlasPath, libraryItem.regionName), libraryItem)
-		}
-		LibraryItemType.ANIMATION -> AnimationInstance(this, bundle, libraryItem as AnimationLibraryItem)
+	val component = when (libraryItem) {
+		is LibraryItem.AtlasLibraryItem -> AtlasInstance(atlas(libraryItem.atlasPath, libraryItem.regionName), libraryItem)
+		is LibraryItem.AnimationLibraryItem -> AnimationInstance(this, bundle, libraryItem)
+		is LibraryItem.ImageLibraryItem -> ImageInstance(textureC((libraryItem).path), libraryItem)
+		is LibraryItem.CustomLibraryItem -> throw Exception("Cannot create a component with a custom library type.")
 	}
 	component.init()
 	return component

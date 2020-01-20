@@ -19,37 +19,41 @@ package com.acornui.math
 /**
  */
 class BezierSegment(
-
-		val a: Vector2Ro,
-
-		val b: Vector2Ro,
-
-		val c: Vector2Ro,
-
-		val d: Vector2Ro
-
+		val aX: Float,
+		val aY: Float,
+		val bX: Float,
+		val bY: Float,
+		val cX: Float,
+		val cY: Float,
+		val dX: Float,
+		val dY: Float
 ) {
 
-	private val coeffA: Float
-	private val coeffB: Float
-	private val coeffC: Float
-	private val coeffD: Float
-	private val roots = arrayListOf<Float>()
+	constructor(source: FloatArray,
+				index: Int) : this(
+			aX = source[index],
+			aY = source[index + 1],
+			bX = source[index + 2],
+			bY = source[index + 3],
+			cX = source[index + 4],
+			cY = source[index + 5],
+			dX = source[index + 6],
+			dY = source[index + 7]
+	)
 
-	init {
-		coeffA = -a.x + 3f * b.x - 3f * c.x + d.x
-		coeffB = 3f * a.x - 6f * b.x + 3f * c.x
-		coeffC = -3f * a.x + 3f * b.x
-		coeffD = a.x
-	}
+	private val coeffA: Float = -aX + 3f * bX - 3f * cX + dX
+	private val coeffB: Float = 3f * aX - 6f * bX + 3f * cX
+	private val coeffC: Float = -3f * aX + 3f * bX
+	private val coeffD: Float = aX
+	private val roots = arrayListOf<Float>()
 
 	/**
 	 */
 	fun getValue(t: Float, out: Vector2) {
-		val ax = a.x
-		val x = (t * t * (d.x - ax) + 3f * (1f - t) * (t * (c.x - ax) + (1f - t) * (b.x - ax))) * t + ax
-		val ay = a.y
-		val y = (t * t * (d.y - ay) + 3f * (1f - t) * (t * (c.y - ay) + (1f - t) * (b.y - ay))) * t + ay
+		val ax = aX
+		val x = (t * t * (dX - ax) + 3f * (1f - t) * (t * (cX - ax) + (1f - t) * (bX - ax))) * t + ax
+		val ay = aY
+		val y = (t * t * (dY - ay) + 3f * (1f - t) * (t * (cY - ay) + (1f - t) * (bY - ay))) * t + ay
 		out.set(x, y)
 	}
 
@@ -57,12 +61,12 @@ class BezierSegment(
 	/**
 	 */
 	fun getY(x: Float): Float {
-		if (a.x < d.x) {
-			if (x <= a.x + 0.001f) return a.y
-			if (x >= d.x - 0.001f) return d.y
+		if (aX < dX) {
+			if (x <= aX + 0.001f) return aY
+			if (x >= dX - 0.001f) return dY
 		} else {
-			if (x >= a.x + 0.001f) return a.y
-			if (x <= d.x - 0.001f) return d.y
+			if (x >= aX + 0.001f) return aY
+			if (x <= dX - 0.001f) return dY
 		}
 
 		MathUtils.getCubicRoots(coeffA, coeffB, coeffC, coeffD - x, roots)
@@ -84,7 +88,7 @@ class BezierSegment(
 		if (time == null)
 			return 0f // Cubic root within range not found.
 
-		val y: Float = getSingleValue(time, a.y, b.y, c.y, d.y)
+		val y: Float = getSingleValue(time, aY, bY, cY, dY)
 		return y
 	}
 

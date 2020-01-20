@@ -18,47 +18,47 @@ package com.acornui.tween.animation
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.math.Vector2Ro
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * A data class representing an animation.
  */
+@Serializable
 data class AnimationBundle(
 
 		val library: Map<String, LibraryItem>,
 
 		/**
 		 * Global easings.
-		 * A map of easingId -> [AnimationEasing] object.
+		 * A map of easingId -> [FloatArray] object.
 		 */
-		val easings: Map<String, AnimationEasing>
+		val easings: Map<String, FloatArray>
 )
 
 
-interface LibraryItem {
-	val itemType: LibraryItemType
+@Serializable
+sealed class LibraryItem {
+
+	@Serializable
+	@SerialName("atlas")
+	data class AtlasLibraryItem(val atlasPath: String, val regionName: String) : LibraryItem()
+
+	@Serializable
+	@SerialName("image")
+	data class ImageLibraryItem(val path: String) : LibraryItem()
+
+	@Serializable
+	@SerialName("animation")
+	data class AnimationLibraryItem(val timeline: Timeline) : LibraryItem()
+
+	@Serializable
+	@SerialName("custom")
+	object CustomLibraryItem : LibraryItem()
 }
 
-data class AtlasLibraryItem(val atlasPath: String, val regionName: String) : LibraryItem {
-	override val itemType = LibraryItemType.ATLAS
-}
-
-data class ImageLibraryItem(val path: String) : LibraryItem {
-	override val itemType = LibraryItemType.IMAGE
-}
-
-enum class LibraryItemType {
-	IMAGE,
-	ATLAS,
-	ANIMATION,
-	CUSTOM
-}
-
-data class AnimationLibraryItem(
-		val timeline: Timeline
-) : LibraryItem {
-	override val itemType = LibraryItemType.ANIMATION
-}
-
+@Serializable
 data class Timeline(
 		val duration: Float,
 		val layers: List<Layer>,
@@ -72,11 +72,10 @@ data class Timeline(
 	/**
 	 * The times of the labels, in ascending order.
 	 */
-	val labelTimes by lazy {
-		labels.values.sorted()
-	}
+	val labelTimes = labels.values.sorted()
 }
 
+@Serializable
 data class Layer(
 		val name: String,
 		val symbolName: String,
@@ -92,18 +91,20 @@ data class Layer(
 	}
 }
 
+@Serializable
 data class KeyFrame(
 		val time: Float,
 
 		/**
 		 * Easings local to the frame.
-		 * A map of easingId -> [AnimationEasing] object.
+		 * A map of easingId -> [FloatArray] object.
 		 * If the easing is not found, global easings will be checked.
 		 */
-		val easings: Map<String, AnimationEasing>,
+		val easings: Map<String, FloatArray>,
 		val props: Map<PropType, Prop>
 )
 
+@Serializable
 data class Prop(
 
 		/**
@@ -112,19 +113,11 @@ data class Prop(
 		val value: Float,
 
 		/**
-		 * The name of the [AnimationEasing] object.
+		 * The name of the [FloatArray] object.
 		 * This will first be looked for on the keyframe, and then on the animation bundle.
 		 * Null if this property is not interpolated.
 		 */
-		val easing: String?
-)
-
-data class AnimationEasing(
-
-		/**
-		 * x, y, ...
-		 */
-		val points: List<Vector2Ro>
+		val easing: String? = null
 )
 
 enum class PropType {
