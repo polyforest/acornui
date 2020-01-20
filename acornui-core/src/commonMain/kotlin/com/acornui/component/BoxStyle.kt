@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component
 
 import com.acornui.collection.ArrayList
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.component.style.styleProperty
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.graphic.color
 import com.acornui.math.*
 import com.acornui.radToDeg
-import com.acornui.serialization.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.math.atan2
@@ -110,23 +109,6 @@ data class LinearGradient(
 	}
 }
 
-object LinearGradientSerializer : To<LinearGradient>, From<LinearGradient> {
-
-	override fun read(reader: Reader): LinearGradient {
-		return LinearGradient(
-				direction = GradientDirection.valueOf(reader.string("direction")!!),
-				angle = reader.float("angle")!!,
-				colorStops = reader.array2("colorStops", ColorStopSerializer)!!.toMutableList()
-		)
-	}
-
-	override fun LinearGradient.write(writer: Writer) {
-		writer.string("direction", direction.name)
-		writer.float("angle", angle)
-		writer.array("colorStops", colorStops, ColorStopSerializer)
-	}
-}
-
 enum class GradientDirection {
 	TOP_LEFT,
 	TOP,
@@ -187,24 +169,6 @@ data class ColorStop(
 
 }
 
-object ColorStopSerializer : To<ColorStop>, From<ColorStop> {
-
-	override fun read(reader: Reader): ColorStop {
-		val c = ColorStop(
-				color = reader.color("color")!!,
-				percent = reader.float("percent"),
-				pixels = reader.float("pixels")
-		)
-		return c
-	}
-
-	override fun ColorStop.write(writer: Writer) {
-		writer.color("color", color)
-		if (percent != null) writer.float("percent", percent)
-		if (pixels != null) writer.float("pixels", pixels)
-	}
-}
-
 interface BorderColorsRo {
 
 	val top: ColorRo
@@ -261,23 +225,5 @@ data class BorderColors(
 		right.mul(value)
 		bottom.mul(value)
 		left.mul(value)
-	}
-}
-
-object BorderColorsSerializer : To<BorderColorsRo>, From<BorderColors> {
-	override fun BorderColorsRo.write(writer: Writer) {
-		writer.color("top", top)
-		writer.color("right", right)
-		writer.color("bottom", bottom)
-		writer.color("left", left)
-	}
-
-	override fun read(reader: Reader): BorderColors {
-		return BorderColors(
-				reader.color("top")!!,
-				reader.color("right")!!,
-				reader.color("bottom")!!,
-				reader.color("left")!!
-		)
 	}
 }

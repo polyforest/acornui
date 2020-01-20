@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.graphic
 
-import com.acornui.graphic.*
-import com.acornui.math.*
-import com.acornui.serialization.*
+import com.acornui.math.Rectangle
 
 /**
  * A byte array of pixels.
@@ -168,10 +168,10 @@ class RgbData(
 	 */
 	fun rotate90CW() {
 		val newScanSize: Int = height * numBands
-		val newBytes = ByteArray(width * height * numBands);
-		for (y in 0..height - 1) {
+		val newBytes = ByteArray(width * height * numBands)
+		for (y in 0 until height) {
 			val x2 = height - 1 - y
-			for (x in 0..width - 1) {
+			for (x in 0 until width) {
 				val y2 = x
 				transferPixelTo(x, y, newBytes, newScanSize, hasAlpha, numBands, x2, y2)
 			}
@@ -188,12 +188,11 @@ class RgbData(
 	 */
 	fun rotate90CCW() {
 		val newScanSize: Int = height * numBands
-		val newBytes = ByteArray(width * height * numBands);
-		for (y in 0..height - 1) {
-			val x2 = y
-			for (x in 0..width - 1) {
+		val newBytes = ByteArray(width * height * numBands)
+		for (y in 0 until height) {
+			for (x in 0 until width) {
 				val y2 = width - 1 - x
-				transferPixelTo(x, y, newBytes, newScanSize, hasAlpha, numBands, x2, y2)
+				transferPixelTo(x, y, newBytes, newScanSize, hasAlpha, numBands, y, y2)
 			}
 		}
 		bytes = newBytes
@@ -226,27 +225,4 @@ fun rgbData(width: Int, height: Int, hasAlpha: Boolean = true, init: RgbData.() 
 	val r = RgbData(width, height, hasAlpha)
 	r.init()
 	return r
-}
-
-object RgbDataSerializer : To<RgbData>, From<RgbData> {
-
-	override fun read(reader: Reader): RgbData {
-		return RgbData(
-				initialWidth = reader.int("width")!!,
-				initialHeight = reader.int("height")!!,
-				hasAlpha = reader.bool("hasAlpha")!!
-		).apply {
-			val bytes = reader.byteArray("bytes")!!
-			for (i in 0..bytes.lastIndex) {
-				this[i] = bytes[i]
-			}
-		}
-	}
-
-	override fun RgbData.write(writer: Writer) {
-		writer.int("width", width)
-		writer.int("height", height)
-		writer.bool("hasAlpha", hasAlpha)
-		writer.byteArray(bytes)
-	}
 }
