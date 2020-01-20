@@ -119,11 +119,10 @@ private class LayerTween(
 							Log.warn("Easing not found: ${dataProp.easing}")
 							Easing.stepped
 						} else {
-							if (animEasing.isEmpty()) {
-								EasingCache(Easing.linear)
-							} else {
-								EasingCache(Bezier(animEasing))
-							}
+							if (animEasing.isEmpty())
+								Easing.linear
+							else
+								EasingCache(Bezier(floatArrayOf(0f, 0f) + animEasing + floatArrayOf(1f, 1f)))
 						}
 					}
 					Prop(dataProp.value, easing)

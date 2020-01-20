@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.math
 
+import com.acornui.collection.getInsertionIndex
 import com.acornui.collection.scl
-import com.acornui.collection.sortedInsertionIndex
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.cos
@@ -327,17 +329,22 @@ class Repeat(val inner: Interpolation, val repetitions: Float = 1f) : Interpolat
 object BasicBounce : Interpolation {
 	override fun apply(alpha: Float): Float {
 		var a = alpha
-		return if (a < 1f / 2.75f) {
-			7.5625f * a * a
-		} else if (a < 2f / 2.75f) {
-			a -= 1.5f / 2.75f
-			7.5625f * a * a + 0.75f
-		} else if (a < 2.5f / 2.75f) {
-			a -= 2.25f / 2.75f
-			7.5625f * a * a + 0.9375f
-		} else {
-			a -= 2.625f / 2.75f
-			7.5625f * a * a + 0.984375f
+		return when {
+			a < 1f / 2.75f -> {
+				7.5625f * a * a
+			}
+			a < 2f / 2.75f -> {
+				a -= 1.5f / 2.75f
+				7.5625f * a * a + 0.75f
+			}
+			a < 2.5f / 2.75f -> {
+				a -= 2.25f / 2.75f
+				7.5625f * a * a + 0.9375f
+			}
+			else -> {
+				a -= 2.625f / 2.75f
+				7.5625f * a * a + 0.984375f
+			}
 		}
 	}
 }
@@ -356,7 +363,7 @@ class BounceInPlace(
 	init {
 		if (bounces < 1 || bounces > 20) throw Exception("repetitions must be between 1 and 20")
 		var r = 1f
-		decays = FloatArray(bounces, { val prev = r; r *= restitution; prev })
+		decays = FloatArray(bounces) { val prev = r; r *= restitution; prev }
 
 		intervals = FloatArray(bounces, { sqrt(decays[it]) })
 		intervals.scl(1f / intervals.sum())
@@ -414,32 +421,75 @@ class Clamp(val inner: Interpolation, val startAlpha: Float = 0f, val endAlpha: 
 }
 
 class Bezier(
-		points: FloatArray
+		private val points: FloatArray
 ) : Interpolation {
 
-	private val segments: List<BezierSegment>
-
 	init {
-		val pts = floatArrayOf(0f, 0f) + points + floatArrayOf(1f, 1f)
-		check(pts.size >= 6) { "Invalid Bezier path." }
-
-		val segments = ArrayList<BezierSegment>()
-		for (i in 0..pts.lastIndex - 6 step 6) {
-			segments.add(BezierSegment(pts, i))
-		}
-		this.segments = segments
+		check(points.size >= 6) { "Invalid Bezier path." }
 	}
 
 	override fun apply(alpha: Float): Float {
 		if (alpha <= 0f) return 0f
 		if (alpha >= 1f) return 1f
+		val segmentIndex = points.getInsertionIndex(alpha, stride = 6) - 6
+		return getY(segmentIndex, alpha)
+	}
 
-		val segmentIndex = segments.sortedInsertionIndex(alpha, matchForwards = true, comparator = { time, segment ->
-			time.compareTo(segment.aX)
-		}) - 1
-		val segment = segments[segmentIndex]
-		val eased = segment.getY(alpha)
-		return eased
+	/**
+	 * After finding the correct bezier segment, calculate the cubic equation and return the easing value.
+	 */
+	private fun getY(index: Int, x: Float): Float {
+		val points = points
+		val aX = points[index]
+		val aY = points[index + 1]
+		val bX = points[index + 2]
+		val bY = points[index + 3]
+		val cX = points[index + 4]
+		val cY = points[index + 5]
+		val dX = points[index + 6]
+		val dY = points[index + 7]
+
+		val coeffA: Float = -aX + 3f * bX - 3f * cX + dX
+		val coeffB: Float = 3f * aX - 6f * bX + 3f * cX
+		val coeffC: Float = -3f * aX + 3f * bX
+		val coeffD: Float = aX
+		
+		if (aX < dX) {
+			if (x <= aX + 0.001f) return aY
+			if (x >= dX - 0.001f) return dY
+		} else {
+			if (x >= aX + 0.001f) return aY
+			if (x <= dX - 0.001f) return dY
+		}
+
+		MathUtils.getCubicRoots(coeffA, coeffB, coeffC, coeffD - x, roots)
+		var time: Float? = null
+		if (roots.isEmpty())
+			time = 0f
+		else if (roots.size == 1)
+			time = roots[0]
+		else {
+			for (i in 0..roots.lastIndex) {
+				val root = roots[i]
+				if (root > -0.01f && root < 1.01f) {
+					time = root
+					break
+				}
+			}
+		}
+
+		if (time == null)
+			return 0f // Cubic root within range not found.
+
+		return getSingleValue(time, aY, bY, cY, dY)
+	}
+
+	private fun getSingleValue(t: Float, a: Float, b: Float, c: Float, d: Float): Float {
+		return (t * t * (d - a) + 3f * (1f - t) * (t * (c - a) + (1f - t) * (b - a))) * t + a
+	}
+	
+	companion object {
+		private val roots = arrayListOf<Float>()
 	}
 
 }
@@ -495,7 +545,7 @@ object Easing {
 
 	val hermite: Interpolation = Hermite
 
-	private val _registry = mutableMapOf(
+	private val registryInternal = mutableMapOf(
 			"stepped" to stepped,
 			"linear" to linear,
 
@@ -545,31 +595,31 @@ object Easing {
 			"hermite" to hermite
 	)
 
-	val registry: Map<String, Interpolation> = _registry
+	val registry: Map<String, Interpolation> = registryInternal
 
 	/**
 	 * Registers a named interpolation object, for use in serialization.
 	 */
 	fun registerInterpolation(name: String, value: Interpolation) {
-		_registry[name] = value
+		registryInternal[name] = value
 	}
 
 	/**
 	 * Returns the interpolation object if there was one registered with the given name.
 	 */
 	fun fromStrOptional(name: String): Interpolation? {
-		return _registry[name]
+		return registryInternal[name]
 	}
 
 	fun fromStr(name: String): Interpolation {
-		return _registry[name] ?: error("Interpolation \"$name\" not found.")
+		return registryInternal[name] ?: error("Interpolation \"$name\" not found.")
 	}
 
 	/**
 	 * Returns the name of the static interpolation value as it was registered via [registerInterpolation].
 	 */
 	fun toString(value: Interpolation): String? {
-		return _registry.entries.firstOrNull { it.value === value }?.key
+		return registryInternal.entries.firstOrNull { it.value === value }?.key
 	}
 
 }
