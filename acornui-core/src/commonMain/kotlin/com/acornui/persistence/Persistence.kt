@@ -27,7 +27,7 @@ interface Persistence : Clearable {
 
 	/**
 	 * The version of the application as described in [com.acornui.version] when the persistence was
-	 * last saved. This can be useful for storage migration.
+	 * last saved.
 	 * This will be null if there was nothing loaded.
 	 */
 	val version: Version?
@@ -49,11 +49,6 @@ interface Persistence : Clearable {
 	fun setItem(key: String, value: String)
 	fun removeItem(key: String)
 	override fun clear()
-
-	/**
-	 * Ensures that the persistence is written to disk. Note that not all implementations necessarily wait for this.
-	 */
-	fun flush()
 
 	companion object : DKey<Persistence>
 }

@@ -18,16 +18,17 @@
 
 package com.acornui.persistence
 
-import com.acornui.collection.stringMapOf
 import com.acornui.Version
 import com.acornui.logging.Log
-import com.acornui.serialization.*
+import com.acornui.serialization.jsonParse
+import com.acornui.serialization.jsonStringify
+import kotlinx.serialization.Serializable
 import java.io.File
 
 open class JvmPersistence(
 		private val currentVersion: Version,
 		name: String,
-		persistenceDir: String = System.getProperty("user.home") + "/.prefs"
+		persistenceDir: File = File(System.getProperty("user.home") + "/.prefs")
 ) : Persistence {
 
 	private val file = File(persistenceDir, "$name.data")
@@ -43,7 +44,7 @@ open class JvmPersistence(
 		data = if (file.exists()) {
 			// Load the saved data.
 			val jsonData = file.readText()
-			json.read(jsonData, PersistenceDataSerializer)
+			jsonParse(PersistenceData.serializer(), jsonData)
 		} else {
 			PersistenceData()
 		}
@@ -67,47 +68,28 @@ open class JvmPersistence(
 
 	override fun setItem(key: String, value: String) {
 		data[key] = value
+		write()
 	}
 
 	override fun removeItem(key: String) {
 		data.remove(key)
+		write()
 	}
 
 	override fun clear() {
 		data.clear()
+		file.delete()
 	}
 
-	override fun flush() {
+	private fun write() {
 		data.version = currentVersion
-		val jsonStr = json.write(data, PersistenceDataSerializer)
+		val jsonStr = jsonStringify(PersistenceData.serializer(), data)
 		file.writeText(jsonStr)
 	}
 }
 
-private class PersistenceData(
+@Serializable
+private data class PersistenceData(
 		val map: MutableMap<String, String> = HashMap(),
 		var version: Version? = null
 ) : MutableMap<String, String> by map
-
-private object PersistenceDataSerializer : From<PersistenceData>, To<PersistenceData> {
-
-	override fun read(reader: Reader): PersistenceData {
-		val versionStr = reader.string("version")
-		val version = if (versionStr == null) null else Version.fromStr(versionStr)
-
-		val map = stringMapOf<String>()
-		reader["map"]?.forEach { s, reader2 ->
-			map[s] = reader2.string()!!
-		}
-		return PersistenceData(map, version)
-	}
-
-	override fun PersistenceData.write(writer: Writer) {
-		writer.string("version", version?.toVersionString())
-		writer.obj("map", true) {
-			for ((key, value) in map) {
-				it.string(key, value)
-			}
-		}
-	}
-}

@@ -18,7 +18,6 @@ package com.acornui.math
 
 import com.acornui.test.assertClose
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class BezierTest {
 

@@ -19,6 +19,7 @@ package com.acornui
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
+import kotlinx.serialization.Serializable
 
 /**
  * A major.minor.patch.build representation
@@ -28,6 +29,7 @@ import com.acornui.di.inject
  * PATCH version when there are no incompatible api changes.
  * BUILD version automatically incremented on a build.
  */
+@Serializable
 data class Version(
 		val major: Int,
 		val minor: Int,

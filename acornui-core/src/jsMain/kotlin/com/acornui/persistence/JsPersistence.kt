@@ -79,6 +79,4 @@ class JsPersistence(private val currentVersion: Version) : Persistence {
 		localStorage.clear()
 	}
 
-	override fun flush() {
-	}
 }

@@ -18,7 +18,6 @@ package com.acornui.particle
 
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
-import com.acornui.serialization.*
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
@@ -35,24 +34,5 @@ data class FloatRange(
 
 	companion object {
 		val ZERO = FloatRange()
-	}
-}
-
-object FloatRangeSerializer : From<FloatRange>, To<FloatRange> {
-
-	override fun read(reader: Reader): FloatRange {
-		val easingName = reader.string("easing") ?: "linear"
-
-		return FloatRange(
-				min = reader.float("min")!!,
-				max = reader.float("max")!!,
-				easing = Easing.fromStr(easingName)
-		)
-	}
-
-	override fun FloatRange.write(writer: Writer) {
-		writer.float("min", min)
-		writer.float("max", max)
-		writer.string("easing", Easing.toString(easing))
 	}
 }
