@@ -78,6 +78,9 @@ open class ShaderBatchImpl(
 	override val whitePixel: TextureRo
 		get() = if (drawCall.texture?.hasWhitePixel == true) drawCall.texture!! else defaultWhitePixel
 
+	override val currentDrawCall: DrawElementsCallRo
+		get() = drawCall
+
 	override fun putIndex(index: Short) {
 		indices.put(index)
 		if (index > _highestIndex) _highestIndex = index
@@ -237,17 +240,24 @@ fun Scoped.shaderBatch(): ShaderBatchImpl {
 	return ShaderBatchImpl(inject(CachedGl20))
 }
 
+interface DrawElementsCallRo {
+	val texture: TextureRo?
+	val blendMode: BlendMode
+	val premultipiedAlpha: Boolean
+	val drawMode: Int
+	val count: Int
+	val offset: Int
+}
 
+class DrawElementsCall private constructor() : DrawElementsCallRo, Clearable {
 
-class DrawElementsCall private constructor() : Clearable {
+	override var texture: TextureRo? = null
+	override var blendMode = BlendMode.NORMAL
+	override var premultipiedAlpha = false
+	override var drawMode = Gl20.TRIANGLES
 
-	var texture: TextureRo? = null
-	var blendMode = BlendMode.NORMAL
-	var premultipiedAlpha = false
-	var drawMode = Gl20.TRIANGLES
-
-	var count = 0
-	var offset = 0
+	override var count = 0
+	override var offset = 0
 
 	override fun clear() {
 		texture = null

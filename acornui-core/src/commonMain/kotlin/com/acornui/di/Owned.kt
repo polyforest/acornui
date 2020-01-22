@@ -52,6 +52,7 @@ interface Owned : Scoped {
 /**
  * Wraps the callback in an `if (!isDisposed)` block.
  */
+@Deprecated("launch and async will now cancel on disposal.")
 inline fun Owned.notDisposed(crossinline callback: () -> Unit): () -> Unit {
 	return { if (!isDisposed) callback() }
 }
@@ -59,6 +60,7 @@ inline fun Owned.notDisposed(crossinline callback: () -> Unit): () -> Unit {
 /**
  * Wraps the callback in an `if (!isDisposed)` block.
  */
+@Deprecated("launch and async will now cancel on disposal.")
 inline fun <P1> Owned.notDisposed(crossinline callback: (P1) -> Unit): (P1) -> Unit {
 	return { p1 -> if (!isDisposed) callback(p1) }
 }
@@ -66,6 +68,7 @@ inline fun <P1> Owned.notDisposed(crossinline callback: (P1) -> Unit): (P1) -> U
 /**
  * Wraps the callback in an `if (!isDisposed)` block.
  */
+@Deprecated("launch and async will now cancel on disposal.")
 inline fun <P1, P2> Owned.notDisposed(crossinline callback: (P1, P2) -> Unit): (P1, P2) -> Unit {
 	return { p1, p2 -> if (!isDisposed) callback(p1, p2) }
 }
@@ -73,6 +76,7 @@ inline fun <P1, P2> Owned.notDisposed(crossinline callback: (P1, P2) -> Unit): (
 /**
  * Wraps the callback in an `if (!isDisposed)` block.
  */
+@Deprecated("launch and async will now cancel on disposal.")
 inline fun <P1, P2, P3> Owned.notDisposed(crossinline callback: (P1, P2, P3) -> Unit): (P1, P2, P3) -> Unit {
 	return { p1, p2, p3 -> if (!isDisposed) callback(p1, p2, p3) }
 }
@@ -80,6 +84,7 @@ inline fun <P1, P2, P3> Owned.notDisposed(crossinline callback: (P1, P2, P3) -> 
 /**
  * Wraps the callback in an `if (!isDisposed)` block.
  */
+@Deprecated("launch and async will now cancel on disposal.")
 inline fun <P1, P2, P3, P4> Owned.notDisposed(crossinline callback: (P1, P2, P3, P4) -> Unit): (P1, P2, P3, P4) -> Unit {
 	return { p1, p2, p3, p4 -> if (!isDisposed) callback(p1, p2, p3, p4) }
 }

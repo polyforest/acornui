@@ -1,6 +1,7 @@
 package com.acornui.headless
 
 import com.acornui.gl.core.DrawElementsCall
+import com.acornui.gl.core.DrawElementsCallRo
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.VertexAttributes
 import com.acornui.graphic.BlendMode
@@ -12,6 +13,8 @@ object MockShaderBatch : ShaderBatch {
 	override val isDynamic: Boolean = false
 
 	override val whitePixel: TextureRo = MockTexture
+
+	override val currentDrawCall: DrawElementsCallRo = DrawElementsCall.obtain()
 
 	override fun begin(texture: TextureRo, blendMode: BlendMode, premultipliedAlpha: Boolean, drawMode: Int) {
 	}

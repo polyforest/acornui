@@ -145,7 +145,7 @@ fun ShaderBatch.putIdtQuad() {
  * ellipse.
  */
 fun ShaderBatch.ellipse(radiusX: Float, radiusY: Float = radiusX, x: Float = 0f, y: Float = 0f, segments: Int = 100) {
-	begin(drawMode = Gl20.TRIANGLE_FAN)
+	begin(texture = currentDrawCall.texture ?: whitePixel, drawMode = Gl20.TRIANGLE_FAN, blendMode = currentDrawCall.blendMode, premultipliedAlpha = currentDrawCall.premultipiedAlpha)
 	var n = highestIndex
 	putVertex(x, y, 0f)
 	putIndex(++n)

@@ -39,6 +39,11 @@ interface ShaderBatch : Clearable, VertexFeed, IndexFeed {
 	val whitePixel: TextureRo
 
 	/**
+	 * The draw call settings last set via [begin].
+	 */
+	val currentDrawCall: DrawElementsCallRo
+
+	/**
 	 * Marks the beginning of a new batch. This will flush the batch if the buffers are past an internal threshold.
 	 *
 	 * @param drawMode Possible values are: [Gl20.POINTS], [Gl20.LINE_STRIP], [Gl20.LINE_LOOP], [Gl20.LINES],
