@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate", "CanBeParameter")
 
 package com.acornui.graphic
 
@@ -27,7 +27,6 @@ import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
 import com.acornui.math.IntRectangleRo
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
  * @author nbilyk
@@ -41,11 +40,11 @@ data class TextureAtlasData(
 	 * Does a search for a region with the given name.
 	 * This result should be cached instead of searching every frame.
 	 */
-	fun findRegion(name: String): Pair<AtlasPageData, AtlasRegionData>? {
+	fun findRegion(name: String): AtlasPageRegionData? {
 		for (page in pages) {
 			for (region in page.regions) {
 				if (region.name.equalsIgnoreExtension(name)) {
-					return Pair(page, region)
+					return AtlasPageRegionData(page, region)
 				}
 			}
 		}
@@ -60,6 +59,11 @@ data class TextureAtlasData(
 		return false
 	}
 }
+
+data class AtlasPageRegionData(
+		val page: AtlasPageData,
+		val region: AtlasRegionData
+)
 
 /**
  * Represents a single texture atlas page.
