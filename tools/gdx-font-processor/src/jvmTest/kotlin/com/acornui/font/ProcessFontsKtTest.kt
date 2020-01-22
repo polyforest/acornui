@@ -28,7 +28,7 @@ class ProcessFontsKtTest {
 	}
 
 	private fun checkFonts(family: FontFamily, expectedSizes: List<Int>, expectedWeights: List<String>, expectedStyles: List<String>, face: String) {
-		assertEquals(face, family.face)
+		assertEquals(face, family.family)
 		val remaining = family.fonts.copy()
 		for (expectedSize in expectedSizes) {
 			for (expectedWeight in expectedWeights) {

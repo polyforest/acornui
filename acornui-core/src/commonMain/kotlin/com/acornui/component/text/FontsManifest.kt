@@ -17,13 +17,18 @@
 package com.acornui.component.text
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class FontFamily(
-		val face: String,
+		val family: String,
 		val sizes: List<Int>,
 		val fonts: List<Font>
-)
+) {
+
+	@Transient
+	val familyDisplayName: String = family.replace('_', ' ')
+}
 
 @Serializable
 data class Font(

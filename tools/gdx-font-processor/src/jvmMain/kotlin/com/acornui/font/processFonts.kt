@@ -1,7 +1,6 @@
 package com.acornui.font
 
 import com.acornui.component.text.*
-import com.acornui.io.file.Path
 import com.acornui.serialization.jsonStringify
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
@@ -86,7 +85,7 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 			outputDir.resolve(face).resolve(fontsManifestFilename).writeText(jsonStringify(
 					FontFamily.serializer(),
 					FontFamily(
-							face = face,
+							family = face,
 							sizes = settingsFinal.sizes,
 							fonts = fonts
 					)
