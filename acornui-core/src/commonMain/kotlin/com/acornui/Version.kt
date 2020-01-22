@@ -19,7 +19,10 @@ package com.acornui
 import com.acornui.di.DKey
 import com.acornui.di.Scoped
 import com.acornui.di.inject
-import kotlinx.serialization.Serializable
+import com.acornui.text.parseDate
+import com.acornui.time.Date
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A major.minor.patch.build representation
@@ -29,7 +32,7 @@ import kotlinx.serialization.Serializable
  * PATCH version when there are no incompatible api changes.
  * BUILD version automatically incremented on a build.
  */
-@Serializable
+@Serializable(with = VersionSerializer::class)
 data class Version(
 		val major: Int,
 		val minor: Int,
@@ -71,3 +74,18 @@ data class Version(
 
 val Scoped.version: Version
 	get() = inject(Version)
+
+@Serializer(forClass = Version::class)
+object VersionSerializer : KSerializer<Version> {
+
+	override val descriptor: SerialDescriptor =
+			StringDescriptor.withName("VersionSerializer")
+
+	override fun serialize(encoder: Encoder, obj: Version) {
+		encoder.encodeString(obj.toVersionString())
+	}
+
+	override fun deserialize(decoder: Decoder): Version {
+		return Version.fromStr(decoder.decodeString())
+	}
+}

@@ -36,8 +36,6 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 	info.spacing.horizontal = settings.spacing
 	info.spacing.vertical = settings.spacing
 
-	val fontSets = ArrayList<FontFamily>()
-
 	inputDir.walkTopDown().forEach { folder ->
 		if (!folder.isDirectory) return@forEach
 
@@ -78,24 +76,23 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 				BitmapFontWriter.writeFont(data, pngFiles,
 						Gdx.files.absolute("${outputFolder.absolutePath}/$fontName.fnt"), info, settingsFinal.pageWidth, settingsFinal.pageHeight)
 
-				fonts.add(Font(path = Path(folderRelPath, "$fontName.fnt" ).value, weight = weight, style = style, size = size))
+				fonts.add(Font(path = "$fontName.fnt", weight = weight, style = style, size = size))
 			}
 		}
 
 		if (fonts.isNotEmpty()) {
 			// Write a fontSet descriptor
-			val fontSet = FontFamily(
-					family = folder.name.removeSuffix("_unprocessedFonts"),
-					sizes = settingsFinal.sizes,
-					fonts = fonts
-			)
-			fontSets.add(fontSet)
+			val face = folder.name.removeSuffix("_unprocessedFonts")
+			outputDir.resolve(face).resolve(fontsManifestFilename).writeText(jsonStringify(
+					FontFamily.serializer(),
+					FontFamily(
+							face = face,
+							sizes = settingsFinal.sizes,
+							fonts = fonts
+					)
+			))
 		}
 	}
-	outputDir.resolve(fontsManifestFilename).writeText(jsonStringify(
-			FontsManifest.serializer(),
-			FontsManifest(fontSets.map { font -> font.family to font }.toMap())
-	))
 
 	app.exit()
 }

@@ -19,18 +19,8 @@ package com.acornui.component.text
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FontsManifest(
-
-		/**
-		 * A map of family: String => FontFamily
-		 */
-		val sets: Map<String, FontFamily>
-)
-
-@Serializable
 data class FontFamily(
-
-		val family: String,
+		val face: String,
 		val sizes: List<Int>,
 		val fonts: List<Font>
 )
