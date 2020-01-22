@@ -157,7 +157,7 @@ class I18nImpl(override val injector: Injector) : Scoped, I18n, Disposable {
 		val path2 = manifestPath.replace("{bundleName}", bundleName)
 		globalLaunch {
 			val availableLocales = cachedGroup.cacheAsync(path2) {
-				loadText(path2).split(",").map { Locale(it) }
+				loadText(path2).split(",").map { Locale(it.trim()) }
 			}.await()
 
 			// Find the best available locale to load.
