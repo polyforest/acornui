@@ -142,14 +142,10 @@ interface TooltipManager {
 
 	fun createTooltip(value: String): Tooltip<String>
 
-	companion object : DKey<TooltipManager> {
-		override fun factory(injector: Injector): TooltipManager? {
-			return TooltipManagerImpl(injector)
-		}
-	}
+	companion object : DKey<TooltipManager>
 }
 
-class TooltipManagerImpl(override val injector: Injector) : TooltipManager, Scoped, Disposable {
+class TooltipManagerImpl(private val popUpManager: PopUpManager, stage: Stage) : TooltipManager, Disposable {
 
 	private val _tooltips = ActiveList<Tooltip<*>>()
 	override val tooltips: MutableList<Tooltip<*>> = _tooltips
@@ -157,9 +153,8 @@ class TooltipManagerImpl(override val injector: Injector) : TooltipManager, Scop
 	private val toolTipLayoutData: CanvasLayoutData = canvasLayoutData()
 
 	private var enterFrameHandle: Disposable? = null
-	private val popUpManager = inject(PopUpManager)
 
-	private val defaultTooltipView: ItemRenderer<String> = TooltipView(stage)
+	private val defaultTooltipView: ItemRenderer<String> by lazy { TooltipView(stage) }
 
 	init {
 		_tooltips.bind {

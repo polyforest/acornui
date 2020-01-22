@@ -41,7 +41,7 @@ import com.acornui.time.timer
  */
 open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
 
-	override fun getAdditionalDependencies(): List<DependencyPair<*>> = listOf(Stage to this)
+	override fun getAdditionalDependencies(): List<DependencyPair<*>> = listOf(Stage to this, TooltipManager to TooltipManagerImpl(owner.inject(PopUpManager), this))
 
 	private val defaultBackgroundColor = gl.getParameterfv(Gl20.COLOR_CLEAR_VALUE, Color())
 
