@@ -40,7 +40,7 @@ interface Polygon2Ro {
 	 */
 	fun intersects(other: Polygon2Ro, mTd: Vector2? = null): Boolean
 
-	fun getContactInfo(other: Polygon2Ro, mTd: Vector2, collisionInfo: CollisionInfo)
+	fun getContactInfo(other: Polygon2Ro, mTd: Vector2Ro, collisionInfo: CollisionInfo)
 
 }
 
@@ -182,7 +182,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 		return this
 	}
 
-	override fun getContactInfo(other: Polygon2Ro, mTd: Vector2, collisionInfo: CollisionInfo) {
+	override fun getContactInfo(other: Polygon2Ro, mTd: Vector2Ro, collisionInfo: CollisionInfo) {
 		mTd2.set(mTd).scl(-1f)
 		val nA = getSupportPoints(vertices, mTd2, supportA)
 		val nB = getSupportPoints(other.vertices, mTd, supportB)
@@ -345,7 +345,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 			out.nor()
 		}
 
-		private fun getSupportPoints(vertices: List<Float>, dir: Vector2, out: FloatArray): Int {
+		private fun getSupportPoints(vertices: List<Float>, dir: Vector2Ro, out: FloatArray): Int {
 			_assert(vertices.isNotEmpty())
 
 			var minD = Float.MAX_VALUE
