@@ -20,6 +20,8 @@
  * Copyright 2011 See https://github.com/libgdx/libgdx/blob/master/AUTHORS
  */
 
+@file:Suppress("SpellCheckingInspection")
+
 package com.acornui.math
 
 import com.acornui.closeTo
@@ -642,7 +644,7 @@ class Quaternion(
 	 * @return This quaternion for chaining
 	 */
 	fun setFromCross(v1: Vector3Ro, v2: Vector3Ro): Quaternion {
-		val dot = MathUtils.clamp(v1.dot(v2), -1f, 1f)
+		val dot = clamp(v1.dot(v2), -1f, 1f)
 		val angle = acos(dot)
 		return setFromAxis(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x, angle)
 	}
@@ -658,7 +660,7 @@ class Quaternion(
 	 * @return This quaternion for chaining
 	 */
 	fun setFromCross(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float): Quaternion {
-		val dot = MathUtils.clamp(Vector3.dot(x1, y1, z1, x2, y2, z2), -1f, 1f)
+		val dot = clamp(Vector3.dot(x1, y1, z1, x2, y2, z2), -1f, 1f)
 		val angle = acos(dot)
 		return setFromAxis(y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2, angle)
 	}
@@ -747,28 +749,27 @@ class Quaternion(
 	 */
 	fun exp(alpha: Float): Quaternion {
 
-		//Calculate |q|^alpha
+		// Calculate |q|^alpha
 		val norm = len()
 		val normExp = norm.pow(alpha)
 
-		//Calculate theta
-		val theta = acos((w / norm))
+		// Calculate theta
+		val theta = acos(w / norm)
 
-		//Calculate coefficient of basis elements
-		val coeff: Float
-		if (abs(theta) < 0.001f)
-		//If theta is small enough, use the limit of sin(alpha*theta) / sin(theta) instead of actual value
-			coeff = normExp * alpha / norm
-		else
-			coeff = normExp * sin(alpha * theta) / (norm * sin(theta))
+		// Calculate coefficient of basis elements
+		val coeff = if (abs(theta) < 0.001f) {
+			// If theta is small enough, use the limit of sin(alpha*theta) / sin(theta) instead of actual value
+			normExp * alpha / norm
+		} else {
+			normExp * sin(alpha * theta) / (norm * sin(theta))
+		}
 
-		//Write results
 		w = normExp * cos(alpha * theta)
 		x *= coeff
 		y *= coeff
 		z *= coeff
 
-		//Fix any possible discrepancies
+		// Fix any possible discrepancies
 		nor()
 
 		return this
