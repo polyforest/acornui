@@ -29,11 +29,9 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {
 		js {
-			compilations.all {
+			compilations.named("main") {
 				kotlinOptions {
 					main = "call"
-					metaInfo = false
-					sourceMap = true
 				}
 			}
 
