@@ -91,7 +91,9 @@ class AcornTexturePackerTest {
 		assertTrue(out.resolve("packTest11.png").exists())
 
 		val atlasData = jsonParse(TextureAtlasData.serializer(), out.resolve("packTest1.json").readText())
-		assertNotNull(atlasData.findRegion("part11.png"))
+		val part1Region = atlasData.findRegion("part12.png")
+		assertNotNull(part1Region)
+		assertEquals(listOf(1f,2f,3f,4f), part1Region.region.splits?.toList())
 	}
 
 }

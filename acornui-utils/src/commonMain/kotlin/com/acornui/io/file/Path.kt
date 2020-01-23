@@ -72,4 +72,18 @@ class Path(v: String) : Comparable<Path> {
 	}
 
 	override fun toString(): String = value
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || this::class != other::class) return false
+		other as Path
+		if (value != other.value) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return value.hashCode()
+	}
+
+
 }

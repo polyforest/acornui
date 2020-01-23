@@ -18,6 +18,7 @@ package com.acornui.io.file
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class PathTest {
 
@@ -49,5 +50,12 @@ class PathTest {
 
 		val path2 = Path("/src/", "test/")
 		assertEquals("/src/test", path2.value)
+	}
+
+	@Test
+	fun equals() {
+		assertEquals(Path("Test/Two/Three"), Path("Test/Two/Three"))
+		assertEquals(Path("Test/Two/Three/"), Path("Test/Two/Three"))
+		assertNotEquals(Path("Test/Two/Three"), Path("Test/Two"))
 	}
 }
