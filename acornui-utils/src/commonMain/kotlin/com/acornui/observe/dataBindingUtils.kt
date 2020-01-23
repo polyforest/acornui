@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+@file:JvmName("DataBindingUtils")
 
 package com.acornui.observe
 
@@ -9,6 +10,7 @@ import com.acornui.signal.bind
 import com.acornui.signal.or
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 
 /**
  * Mirrors changes from two data binding objects. If one changes, the other will be set.

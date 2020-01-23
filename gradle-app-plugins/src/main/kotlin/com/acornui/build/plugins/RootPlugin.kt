@@ -23,7 +23,7 @@ class RootPlugin : Plugin<Project> {
 				mavenLocal()
 				jcenter()
 				maven {
-					url = project.uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+					url = project.uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 				}
 				maven {
 					url = project.uri("http://artifacts.acornui.com/mvn/")

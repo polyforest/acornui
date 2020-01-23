@@ -1,4 +1,4 @@
-@file:JvmName("DataBindingUtils")
+@file:JvmName("DataBindingCoreUtils")
 
 package com.acornui.observe
 

@@ -25,7 +25,7 @@ pluginManagement {
 		gradlePluginPortal()
 
 		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 		}
 	}
 	resolutionStrategy {

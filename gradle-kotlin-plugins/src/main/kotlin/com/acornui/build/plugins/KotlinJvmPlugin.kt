@@ -37,7 +37,6 @@ open class KotlinJvmPlugin : Plugin<Project> {
 		fun configure(project: Project) {
 			val kotlinVersion: String by project.extra
 			val kotlinJvmTarget: String by project.extra
-			val kotlinLanguageVersion: String by project.extra
 			val kotlinSerializationVersion: String by project.extra
 			val kotlinCoroutinesVersion: String by project.extra
 
@@ -46,8 +45,6 @@ open class KotlinJvmPlugin : Plugin<Project> {
 					compilations.all {
 						kotlinOptions {
 							jvmTarget = kotlinJvmTarget
-							languageVersion = kotlinLanguageVersion
-							apiVersion = kotlinLanguageVersion
 						}
 					}
 				}

@@ -38,7 +38,7 @@ subprojects {
 		gradlePluginPortal()
 		jcenter()
 		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 		}
 	}
 

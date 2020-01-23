@@ -17,14 +17,13 @@
 rootProject.name = "acornui"
 
 pluginManagement {
-	val version: String by extra
 	val kotlinVersion: String by extra
 	val dokkaVersion: String by extra
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-dev/")
+			url = uri("https://dl.bintray.com/kotlin/kotlin-eap")
 		}
 	}
 	resolutionStrategy {
@@ -37,6 +36,8 @@ pluginManagement {
 		}
 	}
 }
+
+enableFeaturePreview("GRADLE_METADATA")
 
 includeBuild("gradle-kotlin-plugins")
 

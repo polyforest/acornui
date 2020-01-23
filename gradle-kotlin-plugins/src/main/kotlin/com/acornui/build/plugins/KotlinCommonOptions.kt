@@ -28,11 +28,20 @@ object KotlinCommonOptions {
 		val kotlinVersion: String by project.extra
 		val kotlinSerializationVersion: String by project.extra
 		val kotlinCoroutinesVersion: String by project.extra
+		val kotlinLanguageVersion: String by project.extra
 
 		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
 		project.extensions.configure<KotlinMultiplatformExtension> {
+			targets.all {
+				compilations.all {
+					kotlinOptions {
+						languageVersion = kotlinLanguageVersion
+						apiVersion = kotlinLanguageVersion
+					}
+				}
+			}
 			sourceSets {
 				all {
 					languageSettings.apply {
