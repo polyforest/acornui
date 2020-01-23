@@ -53,7 +53,7 @@ class PathTest {
 	}
 
 	@Test
-	fun equals() {
+	fun equalsTest() {
 		assertEquals(Path("Test/Two/Three"), Path("Test/Two/Three"))
 		assertEquals(Path("Test/Two/Three/"), Path("Test/Two/Three"))
 		assertNotEquals(Path("Test/Two/Three"), Path("Test/Two"))
