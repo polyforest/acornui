@@ -70,7 +70,7 @@ class PhysicsController(
 	 */
 	private fun checkCollision(pA: Physics, pB: Physics) {
 		if (!pA.canCollide || !pB.canCollide || (pA.isFixed && pB.isFixed) || (pA.collideGroup != -1 && pA.collideGroup == pB.collideGroup)) return
-		val impactSpeed = collision.impactSpeed
+		val impactVelocity = collision.impactVelocity
 		posDelta.set(pA.position.x, pA.position.y).sub(pB.position.x, pB.position.y)
 		val dist2 = posDelta.len2()
 		val r2 = pA.radius * maxOf(pA.scale.x, pA.scale.y) + pB.radius * maxOf(pB.scale.x, pB.scale.y) // The combined radii
@@ -108,9 +108,9 @@ class PhysicsController(
 				rA.set(cA).sub(pA.position.x, pA.position.y)
 				rB.set(cB).sub(pB.position.x, pB.position.y)
 
-				impactSpeed.set(pA.velocity).add(-rA.y * pA.rotationalVelocity, rA.x * pA.rotationalVelocity).sub(pB.velocity).sub(-rB.y * pB.rotationalVelocity, rB.x * pB.rotationalVelocity)
+				impactVelocity.set(pA.velocity).add(-rA.y * pA.rotationalVelocity, rA.x * pA.rotationalVelocity).sub(pB.velocity).sub(-rB.y * pB.rotationalVelocity, rB.x * pB.rotationalVelocity)
 
-				val vN = impactSpeed.dot(mTd)
+				val vN = impactVelocity.dot(mTd)
 				if (vN < 0.0f) {
 					val restitution = pA.restitution * pB.restitution
 					// Intersecting and moving toward each other.
@@ -156,7 +156,7 @@ interface CollisionRo : Command {
 	val collisionInfo: CollisionInfoRo
 
 	val z: Float
-	val impactSpeed: Vector2Ro
+	val impactVelocity: Vector2Ro
 	val impactDirection: Vector2Ro
 	val impactStrength: Float
 
@@ -173,8 +173,20 @@ class Collision(
 	override val type = CollisionRo
 
 	override var z = 0f
-	override val impactSpeed = Vector2()
+
+	/**
+	 * The combined impact velocity of this collision.
+	 */
+	override val impactVelocity = Vector2()
+
+	/**
+	 * The angle of the collision impulse.
+	 */
 	override val impactDirection = Vector2()
+
+	/**
+	 * The dot product of the impact velocity and impact direction.
+	 */
 	override var impactStrength = 0f
 
 	override var entityA: Entity? = null
