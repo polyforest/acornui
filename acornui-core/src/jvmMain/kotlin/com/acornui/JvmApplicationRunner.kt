@@ -35,7 +35,6 @@ open class JvmApplicationRunner(
 	protected val appConfig = stage.inject(AppConfig)
 
 	open fun run() = runBlocking {
-		check(isUiThread()) { "JvmApplicationRunner must be run in the main UI thread. "}
 		Log.debug("Activating stage")
 		stage.activate()
 

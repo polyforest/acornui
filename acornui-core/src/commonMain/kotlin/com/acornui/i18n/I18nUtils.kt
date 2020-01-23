@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmName("I18nUtils")
-
 // Map has withDefault
 
 package com.acornui.i18n
@@ -38,7 +36,6 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.PropertiesParser
-import kotlin.jvm.JvmName
 
 interface I18n {
 

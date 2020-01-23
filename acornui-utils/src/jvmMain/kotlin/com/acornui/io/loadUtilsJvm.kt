@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.net.HttpURLConnection
-import java.net.JarURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 import java.nio.ByteBuffer

@@ -20,6 +20,7 @@ package com.acornui.lwjgl
 
 import com.acornui.*
 import com.acornui.asset.Loaders
+import com.acornui.async.isUiThread
 import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
@@ -239,6 +240,7 @@ private class LwjglApplicationRunner(
 ) : JvmApplicationRunner(stage) {
 
 	override fun run() {
+		check(isUiThread()) { "LwjglApplicationRunner must be run in the main UI thread. "}
 		window.refresh.add(::refreshHandler)
 		super.run()
 		window.refresh.remove(::refreshHandler)

@@ -1,5 +1,3 @@
-@file:JvmName("LoadUtils")
-
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -21,7 +19,6 @@ package com.acornui.io
 import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
 import com.acornui.recycle.Clearable
-import kotlin.jvm.JvmName
 import kotlin.time.Duration
 
 // TODO: make serializable

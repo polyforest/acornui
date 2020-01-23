@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-@file:JvmName("HeadlessApplicationUtils")
-
 package com.acornui.headless
 
 import com.acornui.AppConfig
 import com.acornui.component.Stage
-import kotlin.jvm.JvmName
 
 expect suspend fun headlessApplication(appConfig: AppConfig, onReady: Stage.() -> Unit)
 suspend fun headlessApplication(onReady: Stage.() -> Unit) = headlessApplication(AppConfig(), onReady)
