@@ -69,6 +69,9 @@ fun Project.configureWebTasks() {
 		enabled = false
 		//finalizedBy("jsAcornBrowserDevelopmentDistribution", "jsAcornBrowserProductionDistribution")
 	}
+	tasks.named("build").configure {
+		dependsOn("jsProd")
+	}
 
 }
 
