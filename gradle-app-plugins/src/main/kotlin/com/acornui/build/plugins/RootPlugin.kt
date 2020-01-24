@@ -23,6 +23,16 @@ class RootPlugin : Plugin<Project> {
 
 		target.pluginManager.apply("org.jetbrains.dokka")
 
+		val acornLibraries = listOf("utils", "core", "game", "spine", "test-utils", "lwjgl-backend", "webgl-backend").map { ":acornui-$it" }
+		if (isComposite) {
+			acornLibraries.forEach { id ->
+				target.findProject(id)?.let { foundProject ->
+					foundProject.group = "com.acornui"
+					foundProject.buildDir = target.rootProject.buildDir.resolve("acornui/${foundProject.name}")
+				}
+			}
+		}
+
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
@@ -41,16 +51,9 @@ class RootPlugin : Plugin<Project> {
 					// A workaround to composite builds not working - https://youtrack.jetbrains.com/issue/KT-30285
 					if (isComposite) {
 						dependencySubstitution {
-							listOf("utils", "core", "game", "spine", "test-utils").forEach {
-								val id = ":acornui-$it"
+							acornLibraries.forEach { id ->
 								if (findProject(id) != null) {
-									substitute(module("com.acornui:acornui-$it")).with(project(id))
-								}
-							}
-							listOf("lwjgl", "webgl").forEach {
-								val id = ":acornui-$it-backend"
-								if (findProject(id) != null) {
-									substitute(module("com.acornui:acornui-$it-backend")).with(project(id))
+									substitute(module("com.acornui$id")).with(project(id))
 								}
 							}
 						}

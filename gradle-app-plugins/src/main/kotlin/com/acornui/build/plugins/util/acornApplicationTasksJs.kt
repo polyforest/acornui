@@ -67,7 +67,7 @@ fun Project.configureWebTasks() {
 	}
 	tasks.named<Copy>("jsBrowserDistribution").configure {
 		enabled = false
-		finalizedBy("jsAcornBrowserDevelopmentDistribution", "jsAcornBrowserProductionDistribution")
+		//finalizedBy("jsAcornBrowserDevelopmentDistribution", "jsAcornBrowserProductionDistribution")
 	}
 
 }
