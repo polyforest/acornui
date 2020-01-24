@@ -126,11 +126,10 @@ infix fun <T> Deferred<T>.finally(callback: (result: T?) -> Unit): Deferred<T> {
 
 class CoroutineScopeAttachment(injector: Injector) : Disposable {
 
-	private val supervisor = SupervisorJob()
-	val componentScope = CoroutineScope(injector.inject(applicationScopeKey).coroutineContext + supervisor)
+	val componentScope = CoroutineScope(injector.inject(applicationScopeKey).coroutineContext)
 
 	override fun dispose() {
-		supervisor.cancel()
+		componentScope.cancel()
 	}
 
 	companion object
