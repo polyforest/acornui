@@ -13,13 +13,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import java.util.concurrent.TimeUnit
 
 fun Project.preventSnapshotDependencyCaching() {
 	allprojects {
-		configurations.all {
+		configurations.configureEach {
 			// Gradle has a bug where snapshots aren't marked as changing when their versions are dynamically applied.
 			resolutionStrategy {
 				cacheChangingModulesFor(0, TimeUnit.SECONDS)

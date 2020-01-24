@@ -53,4 +53,4 @@ listOf("acornui-texture-packer", "gdx-font-processor").forEach { tool ->
 	project(name).projectDir = file("tools/$tool")
 }
 
-include("gradle-app-plugins")
+include("gradle-app-plugins", "gradle-settings-plugins")

@@ -38,31 +38,16 @@ samWithReceiver {
 }
 
 fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
-
 val kotlinVersion: String by extra
-val kotlinSerializationVersion: String by extra
-val dokkaVersion: String by extra
-
 dependencies {
 	compileOnly(gradleKotlinDsl())
 	compileOnly(gradleApi())
-	implementation(kotlin("compiler", version = kotlinVersion))
-	implementation(kotlin("gradle-plugin", version = kotlinVersion))
-	implementation(kotlin("serialization", version = kotlinVersion))
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
-
-	implementation(project(":acornui-utils"))
-	implementation(project(":acornui-core"))
-	implementation(project(":acornui-lwjgl-backend"))
-	implementation(project(":acornui-texture-packer"))
-	implementation(project(":gdx-font-processor"))
+	compileOnly(kotlin("compiler", version = kotlinVersion))
+	compileOnly(kotlin("gradle-plugin", version = kotlinVersion))
 
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
-
-	implementation("com.acornui:gradle-kotlin-plugins:$version")
 }
 
 val kotlinLanguageVersion: String by project.extra
@@ -91,24 +76,11 @@ kotlin {
 
 gradlePlugin {
 	plugins {
-		create("root") {
-			id = "com.acornui.root"
-			implementationClass = "com.acornui.build.plugins.RootPlugin"
-			displayName = "Root project plugin for an Acorn UI application."
-			description = "Configuration of a root project for an Acorn UI application."
+		create("root-settings") {
+			id = "com.acornui.root-settings"
+			implementationClass = "com.acornui.build.plugins.RootSettingsPlugin"
+			displayName = "Settings configuration for an acorn ui project."
+			description = "Configuration of root settings for an Acorn UI application."
 		}
-
-		create("app") {
-			id = "com.acornui.app"
-			implementationClass = "com.acornui.build.plugins.AcornUiApplicationPlugin"
-			displayName = "Acorn UI Multi-Platform Application"
-			description = "Configuration of an Acorn UI Application project. Plugin \"com.acornui.root\" should first be applied to the root project."
-		}
-	}
-}
-
-tasks.named<ProcessResources>("processResources").configure {
-	filesMatching("acornDependencies.txt") {
-		expand(project.properties)
 	}
 }

@@ -21,7 +21,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-//import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 
 @Suppress("unused")
 open class KotlinJsPlugin : Plugin<Project> {
@@ -33,7 +32,6 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 	companion object {
 
-//		@UseExperimental(ExperimentalDistributionDsl::class)
 		fun configure(project: Project) {
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				val kotlinVersion: String by project.extra

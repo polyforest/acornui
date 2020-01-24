@@ -6,7 +6,9 @@ import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.repositories
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -34,23 +36,21 @@ class RootPlugin : Plugin<Project> {
 				}
 			}
 
-			project.configurations.all {
+			project.configurations.configureEach {
 				resolutionStrategy {
 					// A workaround to composite builds not working - https://youtrack.jetbrains.com/issue/KT-30285
 					if (isComposite) {
-						configurations.all {
-							resolutionStrategy.dependencySubstitution {
-								listOf("utils", "core", "game", "spine", "test-utils").forEach {
-									val id = ":acornui-$it"
-									if (findProject(id) != null) {
-										substitute(module("com.acornui:acornui-$it")).with(project(id))
-									}
+						dependencySubstitution {
+							listOf("utils", "core", "game", "spine", "test-utils").forEach {
+								val id = ":acornui-$it"
+								if (findProject(id) != null) {
+									substitute(module("com.acornui:acornui-$it")).with(project(id))
 								}
-								listOf("lwjgl", "webgl").forEach {
-									val id = ":acornui-$it-backend"
-									if (findProject(id) != null) {
-										substitute(module("com.acornui:acornui-$it-backend")).with(project(id))
-									}
+							}
+							listOf("lwjgl", "webgl").forEach {
+								val id = ":acornui-$it-backend"
+								if (findProject(id) != null) {
+									substitute(module("com.acornui:acornui-$it-backend")).with(project(id))
 								}
 							}
 						}
