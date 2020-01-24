@@ -31,9 +31,8 @@ class RootSettingsPlugin : Plugin<Settings> {
 				val acornVersion: String by extra
 				repositories {
 					mavenLocal()
-					maven {
-						url = URI("https://dl.bintray.com/kotlin/kotlin-dev/")
-					}
+					maven { url = URI("https://dl.bintray.com/kotlin/kotlin-eap/") }
+					maven { url = URI("http://artifacts.acornui.com/mvn/") }
 					gradlePluginPortal()
 				}
 				resolutionStrategy {
