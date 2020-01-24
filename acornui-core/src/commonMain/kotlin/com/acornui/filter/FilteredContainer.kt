@@ -32,9 +32,7 @@ import kotlin.contracts.contract
 class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) {
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
-		bind {
-			invalidate(VERTICES)
-		}
+		bind { invalidate(ValidationFlags.VERTICES_GLOBAL) }
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
@@ -58,6 +56,7 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
+		//println("drawRegionCanvas3 $drawRegionCanvas")
 		val model = transformGlobal
 		val tint = colorTintGlobal
 		for (i in _renderFilters.lastIndex downTo 0) {
@@ -82,9 +81,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 		}
 	}
 
-	companion object {
-		const val VERTICES = 1 shl 16
-	}
 }
 
 inline fun Owned.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {

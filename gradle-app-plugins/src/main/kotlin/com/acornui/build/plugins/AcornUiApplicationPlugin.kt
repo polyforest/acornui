@@ -61,12 +61,19 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 				dependencies {
 					api("com.acornui:acornui-lwjgl-backend")
 
+					// FIXME: I have no idea why this can't be transient in lwjgl-backend
 					val lwjglVersion: String by target.extra
+					val jorbisVersion: String by target.extra
+					val jlayerVersion: String by target.extra
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
-
-					// FIXME: I have no idea why this can't be in lwjgl-backend
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
+
+					implementation("$lwjglGroup:$lwjglName:$lwjglVersion")
+					extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
+					implementation("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
+					implementation("org.jcraft:jorbis:$jorbisVersion")
+
 					for (os in listOf("linux", "macos", "windows")) {
 						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
 						extensions.forEach {

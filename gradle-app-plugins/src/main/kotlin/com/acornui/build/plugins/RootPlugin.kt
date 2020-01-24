@@ -12,7 +12,11 @@ import org.gradle.kotlin.dsl.*
 class RootPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
+		val acornUiHome: String? by target.extra
 		val acornVersion: String by target.extra
+		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists()
+		target.logger.lifecycle("isComposite=$isComposite")
+
 		target.preventSnapshotDependencyCaching()
 
 		target.pluginManager.apply("org.jetbrains.dokka")
@@ -32,6 +36,25 @@ class RootPlugin : Plugin<Project> {
 
 			project.configurations.all {
 				resolutionStrategy {
+					// A workaround to composite builds not working - https://youtrack.jetbrains.com/issue/KT-30285
+					if (isComposite) {
+						configurations.all {
+							resolutionStrategy.dependencySubstitution {
+								listOf("utils", "core", "game", "spine", "test-utils").forEach {
+									val id = ":acornui-$it"
+									if (findProject(id) != null) {
+										substitute(module("com.acornui:acornui-$it")).with(project(id))
+									}
+								}
+								listOf("lwjgl", "webgl").forEach {
+									val id = ":acornui-$it-backend"
+									if (findProject(id) != null) {
+										substitute(module("com.acornui:acornui-$it-backend")).with(project(id))
+									}
+								}
+							}
+						}
+					}
 					eachDependency {
 						when {
 							requested.group.startsWith("com.acornui") -> {

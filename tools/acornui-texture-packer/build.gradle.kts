@@ -33,7 +33,7 @@ kotlin {
 		}
 		named("jvmMain") {
 			dependencies {
-				implementation(project(":backends:acornui-lwjgl-backend"))
+				implementation(project(":acornui-lwjgl-backend"))
 			}
 		}
 	}

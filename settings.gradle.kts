@@ -42,7 +42,15 @@ enableFeaturePreview("GRADLE_METADATA")
 includeBuild("gradle-kotlin-plugins")
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
-include("backends:acornui-lwjgl-backend", "backends:acornui-webgl-backend")
-include("tools:acornui-texture-packer", "tools:gdx-font-processor")
+listOf("lwjgl", "webgl").forEach { backend ->
+	val name = ":acornui-$backend-backend"
+	include(name)
+	project(name).projectDir = file("backends/acornui-$backend-backend")
+}
+listOf("acornui-texture-packer", "gdx-font-processor").forEach { tool ->
+	val name = ":$tool"
+	include(name)
+	project(name).projectDir = file("tools/$tool")
+}
 
 include("gradle-app-plugins")
