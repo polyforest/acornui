@@ -21,8 +21,8 @@ jobs:
         with:
           java-version: 8
       - name: Publish artifacts
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           # The GITHUB_REF tag comes in the format 'refs/tags/xxx'.
           # If we split on '/' and take the 3rd value,
