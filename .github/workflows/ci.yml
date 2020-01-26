@@ -50,6 +50,6 @@ jobs:
         with:
           java-version: 8
       - name: Publish artifacts
-          uses: eskatos/gradle-command-action@v1
-          with:
-            arguments: publish -PgithubToken=${{ secrets.GITHUB_TOKEN }}
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: publish -PgithubToken=${{ secrets.GITHUB_TOKEN }}
