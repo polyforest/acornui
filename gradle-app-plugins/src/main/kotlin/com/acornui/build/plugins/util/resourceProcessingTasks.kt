@@ -31,8 +31,8 @@ import org.gradle.language.jvm.tasks.ProcessResources
  * need processing in this way.
  */
 fun Project.configureResourceProcessingTasks() {
-	kotlinExt.targets.all {
-		compilations.all {
+	kotlinExt.targets.configureEach {
+		compilations.configureEach {
 			val processResourcesName = disambiguateName("processResources")
 			if (tasks.findByName(processResourcesName) != null) {
 				val processAcornResources = tasks.register<AcornUiResourceProcessorTask>(disambiguateName("processAcornResources")) {

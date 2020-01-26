@@ -1,5 +1,3 @@
-import com.acornui.build.util.delegateLifecycleTasksToSubProjects
-
 /*
  * Copyright 2019 Poly Forest, LLC
  *
@@ -21,7 +19,7 @@ plugins {
 	idea
 	`maven-publish`
 	id("org.jetbrains.dokka")
-	id("com.acornui.kotlin-mpp") apply false
+	//id("com.acornui.kotlin-mpp") apply false
 
 	// Necessary to avoid the warning:
 	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
@@ -31,10 +29,17 @@ plugins {
 	kotlin("multiplatform") apply false
 }
 
+buildscript {
+	dependencies {
+		classpath("com.acornui:gradle-kotlin-plugins:$version")
+	}
+}
+
 subprojects {
 	apply<MavenPublishPlugin>()
 
 	repositories {
+		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 		maven {
@@ -45,7 +50,11 @@ subprojects {
 	publishing {
 		repositories {
 			maven {
-				url = uri(rootProject.buildDir.resolve("artifacts"))
+				url = uri("https://maven.pkg.github.com/polyforest/acornui")
+				credentials {
+					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
+					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
+				}
 			}
 		}
 	}
@@ -76,17 +85,11 @@ tasks {
 	}
 }
 
-val cleanArtifacts = tasks.register<Delete>("cleanArtifacts") {
-	group = "publishing"
-	delete(rootProject.buildDir.resolve("artifacts"))
-}
-
 // All tasks depend on the common kotlin plugins
-tasks.all {
-	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publish"))
+tasks.configureEach {
+	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publishToMavenLocal"))
 }
 
-val projectProperties = project.gradle.startParameter.projectProperties
 for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
@@ -97,12 +100,12 @@ for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 for (taskName in listOf("publish", "publishToMavenLocal")) {
 	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
 		subprojects.forEach {
-			dependsOn(":${it.path}:$taskName")
+			dependsOn(":${it.path}:publishToMavenLocal")
 		}
 		dir = file("skins")
 		tasks = listOf("build", taskName)
 		buildName = "${taskName}Skins"
-		startParameter.projectProperties = projectProperties
+		startParameter.projectProperties = mapOf("version" to version.toString())
 	}
 	tasks.named(taskName) {
 		dependsOn(skinTask)

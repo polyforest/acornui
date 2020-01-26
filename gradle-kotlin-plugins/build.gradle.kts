@@ -16,7 +16,6 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import java.util.Properties
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.gradle.kotlin.dsl.java as javax
 
@@ -27,14 +26,6 @@ plugins {
     kotlin("jvm")
 }
 
-buildscript {
-    val props = java.util.Properties()
-    props.load(projectDir.resolve("../gradle.properties").inputStream())
-    val kotlinVersion: String by props
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
-    }
-}
 apply(plugin = "kotlin-sam-with-receiver")
 
 samWithReceiver {
@@ -43,10 +34,12 @@ samWithReceiver {
 
 fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
 
-val props = Properties()
-props.load(projectDir.resolve("../gradle.properties").inputStream())
-version = props["version"]!!
-group = props["group"]!!
+val version: String by project
+val group: String by project
+project.version = version
+project.group = group
+
+logger.lifecycle("Kotlin plugins $group:$name:$version")
 
 repositories {
     jcenter()
@@ -56,8 +49,8 @@ repositories {
     }
 }
 
-val kotlinVersion: String by props
-val dokkaVersion: String by props
+val kotlinVersion: String by project
+val dokkaVersion: String by project
 
 dependencies {
     compileOnly(gradleKotlinDsl())
@@ -74,11 +67,11 @@ dependencies {
 }
 
 kotlin {
-    sourceSets.all {
+    sourceSets.configureEach {
         languageSettings.useExperimentalAnnotation("kotlin.Experimental")
     }
     target {
-        compilations.all {
+        compilations.configureEach {
             kotlinOptions {
                 jvmTarget = JavaVersion.VERSION_1_8.toString()
             }
@@ -87,7 +80,7 @@ kotlin {
 }
 
 javax {
-//    withSourcesJar()
+    withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
@@ -95,7 +88,11 @@ javax {
 publishing {
     repositories {
         maven {
-            url = uri(project.projectDir.resolve("../build/artifacts"))
+            url = uri("https://maven.pkg.github.com/polyforest/acornui")
+            credentials {
+                username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
         }
     }
 }
@@ -106,19 +103,19 @@ gradlePlugin {
             id = "com.acornui.kotlin-mpp"
             implementationClass = "com.acornui.build.plugins.KotlinMppPlugin"
             displayName = "Kotlin multi-platform configuration for Acorn UI"
-            description = "Configures an Acorn UI library project for Kotlin multi-platform."
+            description = "Configures a project for Kotlin multi-platform builds using JS and JVM targets."
         }
         create("kotlinJvm") {
             id = "com.acornui.kotlin-jvm"
             implementationClass = "com.acornui.build.plugins.KotlinJvmPlugin"
             displayName = "Kotlin jvm configuration for Acorn UI"
-            description = "Configures an Acorn UI library project for Kotlin jvm."
+            description = "Configures a project for Kotlin multi-platform builds using the JVM target."
         }
         create("kotlinJs") {
             id = "com.acornui.kotlin-js"
             implementationClass = "com.acornui.build.plugins.KotlinJsPlugin"
             displayName = "Kotlin js configuration for Acorn UI"
-            description = "Configures an Acorn UI library project for Kotlin js."
+            description = "Configures a project for Kotlin multi-platform builds using the JS target."
         }
     }
 }

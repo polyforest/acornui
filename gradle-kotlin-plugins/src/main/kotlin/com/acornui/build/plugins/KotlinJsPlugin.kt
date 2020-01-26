@@ -47,7 +47,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 					}
 //					nodejs()
 
-					compilations.all {
+					compilations.configureEach {
 						kotlinOptions {
 							moduleKind = "umd"
 							sourceMap = true

@@ -15,11 +15,7 @@
  */
 
 pluginManagement {
-
-	val props = java.util.Properties()
-	props.load(file("../gradle.properties").inputStream())
-
-	val kotlinVersion: String by props
+	val kotlinVersion: String by settings
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
@@ -33,6 +29,18 @@ pluginManagement {
 			when {
 				requested.id.namespace == "org.jetbrains.kotlin" ->
 					useVersion(kotlinVersion)
+			}
+		}
+	}
+	buildscript {
+		dependencies {
+			classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+		}
+		repositories {
+			mavenLocal()
+			gradlePluginPortal()
+			maven {
+				url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 			}
 		}
 	}

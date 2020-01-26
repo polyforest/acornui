@@ -23,7 +23,7 @@ plugins {
 kotlin {
 	sourceSets {
 		named("jvmMain") {
-			val gdxVersion: String by extra
+			val gdxVersion: String by project
 			dependencies {
 				implementation(kotlin("stdlib"))
 				implementation(kotlin("stdlib-jdk8"))

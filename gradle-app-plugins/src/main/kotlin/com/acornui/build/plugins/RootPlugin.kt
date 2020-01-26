@@ -4,11 +4,13 @@ package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
+import com.acornui.build.util.addAcornRepositories
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.repositories
+import java.net.URI
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -16,7 +18,8 @@ class RootPlugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		val acornUiHome: String? by target.extra
 		val acornVersion: String by target.extra
-		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists()
+		target.logger.lifecycle("**** APPLY " + acornUiHome + " : " + target.projectDir)
+		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists() && !target.projectDir.startsWith(acornUiHome!!)
 		target.logger.lifecycle("isComposite=$isComposite")
 
 		target.preventSnapshotDependencyCaching()
@@ -37,12 +40,17 @@ class RootPlugin : Plugin<Project> {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
 				mavenLocal()
+				maven {
+					url = URI("https://maven.pkg.github.com/polyforest/acornui")
+					credentials {
+						username = "anonymous"
+						password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
+					}
+				}
+				gradlePluginPortal()
 				jcenter()
 				maven {
-					url = project.uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-				}
-				maven {
-					url = project.uri("http://artifacts.acornui.com/mvn/")
+					url = URI("https://dl.bintray.com/kotlin/kotlin-eap/")
 				}
 			}
 

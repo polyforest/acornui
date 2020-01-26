@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-rootProject.name = "acornui-skins"
+package com.acornui.build.util
 
-pluginManagement {
-	val version: String by settings
-	repositories {
-		mavenLocal()
-		maven {
-			url = uri("https://maven.pkg.github.com/polyforest/acornui")
-			credentials {
-				username = "anonymous"
-				password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
-			}
-		}
-		gradlePluginPortal()
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import java.net.URI
+
+fun RepositoryHandler.addAcornRepositories() {
+	mavenLocal()
+	maven {
+		url = URI("https://maven.pkg.github.com/polyforest/acornui")
+		credentials {
+			username = "anonymous"
+			password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
 		}
 	}
-	resolutionStrategy {
-		eachPlugin {
-			when {
-				requested.id.namespace == "com.acornui" ->
-					useVersion(version)
-			}
-		}
+	gradlePluginPortal()
+	jcenter()
+	maven {
+		url = URI("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 }
-
-include("basic")

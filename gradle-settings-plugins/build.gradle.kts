@@ -25,7 +25,7 @@ plugins {
 }
 
 buildscript {
-	val kotlinVersion: String by extra
+	val kotlinVersion: String by project
 	dependencies {
 		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
 	}
@@ -38,7 +38,7 @@ samWithReceiver {
 }
 
 fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
-val kotlinVersion: String by extra
+val kotlinVersion: String by project
 dependencies {
 	compileOnly(gradleKotlinDsl())
 	compileOnly(gradleApi())
@@ -60,11 +60,11 @@ java {
 }
 
 kotlin {
-	sourceSets.all {
+	sourceSets.configureEach {
 		languageSettings.useExperimentalAnnotation("kotlin.Experimental")
 	}
 	target {
-		compilations.all {
+		compilations.configureEach {
 			kotlinOptions {
 				jvmTarget = kotlinJvmTarget
 				languageVersion = kotlinLanguageVersion

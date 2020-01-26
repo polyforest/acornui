@@ -17,8 +17,8 @@
 rootProject.name = "acornui"
 
 pluginManagement {
-	val kotlinVersion: String by extra
-	val dokkaVersion: String by extra
+	val kotlinVersion: String by settings
+	val dokkaVersion: String by settings
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
@@ -39,7 +39,11 @@ pluginManagement {
 
 enableFeaturePreview("GRADLE_METADATA")
 
-includeBuild("gradle-kotlin-plugins")
+includeBuild("gradle-kotlin-plugins") {
+	dependencySubstitution {
+		substitute(module("com.acornui:gradle-kotlin-plugins")).with(project(":"))
+	}
+}
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
 listOf("lwjgl", "webgl").forEach { backend ->

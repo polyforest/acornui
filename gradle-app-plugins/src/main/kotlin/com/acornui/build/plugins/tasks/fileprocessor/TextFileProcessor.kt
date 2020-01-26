@@ -40,7 +40,7 @@ class TextFileProcessor : FileChangeProcessorBase() {
 	}
 
 	override fun process(sourceFile: File, targetFile: File, task: Task) {
-		val properties = (task.project.extra.properties + task.extra.properties).mapValues { it.value.toString() }
+		val properties = (task.project.properties + task.extra.properties).mapValues { it.value.toString() }
 		var str = sourceFile.readText()
 		for (fileProcessor in textFileProcessors) {
 			str = fileProcessor.process(targetFile.path, str, properties)

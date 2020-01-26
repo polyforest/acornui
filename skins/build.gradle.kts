@@ -27,9 +27,10 @@ plugins {
 	`maven-publish`
 }
 
-val props = java.util.Properties()
-props.load(projectDir.resolve("../gradle.properties").inputStream())
-version = props["version"]!!
+allprojects {
+	group = "com.acornui.skins"
+	logger.lifecycle("Skins version $group:$name:$version")
+}
 
 subprojects {
 	extra["acornVersion"] = version
@@ -60,7 +61,11 @@ subprojects {
 	publishing {
 		repositories {
 			maven {
-				url = uri(rootProject.projectDir.resolve("../build/artifacts"))
+				url = uri("https://maven.pkg.github.com/polyforest/acornui")
+				credentials {
+					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
+					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
+				}
 			}
 		}
 
@@ -72,3 +77,4 @@ subprojects {
 	}
 }
 
+extra

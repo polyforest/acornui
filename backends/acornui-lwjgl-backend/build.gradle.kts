@@ -25,9 +25,9 @@ kotlin {
 				implementation(project(":acornui-core"))
 				implementation(project(":acornui-utils"))
 
-				val lwjglVersion: String by extra
-				val jorbisVersion: String by extra
-				val jlayerVersion: String by extra
+				val lwjglVersion: String by project
+				val jorbisVersion: String by project
+				val jlayerVersion: String by project
 				val lwjglGroup = "org.lwjgl"
 				val lwjglName = "lwjgl"
 				val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")

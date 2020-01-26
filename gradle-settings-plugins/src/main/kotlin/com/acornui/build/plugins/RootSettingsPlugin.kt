@@ -18,7 +18,6 @@ package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
-import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
 import java.net.URI
@@ -28,12 +27,21 @@ class RootSettingsPlugin : Plugin<Settings> {
 	override fun apply(target: Settings) {
 		with(target) {
 			pluginManagement {
-				val acornVersion: String by extra
+				val acornVersion: String by settings
 				repositories {
 					mavenLocal()
-					maven { url = URI("https://dl.bintray.com/kotlin/kotlin-eap/") }
-					maven { url = URI("http://artifacts.acornui.com/mvn/") }
+					maven {
+						url = URI("https://maven.pkg.github.com/polyforest/acornui")
+						credentials {
+							username = "anonymous"
+							password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
+						}
+					}
 					gradlePluginPortal()
+					jcenter()
+					maven {
+						url = URI("https://dl.bintray.com/kotlin/kotlin-eap/")
+					}
 				}
 				resolutionStrategy {
 					eachPlugin {
@@ -48,7 +56,7 @@ class RootSettingsPlugin : Plugin<Settings> {
 			enableFeaturePreview("GRADLE_METADATA")
 
 			// Acorn composite project as sub-projects as a workaround to https://youtrack.jetbrains.com/issue/KT-30285
-			val acornUiHome: String? by extra
+			val acornUiHome: String? by settings
 			if (acornUiHome != null && File(acornUiHome!!).exists()) {
 				listOf("utils", "core", "game", "test-utils").forEach { acornModule ->
 					val name = ":acornui-$acornModule"

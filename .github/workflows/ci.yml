@@ -24,20 +24,32 @@ jobs:
     - name: Build
       uses: eskatos/gradle-command-action@v1
       with:
-        arguments: build publish -x jsBrowserTest --stacktrace
+        arguments: build -x jsBrowserTest --stacktrace
     - name: Upload Test Reports
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: test-reports-${{ matrix.os }}
         path: build/reports
-    - name: Upload Artifacts
-      uses: appleboy/scp-action@v0.0.5
-      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
-      with:
-        host: bandbox.dreamhost.com
-        username: ${{ secrets.BANDBOX_FTP_USERNAME }}
-        password: ${{ secrets.BANDBOX_FTP_PASSWORD }}
-        source: "build/artifacts"
-        target: "~/artifacts.acornui.com/mvn"
-        strip_components: 2
+  publish:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Gradle Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Publish artifacts
+          uses: eskatos/gradle-command-action@v1
+          with:
+            arguments: publish -PgithubToken=${{ secrets.GITHUB_TOKEN }}

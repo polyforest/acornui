@@ -34,8 +34,8 @@ object KotlinCommonOptions {
 		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
 		project.extensions.configure<KotlinMultiplatformExtension> {
-			targets.all {
-				compilations.all {
+			targets.configureEach {
+				compilations.configureEach {
 					kotlinOptions {
 						languageVersion = kotlinLanguageVersion
 						apiVersion = kotlinLanguageVersion

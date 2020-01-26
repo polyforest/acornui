@@ -25,7 +25,7 @@ plugins {
 }
 
 buildscript {
-	val kotlinVersion: String by extra
+	val kotlinVersion: String by project
 	dependencies {
 		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
 	}
@@ -39,9 +39,9 @@ samWithReceiver {
 
 fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
 
-val kotlinVersion: String by extra
-val kotlinSerializationVersion: String by extra
-val dokkaVersion: String by extra
+val kotlinVersion: String by project
+val kotlinSerializationVersion: String by project
+val dokkaVersion: String by project
 
 dependencies {
 	compileOnly(gradleKotlinDsl())
@@ -52,6 +52,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
+	implementation("com.acornui:gradle-kotlin-plugins:$version")
 	implementation(project(":acornui-utils"))
 	implementation(project(":acornui-core"))
 	implementation(project(":acornui-lwjgl-backend"))
@@ -61,8 +62,6 @@ dependencies {
 	testImplementation(gradleKotlinDsl())
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
-
-	implementation("com.acornui:gradle-kotlin-plugins:$version")
 }
 
 val kotlinLanguageVersion: String by project.extra
@@ -75,11 +74,11 @@ java {
 }
 
 kotlin {
-	sourceSets.all {
+	sourceSets.configureEach {
 		languageSettings.useExperimentalAnnotation("kotlin.Experimental")
 	}
 	target {
-		compilations.all {
+		compilations.configureEach {
 			kotlinOptions {
 				jvmTarget = kotlinJvmTarget
 				languageVersion = kotlinLanguageVersion

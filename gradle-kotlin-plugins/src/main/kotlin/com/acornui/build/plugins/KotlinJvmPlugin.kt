@@ -42,7 +42,7 @@ open class KotlinJvmPlugin : Plugin<Project> {
 
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				jvm {
-					compilations.all {
+					compilations.configureEach {
 						kotlinOptions {
 							jvmTarget = kotlinJvmTarget
 						}
