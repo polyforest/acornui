@@ -17,15 +17,14 @@
 package com.acornui.animation
 
 import com.acornui.serialization.jsonParse
-import com.acornui.tween.animation.*
-import java.io.File
+import com.acornui.tween.animation.AnimationBundle
 import kotlin.test.Test
 
 class AnimationTest {
 
 	@Test
 	fun serialization() {
-		val bundle = jsonParse(AnimationBundle.serializer(), File("build/processedResources/jvm/test/animation/animation.json").readText())
+		val bundle = jsonParse(AnimationBundle.serializer(), AnimationTest::class.java.getResource("/animation/animation.json").readText())
 		println(bundle)
 
 

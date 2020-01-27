@@ -15,8 +15,8 @@ class ProcessFontsKtTest {
 
 	@Test
 	fun process() {
-		val input = File("build/processedResources/jvm/test/fonts_unprocessedFonts")
-		val output = File("build/processedResources/jvm/test/out/fonts")
+		val input = File(ProcessFontsKtTest::class.java.getResource("fonts_unprocessedFonts").file)
+		val output = input.resolveSibling("out/fonts")
 		assertTrue(output.deleteRecursively())
 		processFonts(input, output)
 
