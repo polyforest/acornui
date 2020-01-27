@@ -24,7 +24,7 @@ jobs:
     - name: Build
       uses: eskatos/gradle-command-action@v1
       with:
-        arguments: build -PgithubToken=${{ secrets.GITHUB_PUBLISH_TOKEN }} -PgithubAtor=${{ GITHUB_ACTOR }} -x jsBrowserTest --stacktrace
+        arguments: build -PgithubToken=${{ secrets.GITHUB_PUBLISH_TOKEN }} -PgithubActor=${{ github.actor }} -x jsBrowserTest --stacktrace
     - name: Upload Test Reports
       uses: actions/upload-artifact@v1
       if: always()
@@ -52,4 +52,4 @@ jobs:
       - name: Publish artifacts
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: publish -PgithubToken=${{ secrets.GITHUB_PUBLISH_TOKEN }} -PgithubAtor=${{ GITHUB_ACTOR }}
+          arguments: publish -PgithubToken=${{ secrets.GITHUB_PUBLISH_TOKEN }} -PgithubActor=${{ github.actor }}
