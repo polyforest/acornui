@@ -4,7 +4,6 @@ package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
-import com.acornui.build.util.addAcornRepositories
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
@@ -16,9 +15,10 @@ import java.net.URI
 class RootPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		val acornUiHome: String? by target.extra
-		val acornVersion: String by target.extra
-		target.logger.lifecycle("**** APPLY " + acornUiHome + " : " + target.projectDir)
+		val acornUiHome: String? by target
+		val acornVersion: String by target
+		val githubToken: String by target
+		val githubActor: String by target
 		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists() && !target.projectDir.startsWith(acornUiHome!!)
 		target.logger.lifecycle("isComposite=$isComposite")
 
@@ -43,8 +43,8 @@ class RootPlugin : Plugin<Project> {
 				maven {
 					url = URI("https://maven.pkg.github.com/polyforest/acornui")
 					credentials {
-						username = "anonymous"
-						password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
+						username = githubActor
+						password = githubToken
 					}
 				}
 				gradlePluginPortal()

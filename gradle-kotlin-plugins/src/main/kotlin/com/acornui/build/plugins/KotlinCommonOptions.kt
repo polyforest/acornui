@@ -25,10 +25,10 @@ object KotlinCommonOptions {
 
 	@Suppress("UnstableApiUsage")
 	fun configure(project: Project) {
-		val kotlinVersion: String by project.extra
-		val kotlinSerializationVersion: String by project.extra
-		val kotlinCoroutinesVersion: String by project.extra
-		val kotlinLanguageVersion: String by project.extra
+		val kotlinVersion: String by project
+		val kotlinSerializationVersion: String by project
+		val kotlinCoroutinesVersion: String by project
+		val kotlinLanguageVersion: String by project
 
 		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")

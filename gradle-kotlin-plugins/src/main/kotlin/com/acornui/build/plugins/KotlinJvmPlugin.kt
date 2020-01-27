@@ -35,10 +35,10 @@ open class KotlinJvmPlugin : Plugin<Project> {
 	companion object {
 
 		fun configure(project: Project) {
-			val kotlinVersion: String by project.extra
-			val kotlinJvmTarget: String by project.extra
-			val kotlinSerializationVersion: String by project.extra
-			val kotlinCoroutinesVersion: String by project.extra
+			val kotlinVersion: String by project
+			val kotlinJvmTarget: String by project
+			val kotlinSerializationVersion: String by project
+			val kotlinCoroutinesVersion: String by project
 
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				jvm {

@@ -34,9 +34,9 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 		fun configure(project: Project) {
 			project.extensions.configure<KotlinMultiplatformExtension> {
-				val kotlinVersion: String by project.extra
-				val kotlinSerializationVersion: String by project.extra
-				val kotlinCoroutinesVersion: String by project.extra
+				val kotlinVersion: String by project
+				val kotlinSerializationVersion: String by project
+				val kotlinCoroutinesVersion: String by project
 
 				js {
 					browser {

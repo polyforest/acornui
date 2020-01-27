@@ -62,9 +62,9 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					api("com.acornui:acornui-lwjgl-backend")
 
 					// FIXME: I have no idea why this can't be transient in lwjgl-backend
-					val lwjglVersion: String by target.extra
-					val jorbisVersion: String by target.extra
-					val jlayerVersion: String by target.extra
+					val lwjglVersion: String by target
+					val jorbisVersion: String by target
+					val jlayerVersion: String by target
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")

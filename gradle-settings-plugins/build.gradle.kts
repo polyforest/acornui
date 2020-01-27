@@ -50,8 +50,8 @@ dependencies {
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
 
-val kotlinLanguageVersion: String by project.extra
-val kotlinJvmTarget: String by project.extra
+val kotlinLanguageVersion: String by project
+val kotlinJvmTarget: String by project
 
 java {
 	withSourcesJar()

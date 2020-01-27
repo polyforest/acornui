@@ -28,13 +28,16 @@ class RootSettingsPlugin : Plugin<Settings> {
 		with(target) {
 			pluginManagement {
 				val acornVersion: String by settings
+				val githubToken: String by settings
+				val githubActor: String by settings
+
 				repositories {
 					mavenLocal()
 					maven {
 						url = URI("https://maven.pkg.github.com/polyforest/acornui")
 						credentials {
-							username = "anonymous"
-							password = "a1b92e4b7ff208be2b7f0f8524bb2a48566079f9"
+							username = githubActor
+							password = githubToken
 						}
 					}
 					gradlePluginPortal()

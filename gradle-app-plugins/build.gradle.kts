@@ -60,12 +60,13 @@ dependencies {
 	implementation(project(":gdx-font-processor"))
 
 	testImplementation(gradleKotlinDsl())
+	testImplementation(gradleTestKit())
 	testImplementation(kotlin("test", version = kotlinVersion))
 	testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
 
-val kotlinLanguageVersion: String by project.extra
-val kotlinJvmTarget: String by project.extra
+val kotlinLanguageVersion: String by project
+val kotlinJvmTarget: String by project
 
 java {
 	withSourcesJar()
@@ -109,5 +110,14 @@ gradlePlugin {
 tasks.named<ProcessResources>("processResources").configure {
 	filesMatching("acornDependencies.txt") {
 		expand(project.properties)
+	}
+}
+
+tasks.named<ProcessResources>("processTestResources").configure {
+	filesMatching("**/gradle.properties") {
+		expand(project.properties)
+	}
+	doLast {
+		println("**** WAT")
 	}
 }
