@@ -105,7 +105,9 @@ for (taskName in listOf("publish", "publishToMavenLocal")) {
 		dir = file("skins")
 		tasks = listOf("build", taskName)
 		buildName = "${taskName}Skins"
-		startParameter.projectProperties = mapOf("version" to version.toString())
+		val githubActor: String by project
+		val githubToken: String by project
+		startParameter.projectProperties = mapOf("version" to version.toString(), "githubActor" to githubActor, "githubToken" to githubToken)
 	}
 	tasks.named(taskName) {
 		dependsOn(skinTask)

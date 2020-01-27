@@ -28,4 +28,4 @@ jobs:
           NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
           echo "New version: ${NEW_VERSION}"
           echo "Github username: ${GITHUB_ACTOR}"
-          ./gradlew publish -Pversion=${NEW_VERSION} -PgithubToken=${{ secrets.GITHUB_PUBLISH_TOKEN }} -PgithubActor=${{ github.actor }}
+          ./gradlew publish -Pversion=${NEW_VERSION} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
