@@ -24,8 +24,9 @@ jobs:
         # The GITHUB_REF tag comes in the format 'refs/tags/xxx'.
         # If we split on '/' and take the 3rd value,
         # we can get the release name.
+        # | tail -c +2 to remove the leading 'v'
         run: |
-          NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
+          NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3 | tail -c +2)
           echo "New version: ${NEW_VERSION}"
           echo "Github username: ${GITHUB_ACTOR}"
           ./gradlew publish -Pversion=${NEW_VERSION} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
