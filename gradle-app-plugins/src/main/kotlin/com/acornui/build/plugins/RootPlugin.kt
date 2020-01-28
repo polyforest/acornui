@@ -7,9 +7,9 @@ import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.repositories
+import java.net.URI
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -24,7 +24,7 @@ class RootPlugin : Plugin<Project> {
 
 		target.preventSnapshotDependencyCaching()
 
-//		target.pluginManager.apply("org.jetbrains.dokka")
+		target.pluginManager.apply("org.jetbrains.dokka")
 
 		val acornLibraries = listOf("utils", "core", "game", "spine", "test-utils", "lwjgl-backend", "webgl-backend").map { ":acornui-$it" }
 		if (isComposite) {
@@ -40,7 +40,8 @@ class RootPlugin : Plugin<Project> {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
 				mavenLocal()
-				maven("https://maven.pkg.github.com/polyforest/acornui") {
+				maven {
+					url = URI("https://maven.pkg.github.com/polyforest/acornui")
 					credentials {
 						username = githubActor
 						password = githubToken
@@ -48,7 +49,9 @@ class RootPlugin : Plugin<Project> {
 				}
 				gradlePluginPortal()
 				jcenter()
-				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+				maven {
+					url = URI("https://dl.bintray.com/kotlin/kotlin-eap/")
+				}
 			}
 
 			project.configurations.configureEach {

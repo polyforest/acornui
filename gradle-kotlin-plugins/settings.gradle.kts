@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Poly Forest, LLC
+ * Copyright 2019 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = "acornui-skins"
-
 pluginManagement {
-	val version: String by settings
-	val githubToken: String by settings
-	val githubActor: String by settings
+	val kotlinVersion: String by settings
 	repositories {
 		mavenLocal()
-		maven {
-			url = uri("https://maven.pkg.github.com/polyforest/acornui")
-			credentials {
-				username = githubActor
-				password = githubToken
-			}
-		}
 		gradlePluginPortal()
+
 		maven {
 			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 		}
@@ -37,11 +27,21 @@ pluginManagement {
 	resolutionStrategy {
 		eachPlugin {
 			when {
-				requested.id.namespace == "com.acornui" ->
-					useVersion(version)
+				requested.id.namespace == "org.jetbrains.kotlin" ->
+					useVersion(kotlinVersion)
+			}
+		}
+	}
+	buildscript {
+		dependencies {
+			classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+		}
+		repositories {
+			mavenLocal()
+			gradlePluginPortal()
+			maven {
+				url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
 			}
 		}
 	}
 }
-
-include("basic")

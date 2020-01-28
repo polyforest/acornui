@@ -22,7 +22,9 @@ pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
-		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+		maven {
+			url = uri("https://dl.bintray.com/kotlin/kotlin-eap")
+		}
 	}
 	resolutionStrategy {
 		eachPlugin {
@@ -37,9 +39,13 @@ pluginManagement {
 
 enableFeaturePreview("GRADLE_METADATA")
 
-include("gradle-kotlin-plugins", "gradle-settings-plugins")
-include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
+includeBuild("gradle-kotlin-plugins") {
+	dependencySubstitution {
+		substitute(module("com.acornui:gradle-kotlin-plugins")).with(project(":"))
+	}
+}
 
+include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
 listOf("lwjgl", "webgl").forEach { backend ->
 	val name = ":acornui-$backend-backend"
 	include(name)
