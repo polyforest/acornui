@@ -25,7 +25,6 @@ plugins {
     `java-gradle-plugin`
     kotlin("jvm")
 }
-
 apply(plugin = "kotlin-sam-with-receiver")
 
 samWithReceiver {
@@ -41,14 +40,6 @@ project.group = group
 
 logger.lifecycle("Kotlin plugins $group:$name:$version")
 
-repositories {
-    jcenter()
-    gradlePluginPortal()
-    maven {
-        url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-    }
-}
-
 val kotlinVersion: String by project
 val dokkaVersion: String by project
 
@@ -58,7 +49,7 @@ dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
     implementation(kotlin("gradle-plugin-api", version = kotlinVersion))
     implementation(kotlin("serialization", version = kotlinVersion))
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+//    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
     testImplementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
@@ -87,8 +78,7 @@ javax {
 
 publishing {
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/polyforest/acornui")
+        maven("https://maven.pkg.github.com/polyforest/acornui") {
             credentials {
                 username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
                 password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -116,12 +106,6 @@ gradlePlugin {
             implementationClass = "com.acornui.build.plugins.KotlinJsPlugin"
             displayName = "Kotlin js configuration for Acorn UI"
             description = "Configures a project for Kotlin multi-platform builds using the JS target."
-        }
-        create("root-settings") {
-            id = "com.acornui.root-settings"
-            implementationClass = "com.acornui.build.plugins.RootSettingsPlugin"
-            displayName = "Settings configuration for an acorn ui project."
-            description = "Configuration of root settings for an Acorn UI application."
         }
     }
 }

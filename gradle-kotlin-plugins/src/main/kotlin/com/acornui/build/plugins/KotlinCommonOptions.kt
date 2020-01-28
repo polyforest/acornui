@@ -30,6 +30,7 @@ object KotlinCommonOptions {
 		val kotlinCoroutinesVersion: String by project
 		val kotlinLanguageVersion: String by project
 
+//		project.pluginManager.apply("org.jetbrains.dokka")
 		project.pluginManager.apply("org.jetbrains.kotlin.multiplatform")
 		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
@@ -69,19 +70,6 @@ object KotlinCommonOptions {
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
 				}
-
-				// This will be very different in upcoming dokka 0.10.0
-//				project.rootProject.tasks.maybeNamed<DokkaTask>("dokka") {
-//					impliedPlatforms = mutableListOf("Common")
-//					commonMain.kotlin.srcDirs.forEach { srcDir ->
-//						if (srcDir.exists()) {
-//							this.sourceRoot {
-//								path = srcDir.path
-//								platforms = mutableListOf("Common")
-//							}
-//						}
-//					}
-//				}
 			}
 		}
 	}

@@ -18,8 +18,6 @@ plugins {
 	base
 	idea
 	`maven-publish`
-	id("org.jetbrains.dokka")
-	//id("com.acornui.kotlin-mpp") apply false
 
 	// Necessary to avoid the warning:
 	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
@@ -27,11 +25,31 @@ plugins {
 	kotlin("jvm") apply false
 	kotlin("js") apply false
 	kotlin("multiplatform") apply false
+
+//	id("org.jetbrains.dokka")
 }
 
 buildscript {
+	val kotlinVersion: String by project
 	dependencies {
 		classpath("com.acornui:gradle-kotlin-plugins:$version")
+		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+	}
+}
+
+val kotlinVersion: String by project
+allprojects {
+	configurations.configureEach {
+		resolutionStrategy {
+			dependencySubstitution.all {
+				val requested = requested
+				if (requested is ModuleComponentSelector) {
+					if (requested.group == "org.jetbrains.kotlin") {
+						useTarget("${requested.group}:${requested.module}:$kotlinVersion")
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -42,15 +60,12 @@ subprojects {
 		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 
 	publishing {
 		repositories {
-			maven {
-				url = uri("https://maven.pkg.github.com/polyforest/acornui")
+			maven("https://maven.pkg.github.com/polyforest/acornui") {
 				credentials {
 					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
 					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -74,28 +89,6 @@ subprojects {
 	}
 }
 
-tasks {
-	dokka {
-		outputDirectory = "${project.buildDir}/dokka/$version"
-		reportUndocumented = false
-		kotlinTasks {
-			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-			emptyList()
-		}
-	}
-}
-
-// All tasks depend on the common kotlin plugins
-tasks.configureEach {
-	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publishToMavenLocal"))
-}
-
-for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
-	tasks.named(taskName) {
-		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
-	}
-}
-
 // Publish skins when this project is published.
 for (taskName in listOf("publish", "publishToMavenLocal")) {
 	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
@@ -113,4 +106,3 @@ for (taskName in listOf("publish", "publishToMavenLocal")) {
 		dependsOn(skinTask)
 	}
 }
-

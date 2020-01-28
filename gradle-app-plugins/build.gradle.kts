@@ -50,7 +50,7 @@ dependencies {
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+//	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
 	implementation("com.acornui:gradle-kotlin-plugins:$version")
 	implementation(project(":acornui-utils"))

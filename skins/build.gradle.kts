@@ -18,7 +18,6 @@
 
 import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
 import com.acornui.build.util.delegateLifecycleTasksToSubProjects
-import org.gradle.kotlin.dsl.java as javaExt // KT-35888
 
 plugins {
 	id("org.gradle.java")
@@ -60,8 +59,7 @@ subprojects {
 
 	publishing {
 		repositories {
-			maven {
-				url = uri("https://maven.pkg.github.com/polyforest/acornui")
+			maven("https://maven.pkg.github.com/polyforest/acornui") {
 				credentials {
 					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
 					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -76,5 +74,3 @@ subprojects {
 		}
 	}
 }
-
-extra

@@ -22,17 +22,14 @@ pluginManagement {
 	val githubActor: String by settings
 	repositories {
 		mavenLocal()
-		maven {
-			url = uri("https://maven.pkg.github.com/polyforest/acornui")
+		maven("https://maven.pkg.github.com/polyforest/acornui") {
 			credentials {
 				username = githubActor
 				password = githubToken
 			}
 		}
 		gradlePluginPortal()
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 	resolutionStrategy {
 		eachPlugin {

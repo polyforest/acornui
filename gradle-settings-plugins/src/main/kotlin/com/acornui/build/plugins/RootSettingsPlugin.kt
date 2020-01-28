@@ -18,6 +18,7 @@ package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
+import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
 import java.net.URI
@@ -32,9 +33,7 @@ class RootSettingsPlugin : Plugin<Settings> {
 				val githubActor: String by settings
 
 				repositories {
-					mavenLocal()
-					maven {
-						url = URI("https://maven.pkg.github.com/polyforest/acornui")
+					maven("https://maven.pkg.github.com/polyforest/acornui") {
 						credentials {
 							username = githubActor
 							password = githubToken
@@ -42,9 +41,8 @@ class RootSettingsPlugin : Plugin<Settings> {
 					}
 					gradlePluginPortal()
 					jcenter()
-					maven {
-						url = URI("https://dl.bintray.com/kotlin/kotlin-eap/")
-					}
+					maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+					mavenLocal()
 				}
 				resolutionStrategy {
 					eachPlugin {
