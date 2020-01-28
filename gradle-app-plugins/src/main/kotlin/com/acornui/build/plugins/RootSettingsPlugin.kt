@@ -20,39 +20,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
-import java.net.URI
 
 class RootSettingsPlugin : Plugin<Settings> {
 
 	override fun apply(target: Settings) {
 		with(target) {
-			pluginManagement {
-				val acornVersion: String by settings
-				val githubToken: String by settings
-				val githubActor: String by settings
-
-				repositories {
-					mavenLocal()
-					maven("https://maven.pkg.github.com/polyforest/acornui") {
-						credentials {
-							username = githubActor
-							password = githubToken
-						}
-					}
-					gradlePluginPortal()
-					jcenter()
-					maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-				}
-				resolutionStrategy {
-					eachPlugin {
-						when {
-							requested.id.namespace == "com.acornui" ->
-								useVersion(acornVersion)
-						}
-					}
-				}
-			}
-
 			enableFeaturePreview("GRADLE_METADATA")
 
 			// Acorn composite project as sub-projects as a workaround to https://youtrack.jetbrains.com/issue/KT-30285

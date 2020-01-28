@@ -20,14 +20,14 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import java.util.*
 
 /**
- * Applies the dependency version properties set in acornDependencies.txt
+ * Applies the dependency version properties set in acorn.properties
  */
 object AcornDependencies {
 
 	private val props: Properties
 
 	init {
-		val iS = AcornDependencies::class.java.classLoader.getResourceAsStream("acornDependencies.txt")
+		val iS = javaClass.getResourceAsStream("/acorn.properties")
 		props = Properties()
 		props.load(iS)
 	}

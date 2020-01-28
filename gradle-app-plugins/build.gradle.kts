@@ -97,18 +97,23 @@ gradlePlugin {
 			displayName = "Root project plugin for an Acorn UI application."
 			description = "Configuration of a root project for an Acorn UI application."
 		}
-
 		create("app") {
 			id = "com.acornui.app"
 			implementationClass = "com.acornui.build.plugins.AcornUiApplicationPlugin"
 			displayName = "Acorn UI Multi-Platform Application"
 			description = "Configuration of an Acorn UI Application project. Plugin \"com.acornui.root\" should first be applied to the root project."
 		}
+		create("root-settings") {
+			id = "com.acornui.root-settings"
+			implementationClass = "com.acornui.build.plugins.RootSettingsPlugin"
+			displayName = "Settings configuration for an acorn ui project."
+			description = "Configuration of root settings for an Acorn UI application."
+		}
 	}
 }
 
 tasks.named<ProcessResources>("processResources").configure {
-	filesMatching("acornDependencies.txt") {
+	filesMatching("acorn.properties") {
 		expand(project.properties)
 	}
 }
@@ -116,8 +121,5 @@ tasks.named<ProcessResources>("processResources").configure {
 tasks.named<ProcessResources>("processTestResources").configure {
 	filesMatching("**/gradle.properties") {
 		expand(project.properties)
-	}
-	doLast {
-		println("**** WAT")
 	}
 }
