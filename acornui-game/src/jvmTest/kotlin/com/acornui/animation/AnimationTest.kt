@@ -24,7 +24,7 @@ class AnimationTest {
 
 	@Test
 	fun serialization() {
-		val bundle = jsonParse(AnimationBundle.serializer(), AnimationTest::class.java.getResource("/animation/animation.json").readText())
+		val bundle = jsonParse(AnimationBundle.serializer(), javaClass.getResource("/animation/animation.json").readText())
 		println(bundle)
 
 

@@ -81,7 +81,7 @@ class AcornTexturePackerTest {
 	}
 
 	@Test fun testPackBasic() = runTest {
-		val packTest1 = File(AcornTexturePackerTest::class.java.getResource("/packTest1").file)
+		val packTest1 = File(javaClass.getResource("/packTest1").file)
 		val out = packTest1.resolveSibling("packTest1_out")
 		out.deleteRecursively()
 

@@ -21,7 +21,6 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -38,8 +37,7 @@ class AcornUiApplicationPluginTest {
 
 		override fun before() {
 			super.before()
-			val projectDir = File("build/resources/test/basic-acorn-project/")
-			require(projectDir.exists()) { "Could not find directory: ${projectDir.absolutePath}"}
+			val projectDir = File(javaClass.getResource("/basic-acorn-project").file)
 			projectDir.copyRecursively(root, overwrite = true)
 		}
 	}
