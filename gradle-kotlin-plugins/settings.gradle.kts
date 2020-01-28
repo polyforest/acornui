@@ -17,8 +17,8 @@
 pluginManagement {
 	val kotlinVersion: String by settings
 	repositories {
-		mavenLocal()
 		gradlePluginPortal()
+		jcenter()
 		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 	resolutionStrategy {
@@ -34,8 +34,7 @@ pluginManagement {
 			classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
 		}
 		repositories {
-			mavenLocal()
-			gradlePluginPortal()
+			mavenCentral()
 			maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 		}
 	}

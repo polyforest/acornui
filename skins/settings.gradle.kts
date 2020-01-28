@@ -18,26 +18,16 @@ rootProject.name = "acornui-skins"
 
 pluginManagement {
 	val version: String by settings
-	val githubToken: String by settings
-	val githubActor: String by settings
 	repositories {
-		mavenLocal()
-		maven("https://maven.pkg.github.com/polyforest/acornui") {
-			credentials {
-				username = githubActor
-				password = githubToken
-			}
-		}
 		gradlePluginPortal()
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+		mavenCentral()
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+		mavenLocal()
 	}
 	resolutionStrategy {
 		eachPlugin {
 			when {
-				requested.id.namespace == "com.acornui" ->
-					useVersion(version)
+				requested.id.namespace == "com.acornui" -> useVersion(version)
 			}
 		}
 	}

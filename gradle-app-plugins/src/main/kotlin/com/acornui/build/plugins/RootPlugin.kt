@@ -10,7 +10,6 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.repositories
-import java.net.URI
 
 @Suppress("unused")
 class RootPlugin : Plugin<Project> {
@@ -18,8 +17,6 @@ class RootPlugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		val acornUiHome: String? by target
 		val acornVersion: String by target
-		val githubToken: String by target
-		val githubActor: String by target
 		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists() && !target.projectDir.startsWith(acornUiHome!!)
 		target.logger.lifecycle("isComposite=$isComposite")
 
@@ -40,16 +37,10 @@ class RootPlugin : Plugin<Project> {
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
-				mavenLocal()
-				maven("https://maven.pkg.github.com/polyforest/acornui") {
-					credentials {
-						username = githubActor
-						password = githubToken
-					}
-				}
-				gradlePluginPortal()
+				mavenCentral()
 				jcenter()
 				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+				mavenLocal()
 			}
 
 			project.configurations.configureEach {

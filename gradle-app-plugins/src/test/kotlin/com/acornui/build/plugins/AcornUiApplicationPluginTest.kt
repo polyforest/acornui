@@ -44,8 +44,6 @@ class AcornUiApplicationPluginTest {
 
 	@Test fun addsRunJvmTask() {
 		val project = ProjectBuilder.builder().build()
-		project.extra["githubActor"] = "test"
-		project.extra["githubToken"] = "test"
 		project.extra["acornVersion"] = "test"
 		project.pluginManager.apply("com.acornui.root")
 		project.pluginManager.apply("com.acornui.app")

@@ -18,3 +18,7 @@ plugins {
 	id("com.acornui.root")
 	id("com.acornui.app")
 }
+
+repositories {
+	maven("http://artifacts.acornui.com/mvn")
+}
