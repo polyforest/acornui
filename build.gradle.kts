@@ -42,15 +42,12 @@ subprojects {
 		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 
 	publishing {
 		repositories {
-			maven {
-				url = uri("https://maven.pkg.github.com/polyforest/acornui")
+			maven("https://maven.pkg.github.com/polyforest/acornui") {
 				credentials {
 					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
 					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")

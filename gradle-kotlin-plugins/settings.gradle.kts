@@ -19,10 +19,7 @@ pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
-
-		maven {
-			url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 	resolutionStrategy {
 		eachPlugin {
@@ -39,9 +36,7 @@ pluginManagement {
 		repositories {
 			mavenLocal()
 			gradlePluginPortal()
-			maven {
-				url = uri("https://dl.bintray.com/kotlin/kotlin-eap/")
-			}
+			maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 		}
 	}
 }
