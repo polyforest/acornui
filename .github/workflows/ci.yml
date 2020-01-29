@@ -52,4 +52,4 @@ jobs:
       - name: Publish artifacts
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: publish -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} -PsigningKey=${{ secrets.SIGNING_KEY }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
+          arguments: publish -PsigningKeyId=${{ secrets.SIGNING_ID }} -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} -PsigningKey=${{ secrets.SIGNING_KEY }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
