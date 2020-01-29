@@ -46,6 +46,7 @@ jobs:
         run: |
           echo "$SIGNING_KEY" > signingKey.asc
           gpg --import --batch --passphrase ${{secrets.SIGNING_PASSWORD}} signingKey.asc
+          export GPG_TTY=$(tty)
           ./gradlew publish -Psigning.gnupg.keyName=${{ secrets.SIGNING_KEY_ID }} -Psigning.gnupg.passphrase=${{ secrets.SIGNING_PASSWORD }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
         env:
           SIGNING_KEY: ${{secrets.SIGNING_KEY}}
