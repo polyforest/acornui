@@ -50,6 +50,9 @@ jobs:
         with:
           java-version: 8
       - name: Publish artifacts
-        uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: publish -PsigningKeyId=${{ secrets.SIGNING_ID }} -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} -PsigningKey=${{ secrets.SIGNING_KEY }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
+        run: |
+          echo "$SIGNING_KEY" > signingKey.asc
+          gpg --import --batch --passphrase ${{secrets.SIGNING_PASSWORD}} signingKey.asc
+          ./gradlew publish -Psigning.gnupg.keyName=${{ secrets.SIGNING_KEY_ID }} -Psigning.gnupg.passphrase=${{ secrets.SIGNING_PASSWORD }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
+        env:
+          SIGNING_KEY: ${{secrets.SIGNING_KEY}}
