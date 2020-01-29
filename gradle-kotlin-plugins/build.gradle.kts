@@ -20,12 +20,13 @@ import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.gradle.kotlin.dsl.java as javax
 
 plugins {
-    idea
-    `maven-publish`
-    `java-gradle-plugin`
     kotlin("jvm")
+    `java-gradle-plugin`
+    `maven-publish`
+    signing
 }
 
+apply(from = "../gradle/mavenPublish.gradle.kts")
 apply(plugin = "kotlin-sam-with-receiver")
 
 samWithReceiver {
@@ -59,7 +60,6 @@ dependencies {
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
     testImplementation(gradleKotlinDsl())
-    testImplementation(gradleTestKit())
     testImplementation(kotlin("test", version = kotlinVersion))
     testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
@@ -81,17 +81,6 @@ javax {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-publishing {
-    repositories {
-        maven("https://maven.pkg.github.com/polyforest/acornui") {
-            credentials {
-                username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
 }
 
 gradlePlugin {

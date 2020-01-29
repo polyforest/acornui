@@ -18,6 +18,7 @@ plugins {
 	base
 	idea
 	`maven-publish`
+	signing
 	id("org.jetbrains.dokka")
 	//id("com.acornui.kotlin-mpp") apply false
 
@@ -36,24 +37,15 @@ buildscript {
 }
 
 subprojects {
-	apply<MavenPublishPlugin>()
+//	apply<MavenPublishPlugin>()
+//	apply<SigningPlugin>()
+	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
 
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-	}
-
-	publishing {
-		repositories {
-			maven("https://maven.pkg.github.com/polyforest/acornui") {
-				credentials {
-					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
-					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
-				}
-			}
-		}
 	}
 
 	afterEvaluate {
@@ -71,16 +63,19 @@ subprojects {
 	}
 }
 
-tasks {
-	dokka {
-		outputDirectory = "${project.buildDir}/dokka/$version"
-		reportUndocumented = false
-		kotlinTasks {
-			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-			emptyList()
-		}
-	}
-}
+
+
+
+//tasks {
+//	dokka {
+//		outputDirectory = "${project.buildDir}/dokka/$version"
+//		reportUndocumented = false
+//		kotlinTasks {
+//			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+//			emptyList()
+//		}
+//	}
+//}
 
 // All tasks depend on the common kotlin plugins
 tasks.configureEach {

@@ -37,10 +37,15 @@ class RootPlugin : Plugin<Project> {
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
+				val acornVersion: String by extra
 				mavenCentral()
 				jcenter()
 				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-				mavenLocal()
+
+				if (acornVersion.endsWith("-SNAPSHOT")) {
+					maven("https://oss.sonatype.org/content/repositories/snapshots")
+					mavenLocal()
+				}
 			}
 
 			project.configurations.configureEach {

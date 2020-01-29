@@ -24,6 +24,7 @@ plugins {
 	id("org.gradle.java")
 	id("com.acornui.root")
 	id("com.acornui.app") apply false
+	signing
 	`maven-publish`
 }
 
@@ -33,9 +34,9 @@ allprojects {
 }
 
 subprojects {
+	apply(from = "$rootDir/../gradle/mavenPublish.gradle.kts")
 	extra["acornVersion"] = version
 	apply<JavaPlugin>()
-	apply<MavenPublishPlugin>()
 	version = rootProject.version
 
 	sourceSets {
@@ -59,15 +60,6 @@ subprojects {
 	delegateLifecycleTasksToSubProjects()
 
 	publishing {
-		repositories {
-			maven("https://maven.pkg.github.com/polyforest/acornui") {
-				credentials {
-					username = project.findProperty("githubActor") as String? ?: System.getenv("GITHUB_ACTOR")
-					password = project.findProperty("githubToken") as String? ?: System.getenv("GITHUB_TOKEN")
-				}
-			}
-		}
-
 		publications {
 			create<MavenPublication>("default") {
 				from(components["java"])

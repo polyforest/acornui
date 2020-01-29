@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 pluginManagement {
+	apply("$rootDir/../gradle/sharedSettings.gradle.kts")
 	val kotlinVersion: String by settings
 	repositories {
 		gradlePluginPortal()
@@ -29,13 +29,16 @@ pluginManagement {
 			}
 		}
 	}
-	buildscript {
-		dependencies {
-			classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
-		}
-		repositories {
-			mavenCentral()
-			maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
+}
+
+buildscript {
+	val kotlinVersion: String by settings
+	dependencies {
+		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+	}
+	repositories {
+		mavenCentral()
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 }
+
