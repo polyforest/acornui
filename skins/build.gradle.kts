@@ -28,14 +28,9 @@ plugins {
 	`maven-publish`
 }
 
-allprojects {
-	group = "com.acornui.skins"
-	logger.lifecycle("Skins version $group:$name:$version")
-}
-
 subprojects {
+	group = "com.acornui.skins"
 	apply(from = "$rootDir/../gradle/mavenPublish.gradle.kts")
-	extra["acornVersion"] = version
 	apply<JavaPlugin>()
 	version = rootProject.version
 
@@ -67,5 +62,3 @@ subprojects {
 		}
 	}
 }
-
-extra

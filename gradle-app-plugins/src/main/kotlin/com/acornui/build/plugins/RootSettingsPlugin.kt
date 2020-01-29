@@ -21,6 +21,7 @@ import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
 
+@Suppress("unused")
 class RootSettingsPlugin : Plugin<Settings> {
 
 	override fun apply(target: Settings) {

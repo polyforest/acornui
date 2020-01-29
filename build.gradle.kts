@@ -63,23 +63,14 @@ subprojects {
 	}
 }
 
-
-
-
-//tasks {
-//	dokka {
-//		outputDirectory = "${project.buildDir}/dokka/$version"
-//		reportUndocumented = false
-//		kotlinTasks {
-//			// dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-//			emptyList()
-//		}
-//	}
-//}
+val publishPluginsToMavenLocal = tasks.register("publishPluginsToMavenLocal") {
+	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publishToMavenLocal"))
+}
 
 // All tasks depend on the common kotlin plugins
 tasks.configureEach {
-	dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":publishToMavenLocal"))
+	if (name != "publishPluginsToMavenLocal")
+		dependsOn(publishPluginsToMavenLocal)
 }
 
 for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
@@ -97,12 +88,9 @@ for (taskName in listOf("publish", "publishToMavenLocal")) {
 		dir = file("skins")
 		tasks = listOf("build", taskName)
 		buildName = "${taskName}Skins"
-		val githubActor: String by project
-		val githubToken: String by project
-		startParameter.projectProperties = mapOf("version" to version.toString(), "githubActor" to githubActor, "githubToken" to githubToken)
+		startParameter.projectProperties = gradle.startParameter.projectProperties + mapOf("version" to version.toString(), "acornVersion" to version.toString())
 	}
 	tasks.named(taskName) {
 		dependsOn(skinTask)
 	}
 }
-

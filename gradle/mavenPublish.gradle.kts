@@ -35,8 +35,18 @@
 
 import groovy.util.Node
 
-apply<MavenPublishPlugin>()
+buildscript {
+	repositories {
+		maven("https://plugins.gradle.org/m2/")
+	}
+	dependencies {
+		classpath("de.marcphilipp.gradle:nexus-publish-plugin:0.3.0")
+	}
+}
+
+//apply<MavenPublishPlugin>()
 apply<SigningPlugin>()
+apply<de.marcphilipp.gradle.nexus.NexusPublishPlugin>()
 
 // Thanks: https://github.com/h0tk3y/k-new-mpp-samples/blob/master/publish-to-maven-central/build.gradle.kts
 
@@ -64,9 +74,6 @@ val Project.isSnapshot: Boolean
 	get() = version.toString().endsWith("-SNAPSHOT")
 
 the<PublishingExtension>().apply {
-	println("publishing extension ${project.name} ")
-
-
 	publications.withType<MavenPublication>().configureEach {
 		if (name == "kotlinMultiplatform") {
 			artifact(sourcesJar)
@@ -110,18 +117,6 @@ the<PublishingExtension>().apply {
 		if (!isSnapshot)
 			the<SigningExtension>().sign(this)
 	}
-
-	repositories {
-		val url = if (isSnapshot) "https://oss.sonatype.org/content/repositories/snapshots" else "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-		maven(url) {
-			credentials {
-				val ossrhUsername: String? by project
-				val ossrhPassword: String? by project
-				username = ossrhUsername
-				password = ossrhPassword
-			}
-		}
-	}
 }
 
 the<SigningExtension>().apply {
@@ -129,4 +124,16 @@ the<SigningExtension>().apply {
 	val signingKey: String? by project
 	val signingPassword: String? by project
 	useInMemoryPgpKeys(signingKey, signingPassword)
+}
+
+the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
+	clientTimeout.set(java.time.Duration.ofMinutes(20))
+	repositories {
+		sonatype {
+			val ossrhUsername: String? by project
+			val ossrhPassword: String? by project
+			username.set(ossrhUsername)
+			password.set(ossrhPassword)
+		}
+	}
 }

@@ -103,11 +103,5 @@ gradlePlugin {
             displayName = "Kotlin js configuration for Acorn UI"
             description = "Configures a project for Kotlin multi-platform builds using the JS target."
         }
-        create("root-settings") {
-            id = "com.acornui.root-settings"
-            implementationClass = "com.acornui.build.plugins.RootSettingsPlugin"
-            displayName = "Settings configuration for an acorn ui project."
-            description = "Configuration of root settings for an Acorn UI application."
-        }
     }
 }

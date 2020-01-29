@@ -17,6 +17,7 @@
 rootProject.name = "acornui-skins"
 
 pluginManagement {
+	apply("$rootDir/../gradle/sharedSettings.gradle.kts")
 	val version: String by settings
 	repositories {
 		gradlePluginPortal()

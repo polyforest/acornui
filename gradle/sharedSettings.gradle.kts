@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import java.util.*
 import org.gradle.kotlin.dsl.java as javaExt // KT-35888
 
 buildscript {
@@ -31,15 +32,15 @@ buildscript {
 			extra[key] = value
 	}
 	gradle.allprojects {
-		if (!extra.has("version"))
-			version = props["version"]!!
-		if (!extra.has("group"))
-			group = props["group"]!!
 		for (entry in props.entries) {
 			val key = entry.key.toString()
 			val value = entry.value.toString()
-			if (!extra.has(key))
+			if (!extra.has(key) && project.findProperty(key) == null)
 				extra[key] = value
 		}
+		if (version == Project.DEFAULT_VERSION)
+			version = props["version"]!!
+		if (group.toString().isEmpty())
+			group = props["group"]!!
 	}
 }
