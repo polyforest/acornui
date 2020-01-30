@@ -21,7 +21,7 @@ jobs:
         arguments: build -x jsBrowserTest --stacktrace
     - name: Upload Test Reports
       uses: actions/upload-artifact@v1
-      if: always() && "!contains(github.event.head_commit.message, 'skip-tests')"
+      if: always() && !contains(github.event.head_commit.message, 'skip-tests')
       with:
         name: test-reports-${{ matrix.os }}
         path: build/reports
