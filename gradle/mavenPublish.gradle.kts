@@ -128,14 +128,16 @@ the<SigningExtension>().apply {
 	useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 }
 
-//the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
-//	clientTimeout.set(java.time.Duration.ofMinutes(20))
-//	repositories {
-//		sonatype {
-//			val ossrhUsername: String? by project
-//			val ossrhPassword: String? by project
-//			username.set(ossrhUsername)
-//			password.set(ossrhPassword)
-//		}
-//	}
-//}
+the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
+	clientTimeout.set(java.time.Duration.ofMinutes(20))
+	repositories {
+		val ossrhUsername: String? by project
+		if (ossrhUsername != null) {
+			val ossrhPassword: String by project
+			sonatype {
+				username.set(ossrhUsername)
+				password.set(ossrhPassword)
+			}
+		}
+	}
+}

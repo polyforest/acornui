@@ -21,9 +21,10 @@ jobs:
         run: |
           NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3 | tail -c +2)
           echo "New version: ${NEW_VERSION}"
-          echo "$SIGNING_KEY" > signingKey.asc
-          gpg --import --batch --passphrase ${{secrets.SIGNING_PASSWORD}} signingKey.asc
-          export GPG_TTY=$(tty)
-          ./gradlew publish -Pversion=${NEW_VERSION} -Psigning.gnupg.keyName=${{ secrets.SIGNING_KEY_ID }} -Psigning.gnupg.passphrase=${{ secrets.SIGNING_PASSWORD }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
+          ./gradlew publish -Pversion=${NEW_VERSION} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }}
         env:
-          SIGNING_KEY: ${{secrets.SIGNING_KEY}}
+          ORG_GRADLE_PROJECT_ossrhUsername: ${{secrets.OSSRH_USERNAME}}
+          ORG_GRADLE_PROJECT_ossrhPassword: ${{secrets.OSSRH_PASSWORD}}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{secrets.SIGNING_KEY_ID}}
+          ORG_GRADLE_PROJECT_signingPassword: ${{secrets.SIGNING_PASSWORD}}
+          ORG_GRADLE_PROJECT_signingKey: ${{secrets.SIGNING_KEY}}
