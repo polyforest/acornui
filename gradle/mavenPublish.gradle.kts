@@ -35,6 +35,9 @@
 
 import groovy.util.Node
 import org.gradle.api.internal.artifacts.repositories.resolver.ExternalResourceResolver
+import de.marcphilipp.gradle.nexus.NexusPublishPlugin
+import de.marcphilipp.gradle.nexus.NexusPublishExtension
+import java.time.Duration
 
 buildscript {
 	repositories {
@@ -45,11 +48,49 @@ buildscript {
 	}
 }
 
-//apply<MavenPublishPlugin>()
-apply<SigningPlugin>()
-apply<de.marcphilipp.gradle.nexus.NexusPublishPlugin>()
-
 // Thanks: https://github.com/h0tk3y/k-new-mpp-samples/blob/master/publish-to-maven-central/build.gradle.kts
+
+// Configure signing and publishing extensions.
+
+val Project.isSnapshot: Boolean
+	get() = version.toString().endsWith("-SNAPSHOT")
+
+val signingKeyId: String? by project
+val signingKey: String? by project
+val signingPassword: String? by project
+val hasSigningProps = signingKeyId != null && signingKey != null && signingPassword != null
+
+val ossrhUsername: String? by project
+val ossrhPassword: String? by project
+
+if (ossrhUsername != null && ossrhPassword != null) {
+	if (!isSnapshot) require(hasSigningProps) { "Staged production releases must have signing credentials set. (signingKeyId, signingKey, and signingPassword)" }
+	apply<NexusPublishPlugin>()
+	the<NexusPublishExtension>().apply {
+		clientTimeout.set(Duration.ofMinutes(20))
+		repositories {
+			sonatype {
+				username.set(ossrhUsername)
+				password.set(ossrhPassword)
+			}
+		}
+	}
+} else {
+	apply<MavenPublishPlugin>()
+}
+
+if (hasSigningProps && !isSnapshot) {
+	apply<SigningPlugin>()
+	the<SigningExtension>().apply {
+		isRequired = true
+		useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+	}
+	the<PublishingExtension>().apply {
+		publications.withType<MavenPublication>().configureEach {
+			the<SigningExtension>().sign(this)
+		}
+	}
+}
 
 val javadocJar = tasks.findByName("javadocJar") ?: tasks.create("javadocJar", Jar::class) {
 	archiveClassifier.value("javadoc")
@@ -70,9 +111,6 @@ fun Node.add(key: String, value: String) {
 fun Node.node(key: String, content: Node.() -> Unit) {
 	appendNode(key).also(content)
 }
-
-val Project.isSnapshot: Boolean
-	get() = version.toString().endsWith("-SNAPSHOT")
 
 the<PublishingExtension>().apply {
 	require(ExternalResourceResolver.disableExtraChecksums()) { "Sonatype cannot handle extra checksums. "}
@@ -117,33 +155,6 @@ the<PublishingExtension>().apply {
 						add("name", "Nicholas Bilyk")
 					}
 				}
-			}
-		}
-		if (!isSnapshot)
-			the<SigningExtension>().sign(this)
-	}
-}
-
-val signingKeyId: String? by project
-if (signingKeyId != null) {
-	the<SigningExtension>().apply {
-		isRequired = !isSnapshot
-		val signingKey: String by project
-		val signingPassword: String by project
-
-		useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-	}
-}
-
-the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
-	clientTimeout.set(java.time.Duration.ofMinutes(20))
-	repositories {
-		val ossrhUsername: String? by project
-		if (ossrhUsername != null) {
-			val ossrhPassword: String by project
-			sonatype {
-				username.set(ossrhUsername)
-				password.set(ossrhPassword)
 			}
 		}
 	}

@@ -37,8 +37,6 @@ buildscript {
 }
 
 subprojects {
-//	apply<MavenPublishPlugin>()
-//	apply<SigningPlugin>()
 	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
 
 	repositories {
