@@ -34,6 +34,7 @@
 
 
 import groovy.util.Node
+import org.gradle.api.internal.artifacts.repositories.resolver.ExternalResourceResolver
 
 buildscript {
 	repositories {
@@ -74,6 +75,10 @@ val Project.isSnapshot: Boolean
 	get() = version.toString().endsWith("-SNAPSHOT")
 
 the<PublishingExtension>().apply {
+	require(ExternalResourceResolver.disableExtraChecksums()) { "Sonatype cannot handle extra checksums. "}
+	repositories {
+		maven("D:\\Projects\\acornui\\build\\publications")
+	}
 	publications.withType<MavenPublication>().configureEach {
 		if (name == "kotlinMultiplatform") {
 			artifact(sourcesJar)
