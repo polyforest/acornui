@@ -2,30 +2,30 @@ name: CI
 
 on: push
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Setup Java
-      uses: actions/setup-java@v1
-      with:
-        java-version: 8
-    - name: Build
-      uses: eskatos/gradle-command-action@v1
-      with:
-        arguments: build -x jsBrowserTest --stacktrace
-    - name: Upload Test Reports
-      uses: actions/upload-artifact@v1
-      if: always()
-      with:
-        name: test-reports-${{ matrix.os }}
-        path: build/reports
+#  build:
+#    strategy:
+#      matrix:
+#        os: [ubuntu-latest, macos-latest, windows-latest]
+#    runs-on: ${{ matrix.os }}
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v1
+#    - name: Setup Java
+#      uses: actions/setup-java@v1
+#      with:
+#        java-version: 8
+#    - name: Build
+#      uses: eskatos/gradle-command-action@v1
+#      with:
+#        arguments: build -x jsBrowserTest --stacktrace
+#    - name: Upload Test Reports
+#      uses: actions/upload-artifact@v1
+#      if: always()
+#      with:
+#        name: test-reports-${{ matrix.os }}
+#        path: build/reports
   publish:
-    needs: build
+#    needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -44,9 +44,8 @@ jobs:
           java-version: 8
       - name: Publish artifacts
         run: |
-          echo "$SIGNING_KEY" > signingKey.asc
-          gpg --import --batch --passphrase ${{secrets.SIGNING_PASSWORD}} signingKey.asc
-          export GPG_TTY=$(tty)
-          ./gradlew publish -Psigning.gnupg.keyName=${{ secrets.SIGNING_KEY_ID }} -Psigning.gnupg.passphrase=${{ secrets.SIGNING_PASSWORD }} -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
+          ./gradlew publish -PossrhUsername=${{ secrets.OSSRH_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} -PgithubToken=${{ github.token }} -PgithubActor=${{ github.actor }}
         env:
-          SIGNING_KEY: ${{secrets.SIGNING_KEY}}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{secrets.SIGNING_KEY_ID}}
+          ORG_GRADLE_PROJECT_signingPassword: ${{secrets.SIGNING_PASSWORD}}
+          ORG_GRADLE_PROJECT_signingKey: ${{secrets.SIGNING_KEY}}

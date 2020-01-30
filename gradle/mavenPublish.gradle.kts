@@ -121,17 +121,21 @@ the<PublishingExtension>().apply {
 
 the<SigningExtension>().apply {
 	isRequired = !isSnapshot
-	useGpgCmd()
+
+	val signingKeyId: String by project
+	val signingKey: String by project
+	val signingPassword: String by project
+	useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 }
 
-the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
-	clientTimeout.set(java.time.Duration.ofMinutes(20))
-	repositories {
-		sonatype {
-			val ossrhUsername: String? by project
-			val ossrhPassword: String? by project
-			username.set(ossrhUsername)
-			password.set(ossrhPassword)
-		}
-	}
-}
+//the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
+//	clientTimeout.set(java.time.Duration.ofMinutes(20))
+//	repositories {
+//		sonatype {
+//			val ossrhUsername: String? by project
+//			val ossrhPassword: String? by project
+//			username.set(ossrhUsername)
+//			password.set(ossrhPassword)
+//		}
+//	}
+//}
