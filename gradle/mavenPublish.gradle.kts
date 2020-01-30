@@ -114,9 +114,6 @@ fun Node.node(key: String, content: Node.() -> Unit) {
 
 the<PublishingExtension>().apply {
 	require(ExternalResourceResolver.disableExtraChecksums()) { "Sonatype cannot handle extra checksums. "}
-	repositories {
-		maven("D:\\Projects\\acornui\\build\\publications")
-	}
 	publications.withType<MavenPublication>().configureEach {
 		if (name == "kotlinMultiplatform") {
 			artifact(sourcesJar)
