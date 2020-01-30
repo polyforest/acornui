@@ -119,13 +119,15 @@ the<PublishingExtension>().apply {
 	}
 }
 
-the<SigningExtension>().apply {
-	isRequired = !isSnapshot
+val signingKeyId: String? by project
+if (signingKeyId != null) {
+	the<SigningExtension>().apply {
+		isRequired = !isSnapshot
+		val signingKey: String by project
+		val signingPassword: String by project
 
-	val signingKeyId: String by project
-	val signingKey: String by project
-	val signingPassword: String by project
-	useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+		useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+	}
 }
 
 the<de.marcphilipp.gradle.nexus.NexusPublishExtension>().apply {
