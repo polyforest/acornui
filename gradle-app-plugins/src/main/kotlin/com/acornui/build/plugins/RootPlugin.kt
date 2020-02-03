@@ -15,29 +15,12 @@ import org.gradle.kotlin.dsl.repositories
 class RootPlugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
-		val acornUiHome: String? by target
 		val acornVersion: String by target
-		val isComposite = acornUiHome != null && target.file(acornUiHome!!).exists() && !target.projectDir.startsWith(acornUiHome!!)
-		target.logger.lifecycle("isComposite=$isComposite")
-
 		target.preventSnapshotDependencyCaching()
-
-		target.pluginManager.apply("org.jetbrains.dokka")
-
-		val acornLibraries = listOf("utils", "core", "game", "spine", "test-utils", "lwjgl-backend", "webgl-backend").map { ":acornui-$it" }
-		if (isComposite) {
-			acornLibraries.forEach { id ->
-				target.findProject(id)?.let { foundProject ->
-					foundProject.group = "com.acornui"
-					foundProject.buildDir = target.rootProject.buildDir.resolve("acornui/${foundProject.name}")
-				}
-			}
-		}
 
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
-				val acornVersion: String by extra
 				mavenCentral()
 				jcenter()
 				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
@@ -50,21 +33,9 @@ class RootPlugin : Plugin<Project> {
 
 			project.configurations.configureEach {
 				resolutionStrategy {
-					// A workaround to composite builds not working - https://youtrack.jetbrains.com/issue/KT-30285
-					if (isComposite) {
-						dependencySubstitution {
-							acornLibraries.forEach { id ->
-								if (findProject(id) != null) {
-									substitute(module("com.acornui$id")).with(project(id))
-								}
-							}
-						}
-					}
 					eachDependency {
 						when {
-							requested.group.startsWith("com.acornui") -> {
-								useVersion(acornVersion)
-							}
+							requested.group.startsWith("com.acornui") -> useVersion(acornVersion)
 						}
 					}
 				}

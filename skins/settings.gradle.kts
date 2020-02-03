@@ -19,19 +19,28 @@ rootProject.name = "acornui-skins"
 pluginManagement {
 	apply("$rootDir/../gradle/sharedSettings.gradle.kts")
 	val version: String by settings
-	repositories {
-		gradlePluginPortal()
-		mavenCentral()
-		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-		mavenLocal()
+	gradle.allprojects {
+		extra["acornVersion"] = version
 	}
 	resolutionStrategy {
 		eachPlugin {
 			when {
-				requested.id.namespace == "com.acornui" -> useVersion(version)
+				requested.id.namespace == "com.acornui" ->
+					useVersion(version)
 			}
 		}
 	}
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		jcenter()
+		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+		if (version.endsWith("-SNAPSHOT")) {
+			maven("https://oss.sonatype.org/content/repositories/snapshots")
+			mavenLocal()
+		}
+	}
 }
+
 
 include("basic")

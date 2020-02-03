@@ -50,7 +50,7 @@ dependencies {
 	implementation(kotlin("gradle-plugin", version = kotlinVersion))
 	implementation(kotlin("serialization", version = kotlinVersion))
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+//	implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
 	implementation("com.acornui:gradle-kotlin-plugins:$version")
 	implementation(project(":acornui-utils"))
@@ -102,12 +102,6 @@ gradlePlugin {
 			implementationClass = "com.acornui.build.plugins.AcornUiApplicationPlugin"
 			displayName = "Acorn UI Multi-Platform Application"
 			description = "Configuration of an Acorn UI Application project. Plugin \"com.acornui.root\" should first be applied to the root project."
-		}
-		create("root-settings") {
-			id = "com.acornui.root-settings"
-			implementationClass = "com.acornui.build.plugins.RootSettingsPlugin"
-			displayName = "Settings configuration for an acorn ui project."
-			description = "Configuration of root settings for an Acorn UI application."
 		}
 	}
 }

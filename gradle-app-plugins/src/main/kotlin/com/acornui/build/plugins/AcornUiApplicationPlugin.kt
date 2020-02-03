@@ -52,8 +52,8 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val commonMain by getting {
 				dependencies {
-					implementation("com.acornui:acornui-core")
 					implementation("com.acornui:acornui-utils")
+					implementation("com.acornui:acornui-core")
 				}
 			}
 

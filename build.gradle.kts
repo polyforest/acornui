@@ -19,7 +19,7 @@ plugins {
 	idea
 	`maven-publish`
 	signing
-	id("org.jetbrains.dokka")
+//	id("org.jetbrains.dokka")
 	//id("com.acornui.kotlin-mpp") apply false
 
 	// Necessary to avoid the warning:
@@ -40,10 +40,10 @@ subprojects {
 	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
 
 	repositories {
-		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+		mavenLocal()
 	}
 
 	afterEvaluate {
@@ -79,7 +79,8 @@ for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 
 // Publish skins when this project is published.
 for (taskName in listOf("publish", "publishToMavenLocal")) {
-	val skinTask = tasks.register<GradleBuild>("${taskName}Skins") {
+	val skinTask = tasks.register<GradleBuild>("publishSkins${taskName.removePrefix("publish")}") {
+		group = "publishing"
 		subprojects.forEach {
 			dependsOn(":${it.path}:publishToMavenLocal")
 		}

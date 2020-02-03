@@ -57,7 +57,7 @@ dependencies {
     implementation(kotlin("gradle-plugin", version = kotlinVersion))
     implementation(kotlin("gradle-plugin-api", version = kotlinVersion))
     implementation(kotlin("serialization", version = kotlinVersion))
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
+//    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
 
     testImplementation(gradleKotlinDsl())
     testImplementation(kotlin("test", version = kotlinVersion))

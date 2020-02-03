@@ -29,7 +29,7 @@ pluginManagement {
 			val id = requested.id
 			when {
 				id.namespace == "org.jetbrains.kotlin" -> useVersion(kotlinVersion)
-				id.id == "org.jetbrains.dokka" -> useVersion(dokkaVersion)
+//				id.id == "org.jetbrains.dokka" -> useVersion(dokkaVersion)
 			}
 		}
 	}

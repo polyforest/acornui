@@ -22,8 +22,8 @@ kotlin {
     sourceSets {
         named("jsMain") {
             dependencies {
-                implementation(project(":acornui-core"))
                 implementation(project(":acornui-utils"))
+                implementation(project(":acornui-core"))
             }
         }
     }

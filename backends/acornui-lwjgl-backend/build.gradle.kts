@@ -22,8 +22,8 @@ kotlin {
 	sourceSets {
 		named("jvmMain") {
 			dependencies {
-				implementation(project(":acornui-core"))
 				implementation(project(":acornui-utils"))
+				implementation(project(":acornui-core"))
 
 				val lwjglVersion: String by project
 				val jorbisVersion: String by project

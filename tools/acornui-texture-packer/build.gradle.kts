@@ -22,8 +22,8 @@ kotlin {
 	sourceSets {
 		commonMain {
 			dependencies {
-				implementation(project(":acornui-core"))
 				implementation(project(":acornui-utils"))
+				implementation(project(":acornui-core"))
 			}
 		}
 		commonTest {
