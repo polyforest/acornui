@@ -20,6 +20,7 @@ package com.acornui.test
 
 import com.acornui.closeTo
 import com.acornui.collection.toList
+import com.acornui.math.RectangleRo
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3Ro
 import com.acornui.time.nanoElapsed
@@ -229,6 +230,13 @@ fun assertClose(expected: Vector3Ro, actual: Vector3Ro, maxDifference: Float = 0
 fun assertClose(expected: Vector2Ro, actual: Vector2Ro, maxDifference: Float = 0.0001f) {
 	assertClose(expected.x, actual.x, maxDifference, "x")
 	assertClose(expected.y, actual.y, maxDifference, "y")
+}
+
+fun assertClose(expected: RectangleRo, actual: RectangleRo, maxDifference: Float = 0.0001f) {
+	assertClose(expected.x, actual.x, maxDifference, "x")
+	assertClose(expected.y, actual.y, maxDifference, "y")
+	assertClose(expected.width, actual.width, maxDifference, "width")
+	assertClose(expected.height, actual.height, maxDifference, "height")
 }
 
 fun <T: Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {

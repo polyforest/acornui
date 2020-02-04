@@ -16,47 +16,84 @@
 
 package com.acornui.headless
 
+import com.acornui.WindowConfig
 import com.acornui.browser.Location
 import com.acornui.graphic.Window
-import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal1
-import com.acornui.signal.emptySignal
+import com.acornui.signal.*
 
 /**
  * HeadlessWindow is used for testing and headless applications.  It mocks everything except for close/closing logic.
  */
-class HeadlessWindow : Window {
+class HeadlessWindow(config: WindowConfig) : Window {
 
 	private val _closeRequested = Signal1<Cancel>()
 	override val closeRequested: Signal<(Cancel) -> Unit> = _closeRequested.asRo()
-	override val isActiveChanged: Signal<(Boolean) -> Unit> = emptySignal()
-	override val isActive: Boolean = false
-	override val isVisibleChanged: Signal<(Boolean) -> Unit> = emptySignal()
-	override val isVisible: Boolean = false
-	override val sizeChanged: Signal<(Float, Float) -> Unit> = emptySignal()
-	override val scaleChanged: Signal<(Float, Float) -> Unit> = emptySignal()
+	private val _isActiveChanged = Signal1<Boolean>()
+	override val isActiveChanged = _isActiveChanged.asRo()
+	override var isActive: Boolean = false
+		set(value) {
+			field = value
+			_isActiveChanged.dispatch(value)
+		}
+
+	private val _isVisibleChanged = Signal1<Boolean>()
+	override val isVisibleChanged = _isVisibleChanged.asRo()
+	override var isVisible: Boolean = false
+		set(value) {
+			field = value
+			_isVisibleChanged.dispatch(value)
+		}
+
+	private val _sizeChanged = Signal2<Float, Float>()
+	override val sizeChanged = _sizeChanged.asRo()
+
+	private val _scaleChanged = Signal2<Float, Float>()
+	override val scaleChanged = _scaleChanged.asRo()
+
 	override val refresh: Signal<() -> Unit> = emptySignal()
-	override val width: Float = 1000f
-	override val height: Float = 1000f
-	override val framebufferWidth: Int = 0
-	override val framebufferHeight: Int = 0
-	override val scaleX: Float = 1f
-	override val scaleY: Float = 1f
+
+	override var width: Float = config.initialWidth
+		private set
+
+	override var height: Float = config.initialHeight
+		private set
+
+	override val framebufferWidth: Int = config.initialWidth.toInt()
+	override val framebufferHeight: Int = config.initialHeight.toInt()
+
+	override var scaleX: Float = 1f
+		private set
+
+	override var scaleY: Float = 1f
+		private set
 
 	private val closeCancel = Cancel()
 	private var closeIsRequested = false
 
 	override fun setSize(width: Float, height: Float) {
+		this.width = width
+		this.height = height
+		_sizeChanged.dispatch(width, height)
 	}
 
+	fun setScale(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+		_scaleChanged.dispatch(scaleX, scaleY)
+		_sizeChanged.dispatch(width, height)
+	}
+
+	private var renderRequested = false
 	override var continuousRendering: Boolean = false
 
 	override fun shouldRender(clearRenderRequest: Boolean): Boolean {
-		return false
+		val shouldRender = continuousRendering || renderRequested
+		if (clearRenderRequest && renderRequested) renderRequested = false
+		return shouldRender
 	}
 
 	override fun requestRender() {
+		renderRequested = true
 	}
 
 	override fun renderBegin() {
@@ -86,5 +123,9 @@ class HeadlessWindow : Window {
 
 	override fun dispose() {
 		_closeRequested.dispose()
+		_isActiveChanged.dispose()
+		_sizeChanged.dispose()
+		_scaleChanged.dispose()
+		_isVisibleChanged.dispose()
 	}
 }

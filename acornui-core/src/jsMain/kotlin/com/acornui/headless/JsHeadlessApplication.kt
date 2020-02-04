@@ -25,6 +25,6 @@ class JsHeadlessApplication : JsApplicationBase() {
 	/**
 	 * Creates an injector with JS dependencies from the bootstrap, and mock dependencies for input and graphics.
 	 */
-	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(), bootstrap.dependenciesList())
+	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(config()), bootstrap.dependenciesList())
 	
 }

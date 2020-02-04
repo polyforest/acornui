@@ -80,7 +80,7 @@ class GlfwWindowImpl(
 	// https://github.com/glfw/glfw/issues/677
 
 	private val _glfwWindowSizeChanged = Signal2<Int, Int>()
-	val glfwWindowSizeChanged = _scaleChanged.asRo()
+	val glfwWindowSizeChanged = _glfwWindowSizeChanged.asRo()
 
 	var glfwWindowWidth: Int = 0
 		private set
@@ -202,6 +202,7 @@ class GlfwWindowImpl(
 			glfwWindowHeight = height
 			_glfwWindowSizeChanged.dispatch(width, height)
 		}
+
 		val windowW = IntArray(1)
 		val windowH = IntArray(1)
 		glfwGetWindowSize(windowId, windowW, windowH)
@@ -272,17 +273,16 @@ class GlfwWindowImpl(
 	}
 
 	override var continuousRendering: Boolean = false
-	private var _renderRequested: Boolean = true
+	private var renderRequested: Boolean = true
 
 	override fun shouldRender(clearRenderRequest: Boolean): Boolean {
-		val shouldRender = continuousRendering || _renderRequested
-		if (clearRenderRequest && _renderRequested) _renderRequested = false
+		val shouldRender = continuousRendering || renderRequested
+		if (clearRenderRequest && renderRequested) renderRequested = false
 		return shouldRender
 	}
 
 	override fun requestRender() {
-		if (_renderRequested) return
-		_renderRequested = true
+		renderRequested = true
 	}
 
 	override fun renderBegin() {

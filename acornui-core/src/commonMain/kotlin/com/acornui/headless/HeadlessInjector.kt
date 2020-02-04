@@ -16,6 +16,7 @@
 
 package com.acornui.headless
 
+import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.di.*
 import com.acornui.focus.FocusManager
@@ -26,16 +27,11 @@ import com.acornui.io.byteBuffer
 
 object HeadlessInjector {
 
-	val owner: Owned by lazy { OwnedImpl(injector = create()) }
+	val owner: Owned by lazy { OwnedImpl(injector = create(AppConfig())) }
 
-	@Deprecated("", ReplaceWith("owner"))
-	fun createOwner(): Owned {
-		return OwnedImpl(injector = create())
-	}
-
-	fun create(): Injector {
+	fun create(config: AppConfig): Injector {
 		return InjectorImpl(null, listOf<DependencyPair<*>>(
-				Window to HeadlessWindow(),
+				Window to HeadlessWindow(config.window),
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
 				Loaders.binaryLoader to MockLoader(byteBuffer(1)),

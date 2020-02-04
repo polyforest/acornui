@@ -35,7 +35,7 @@ object StencilUtil {
 			val bitPlanes = gl.getParameteri(Gl20.STENCIL_BITS)
 			maxDepth = 1 shl bitPlanes - 1
 		}
-		if (depth >= maxDepth) throw IllegalStateException("There may not be more than $maxDepth nested masks.")
+		check(maxDepth < 0 || depth < maxDepth) { "There may not be more than $maxDepth nested masks." }
 		gl.colorMask(false, false, false, false)
 		gl.stencilFunc(Gl20.ALWAYS, 0, -1)
 		gl.stencilOp(Gl20.INCR, Gl20.INCR, Gl20.INCR)

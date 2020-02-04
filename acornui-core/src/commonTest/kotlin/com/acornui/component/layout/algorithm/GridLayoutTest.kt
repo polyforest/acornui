@@ -42,7 +42,7 @@ class GridLayoutTest {
 
 		val positions = ArrayList<Pair<Int, Int>>()
 		layout.cellWalk(list, style) {
-			element, rowIndex, colIndex ->
+			_, rowIndex, colIndex ->
 			positions.add(Pair(rowIndex, colIndex))
 		}
 

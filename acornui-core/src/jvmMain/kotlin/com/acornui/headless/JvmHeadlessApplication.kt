@@ -51,7 +51,7 @@ open class JvmHeadlessApplication : ApplicationBase() {
 		dispose()
 	}
 
-	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(), bootstrap.dependenciesList())
+	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(config()), bootstrap.dependenciesList())
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {

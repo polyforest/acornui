@@ -38,6 +38,11 @@ interface BoundsRo : RectangleRo {
 	fun copy(width: Float = this.width, height: Float = this.height): Bounds {
 		return Bounds(width, height)
 	}
+
+	/**
+	 * Returns a new Rectangle object with the x, y, width, and height dimensions set to this bounds dimensions.
+	 */
+	fun toRectangle(): Rectangle = Rectangle(x, y, width, height)
 }
 
 class Bounds(
