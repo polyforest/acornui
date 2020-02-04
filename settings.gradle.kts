@@ -44,6 +44,7 @@ includeBuild("gradle-kotlin-plugins") {
 }
 
 include("acornui-utils", "acornui-core", "acornui-game", "acornui-spine", "acornui-test-utils")
+include("skins:basic")
 listOf("lwjgl", "webgl").forEach { backend ->
 	val name = ":acornui-$backend-backend"
 	include(name)

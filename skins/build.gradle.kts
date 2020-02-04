@@ -16,23 +16,34 @@
 * limitations under the License.
 */
 
-import com.acornui.build.plugins.tasks.AcornUiResourceProcessorTask
-import com.acornui.build.util.delegateLifecycleTasksToSubProjects
-import org.gradle.kotlin.dsl.java as javaExt // KT-35888
+import javax.inject.Inject
 
 plugins {
+	kotlin("jvm")
 	id("org.gradle.java")
-	id("com.acornui.root")
-	id("com.acornui.app") apply false
-	signing
-	`maven-publish`
 }
+
+dependencies {
+	implementation(kotlin("stdlib-jdk8"))
+	implementation(project(":gradle-app-plugins"))
+	implementation(gradleKotlinDsl())
+	implementation(gradleTestKit())
+}
+
+tasks {
+	compileKotlin {
+		kotlinOptions.jvmTarget = "1.8"
+	}
+	compileTestKotlin {
+		kotlinOptions.jvmTarget = "1.8"
+	}
+}
+
+val skinsProject = project
 
 subprojects {
 	group = "com.acornui.skins"
-	apply(from = "$rootDir/../gradle/mavenPublish.gradle.kts")
 	apply<JavaPlugin>()
-	version = rootProject.version
 
 	sourceSets {
 		main {
@@ -42,9 +53,16 @@ subprojects {
 		}
 	}
 
-	val processAcornResources = tasks.register<AcornUiResourceProcessorTask>("processAcornResources") {
+	val processAcornResources = tasks.register<SkinsResourceProcessorTask>("processAcornResources") {
+		dependsOn(skinsProject.tasks.findByName("classes"))
 		from(file("resources"))
 		into(tasks.getByName<ProcessResources>("processResources").destinationDir)
+
+		val compilation = skinsProject.kotlin.target.compilations["main"]
+		classpath = skinsProject.files(
+				compilation.runtimeDependencyFiles,
+				compilation.output.allOutputs
+		)
 	}
 
 	tasks.getByName("processResources") {
@@ -52,13 +70,88 @@ subprojects {
 		enabled = false
 	}
 
-	delegateLifecycleTasksToSubProjects()
-
 	publishing {
 		publications {
 			create<MavenPublication>("default") {
 				from(components["java"])
 			}
+		}
+	}
+}
+
+val Project.kotlinExt: org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+	get() = extensions.getByType()
+
+/**
+ * To process the resources in the skin projects and publish them, the skins project must have access to the
+ * acorn resources task.
+ * At the time of writing, you cannot add a project() build dependency in gradle.
+ *
+ * Our options are:
+ * 	1) Composite builds
+ * 	2) Using GradleBuild tasks
+ * 	3) JavaExec task using gradle test kit
+ *
+ * 	We chose #3 because options #1 and #2 have difficulties with shared configuration, integrating with the
+ * 	multi-project build, and IDEA support.
+ *
+ *
+ */
+open class SkinsResourceProcessorTask @javax.inject.Inject constructor(objects: ObjectFactory) : DefaultTask() {
+
+	@Incremental
+	@PathSensitive(PathSensitivity.RELATIVE)
+	@InputFiles
+	val sources: ConfigurableFileCollection = objects.fileCollection()
+
+	/**
+	 * Adds the given file tree to the list of sources.
+	 */
+	fun from(tree: FileTree): SkinsResourceProcessorTask {
+		sources.from(tree)
+		return this
+	}
+
+	fun from(source: File): SkinsResourceProcessorTask {
+		sources.from(source)
+		return this
+	}
+
+	fun from(sources: Iterable<File>): SkinsResourceProcessorTask {
+		this.sources.from(sources)
+		return this
+	}
+
+	fun into(directory: File?) {
+		outputDir.set(directory)
+	}
+
+	fun into(directory: Directory?) {
+		outputDir.set(directory)
+	}
+
+	@get:OutputDirectory
+	val outputDir: DirectoryProperty = objects.directoryProperty()
+
+	@Classpath
+	var classpath: FileCollection = objects.fileCollection()
+
+	@Inject
+	protected open fun getExecActionFactory(): org.gradle.process.internal.ExecActionFactory =
+			throw UnsupportedOperationException()
+
+	@TaskAction
+	fun execute(inputChanges: InputChanges) {
+		getExecActionFactory().newJavaExecAction().apply {
+			classpath = this@SkinsResourceProcessorTask.classpath
+			workingDir = project.projectDir
+			main = "com.acornui.skins.MainKt"
+
+			val changes = inputChanges.getFileChanges(sources).joinToString(";") { change: FileChange ->
+				listOf(change.file.absolutePath, change.changeType, change.fileType, change.normalizedPath).joinToString(",")
+			}
+			args = listOf(outputDir.asFile.get().absolutePath, changes)
+			execute()
 		}
 	}
 }

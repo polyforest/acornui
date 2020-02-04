@@ -19,8 +19,6 @@ plugins {
 	idea
 	`maven-publish`
 	signing
-//	id("org.jetbrains.dokka")
-	//id("com.acornui.kotlin-mpp") apply false
 
 	// Necessary to avoid the warning:
 	// "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may
@@ -74,22 +72,5 @@ tasks.configureEach {
 for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
-	}
-}
-
-// Publish skins when this project is published.
-for (taskName in listOf("publish", "publishToMavenLocal")) {
-	val skinTask = tasks.register<GradleBuild>("publishSkins${taskName.removePrefix("publish")}") {
-		group = "publishing"
-		subprojects.forEach {
-			dependsOn(":${it.path}:publishToMavenLocal")
-		}
-		dir = file("skins")
-		tasks = listOf("build", taskName)
-		buildName = "${taskName}Skins"
-		startParameter.projectProperties = gradle.startParameter.projectProperties + mapOf("version" to version.toString(), "acornVersion" to version.toString())
-	}
-	tasks.named(taskName) {
-		dependsOn(skinTask)
 	}
 }
