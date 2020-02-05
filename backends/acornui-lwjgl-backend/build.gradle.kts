@@ -22,8 +22,8 @@ kotlin {
 	sourceSets {
 		named("jvmMain") {
 			dependencies {
-				implementation(project(":acornui-utils"))
-				implementation(project(":acornui-core"))
+				api(project(":acornui-utils"))
+				api(project(":acornui-core"))
 
 				val lwjglVersion: String by project
 				val jorbisVersion: String by project
@@ -32,21 +32,10 @@ kotlin {
 				val lwjglName = "lwjgl"
 				val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 
-				implementation("$lwjglGroup:$lwjglName:$lwjglVersion")
-				extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
-				implementation("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
-				implementation("org.jcraft:jorbis:$jorbisVersion")
-
-				for (os in listOf("linux", "macos", "windows")) {
-					runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
-					extensions.forEach {
-						runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
-					}
-				}
-			}
-		}
-		named("jvmTest") {
-			dependencies {
+				api("$lwjglGroup:$lwjglName:$lwjglVersion")
+				extensions.forEach { api("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
+				api("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
+				api("org.jcraft:jorbis:$jorbisVersion")
 			}
 		}
 	}

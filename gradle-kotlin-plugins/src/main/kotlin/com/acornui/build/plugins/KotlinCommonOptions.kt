@@ -69,19 +69,6 @@ object KotlinCommonOptions {
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlinCoroutinesVersion")
 					}
 				}
-
-				// This will be very different in upcoming dokka 0.10.0
-//				project.rootProject.tasks.maybeNamed<DokkaTask>("dokka") {
-//					impliedPlatforms = mutableListOf("Common")
-//					commonMain.kotlin.srcDirs.forEach { srcDir ->
-//						if (srcDir.exists()) {
-//							this.sourceRoot {
-//								path = srcDir.path
-//								platforms = mutableListOf("Common")
-//							}
-//						}
-//					}
-//				}
 			}
 		}
 	}

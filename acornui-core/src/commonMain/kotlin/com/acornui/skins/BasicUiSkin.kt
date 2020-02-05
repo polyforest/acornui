@@ -52,6 +52,9 @@ open class BasicUiSkin(
 
 	final override val injector = target.injector
 
+	init {
+	}
+
 	open fun apply() {
 		target.styleRules.clear()
 		WindowScalingAttachment.attach(target)

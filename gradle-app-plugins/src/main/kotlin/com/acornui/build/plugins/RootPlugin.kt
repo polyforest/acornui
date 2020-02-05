@@ -3,6 +3,7 @@
 package com.acornui.build.plugins
 
 import com.acornui.build.AcornDependencies
+import com.acornui.build.plugins.util.isAcornUiComposite
 import com.acornui.build.plugins.util.preventSnapshotDependencyCaching
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -18,6 +19,20 @@ class RootPlugin : Plugin<Project> {
 		val acornVersion: String by target
 		target.preventSnapshotDependencyCaching()
 
+		if (target.isAcornUiComposite) {
+			// Sets the build dir for the included acorn projects so that multiple acorn composite projects don't
+			// conflict. This is mainly for the JS side - the npm dependencies will include the root project name, which
+			// won't match from one faux-composite project to the next.
+			val acornLibraries = listOf("lwjgl-backend", "webgl-backend", "core", "game", "spine", "utils", "test-utils").map { ":acornui-$it" }
+			acornLibraries.forEach { id ->
+				target.findProject(id)?.let { foundProject ->
+					foundProject.group = "com.acornui"
+					foundProject.version = acornVersion
+					foundProject.buildDir = target.buildDir.resolve("acornui/${foundProject.name}")
+				}
+			}
+		}
+
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
@@ -28,16 +43,6 @@ class RootPlugin : Plugin<Project> {
 				if (acornVersion.endsWith("-SNAPSHOT")) {
 					maven("https://oss.sonatype.org/content/repositories/snapshots")
 					mavenLocal()
-				}
-			}
-
-			project.configurations.configureEach {
-				resolutionStrategy {
-					eachDependency {
-						when {
-							requested.group.startsWith("com.acornui") -> useVersion(acornVersion)
-						}
-					}
 				}
 			}
 

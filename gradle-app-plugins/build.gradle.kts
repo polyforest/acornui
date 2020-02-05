@@ -91,6 +91,20 @@ kotlin {
 
 gradlePlugin {
 	plugins {
+		create("root-settings") {
+			id = "com.acornui.settings"
+			implementationClass = "com.acornui.build.plugins.SettingsPlugin"
+			displayName = "Settings plugin for faux composite builds with Acorn UI."
+			description = """Creates a faux composite build with Acorn UI using the project property acornUiHome. 
+|If property acornUiHome is not set, this plugin will do nothing.
+|Acorn dependencies should be declared using `com.acornui.build.plugins.util.acorn`. E.g.: 
+|```
+|dependencies {
+|  implementation(acorn(project, "utils"))
+|}
+|```
+|This is a workaround to issue KT-30285.""".trimMargin()
+		}
 		create("root") {
 			id = "com.acornui.root"
 			implementationClass = "com.acornui.build.plugins.RootPlugin"

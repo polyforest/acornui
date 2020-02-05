@@ -52,14 +52,14 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val commonMain by getting {
 				dependencies {
-					implementation("com.acornui:acornui-utils")
-					implementation("com.acornui:acornui-core")
+					implementation(acorn(target,"utils"))
+					implementation(acorn(target,"core"))
 				}
 			}
 
 			val jvmMain by getting {
 				dependencies {
-					api("com.acornui:acornui-lwjgl-backend")
+					implementation(acorn(target,"lwjgl-backend"))
 
 					// FIXME: I have no idea why this can't be transient in lwjgl-backend
 					val lwjglVersion: String by target
@@ -68,11 +68,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					val lwjglGroup = "org.lwjgl"
 					val lwjglName = "lwjgl"
 					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
-
-					implementation("$lwjglGroup:$lwjglName:$lwjglVersion")
-					extensions.forEach { implementation("$lwjglGroup:$lwjglName-$it:$lwjglVersion") }
-					implementation("com.badlogicgames.jlayer:jlayer:$jlayerVersion-gdx")
-					implementation("org.jcraft:jorbis:$jorbisVersion")
 
 					for (os in listOf("linux", "macos", "windows")) {
 						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
@@ -85,8 +80,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val jsMain by getting {
 				dependencies {
-//					compileOnly(npm("html-webpack-plugin", version = "3.2.0"))
-					implementation("com.acornui:acornui-webgl-backend")
+					implementation(acorn(target,"webgl-backend"))
 				}
 			}
 		}
@@ -111,6 +105,4 @@ fun Project.acornuiApp(init: AcornUiApplicationExtension.() -> Unit) {
 }
 
 val Project.acornuiApp
-	get() : AcornUiApplicationExtension {
-		return the()
-	}
+	get() : AcornUiApplicationExtension = the()

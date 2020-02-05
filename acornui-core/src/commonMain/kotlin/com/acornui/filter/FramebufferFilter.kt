@@ -28,6 +28,8 @@ import com.acornui.graphic.Texture
 import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * Draws a region to a frame buffer.
@@ -40,6 +42,10 @@ class FramebufferFilter(
 
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
+
+	init {
+		println("F b filter created")
+	}
 
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
@@ -56,12 +62,18 @@ class FramebufferFilter(
 	 */
 	val transform: Matrix4Ro = _transform
 
+	init {
+		println("Frame buff??")
+	}
+
 	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		_transform.setTranslation(regionCanvas.x, regionCanvas.y)
-		framebuffer.setSize(regionCanvas.width * scaleX, regionCanvas.height * scaleY, scaleX, scaleY)
+		println("Update g v")
+		val ceiled = regionCanvas.ceil()
+		_transform.setTranslation(ceiled.x, ceiled.y)
+		framebuffer.setSize(ceiled.width * scaleX, ceiled.height * scaleY, scaleX, scaleY)
 		framebuffer.drawable(sprite)
 		sprite.updateGlobalVertices(transform = _transform, tint = tint)
-		return Rectangle(regionCanvas.x, regionCanvas.y, sprite.naturalWidth, sprite.naturalHeight)
+		return ceiled
 	}
 
 	override fun render(inner: () -> Unit) {
@@ -69,9 +81,13 @@ class FramebufferFilter(
 		drawToScreen()
 	}
 
+	private val previousViewport = IntArray(4)
+
 	fun drawToFramebuffer(inner: () -> Unit) {
+		gl.getParameteriv(Gl20.VIEWPORT, previousViewport)
 		framebuffer.begin()
-//		gl.viewport(-viewport.x, -viewport.y, fB.width, fB.height) // TODO
+		println("***Viewport")
+//		gl.viewport(-_transform.translationX.toInt(), -_transform.translationY.toInt(), previousViewport[2], previousViewport[3])
 		gl.clearAndReset(clearColor, clearMask)
 		inner()
 		framebuffer.end()
@@ -103,4 +119,8 @@ inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}):
 	val b = FramebufferFilter(this)
 	b.init()
 	return b
+}
+
+private fun RectangleRo.ceil(): RectangleRo {
+	return MinMax(floor(x), floor(y), ceil(right), ceil(bottom))
 }
