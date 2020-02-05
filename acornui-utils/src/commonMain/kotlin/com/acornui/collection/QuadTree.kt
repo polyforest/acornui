@@ -110,7 +110,7 @@ class QuadTree<K : Comparable<K>, V> : Clearable {
 	 * Finds the node with the given [value], [x], and [y]. Returns null if there is no match.
 	 */
 	private fun find(parent: Node?, value: V, x: K, y: K): Node? {
-		return find(root, x, y)!!.parentWalk { it.value != value }
+		return find(parent, x, y)!!.parentWalk { it.value != value }
 	}
 
 	/**
