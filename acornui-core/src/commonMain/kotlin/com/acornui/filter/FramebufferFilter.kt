@@ -62,18 +62,17 @@ class FramebufferFilter(
 	 */
 	val transform: Matrix4Ro = _transform
 
-	init {
-		println("Frame buff??")
-	}
+	private val regionScreen = MinMax()
+	private val regionCanvasCeiled = MinMax()
 
 	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		println("Update g v")
-		val ceiled = regionCanvas.ceil()
-		_transform.setTranslation(ceiled.x, ceiled.y)
-		framebuffer.setSize(ceiled.width * scaleX, ceiled.height * scaleY, scaleX, scaleY)
+		regionScreen.set(regionCanvas).scl(scaleX, scaleY).ceil()
+		regionCanvasCeiled.set(regionScreen).scl(1f / scaleX, 1f / scaleY)
+		_transform.setTranslation(regionCanvasCeiled.x, regionCanvasCeiled.y)
+		framebuffer.setSize(regionScreen.width, regionScreen.height, scaleX, scaleY)
 		framebuffer.drawable(sprite)
 		sprite.updateGlobalVertices(transform = _transform, tint = tint)
-		return ceiled
+		return this.regionCanvasCeiled
 	}
 
 	override fun render(inner: () -> Unit) {
@@ -86,8 +85,7 @@ class FramebufferFilter(
 	fun drawToFramebuffer(inner: () -> Unit) {
 		gl.getParameteriv(Gl20.VIEWPORT, previousViewport)
 		framebuffer.begin()
-		println("***Viewport")
-//		gl.viewport(-_transform.translationX.toInt(), -_transform.translationY.toInt(), previousViewport[2], previousViewport[3])
+		gl.viewport(-regionScreen.x.toInt(), -(previousViewport[3] - (regionScreen.y + framebuffer.heightPixels)).toInt(), previousViewport[2], previousViewport[3])
 		gl.clearAndReset(clearColor, clearMask)
 		inner()
 		framebuffer.end()
@@ -121,6 +119,6 @@ inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}):
 	return b
 }
 
-private fun RectangleRo.ceil(): RectangleRo {
-	return MinMax(floor(x), floor(y), ceil(right), ceil(bottom))
+private fun MinMax.ceil(): MinMax {
+	return set(floor(x), floor(y), ceil(xMax), ceil(yMax))
 }

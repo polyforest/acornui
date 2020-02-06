@@ -56,7 +56,6 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
-		//println("drawRegionCanvas3 $drawRegionCanvas")
 		val model = transformGlobal
 		val tint = colorTintGlobal
 		for (i in _renderFilters.lastIndex downTo 0) {
