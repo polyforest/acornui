@@ -34,6 +34,7 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
+import org.lwjgl.opengl.GLUtil
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import kotlin.math.ceil
@@ -147,14 +148,6 @@ class GlfwWindowImpl(
 		if (glConfig.vSync)
 			glfwSwapInterval(1)
 
-
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities()
-
 //		if (debug) {
 //			GLUtil.setupDebugMessageCallback()
 //		}
@@ -179,12 +172,6 @@ class GlfwWindowImpl(
 		scaleX = scaleXArr[0]
 		scaleY = scaleYArr[0]
 		Log.info("Window content scale: $scaleX")
-
-		// Make the window visible
-		glfwShowWindow(windowId)
-
-		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
-		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
 
 		// Redraw when the window has been minimized / restored / etc.
 
@@ -230,6 +217,19 @@ class GlfwWindowImpl(
 			_refresh.dispatch()
 			requestRender()
 		}
+
+		// Make the window visible
+		glfwShowWindow(windowId)
+
+		// This line is critical for LWJGL's interoperation with GLFW's
+		// OpenGL context, or any context that is managed externally.
+		// LWJGL detects the context that is current in the current thread,
+		// creates the GLCapabilities instance and makes the OpenGL
+		// bindings available for use.
+		GL.createCapabilities()
+
+		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
+		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
 
 		// Clear as soon as possible to avoid a frame of black
 		gl.clearColor(windowConfig.backgroundColor)
@@ -359,6 +359,8 @@ class GlfwWindowImpl(
 		_refresh.dispose()
 		_isVisibleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
+		glfwDestroyWindow(windowId)
 		glfwTerminate()
+		glfwSetErrorCallback(null)?.free()
 	}
 }

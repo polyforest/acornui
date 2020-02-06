@@ -61,7 +61,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 				dependencies {
 					implementation(acorn(target,"lwjgl-backend"))
 
-					// FIXME: I have no idea why this can't be transient in lwjgl-backend
 					val lwjglVersion: String by target
 					val jorbisVersion: String by target
 					val jlayerVersion: String by target
