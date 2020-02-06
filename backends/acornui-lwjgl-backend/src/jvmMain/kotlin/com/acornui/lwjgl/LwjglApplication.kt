@@ -120,7 +120,11 @@ open class LwjglApplication : ApplicationBase() {
 	 */
 	private val windowTask by task(Window) {
 		val config = config()
-		val window = GlfwWindowImpl(config.window, config.gl, get(Gl20), debug)
+		val gl = get(Gl20)
+		val window = GlfwWindowImpl(config.window, config.gl, debug)
+		// Clear as soon as possible to avoid a frame of black
+		gl.clearColor(config.window.backgroundColor)
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		_windowId = window.windowId
 		window
 	}

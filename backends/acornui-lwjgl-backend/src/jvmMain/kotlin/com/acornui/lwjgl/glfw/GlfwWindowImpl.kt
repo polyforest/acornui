@@ -19,7 +19,6 @@ package com.acornui.lwjgl.glfw
 import com.acornui.GlConfig
 import com.acornui.WindowConfig
 import com.acornui.browser.Location
-import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Window
 import com.acornui.logging.Log
 import com.acornui.lwjgl.browser.JvmLocation
@@ -46,7 +45,6 @@ import kotlin.math.ceil
 class GlfwWindowImpl(
 		windowConfig: WindowConfig,
 		private val glConfig: GlConfig,
-		gl: Gl20,
 		debug: Boolean
 ) : Window {
 
@@ -104,8 +102,8 @@ class GlfwWindowImpl(
 	private var forceClose = false
 
 	init {
-		if (debug)
-			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE)
+//		if (debug)
+//			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE)
 
 		GLFWErrorCallback.createPrint(System.err).set()
 
@@ -144,13 +142,18 @@ class GlfwWindowImpl(
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(windowId)
 
+		// This line is critical for LWJGL's interoperation with GLFW's
+		// OpenGL context, or any context that is managed externally.
+		// LWJGL detects the context that is current in the current thread,
+		// creates the GLCapabilities instance and makes the OpenGL
+		// bindings available for use.
+		GL.createCapabilities()
+
 		// Enable v-sync
 		if (glConfig.vSync)
 			glfwSwapInterval(1)
 
-//		if (debug) {
-//			GLUtil.setupDebugMessageCallback()
-//		}
+//		if (debug) GLUtil.setupDebugMessageCallback()
 
 		// Center our window
 		val vidMode = glfwGetVideoMode(primaryMonitor)
@@ -172,6 +175,9 @@ class GlfwWindowImpl(
 		scaleX = scaleXArr[0]
 		scaleY = scaleYArr[0]
 		Log.info("Window content scale: $scaleX")
+
+		// Make the window visible
+		glfwShowWindow(windowId)
 
 		// Redraw when the window has been minimized / restored / etc.
 
@@ -211,6 +217,7 @@ class GlfwWindowImpl(
 					glfwSetWindowShouldClose(windowId, false)
 				}
 			}
+			Log.debug("Close callback. isCloseRequested: ${isCloseRequested()}")
 		}
 
 		glfwSetWindowRefreshCallback(windowId) {
@@ -218,22 +225,8 @@ class GlfwWindowImpl(
 			requestRender()
 		}
 
-		// Make the window visible
-		glfwShowWindow(windowId)
-
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities()
-
 		Log.info("Vendor: ${GL11.glGetString(GL11.GL_VENDOR)}")
 		Log.info("Supported GLSL language version: ${GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)}")
-
-		// Clear as soon as possible to avoid a frame of black
-		gl.clearColor(windowConfig.backgroundColor)
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 	}
 
 	private fun updateScale(scaleX: Float, scaleY: Float) {
