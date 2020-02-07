@@ -100,6 +100,13 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			val uniforms = gl.uniforms
 			uniforms.put("u_resolutionInv", 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
 			gl.batch.begin(framebufferFilter.texture)
+			blurFramebufferA.begin()
+			gl.clearAndReset()
+			blurFramebufferA.end()
+			blurFramebufferB.begin()
+			gl.clearAndReset()
+			blurFramebufferB.end()
+
 			val passes = quality.passes
 			val scl = 0.25f / passes.toFloat() // 1f / BEST.passes
 			val sclX = scl * scaleX
@@ -107,7 +114,7 @@ open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
 			for (i in 1..passes) {
 				val iF = i.toFloat()
 				blurFramebufferA.begin()
-				uniforms.put("u_dir", blurDirX.x * iF * sclX, blurDirX.y * iF * sclY)
+				uniforms.put("u_dir", blurDirX.x * iF * sclX, 0f)
 				gl.batch.putIdtQuad()
 				blurFramebufferA.end()
 				blurFramebufferB.begin()

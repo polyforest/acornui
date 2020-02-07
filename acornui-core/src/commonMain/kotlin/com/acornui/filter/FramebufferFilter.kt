@@ -43,10 +43,6 @@ class FramebufferFilter(
 	var clearMask = Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT
 	var clearColor = Color.CLEAR
 
-	init {
-		println("F b filter created")
-	}
-
 	private val framebuffer = resizeableFramebuffer(hasDepth = hasDepth, hasStencil = hasStencil)
 
 	val texture: Texture
