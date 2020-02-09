@@ -21,10 +21,8 @@ import com.acornui.DisposedException
 import com.acornui.async.applicationScope
 import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.collection.stringMapOf
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.recycle.Clearable
 import com.acornui.time.tick
 import kotlinx.coroutines.*
@@ -72,7 +70,7 @@ interface Cache : Clearable {
 
 	companion object : DKey<Cache> {
 
-		override fun factory(injector: Injector): Cache? {
+		override fun factory(context: Context): Cache? {
 			return CacheImpl()
 		}
 	}
@@ -246,6 +244,6 @@ class CachedGroup(
  * Constructs a new [CachedGroup] object which will increment or decrement a list of keys with the
  * given [cache].
  */
-fun Scoped.cachedGroup(cache: Cache = inject(Cache)): CachedGroup {
+fun Context.cachedGroup(cache: Cache = inject(Cache)): CachedGroup {
 	return CachedGroup(cache, applicationScope)
 }

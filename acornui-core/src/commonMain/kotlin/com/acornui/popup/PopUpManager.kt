@@ -26,8 +26,14 @@ import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.layout.algorithm.CanvasLayoutStyle
 import com.acornui.component.layout.setSize
-import com.acornui.component.style.*
-import com.acornui.di.*
+import com.acornui.component.style.OptionalSkinPart
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.DKey
+import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.graphic.Color
 import com.acornui.input.Ascii
@@ -52,7 +58,7 @@ interface PopUpManager : Clearable {
 	/**
 	 * Initializes the pop-up manager, returning the view.
 	 */
-	fun init(owner: Owned): UiComponent
+	fun init(owner: Context): UiComponent
 
 	/**
 	 * Returns a list of the current pop-ups.
@@ -74,11 +80,7 @@ interface PopUpManager : Clearable {
 	/**
 	 * Removes the pop-up with the given component.
 	 */
-	fun removePopUp(child: UiComponent) {
-		val info = currentPopUps.firstOrNull2 { it.child == child }
-		if (info != null)
-			removePopUp(info)
-	}
+	fun removePopUp(child: UiComponent)
 
 	fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>)
 
@@ -88,8 +90,8 @@ interface PopUpManager : Clearable {
 	override fun clear()
 
 	companion object : DKey<PopUpManager>, StyleTag {
-		override fun factory(injector: Injector): PopUpManager? {
-			return PopUpManagerImpl()
+		override fun factory(context: Context): PopUpManager? {
+			return PopUpManagerImpl(context)
 		}
 	}
 }
@@ -169,11 +171,11 @@ class PopUpManagerStyle : StyleBase() {
 	companion object : StyleType<PopUpManagerStyle>
 }
 
-class PopUpManagerImpl : PopUpManager, Disposable {
+class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Disposable {
 
 	private lateinit var view: PopUpManagerView
 
-	override fun init(owner: Owned): UiComponent {
+	override fun init(owner: Context): UiComponent {
 		view = PopUpManagerView(owner)
 		view.modalCloseRequested.add(::requestModalClose)
 		return view
@@ -212,7 +214,7 @@ class PopUpManagerImpl : PopUpManager, Disposable {
 	}
 
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
-		removePopUp(popUpInfo)
+		removePopUp(popUpInfo, allowDisposal = false)
 		val child = popUpInfo.child
 		if (child is Closeable)
 			child.closed.add(::childClosedHandler)
@@ -231,6 +233,23 @@ class PopUpManagerImpl : PopUpManager, Disposable {
 	}
 
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
+		removePopUp(popUpInfo, true)
+	}
+
+	override fun removePopUp(child: UiComponent) {
+		removePopUp(child, allowDisposal = true)
+	}
+
+	/**
+	 * Removes the pop-up with the given component.
+	 */
+	private fun removePopUp(child: UiComponent, allowDisposal: Boolean) {
+		val info = currentPopUps.firstOrNull2 { it.child == child }
+		if (info != null)
+			removePopUp(info, allowDisposal)
+	}
+
+	private fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>, allowDisposal: Boolean) {
 		notValidatingCheck()
 		val wasFocused = popUpInfo.child.isFocused
 		val removed = _currentPopUps.remove(popUpInfo)
@@ -241,7 +260,7 @@ class PopUpManagerImpl : PopUpManager, Disposable {
 			child.closed.remove(::childClosedHandler)
 		child.disposed.remove(::popUpChildDisposedHandler)
 		popUpInfo.onClosed(child)
-		if (popUpInfo.dispose && !child.disposed.isDispatching && !child.isDisposed)
+		if (allowDisposal && popUpInfo.dispose && !child.isDisposed)
 			child.dispose()
 		refresh()
 		val currentPopUp = _currentPopUps.lastOrNull()
@@ -259,15 +278,16 @@ class PopUpManagerImpl : PopUpManager, Disposable {
 	}
 
 	private fun popUpChildDisposedHandler(child: UiComponent) {
-		removePopUp(child)
+		removePopUp(child, allowDisposal = false)
 	}
 
 	override fun dispose() {
+		super.dispose()
 		clear()
 	}
 }
 
-private class PopUpManagerView(owner: Owned) : ElementLayoutContainer<CanvasLayoutStyle, CanvasLayoutData, UiComponent>(owner, CanvasLayout()) {
+private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLayoutStyle, CanvasLayoutData, UiComponent>(owner, CanvasLayout()) {
 
 	private val _modalCloseRequested = own(Signal0())
 	val modalCloseRequested = _modalCloseRequested.asRo()
@@ -414,15 +434,15 @@ private class PopUpManagerView(owner: Owned) : ElementLayoutContainer<CanvasLayo
 	}
 }
 
-fun <T : UiComponent> Scoped.addPopUp(popUpInfo: PopUpInfo<T>): T {
+fun <T : UiComponent> Context.addPopUp(popUpInfo: PopUpInfo<T>): T {
 	inject(PopUpManager).addPopUp(popUpInfo)
 	return popUpInfo.child
 }
 
-fun Scoped.removePopUp(popUpInfo: PopUpInfo<*>) {
+fun Context.removePopUp(popUpInfo: PopUpInfo<*>) {
 	inject(PopUpManager).removePopUp(popUpInfo)
 }
 
-fun Scoped.removePopUp(popUpInfoChild: UiComponent) {
+fun Context.removePopUp(popUpInfoChild: UiComponent) {
 	inject(PopUpManager).removePopUp(popUpInfoChild)
 }

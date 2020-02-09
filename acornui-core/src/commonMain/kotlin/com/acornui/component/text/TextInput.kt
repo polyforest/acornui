@@ -26,8 +26,7 @@ import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.function.as2
 import com.acornui.input.*
@@ -102,7 +101,7 @@ interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
 
 // TODO: instead of cursor component, just use 4 vertices
 
-class TextInputImpl(owner: Owned) : ContainerImpl(owner), TextInput {
+class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 
 	private var background: UiComponent? = null
 
@@ -254,7 +253,7 @@ interface TextArea : TextInput {
 	companion object : StyleTag
 }
 
-class TextAreaImpl(owner: Owned) : ContainerImpl(owner), TextArea {
+class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 
 	private var background: UiComponent? = null
 
@@ -513,14 +512,14 @@ var TextArea.selectable: Boolean
 	}
 
 
-inline fun Owned.textInput(init: ComponentInit<TextInputImpl> = {}): TextInputImpl  {
+inline fun Context.textInput(init: ComponentInit<TextInputImpl> = {}): TextInputImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextInputImpl(this)
 	t.init()
 	return t
 }
 
-inline fun Owned.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl  {
+inline fun Context.textArea(init: ComponentInit<TextAreaImpl> = {}): TextAreaImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextAreaImpl(this)
 	t.init()

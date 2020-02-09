@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -28,7 +28,7 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 
-open class WindowPanel(owner: Owned) : ElementContainerImpl<UiComponent>(owner), Labelable, Closeable, LayoutDataProvider<StackLayoutData> {
+open class WindowPanel(owner: Context) : ElementContainerImpl<UiComponent>(owner), Labelable, Closeable, LayoutDataProvider<StackLayoutData> {
 
 	private val _closing = own(Signal2<Closeable, Cancel>())
 	override val closing = _closing.asRo()
@@ -137,7 +137,7 @@ class WindowPanelStyle : StyleBase() {
 	companion object : StyleType<WindowPanelStyle>
 }
 
-fun Owned.windowPanel(
+fun Context.windowPanel(
 		init: ComponentInit<WindowPanel> = {}): WindowPanel {
 	val p = WindowPanel(this)
 	p.init()

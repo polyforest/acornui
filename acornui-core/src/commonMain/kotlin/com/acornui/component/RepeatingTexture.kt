@@ -17,7 +17,7 @@
 package com.acornui.component
 
 
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TextureWrapMode
@@ -30,7 +30,7 @@ import kotlin.contracts.contract
  * @author nbilyk
  */
 class RepeatingTexture(
-		owner: Owned
+		owner: Context
 ) : TextureComponent(owner) {
 
 	var wrapS = TextureWrapMode.REPEAT
@@ -59,7 +59,7 @@ class RepeatingTexture(
 	}
 }
 
-inline fun Owned.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
+inline fun Context.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val g = RepeatingTexture(this)
 	g.path = path

@@ -16,24 +16,27 @@
 
 package com.acornui.nav
 
-import com.acornui.recycle.Clearable
-import com.acornui.collection.copy
-import com.acornui.component.*
-import com.acornui.component.style.SkinPart
 import com.acornui.ChildRo
 import com.acornui.Disposable
-import com.acornui.Lifecycle
 import com.acornui.LifecycleRo
-import com.acornui.di.*
-import com.acornui.focus.focus
-import com.acornui.input.interaction.click
+import com.acornui.collection.copy
+import com.acornui.component.ElementContainer
+import com.acornui.component.Toggleable
+import com.acornui.component.UiComponent
+import com.acornui.component.showAssetLoadingBar
+import com.acornui.component.style.SkinPart
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.DKey
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
+import com.acornui.input.interaction.click
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
 
-interface NavigationManager : Clearable, Disposable {
+interface NavigationManager : Clearable {
 
 	val changed: Signal<(NavEvent) -> Unit>
 
@@ -86,7 +89,7 @@ interface NavigationManager : Clearable, Disposable {
 
 	companion object : DKey<NavigationManager> {
 
-		override fun factory(injector: Injector) = NavigationManagerImpl()
+		override fun factory(context: Context) = NavigationManagerImpl(context)
 
 		fun pathToString(path: List<NavNode>): String {
 			return "" + path.joinToString("/")
@@ -107,11 +110,11 @@ interface NavEvent {
 		get() = NavigationManager.pathToString(newPath)
 }
 
-fun Scoped.navigate(absolutePath: String) {
+fun Context.navigate(absolutePath: String) {
 	inject(NavigationManager).path(absolutePath)
 }
 
-class NavigationManagerImpl : NavigationManager {
+class NavigationManagerImpl(owner: Context) : ContextImpl(owner), NavigationManager {
 
 	private val _changed = Signal1<NavEvent>()
 	override val changed = _changed.asRo()
@@ -141,6 +144,7 @@ class NavigationManagerImpl : NavigationManager {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		_changed.dispose()
 	}
 }
@@ -150,7 +154,7 @@ class NavEventImpl : NavEvent {
 	override val newPath = ArrayList<NavNode>()
 }
 
-interface NavBindable : ChildRo, Scoped
+interface NavBindable : ChildRo, Context
 
 interface NavBinding {
 
@@ -221,7 +225,7 @@ class NavBindingImpl(
 		if (host is LifecycleRo) {
 			host.activated.add(activatedHandler)
 			host.deactivated.add(deactivatedHandler)
-			host.disposed.add(disposedHandler)
+			(host as LifecycleRo).disposed.add(disposedHandler)
 			if (host.isActive) {
 				refreshDepth()
 				onNavChanged()
@@ -326,10 +330,10 @@ class NavBindingImpl(
 
 	override fun dispose() {
 		navManager.changed.remove(navChangedHandler)
-		if (host is Lifecycle) {
+		if (host is LifecycleRo) {
 			host.activated.remove(activatedHandler)
 			host.deactivated.remove(deactivatedHandler)
-			host.disposed.remove(disposedHandler)
+			(host as LifecycleRo).disposed.remove(disposedHandler)
 		}
 		_changed.dispose()
 	}

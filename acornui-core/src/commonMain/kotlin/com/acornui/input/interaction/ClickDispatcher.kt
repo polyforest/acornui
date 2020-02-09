@@ -23,9 +23,8 @@ import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.time.timer
 
@@ -37,8 +36,8 @@ import com.acornui.time.timer
  * This will respond to mouse and touch, but not both.
  */
 abstract class ClickDispatcher(
-		override val injector: Injector
-) : Scoped, Disposable {
+		context: Context
+) : ContextImpl(context) {
 
 	protected val stage = inject(Stage)
 	private val interactivityManager = inject(InteractivityManager)
@@ -189,6 +188,7 @@ abstract class ClickDispatcher(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stage.mouseDown(isCapture = true).remove(::rootMouseDownHandler)
 		stage.touchStart(isCapture = true).remove(::rootTouchStartHandler)
 		stage.mouseUp().remove(::rootMouseUpHandler)
@@ -204,7 +204,7 @@ abstract class ClickDispatcher(
 	}
 }
 
-class JvmClickDispatcher(injector: Injector) : ClickDispatcher(injector) {
+class JvmClickDispatcher(owner: Context) : ClickDispatcher(owner) {
 
 	init {
 		stage.mouseUp().add(::mouseUpHandler)

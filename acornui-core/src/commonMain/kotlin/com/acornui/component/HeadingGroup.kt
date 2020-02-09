@@ -22,13 +22,13 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class HeadingGroup(owner: Owned) : ElementContainerImpl<UiComponent>(owner), Labelable, LayoutDataProvider<StackLayoutData> {
+open class HeadingGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner), Labelable, LayoutDataProvider<StackLayoutData> {
 
 	val style = bind(HeadingGroupStyle())
 
@@ -88,7 +88,7 @@ open class HeadingGroup(owner: Owned) : ElementContainerImpl<UiComponent>(owner)
 
 }
 
-inline fun Owned.headingGroup(init: ComponentInit<HeadingGroup> = {}): HeadingGroup  {
+inline fun Context.headingGroup(init: ComponentInit<HeadingGroup> = {}): HeadingGroup  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val f = HeadingGroup(this)
 	f.init()
@@ -107,7 +107,7 @@ open class HeadingGroupStyle : StyleBase() {
 	/**
 	 * The labelable component to place at the top of the group.
 	 */
-	var heading by prop<Owned.() -> Labelable> { text() }
+	var heading by prop<Context.() -> Labelable> { text() }
 
 	/**
 	 * The padding around the heading component.

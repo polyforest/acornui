@@ -16,12 +16,12 @@
 
 package com.acornui.asset
 
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.DeserializationStrategy
 
-fun <R : Any> Scoped.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): Deferred<R> {
+fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): Deferred<R> {
 	return group.cacheAsync(path) {
 		jsonParse(deserializer, loadText(path))
 	}

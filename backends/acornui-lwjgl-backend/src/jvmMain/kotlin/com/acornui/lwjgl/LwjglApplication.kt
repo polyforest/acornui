@@ -29,8 +29,7 @@ import com.acornui.component.Stage
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.cursor.CursorManager
-import com.acornui.di.Owned
-import com.acornui.di.own
+import com.acornui.di.Context
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
@@ -99,12 +98,13 @@ open class LwjglApplication : ApplicationBase() {
 
 	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
-		val stage = createStage(createInjector())
+		val context = createContext()
+		val stage = createStage(context)
 		initializeSpecialInteractivity(stage)
 		stage.onReady()
 
 		LwjglApplicationRunner(stage).run()
-		stage.dispose()
+		context.dispose()
 		dispose()
 	}
 
@@ -225,12 +225,11 @@ open class LwjglApplication : ApplicationBase() {
 		}
 	}
 
-	protected open fun initializeSpecialInteractivity(owner: Owned) {
-		val injector = owner.injector
-		owner.own(JvmClickDispatcher(injector))
-		owner.own(FakeFocusMouse(injector))
-		owner.own(UndoDispatcher(injector))
-		owner.own(ContextMenuManager(injector))
+	protected open fun initializeSpecialInteractivity(owner: Context) {
+		JvmClickDispatcher(owner)
+		FakeFocusMouse(owner)
+		UndoDispatcher(owner)
+		ContextMenuManager(owner)
 	}
 
 	override fun dispose() {

@@ -20,7 +20,7 @@ import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.audio.AudioManager
 import com.acornui.audio.AudioManagerImpl
 import com.acornui.component.Stage
-import com.acornui.di.*
+import com.acornui.di.Context
 import com.acornui.graphic.Window
 import com.acornui.graphic.updateAndRender
 import com.acornui.input.interaction.ContextMenuManager
@@ -28,8 +28,6 @@ import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.logging.Log
 import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
-import com.acornui.selection.SelectionManager
-import com.acornui.selection.SelectionManagerImpl
 import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
@@ -62,8 +60,9 @@ abstract class JsApplicationBase : ApplicationBase() {
 	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
 		contentLoad()
-		val stage = createStage(createInjector())
-		PendingDisposablesRegistry.register(stage)
+		val context = createContext()
+		val stage = createStage(context)
+		PendingDisposablesRegistry.register(context)
 		initializeSpecialInteractivity(stage)
 		stage.onReady()
 
@@ -94,15 +93,11 @@ abstract class JsApplicationBase : ApplicationBase() {
 		JsPersistence(get(Version))
 	}
 
-	protected open val selectionManagerTask by task(SelectionManager) {
-		SelectionManagerImpl()
-	}
-
 	// TODO: Browserless clipboard
 
-	protected open suspend fun initializeSpecialInteractivity(owner: Owned) {
-		owner.own(UndoDispatcher(owner.injector))
-		owner.own(ContextMenuManager(owner.injector))
+	protected open suspend fun initializeSpecialInteractivity(owner: Context) {
+		UndoDispatcher(owner)
+		ContextMenuManager(owner)
 	}
 
 	private fun memberRefTest() {}
@@ -117,9 +112,6 @@ abstract class JsApplicationBase : ApplicationBase() {
 	}
 
 }
-
-external fun delete(p: dynamic): Boolean
-
 
 interface JsApplicationRunner {
 

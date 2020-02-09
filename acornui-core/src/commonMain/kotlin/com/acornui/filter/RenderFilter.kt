@@ -17,8 +17,8 @@
 package com.acornui.filter
 
 import com.acornui.Disposable
-import com.acornui.di.Owned
-import com.acornui.di.OwnedImpl
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
@@ -54,7 +54,7 @@ interface RenderFilter : Observable {
 /**
  * The base class for render filters.
  */
-abstract class RenderFilterBase(owner: Owned) : OwnedImpl(owner), RenderFilter, Disposable {
+abstract class RenderFilterBase(owner: Context) : ContextImpl(owner), RenderFilter, Disposable {
 
 	private val _changed = Signal1<Observable>()
 	override val changed = _changed.asRo()

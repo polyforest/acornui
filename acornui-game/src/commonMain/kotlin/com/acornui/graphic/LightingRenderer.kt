@@ -19,9 +19,8 @@
 package com.acornui.graphic
 
 import com.acornui.Disposable
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4
@@ -30,11 +29,11 @@ import com.acornui.math.Matrix4
  * @author nbilyk
  */
 class LightingRenderer(
-		override val injector: Injector,
+		context: Context,
 		val numPointLights: Int = 10,
 		val numShadowPointLights: Int = 3,
-		private val directionalShadowMapShader: ShaderProgram = DirectionalShadowShader(injector.inject(CachedGl20)),
-		private val pointShadowMapShader: ShaderProgram = PointShadowShader(injector.inject(CachedGl20)),
+		private val directionalShadowMapShader: ShaderProgram = DirectionalShadowShader(context.inject(CachedGl20)),
+		private val pointShadowMapShader: ShaderProgram = PointShadowShader(context.inject(CachedGl20)),
 
 		directionalShadowsResolution: Int = 1024,
 		pointShadowsResolution: Int = 1024,
@@ -45,7 +44,7 @@ class LightingRenderer(
 		 * GL_EXT_packed_depth_stencil extension is true.
 		 */
 		hasStencil: Boolean = false
-) : Scoped, Disposable {
+) : ContextImpl(context), Disposable {
 
 	var directionalShadowUnit = 1
 	var pointShadowUnit = 2
@@ -53,12 +52,12 @@ class LightingRenderer(
 	private val gl = inject(CachedGl20)
 	private val window = inject(Window)
 
-	private val directionalShadowsFbo = Framebuffer(injector, directionalShadowsResolution, directionalShadowsResolution, hasDepth = true, hasStencil = hasStencil)
+	private val directionalShadowsFbo = framebuffer(directionalShadowsResolution, directionalShadowsResolution, hasDepth = true, hasStencil = hasStencil)
 	val directionalLightCamera = DirectionalLightCamera()
 
 	// Point lights
 	private val pointLightShadowMaps: Array<CubeMap>
-	private val pointShadowsFbo = Framebuffer(injector, pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil)
+	private val pointShadowsFbo = framebuffer(pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil)
 	private val pointLightCamera = PointLightCamera(window, pointShadowsResolution.toFloat())
 
 	private val bias = Matrix4().apply {

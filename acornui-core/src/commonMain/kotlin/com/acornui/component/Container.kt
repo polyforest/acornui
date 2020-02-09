@@ -21,7 +21,7 @@ package com.acornui.component
 import com.acornui.ParentRo
 import com.acornui.collection.*
 import com.acornui.component.layout.intersectsGlobalRay
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.focus.invalidateFocusOrderDeep
 import com.acornui.math.Ray
 import com.acornui.math.RayRo
@@ -46,7 +46,7 @@ interface Container : UiComponent, ContainerRo
  * @author nbilyk
  */
 open class ContainerImpl(
-		owner: Owned
+		owner: Context
 ) : UiComponentImpl(owner), Container {
 
 	/**
@@ -354,12 +354,12 @@ open class ContainerImpl(
 }
 
 @JvmName("containerT")
-inline fun <E : UiComponent> Owned.container(init: ComponentInit<ElementContainerImpl<E>> = {}): ElementContainerImpl<E> {
+inline fun <E : UiComponent> Context.container(init: ComponentInit<ElementContainerImpl<E>> = {}): ElementContainerImpl<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return ElementContainerImpl<E>(this).apply(init)
 }
 
-fun Owned.container(init: ComponentInit<ElementContainerImpl<UiComponent>> = {}): ElementContainerImpl<UiComponent> {
+fun Context.container(init: ComponentInit<ElementContainerImpl<UiComponent>> = {}): ElementContainerImpl<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return ElementContainerImpl<UiComponent>(this).apply(init)
 }

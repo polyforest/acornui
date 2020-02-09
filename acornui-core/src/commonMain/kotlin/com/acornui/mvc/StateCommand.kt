@@ -16,11 +16,12 @@
 
 package com.acornui.mvc
 
+import com.acornui.Disposable
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.component.UiComponentRo
-import com.acornui.Disposable
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.DKey
 import com.acornui.input.interaction.redo
 import com.acornui.input.interaction.undo
 import com.acornui.logging.Log
@@ -130,13 +131,13 @@ class StateCommandHistory : Disposable {
 	}
 
 	companion object : DKey<StateCommandHistory> {
-		override fun factory(injector: Injector): StateCommandHistory? {
+		override fun factory(context: Context): StateCommandHistory? {
 			return StateCommandHistory()
 		}
 	}
 }
 
-fun Scoped.stateCommandHistory(): StateCommandHistory = inject(StateCommandHistory)
+fun Context.stateCommandHistory(): StateCommandHistory = inject(StateCommandHistory)
 
 
 /**

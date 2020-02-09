@@ -16,14 +16,10 @@
 
 package com.acornui.focus
 
-import com.acornui.Disposable
 import com.acornui.component.*
-import com.acornui.di.Injector
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
-import com.acornui.graphic.Color
-import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
@@ -37,7 +33,7 @@ interface HighlightView : UiComponent {
 }
 
 open class SimpleHighlight(
-		owner: Owned,
+		owner: Context,
 		atlasPath: String,
 		regionName: String
 ) : ContainerImpl(owner), HighlightView {
@@ -121,13 +117,13 @@ open class SimpleHighlight(
 }
 
 class SimpleFocusHighlighter(
-		override val injector: Injector,
+		owner: Context,
 		private val highlight: HighlightView
-) : Scoped, FocusHighlighter, Disposable {
+) : ContextImpl(owner), FocusHighlighter {
 
 	private val popUpManager by PopUpManager
 
-	constructor(owner: Owned, theme: Theme) : this(owner.injector, SimpleHighlight(owner, theme.atlasPath, "FocusRect").apply {
+	constructor(context: Context, theme: Theme) : this(context, SimpleHighlight(context, theme.atlasPath, "FocusRect").apply {
 		colorTint = theme.focusHighlightColor
 	})
 
@@ -155,6 +151,7 @@ class SimpleFocusHighlighter(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		popUpManager.removePopUp(popUpInfo)
 		if (!highlight.isDisposed)
 			highlight.dispose()

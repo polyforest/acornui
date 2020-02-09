@@ -21,7 +21,7 @@ import com.acornui.asset.*
 import com.acornui.async.UI
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Texture
@@ -139,7 +139,7 @@ class Glyph(
 /**
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
+suspend fun Context.loadFontFromDir(fontPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	return loadFontFromDir(fontPath, Path(fontPath).parent.value, group)
 }
 
@@ -151,7 +151,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, group: CachedGroup = cached
  * @param imagesDir The directory of images.
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
-suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
+suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	val dir = Path(imagesDir)
 	val bitmapFontData = group.cacheAsync(fontPath) {
 		AngelCodeParser.parse(loadText(fontPath))
@@ -203,7 +203,7 @@ suspend fun Scoped.loadFontFromDir(fontPath: String, imagesDir: String, group: C
 	return font
 }
 
-suspend fun Scoped.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
+suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CachedGroup = cachedGroup()): BitmapFont {
 	val atlasFile = Path(atlasPath)
 
 	val bitmapFontData = group.cacheAsync(fontKey) {

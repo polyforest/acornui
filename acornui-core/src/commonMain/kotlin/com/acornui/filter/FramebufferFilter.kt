@@ -19,13 +19,17 @@ package com.acornui.filter
 import com.acornui.AppConfig
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
-import com.acornui.di.Owned
-import com.acornui.di.inject
-import com.acornui.gl.core.*
+import com.acornui.di.Context
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.clearAndReset
+import com.acornui.gl.core.resizeableFramebuffer
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
-import com.acornui.math.*
+import com.acornui.math.Matrix4
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.MinMax
+import com.acornui.math.RectangleRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.ceil
@@ -35,7 +39,7 @@ import kotlin.math.floor
  * Draws a region to a frame buffer.
  */
 class FramebufferFilter(
-		owner: Owned,
+		owner: Context,
 		hasDepth: Boolean = owner.inject(AppConfig).gl.depth,
 		hasStencil: Boolean = owner.inject(AppConfig).gl.stencil
 ) : RenderFilterBase(owner) {
@@ -108,7 +112,7 @@ class FramebufferFilter(
 /**
  * A frame buffer filter will cache the render target as a bitmap.
  */
-inline fun Owned.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
+inline fun Context.framebufferFilter(init: ComponentInit<FramebufferFilter> = {}): FramebufferFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = FramebufferFilter(this)
 	b.init()

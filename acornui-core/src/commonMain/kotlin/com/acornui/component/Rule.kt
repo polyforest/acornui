@@ -20,12 +20,12 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.set
 import com.acornui.component.style.styleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class Rule(owned: Owned, private val isVertical: Boolean) : ElementContainerImpl<UiComponent>(owned) {
+class Rule(owned: Context, private val isVertical: Boolean) : ElementContainerImpl<UiComponent>(owned) {
 
 	private val rect: Rect = +rect()
 
@@ -67,12 +67,12 @@ class RuleStyle : BoxStyle() {
 	}
 }
 
-fun Owned.hr(init: ComponentInit<Rule> = {}): Rule {
+fun Context.hr(init: ComponentInit<Rule> = {}): Rule {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return Rule(this, isVertical = false).apply(init)
 }
 
-fun Owned.vr(init: ComponentInit<Rule> = {}): Rule {
+fun Context.vr(init: ComponentInit<Rule> = {}): Rule {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return Rule(this, isVertical = true).apply(init)
 }

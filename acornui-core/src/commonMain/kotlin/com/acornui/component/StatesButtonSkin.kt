@@ -4,10 +4,10 @@ import com.acornui.component.style.OptionalSkinPart
 import com.acornui.component.style.SkinPart
 import com.acornui.component.style.noSkin
 import com.acornui.component.style.noSkinOptional
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 
-class StatesButtonSkin(owner: Owned,
+class StatesButtonSkin(owner: Context,
 					   upState: SkinPart = noSkin,
 					   overState: OptionalSkinPart = noSkinOptional,
 					   downState: OptionalSkinPart = noSkinOptional,

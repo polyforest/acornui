@@ -16,7 +16,7 @@
 
 package com.acornui.ecs
 
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.mvc.Command
 import com.acornui.mvc.CommandType
 import com.acornui.mvc.Commander
@@ -49,17 +49,17 @@ inline fun watchEntities(entities: List<Entity>, cmd: Commander, crossinline ini
 	}
 }
 
-fun Scoped.addEntity(e: Entity) {
+fun Context.addEntity(e: Entity) {
 	invokeCommand(AddEntity(e))
 }
 
-fun Scoped.addEntity(init: Entity.() -> Unit) {
+fun Context.addEntity(init: Entity.() -> Unit) {
 	val e = entity()
 	e.init()
 	invokeCommand(AddEntity(e))
 }
 
-fun Scoped.removeEntity(e: Entity) {
+fun Context.removeEntity(e: Entity) {
 	invokeCommand(RemoveEntity(e))
 }
 

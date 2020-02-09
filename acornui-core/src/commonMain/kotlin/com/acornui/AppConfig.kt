@@ -16,12 +16,10 @@
 
 package com.acornui
 
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.io.file.FilesManifest
 import kotlinx.serialization.Serializable
 
 /**
@@ -142,11 +140,11 @@ data class GlConfig(
 /**
  * A convenient way to get the scoped AppConfig.
  */
-val Scoped.config: AppConfig
+val Context.config: AppConfig
 	get() = inject(AppConfig)
 
 /**
  * The number of seconds between each time driver tick.
  */
-val Scoped.tickTime: Float
+val Context.tickTime: Float
 	get() = config.frameTime

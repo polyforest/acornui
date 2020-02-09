@@ -24,7 +24,7 @@ import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
 import com.acornui.math.Pad
@@ -145,7 +145,7 @@ open class VirtualVerticalLayoutStyle : StyleBase() {
 /**
  * Creates a virtualized data scroller with a vertical layout.
  */
-fun <E : Any> Owned.vDataScroller(
+fun <E : Any> Context.vDataScroller(
 		init: ComponentInit<DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData>> = {}
 ): DataScroller<E, VirtualVerticalLayoutStyle, VerticalLayoutData> {
 	val layoutAlgorithm = VirtualVerticalLayout()

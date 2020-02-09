@@ -18,7 +18,7 @@ package com.acornui.headless
 
 import com.acornui.component.UiComponentImpl
 
-open class MockComponent(val name: String = "M${c++}") : UiComponentImpl(HeadlessInjector.owner) {
+open class MockComponent(val name: String = "M${c++}") : UiComponentImpl(HeadlessDependencies.owner) {
 
 	override fun toString(): String {
 		return "MockComponent($name)"

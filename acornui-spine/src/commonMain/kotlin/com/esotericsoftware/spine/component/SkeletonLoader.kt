@@ -16,16 +16,21 @@
 
 package com.esotericsoftware.spine.component
 
-import kotlinx.coroutines.Deferred
+import com.acornui.asset.CachedGroup
+import com.acornui.asset.loadAndCacheJsonAsync
+import com.acornui.asset.loadText
+import com.acornui.async.awaitAll
 import com.acornui.async.globalAsync
 import com.acornui.collection.stringMapOf
-import com.acornui.asset.*
-import com.acornui.async.awaitAll
-import com.acornui.di.Scoped
-import com.acornui.graphic.*
+import com.acornui.di.Context
+import com.acornui.graphic.AtlasPageData
+import com.acornui.graphic.Texture
+import com.acornui.graphic.TextureAtlasData
+import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.serialization.parseJson
 import com.esotericsoftware.spine.data.SkeletonData
 import com.esotericsoftware.spine.data.SkeletonDataSerializer
+import kotlinx.coroutines.Deferred
 
 
 class LoadedSkeleton(
@@ -60,7 +65,7 @@ class LoadedSkin(
  * Loads the skeleton from the specified JSON file and texture atlas.
  * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = globalAsync {
+fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = globalAsync {
 	val skeletonDataLoader = cachedGroup.cacheAsync(skeletonDataPath) {
 		parseJson(loadText(skeletonDataPath), SkeletonDataSerializer)
 	}
@@ -78,7 +83,7 @@ fun Scoped.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skin
 	LoadedSkeleton(skeletonData, textureAtlasData, loadedSkins.awaitAll())
 }
 
-fun Scoped.loadSkeletonSkin(
+fun Context.loadSkeletonSkin(
 		skeletonData: SkeletonData,
 		textureAtlasData: TextureAtlasData,
 		skin: String,

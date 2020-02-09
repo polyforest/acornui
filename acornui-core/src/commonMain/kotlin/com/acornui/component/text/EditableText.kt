@@ -21,7 +21,6 @@ import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.rect
-import com.acornui.di.inject
 import com.acornui.di.own
 import com.acornui.focus.blurredSelf
 import com.acornui.focus.focusedSelf

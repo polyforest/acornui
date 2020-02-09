@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
+@file:Suppress("LeakingThis")
+
 package com.acornui.component
 
 import com.acornui.Disposable
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StyleableRo
-import com.acornui.di.DependencyPair
-import com.acornui.di.Injector
-import com.acornui.di.OwnedImpl
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
-import com.acornui.gl.core.*
+import com.acornui.gl.core.DefaultShaderProgram
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
 import com.acornui.graphic.centerCamera
 import com.acornui.graphic.orthographicCamera
@@ -39,10 +40,12 @@ import com.acornui.time.timer
 /**
  * @author nbilyk
  */
-open class StageImpl(injector: Injector) : Stage, ElementContainerImpl<UiComponent>(OwnedImpl(injector)), Focusable {
+open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
-	override fun getAdditionalDependencies(): List<DependencyPair<*>> = listOf(Stage to this, TooltipManager to TooltipManagerImpl(owner.inject(PopUpManager), this))
-
+	init {
+		childDependencies += listOf(Stage to this, TooltipManager to TooltipManagerImpl(owner.inject(PopUpManager), this))
+	}
+	
 	private val defaultBackgroundColor = gl.getParameterfv(Gl20.COLOR_CLEAR_VALUE, Color())
 
 	final override val style = bind(StageStyle())

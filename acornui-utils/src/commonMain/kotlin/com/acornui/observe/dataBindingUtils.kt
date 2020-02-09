@@ -45,7 +45,7 @@ infix fun <T> Bindable.or(other: DataBindingRo<T>): Bindable {
 /**
  * Immediately, and when the data has changed, the callback will be invoked.
  */
-inline fun <T> DataBindingRo<T>.bind(crossinline callback: (T) -> Unit): Disposable {
+fun <T> DataBindingRo<T>.bind(callback: (T) -> Unit): Disposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	val handler = { _: T, new: T -> callback(new) }
 	changed.add(handler)
@@ -61,7 +61,7 @@ inline fun <T> DataBindingRo<T>.bind(crossinline callback: (T) -> Unit): Disposa
  * The first time the callback is invoked, the `old` parameter will be null.
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun <T> DataBindingRo<T>.bind2(noinline callback: (old: T?, new: T) -> Unit): Disposable {
+fun <T> DataBindingRo<T>.bind2(callback: (old: T?, new: T) -> Unit): Disposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	changed.add(callback)
 	callback(null, value)

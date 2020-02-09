@@ -21,7 +21,7 @@ package com.acornui.component
 import com.acornui.collection.forEach2
 import com.acornui.component.ValidationFlags.LAYOUT
 import com.acornui.component.ValidationFlags.VIEW_PROJECTION
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.useCamera
 import com.acornui.gl.core.useViewportFromCanvasTransform
 import com.acornui.graphic.Camera
@@ -33,7 +33,7 @@ import com.acornui.math.*
  *
  * Does not support z translation, rotations, or custom transformations.
  */
-open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 
 	var camera: Camera = OrthographicCamera()
 		set(value) {
@@ -87,7 +87,7 @@ open class Scene(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 	}
 }
 
-fun Owned.scene(init: ComponentInit<Scene>): Scene {
+fun Context.scene(init: ComponentInit<Scene>): Scene {
 	val s = Scene(this)
 	s.init()
 	return s

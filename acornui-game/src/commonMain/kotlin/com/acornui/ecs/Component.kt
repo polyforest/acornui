@@ -16,9 +16,7 @@
 
 package com.acornui.ecs
 
-import com.acornui._assert
 import com.acornui.Disposable
-import com.acornui.serialization.*
 
 interface Component : Disposable {
 
@@ -61,7 +59,7 @@ abstract class ComponentBase : Component {
 	override fun assertValid(): Boolean {
 		for (i in 0..requiredSiblings.lastIndex) {
 			val requiredSibling = requiredSiblings[i]
-			_assert(getSibling(requiredSibling) != null) { "$type is missing sibling: $requiredSibling" }
+			check(getSibling(requiredSibling) != null) { "$type is missing sibling: $requiredSibling" }
 		}
 		return true
 	}

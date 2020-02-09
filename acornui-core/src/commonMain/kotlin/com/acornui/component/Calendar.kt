@@ -19,15 +19,17 @@ package com.acornui.component
 import com.acornui.behavior.Selection
 import com.acornui.behavior.SelectionBase
 import com.acornui.collection.Filter
-import com.acornui.component.layout.*
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.*
+import com.acornui.component.layout.spacer
 import com.acornui.component.style.*
 import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.focus
 import com.acornui.graphic.Color
@@ -53,7 +55,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class Calendar(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner) {
 
 	/**
@@ -62,8 +64,8 @@ open class Calendar(
 	 */
 	var selectable = true
 
-	private var _headerFactory: Owned.() -> Labelable = { text { charStyle.selectable = false } }
-	private var _rendererFactory: Owned.() -> CalendarItemRenderer = { calendarItemRenderer() }
+	private var _headerFactory: Context.() -> Labelable = { text { charStyle.selectable = false } }
+	private var _rendererFactory: Context.() -> CalendarItemRenderer = { calendarItemRenderer() }
 	private val grid = grid()
 	private val monthYearText: TextField
 
@@ -111,7 +113,7 @@ open class Calendar(
 		}
 	})
 
-	fun headerFactory(value: Owned.() -> Labelable) {
+	fun headerFactory(value: Context.() -> Labelable) {
 		val headers = _headers
 		if (headers != null) {
 			// Dispose old header cells when switching renderer factories.
@@ -137,7 +139,7 @@ open class Calendar(
 			return _headers!!
 		}
 
-	fun rendererFactory(value: Owned.() -> CalendarItemRenderer) {
+	fun rendererFactory(value: Context.() -> CalendarItemRenderer) {
 		val cells = _cells
 		if (cells != null) {
 			// Dispose old cells when switching renderer factories.
@@ -403,7 +405,7 @@ class CalendarStyle : StyleBase() {
 	companion object : StyleType<CalendarStyle>
 }
 
-inline fun Owned.calendar(init: ComponentInit<Calendar> = {}): Calendar  {
+inline fun Context.calendar(init: ComponentInit<Calendar> = {}): Calendar  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = Calendar(this)
 	c.init()
@@ -425,7 +427,7 @@ interface CalendarItemRenderer : ListItemRenderer<DateRo> {
 
 }
 
-open class CalendarItemRendererImpl(owner: Owned) : ContainerImpl(owner), CalendarItemRenderer {
+open class CalendarItemRendererImpl(owner: Context) : ContainerImpl(owner), CalendarItemRenderer {
 
 	val style = bind(CalendarItemRendererStyle())
 
@@ -585,7 +587,7 @@ open class CalendarItemRendererStyle : StyleBase() {
 	companion object : StyleType<CalendarItemRendererStyle>
 }
 
-inline fun Owned.calendarItemRenderer(init: ComponentInit<CalendarItemRendererImpl> = {}): CalendarItemRendererImpl  {
+inline fun Context.calendarItemRenderer(init: ComponentInit<CalendarItemRendererImpl> = {}): CalendarItemRendererImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = CalendarItemRendererImpl(this)
 	c.init()

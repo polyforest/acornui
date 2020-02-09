@@ -1,16 +1,19 @@
 package com.acornui.skins
 
 import com.acornui.component.*
-import com.acornui.component.layout.*
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.LayoutDataProvider
+import com.acornui.component.layout.setSize
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -21,7 +24,7 @@ import kotlin.contracts.contract
 interface IconButtonSkin : ButtonSkin, SingleElementContainer<UiComponent>
 
 class BasicIconButtonSkin(
-		owner: Owned,
+		owner: Context,
 		private val texture: ButtonSkin
 ) : SingleElementContainerImpl<UiComponent>(owner), IconButtonSkin, LayoutDataProvider<HorizontalLayoutData> {
 
@@ -119,30 +122,30 @@ class IconButtonLayoutStyle : StyleBase() {
 
 }
 
-inline fun Owned.basicIconButtonSkin(texture: ButtonSkin, init: ComponentInit<BasicIconButtonSkin> = {}): BasicIconButtonSkin {
+inline fun Context.basicIconButtonSkin(texture: ButtonSkin, init: ComponentInit<BasicIconButtonSkin> = {}): BasicIconButtonSkin {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return BasicIconButtonSkin(this, texture).apply(init)
 }
 
 @Deprecated("DSL changed")
-fun Owned.basicIconButtonSkin(texture: ButtonSkin,
+fun Context.basicIconButtonSkin(texture: ButtonSkin,
 
-							  /**
+								/**
 							   * The padding around the text and icon.
 							   */
 							  padding: PadRo = Pad(4f),
 
-							  /**
+								/**
 							   * The horizontal gap between the icon and the textfield.
 							   */
 							  hGap: Float = 4f,
 
-							  /**
+								/**
 							   * The vertical alignment between the icon and the label.
 							   */
 							  vAlign: VAlign = VAlign.MIDDLE,
 
-							  /**
+								/**
 							   * If false, the icon will be on the right instead of left.
 							   */
 							  iconOnLeft: Boolean = true
@@ -154,7 +157,7 @@ fun Owned.basicIconButtonSkin(texture: ButtonSkin,
 	layoutStyle.iconOnLeft = iconOnLeft
 }
 
-inline fun Owned.basicIconButtonSkin(theme: Theme, init: ComponentInit<BasicIconButtonSkin> = {}): IconButtonSkin {
+inline fun Context.basicIconButtonSkin(theme: Theme, init: ComponentInit<BasicIconButtonSkin> = {}): IconButtonSkin {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return BasicIconButtonSkin(this, basicButtonSkin(theme)).apply {
 		layoutStyle.apply {

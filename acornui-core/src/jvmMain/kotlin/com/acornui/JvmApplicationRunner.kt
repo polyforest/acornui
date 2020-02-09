@@ -16,9 +16,7 @@
 
 package com.acornui
 
-import com.acornui.async.isUiThread
 import com.acornui.component.Stage
-import com.acornui.di.inject
 import com.acornui.graphic.Window
 import com.acornui.graphic.updateAndRender
 import com.acornui.logging.Log

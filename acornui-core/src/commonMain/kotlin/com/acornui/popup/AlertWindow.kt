@@ -21,10 +21,9 @@ import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 
-class AlertWindow(owner: Owned) : WindowPanel(owner) {
+class AlertWindow(owner: Context) : WindowPanel(owner) {
 
 	init {
 		styleTags.add(AlertWindow)
@@ -33,8 +32,8 @@ class AlertWindow(owner: Owned) : WindowPanel(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.alert(title: String, message: String, priority: Float = 1f, width: Float? = 500f, height: Float? = null): PopUpInfo<AlertWindow> = alert(title, message, priority, CanvasLayoutData().apply { this.width = width; this.height = height; center() })
-fun Owned.alert(title: String, message: String, priority: Float = 1f, layoutData: CanvasLayoutData = CanvasLayoutData().apply { width = 500f; height = null; center() }): PopUpInfo<AlertWindow> {
+fun Context.alert(title: String, message: String, priority: Float = 1f, width: Float? = 500f, height: Float? = null): PopUpInfo<AlertWindow> = alert(title, message, priority, CanvasLayoutData().apply { this.width = width; this.height = height; center() })
+fun Context.alert(title: String, message: String, priority: Float = 1f, layoutData: CanvasLayoutData = CanvasLayoutData().apply { width = 500f; height = null; center() }): PopUpInfo<AlertWindow> {
 	val alertWindow = AlertWindow(this)
 	alertWindow.label = title
 	alertWindow.apply {

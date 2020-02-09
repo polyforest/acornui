@@ -16,8 +16,7 @@
 
 package com.acornui.graphic
 
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
@@ -64,7 +63,7 @@ open class PerspectiveCamera : CameraBase() {
 	}
 }
 
-fun Owned.perspectiveCamera(autoCenter: Boolean = false, init: PerspectiveCamera.() -> Unit = {}): PerspectiveCamera {
+fun Context.perspectiveCamera(autoCenter: Boolean = false, init: PerspectiveCamera.() -> Unit = {}): PerspectiveCamera {
 	val p = PerspectiveCamera()
 	p.init()
 	if (autoCenter) own(inject(Window).autoCenterCamera(p))

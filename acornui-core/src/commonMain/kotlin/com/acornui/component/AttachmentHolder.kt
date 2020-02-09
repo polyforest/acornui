@@ -16,6 +16,8 @@
 
 package com.acornui.component
 
+import com.acornui.Disposable
+
 /**
  * An AttachmentHolder can contain a map of arbitrary objects. This is used to attach reusable behaviors to components
  * such as drag and drop, toss scrolling, user interaction.
@@ -30,6 +32,13 @@ interface AttachmentHolder {
 	 * Removes an attachment added via [setAttachment]
 	 */
 	fun <T : Any> removeAttachment(key: Any): T?
+}
+
+/**
+ * Removes and disposes an attachment added via [AttachmentHolder.setAttachment]
+ */
+fun <T : Disposable> AttachmentHolder.disposeAttachment(key: Any) {
+	removeAttachment<T>(key)?.dispose()
 }
 
 fun <T : Any> AttachmentHolder.createOrReuseAttachment(key: Any, factory: () -> T): T {

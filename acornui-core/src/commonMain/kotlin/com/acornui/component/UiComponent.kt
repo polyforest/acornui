@@ -25,9 +25,7 @@ import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.StyleableRo
-import com.acornui.di.Owned
-import com.acornui.di.inject
-import com.acornui.di.injectOptional
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.input.MouseState
 import com.acornui.math.MinMaxRo
@@ -165,13 +163,11 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable {
+interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable, Context {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>
 	override val deactivated: Signal<(UiComponent) -> Unit>
-
-	override val owner: Owned
 
 	/**
 	 * The parent on the display graph.

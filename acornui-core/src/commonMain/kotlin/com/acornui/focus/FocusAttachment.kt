@@ -18,17 +18,16 @@ package com.acornui.focus
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.Disposable
-import com.acornui.di.inject
+import com.acornui.di.ContextImpl
 import com.acornui.di.owns
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
 class FocusAttachment(
 		private val target: UiComponentRo
-) : Disposable {
+) : ContextImpl(target) {
 
-	private val focusManager = target.inject(FocusManager)
+	private val focusManager = inject(FocusManager)
 
 	private val _focused = Signal0()
 	val focused = _focused.asRo()
@@ -79,6 +78,7 @@ class FocusAttachment(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		focusManager.focusedChanged.remove(::focusChangedHandler)
 		_focused.dispose()
 		_focusedSelf.dispose()

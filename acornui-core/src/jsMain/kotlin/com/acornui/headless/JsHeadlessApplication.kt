@@ -17,14 +17,13 @@
 package com.acornui.headless
 
 import com.acornui.JsApplicationBase
-import com.acornui.di.Injector
-import com.acornui.di.InjectorImpl
+import com.acornui.di.ContextImpl
 
 class JsHeadlessApplication : JsApplicationBase() {
 
 	/**
 	 * Creates an injector with JS dependencies from the bootstrap, and mock dependencies for input and graphics.
 	 */
-	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(config()), bootstrap.dependenciesList())
+	override suspend fun createContext() = ContextImpl(HeadlessDependencies.create(config()) + bootstrap.dependencies())
 	
 }

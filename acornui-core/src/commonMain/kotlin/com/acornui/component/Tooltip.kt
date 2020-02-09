@@ -24,10 +24,11 @@ import com.acornui.component.layout.algorithm.canvasLayoutData
 import com.acornui.component.layout.setSize
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.DKey
 import com.acornui.function.as1
 import com.acornui.function.as2
-import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
 import com.acornui.input.mouseDown
@@ -40,23 +41,24 @@ import com.acornui.popup.PopUpManager
 import com.acornui.signal.bind
 import com.acornui.time.tick
 
-class TooltipAttachment(val target: UiComponentRo) : Disposable {
+class TooltipAttachment(val target: UiComponentRo) : ContextImpl(target) {
+
+	val tooltipManager = inject(TooltipManager)
 
 	private var isOver: Boolean = false
-	private val tooltipManager = target.inject(TooltipManager)
 	private var timerHandle: Disposable? = null
 	private var showCountdown = showDelay
 	private var hideCountdown = hideDelay
-	private val dT = target.inject(AppConfig).frameTime
+	private val dT = inject(AppConfig).frameTime
 
 	init {
-		target.rollOver(isCapture = true).add(::targetRollOverHandler)
-		target.rollOut(isCapture = true).add(::targetRollOutHandler)
+		target.rollOver(isCapture = true).add(::targetRollOverHandler.as1)
+		target.rollOut(isCapture = true).add(::targetRollOutHandler.as1)
 		target.mouseDown(isCapture = true).add(::resetShowCountdown.as1)
 		target.touchStart(isCapture = true).add(::resetShowCountdown.as1)
 	}
 
-	private fun targetRollOverHandler(event: MouseInteractionRo) {
+	private fun targetRollOverHandler() {
 		hideCountdown = hideDelay
 		isOver = true
 		if (timerHandle == null) {
@@ -84,7 +86,7 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 		}
 	}
 
-	private fun targetRollOutHandler(event: MouseInteractionRo) {
+	private fun targetRollOutHandler() {
 		isOver = false
 	}
 
@@ -115,8 +117,9 @@ class TooltipAttachment(val target: UiComponentRo) : Disposable {
 		}
 
 	override fun dispose() {
-		target.rollOver(isCapture = true).remove(::targetRollOverHandler)
-		target.rollOut(isCapture = true).remove(::targetRollOutHandler)
+		super.dispose()
+		target.rollOver(isCapture = true).remove(::targetRollOverHandler.as1)
+		target.rollOut(isCapture = true).remove(::targetRollOutHandler.as1)
 		target.mouseDown(isCapture = true).remove(::resetShowCountdown.as1)
 		target.touchStart(isCapture = true).remove(::resetShowCountdown.as1)
 
@@ -221,7 +224,7 @@ data class Tooltip<E>(
 		val priority: Float = 0f
 )
 
-class TooltipView(owner: Owned) : ContainerImpl(owner), ItemRenderer<String> {
+class TooltipView(owner: Context) : ContainerImpl(owner), ItemRenderer<String> {
 
 	val style = bind(PanelStyle())
 
@@ -262,6 +265,8 @@ fun UiComponentRo.tooltipAttachment(): TooltipAttachment {
 	return createOrReuseAttachment(TooltipAttachment) { TooltipAttachment(this) }
 }
 
+@Suppress("unused")
 fun UiComponentRo.tooltip(value: String?) {
-	tooltipAttachment().tooltip = if (value == null) null else inject(TooltipManager).createTooltip(value)
+	val attachment = tooltipAttachment()
+	attachment.tooltip = if (value == null) null else attachment.tooltipManager.createTooltip(value)
 }

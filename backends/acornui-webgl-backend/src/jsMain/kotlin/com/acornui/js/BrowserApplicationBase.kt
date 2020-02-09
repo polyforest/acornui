@@ -19,7 +19,7 @@ package com.acornui.js
 import com.acornui.JsApplicationBase
 import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.dKey
 import com.acornui.focus.FocusManager
 import com.acornui.graphic.Window
@@ -77,7 +77,7 @@ abstract class BrowserApplicationBase : JsApplicationBase() {
 
 	abstract val canvasTask: suspend () -> HTMLElement
 	abstract val windowTask: suspend () -> Window
-	abstract val componentsTask: suspend () -> (owner: Owned) -> HtmlComponent
+	abstract val componentsTask: suspend () -> (owner: Context) -> HtmlComponent
 
 	protected open val mouseInputTask by task(MouseInput) {
 		JsMouseInput(get(CANVAS))

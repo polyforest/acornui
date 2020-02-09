@@ -16,7 +16,6 @@
 
 package com.acornui.component.drawing
 
-import com.acornui._assert
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -95,11 +94,11 @@ fun ShaderBatch.line(p1: Vector2Ro, p2: Vector2Ro, lineStyle: LineStyleRo = Line
 	capBuilder.createCap(p1, p2, controlA, this, lineStyle, controlAThickness, clockwise = true)
 	val vertexSize = vertexAttributes.vertexSize
 	val indexA = vertexComponentsCount / vertexSize - 2
-	_assert(indexA >= startVertexPosition / vertexSize, "Cap builder did not create at least two vertices")
+	check(indexA >= startVertexPosition / vertexSize) { "Cap builder did not create at least two vertices" }
 	val indexB = indexA + 1
 	capBuilder.createCap(p2, p1, controlB, this, lineStyle, controlBThickness, clockwise = false)
 	val indexC = vertexComponentsCount / vertexSize - 2
-	_assert(indexC >= indexA + 2, "Cap builder did not create at least two vertices")
+	check(indexC >= indexA + 2) { "Cap builder did not create at least two vertices" }
 	val indexD = indexC + 1
 
 	// Span a rectangle from the ends the caps create.

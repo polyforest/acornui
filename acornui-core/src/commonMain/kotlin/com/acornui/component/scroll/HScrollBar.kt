@@ -22,7 +22,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
 import kotlin.contracts.InvocationKind
@@ -30,7 +30,7 @@ import kotlin.contracts.contract
 import kotlin.math.round
 
 open class HScrollBar(
-		owner: Owned
+		owner: Context
 ) : ScrollBarBase(owner) {
 
 	init {
@@ -112,14 +112,14 @@ open class HScrollBar(
 	companion object : StyleTag
 }
 
-inline fun Owned.hScrollBar(init: ComponentInit<HScrollBar> = {}): HScrollBar  {
+inline fun Context.hScrollBar(init: ComponentInit<HScrollBar> = {}): HScrollBar  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val h = HScrollBar(this)
 	h.init()
 	return h
 }
 
-open class HSlider(owner: Owned) : HScrollBar(owner) {
+open class HSlider(owner: Context) : HScrollBar(owner) {
 
 	init {
 		styleTags.add(HSlider)
@@ -129,7 +129,7 @@ open class HSlider(owner: Owned) : HScrollBar(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.hSlider(init: ComponentInit<HSlider>): HSlider {
+fun Context.hSlider(init: ComponentInit<HSlider>): HSlider {
 	val h = HSlider(this)
 	h.init()
 	return h

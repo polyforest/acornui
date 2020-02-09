@@ -19,10 +19,8 @@ package com.acornui.input.interaction
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
-import com.acornui.Disposable
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.focus.FocusManager
 import com.acornui.input.*
 import com.acornui.signal.StoppableSignal
@@ -45,12 +43,12 @@ fun UiComponentRo.redo(isCapture: Boolean = false): StoppableSignal<UndoInteract
 	return createOrReuse(UndoInteractionRo.REDO, isCapture)
 }
 
-class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
+class UndoDispatcher(owner: Context) : ContextImpl(owner) {
 
-	private val key = inject(KeyInput)
-	private val interactivity = inject(InteractivityManager)
-	private val focus = inject(FocusManager)
-	private val stage = inject(Stage)
+	private val key by KeyInput
+	private val interactivity by InteractivityManager
+	private val focus by FocusManager
+	private val stage by Stage
 
 	private val event = UndoInteraction()
 
@@ -75,6 +73,7 @@ class UndoDispatcher(override val injector: Injector) : Scoped, Disposable {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		key.keyDown.remove(keyDownHandler)
 	}
 }

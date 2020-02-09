@@ -21,7 +21,7 @@ import com.acornui.component.style.SkinPart
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import kotlin.contracts.InvocationKind
@@ -32,7 +32,7 @@ import kotlin.contracts.contract
  * It contains no data, and is not toggleable.
  */
 class NullRenderer(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner), ListRenderer {
 
 	override var index: Int = -1
@@ -73,7 +73,7 @@ class NullRendererStyle : StyleBase() {
 	companion object : StyleType<NullRendererStyle>
 }
 
-inline fun Owned.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer  {
+inline fun Context.nullItemRenderer(init: ComponentInit<NullRenderer> = {}): NullRenderer  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val renderer = NullRenderer(this)
 	renderer.init()

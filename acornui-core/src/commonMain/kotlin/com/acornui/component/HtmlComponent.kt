@@ -17,7 +17,7 @@
 package com.acornui.component
 
 import com.acornui.component.style.StyleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.dKey
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -29,21 +29,21 @@ interface HtmlComponent : UiComponent {
 	var html: String
 
 	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Owned) -> HtmlComponent>()
+		val FACTORY_KEY = dKey<(owner: Context) -> HtmlComponent>()
 	}
 }
 
-inline fun Owned.htmlComponent(html: String, init: ComponentInit<HtmlComponent> = {}): HtmlComponent  {
+inline fun Context.htmlComponent(html: String, init: ComponentInit<HtmlComponent> = {}): HtmlComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val c = injector.inject(HtmlComponent.FACTORY_KEY)(this)
+	val c = inject(HtmlComponent.FACTORY_KEY)(this)
 	c.html = html
 	c.init()
 	return c
 }
 
-inline fun Owned.htmlComponent(init: ComponentInit<HtmlComponent> = {}): HtmlComponent  {
+inline fun Context.htmlComponent(init: ComponentInit<HtmlComponent> = {}): HtmlComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val c = injector.inject(HtmlComponent.FACTORY_KEY)(this)
+	val c = inject(HtmlComponent.FACTORY_KEY)(this)
 	c.init()
 	return c
 }

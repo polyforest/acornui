@@ -20,7 +20,7 @@ package com.acornui.filter
 
 import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.component.*
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
@@ -29,7 +29,7 @@ import com.acornui.signal.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) {
+class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner) {
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
 		bind { invalidate(ValidationFlags.VERTICES_GLOBAL) }
@@ -82,7 +82,7 @@ class FilteredContainer(owner: Owned) : FillLayoutContainer<UiComponent>(owner) 
 
 }
 
-inline fun Owned.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {
+inline fun Context.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = FilteredContainer(this)
 	c.init()

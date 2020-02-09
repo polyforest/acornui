@@ -18,19 +18,16 @@ package com.acornui.component
 
 import com.acornui.collection.addAll
 import com.acornui.component.layout.spacer
-import com.acornui.headless.HeadlessInjector
+import com.acornui.headless.HeadlessDependencies
 import com.acornui.headless.MockComponent
 import com.acornui.test.assertListEquals
-
 import kotlin.test.*
-import kotlin.test.Test
-import kotlin.test.Ignore
 
 class ContainerImplTest {
 
 	@Test
 	fun addChild() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent())
 				val b = addChild(MockComponent())
@@ -45,7 +42,7 @@ class ContainerImplTest {
 
 	@Test
 	fun addOptionalChild() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent())
 				addOptionalChild(null)
@@ -57,7 +54,7 @@ class ContainerImplTest {
 
 	@Test
 	fun removeChild() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent("a"))
 				val b = addChild(MockComponent("b"))
@@ -72,7 +69,7 @@ class ContainerImplTest {
 
 	@Test
 	fun clearChildren() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent("a"))
 				val b = addChild(MockComponent("b"))
@@ -95,7 +92,7 @@ class ContainerImplTest {
 
 	@Test
 	fun activate() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent("a"))
 				val b = addChild(MockComponent("b"))
@@ -115,7 +112,7 @@ class ContainerImplTest {
 
 	@Test
 	fun invalidate() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				val a = addChild(MockComponent("a"))
 				val b = addChild(MockComponent("b"))
@@ -150,7 +147,7 @@ class ContainerImplTest {
 	@Ignore("No-op children validation currently inactive")
 	@Test
 	fun noopChildrenUpdate() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				var updateCountA = 0
 				val childA = addChild(object : MockComponent("a") {
@@ -194,7 +191,7 @@ class ContainerImplTest {
 
 	@Test
 	fun drawTest() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 			init {
 				var drawCountA = 0
 				addChild(object : MockComponent("a") {
@@ -246,7 +243,7 @@ class ContainerImplTest {
 
 	@Test
 	fun onChildInvalidated() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 
 			private var childInvalidatedCount: Int = 0
 
@@ -280,7 +277,7 @@ class ContainerImplTest {
 	@Test
 	fun childDisposedHandler() {
 
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 
 			private var childDisposedCount: Int = 0
 
@@ -309,7 +306,7 @@ class ContainerImplTest {
 
 	@Test
 	fun dispose() {
-		object : ContainerImpl(HeadlessInjector.owner) {
+		object : ContainerImpl(HeadlessDependencies.owner) {
 
 			init {
 				val a = addChild(spacer())

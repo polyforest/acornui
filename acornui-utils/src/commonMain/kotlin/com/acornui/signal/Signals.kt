@@ -329,3 +329,9 @@ open class StoppableSignalImpl<P1 : Stoppable> : SignalBase<(P1) -> Unit>(), Sto
 
 	fun asRo(): StoppableSignal<P1> = this
 }
+
+///**
+// * An indicator that the handler's type parameter can be safely cast to the dispatching class.
+// * Kotlin doesn't support the Self type, so this is a workaround to that limitation.
+// */
+//typealias Self = Any

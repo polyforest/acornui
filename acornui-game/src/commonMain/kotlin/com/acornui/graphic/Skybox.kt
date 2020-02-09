@@ -21,7 +21,7 @@ import com.acornui.async.async
 import com.acornui.async.launch
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.*
 import com.acornui.io.floatBuffer
 import com.acornui.io.put
@@ -29,7 +29,7 @@ import com.acornui.math.Matrix4
 import com.acornui.math.Vector3
 import com.acornui.observe.ModTagWatch
 
-class Skybox(owner: Owned, private val camera: CameraRo) : UiComponentImpl(owner) {
+class Skybox(owner: Context, private val camera: CameraRo) : UiComponentImpl(owner) {
 
 	private val shader = SkyboxShader(gl)
 

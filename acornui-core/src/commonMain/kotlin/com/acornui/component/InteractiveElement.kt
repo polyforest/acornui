@@ -18,15 +18,13 @@ package com.acornui.component
 
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
-import com.acornui.math.Vector2
 import com.acornui.signal.StoppableSignal
 
-interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, AttachmentHolder, Owned {
+interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, AttachmentHolder, Context {
 
 	/**
 	 * If false, interaction will be blocked on this element.

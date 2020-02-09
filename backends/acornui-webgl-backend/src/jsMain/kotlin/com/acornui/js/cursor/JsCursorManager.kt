@@ -55,10 +55,11 @@ class JsCursorManager(private val canvas: HTMLElement) : CursorManagerBase() {
  */
 // TODO: IE doesn't support hot spot, and only the .cur format...
 class JsTextureCursor(
-		val texturePath: String,
-		val hotX: Int,
-		val hotY: Int,
-		val canvas: HTMLCanvasElement) : LifecycleBase(), Cursor {
+		private val texturePath: String,
+		private val hotX: Int,
+		private val hotY: Int,
+		private val canvas: HTMLCanvasElement
+) : LifecycleBase(), Cursor {
 
 	init {
 	}
@@ -76,11 +77,8 @@ class JsTextureCursor(
  * Loads a texture atlas and pulls out the cursor region, sending the pixels to the OS.
  */
 class JsStandardCursor(
-		val identifier: String,
-		val canvas: HTMLElement) : LifecycleBase(), Cursor {
-
-	init {
-	}
+		private val identifier: String,
+		private val canvas: HTMLElement) : LifecycleBase(), Cursor {
 
 	override fun onActivated() {
 		canvas.style.cursor = identifier

@@ -21,10 +21,8 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.component.text.text
-import com.acornui.di.Injector
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -34,11 +32,11 @@ import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.signal.StoppableSignal
 
-class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
+class ContextMenuManager(owner: Context) : ContextImpl(owner), Disposable {
 
 	private val contextEvent = ContextMenuInteraction()
-	private val interactivity = inject(InteractivityManager)
-	private val popUpManager = inject(PopUpManager)
+	private val interactivity by InteractivityManager
+	private val popUpManager by PopUpManager
 
 	init {
 		stage.rightClick().add(::rightClickHandler)
@@ -60,6 +58,7 @@ class ContextMenuManager(override val injector: Injector) : Scoped, Disposable {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stage.rightClick().remove(::rightClickHandler)
 	}
 }
@@ -147,7 +146,7 @@ class ContextMenuItem(
 
 class ContextMenuGroup(val items: List<ContextMenuItem>)
 
-class ContextMenuView(owner: Owned) : ContainerImpl(owner) {
+class ContextMenuView(owner: Context) : ContainerImpl(owner) {
 
 	val style = bind(ContextMenuStyle())
 
@@ -344,7 +343,7 @@ class ContextMenuStyle : StyleBase() {
 	/**
 	 * The background for each row.
 	 */
-	var rowBackground by prop<Owned.() -> RowBackground>({ rowBackground() })
+	var rowBackground by prop<Context.() -> RowBackground>({ rowBackground() })
 
 	companion object : StyleType<ContextMenuStyle>
 

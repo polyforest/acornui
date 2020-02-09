@@ -29,7 +29,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkinOptional
 import com.acornui.component.text.TextStyleTags
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
@@ -43,7 +43,7 @@ interface DataGridGroupHeader : UiComponent {
 }
 
 open class DataGridGroupHeaderImpl<E>(
-		owner: Owned,
+		owner: Context,
 		protected val group: DataGridGroup<E>,
 		protected val list: ObservableList<E>
 ) : ElementLayoutContainer<HorizontalLayoutStyle, HorizontalLayoutData, UiComponent>(
@@ -103,7 +103,7 @@ class DataGridGroupHeaderStyle : StyleBase() {
 	/**
 	 * Added to group headers, when clicked, the group will be collapsed.
 	 */
-	var collapseButton by prop<Owned.() -> ButtonImpl>({ throw Exception("Skin part must be created.") })
+	var collapseButton by prop<Context.() -> ButtonImpl>({ throw Exception("Skin part must be created.") })
 
 	/**
 	 * The header background for groups.
@@ -113,7 +113,7 @@ class DataGridGroupHeaderStyle : StyleBase() {
 	companion object : StyleType<DataGridGroupHeaderStyle>
 }
 
-fun <E> Owned.dataGridGroupHeader(group: DataGridGroup<E>, list: ObservableList<E>, label: String = "", init: ComponentInit<DataGridGroupHeaderImpl<E>> = {}): DataGridGroupHeader {
+fun <E> Context.dataGridGroupHeader(group: DataGridGroup<E>, list: ObservableList<E>, label: String = "", init: ComponentInit<DataGridGroupHeaderImpl<E>> = {}): DataGridGroupHeader {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val d = DataGridGroupHeaderImpl(this, group, list)
 	d.label = label

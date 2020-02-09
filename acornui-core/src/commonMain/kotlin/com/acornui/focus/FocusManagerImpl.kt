@@ -16,13 +16,12 @@
 
 package com.acornui.focus
 
-import com.acornui._assert
+import com.acornui.DisposedException
 import com.acornui.collection.addSorted
 import com.acornui.collection.poll
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
-import com.acornui.DisposedException
 import com.acornui.di.ownerWalk
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
@@ -108,7 +107,7 @@ class FocusManagerImpl() : FocusManager {
 	}
 
 	override fun init(root: ElementContainer<UiComponent>) {
-		_assert(_root == null, "Already initialized.")
+		check(_root == null) { "Already initialized." }
 		_root = root
 		_focused = root
 		root.keyDown().add(rootKeyDownHandler)
@@ -150,7 +149,12 @@ class FocusManagerImpl() : FocusManager {
 
 	private fun UiComponentRo.calculateFocusDemarcations(out: MutableList<UiComponentRo>) {
 		out.add(this)
-		ownerWalk { if (it is UiComponentRo && it.isFocusContainer && it.isActive) out.add(it); true }
+		ownerWalk { 
+			if (it is UiComponentRo && it.isFocusContainer && it.isActive) {
+				out.add(it)
+			}
+			true 
+		}
 	}
 
 	private fun UiComponentRo.compareFocusOrder(other: UiComponentRo): Int {

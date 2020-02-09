@@ -22,7 +22,7 @@ import com.acornui.async.catch
 import com.acornui.async.then
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Color
@@ -30,14 +30,14 @@ import com.acornui.graphic.ColorRo
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-inline fun Owned.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val atlasComponent = IconAtlasComponent(this)
 	atlasComponent.init()
 	return atlasComponent
 }
 
-inline fun Owned.iconAtlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val iconAtlas = iconAtlas {
 		setRegion(atlasPath, region)
@@ -46,7 +46,7 @@ inline fun Owned.iconAtlas(atlasPath: String, region: String, init: ComponentIni
 	return iconAtlas
 }
 
-inline fun Owned.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image  {
+inline fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val image = IconImageComponent(this)
 	image.element = textureC {
@@ -72,7 +72,7 @@ class IconStyle : StyleBase() {
 	companion object : StyleType<IconStyle>
 }
 
-class IconAtlasComponent(owner: Owned) : AtlasComponent(owner) {
+class IconAtlasComponent(owner: Context) : AtlasComponent(owner) {
 	init {
 		val style = bind(IconStyle())
 		watch(style) {
@@ -81,7 +81,7 @@ class IconAtlasComponent(owner: Owned) : AtlasComponent(owner) {
 	}
 }
 
-class IconImageComponent(owner: Owned) : Image(owner) {
+class IconImageComponent(owner: Context) : Image(owner) {
 	init {
 		val style = bind(IconStyle())
 		watch(style) {

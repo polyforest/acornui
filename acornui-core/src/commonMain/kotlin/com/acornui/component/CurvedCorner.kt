@@ -18,8 +18,7 @@ package com.acornui.component
 
 import com.acornui.async.disposeOnShutdown
 import com.acornui.component.drawing.putIdtQuad
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Window
@@ -49,7 +48,7 @@ private val smoothCornerMap: MutableMap<SmoothCornerKey, Framebuffer> = HashMap(
  * @param useCache If true, the frame buffer used will be saved for matching corner properties.
  * @return Returns [spriteOut].
  */
-fun Scoped.createSmoothCorner(
+fun Context.createSmoothCorner(
 		cornerRadiusX: Float,
 		cornerRadiusY: Float,
 		strokeThicknessX: Float? = null,

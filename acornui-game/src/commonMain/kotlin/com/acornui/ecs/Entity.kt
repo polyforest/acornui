@@ -17,7 +17,6 @@
 package com.acornui.ecs
 
 import com.acornui.UidUtil
-import com.acornui._assert
 import com.acornui.assertionsEnabled
 
 
@@ -36,7 +35,7 @@ class Entity(
 
 	fun assertValid(): Boolean {
 		if (!assertionsEnabled) return true
-		_assert(components.isNotEmpty()) { "Entity is empty." }
+		check(components.isNotEmpty()) { "Entity is empty." }
 		for (entry in components) {
 			entry.value.assertValid()
 		}
@@ -58,7 +57,7 @@ class Entity(
 	}
 
 	fun addComponent(component: Component): Entity {
-		_assert(component.parentEntity == null, "Component must be removed first.")
+		check(component.parentEntity == null) { "Component must be removed first." }
 		component.parentEntity = this
 		_components[component.type] = component
 		return this

@@ -22,7 +22,7 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
 import com.acornui.component.text.RestrictPatterns
 import com.acornui.component.text.textInput
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.enableDownRepeat
@@ -39,7 +39,7 @@ import com.acornui.text.numberFormatter
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class NumericStepper(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 
 	val style = bind(NumericStepperStyle())
 
@@ -262,7 +262,7 @@ class NumericStepperStyle : StyleBase() {
 	companion object : StyleType<NumericStepperStyle>
 }
 
-inline fun Owned.numericStepper(init: ComponentInit<NumericStepper> = {}): NumericStepper  {
+inline fun Context.numericStepper(init: ComponentInit<NumericStepper> = {}): NumericStepper  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = NumericStepper(this)
 	c.init()

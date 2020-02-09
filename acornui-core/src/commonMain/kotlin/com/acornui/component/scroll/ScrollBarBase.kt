@@ -17,22 +17,27 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.*
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.noSkin
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.input.interaction.*
+import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.MouseInteractionRo
+import com.acornui.input.interaction.drag
+import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.mouseDown
 import com.acornui.input.mouseOver
-import com.acornui.tween.killTween
-import com.acornui.tween.tweenAlpha
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
 import com.acornui.time.start
+import com.acornui.tween.killTween
+import com.acornui.tween.tweenAlpha
 import kotlin.properties.Delegates
 
-abstract class ScrollBarBase(owner: Owned) : ContainerImpl(owner) {
+abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 
 	protected val _scrollModel = own(ScrollModelImpl())
 

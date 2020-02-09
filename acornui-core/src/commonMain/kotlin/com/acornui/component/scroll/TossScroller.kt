@@ -23,10 +23,14 @@ import com.acornui.collection.poll
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.config
+import com.acornui.di.ContextImpl
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
-import com.acornui.math.*
+import com.acornui.math.Easing
+import com.acornui.math.Interpolation
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 import com.acornui.time.nowMs
@@ -48,7 +52,7 @@ class TossScroller(
 		val slowEase: Interpolation = DEFAULT_SLOW_EASE,
 
 		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
-) : Disposable {
+) : ContextImpl(target) {
 
 	private val tickTime = target.config.frameTime
 
@@ -238,6 +242,7 @@ class TossScroller(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stop()
 		_tossStart.dispose()
 		_toss.dispose()

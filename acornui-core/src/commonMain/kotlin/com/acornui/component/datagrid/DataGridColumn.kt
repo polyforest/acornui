@@ -21,7 +21,7 @@ import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.VAlign
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.observe.ObservableBase
 
 abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
@@ -97,7 +97,7 @@ abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
 	 * or sorting arrows.
 	 * The cell is cached, so this method should not return inconsistent results.
 	 */
-	abstract fun createHeaderCell(owner: Owned): UiComponent
+	abstract fun createHeaderCell(owner: Context): UiComponent
 
 	/**
 	 * The header cell interactivity mode. This should be [InteractivityMode.NONE] unless the header cell has something
@@ -110,7 +110,7 @@ abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
 	 * Constructs a new cell for this column.
 	 * The cell is cached, so this method should not return inconsistent results.
 	 */
-	abstract fun createCell(owner: Owned): DataGridCell<CellData>
+	abstract fun createCell(owner: Context): DataGridCell<CellData>
 
 	/**
 	 * The cell's interactivity mode. This should be [InteractivityMode.NONE] unless the cell has something
@@ -123,7 +123,7 @@ abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
 	 * Constructs a new footer cell for this column.
 	 * This should be overriden if [DataGrid.showFooterRow] or any group's [DataGridGroup.showFooter] property is true.
 	 */
-	open fun createFooterRowCell(owner: Owned, list: ObservableList<RowData>): UiComponent {
+	open fun createFooterRowCell(owner: Context, list: ObservableList<RowData>): UiComponent {
 		throw Exception("A footer cell was requested, but createFooterCell was not implemented.")
 	}
 
@@ -151,7 +151,7 @@ abstract class DataGridColumn<in RowData, CellData> : ObservableBase() {
 	/**
 	 * Constructs a new editor cell.
 	 */
-	abstract fun createEditorCell(owner: Owned): DataGridEditorCell<CellData>
+	abstract fun createEditorCell(owner: Context): DataGridEditorCell<CellData>
 
 	fun getPreferredWidth(availableWidth: Float?): Float? {
 		var w = if (availableWidth == null || widthPercent == null) width else widthPercent!! * availableWidth

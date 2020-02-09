@@ -19,7 +19,7 @@ package com.acornui.component
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
@@ -35,7 +35,7 @@ interface RowBackground : UiComponent, Toggleable {
 	companion object : StyleTag
 }
 
-open class RowBackgroundImpl(owner: Owned) : ContainerImpl(owner), RowBackground {
+open class RowBackgroundImpl(owner: Context) : ContainerImpl(owner), RowBackground {
 
 	override var toggled: Boolean by validationProp(false, BACKGROUND_COLOR)
 	override var highlighted: Boolean by validationProp(false, BACKGROUND_COLOR)
@@ -105,7 +105,7 @@ class RowBackgroundStyle : StyleBase() {
 	companion object : StyleType<RowBackgroundStyle>
 }
 
-inline fun Owned.rowBackground(init: ComponentInit<RowBackgroundImpl> = {}): RowBackgroundImpl  {
+inline fun Context.rowBackground(init: ComponentInit<RowBackgroundImpl> = {}): RowBackgroundImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val r = RowBackgroundImpl(this)
 	r.init()

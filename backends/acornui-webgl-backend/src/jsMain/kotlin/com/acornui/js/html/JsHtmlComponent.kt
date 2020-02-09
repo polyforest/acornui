@@ -20,7 +20,7 @@ import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.parentWalk
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -32,7 +32,7 @@ import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.browser.document
 
 class JsHtmlComponent(
-		owner: Owned,
+		owner: Context,
 		rootElement: HTMLElement,
 		element: HTMLElement = document.createElement("div") as HTMLElement
 ) : UiComponentImpl(owner), HtmlComponent {

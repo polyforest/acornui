@@ -23,7 +23,7 @@ import com.acornui.collection.indexOfFirst2
 import com.acornui.collection.indexOfLast2
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.algorithm.VerticalLayoutData
-import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
+import com.acornui.component.layout.algorithm.virtual.ItemRendererContext
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.vDataScroller
 import com.acornui.component.scroll.ScrollModel
@@ -33,8 +33,7 @@ import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
@@ -57,14 +56,14 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class OptionList<E : Any>(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner), Clearable {
 
-	constructor(owner: Owned, data: List<E?>) : this(owner) {
+	constructor(owner: Context, data: List<E?>) : this(owner) {
 		data(data)
 	}
 
-	constructor(owner: Owned, data: ObservableList<E?>) : this(owner) {
+	constructor(owner: Context, data: ObservableList<E?>) : this(owner) {
 		data(data)
 	}
 
@@ -217,7 +216,7 @@ open class OptionList<E : Any>(
 	val scrollModel: ScrollModel
 		get() = dataScroller.scrollModel
 
-	fun rendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>) {
+	fun rendererFactory(value: ItemRendererContext<VerticalLayoutData>.() -> ListItemRenderer<E>) {
 		dataScroller.rendererFactory(value)
 	}
 
@@ -225,7 +224,7 @@ open class OptionList<E : Any>(
 	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
 	 * to be used in this list.
 	 */
-	fun nullRendererFactory(value: ItemRendererOwner<VerticalLayoutData>.() -> ListRenderer) {
+	fun nullRendererFactory(value: ItemRendererContext<VerticalLayoutData>.() -> ListRenderer) {
 		dataScroller.nullRendererFactory(value)
 	}
 
@@ -262,7 +261,7 @@ open class OptionList<E : Any>(
 		}
 	}
 
-	fun emptyListRenderer(value: ItemRendererOwner<VerticalLayoutData>.() -> UiComponent) {
+	fun emptyListRenderer(value: ItemRendererContext<VerticalLayoutData>.() -> UiComponent) {
 		dataScroller.emptyListRenderer(value)
 	}
 
@@ -531,14 +530,14 @@ class OptionListStyle : StyleBase() {
 	companion object : StyleType<OptionListStyle>
 }
 
-fun <E : Any> Owned.optionList(
+fun <E : Any> Context.optionList(
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
 	val t = OptionList<E>(this)
 	t.init()
 	return t
 }
 
-inline fun <E : Any> Owned.optionList(
+inline fun <E : Any> Context.optionList(
 		data: ObservableList<E?>,
 		noinline rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
@@ -550,7 +549,7 @@ inline fun <E : Any> Owned.optionList(
 	return t
 }
 
-inline fun <E : Any> Owned.optionList(
+inline fun <E : Any> Context.optionList(
 		data: List<E?>,
 		noinline rendererFactory: OptionListRendererFactory<E> = { simpleItemRenderer() },
 		init: ComponentInit<OptionList<E>> = {}): OptionList<E> {
@@ -562,7 +561,7 @@ inline fun <E : Any> Owned.optionList(
 	return t
 }
 
-typealias OptionListRendererFactory<E> = ItemRendererOwner<VerticalLayoutData>.() -> ListItemRenderer<E>
+typealias OptionListRendererFactory<E> = ItemRendererContext<VerticalLayoutData>.() -> ListItemRenderer<E>
 
 fun <E : Any> OptionList<E>.sortedByInput(data: List<E?>, ignoreCase: Boolean = true): ListView<E?> {
 	val listView = ListView(data)

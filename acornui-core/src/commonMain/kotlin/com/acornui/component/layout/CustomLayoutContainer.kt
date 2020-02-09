@@ -19,7 +19,7 @@ package com.acornui.component.layout
 import com.acornui.component.ComponentInit
 import com.acornui.component.ElementContainerImpl
 import com.acornui.component.UiComponent
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
@@ -44,7 +44,7 @@ import kotlin.jvm.JvmName
  * ```
  */
 open class CustomLayoutContainer<E : UiComponent>(
-		owner: Owned
+		owner: Context
 ) : ElementContainerImpl<E>(owner), Focusable {
 
 	var updateLayoutCallback: (explicitWidth: Float?, explicitHeight: Float?, out: Bounds) -> Unit = { _, _, _ -> }
@@ -57,12 +57,12 @@ open class CustomLayoutContainer<E : UiComponent>(
 }
 
 @JvmName("customLayoutT")
-inline fun <E : UiComponent> Owned.customLayout(init: ComponentInit<CustomLayoutContainer<E>> = {}): CustomLayoutContainer<E> {
+inline fun <E : UiComponent> Context.customLayout(init: ComponentInit<CustomLayoutContainer<E>> = {}): CustomLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return CustomLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.customLayout(init: ComponentInit<CustomLayoutContainer<UiComponent>> = {}): CustomLayoutContainer<UiComponent> {
+inline fun Context.customLayout(init: ComponentInit<CustomLayoutContainer<UiComponent>> = {}): CustomLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return CustomLayoutContainer<UiComponent>(this).apply(init)
 }

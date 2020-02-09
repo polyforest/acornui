@@ -6,7 +6,7 @@ import com.acornui.component.style.NoopStyle
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.set
 import com.acornui.component.style.styleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.filter.BlurQuality
 import com.acornui.filter.GlowFilter
 import com.acornui.filter.filtered
@@ -21,7 +21,7 @@ import kotlin.contracts.contract
 /**
  * A Rect with a shadow.
  */
-class GlowRect(owner: Owned) : LayoutContainer<NoopStyle, NoopLayoutData>(owner, FillLayout()) {
+class GlowRect(owner: Context) : LayoutContainer<NoopStyle, NoopLayoutData>(owner, FillLayout()) {
 	
 	private val glowFilter: GlowFilter
 	private val rect: Rect = rect()
@@ -66,7 +66,7 @@ class GlowBoxStyle : BoxStyle() {
 
 val shadowRectStyleTag = styleTag()
 
-fun Owned.shadowRect(init: ComponentInit<GlowRect>): GlowRect {
+fun Context.shadowRect(init: ComponentInit<GlowRect>): GlowRect {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return GlowRect(this).apply {
 		styleTags.add(shadowRectStyleTag)

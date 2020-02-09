@@ -24,9 +24,7 @@ import com.acornui.async.globalAsync
 import com.acornui.component.InteractivityMode
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
@@ -39,7 +37,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 
 class ParticleEffectComponent(
-		owner: Owned
+		owner: Context
 ) : UiComponentImpl(owner) {
 
 	/**
@@ -160,7 +158,7 @@ class LoadedParticleEffect(
 
 typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
 
-suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	@Suppress("DeferredResultUnused")
 	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
@@ -172,7 +170,7 @@ suspend fun Scoped.loadParticleEffect(pDataPath: String, atlasPath: String, grou
 	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
 }
 
-suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val gl = inject(CachedGl20)
 
@@ -195,7 +193,7 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, atlasPath:
  * Given a particle effect and a sprite resolver, creates a particle effect instance, and requests a [Sprite] for every
  * emitter.
  */
-suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
 	val effectInstance = particleEffect.createInstance(maxParticlesScale)
 
@@ -206,7 +204,7 @@ suspend fun Scoped.loadParticleEffect(particleEffect: ParticleEffect, group: Cac
 			val sprite = spriteResolver(emitter, emitter.imageEntries[i])
 			sprites.add(sprite)
 		}
-		emitterRenderers.add(ParticleEmitterRenderer2d(injector, emitterInstance, sprites))
+		emitterRenderers.add(ParticleEmitterRenderer2d(emitterInstance, sprites))
 	}
 	return LoadedParticleEffect(effectInstance, emitterRenderers, group)
 }
@@ -222,13 +220,13 @@ interface ParticleEmitterRenderer {
 }
 
 
-fun Owned.particleEffectComponent(init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
+fun Context.particleEffectComponent(init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
 	val p = ParticleEffectComponent(this)
 	p.init()
 	return p
 }
 
-fun Owned.particleEffectComponent(pDataPath: String, atlasPath: String, maxParticlesScale: Float = 1f, init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
+fun Context.particleEffectComponent(pDataPath: String, atlasPath: String, maxParticlesScale: Float = 1f, init: ParticleEffectComponent.() -> Unit = {}): ParticleEffectComponent {
 	val p = ParticleEffectComponent(this)
 	p.load(pDataPath, atlasPath, maxParticlesScale = maxParticlesScale)
 	p.init()

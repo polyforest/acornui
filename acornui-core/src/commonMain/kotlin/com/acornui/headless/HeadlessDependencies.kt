@@ -18,19 +18,24 @@ package com.acornui.headless
 
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.DependencyMap
+import com.acornui.di.dependencyMapOf
 import com.acornui.focus.FocusManager
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.Window
-import com.acornui.input.*
+import com.acornui.input.InteractivityManager
+import com.acornui.input.KeyInput
+import com.acornui.input.MouseInput
 import com.acornui.io.byteBuffer
 
-object HeadlessInjector {
+object HeadlessDependencies {
 
-	val owner: Owned by lazy { OwnedImpl(injector = create(AppConfig())) }
+	val owner: Context by lazy { ContextImpl(create(AppConfig())) }
 
-	fun create(config: AppConfig): Injector {
-		return InjectorImpl(null, listOf<DependencyPair<*>>(
+	fun create(config: AppConfig): DependencyMap {
+		return dependencyMapOf(
 				Window to HeadlessWindow(config.window),
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
@@ -43,6 +48,6 @@ object HeadlessInjector {
 				InteractivityManager to MockInteractivityManager,
 				FocusManager to MockFocusManager,
 				CachedGl20 to MockGl20
-		))
+		)
 	}
 }

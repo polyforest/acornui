@@ -24,13 +24,13 @@ import com.acornui.component.ElementContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.selection.SelectionRange
 
 interface TextNodeContainerRo : ContainerRo, TextNodeRo
 interface TextNodeContainer : TextNode, TextNodeContainerRo
 
-abstract class TextElementContainerImpl<E : TextNode>(owner: Owned) : ElementContainerImpl<E>(owner), TextNodeContainer {
+abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementContainerImpl<E>(owner), TextNodeContainer {
 
 	private val _lines = ArrayList<LineInfo>()
 	private val _textElements = ArrayList<TextElementRo>()

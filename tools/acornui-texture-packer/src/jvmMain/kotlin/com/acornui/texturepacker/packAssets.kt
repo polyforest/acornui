@@ -18,7 +18,6 @@ package com.acornui.texturepacker
 
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
-import com.acornui.di.inject
 import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
 import com.acornui.io.file.Path

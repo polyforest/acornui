@@ -18,7 +18,6 @@ package com.acornui.input.interaction
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
-import com.acornui.di.inject
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
 import com.acornui.input.WhichButton

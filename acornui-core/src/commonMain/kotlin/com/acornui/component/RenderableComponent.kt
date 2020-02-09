@@ -16,14 +16,14 @@
 
 package com.acornui.component
 
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 
 /**
  * @author nbilyk
  */
 abstract class RenderableComponent<T : BasicRenderable?>(
-		owner: Owned
+		owner: Context
 ) : UiComponentImpl(owner) {
 
 	protected abstract val renderable: T?
@@ -45,9 +45,9 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 	}
 }
 
-class RenderableComponentImpl<T: BasicRenderable>(owner: Owned, override val renderable: T) : RenderableComponent<T>(owner)
+class RenderableComponentImpl<T: BasicRenderable>(owner: Context, override val renderable: T) : RenderableComponent<T>(owner)
 
-fun <T: BasicRenderable> Owned.drawableC(drawable: T, init: ComponentInit<RenderableComponentImpl<T>> = {}): RenderableComponentImpl<T> {
+fun <T: BasicRenderable> Context.drawableC(drawable: T, init: ComponentInit<RenderableComponentImpl<T>> = {}): RenderableComponentImpl<T> {
 	val d = RenderableComponentImpl(this, drawable)
 	d.init()
 	return d

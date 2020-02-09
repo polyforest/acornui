@@ -25,7 +25,7 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -377,15 +377,15 @@ enum class FlowVAlign {
 	BASELINE
 }
 
-open class FlowLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<FlowLayoutStyle, FlowLayoutData, E>(owner, FlowLayout())
+open class FlowLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<FlowLayoutStyle, FlowLayoutData, E>(owner, FlowLayout())
 
 @JvmName("flowT")
-inline fun <E : UiComponent> Owned.flow(init: ComponentInit<FlowLayoutContainer<E>> = {}): FlowLayoutContainer<E> {
+inline fun <E : UiComponent> Context.flow(init: ComponentInit<FlowLayoutContainer<E>> = {}): FlowLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FlowLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.flow(init: ComponentInit<FlowLayoutContainer<UiComponent>> = {}): FlowLayoutContainer<UiComponent> {
+inline fun Context.flow(init: ComponentInit<FlowLayoutContainer<UiComponent>> = {}): FlowLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return flow<UiComponent>(init)
 }

@@ -20,9 +20,7 @@ import com.acornui.Disposable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.io.GlobalProgressReporter
@@ -43,7 +41,7 @@ import kotlin.time.seconds
 /**
  * A progress bar made from simple rectangles.
  */
-class ProgressBarRect(owner: Owned) : ContainerImpl(owner) {
+class ProgressBarRect(owner: Context) : ContainerImpl(owner) {
 
 	val style = bind(ProgressBarRectStyle())
 
@@ -128,7 +126,7 @@ class ProgressBarRectStyle : StyleBase() {
 	companion object : StyleType<ProgressBarRectStyle>
 }
 
-inline fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBarRect  {
+inline fun Context.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): ProgressBarRect  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val p = ProgressBarRect(this)
 	p.init()
@@ -139,14 +137,14 @@ inline fun Owned.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): Pro
  * The factory for creating the loading bar.  This must be set before [showAssetLoadingBar] is ever called
  * (The component is only created once.)
  */
-var progressBar: Owned.()->UiComponent = {
+var progressBar: Context.()->UiComponent = {
 	val progressBar = progressBarRect()
 	progressBar.watch(GlobalProgressReporter)
 	progressBar
 }
 
 private var progressBarPopUp: PopUpInfo<UiComponent>? = null
-fun Scoped.showAssetLoadingBar(progress: Progress = GlobalProgressReporter, onCompleted: () -> Unit = {}) {
+fun Context.showAssetLoadingBar(progress: Progress = GlobalProgressReporter, onCompleted: () -> Unit = {}) {
 	if (progress.remaining < 0.4.seconds) return onCompleted() // Close enough
 
 	if (progressBarPopUp == null) {

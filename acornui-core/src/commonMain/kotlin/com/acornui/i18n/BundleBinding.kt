@@ -17,18 +17,17 @@
 package com.acornui.i18n
 
 import com.acornui.Disposable
-import com.acornui.toDisposable
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal1
+import com.acornui.toDisposable
 
 /**
  * This class is responsible for tracking a set of callbacks and cached files for an [I18n] bundle.
  * When this binding is disposed, the handlers are all removed and the cached file references are decremented.
  */
-class BundleBinding(override val injector: Injector, bundleName: String) : Scoped, Disposable, I18nBundleRo {
+class BundleBinding(owner: Context, bundleName: String) : ContextImpl(owner), I18nBundleRo {
 
 	private val _changed = Signal1<I18nBundleRo>()
 	override val changed = _changed.asRo()
@@ -58,6 +57,7 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 	override fun get(key: String): String? = bundle[key]
 
 	override fun dispose() {
+		super.dispose()
 		bundle.changed.remove(::bundleChangedHandler)
 		_changed.dispose()
 	}
@@ -66,6 +66,6 @@ class BundleBinding(override val injector: Injector, bundleName: String) : Scope
 /**
  * Invokes the callback when this bundle has changed.
  */
-fun Scoped.i18n(bundleName: String) : BundleBinding {
-	return BundleBinding(injector, bundleName)
+fun Context.i18n(bundleName: String) : BundleBinding {
+	return BundleBinding(this, bundleName)
 }

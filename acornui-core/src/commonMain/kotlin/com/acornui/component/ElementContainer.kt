@@ -20,7 +20,7 @@ package com.acornui.component
 
 import com.acornui.collection.*
 import com.acornui.component.layout.LayoutElement
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 
 interface ElementParentRo<out T> {
@@ -118,7 +118,7 @@ interface ElementContainer<E : UiComponent> : ElementContainerRo<E>, ElementPare
  * @author nbilyk
  */
 open class ElementContainerImpl<E : UiComponent>(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner), ElementContainer<E>, Container {
 
 	//-------------------------------------------------------------------------------------------------

@@ -19,10 +19,13 @@ package com.acornui.component.layout.algorithm
 import com.acornui.collection.sortTo
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
@@ -210,15 +213,15 @@ class HorizontalLayoutData : BasicLayoutData() {
 	var priority: Float by bindable(0f)
 }
 
-open class HorizontalLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<HorizontalLayoutStyle, HorizontalLayoutData, E>(owner, HorizontalLayout())
+open class HorizontalLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<HorizontalLayoutStyle, HorizontalLayoutData, E>(owner, HorizontalLayout())
 
 @JvmName("hGroupT")
-inline fun <E : UiComponent> Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer<E>> = {}): HorizontalLayoutContainer<E> {
+inline fun <E : UiComponent> Context.hGroup(init: ComponentInit<HorizontalLayoutContainer<E>> = {}): HorizontalLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return HorizontalLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.hGroup(init: ComponentInit<HorizontalLayoutContainer<UiComponent>> = {}): HorizontalLayoutContainer<UiComponent> {
+inline fun Context.hGroup(init: ComponentInit<HorizontalLayoutContainer<UiComponent>> = {}): HorizontalLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return hGroup<UiComponent>(init)
 }

@@ -22,18 +22,15 @@ import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable
 import com.acornui.component.style.addStyleRule
-import com.acornui.cursor.RollOverCursor
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.clearCursor
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.function.as2
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.clipboardCopy
 import com.acornui.input.interaction.*
-import com.acornui.input.mouseOver
 import com.acornui.math.Bounds
 import com.acornui.selection.Selectable
 import com.acornui.selection.SelectableComponent
@@ -101,7 +98,7 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
  * @author nbilyk
  */
 @Suppress("LeakingThis", "UNUSED_PARAMETER")
-open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(owner), TextField {
+open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(owner), TextField {
 
 	override val flowStyle = bind(TextFlowStyle())
 	override val charStyle = bind(CharStyle())
@@ -143,7 +140,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 				} }
 			} else {
 				clearCursor()
-				clearDragAttachment(DRAG_ATTACHMENT_KEY)
+				disposeAttachment<DragAttachment>(DRAG_ATTACHMENT_KEY)
 			}
 		}
 		selectionManager.selectionChanged.add(::refreshSelection.as2)
@@ -283,7 +280,7 @@ open class TextFieldImpl(owner: Owned) : SingleElementContainerImpl<TextNode>(ow
 /**
  * Creates a [TextField] implementation with the provided text content.
  */
-inline fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.text(text: String, init: ComponentInit<TextField> = {}): TextField  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.text = text
@@ -294,7 +291,7 @@ inline fun Owned.text(text: String, init: ComponentInit<TextField> = {}): TextFi
 /**
  * Creates a [TextField] implementation.
  */
-inline fun Owned.text(init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.text(init: ComponentInit<TextField> = {}): TextField  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.init()

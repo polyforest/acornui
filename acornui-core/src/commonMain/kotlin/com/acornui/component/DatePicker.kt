@@ -24,8 +24,7 @@ import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
@@ -44,7 +43,7 @@ import com.acornui.time.Date
 import com.acornui.time.DateRo
 
 open class DatePicker(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner), Clearable {
 
 	private val _input = own(Signal0())
@@ -183,7 +182,7 @@ open class DatePicker(
 	val calendarLayoutStyle: GridLayoutStyle
 		get() = calendar.layoutStyle
 
-	fun rendererFactory(value: Owned.() -> CalendarItemRenderer) {
+	fun rendererFactory(value: Context.() -> CalendarItemRenderer) {
 		calendar.rendererFactory(value)
 	}
 
@@ -322,7 +321,7 @@ class DatePickerStyle : StyleBase() {
 	companion object : StyleType<DatePickerStyle>
 }
 
-fun Owned.datePicker(
+fun Context.datePicker(
 		init: ComponentInit<DatePicker> = {}): DatePicker {
 	val t = DatePicker(this)
 	t.init()

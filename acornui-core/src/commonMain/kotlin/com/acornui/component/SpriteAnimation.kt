@@ -24,9 +24,7 @@ import com.acornui.async.async
 import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.collection.forEach2
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.*
 import com.acornui.math.Bounds
@@ -36,7 +34,7 @@ import kotlinx.coroutines.Deferred
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class SpriteAnimation(owner: Owned) : UiComponentImpl(owner), Clearable {
+class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 
 	/**
 	 * The current animation frame. This will increment after this animation's framerate duration has passed.
@@ -181,7 +179,7 @@ data class LoadedAnimation(
 	}
 }
 
-suspend fun Scoped.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAnimation {
+suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAnimation {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
 	for (page in atlasData.pages) {
@@ -224,7 +222,7 @@ private fun String.calculateFrameIndex(name: String): Int {
 	return -1
 }
 
-inline fun Owned.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
+inline fun Context.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpriteAnimation(this)
 	s.setRegion(atlasPath, regionName)
@@ -232,7 +230,7 @@ inline fun Owned.spriteAnimation(atlasPath: String, regionName: String, init: Co
 	return s
 }
 
-inline fun Owned.spriteAnimation(init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
+inline fun Context.spriteAnimation(init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpriteAnimation(this)
 	s.init()

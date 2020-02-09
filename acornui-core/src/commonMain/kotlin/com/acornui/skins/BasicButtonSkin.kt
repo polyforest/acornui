@@ -8,20 +8,20 @@ import com.acornui.component.text.TextField
 import com.acornui.component.text.charStyle
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 import com.acornui.reflect.afterChangeWithInit
 
 private class BasicButtonSkin(
-		owner: Owned,
+		owner: Context,
 		private val theme: Theme,
 		borderRadius: CornersRo,
 		borderThickness: PadRo
 ) : LayoutContainer<CanvasLayoutStyle, CanvasLayoutData>(owner, CanvasLayout()), ButtonSkin {
 
-	constructor(owner: Owned, theme: Theme) : this(owner, theme, Corners(theme.borderRadius), Pad(theme.strokeThickness))
+	constructor(owner: Context, theme: Theme) : this(owner, theme, Corners(theme.borderRadius), Pad(theme.strokeThickness))
 
 	override var label: String = ""
 
@@ -91,7 +91,7 @@ private class BasicButtonSkin(
 	}
 }
 
-fun Owned.basicButtonSkin(
+fun Context.basicButtonSkin(
 		theme: Theme,
 		borderRadii: CornersRo = Corners(theme.borderRadius),
 		borderThickness: PadRo = Pad(theme.strokeThickness)
@@ -103,7 +103,7 @@ fun Owned.basicButtonSkin(
  * A typical implementation of a skin part for a labelable button state.
  */
 private class BasicLabelButtonSkin(
-		owner: Owned,
+		owner: Context,
 		private val texture: ButtonSkin,
 		private val padding: PadRo,
 		val textColors: Map<ButtonState, ColorRo>
@@ -150,14 +150,14 @@ private class BasicLabelButtonSkin(
 	}
 }
 
-fun Owned.basicLabelButtonSkin(texture: ButtonSkin, padding: PadRo, textColors: Map<ButtonState, ColorRo>): ButtonSkin = BasicLabelButtonSkin(this, texture, padding, textColors)
-fun Owned.basicLabelButtonSkin(theme: Theme): ButtonSkin = BasicLabelButtonSkin(this, basicButtonSkin(theme), theme.buttonPad, mapOf(ButtonState.DISABLED to theme.textDisabledColor))
+fun Context.basicLabelButtonSkin(texture: ButtonSkin, padding: PadRo, textColors: Map<ButtonState, ColorRo>): ButtonSkin = BasicLabelButtonSkin(this, texture, padding, textColors)
+fun Context.basicLabelButtonSkin(theme: Theme): ButtonSkin = BasicLabelButtonSkin(this, basicButtonSkin(theme), theme.buttonPad, mapOf(ButtonState.DISABLED to theme.textDisabledColor))
 
 /**
  * A typical implementation of a skin part for a labelable button state.
  */
 private class BasicCheckboxSkin(
-		owner: Owned,
+		owner: Context,
 		private val box: ButtonSkin
 ) : HorizontalLayoutContainer<UiComponent>(owner), ButtonSkin {
 
@@ -191,7 +191,7 @@ private class BasicCheckboxSkin(
 }
 
 private class BasicCheckboxBox(
-		owner: Owned,
+		owner: Context,
 		theme: Theme,
 		upRegion: String,
 		toggledRegion: String,
@@ -224,7 +224,7 @@ private class BasicCheckboxBox(
 	}
 }
 
-fun Owned.basicCheckboxSkin(theme: Theme): ButtonSkin {
+fun Context.basicCheckboxSkin(theme: Theme): ButtonSkin {
 	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
@@ -234,7 +234,7 @@ fun Owned.basicCheckboxSkin(theme: Theme): ButtonSkin {
 	))
 }
 
-fun Owned.basicRadioButtonSkin(theme: Theme): ButtonSkin {
+fun Context.basicRadioButtonSkin(theme: Theme): ButtonSkin {
 	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
@@ -244,7 +244,7 @@ fun Owned.basicRadioButtonSkin(theme: Theme): ButtonSkin {
 	))
 }
 
-fun Owned.collapseButtonSkin(theme: Theme): ButtonSkin {
+fun Context.collapseButtonSkin(theme: Theme): ButtonSkin {
 	return BasicCheckboxSkin(this, BasicCheckboxBox(
 			this,
 			theme,
@@ -254,7 +254,7 @@ fun Owned.collapseButtonSkin(theme: Theme): ButtonSkin {
 	))
 }
 
-private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerImpl<UiComponent>(owner), ButtonSkin {
+private class BasicTabSkin(owner: Context, theme: Theme) : SingleElementContainerImpl<UiComponent>(owner), ButtonSkin {
 
 	private val notToggled: IconButtonSkin
 	private val toggled: IconButtonSkin
@@ -303,13 +303,13 @@ private class BasicTabSkin(owner: Owned, theme: Theme) : SingleElementContainerI
 	}
 }
 
-fun Owned.basicTabSkin(theme: Theme): ButtonSkin = BasicTabSkin(this, theme)
+fun Context.basicTabSkin(theme: Theme): ButtonSkin = BasicTabSkin(this, theme)
 
-class EmptyButtonSkin(owner: Owned) : UiComponentImpl(owner), ButtonSkin {
+class EmptyButtonSkin(owner: Context) : UiComponentImpl(owner), ButtonSkin {
 	override var label: String = ""
 	override var buttonState: ButtonState = ButtonState.UP
 }
 
-fun Owned.emptyButtonSkin(): EmptyButtonSkin {
+fun Context.emptyButtonSkin(): EmptyButtonSkin {
 	return EmptyButtonSkin(this)
 }

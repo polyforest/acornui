@@ -19,6 +19,7 @@ package com.acornui.input.interaction
 import com.acornui.Disposable
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
+import com.acornui.di.ContextImpl
 import com.acornui.input.interaction.LongPressAttachment.Companion.DEFAULT_LONG_PRESS_TIME
 import com.acornui.input.touchEnd
 import com.acornui.input.touchMove
@@ -36,7 +37,7 @@ private class LongPressAttachment(
 		private val isCapture: Boolean,
 		private val longPressTime: Float = DEFAULT_LONG_PRESS_TIME,
 		private val affordance: Float = DragAttachment.DEFAULT_AFFORDANCE
-) : Disposable {
+) : ContextImpl(target) {
 
 	private val _longPress = Signal0()
 	val longPress = _longPress.asRo()
@@ -96,6 +97,7 @@ private class LongPressAttachment(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stopTimer()
 		target.touchStart(isCapture).remove(::touchStartHandler)
 		target.touchEnd(isCapture).remove(::touchEndHandler)

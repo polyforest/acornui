@@ -18,23 +18,21 @@ package com.acornui.gl.core
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
-import com.acornui.Disposable
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Window
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.function.as2
+import com.acornui.graphic.BlendMode
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.Window
 import com.acornui.math.Matrix4
 
 /**
  * Wraps a frame buffer, keeping it the size of the screen.
  */
-class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean = false, hasStencil: Boolean = false) : Scoped, Disposable {
+class FullScreenFramebuffer(owner: Context, hasDepth: Boolean = false, hasStencil: Boolean = false) : ContextImpl(owner) {
 
 	private val window = inject(Window)
-	private val framebuffer = ResizeableFramebuffer(injector, hasDepth, hasStencil)
+	private val framebuffer = resizeableFramebuffer(hasDepth, hasStencil)
 
 	private val transform = Matrix4().apply {
 		setTranslation(-1f, -1f, 0f)
@@ -102,13 +100,14 @@ class FullScreenFramebuffer(override val injector: Injector, hasDepth: Boolean =
 	}
 
 	override fun dispose() {
+		super.dispose()
 		window.sizeChanged.remove(::resize.as2)
 		framebuffer.dispose()
 	}
 }
 
-fun Scoped.fullScreenFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<FullScreenFramebuffer> = {}): FullScreenFramebuffer {
-	val f = FullScreenFramebuffer(injector, hasDepth, hasStencil)
+fun Context.fullScreenFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<FullScreenFramebuffer> = {}): FullScreenFramebuffer {
+	val f = FullScreenFramebuffer(this, hasDepth, hasStencil)
 	f.init()
 	return f
 }

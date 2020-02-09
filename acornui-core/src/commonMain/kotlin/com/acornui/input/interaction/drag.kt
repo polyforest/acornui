@@ -18,11 +18,8 @@ package com.acornui.input.interaction
 
 import com.acornui.Disposable
 import com.acornui.LifecycleRo
-import com.acornui.component.UiComponentRo
-import com.acornui.component.canvasToLocal
-import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.stage
-import com.acornui.di.inject
+import com.acornui.component.*
+import com.acornui.di.ContextImpl
 import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.math.Vector2
@@ -42,10 +39,10 @@ class DragAttachment(
 		 * The manhattan distance between the start drag position and the current position before dragging will begin.
 		 */
 		var affordance: Float = DEFAULT_AFFORDANCE
-) : Disposable {
+) : ContextImpl(target) {
 
 	private val stage = target.stage
-	private val mouse = target.inject(MouseState)
+	private val mouse = inject(MouseState)
 
 	private var watchingMouse = false
 	private var watchingTouch = false
@@ -332,6 +329,7 @@ class DragAttachment(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stop()
 		_dragStart.dispose()
 		_drag.dispose()
@@ -458,8 +456,9 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 /**
  * Disposes and removes the drag attachment with the given affordance.
  */
+@Deprecated("Use disposeAttachment", ReplaceWith("disposeAttachment<DragAttachment>(key)"))
 fun UiComponentRo.clearDragAttachment(key: Any = DragAttachment) {
-	getAttachment<DragAttachment>(key)?.dispose()
+	disposeAttachment<DragAttachment>(key)
 }
 
 /**

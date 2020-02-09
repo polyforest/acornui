@@ -25,10 +25,10 @@ import com.acornui.collection.ObservableList
 import com.acornui.collection.forEach2
 import com.acornui.collection.unshift
 import com.acornui.component.*
-import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
+import com.acornui.component.layout.algorithm.virtual.ItemRendererContext
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.style.Style
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.function.as2
 import com.acornui.function.as3
@@ -53,12 +53,12 @@ interface VirtualLayoutContainer<S, out T : LayoutData> : Container {
  * A virtualized list of components, with no clipping or scrolling. This is a lower-level component, used by the [DataScroller].
  */
 class VirtualList<E : Any, S : Style, out T : LayoutData>(
-		owner: Owned,
+		owner: Context,
 		override val layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		layoutStyle: S
-) : ContainerImpl(owner), ItemRendererOwner<T>, VirtualLayoutContainer<S, T> {
+) : ContainerImpl(owner), ItemRendererContext<T>, VirtualLayoutContainer<S, T> {
 
-	constructor(owner: Owned,
+	constructor(owner: Context,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 				style: S,
 				data: ObservableList<E?>
@@ -66,7 +66,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 		data(data)
 	}
 
-	constructor(owner: Owned,
+	constructor(owner: Context,
 				layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 				style: S,
 				data: List<E?>
@@ -186,13 +186,13 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	// Null item renderers
 	//-------------------------------------------------
 
-	private var _nullRendererFactory: ItemRendererOwner<T>.() -> ListRenderer = { nullItemRenderer() }
+	private var _nullRendererFactory: ItemRendererContext<T>.() -> ListRenderer = { nullItemRenderer() }
 
 	/**
 	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
 	 * to be used in this list.
 	 */
-	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> ListRenderer) {
+	fun nullRendererFactory(value: ItemRendererContext<T>.() -> ListRenderer) {
 		if (_nullRendererFactory === value) return
 		_nullRendererFactory = value
 		nullRendererPool.disposeAndClear()
@@ -206,13 +206,13 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	// Item renderers
 	//-------------------------------------------------
 
-	private var _rendererFactory: ItemRendererOwner<T>.() -> ListItemRenderer<E> = { simpleItemRenderer() }
+	private var _rendererFactory: ItemRendererContext<T>.() -> ListItemRenderer<E> = { simpleItemRenderer() }
 
 	/**
 	 * Sets the renderer factory for this list. The renderer factory is responsible for creating renderers to be used
 	 * in this list.
 	 */
-	fun rendererFactory(value: ItemRendererOwner<T>.() -> ListItemRenderer<E>) {
+	fun rendererFactory(value: ItemRendererContext<T>.() -> ListItemRenderer<E>) {
 		if (_rendererFactory === value) return
 		_rendererFactory = value
 		rendererPool.disposeAndClear()
@@ -224,7 +224,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 
 	private var _emptyListRenderer: UiComponent? = null
 
-	fun emptyListRenderer(value: ItemRendererOwner<T>.() -> UiComponent) {
+	fun emptyListRenderer(value: ItemRendererContext<T>.() -> UiComponent) {
 		_emptyListRenderer?.dispose()
 		_emptyListRenderer = addOptionalChild(value.invoke(this)).apply {
 			this?.visible = false
@@ -447,7 +447,7 @@ class VirtualList<E : Any, S : Style, out T : LayoutData>(
 	}
 }
 
-fun <E : Any, S : Style, T : LayoutData> Owned.virtualList(
+fun <E : Any, S : Style, T : LayoutData> Context.virtualList(
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		style: S,
 		init: ComponentInit<VirtualList<E, S, T>> = {}): VirtualList<E, S, T> {

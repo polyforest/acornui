@@ -16,19 +16,16 @@
 
 package com.acornui.component.style
 
-import com.acornui.recycle.Clearable
+import com.acornui.Disposable
 import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
-import com.acornui.Disposable
-import com.acornui.collection.forEach2
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.observe.*
+import com.acornui.recycle.Clearable
 import com.acornui.serialization.Writer
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.SerialClassDescImpl
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -262,12 +259,12 @@ class StyleProp<T>(
 /**
  * The function signature for a factory that provides a component.
  */
-typealias SkinPart = Owned.() -> UiComponent
+typealias SkinPart = Context.() -> UiComponent
 
 /**
  * The function signature for a factory that optionally provides a component.
  */
-typealias OptionalSkinPart = Owned.() -> UiComponent?
+typealias OptionalSkinPart = Context.() -> UiComponent?
 
 /**
  * Used as a placeholder for skin part factories that need to be declared in the skin.

@@ -17,12 +17,13 @@
 package com.acornui.input
 
 import com.acornui.component.UiComponent
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.DKey
 import com.acornui.observe.Observable
 
 interface SoftKeyboardManager : Observable {
 
-	fun createView(owner: Owned): UiComponent
+	fun createView(owner: Context): UiComponent
 
 	val isShowing: Boolean
 	val keyboardType: String?
@@ -31,8 +32,8 @@ interface SoftKeyboardManager : Observable {
 	fun hide()
 
 	companion object : DKey<SoftKeyboardManager> {
-		override fun factory(injector: Injector): SoftKeyboardManager? {
-			return SoftKeyboardManagerImpl()
+		override fun factory(context: Context): SoftKeyboardManager? {
+			return SoftKeyboardManagerImpl(context)
 		}
 	}
 }
@@ -78,5 +79,5 @@ object SoftKeyboardType {
 	const val URL = "url"
 }
 
-val Scoped.touchScreenKeyboard: SoftKeyboardManager
+val Context.touchScreenKeyboard: SoftKeyboardManager
 	get() = inject(SoftKeyboardManager)

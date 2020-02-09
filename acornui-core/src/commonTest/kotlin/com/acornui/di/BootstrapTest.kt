@@ -71,7 +71,7 @@ class BootstrapTest {
 			delay(0.1.seconds)
 			"dependency 1"
 		}
-		val dependencyList = bootstrap.dependenciesList()
+		val dependencyList = bootstrap.dependencies()
 		assertUnorderedListEquals(listOf(key1 to "dependency 1", key2 to "dependency 2: dependency 1"), dependencyList)
 	}
 
@@ -88,8 +88,8 @@ class BootstrapTest {
 		bootstrap.awaitAll()
 		assertEquals("Extended key", bootstrap.get(key1))
 		assertEquals("Extended key", bootstrap.get(key2))
-		val dependencyList = bootstrap.dependenciesList()
-		assertUnorderedListEquals(listOf(key2 to "Extended key"), dependencyList)
+		val dependencyList = bootstrap.dependencies()
+		assertUnorderedListEquals(listOf(key1 to "Extended key", key2 to "Extended key"), dependencyList)
 	}
 
 	@Test fun timeout() = runTest {
@@ -117,6 +117,6 @@ class BootstrapTest {
 			delay(1.seconds) // Will cause a timeout
 			"Extended key"
 		}
-		assertEquals(emptyList(), bootstrap.dependenciesList())
+		assertEquals(DependencyMap(), bootstrap.dependencies())
 	}
 }

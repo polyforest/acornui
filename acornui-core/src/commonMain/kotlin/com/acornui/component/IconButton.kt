@@ -18,12 +18,12 @@ package com.acornui.component
 
 import com.acornui.collection.mapTo
 import com.acornui.component.style.StyleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class IconButton(
-		owner: Owned
+		owner: Context
 ) : ButtonImpl(owner), SingleElementContainer<UiComponent> {
 
 	init {
@@ -76,14 +76,14 @@ open class IconButton(
 	companion object : StyleTag
 }
 
-inline fun Owned.iconButton(init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(init: ComponentInit<IconButton> = {}): IconButton  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.init()
 	return b
 }
 
-inline fun Owned.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val button = IconButton(this).apply {
 		element = iconImage(imagePath)
@@ -92,7 +92,7 @@ inline fun Owned.iconButton(imagePath: String, init: ComponentInit<IconButton> =
 	return button
 }
 
-inline fun Owned.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val button = IconButton(this).apply {
 		element = iconAtlas(atlasPath, region)
@@ -101,7 +101,7 @@ inline fun Owned.iconButton(atlasPath: String, region: String, init: ComponentIn
 	return button
 }
 
-inline fun Owned.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.iconMap(regions.mapTo { key, value ->

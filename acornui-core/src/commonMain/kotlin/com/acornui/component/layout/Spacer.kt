@@ -19,7 +19,7 @@ package com.acornui.component.layout
 import com.acornui.component.ComponentInit
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -27,7 +27,7 @@ import kotlin.contracts.contract
  * A component with no rendering, just used to take up whitespace.
  */
 open class Spacer(
-		owner: Owned,
+		owner: Context,
 		initialSpacerWidth: Float = 0f,
 		initialSpacerHeight: Float = 0f
 ) : UiComponentImpl(owner) {
@@ -40,7 +40,7 @@ open class Spacer(
 
 }
 
-inline fun Owned.spacer(width: Float = 0f, height: Float = 0f, init: ComponentInit<Spacer> = {}): Spacer  {
+inline fun Context.spacer(width: Float = 0f, height: Float = 0f, init: ComponentInit<Spacer> = {}): Spacer  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = Spacer(this, width, height)
 	s.init()

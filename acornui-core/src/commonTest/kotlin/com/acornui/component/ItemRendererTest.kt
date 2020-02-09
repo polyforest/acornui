@@ -16,8 +16,8 @@
 
 package com.acornui.component
 
-import com.acornui.di.Owned
-import com.acornui.headless.HeadlessInjector
+import com.acornui.di.Context
+import com.acornui.headless.HeadlessDependencies
 import com.acornui.test.assertListEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -33,7 +33,7 @@ class ItemRendererTest {
 
 	@Test
 	fun recycle() {
-		HeadlessInjector.owner.apply {
+		HeadlessDependencies.owner.apply {
 			// Do a loop to ensure that the pools are unique to the container.
 			for (i in 0..3) {
 				container<TestItemRenderer> {
@@ -69,7 +69,7 @@ class ItemRendererTest {
 	}
 }
 
-private class TestItemRenderer(owner: Owned) : UiComponentImpl(owner), ItemRenderer<String> {
+private class TestItemRenderer(owner: Context) : UiComponentImpl(owner), ItemRenderer<String> {
 
 	override var data: String? = null
 

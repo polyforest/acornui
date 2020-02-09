@@ -23,18 +23,18 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.inject
+import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.time.nowMs
 import com.acornui.time.timer
 
 class DownRepeat(
 		private val target: UiComponentRo
-) : Disposable {
+) : ContextImpl(target) {
 
-	private val mouseState = target.inject(MouseState)
+	private val mouseState = inject(MouseState)
 	private val stage = target.stage
-	private val interactivity = target.inject(InteractivityManager)
+	private val interactivity = inject(InteractivityManager)
 
 	// TODO: This style won't inherit
 	val style = DownRepeatStyle()
@@ -79,6 +79,7 @@ class DownRepeat(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		style.dispose()
 		target.mouseDown().remove(::mouseDownHandler)
 		stage.mouseUp().remove(::rawMouseUpHandler)

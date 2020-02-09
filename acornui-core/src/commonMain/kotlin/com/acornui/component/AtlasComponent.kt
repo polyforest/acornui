@@ -22,7 +22,7 @@ import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.async.async
 import com.acornui.async.catch
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.*
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
@@ -37,7 +37,7 @@ import kotlin.contracts.contract
  *
  * @author nbilyk
  */
-open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Clearable {
+open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), Clearable {
 
 	var region: AtlasRegionData? = null
 		private set
@@ -114,14 +114,14 @@ open class AtlasComponent(owner: Owned) : RenderableComponent<Atlas>(owner), Cle
 	}
 }
 
-inline fun Owned.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.init()
 	return a
 }
 
-inline fun Owned.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.setRegion(atlasPath, region).catch { throw it }

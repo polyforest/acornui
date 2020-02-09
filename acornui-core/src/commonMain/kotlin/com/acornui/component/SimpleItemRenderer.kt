@@ -20,7 +20,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.text.StringFormatter
@@ -30,7 +30,7 @@ import com.acornui.text.ToStringFormatter
  * A SimpleItemRenderer is a [ListItemRenderer] implementation that displays data as text using a formatter.
  */
 open class SimpleItemRenderer<E : Any>(
-		owner: Owned,
+		owner: Context,
 		private val formatter: StringFormatter<E>
 ) : ContainerImpl(owner), ListItemRenderer<E> {
 
@@ -76,7 +76,7 @@ class SimpleItemRendererStyle : StyleBase() {
 	companion object : StyleType<SimpleItemRendererStyle>
 }
 
-fun <E : Any> Owned.simpleItemRenderer(formatter: StringFormatter<E> = ToStringFormatter, init: ComponentInit<SimpleItemRenderer<E>> = {}): SimpleItemRenderer<E> {
+fun <E : Any> Context.simpleItemRenderer(formatter: StringFormatter<E> = ToStringFormatter, init: ComponentInit<SimpleItemRenderer<E>> = {}): SimpleItemRenderer<E> {
 	val renderer = SimpleItemRenderer(this, formatter)
 	renderer.init()
 	return renderer

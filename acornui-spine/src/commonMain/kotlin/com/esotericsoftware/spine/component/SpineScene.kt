@@ -19,7 +19,7 @@ package com.esotericsoftware.spine.component
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.useCamera
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.time.onTick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -28,7 +28,7 @@ import kotlin.contracts.contract
  * A Spine scene is a component that allows for spine skeletons to be added and rendered.
  * Created by nbilyk on 6/11/2016.
  */
-class SpineScene(owner: Owned) : UiComponentImpl(owner) {
+class SpineScene(owner: Context) : UiComponentImpl(owner) {
 
 	var flipY = true
 
@@ -113,7 +113,7 @@ class SpineScene(owner: Owned) : UiComponentImpl(owner) {
 
 }
 
-inline fun Owned.spineScene(init: ComponentInit<SpineScene> = {}): SpineScene  {
+inline fun Context.spineScene(init: ComponentInit<SpineScene> = {}): SpineScene  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpineScene(this)
 	s.init()

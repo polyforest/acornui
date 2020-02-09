@@ -20,7 +20,7 @@ import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
 import com.acornui.async.then
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.TextureRo
 import com.acornui.math.IntRectangleRo
@@ -30,7 +30,7 @@ import kotlin.contracts.contract
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(owner) {
+class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(owner) {
 
 	override val renderable: NinePatch = NinePatch(gl)
 
@@ -134,7 +134,7 @@ class NinePatchComponent(owner: Owned) : RenderableComponent<BasicRenderable>(ow
 	}
 }
 
-inline fun Owned.ninePatch(init: ComponentInit<NinePatchComponent> = {}): NinePatchComponent  {
+inline fun Context.ninePatch(init: ComponentInit<NinePatchComponent> = {}): NinePatchComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val ninePatch = NinePatchComponent(this)
 	ninePatch.init()

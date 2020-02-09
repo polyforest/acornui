@@ -32,7 +32,7 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.di.Scoped
+import com.acornui.di.ContextImpl
 import com.acornui.filter.BlurQuality
 import com.acornui.focus.FocusHighlighter
 import com.acornui.focus.FocusableStyle
@@ -48,12 +48,7 @@ import com.acornui.math.*
 open class BasicUiSkin(
 		protected val target: UiComponent,
 		protected val theme: Theme = Theme()
-) : Scoped {
-
-	final override val injector = target.injector
-
-	init {
-	}
+) : ContextImpl(target) {
 
 	open fun apply() {
 		target.styleRules.clear()

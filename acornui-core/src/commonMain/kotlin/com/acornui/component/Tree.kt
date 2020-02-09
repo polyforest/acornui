@@ -31,7 +31,7 @@ import com.acornui.component.style.noSkin
 import com.acornui.component.text.text
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -45,7 +45,7 @@ import com.acornui.signal.Signal3
  * A Tree component represents a hierarchy of parent/children relationships.
  */
 @ExperimentalAcorn
-class Tree<E : ParentRo<E>>(owner: Owned, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
+class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
 
 	private val toggledChangeRequestedCancel = Cancel()
 	private val _nodeToggledChanging = own(Signal3<E, Boolean, Cancel>())
@@ -129,7 +129,7 @@ interface TreeItemRenderer<E : ParentRo<E>> : TreeItemRendererRo<E>, ItemRendere
 
 }
 
-open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Owned, protected val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
+open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
 
 	val style = bind(DefaultTreeItemRendererStyle())
 
@@ -266,7 +266,7 @@ open class DefaultTreeItemRendererStyle : StyleBase() {
 	companion object : StyleType<DefaultTreeItemRendererStyle>
 }
 
-fun <E : ParentRo<E>> Owned.tree(rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }, init: ComponentInit<Tree<E>> = {}): Tree<E> {
+fun <E : ParentRo<E>> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }, init: ComponentInit<Tree<E>> = {}): Tree<E> {
 	val tree = Tree(this, rootFactory)
 	tree.init()
 	return tree

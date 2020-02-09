@@ -20,7 +20,7 @@ import com.acornui.collection.addAll
 import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.gl.core.useColorTransformation
@@ -37,7 +37,7 @@ import com.acornui.reflect.afterChange
  * Note: ImageButton does not currently support indeterminate states.
  */
 class ImageButton(
-		owner: Owned
+		owner: Context
 ) : SingleElementContainerImpl<UiComponent>(owner), Toggleable, Focusable {
 
 	val style = bind(ImageButtonStyle())
@@ -106,19 +106,19 @@ class ImageButton(
 
 }
 
-fun Owned.imageButton(init: ImageButton.() -> Unit = {}): ImageButton {
+fun Context.imageButton(init: ImageButton.() -> Unit = {}): ImageButton {
 	val i = ImageButton(this)
 	i.init()
 	return i
 }
 
-fun Owned.iconImageButton(init: ImageButton.() -> Unit = {}): ImageButton =
+fun Context.iconImageButton(init: ImageButton.() -> Unit = {}): ImageButton =
 		imageButton {
 			styleTags.add(ImageButton.ICON_IMAGE)
 			init()
 		}
 
-fun Owned.iconImageButton(atlasPath: String, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
+fun Context.iconImageButton(atlasPath: String, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
 		imageButton {
 			styleTags.add(ImageButton.ICON_IMAGE)
 			element = atlas(atlasPath, atlasRegion)

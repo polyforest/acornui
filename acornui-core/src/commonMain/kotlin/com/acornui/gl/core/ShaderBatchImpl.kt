@@ -16,11 +16,9 @@
 
 package com.acornui.gl.core
 
-import com.acornui._assert
-import com.acornui.assertionsEnabled
 import com.acornui.Disposable
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.assertionsEnabled
+import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.TextureRo
@@ -124,11 +122,11 @@ open class ShaderBatchImpl(
 		if (assertionsEnabled) {
 			// If assertions are enabled, check that we have rational vertex and index counts.
 			val vertexSize = vertexAttributes.vertexSize
-			_assert(vertexComponentsL % vertexSize == 0, "vertexData size $vertexComponentsL not evenly divisible by vertexSize value $vertexSize")
+			check(vertexComponentsL % vertexSize == 0) { "vertexData size $vertexComponentsL not evenly divisible by vertexSize value $vertexSize" }
 			if (drawCall.drawMode == Gl20.LINES) {
-				_assert(indicesL % 2 == 0, "indices size $indicesL not evenly divisible by 2")
+				check(indicesL % 2 == 0) { "indices size $indicesL not evenly divisible by 2" }
 			} else if (drawCall.drawMode == Gl20.TRIANGLES) {
-				_assert(indicesL % 3 == 0, "indices size $indicesL not evenly divisible by 3")
+				check(indicesL % 3 == 0) { "indices size $indicesL not evenly divisible by 3" }
 			}
 		}
 		val lastDrawCall = drawCalls.lastOrNull()
@@ -236,7 +234,7 @@ open class ShaderBatchImpl(
 	}
 }
 
-fun Scoped.shaderBatch(): ShaderBatchImpl {
+fun Context.shaderBatch(): ShaderBatchImpl {
 	return ShaderBatchImpl(inject(CachedGl20))
 }
 

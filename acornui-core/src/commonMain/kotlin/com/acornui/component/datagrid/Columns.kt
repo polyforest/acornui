@@ -16,26 +16,24 @@
 
 package com.acornui.component.datagrid
 
+import com.acornui.compareTo
+import com.acornui.compareTo2
 import com.acornui.component.ContainerImpl
 import com.acornui.component.DatePicker
 import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.text.*
-import com.acornui.compareTo
-import com.acornui.compareTo2
-import com.acornui.di.Injector
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.selection.selectAll
 import com.acornui.math.Bounds
+import com.acornui.selection.selectAll
 import com.acornui.signal.Signal0
 import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.*
 import com.acornui.time.DateRo
 
-abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn<E, Int?>(), Scoped {
+abstract class IntColumn<in E>() : DataGridColumn<E, Int?>() {
 
 	val formatter = numberFormatter().apply {
 		maxFractionDigits = 0
@@ -46,15 +44,15 @@ abstract class IntColumn<in E>(override val injector: Injector) : DataGridColumn
 		sortable = true
 	}
 
-	override fun createCell(owner: Owned): DataGridCell<Int?> = NumberCell(owner, formatter)
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<Int?> = IntEditorCell(owner)
+	override fun createCell(owner: Context): DataGridCell<Int?> = NumberCell(owner, formatter)
+	override fun createEditorCell(owner: Context): DataGridEditorCell<Int?> = IntEditorCell(owner)
 
 	override fun compareRows(row1: E, row2: E): Int {
 		return getCellData(row1).compareTo(getCellData(row2))
 	}
 }
 
-abstract class FloatColumn<in E>(override val injector: Injector) : DataGridColumn<E, Float?>(), Scoped {
+abstract class FloatColumn<in E> : DataGridColumn<E, Float?>() {
 
 	val formatter = numberFormatter()
 
@@ -63,15 +61,15 @@ abstract class FloatColumn<in E>(override val injector: Injector) : DataGridColu
 		sortable = true
 	}
 
-	override fun createCell(owner: Owned): DataGridCell<Float?> = NumberCell(owner, formatter)
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<Float?> = FloatEditorCell(owner)
+	override fun createCell(owner: Context): DataGridCell<Float?> = NumberCell(owner, formatter)
+	override fun createEditorCell(owner: Context): DataGridEditorCell<Float?> = FloatEditorCell(owner)
 
 	override fun compareRows(row1: E, row2: E): Int {
 		return getCellData(row1).compareTo(getCellData(row2))
 	}
 }
 
-class NumberCell(owner: Owned, private val formatter: NumberFormatter) : ContainerImpl(owner), DataGridCell<Number?> {
+class NumberCell(owner: Context, private val formatter: NumberFormatter) : ContainerImpl(owner), DataGridCell<Number?> {
 
 	private val textField = addChild(text { selectable = false; flowStyle.horizontalAlign = FlowHAlign.RIGHT })
 	private var _data: Number? = null
@@ -95,7 +93,7 @@ class NumberCell(owner: Owned, private val formatter: NumberFormatter) : Contain
 	}
 }
 
-abstract class NumberEditorCell(owner: Owned) : ContainerImpl(owner) {
+abstract class NumberEditorCell(owner: Context) : ContainerImpl(owner) {
 
 	private val _changed = own(Signal0())
 	val changed = _changed.asRo()
@@ -121,7 +119,7 @@ abstract class NumberEditorCell(owner: Owned) : ContainerImpl(owner) {
 	}
 }
 
-class IntEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<Int?> {
+class IntEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCell<Int?> {
 
 	init {
 		input.restrictPattern = RestrictPatterns.INTEGER
@@ -138,7 +136,7 @@ class IntEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<
 	override fun setData(value: Int?) = setNumber(value)
 }
 
-class FloatEditorCell(owner: Owned) : NumberEditorCell(owner), DataGridEditorCell<Float?> {
+class FloatEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCell<Float?> {
 
 	init {
 		input.restrictPattern = RestrictPatterns.FLOAT
@@ -166,23 +164,23 @@ abstract class StringColumn<in E> : DataGridColumn<E, String>() {
 		sortable = true
 	}
 
-	override fun createCell(owner: Owned): DataGridCell<String> = StringCell(owner)
+	override fun createCell(owner: Context): DataGridCell<String> = StringCell(owner)
 
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<String> = StringEditorCell(owner)
+	override fun createEditorCell(owner: Context): DataGridEditorCell<String> = StringEditorCell(owner)
 
 	override fun compareRows(row1: E, row2: E): Int {
 		return getCellData(row1).compareTo2(getCellData(row2), ignoreCase = ignoreCase)
 	}
 }
 
-class StringCell<E>(owner: Owned, val formatter: StringFormatter<E> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
+class StringCell<E>(owner: Context, val formatter: StringFormatter<E> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
 
 	override fun setData(value: E) {
 		label = formatter.format(value)
 	}
 }
 
-class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<String> {
+class StringEditorCell(owner: Context) : ContainerImpl(owner), DataGridEditorCell<String> {
 
 	private val _changed = own(Signal0())
 	override val changed = _changed.asRo()
@@ -213,7 +211,7 @@ class StringEditorCell(owner: Owned) : ContainerImpl(owner), DataGridEditorCell<
 	}
 }
 
-abstract class DateColumn<in E>(override val injector: Injector) : DataGridColumn<E, DateRo?>(), Scoped {
+abstract class DateColumn<in E> : DataGridColumn<E, DateRo?>() {
 
 	val formatter = dateFormatter {
 		dateStyle = DateTimeFormatStyle.SHORT
@@ -228,9 +226,9 @@ abstract class DateColumn<in E>(override val injector: Injector) : DataGridColum
 		sortable = true
 	}
 
-	override fun createCell(owner: Owned): DataGridCell<DateRo?> = DateCell(owner, formatter)
+	override fun createCell(owner: Context): DataGridCell<DateRo?> = DateCell(owner, formatter)
 
-	override fun createEditorCell(owner: Owned): DataGridEditorCell<DateRo?> = DateEditorCell(owner).apply {
+	override fun createEditorCell(owner: Context): DataGridEditorCell<DateRo?> = DateEditorCell(owner).apply {
 		formatter = this@DateColumn.formatter
 		open()
 	}
@@ -240,7 +238,7 @@ abstract class DateColumn<in E>(override val injector: Injector) : DataGridColum
 	}
 }
 
-class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : ContainerImpl(owner), DataGridCell<DateRo?> {
+class DateCell(owner: Context, private val formatter: StringFormatter<DateRo>) : ContainerImpl(owner), DataGridCell<DateRo?> {
 
 	private val textField = addChild(text { selectable = false })
 
@@ -256,7 +254,7 @@ class DateCell(owner: Owned, private val formatter: StringFormatter<DateRo>) : C
 
 }
 
-open class DateEditorCell(owner: Owned) : DatePicker(owner), DataGridEditorCell<DateRo?> {
+open class DateEditorCell(owner: Context) : DatePicker(owner), DataGridEditorCell<DateRo?> {
 
 	init {
 		open()

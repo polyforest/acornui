@@ -19,7 +19,7 @@ package com.acornui.input.interaction
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.isDescendantOf
-import com.acornui.Disposable
+import com.acornui.di.ContextImpl
 import com.acornui.input.mouseOut
 import com.acornui.input.mouseOver
 import com.acornui.signal.StoppableSignal
@@ -33,7 +33,7 @@ import com.acornui.signal.StoppableSignalImpl
  */
 private class RollOverAttachment(
 		private val target: UiComponentRo,
-		private val isCapture: Boolean) : Disposable {
+		private val isCapture: Boolean) : ContextImpl(target) {
 
 	private val _over = StoppableSignalImpl<MouseInteractionRo>()
 	val over = _over.asRo()
@@ -63,6 +63,7 @@ private class RollOverAttachment(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		target.mouseOver(isCapture).remove(::mouseOverHandler)
 		target.mouseOut(isCapture).remove(::mouseOutHandler)
 		_over.dispose()

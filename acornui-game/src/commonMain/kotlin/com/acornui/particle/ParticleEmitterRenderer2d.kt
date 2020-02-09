@@ -16,19 +16,16 @@
 
 package com.acornui.particle
 
-import com.acornui.component.Sprite
 import com.acornui.LifecycleBase
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
+import com.acornui.component.Sprite
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
 
 class ParticleEmitterRenderer2d(
-		override val injector: Injector,
 		private val emitterInstance: ParticleEmitterInstance,
 		private val sprites: List<Sprite>
-) : LifecycleBase(), Scoped, ParticleEmitterRenderer {
+) : LifecycleBase(), ParticleEmitterRenderer {
 
 	override fun refInc() {
 		for (i in 0..sprites.lastIndex) {

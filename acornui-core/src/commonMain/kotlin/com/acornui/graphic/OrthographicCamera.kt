@@ -16,8 +16,7 @@
 
 package com.acornui.graphic
 
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
@@ -59,7 +58,7 @@ class OrthographicCamera : CameraBase() {
 }
 
 
-fun Owned.orthographicCamera(autoCenter: Boolean = false, init: OrthographicCamera.() -> Unit = {}): OrthographicCamera {
+fun Context.orthographicCamera(autoCenter: Boolean = false, init: OrthographicCamera.() -> Unit = {}): OrthographicCamera {
 	val p = OrthographicCamera()
 	if (autoCenter) own(inject(Window).autoCenterCamera(p))
 	p.init()

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.input.interaction
 
-import com.acornui.Disposable
-import com.acornui.Lifecycle
+import com.acornui.ExperimentalAcorn
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.stage
+import com.acornui.di.ContextImpl
+import com.acornui.function.as1
 import com.acornui.input.*
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2.Companion.manhattanDst
@@ -132,6 +135,7 @@ class PinchInteraction : PinchInteractionRo, InteractionEventBase() {
 	}
 }
 
+@ExperimentalAcorn
 class PinchAttachment(
 		val target: UiComponent,
 
@@ -139,7 +143,7 @@ class PinchAttachment(
 		 * The manhattan distance delta the pinch must change before the pinch starts.
 		 */
 		var affordance: Float
-) : Disposable {
+) : ContextImpl(target) {
 
 	private val stage = target.stage
 
@@ -183,7 +187,7 @@ class PinchAttachment(
 	private val startPoints = PinchPoints()
 	private val points = PinchPoints()
 
-	private fun targetDeactivatedHandler(c: Lifecycle) {
+	private fun targetDeactivatedHandler() {
 		stop()
 	}
 
@@ -321,17 +325,18 @@ class PinchAttachment(
 	}
 
 	init {
-		target.deactivated.add(::targetDeactivatedHandler)
+		target.deactivated.add(::targetDeactivatedHandler.as1)
 		target.touchStart().add(::touchStartHandler)
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stop()
 		_pinchStart.dispose()
 		_pinch.dispose()
 		_pinchEnd.dispose()
 
-		target.deactivated.remove(::targetDeactivatedHandler)
+		target.deactivated.remove(::targetDeactivatedHandler.as1)
 		target.touchStart().remove(::touchStartHandler)
 	}
 
@@ -344,7 +349,7 @@ class PinchAttachment(
 	}
 }
 
-
+@ExperimentalAcorn
 fun UiComponent.pinchAttachment(affordance: Float = PinchAttachment.DEFAULT_AFFORDANCE): PinchAttachment {
 	return createOrReuseAttachment(PinchAttachment) { PinchAttachment(this, affordance) }
 }
@@ -352,6 +357,7 @@ fun UiComponent.pinchAttachment(affordance: Float = PinchAttachment.DEFAULT_AFFO
 /**
  * @see PinchAttachment.pinchStart
  */
+@ExperimentalAcorn
 fun UiComponent.pinchStart(): Signal<(PinchInteractionRo) -> Unit> {
 	return pinchAttachment().pinchStart
 }
@@ -359,6 +365,7 @@ fun UiComponent.pinchStart(): Signal<(PinchInteractionRo) -> Unit> {
 /**
  * @see PinchAttachment.pinch
  */
+@ExperimentalAcorn
 fun UiComponent.pinch(): Signal<(PinchInteractionRo) -> Unit> {
 	return pinchAttachment().pinch
 }
@@ -366,6 +373,7 @@ fun UiComponent.pinch(): Signal<(PinchInteractionRo) -> Unit> {
 /**
  * @see PinchAttachment.pinchEnd
  */
+@ExperimentalAcorn
 fun UiComponent.pinchEnd(): Signal<(PinchInteractionRo) -> Unit> {
 	return pinchAttachment().pinchEnd
 }

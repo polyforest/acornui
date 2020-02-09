@@ -20,7 +20,7 @@ import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 
 /**
@@ -93,7 +93,7 @@ interface VirtualLayoutAlgorithm<in S, out T : LayoutData> : LayoutDataProvider<
 
 }
 
-interface ItemRendererOwner<out T : LayoutData> : Owned, LayoutDataProvider<T>
+interface ItemRendererContext<out T : LayoutData> : Context, LayoutDataProvider<T>
 
 enum class VirtualLayoutDirection {
 	VERTICAL,

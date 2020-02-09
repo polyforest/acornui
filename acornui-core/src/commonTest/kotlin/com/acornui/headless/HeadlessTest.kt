@@ -22,7 +22,7 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.stage
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.exit
 import com.acornui.math.Easing
 import com.acornui.test.assertClose
@@ -47,6 +47,7 @@ class HeadlessTest {
 	fun addToStage() = runTest {
 		headlessApplication {
 			stage.addElement(testComponent())
+			+testComponent()
 			exit()
 		}
 	}
@@ -76,6 +77,6 @@ class HeadlessTest {
 	}
 }
 
-private class TestComponent(owner: Owned) : UiComponentImpl(owner)
+private class TestComponent(owner: Context) : UiComponentImpl(owner)
 
-private inline fun Owned.testComponent(init: ComponentInit<UiComponent> = {}): UiComponent = TestComponent(this).apply(init)
+private inline fun Context.testComponent(init: ComponentInit<UiComponent> = {}): UiComponent = TestComponent(this).apply(init)

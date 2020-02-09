@@ -18,7 +18,8 @@ package com.acornui.asset
 
 import com.acornui.audio.Music
 import com.acornui.audio.SoundFactory
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.dKey
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.io.*
@@ -41,7 +42,7 @@ suspend fun <T> Loader<T>.load(url: String,
 /**
  * Requests a [String] resource.
  */
-suspend fun Scoped.loadText(
+suspend fun Context.loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
@@ -52,7 +53,7 @@ suspend fun Scoped.loadText(
 /**
  * Requests a [String] resource.
  */
-suspend fun Scoped.loadText(
+suspend fun Context.loadText(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.textLoader).defaultInitialTimeEstimate
@@ -63,7 +64,7 @@ suspend fun Scoped.loadText(
 /**
  * Requests a [ReadByteBuffer] resource.
  */
-suspend fun Scoped.loadBinary(
+suspend fun Context.loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
@@ -74,7 +75,7 @@ suspend fun Scoped.loadBinary(
 /**
  * Requests a [ReadByteBuffer] resource.
  */
-suspend fun Scoped.loadBinary(
+suspend fun Context.loadBinary(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
@@ -85,7 +86,7 @@ suspend fun Scoped.loadBinary(
 /**
  * Requests a [Texture] resource.
  */
-suspend fun Scoped.loadTexture(
+suspend fun Context.loadTexture(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
@@ -96,7 +97,7 @@ suspend fun Scoped.loadTexture(
 /**
  * Requests a [Texture] resource.
  */
-suspend fun Scoped.loadTexture(
+suspend fun Context.loadTexture(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
@@ -105,7 +106,7 @@ suspend fun Scoped.loadTexture(
 /**
  * Requests a [Music] resource.
  */
-suspend fun Scoped.loadMusic(
+suspend fun Context.loadMusic(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
@@ -116,7 +117,7 @@ suspend fun Scoped.loadMusic(
 /**
  * Requests a [Music] resource.
  */
-suspend fun Scoped.loadMusic(
+suspend fun Context.loadMusic(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
@@ -127,7 +128,7 @@ suspend fun Scoped.loadMusic(
 /**
  * Requests a [SoundFactory] resource.
  */
-suspend fun Scoped.loadSound(
+suspend fun Context.loadSound(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate
@@ -138,7 +139,7 @@ suspend fun Scoped.loadSound(
 /**
  * Requests a [SoundFactory] resource.
  */
-suspend fun Scoped.loadSound(
+suspend fun Context.loadSound(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate

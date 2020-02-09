@@ -19,17 +19,23 @@ package com.acornui.component
 import com.acornui.component.drawing.rect
 import com.acornui.component.drawing.staticMeshC
 import com.acornui.component.drawing.transform
-import com.acornui.di.Owned
-import com.acornui.gl.core.*
+import com.acornui.di.Context
+import com.acornui.gl.core.putIndex
+import com.acornui.gl.core.putQuadIndices
+import com.acornui.gl.core.putTriangleIndices
+import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
-import com.acornui.math.*
+import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.math.PI
+import com.acornui.math.Pad
+import com.acornui.math.Vector3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.*
 
 open class Rect(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner) {
 
 	val style = bind(BoxStyle())
@@ -560,7 +566,7 @@ private fun fitSize(value: Float, other: Float, max: Float): Float {
 	}
 }
 
-inline fun Owned.rect(init: ComponentInit<Rect> = {}): Rect {
+inline fun Context.rect(init: ComponentInit<Rect> = {}): Rect {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return Rect(this).apply(init)
 }

@@ -19,9 +19,8 @@ package com.acornui.graphic
 import com.acornui.Disposable
 import com.acornui.browser.Location
 import com.acornui.component.Stage
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
@@ -226,7 +225,7 @@ data class PopUpSpecs(
  * Requests that the application terminate.
  * @see Window.requestClose
  */
-fun Scoped.exit() {
+fun Context.exit() {
 	inject(Window).requestClose()
 }
 

@@ -22,7 +22,7 @@ import com.acornui.component.style.*
 import com.acornui.component.text.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
@@ -42,7 +42,7 @@ import com.acornui.toInt
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class ColorPicker(owner: Owned) : ContainerImpl(owner) {
+open class ColorPicker(owner: Context) : ContainerImpl(owner) {
 
 	val style = bind(ColorPickerStyle())
 
@@ -192,14 +192,14 @@ class ColorPickerStyle : StyleBase() {
 	companion object : StyleType<ColorPickerStyle>
 }
 
-inline fun Owned.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker  {
+inline fun Context.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPicker(this)
 	c.init()
 	return c
 }
 
-class ColorPalette(owner: Owned) : ContainerImpl(owner) {
+class ColorPalette(owner: Context) : ContainerImpl(owner) {
 
 	private val _changed = own(Signal0())
 	val changed = _changed.asRo()
@@ -434,7 +434,7 @@ class ColorPaletteStyle : StyleBase() {
 /**
  * A Color picker with a text input for a hexdecimal color representation.
  */
-open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
+open class ColorPickerWithText(owner: Context) : ContainerImpl(owner) {
 
 	val changed: Signal<() -> Unit>
 		get() = colorPicker.changed
@@ -566,7 +566,7 @@ open class ColorPickerWithText(owner: Owned) : ContainerImpl(owner) {
 	companion object : StyleTag
 }
 
-inline fun Owned.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText  {
+inline fun Context.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPickerWithText(this)
 	c.init()

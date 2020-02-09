@@ -21,7 +21,7 @@ import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
 import com.acornui.async.catch
 import com.acornui.async.then
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureRo
@@ -36,7 +36,7 @@ import kotlin.contracts.contract
  * A UiComponent representing a single Texture.
  * @author nbilyk
  */
-open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), Clearable {
+open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner), Clearable {
 
 	override val renderable: Sprite = Sprite(gl)
 
@@ -60,11 +60,11 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), 
 			window.requestRender()
 		}
 
-	constructor (owner: Owned, path: String) : this(owner) {
+	constructor (owner: Context, path: String) : this(owner) {
 		this.path = path
 	}
 
-	constructor (owner: Owned, texture: Texture) : this(owner) {
+	constructor (owner: Context, texture: Texture) : this(owner) {
 		this.texture = texture
 	}
 
@@ -184,14 +184,14 @@ open class TextureComponent(owner: Owned) : RenderableComponent<Sprite>(owner), 
 	}
 }
 
-inline fun Owned.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+inline fun Context.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.init()
 	return textureComponent
 }
 
-inline fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+inline fun Context.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.path = path
@@ -199,7 +199,7 @@ inline fun Owned.textureC(path: String, init: ComponentInit<TextureComponent> = 
 	return textureComponent
 }
 
-inline fun Owned.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+inline fun Context.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val textureComponent = TextureComponent(this)
 	textureComponent.texture = texture

@@ -20,8 +20,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.Positionable
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
-import com.acornui.graphic.CameraRo
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.math.*
 import kotlin.contracts.InvocationKind
@@ -44,7 +43,7 @@ interface ScrollRect : ElementContainer<UiComponent> {
 }
 
 class ScrollRectImpl(
-		owner: Owned
+		owner: Context
 ) : ElementContainerImpl<UiComponent>(owner), ScrollRect {
 
 	override val style = bind(ScrollRectStyle())
@@ -79,11 +78,7 @@ class ScrollRectImpl(
 			maskClip.style.margin = it.padding
 		}
 	}
-
-	override var cameraOverride: CameraRo?
-		get() = null
-		set(_) { throw UnsupportedOperationException("Cannot override the camera on ScrollRect.") }
-
+	
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
 		contents.addElement(newIndex, element)
 	}
@@ -114,6 +109,11 @@ class ScrollRectImpl(
 		clipRegionLocal = clipRegion.set(out)
 	}
 
+	override fun updateViewProjection() {
+		check(cameraOverride == null) { "Cannot override the camera on ScrollRect." }
+		super.updateViewProjection()
+	}
+
 	override fun draw() {
 		StencilUtil.mask(gl.batch, gl, {
 			maskClip.render()
@@ -142,7 +142,7 @@ class ScrollRectStyle : StyleBase() {
 	companion object : StyleType<ScrollRectStyle>
 }
 
-inline fun Owned.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl {
+inline fun Context.scrollRect(init: ComponentInit<ScrollRectImpl> = {}): ScrollRectImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = ScrollRectImpl(this)
 	s.init()

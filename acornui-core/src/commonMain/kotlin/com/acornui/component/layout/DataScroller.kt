@@ -23,14 +23,14 @@ import com.acornui.behavior.toggleSelected
 import com.acornui.collection.ObservableList
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.component.layout.algorithm.virtual.ItemRendererOwner
+import com.acornui.component.layout.algorithm.virtual.ItemRendererContext
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutDirection
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.input.Ascii
@@ -47,7 +47,7 @@ import com.acornui.recycle.disposeAndClear
 // FIXME: #161 largest renderer?
 
 class DataScroller<E : Any, out S : Style, out T : LayoutData>(
-		owner: Owned,
+		owner: Context,
 		layoutAlgorithm: VirtualLayoutAlgorithm<S, T>,
 		val layoutStyle: S
 ) : ContainerImpl(owner), Focusable {
@@ -221,7 +221,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	 * Sets the renderer factory for this list. The renderer factory is responsible for creating renderers to be used
 	 * in this scroller.
 	 */
-	fun rendererFactory(value: ItemRendererOwner<T>.() -> ListItemRenderer<E>) {
+	fun rendererFactory(value: ItemRendererContext<T>.() -> ListItemRenderer<E>) {
 		contents.rendererFactory(value)
 		bottomContents.rendererFactory(value)
 	}
@@ -230,7 +230,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 	 * Sets the nullRenderer factory for this list. The nullRenderer factory is responsible for creating nullRenderers
 	 * to be used in this list.
 	 */
-	fun nullRendererFactory(value: ItemRendererOwner<T>.() -> ListRenderer) {
+	fun nullRendererFactory(value: ItemRendererContext<T>.() -> ListRenderer) {
 		contents.nullRendererFactory(value)
 		bottomContents.nullRendererFactory(value)
 	}
@@ -261,7 +261,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		_highlighted.data(value)
 	}
 
-	fun emptyListRenderer(value: ItemRendererOwner<T>.() -> UiComponent) {
+	fun emptyListRenderer(value: ItemRendererContext<T>.() -> UiComponent) {
 		contents.emptyListRenderer(value)
 		bottomContents.emptyListRenderer(value)
 	}
@@ -435,7 +435,7 @@ class DataScrollerStyle : StyleBase() {
 	/**
 	 * The background for each row.
 	 */
-	var rowBackground by prop<Owned.() -> RowBackground> { rowBackground() }
+	var rowBackground by prop<Context.() -> RowBackground> { rowBackground() }
 
 	companion object : StyleType<DataScrollerStyle>
 }

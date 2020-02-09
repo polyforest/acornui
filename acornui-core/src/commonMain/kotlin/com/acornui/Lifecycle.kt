@@ -27,17 +27,17 @@ import com.acornui.signal.Signal1
 interface LifecycleRo {
 
 	/**
-	 * Dispatched then this object has been activated.
+	 * Dispatched when this object has been activated.
 	 */
 	val activated: Signal<(LifecycleRo) -> Unit>
 
 	/**
-	 * Dispatched then this object has been deactivated.
+	 * Dispatched when this object has been deactivated.
 	 */
 	val deactivated: Signal<(LifecycleRo) -> Unit>
 
 	/**
-	 * Dispatched then this object has been disposed.
+	 * Dispatched when this object has been disposed.
 	 */
 	val disposed: Signal<(LifecycleRo) -> Unit>
 
@@ -67,16 +67,16 @@ interface Lifecycle : LifecycleRo, Disposable {
 
 abstract class LifecycleBase : Lifecycle {
 
-	protected val _activated = Signal1<Lifecycle>()
+	private val _activated = Signal1<Lifecycle>()
 	override val activated = _activated.asRo()
-	protected val _deactivated = Signal1<Lifecycle>()
+	private val _deactivated = Signal1<Lifecycle>()
 	override val deactivated = _deactivated.asRo()
-	protected val _disposed = Signal1<Lifecycle>()
+	private val _disposed = Signal1<Lifecycle>()
 	override val disposed = _disposed.asRo()
 
-	protected var _isDisposed: Boolean = false
-	protected var _isDisposing: Boolean = false
-	protected var _isActive: Boolean = false
+	private var _isDisposed: Boolean = false
+	private var _isDisposing: Boolean = false
+	private var _isActive: Boolean = false
 
 	override val isActive: Boolean
 		get() = _isActive
@@ -149,3 +149,9 @@ abstract class UpdatableChildBase : UpdatableChild {
 }
 
 class DisposedException : IllegalStateException("This component has been disposed")
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun LifecycleRo.checkDisposed() {
+	if (isDisposed)
+		throw DisposedException()
+}

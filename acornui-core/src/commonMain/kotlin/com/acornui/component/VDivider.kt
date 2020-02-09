@@ -23,7 +23,7 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.input.interaction.DragInteractionRo
 import com.acornui.input.interaction.drag
 import com.acornui.math.Bounds
@@ -32,7 +32,7 @@ import com.acornui.math.Vector2
 import com.acornui.math.maxOf4
 import kotlin.math.floor
 
-open class VDivider(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
+open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 
 
 	val style = bind(DividerStyle())
@@ -150,7 +150,7 @@ class DividerStyle() : StyleBase() {
 	companion object : StyleType<DividerStyle>
 }
 
-fun Owned.vDivider(init: ComponentInit<VDivider>): VDivider {
+fun Context.vDivider(init: ComponentInit<VDivider>): VDivider {
 	val v = VDivider(this)
 	v.init()
 	return v

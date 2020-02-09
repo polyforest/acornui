@@ -16,21 +16,20 @@
 
 package com.acornui.input.interaction
 
+import com.acornui.Disposable
 import com.acornui.component.InteractivityMode
 import com.acornui.component.Stage
 import com.acornui.component.atlas
 import com.acornui.component.layout.moveTo
-import com.acornui.Disposable
 import com.acornui.component.mousePosition
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.input.*
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.graphic.Color
+import com.acornui.input.*
 import com.acornui.math.Vector2
 import com.acornui.reflect.afterChange
 
-class TouchSimulator(override val injector: Injector) : Scoped, Disposable {
+class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 
 	private val stage = inject(Stage)
 	private val handle = stage.atlas("assets/uiskin/uiskin.json", "Picker") {

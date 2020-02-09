@@ -16,7 +16,6 @@
 
 package com.acornui.graphic.lighting
 
-import com.acornui._assert
 import com.acornui.graphic.CameraRo
 import com.acornui.math.*
 import com.acornui.observe.ModTagWatch
@@ -106,7 +105,7 @@ class DirectionalLightCamera {
 			// Up-to-date
 			return false
 		}
-		_assert(!newDirection.isZero()) { "Direction may not be zero." }
+		check(!newDirection.isZero()) { "Direction may not be zero." }
 
 		setDirection(newDirection)
 		view.setToLookAt(direction, up)

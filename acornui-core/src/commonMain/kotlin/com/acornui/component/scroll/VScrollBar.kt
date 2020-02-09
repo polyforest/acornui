@@ -22,7 +22,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Vector2
 import kotlin.contracts.InvocationKind
@@ -30,7 +30,7 @@ import kotlin.contracts.contract
 import kotlin.math.round
 
 open class VScrollBar(
-		owner: Owned
+		owner: Context
 ) : ScrollBarBase(owner) {
 
 	init {
@@ -114,14 +114,14 @@ open class VScrollBar(
 	companion object : StyleTag
 }
 
-inline fun Owned.vScrollBar(init: ComponentInit<VScrollBar> = {}): VScrollBar  {
+inline fun Context.vScrollBar(init: ComponentInit<VScrollBar> = {}): VScrollBar  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val v = VScrollBar(this)
 	v.init()
 	return v
 }
 
-open class VSlider(owner: Owned) : VScrollBar(owner) {
+open class VSlider(owner: Context) : VScrollBar(owner) {
 
 	init {
 		styleTags.add(VSlider)
@@ -131,7 +131,7 @@ open class VSlider(owner: Owned) : VScrollBar(owner) {
 	companion object : StyleTag
 }
 
-fun Owned.vSlider(init: ComponentInit<VSlider>): VSlider {
+fun Context.vSlider(init: ComponentInit<VSlider>): VSlider {
 	val h = VSlider(this)
 	h.init()
 	return h

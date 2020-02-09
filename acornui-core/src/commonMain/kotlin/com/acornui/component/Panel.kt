@@ -21,7 +21,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkinOptional
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -32,7 +32,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class Panel(
-		owner: Owned
+		owner: Context
 ) : ElementContainerImpl<UiComponent>(owner), Closeable, LayoutDataProvider<StackLayoutData> {
 
 	override val closing = own(Signal2<Closeable, Cancel>())
@@ -95,7 +95,7 @@ open class PanelStyle : StyleBase() {
 	companion object : StyleType<PanelStyle>
 }
 
-inline fun Owned.panel(init: ComponentInit<Panel> = {}): Panel {
+inline fun Context.panel(init: ComponentInit<Panel> = {}): Panel {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val p = Panel(this)
 	p.init()

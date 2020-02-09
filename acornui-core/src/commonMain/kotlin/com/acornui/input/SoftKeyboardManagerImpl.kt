@@ -1,13 +1,13 @@
 package com.acornui.input
 
-import com.acornui.Disposable
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.flow
 import com.acornui.component.style.StyleTag
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.di.own
 import com.acornui.di.owns
+import com.acornui.function.as2
 import com.acornui.input.interaction.*
 import com.acornui.logging.Log
 import com.acornui.math.Bounds
@@ -21,9 +21,9 @@ import com.acornui.time.stop
 import com.acornui.tween.Tween
 import com.acornui.tween.tween
 
-class SoftKeyboardManagerImpl : SoftKeyboardManager, Disposable, Observable {
+class SoftKeyboardManagerImpl(owner: Context) : ContextImpl(owner), SoftKeyboardManager, Observable {
 
-	override fun createView(owner: Owned): UiComponent = SoftKeyboardContainer(owner, this)
+	override fun createView(owner: Context): UiComponent = SoftKeyboardContainer(owner, this)
 
 	private val _changed = Signal1<SoftKeyboardManager>()
 	override val changed = _changed.asRo()
@@ -47,12 +47,13 @@ class SoftKeyboardManagerImpl : SoftKeyboardManager, Disposable, Observable {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		hide()
 		_changed.dispose()
 	}
 }
 
-private class SoftKeyboardContainer(owner: Owned, private val manager: SoftKeyboardManager) : ContainerImpl(owner) {
+private class SoftKeyboardContainer(owner: Context, private val manager: SoftKeyboardManager) : ContainerImpl(owner) {
 
 	private val softKeyboard = addChild(SoftKeyboardView(this))
 	private var showPercent by validationProp(0f, ValidationFlags.LAYOUT)
@@ -74,7 +75,7 @@ private class SoftKeyboardContainer(owner: Owned, private val manager: SoftKeybo
 		touchStart(true).add {
 			it.preventDefault()
 		}
-		focusManager.focusedChanged.add(::focusChangedHandler)
+		focusManager.focusedChanged.add(::focusChangedHandler.as2)
 
 		own(manager.bind {
 			val type = manager.keyboardType
@@ -99,7 +100,7 @@ private class SoftKeyboardContainer(owner: Owned, private val manager: SoftKeybo
 			}
 		}
 
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+	private fun focusChangedHandler() {
 		// If the focus has changed, close the keyboard on the next click.
 		closeOnNextClick = true
 	}
@@ -145,11 +146,11 @@ private class SoftKeyboardContainer(owner: Owned, private val manager: SoftKeybo
 	override fun dispose() {
 		super.dispose()
 		closeOnNextClick = false
-		focusManager.focusedChanged.remove(::focusChangedHandler)
+		focusManager.focusedChanged.remove(::focusChangedHandler.as2)
 	}
 }
 
-class SoftKeyboardView(owner: Owned) : Panel(owner) {
+class SoftKeyboardView(owner: Context) : Panel(owner) {
 
 	val data = dataBinding(SoftKeyboardType.DEFAULT)
 	val capsLock = dataBinding(false)
@@ -178,7 +179,7 @@ class SoftKeyboardView(owner: Owned) : Panel(owner) {
 	companion object : StyleTag
 }
 
-private class CharButton(owner: Owned) : ButtonImpl(owner) {
+private class CharButton(owner: Context) : ButtonImpl(owner) {
 
 	private val charEvent = CharInteraction().apply {
 		type = CharInteractionRo.CHAR

@@ -21,7 +21,7 @@ package com.acornui.graphic
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
@@ -195,7 +195,7 @@ data class AtlasRegionData(
 
 data class LoadedAtlasRegion(val texture: Texture, val region: AtlasRegionData)
 
-suspend fun Scoped.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAtlasRegion {
+suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAtlasRegion {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val (page, region) = atlasData.findRegion(regionName)
 			?: throw RegionNotFoundException(atlasPath, regionName)

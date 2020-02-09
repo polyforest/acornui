@@ -16,6 +16,9 @@
 
 package com.acornui.focus
 
+import com.acornui.Disposable
+import com.acornui.TreeWalk
+import com.acornui.childWalkLevelOrder
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.lastOrNull2
 import com.acornui.component.ElementContainer
@@ -23,12 +26,8 @@ import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.Disposable
-import com.acornui.TreeWalk
-import com.acornui.childWalkLevelOrder
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.di.owns
 import com.acornui.isAncestorOf
 import com.acornui.signal.Cancel
@@ -121,7 +120,7 @@ interface FocusManager : Disposable {
 /**
  * An interface for a component that may be focused.
  */
-interface Focusable : Scoped {
+interface Focusable : Context {
 
 	val focusableStyle: FocusableStyle
 

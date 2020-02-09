@@ -18,10 +18,13 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -138,7 +141,7 @@ class CanvasLayoutStyle : StyleBase() {
 
 }
 
-open class CanvasLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<CanvasLayoutStyle, CanvasLayoutData, E>(owner, CanvasLayout())
+open class CanvasLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<CanvasLayoutStyle, CanvasLayoutData, E>(owner, CanvasLayout())
 
 open class CanvasLayoutData : BasicLayoutData() {
 
@@ -206,12 +209,12 @@ fun canvasLayoutData(init: CanvasLayoutData.() -> Unit = {}): CanvasLayoutData {
 }
 
 @JvmName("canvasT")
-inline fun <E : UiComponent> Owned.canvas(init: ComponentInit<CanvasLayoutContainer<E>> = {}): CanvasLayoutContainer<E> {
+inline fun <E : UiComponent> Context.canvas(init: ComponentInit<CanvasLayoutContainer<E>> = {}): CanvasLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return CanvasLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.canvas(init: ComponentInit<CanvasLayoutContainer<UiComponent>> = {}): CanvasLayoutContainer<UiComponent> {
+inline fun Context.canvas(init: ComponentInit<CanvasLayoutContainer<UiComponent>> = {}): CanvasLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return canvas<UiComponent>(init)
 }

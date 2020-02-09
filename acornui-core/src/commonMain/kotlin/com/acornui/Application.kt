@@ -69,7 +69,7 @@ abstract class ApplicationBase : Application {
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
 
-	protected open suspend fun createInjector(): Injector = InjectorImpl(bootstrap.dependenciesList())
+	protected open suspend fun createContext() = ContextImpl(bootstrap.dependencies())
 
 	protected suspend fun awaitAll() {
 		bootstrap.awaitAll()
@@ -94,7 +94,7 @@ abstract class ApplicationBase : Application {
 		BinaryLoader()
 	}
 
-	protected open fun createStage(injector: Injector): Stage = StageImpl(injector)
+	protected open fun createStage(context: Context): Stage = StageImpl(context)
 
 	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 

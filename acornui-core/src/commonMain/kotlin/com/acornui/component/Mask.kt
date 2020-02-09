@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.di.inject
 import com.acornui.gl.core.*
 import com.acornui.graphic.Window
 import com.acornui.math.Vector3

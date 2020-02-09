@@ -18,8 +18,6 @@ package com.acornui.physics
 
 import com.acornui.Disposable
 import com.acornui.Updatable
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
 import com.acornui.ecs.Entity
 import com.acornui.ecs.componentList
 import com.acornui.geom.CollisionInfo
@@ -34,9 +32,8 @@ import com.acornui.mvc.commander
 import com.acornui.mvc.invokeCommand
 
 class PhysicsController(
-		override val injector: Injector,
 		entities: List<Entity>
-) : Updatable, Scoped, Disposable {
+) : Updatable, Disposable {
 
 	private val cmd = commander()
 	private val physicsVos = ArrayList<Physics>()

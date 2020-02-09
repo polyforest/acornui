@@ -2,17 +2,17 @@ package com.acornui.nav
 
 import com.acornui.ChildRo
 import com.acornui.ParentRo
-import com.acornui.di.Injector
-import com.acornui.di.InjectorImpl
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NavBindingTest {
 
-	private val mockInjector = InjectorImpl(null, listOf())
+	private val mockContext = ContextImpl()
 
 	private val navMan: NavigationManager
-		get() = mockInjector.inject(NavigationManager)
+		get() = mockContext.inject(NavigationManager)
 
 	@Test fun pathStr() {
 		val b = NavBindingImpl(mockBindable(0), "")
@@ -26,7 +26,7 @@ class NavBindingTest {
 	}
 
 	private fun mockBindable(depth: Int): NavBindable {
-		return MockNavBindable(mockInjector, depth)
+		return MockNavBindable(mockContext, depth)
 	}
 
 	@Test fun pathStrWithParams() {
@@ -61,11 +61,11 @@ class NavBindingTest {
 
 }
 
-private class MockNavBindable(override val injector: Injector, private val depth: Int) : ParentRo<NavBindable>,  NavBindable {
+private class MockNavBindable(owner: Context, private val depth: Int) : ContextImpl(owner), ParentRo<NavBindable>, NavBindable {
 
 	override val parent: ParentRo<ChildRo>?
 		get() {
-			return if (depth == 0) null else MockNavBindable(injector, depth - 1)
+			return if (depth == 0) null else MockNavBindable(this, depth - 1)
 		}
 
 	override val children: List<NavBindable>

@@ -21,7 +21,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
@@ -31,7 +31,7 @@ import com.acornui.math.Bounds
  * Similar to [LayoutContainer] except that its elements are protected instead of public.
  */
 open class ElementLayoutContainer<S : Style, out U : LayoutData, E : UiComponent>(
-		owner: Owned,
+		owner: Context,
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : ElementContainerImpl<E>(owner), LayoutDataProvider<U>, Focusable {
 

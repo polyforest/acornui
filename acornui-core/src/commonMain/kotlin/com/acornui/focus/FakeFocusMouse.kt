@@ -21,9 +21,8 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.parentWalk
 import com.acornui.component.stage
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.input.interaction.*
 import com.acornui.time.nowMs
@@ -33,8 +32,8 @@ import com.acornui.toDisposable
  * Dispatches mouse events when using SPACE or ENTER key presses on the focused element.
  */
 class FakeFocusMouse(
-		override val injector: Injector
-) : Scoped, Disposable {
+		owner: Context
+) : ContextImpl(owner) {
 
 	private val focus = inject(FocusManager)
 	private val interactivity = inject(InteractivityManager)
@@ -113,13 +112,14 @@ class FakeFocusMouse(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		stage.keyDown().remove(keyDownHandler)
 		stage.keyUp().remove(keyUpHandler)
 	}
 }
 
-fun Scoped.fakeFocusMouse(): FakeFocusMouse {
-	return FakeFocusMouse(injector)
+fun Context.fakeFocusMouse(): FakeFocusMouse {
+	return FakeFocusMouse(this)
 }
 
 /**

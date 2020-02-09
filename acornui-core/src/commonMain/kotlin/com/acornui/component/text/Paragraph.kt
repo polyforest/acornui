@@ -24,7 +24,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.layout.algorithm.LineInfo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
 import com.acornui.math.Vector3
@@ -37,7 +37,7 @@ import kotlin.math.floor
 /**
  * A Paragraph component is a container of styleable text spans, to be used inside of a TextField.
  */
-class Paragraph(owner: Owned) : UiComponentImpl(owner), TextNode, ElementParent<TextSpanElement> {
+class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParent<TextSpanElement> {
 
 	val flowStyle = bind(TextFlowStyle())
 
@@ -455,7 +455,7 @@ object TextValidationFlags {
 	const val VERTICES = 1 shl 18
 }
 
-inline fun Owned.p(init: ComponentInit<Paragraph> = {}): Paragraph  {
+inline fun Context.p(init: ComponentInit<Paragraph> = {}): Paragraph  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = Paragraph(this)
 	t.init()

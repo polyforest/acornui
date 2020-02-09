@@ -16,10 +16,10 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.StyleTag
 import com.acornui.Disposable
 import com.acornui.Lifecycle
-import com.acornui.di.Owned
+import com.acornui.component.style.StyleTag
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.input.interaction.click
 import com.acornui.signal.Signal0
@@ -31,7 +31,7 @@ interface RadioButtonRo<out T> : ButtonRo {
 interface RadioButton<out T> : Button, RadioButtonRo<T>
 
 open class RadioButtonImpl<out T>(
-		owner: Owned,
+		owner: Context,
 		override val data: T
 ) : ButtonImpl(owner), RadioButton<T> {
 
@@ -45,14 +45,14 @@ open class RadioButtonImpl<out T>(
 	companion object : StyleTag
 }
 
-fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
+fun <T> Context.radioButton(group: RadioGroup<T>, data: T, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
 	val b = RadioButtonImpl(this, data)
 	group.register(b)
 	b.init()
 	return b
 }
 
-fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, label: String, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
+fun <T> Context.radioButton(group: RadioGroup<T>, data: T, label: String, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
 	val b = RadioButtonImpl(this, data)
 	group.register(b)
 	b.label = label
@@ -60,7 +60,7 @@ fun <T> Owned.radioButton(group: RadioGroup<T>, data: T, label: String, init: Co
 	return b
 }
 
-class RadioGroup<T>(val owner: Owned) : Disposable {
+class RadioGroup<T>(val owner: Context) : Disposable {
 
 	init {
 		owner.own(this)
@@ -135,7 +135,7 @@ class RadioGroup<T>(val owner: Owned) : Disposable {
 	}
 }
 
-fun <T> Owned.radioGroup(init: RadioGroup<T>.() -> Unit = {}): RadioGroup<T> {
+fun <T> Context.radioGroup(init: RadioGroup<T>.() -> Unit = {}): RadioGroup<T> {
 	val group = RadioGroup<T>(this)
 	group.init()
 	return group

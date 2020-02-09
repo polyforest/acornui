@@ -17,10 +17,12 @@
 package com.acornui.component
 
 import com.acornui.collection.forEach2
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.NoopLayoutData
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.style.NoopStyle
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -50,15 +52,15 @@ class FillLayout : LayoutAlgorithm<NoopStyle, NoopLayoutData> {
 
 }
 
-open class FillLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<NoopStyle, NoopLayoutData, E>(owner, FillLayout())
+open class FillLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<NoopStyle, NoopLayoutData, E>(owner, FillLayout())
 
 @JvmName("fillGroupT")
-inline fun <E : UiComponent> Owned.fillGroup(init: ComponentInit<FillLayoutContainer<E>> = {}): FillLayoutContainer<E> {
+inline fun <E : UiComponent> Context.fillGroup(init: ComponentInit<FillLayoutContainer<E>> = {}): FillLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FillLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.fillGroup(init: ComponentInit<FillLayoutContainer<UiComponent>> = {}): FillLayoutContainer<UiComponent> {
+inline fun Context.fillGroup(init: ComponentInit<FillLayoutContainer<UiComponent>> = {}): FillLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return fillGroup<UiComponent>(init)
 }

@@ -18,11 +18,13 @@ package com.acornui.component.layout
 
 import com.acornui.collection.SingleList
 import com.acornui.collection.SingleListView
-import com.acornui.component.*
+import com.acornui.component.SingleElementContainer
+import com.acornui.component.SingleElementContainerImpl
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
@@ -30,7 +32,7 @@ import com.acornui.math.Bounds
  * A container that uses a [LayoutAlgorithm] to size and position its external [element].
  */
 open class SingleElementLayoutContainerImpl<S : Style, out U : LayoutData>(
-		owner: Owned,
+		owner: Context,
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
 ) : SingleElementContainerImpl<UiComponent>(owner), SingleElementContainer<UiComponent>, LayoutDataProvider<U>, Focusable {
 

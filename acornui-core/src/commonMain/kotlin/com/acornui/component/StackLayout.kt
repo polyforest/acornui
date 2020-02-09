@@ -17,12 +17,15 @@
 package com.acornui.component
 
 import com.acornui.collection.sortTo
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -171,15 +174,15 @@ open class StackLayoutStyle : StyleBase() {
 	companion object : StyleType<StackLayoutStyle>
 }
 
-open class StackLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<StackLayoutStyle, StackLayoutData, E>(owner, StackLayout())
+open class StackLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<StackLayoutStyle, StackLayoutData, E>(owner, StackLayout())
 
 @JvmName("stackT")
-inline fun <E : UiComponent> Owned.stack(init: ComponentInit<StackLayoutContainer<E>> = {}): StackLayoutContainer<E> {
+inline fun <E : UiComponent> Context.stack(init: ComponentInit<StackLayoutContainer<E>> = {}): StackLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return StackLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.stack(init: ComponentInit<StackLayoutContainer<UiComponent>> = {}): StackLayoutContainer<UiComponent> {
+inline fun Context.stack(init: ComponentInit<StackLayoutContainer<UiComponent>> = {}): StackLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return stack<UiComponent>(init)
 }

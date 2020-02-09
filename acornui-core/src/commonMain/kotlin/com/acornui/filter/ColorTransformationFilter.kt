@@ -16,7 +16,7 @@
 
 package com.acornui.filter
 
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
@@ -24,7 +24,7 @@ import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 
 class ColorTransformationFilter(
-		owner: Owned,
+		owner: Context,
 
 		/**
 		 * The mutable color transformation to be applied.
@@ -46,6 +46,6 @@ class ColorTransformationFilter(
 	}
 }
 
-fun Owned.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
+fun Context.colorTransformationFilter(colorTransformation: ColorTransformation = ColorTransformation()): ColorTransformationFilter {
 	return ColorTransformationFilter(this, colorTransformation)
 }

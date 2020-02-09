@@ -26,9 +26,9 @@ import com.acornui.async.globalLaunch
 import com.acornui.async.then
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.di.DKey
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
 import com.acornui.logging.Log
 import com.acornui.observe.Observable
 import com.acornui.observe.bind
@@ -54,7 +54,7 @@ interface I18n {
 
 	companion object : DKey<I18n> {
 
-		override fun factory(injector: Injector): I18n? = I18nImpl(injector)
+		override fun factory(context: Context): I18n? = I18nImpl(context)
 	}
 }
 
@@ -82,7 +82,7 @@ fun <T : Labelable> T.bindLabel(bundle: I18nBundleRo, key: String = "", default:
 
 fun I18nBundleRo.getOrElse(key: String, default: String = "") = get(key) ?: default
 
-class I18nImpl(override val injector: Injector) : Scoped, I18n, Disposable {
+class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 	private val cachedGroup = cachedGroup()
 
@@ -172,6 +172,7 @@ class I18nImpl(override val injector: Injector) : Scoped, I18n, Disposable {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		cachedGroup.dispose()
 		currentLocaleBinding.dispose()
 	}

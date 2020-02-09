@@ -16,14 +16,13 @@
 
 package com.acornui.cursor
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.collection.sortedInsertionIndex
 import com.acornui.Lifecycle
 import com.acornui.LifecycleBase
+import com.acornui.collection.sortedInsertionIndex
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Owned
-import com.acornui.di.injectOptional
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 
 interface CursorManager {
 
@@ -160,6 +159,6 @@ object CursorPriority {
 	var NOT_ALLOWED: Float = 1000f
 }
 
-fun Owned.busyCursor(): CursorReference? {
+fun Context.busyCursor(): CursorReference? {
 	return injectOptional(CursorManager)?.addCursor(StandardCursors.POINTER_WAIT, CursorPriority.POINTER_WAIT)
 }

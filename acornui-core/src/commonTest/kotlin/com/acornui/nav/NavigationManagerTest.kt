@@ -1,5 +1,6 @@
 package com.acornui.nav
 
+import com.acornui.di.ContextImpl
 import com.acornui.test.assertListEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,7 +22,7 @@ class NavigationManagerTest {
 	}
 
 	@Test fun push() {
-		val m = NavigationManagerImpl()
+		val m = NavigationManagerImpl(ContextImpl())
 		m.push(NavNode("Hi", hashMapOf(Pair("test1", "test2"))))
 
 		assertListEquals(listOf(NavNode("Hi", hashMapOf(Pair("test1", "test2")))), m.path())
@@ -35,7 +36,7 @@ class NavigationManagerTest {
 	}
 
 	@Test fun pop() {
-		val m = NavigationManagerImpl()
+		val m = NavigationManagerImpl(ContextImpl())
 		m.push(NavNode("Hi", hashMapOf(Pair("test1", "test2"))))
 		m.push(NavNode("Bye", hashMapOf(Pair("test2", "test4"))))
 		m.pop()
@@ -47,7 +48,7 @@ class NavigationManagerTest {
 	}
 
 	@Test fun changed() {
-		val m = NavigationManagerImpl()
+		val m = NavigationManagerImpl(ContextImpl())
 		m.changed.add({
 			event ->
 			assertListEquals(listOf(), event.oldPath)
@@ -117,7 +118,7 @@ class NavigationManagerTest {
 	 * Test that the path can be set in a path changed handler.
 	 */
 	@Test fun concurrentPath() {
-		val m = NavigationManagerImpl()
+		val m = NavigationManagerImpl(ContextImpl())
 		m.changed.add({
 			_ ->
 			m.path(listOf(NavNode("test2")))

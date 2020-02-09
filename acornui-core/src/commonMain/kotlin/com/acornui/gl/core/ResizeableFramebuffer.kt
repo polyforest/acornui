@@ -20,8 +20,7 @@ import com.acornui.Disposable
 import com.acornui.ceilInt
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.graphic.Texture
 import com.acornui.math.MathUtils.nextPowerOfTwo
 
@@ -36,12 +35,6 @@ class ResizeableFramebuffer(
 		private val hasDepth: Boolean = false,
 		private val hasStencil: Boolean = false
 ) : Disposable {
-
-	constructor(injector: Injector, hasDepth: Boolean, hasStencil: Boolean) : this(
-			injector.inject(CachedGl20),
-			hasDepth,
-			hasStencil
-	)
 
 	private var framebuffer: Framebuffer? = null
 	val texture: Texture
@@ -144,8 +137,8 @@ class ResizeableFramebuffer(
 	}
 }
 
-fun Scoped.resizeableFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<ResizeableFramebuffer> = {}): ResizeableFramebuffer {
-	val f = ResizeableFramebuffer(injector, hasDepth, hasStencil)
+fun Context.resizeableFramebuffer(hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<ResizeableFramebuffer> = {}): ResizeableFramebuffer {
+	val f = ResizeableFramebuffer(inject(CachedGl20), hasDepth, hasStencil)
 	f.init()
 	return f
 }

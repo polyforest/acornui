@@ -16,13 +16,10 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.Disposable
 import com.acornui.collection.forEach2
 import com.acornui.component.*
-import com.acornui.di.Injector
-import com.acornui.di.Owned
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.gl.core.*
 import com.acornui.graphic.TextureRo
 import com.acornui.math.*
@@ -37,7 +34,7 @@ import kotlin.contracts.contract
  *
  */
 open class StaticMeshComponent(
-		owner: Owned
+		owner: Context
 ) : UiComponentImpl(owner) {
 
 	var intersectionType = MeshIntersectionType.BOUNDING_BOX
@@ -139,14 +136,14 @@ open class StaticMeshComponent(
 	}
 }
 
-inline fun Owned.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
+inline fun Context.staticMeshC(init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.init()
 	return s
 }
 
-inline fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
+inline fun Context.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshComponent> = {}): StaticMeshComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = StaticMeshComponent(this)
 	s.mesh = mesh
@@ -160,11 +157,11 @@ inline fun Owned.staticMeshC(mesh: StaticMesh, init: ComponentInit<StaticMeshCom
  * @author nbilyk
  */
 class StaticMesh(
-		override val injector: Injector,
+		owner: Context,
 		val vertexAttributes: VertexAttributes = standardVertexAttributes
-) : Scoped, Disposable, Clearable {
+) : ContextImpl(owner), Clearable {
 
-	private val gl = inject(CachedGl20)
+	private val gl by CachedGl20
 
 	private val _boundingBox = Box()
 	val boundingBox: BoxRo = _boundingBox
@@ -284,6 +281,7 @@ class StaticMesh(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		batch.dispose()
 	}
 
@@ -294,8 +292,8 @@ class StaticMesh(
 	}
 }
 
-fun Scoped.staticMesh(init: StaticMesh.() -> Unit = {}): StaticMesh {
-	val m = StaticMesh(injector)
+fun Context.staticMesh(init: StaticMesh.() -> Unit = {}): StaticMesh {
+	val m = StaticMesh(this)
 	m.init()
 	return m
 }

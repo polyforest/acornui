@@ -18,10 +18,13 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.*
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleTag
+import com.acornui.component.style.StyleType
+import com.acornui.component.style.disabledTag
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.input.interaction.MouseOrTouchState
@@ -51,7 +54,7 @@ interface Button : ButtonRo, UiComponent, Labelable, Toggleable {
  * A skinnable button with up, over, down, and disabled states.
  */
 open class ButtonImpl(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner), Button, Focusable {
 
 	val style = bind(ButtonStyle())
@@ -241,12 +244,12 @@ open class ButtonStyle : StyleBase() {
 
 	override val type: StyleType<ButtonStyle> = ButtonStyle
 
-	var skin by prop<Owned.() -> ButtonSkin> { basicButtonSkin(Theme()) }
+	var skin by prop<Context.() -> ButtonSkin> { basicButtonSkin(Theme()) }
 
 	companion object : StyleType<ButtonStyle>
 }
 
-fun buttonStyle(skinProvider: Owned.() -> ButtonSkin): ButtonStyle {
+fun buttonStyle(skinProvider: Context.() -> ButtonSkin): ButtonStyle {
 	return ButtonStyle().apply {
 		skin = skinProvider
 	}
@@ -278,14 +281,14 @@ interface ButtonSkin : Labelable {
 
 }
 
-inline fun Owned.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
+inline fun Context.button(init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = ButtonImpl(this)
 	b.init()
 	return b
 }
 
-inline fun Owned.button(label: String, init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
+inline fun Context.button(label: String, init: ComponentInit<ButtonImpl> = {}): ButtonImpl  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = ButtonImpl(this)
 	b.label = label

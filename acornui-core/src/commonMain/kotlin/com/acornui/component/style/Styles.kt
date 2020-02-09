@@ -18,14 +18,13 @@
 
 package com.acornui.component.style
 
-import com.acornui._assert
+import com.acornui.Disposable
+import com.acornui.DisposedException
 import com.acornui.assertionsEnabled
 import com.acornui.collection.ActiveList
 import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.removeFirst
-import com.acornui.Disposable
-import com.acornui.DisposedException
 import com.acornui.observe.Observable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -154,7 +153,7 @@ class Styles(private val host: Styleable) : Disposable {
 	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
 		if (isDisposed) return
 		if (assertionsEnabled)
-			_assert(styleValidators.firstOrNull2 { it.style === style } != null, "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`.")
+			check(styleValidators.firstOrNull2 { it.style === style } != null) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
 		val watcher = StyleWatcher(style, priority, callback)
 		styleWatchers.addSorted(watcher)
 	}

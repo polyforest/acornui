@@ -22,7 +22,7 @@ import com.acornui.collection.addAfter
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.wheel
@@ -38,7 +38,7 @@ import kotlin.math.floor
  * A container with scrolling.
  */
 open class ScrollArea<E : UiComponent>(
-		owner: Owned
+		owner: Context
 ) : ElementContainerImpl<E>(owner), LayoutDataProvider<StackLayoutData> {
 
 	val style = bind(ScrollAreaStyle())
@@ -344,7 +344,6 @@ open class ScrollArea<E : UiComponent>(
 		super.dispose()
 		hScrollModel.changed.remove(::scrollChangedHandler)
 		vScrollModel.changed.remove(::scrollChangedHandler)
-		tossScrolling = false
 	}
 
 	companion object : StyleTag {
@@ -381,12 +380,12 @@ fun ScrollPolicy.toCssString(): String {
 }
 
 @JvmName("scrollAreaT")
-inline fun <E : UiComponent> Owned.scrollArea(init: ComponentInit<ScrollArea<E>> = {}): ScrollArea<E> {
+inline fun <E : UiComponent> Context.scrollArea(init: ComponentInit<ScrollArea<E>> = {}): ScrollArea<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return ScrollArea<E>(this).apply(init)
 }
 
-inline fun Owned.scrollArea(init: ComponentInit<ScrollArea<UiComponent>> = {}): ScrollArea<UiComponent> {
+inline fun Context.scrollArea(init: ComponentInit<ScrollArea<UiComponent>> = {}): ScrollArea<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return scrollArea<UiComponent>(init)
 }

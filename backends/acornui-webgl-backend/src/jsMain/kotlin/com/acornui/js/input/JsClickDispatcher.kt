@@ -16,7 +16,7 @@
 
 package com.acornui.js.input
 
-import com.acornui.di.Injector
+import com.acornui.di.Context
 import com.acornui.input.WhichButton
 import com.acornui.input.interaction.ClickDispatcher
 import com.acornui.input.interaction.ClickInteractionRo
@@ -29,9 +29,9 @@ import org.w3c.dom.events.MouseEvent
  * An implementation of ClickDispatcher that doesn't fire the click event until the browser fires the click event.
  */
 class JsClickDispatcher(
-		private val rootElement: HTMLElement,
-		injector: Injector
-) : ClickDispatcher(injector) {
+		owner: Context,
+		private val rootElement: HTMLElement
+) : ClickDispatcher(owner) {
 
 	init {
 		rootElement.addEventListener("click", ::clickHandler, true)

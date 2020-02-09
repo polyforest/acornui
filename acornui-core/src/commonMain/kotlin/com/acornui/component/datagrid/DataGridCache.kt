@@ -18,12 +18,12 @@
 
 package com.acornui.component.datagrid
 
+import com.acornui.Disposable
 import com.acornui.collection.ListView
 import com.acornui.collection.ObservableListMapping
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
-import com.acornui.Disposable
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.recycle.IndexedPool
 import com.acornui.recycle.ObjectPool
 import com.acornui.recycle.UsedTracker
@@ -94,7 +94,7 @@ internal class DataGridCache<RowData>(private val grid: DataGrid<RowData>) : Dis
 	/**
 	 * Cached display values for a column.
 	 */
-	internal inner class ColumnCache(owner: Owned, val column: DataGridColumn<RowData, *>) : Disposable {
+	internal inner class ColumnCache(owner: Context, val column: DataGridColumn<RowData, *>) : Disposable {
 
 		var headerCell: UiComponent? = null
 

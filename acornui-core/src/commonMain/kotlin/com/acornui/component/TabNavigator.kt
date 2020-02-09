@@ -27,8 +27,8 @@ import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.scaleGroup
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.*
-import com.acornui.di.Owned
-import com.acornui.di.OwnedImpl
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.di.own
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.lazyInstance
@@ -45,7 +45,7 @@ import com.acornui.signal.Signal4
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider<StackLayoutData> {
+open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvider<StackLayoutData> {
 
 	private val _userCurrentIndexChanged = own(Signal4<TabNavigator, Int, Int, Cancel>())
 
@@ -284,7 +284,7 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 		updateSelectedTab()
 	}
 
-	private fun tabDisposedHandler(tab: Owned) {
+	private fun tabDisposedHandler(tab: Context) {
 		removeTab(tab as TabNavigatorTab)
 	}
 
@@ -344,16 +344,16 @@ open class TabNavigator(owner: Owned) : ContainerImpl(owner), LayoutDataProvider
 	}
 }
 
-interface TabNavigatorTab : Owned, Disposable, LayoutDataProvider<StackLayoutData> {
+interface TabNavigatorTab : Context, Disposable, LayoutDataProvider<StackLayoutData> {
 	val button: Button
-	val content: LazyInstance<Owned, UiComponent>
+	val content: LazyInstance<Context, UiComponent>
 }
 
 class TabNavigatorTabImpl<S : Button, T : UiComponent>(
-		owner: Owned,
+		owner: Context,
 		buttonFactory: TabNavigatorTab.() -> S,
 		contentFactory: TabNavigatorTab.() -> T
-) : OwnedImpl(owner), TabNavigatorTab {
+) : ContextImpl(owner), TabNavigatorTab {
 	override val button: S = buttonFactory()
 	override val content: LazyInstance<TabNavigatorTab, T> = lazyInstance(contentFactory)
 
@@ -396,17 +396,17 @@ class TabNavigatorStyle : StyleBase() {
 }
 
 
-fun <S : ButtonImpl, T : UiComponent> Owned.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
+fun <S : ButtonImpl, T : UiComponent> Context.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
 
-fun <T : UiComponent> Owned.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
-fun <T : UiComponent> Owned.tab(bundle: I18nBundleRo, key: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab(
+fun <T : UiComponent> Context.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
+fun <T : UiComponent> Context.tab(bundle: I18nBundleRo, key: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab(
 		{
 			button {
 				bindLabel(bundle, key)
 			}
 		}, contentFactory)
 
-inline fun Owned.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
+inline fun Context.tabNavigator(init: ComponentInit<TabNavigator> = {}): TabNavigator {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TabNavigator(this)
 	t.init()

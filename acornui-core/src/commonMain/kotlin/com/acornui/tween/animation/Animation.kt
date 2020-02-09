@@ -20,7 +20,7 @@ import com.acornui.Updatable
 import com.acornui.collection.ArrayList
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
@@ -59,7 +59,7 @@ class AtlasInstance(
  * The visual component for an animation tween.
  */
 class AnimationInstance(
-		owner: Owned,
+		owner: Context,
 		val bundle: AnimationBundle,
 		override val libraryItem: LibraryItem.AnimationLibraryItem
 ) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance, Updatable {
@@ -242,7 +242,7 @@ private class LayerTween(
 	}
 }
 
-inline fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationInstance> = {}): AnimationInstance  {
+inline fun Context.animationComponent(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<AnimationInstance> = {}): AnimationInstance  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = createComponentFromLibrary(bundle, libraryItemName) as? AnimationInstance ?: throw Exception("Library item is not an animation.")
 	c.init()
@@ -250,7 +250,7 @@ inline fun Owned.animationComponent(bundle: AnimationBundle, libraryItemName: St
 }
 
 
-inline fun Owned.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance  {
+inline fun Context.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val libraryItem = bundle.library[libraryItemName] ?: throw Exception("library item not found with name: $libraryItemName")
 	val component = when (libraryItem) {

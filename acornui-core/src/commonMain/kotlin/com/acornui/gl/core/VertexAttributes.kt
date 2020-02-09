@@ -16,8 +16,6 @@
 
 package com.acornui.gl.core
 
-import com.acornui._assert
-
 class VertexAttributes(
 		val attributes: List<VertexAttribute>
 ) {
@@ -36,7 +34,7 @@ class VertexAttributes(
 	private val attributeByUsage: Map<Int, VertexAttribute>
 
 	init {
-		_assert(attributes.size <= 16, "A shader program may not contain more than 16 vertex attribute objects.")
+		check(attributes.size <= 16) { "A shader program may not contain more than 16 vertex attribute objects." }
 		val offsetsByUsage = HashMap<Int, Int>()
 		val attributeByUsage = HashMap<Int, VertexAttribute>()
 		var offset = 0

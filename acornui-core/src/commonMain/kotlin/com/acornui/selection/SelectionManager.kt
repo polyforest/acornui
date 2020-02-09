@@ -16,12 +16,12 @@
 
 package com.acornui.selection
 
-import com.acornui.recycle.Clearable
-import com.acornui.component.UiComponent
 import com.acornui.Disposable
+import com.acornui.component.UiComponent
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.di.DKey
-import com.acornui.di.Injector
-import com.acornui.di.inject
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import kotlin.math.abs
@@ -42,8 +42,8 @@ interface SelectionManager : Disposable, Clearable {
 	}
 
 	companion object : DKey<SelectionManager> {
-		override fun factory(injector: Injector): SelectionManager? {
-			return SelectionManagerImpl()
+		override fun factory(context: Context): SelectionManager? {
+			return SelectionManagerImpl(context)
 		}
 	}
 }
@@ -56,7 +56,7 @@ fun SelectionManager.contains(target: Selectable, index: Int): Boolean {
 	return false
 }
 
-class SelectionManagerImpl : SelectionManager {
+class SelectionManagerImpl(owner: Context) : ContextImpl(owner), SelectionManager {
 
 	private val _selectionChanged = Signal2<List<SelectionRange>, List<SelectionRange>>()
 	override val selectionChanged = _selectionChanged.asRo()
@@ -71,6 +71,7 @@ class SelectionManagerImpl : SelectionManager {
 		}
 
 	override fun dispose() {
+		super.dispose()
 		_selectionChanged.dispose()
 	}
 }

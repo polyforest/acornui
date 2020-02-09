@@ -20,7 +20,7 @@ import com.acornui.component.layout.SingleElementLayoutContainerImpl
 import com.acornui.component.layout.algorithm.ScaleLayout
 import com.acornui.component.layout.algorithm.ScaleLayoutData
 import com.acornui.component.layout.algorithm.ScaleLayoutStyle
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.Texture
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -28,7 +28,7 @@ import kotlin.contracts.contract
 /**
  * A scale box layout
  */
-open class Image(owner: Owned) : SingleElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout()), SingleElementContainer<UiComponent> {
+open class Image(owner: Context) : SingleElementLayoutContainerImpl<ScaleLayoutStyle, ScaleLayoutData>(owner, ScaleLayout()), SingleElementContainer<UiComponent> {
 
 	override fun onElementChanged(oldElement: UiComponent?, newElement: UiComponent?) {
 		super.onElementChanged(oldElement, newElement)
@@ -42,14 +42,14 @@ open class Image(owner: Owned) : SingleElementLayoutContainerImpl<ScaleLayoutSty
 	}
 }
 
-inline fun Owned.image(init: ComponentInit<Image> = {}): Image  {
+inline fun Context.image(init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
 	return i
 }
 
-inline fun Owned.image(path: String?, init: ComponentInit<Image> = {}): Image  {
+inline fun Context.image(path: String?, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()
@@ -57,7 +57,7 @@ inline fun Owned.image(path: String?, init: ComponentInit<Image> = {}): Image  {
 	return i
 }
 
-inline fun Owned.image(atlasPath: String, region: String, init: ComponentInit<Image> = {}): Image  {
+inline fun Context.image(atlasPath: String, region: String, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val i = Image(this)
 	i.init()

@@ -20,17 +20,20 @@ import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.Matrix4Ro
+import com.acornui.math.Pad
+import com.acornui.math.RectangleRo
+import com.acornui.math.Vector3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.abs
 
-open class BlurFilter(owner: Owned) : RenderFilterBase(owner) {
+open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 
 	var blurX by bindable(1f)
 	var blurY by bindable(1f)
@@ -192,7 +195,7 @@ void main() {
 	}
 }
 
-inline fun Owned.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter  {
+inline fun Context.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = BlurFilter(this)
 	b.init()

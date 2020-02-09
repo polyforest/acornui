@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.di.Owned
+import com.acornui.di.Context
 
 
 interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
@@ -43,7 +43,7 @@ interface SingleElementContainer<T : UiComponent> : ContainerRo, Container {
 	}
 }
 
-open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : ContainerImpl(owner), SingleElementContainer<T> {
+open class SingleElementContainerImpl<T : UiComponent>(owner: Context) : ContainerImpl(owner), SingleElementContainer<T> {
 
 	private var _element: T? = null
 	final override var element: T?
@@ -77,7 +77,7 @@ open class SingleElementContainerImpl<T : UiComponent>(owner: Owned) : Container
  * uses an element of that type, it will be reused. Otherwise, the previous contents will be disposed and
  * the factory will generate new contents.
  */
-inline fun <reified T : UiComponent> SingleElementContainer<UiComponent>.createOrReuseElement(factory: Owned.() -> T): T {
+inline fun <reified T : UiComponent> SingleElementContainer<UiComponent>.createOrReuseElement(factory: Context.() -> T): T {
 	val existing: T
 	val contents = element
 	if (contents !is T) {

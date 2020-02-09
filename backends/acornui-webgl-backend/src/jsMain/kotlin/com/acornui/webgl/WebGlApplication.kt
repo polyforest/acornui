@@ -22,15 +22,16 @@ import com.acornui.asset.Loaders
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
 import com.acornui.debug
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.di.dKey
-import com.acornui.di.own
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
-import com.acornui.gl.core.*
+import com.acornui.gl.core.CachedGl20
+import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.Gl20CachedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -158,10 +159,10 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 		}
 	}
 
-	override suspend fun initializeSpecialInteractivity(owner: Owned) {
+	override suspend fun initializeSpecialInteractivity(owner: Context) {
 		super.initializeSpecialInteractivity(owner)
-		owner.own(FakeFocusMouse(owner.injector))
-		owner.own(JsClickDispatcher(get(CANVAS), owner.injector))
+		FakeFocusMouse(owner)
+		JsClickDispatcher(owner, get(CANVAS))
 	}
 
 	companion object {

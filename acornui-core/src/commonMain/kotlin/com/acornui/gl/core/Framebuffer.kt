@@ -16,12 +16,11 @@
 
 package com.acornui.gl.core
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.Sprite
 import com.acornui.Disposable
 import com.acornui.DisposedException
-import com.acornui.di.Injector
-import com.acornui.di.Scoped
+import com.acornui.component.ComponentInit
+import com.acornui.component.Sprite
+import com.acornui.di.Context
 import com.acornui.graphic.Camera
 import com.acornui.graphic.OrthographicCamera
 import com.acornui.graphic.Texture
@@ -34,7 +33,7 @@ import com.acornui.system.userInfo
 /**
  * @author nbilyk
  */
-class Framebuffer(
+class Framebuffer constructor(
 		private val gl: CachedGl20,
 
 		/**
@@ -53,7 +52,7 @@ class Framebuffer(
 
 		val texture: Texture = BufferTexture(gl, widthPixels, heightPixels)
 ) : Disposable {
-
+	
 	/**
 	 * The width of this frame buffer, in points.
 	 */
@@ -79,13 +78,6 @@ class Framebuffer(
 	private val _viewport = IntRectangle(0, 0, widthPixels, heightPixels)
 
 	val viewport: IntRectangleRo = _viewport
-
-	constructor(injector: Injector,
-				width: Int,
-				height: Int,
-				hasDepth: Boolean = false,
-				hasStencil: Boolean = false,
-				texture: Texture = BufferTexture(injector.inject(CachedGl20), width, height)) : this(injector.inject(CachedGl20), width, height, hasDepth, hasStencil, texture)
 
 	private var previousStencil: Boolean = false
 	private val framebufferHandle: GlFramebufferRef
@@ -290,8 +282,9 @@ class BufferTexture(gl: Gl20,
 	}
 }
 
-fun Scoped.framebuffer(width: Int, height: Int, hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<Framebuffer> = {}): Framebuffer {
-	val f = Framebuffer(injector, width, height, hasDepth, hasStencil)
+fun Context.framebuffer(width: Int, height: Int, hasDepth: Boolean = false, hasStencil: Boolean = false, init: ComponentInit<Framebuffer> = {}): Framebuffer {
+	val gl = inject(CachedGl20)
+	val f = Framebuffer(gl, width, height, hasDepth, hasStencil)
 	f.init()
 	return f
 }

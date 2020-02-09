@@ -21,13 +21,14 @@ var assertionsEnabled: Boolean = debug
 /**
  * assert method calls that work in both jvm and js.
  */
-
+@Deprecated("use check", ReplaceWith("check(value) { message }"))
 fun _assert(value: Boolean, message: Any = "Assertion failed") {
 	if (assertionsEnabled && !value) {
 		throw Exception("" + message)
 	}
 }
 
+@Deprecated("use check", ReplaceWith("check(value, lazyMessage)"))
 inline fun _assert(value: Boolean, lazyMessage: () -> Any) {
 	if (assertionsEnabled && !value) {
 		val message = lazyMessage()

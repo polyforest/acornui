@@ -16,15 +16,14 @@
 
 package com.acornui.component.text
 
+import com.acornui.Disposable
+import com.acornui.async.getCompletedOrNull
 import com.acornui.async.then
+import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
-import com.acornui.Disposable
-import com.acornui.async.getCompletedOrNull
-import com.acornui.collection.forEach2
-import com.acornui.di.Scoped
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.gl.core.CachedGl20
 import com.acornui.recycle.ObjectPool
 
@@ -254,7 +253,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 }
 
-fun Scoped.span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
+fun Context.span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
 	val s = TextSpanElementImpl.obtain(inject(CachedGl20))
 	s.init()
 	return s

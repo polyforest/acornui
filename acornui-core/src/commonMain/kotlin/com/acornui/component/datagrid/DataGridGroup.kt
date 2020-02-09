@@ -18,7 +18,7 @@ package com.acornui.component.datagrid
 
 import com.acornui.collection.Filter
 import com.acornui.collection.ObservableList
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.observe.ObservableBase
 
 open class DataGridGroup<E> : ObservableBase() {
@@ -27,7 +27,7 @@ open class DataGridGroup<E> : ObservableBase() {
 	 * Creates a header to the group. This should not include background or collapse arrow.
 	 * The header is cached, so this method should not return inconsistent results.
 	 */
-	open fun createHeader(owner: Owned, list: ObservableList<E>): DataGridGroupHeader {
+	open fun createHeader(owner: Context, list: ObservableList<E>): DataGridGroupHeader {
 		throw Exception("A header cell was requested, but createHeader was not implemented.")
 	}
 

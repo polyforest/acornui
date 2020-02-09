@@ -19,10 +19,7 @@ package com.acornui.headless
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.async.delay
-import com.acornui.component.Stage
-import com.acornui.component.StageImpl
 import com.acornui.di.dKey
-import com.acornui.di.inject
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.exit
 import com.acornui.input.KeyInput
@@ -42,7 +39,6 @@ class JvmHeadlessApplicationTest {
 
 	@Test fun start() = runBlocking {
 		JvmHeadlessApplication().start(appConfig) {
-			assertTrue(inject(Stage) is StageImpl)
 			assertEquals(inject(CachedGl20), MockGl20)
 			assertEquals(inject(MouseInput), MockMouseInput)
 			assertEquals(inject(KeyInput), MockKeyInput)
@@ -69,7 +65,7 @@ class JvmHeadlessApplicationTest {
 	}
 
 	/**
-	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application 
+	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application
 	 * should not start.
 	 */
 	@Test fun taskTimeout() = runTest {
@@ -84,9 +80,9 @@ class JvmHeadlessApplicationTest {
 			}
 		}
 	}
-	
+
 	/**
-	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application 
+	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application
 	 * should not start.
 	 */
 	@Test fun optionalTaskTimeout() = runTest {

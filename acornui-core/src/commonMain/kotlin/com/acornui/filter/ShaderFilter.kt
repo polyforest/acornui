@@ -16,7 +16,7 @@
 
 package com.acornui.filter
 
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.ShaderProgram
 import com.acornui.gl.core.useProgram
@@ -25,7 +25,7 @@ import com.acornui.gl.core.useProgram
  * A filter that sets a custom shader.
  */
 class ShaderFilter(
-		owner: Owned,
+		owner: Context,
 
 		/**
 		 * The shader to apply to the component.

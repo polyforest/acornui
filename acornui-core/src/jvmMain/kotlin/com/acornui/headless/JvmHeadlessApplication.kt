@@ -24,8 +24,8 @@ import com.acornui.JvmApplicationRunner
 import com.acornui.asset.Loaders
 import com.acornui.async.uiThread
 import com.acornui.component.Stage
-import com.acornui.di.Injector
-import com.acornui.di.InjectorImpl
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
 import kotlin.time.Duration
@@ -44,14 +44,15 @@ open class JvmHeadlessApplication : ApplicationBase() {
 	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
 		set(AppConfig, appConfig)
 
-		val stage = createStage(createInjector())
+		val context = createContext()
+		val stage = createStage(context)
 		stage.onReady()
 		JvmApplicationRunner(stage).run()
-		stage.dispose()
+		context.dispose()
 		dispose()
 	}
 
-	override suspend fun createInjector(): Injector = InjectorImpl(HeadlessInjector.create(config()), bootstrap.dependenciesList())
+	override suspend fun createContext() = ContextImpl(HeadlessDependencies.create(config()) + bootstrap.dependencies())
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {

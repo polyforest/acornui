@@ -17,15 +17,15 @@
 package com.acornui.component.layout.algorithm
 
 import com.acornui.component.layout.Spacer
+import com.acornui.headless.HeadlessDependencies
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.headless.HeadlessInjector
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class VerticalLayoutTest {
 
-	private val owner = HeadlessInjector.owner
+	private val owner = HeadlessDependencies.owner
 
 	@Test fun basic() {
 		val layout = VerticalLayout()

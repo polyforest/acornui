@@ -18,9 +18,8 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
 import com.acornui.focus.Focusable
 import com.acornui.graphic.ColorRo
 
@@ -34,7 +33,10 @@ interface Stage : ElementContainer<UiComponent>, StageRo {
 	companion object : DKey<Stage>
 }
 
-val Scoped.stage: Stage
+val Stage.stage: Stage
+	get() = this
+
+val Context.stage: Stage
 	get() = inject(Stage)
 
 class StageStyle : StyleBase() {

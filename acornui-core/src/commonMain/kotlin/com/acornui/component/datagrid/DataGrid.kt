@@ -28,8 +28,7 @@ import com.acornui.component.style.*
 import com.acornui.component.text.TextStyleTags
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
-import com.acornui.di.Owned
-import com.acornui.di.inject
+import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.input.Ascii
@@ -68,14 +67,14 @@ import kotlin.math.floor
  * Styling
  */
 class DataGrid<RowData>(
-		owner: Owned
+		owner: Context
 ) : ContainerImpl(owner) {
 
-	constructor(owner: Owned, data: List<RowData>) : this(owner) {
+	constructor(owner: Context, data: List<RowData>) : this(owner) {
 		data(data)
 	}
 
-	constructor(owner: Owned, data: ObservableList<RowData>) : this(owner) {
+	constructor(owner: Context, data: ObservableList<RowData>) : this(owner) {
 		data(data)
 	}
 
@@ -1862,7 +1861,7 @@ class DataGridStyle : StyleBase() {
 	/**
 	 * The background for each row.
 	 */
-	var rowBackground by prop<Owned.() -> RowBackground>({ rowBackground() })
+	var rowBackground by prop<Context.() -> RowBackground>({ rowBackground() })
 
 	/**
 	 * If true, the current group header will always be shown.
@@ -1877,19 +1876,19 @@ class DataGridStyle : StyleBase() {
 	companion object : StyleType<DataGridStyle>
 }
 
-fun <E> Owned.dataGrid(data: ObservableList<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
+fun <E> Context.dataGrid(data: ObservableList<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid(this, data)
 	d.init()
 	return d
 }
 
-fun <E> Owned.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
+fun <E> Context.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid(this, data)
 	d.init()
 	return d
 }
 
-fun <E> Owned.dataGrid(init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
+fun <E> Context.dataGrid(init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 	val d = DataGrid<E>(this)
 	d.init()
 	return d

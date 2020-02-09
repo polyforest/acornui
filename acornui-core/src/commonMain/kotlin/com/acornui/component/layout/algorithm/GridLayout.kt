@@ -21,14 +21,17 @@ package com.acornui.component.layout.algorithm
 import com.acornui.collection.*
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.styleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -392,20 +395,20 @@ fun gridLayoutData(init: GridLayoutData.() -> Unit): GridLayoutData {
 	return g
 }
 
-open class GridLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<GridLayoutStyle, GridLayoutData, E>(owner, GridLayout())
+open class GridLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<GridLayoutStyle, GridLayoutData, E>(owner, GridLayout())
 
 @JvmName("gridT")
-inline fun <E : UiComponent> Owned.grid(init: ComponentInit<GridLayoutContainer<E>> = {}): GridLayoutContainer<E> {
+inline fun <E : UiComponent> Context.grid(init: ComponentInit<GridLayoutContainer<E>> = {}): GridLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return GridLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.grid(init: ComponentInit<GridLayoutContainer<UiComponent>> = {}): GridLayoutContainer<UiComponent> {
+inline fun Context.grid(init: ComponentInit<GridLayoutContainer<UiComponent>> = {}): GridLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return grid<UiComponent>(init)
 }
 
-open class FormContainer<E : UiComponent>(owner: Owned) : GridLayoutContainer<UiComponent>(owner) {
+open class FormContainer<E : UiComponent>(owner: Context) : GridLayoutContainer<UiComponent>(owner) {
 	init {
 		styleTags.add(FormContainer)
 		style.apply {
@@ -424,14 +427,14 @@ open class FormContainer<E : UiComponent>(owner: Owned) : GridLayoutContainer<Ui
 	companion object : StyleTag
 }
 
-inline fun Owned.form(init: ComponentInit<FormContainer<UiComponent>> = {}): FormContainer<UiComponent> {
+inline fun Context.form(init: ComponentInit<FormContainer<UiComponent>> = {}): FormContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FormContainer<UiComponent>(this).apply(init)
 }
 
 val formLabelStyle = styleTag()
 
-inline fun Owned.formLabel(text: String = "", init: ComponentInit<TextField> = {}): TextField {
+inline fun Context.formLabel(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return text(text) {
 		styleTags.add(formLabelStyle)

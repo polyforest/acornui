@@ -16,9 +16,9 @@
 
 package com.acornui.di
 
-import com.acornui.async.*
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
+import com.acornui.async.Work
 import com.acornui.collection.removeFirst
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
@@ -34,9 +34,9 @@ class Bootstrap(
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 	private var hasStarted = false
 
-	suspend fun dependenciesList(): List<DependencyPair<*>> {
+	suspend fun dependencies(): DependencyMap {
 		awaitAll()
-		return dependenciesList
+		return DependencyMap(dependenciesList)
 	}
 
 	private val _map = HashMap<DKey<*>, Deferred<Any>>()

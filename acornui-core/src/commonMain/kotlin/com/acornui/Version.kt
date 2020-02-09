@@ -16,11 +16,8 @@
 
 package com.acornui
 
+import com.acornui.di.Context
 import com.acornui.di.DKey
-import com.acornui.di.Scoped
-import com.acornui.di.inject
-import com.acornui.text.parseDate
-import com.acornui.time.Date
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -72,7 +69,7 @@ data class Version(
 	}
 }
 
-val Scoped.version: Version
+val Context.version: Version
 	get() = inject(Version)
 
 @Serializer(forClass = Version::class)

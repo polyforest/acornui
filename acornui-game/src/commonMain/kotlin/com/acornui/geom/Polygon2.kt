@@ -16,7 +16,6 @@
 
 package com.acornui.geom
 
-import com.acornui._assert
 import com.acornui.collection.copy
 import com.acornui.math.*
 import kotlin.math.abs
@@ -346,7 +345,7 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 		}
 
 		private fun getSupportPoints(vertices: List<Float>, dir: Vector2Ro, out: FloatArray): Int {
-			_assert(vertices.isNotEmpty())
+			check(vertices.isNotEmpty()) { "Assertion failed" }
 
 			var minD = Float.MAX_VALUE
 

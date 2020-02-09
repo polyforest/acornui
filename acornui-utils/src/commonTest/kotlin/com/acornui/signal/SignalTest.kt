@@ -138,6 +138,19 @@ class SignalTest {
 	@Test fun concurrentRemove() {
 		TestConcurrentRemove()
 	}
+	
+	@Test fun addWithHandle() {
+		val s = Signal0()
+		var c = 0
+		val handle = s.addWithHandle {
+			c++
+		}
+		s.dispatch()
+		assertEquals(1, c)
+		handle.dispose()
+		s.dispatch()
+		assertEquals(1, c)
+	}
 
 }
 

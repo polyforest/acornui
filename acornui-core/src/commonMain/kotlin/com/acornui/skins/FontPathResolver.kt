@@ -4,7 +4,7 @@ import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.text.BitmapFontRequest
 import com.acornui.component.text.FontFamily
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.io.file.Path
 import com.acornui.math.MathUtils
 
@@ -13,7 +13,7 @@ object FontPathResolver {
 	var fontsDir = "assets/fonts/{family}"
 	var manifestFilename = "fonts.json"
 
-	suspend fun loadFamily(scope: Scoped, family: String): FontFamily {
+	suspend fun loadFamily(scope: Context, family: String): FontFamily {
 		val facePath = fontsDir.replace("{family}", family)
 		return scope.loadAndCacheJsonAsync(FontFamily.serializer(), Path(facePath, manifestFilename).value).await()
 	}
@@ -21,7 +21,7 @@ object FontPathResolver {
 	/**
 	 * Returns the path to the font with the given characteristics.
 	 */
-	suspend fun getPath(scope: Scoped, theme: Theme, request: BitmapFontRequest): String? {
+	suspend fun getPath(scope: Context, theme: Theme, request: BitmapFontRequest): String? {
 		val familyPath = fontsDir.replace("{family}", request.family)
 		val set: FontFamily = loadFamily(scope, request.family)
 		val desiredPt = theme.fontSizes[request.size] ?: error("Unknown size: ${request.size}")

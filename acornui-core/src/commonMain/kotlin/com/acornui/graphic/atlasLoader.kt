@@ -18,11 +18,11 @@ package com.acornui.graphic
 
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.loadTexture
-import com.acornui.di.Scoped
+import com.acornui.di.Context
 import com.acornui.io.file.Path
 import kotlinx.coroutines.Deferred
 
-fun Scoped.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
+fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
 	val atlasFile = Path(atlasPath)
 	val textureFile = atlasFile.sibling(page.texturePath)
 	return group.cacheAsync(textureFile.value) {

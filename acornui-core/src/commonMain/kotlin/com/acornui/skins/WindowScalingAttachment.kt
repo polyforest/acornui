@@ -5,19 +5,18 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.style.AlwaysFilter
 import com.acornui.component.style.StyleRule
 import com.acornui.component.text.charStyle
-import com.acornui.Disposable
-import com.acornui.di.inject
-import com.acornui.graphic.Window
+import com.acornui.di.ContextImpl
 import com.acornui.function.as2
+import com.acornui.graphic.Window
 
 /**
  * Watches the window for scale changes, updating the character style.
  */
-class WindowScalingAttachment(val target: UiComponent) : Disposable {
+class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 
 	private val textScaling = charStyle()
 	private val textScalingRule = StyleRule(textScaling, AlwaysFilter)
-	private val window = target.inject(Window)
+	private val window = inject(Window)
 
 	init {
 		window.scaleChanged.add(::updateWindowScaling.as2)
@@ -26,7 +25,7 @@ class WindowScalingAttachment(val target: UiComponent) : Disposable {
 
 	private fun updateWindowScaling() {
 		textScaling.apply {
-			val window = target.inject(Window)
+			val window = inject(Window)
 			scaleX = window.scaleX
 			scaleY = window.scaleY
 		}
@@ -38,9 +37,9 @@ class WindowScalingAttachment(val target: UiComponent) : Disposable {
 	}
 
 	override fun dispose() {
+		super.dispose()
 		window.scaleChanged.remove(::updateWindowScaling.as2)
 		target.styleRules.remove(textScalingRule)
-
 	}
 
 	companion object {

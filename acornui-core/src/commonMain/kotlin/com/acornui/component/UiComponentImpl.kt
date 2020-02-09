@@ -17,13 +17,15 @@
 package com.acornui.component
 
 import com.acornui.Disposable
-import com.acornui.DisposedException
 import com.acornui.assertionsEnabled
+import com.acornui.checkDisposed
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
 import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.component.style.*
-import com.acornui.di.*
+import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.function.as1
 import com.acornui.gl.core.CachedGl20
@@ -39,6 +41,7 @@ import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.nonZero
 import com.acornui.reflect.afterChange
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
@@ -58,45 +61,29 @@ import kotlin.reflect.KProperty
  * controls.
  */
 open class UiComponentImpl(
-		final override val owner: Owned
-) : UiComponent {
-
-	/**
-	 * Returns a list of any additional dependencies to append to this component's dependency injection.
-	 * This method should not reference any properties on this object, as it will be invoked during
-	 * construction.
-	 * @see createScope
-	 */
-	protected open fun getAdditionalDependencies(): List<DependencyPair<*>> = emptyList()
-
-	@Suppress("LeakingThis")
-	final override val injector = owner.injector + getAdditionalDependencies()
+		owner: Context
+) : UiComponent, ContextImpl(owner) {
 
 	//---------------------------------------------------------
 	// Lifecycle
 	//---------------------------------------------------------
 
-	private val _activated = Signal1<UiComponent>()
+	@Suppress("UNCHECKED_CAST")
+	override val disposed = super.disposed as Signal<(UiComponentImpl) -> Unit>
+
+	private val _activated = own(Signal1<UiComponent>())
 	final override val activated = _activated.asRo()
 
-	private val _deactivated = Signal1<UiComponent>()
+	private val _deactivated = own(Signal1<UiComponent>())
 	final override val deactivated = _deactivated.asRo()
 
-	private val _disposed = Signal1<UiComponent>()
-	final override val disposed = _disposed.asRo()
-
-	private var _isDisposed: Boolean = false
 	private var _isActive: Boolean = false
 
 	override val isActive: Boolean
 		get() = _isActive
 
-	override val isDisposed: Boolean
-		get() = _isDisposed
-
 	final override fun activate() {
-		if (_isDisposed)
-			throw DisposedException()
+		checkDisposed()
 		check(!_isActive) { "Already active" }
 		_isActive = true
 		_activated.dispatch(this)
@@ -105,8 +92,7 @@ open class UiComponentImpl(
 	protected open fun onActivated() {}
 
 	final override fun deactivate() {
-		if (_isDisposed)
-			throw DisposedException()
+		checkDisposed()
 		check(_isActive) { "Not active" }
 		_isActive = false
 		_deactivated.dispatch(this)
@@ -177,9 +163,9 @@ open class UiComponentImpl(
 		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
 	}
 
-	private val _captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
-	private val _bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
-	private val _attachments = HashMap<Any, Any>()
+	private val captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
+	private val bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
+	private val attachments = HashMap<Any, Any>()
 
 	// ChildRo properties
 
@@ -218,7 +204,7 @@ open class UiComponentImpl(
 	 * If set, [viewTransform], [projectionTransform], [viewProjectionTransform], and [viewProjectionTransformInv]
 	 * matrices will be calculated based on this camera.
 	 */
-	open var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
+	var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
 
 	private val _viewProjectionTransformInv = Matrix4()
 	override val viewProjectionTransformInv: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
@@ -270,7 +256,6 @@ open class UiComponentImpl(
 	}
 
 	init {
-		owner.disposed.add(::dispose.as1)
 		validation = validationGraph {
 			ValidationFlags.apply {
 				addNode(HIERARCHY_DESCENDING, ::updateHierarchyDescending)
@@ -459,7 +444,7 @@ open class UiComponentImpl(
 
 
 	final override fun hasInteraction(): Boolean {
-		return _captureSignals.isNotEmpty() || _bubbleSignals.isNotEmpty()
+		return captureSignals.isNotEmpty() || bubbleSignals.isNotEmpty()
 	}
 
 	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
@@ -468,28 +453,28 @@ open class UiComponentImpl(
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
-		val handlers = if (isCapture) _captureSignals else _bubbleSignals
+		val handlers = if (isCapture) captureSignals else bubbleSignals
 		return handlers[type] as StoppableSignal<T>?
 	}
 
 	final override fun <T : InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
-		val handlers = if (isCapture) _captureSignals else _bubbleSignals
+		val handlers = if (isCapture) captureSignals else bubbleSignals
 		handlers[type] = signal
 	}
 
 
 	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
-		val handlers = if (isCapture) _captureSignals else _bubbleSignals
+		val handlers = if (isCapture) captureSignals else bubbleSignals
 		handlers.remove(type)
 	}
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getAttachment(key: Any): T? {
-		return _attachments[key] as T?
+		return attachments[key] as T?
 	}
 
 	final override fun setAttachment(key: Any, value: Any) {
-		_attachments[key] = value
+		attachments[key] = value
 	}
 
 	/**
@@ -497,7 +482,7 @@ open class UiComponentImpl(
 	 */
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> removeAttachment(key: Any): T? {
-		return _attachments.remove(key) as T?
+		return attachments.remove(key) as T?
 	}
 
 	//-----------------------------------------------
@@ -577,7 +562,7 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	override val styleParent: StyleableRo? by lazy {
-		var p: Owned? = owner
+		var p: Context? = owner
 		var s: Styleable? = null
 		while (p != null) {
 			if (p is Styleable) {
@@ -919,41 +904,22 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	override fun dispose() {
-		if (_isDisposed)
-			throw DisposedException()
+		checkDisposed()
 		if (isActive) deactivate()
-		_disposed.dispatch(this)
-		_disposed.dispose()
-		_activated.dispose()
-		_deactivated.dispose()
-		owner.disposed.remove(::dispose.as1)
-		_isDisposed = true
-		if (assertionsEnabled) {
-			parentWalk {
-				if (!owner.owns(it)) {
-					throw Exception("this component must be removed before disposing.")
-				}
-				true
-			}
-		}
-
+		super.dispose()
 		layoutData = null
 
 		// InteractiveElement
 		// Dispose all disposable handlers.
-		for (i in _captureSignals.values) {
+		for (i in captureSignals.values) {
 			(i as? Disposable)?.dispose()
 		}
-		_captureSignals.clear()
-		for (i in _bubbleSignals.values) {
+		captureSignals.clear()
+		for (i in bubbleSignals.values) {
 			(i as? Disposable)?.dispose()
 		}
-		_bubbleSignals.clear()
-		// Dispose all disposable attachments.
-		for (i in _attachments.values) {
-			(i as? Disposable)?.dispose()
-		}
-		_attachments.clear()
+		bubbleSignals.clear()
+		attachments.clear()
 	}
 
 

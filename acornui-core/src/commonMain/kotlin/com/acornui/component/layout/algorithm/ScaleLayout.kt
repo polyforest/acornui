@@ -18,10 +18,13 @@ package com.acornui.component.layout.algorithm
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.*
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutElement
+import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.di.Owned
+import com.acornui.di.Context
 import com.acornui.graphic.Scaling
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -151,15 +154,15 @@ open class ScaleLayoutData : BasicLayoutData() {
 	}
 }
 
-open class ScaleBoxLayoutContainer<E : UiComponent>(owner: Owned) : ElementLayoutContainer<ScaleLayoutStyle, ScaleLayoutData, E>(owner, ScaleLayout())
+open class ScaleBoxLayoutContainer<E : UiComponent>(owner: Context) : ElementLayoutContainer<ScaleLayoutStyle, ScaleLayoutData, E>(owner, ScaleLayout())
 
 @JvmName("scaleGroupT")
-inline fun <E : UiComponent> Owned.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
+inline fun <E : UiComponent> Context.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<E>> = {}): ScaleBoxLayoutContainer<E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return ScaleBoxLayoutContainer<E>(this).apply(init)
 }
 
-inline fun Owned.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<UiComponent>> = {}): ScaleBoxLayoutContainer<UiComponent> {
+inline fun Context.scaleGroup(init: ComponentInit<ScaleBoxLayoutContainer<UiComponent>> = {}): ScaleBoxLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return scaleGroup<UiComponent>(init)
 }
