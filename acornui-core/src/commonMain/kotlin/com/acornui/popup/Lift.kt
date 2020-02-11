@@ -67,7 +67,7 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 		isFocusContainer = true
 		interactivityMode = InteractivityMode.NONE // The elements are interactive but this Lift component is virtual. 
 
-		validation.addNode(CONTENTS_TRANSFORM, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM, ::updateContentsTransform)
+		validation.addNode(CONTENTS_TRANSFORM, ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM or ValidationFlags.VIEW_PROJECTION, ::updateContentsTransform)
 
 		contents.invalidated.add { child, flagsInvalidated ->
 			if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
@@ -118,7 +118,7 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 	private val points = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
 
 	private fun updateContentsTransform() {
-		tmpMat.set(transformGlobal)
+		tmpMat.set(contents.viewProjectionTransformInv).mul(viewProjectionTransform).mul(transformGlobal)
 		if (constrainToStage) {
 			val w = window.width
 			val h = window.height
