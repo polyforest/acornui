@@ -17,11 +17,10 @@
 package com.acornui.asset
 
 import com.acornui.Disposable
-import com.acornui.DisposedException
-import com.acornui.async.applicationScope
 import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.collection.stringMapOf
 import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.di.DKey
 import com.acornui.recycle.Clearable
 import com.acornui.time.tick
@@ -29,6 +28,10 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Synchronized
 
+/**
+ * Cache is a map with reference counting. When the reference counter on a cached element reaches zero, if it remains
+ * at zero for a certain number of frames, it will be removed and disposed.
+ */
 interface Cache : Clearable {
 
 	fun containsKey(key: String): Boolean
@@ -70,9 +73,7 @@ interface Cache : Clearable {
 
 	companion object : DKey<Cache> {
 
-		override fun factory(context: Context): Cache? {
-			return CacheImpl()
-		}
+		override fun factory(context: Context): Cache? = CacheImpl()
 	}
 }
 
@@ -181,18 +182,11 @@ private class CacheValue(
  */
 class CachedGroup(
 
-		/**
-		 * The cache instance this group uses.
-		 */
-		val cache: Cache,
+		owner: Context
 
-		/**
-		 * Adds a key to be tracked.
-		 */
-		private val scope: CoroutineScope
-) : Disposable {
+) : ContextImpl(owner) {
 
-	private var isDisposed = false
+	private val cache: Cache = inject(Cache)
 
 	private val keys = ArrayList<String>()
 
@@ -200,7 +194,7 @@ class CachedGroup(
 	 * Adds a key to be tracked.
 	 */
 	fun add(key: String) {
-		if (isDisposed) throw DisposedException()
+		checkDisposed()
 		if (keys.contains(key)) return
 		cache.refInc(key)
 		keys.add(key)
@@ -212,9 +206,9 @@ class CachedGroup(
 	 * the given [key].
 	 */
 	fun <T : Any> cacheAsync(key: String, context: CoroutineContext = Dispatchers.Default, factory: suspend () -> T): Deferred<T> {
-		if (isDisposed) throw DisposedException()
+		checkDisposed()
 		val r = cache.cache(key) {
-			scope.async(context) {
+			async(context) {
 				factory()
 			}
 		}
@@ -223,15 +217,14 @@ class CachedGroup(
 	}
 
 	fun <T : Any> cache(key: String, factory: () -> T): T {
-		if (isDisposed) throw DisposedException()
+		checkDisposed()
 		val r = cache.cache(key, factory)
 		add(key)
 		return r
 	}
 
 	override fun dispose() {
-		if (isDisposed) throw DisposedException()
-		isDisposed = true
+		super.dispose()
 		for (i in 0..keys.lastIndex) {
 			cache.refDec(keys[i])
 		}
@@ -241,9 +234,8 @@ class CachedGroup(
 }
 
 /**
- * Constructs a new [CachedGroup] object which will increment or decrement a list of keys with the
- * given [cache].
+ * Constructs a new [CachedGroup] object which will increment or decrement a list of keys on the [Cache].
  */
-fun Context.cachedGroup(cache: Cache = inject(Cache)): CachedGroup {
-	return CachedGroup(cache, applicationScope)
+fun Context.cachedGroup(): CachedGroup {
+	return CachedGroup(this)
 }

@@ -29,7 +29,7 @@ class AcornDispatcherTest {
 
 	@Test
 	fun uiDispatcher() = runTest {
-		uiThread = Thread.currentThread()
+		val uiThread = Thread.currentThread()
 		var ranUiLaunch = false
 		lateinit var asyncThread: Thread
 		lateinit var launchUiThread: Thread

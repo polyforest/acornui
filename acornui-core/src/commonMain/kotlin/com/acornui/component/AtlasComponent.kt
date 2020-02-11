@@ -20,7 +20,7 @@ package com.acornui.component
 
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import com.acornui.async.async
+import kotlinx.coroutines.async
 import com.acornui.async.catch
 import com.acornui.di.Context
 import com.acornui.graphic.*

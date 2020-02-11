@@ -20,7 +20,6 @@ import com.acornui.asset.CachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.asset.loadText
 import com.acornui.async.awaitAll
-import com.acornui.async.globalAsync
 import com.acornui.collection.stringMapOf
 import com.acornui.di.Context
 import com.acornui.graphic.AtlasPageData
@@ -31,6 +30,7 @@ import com.acornui.serialization.parseJson
 import com.esotericsoftware.spine.data.SkeletonData
 import com.esotericsoftware.spine.data.SkeletonDataSerializer
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 
 
 class LoadedSkeleton(
@@ -65,7 +65,7 @@ class LoadedSkin(
  * Loads the skeleton from the specified JSON file and texture atlas.
  * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = globalAsync {
+fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = async {
 	val skeletonDataLoader = cachedGroup.cacheAsync(skeletonDataPath) {
 		parseJson(loadText(skeletonDataPath), SkeletonDataSerializer)
 	}
@@ -89,7 +89,7 @@ fun Context.loadSkeletonSkin(
 		skin: String,
 		skinsDirectory: String,
 		cachedGroup: CachedGroup
-): Deferred<LoadedSkin> = globalAsync {
+): Deferred<LoadedSkin> = async {
 
 	val skinData = skeletonData.findSkin(skin) ?: throw Exception("Could not find skin $skin")
 	val pageTextures = stringMapOf<Texture>()

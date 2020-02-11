@@ -17,7 +17,7 @@
 package com.acornui.headless
 
 import com.acornui.async.delay
-import com.acornui.async.launch
+import kotlinx.coroutines.launch
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
@@ -25,6 +25,7 @@ import com.acornui.component.stage
 import com.acornui.di.Context
 import com.acornui.graphic.exit
 import com.acornui.math.Easing
+import com.acornui.runMain
 import com.acornui.test.assertClose
 import com.acornui.test.runTest
 import com.acornui.time.start
@@ -38,40 +39,47 @@ class HeadlessTest {
 
 	@Test
 	fun start() = runTest {
-		headlessApplication {
-			exit()
+		runMain {
+			headlessApplication {
+				exit()
+			}
 		}
 	}
 
 	@Test
 	fun addToStage() = runTest {
-		headlessApplication {
-			stage.addElement(testComponent())
-			+testComponent()
-			exit()
+		runMain {
+			headlessApplication {
+				stage.addElement(testComponent())
+				+testComponent()
+				exit()
+			}
 		}
 	}
 
+	// TODO: CI for Mac has a pretty wide variance
 	@Ignore
 	@Test
 	fun tweenX() = runTest {
-		headlessApplication {
-			testComponent {
-				tweenX(4f, Easing.linear, 100f).start()
-				launch {
-					delay(1.seconds)
-					assertClose(25f, x, maxDifference =  5f)
-					delay(1.seconds)
-					assertClose(50f, x, maxDifference =  5f)
-					delay(1.seconds)
-					assertClose(75f, x, maxDifference =  5f)
-					delay(1.seconds)
-					assertClose(100f, x, maxDifference =  5f)
+		runMain {
+			headlessApplication {
+				testComponent {
+					tweenX(4f, Easing.linear, 100f).start()
+					launch {
+						delay(1.seconds)
+						assertClose(25f, x, maxDifference =  5f)
+						delay(1.seconds)
+						assertClose(50f, x, maxDifference =  5f)
+						delay(1.seconds)
+						assertClose(75f, x, maxDifference =  5f)
+						delay(1.seconds)
+						assertClose(100f, x, maxDifference =  5f)
+					}
 				}
-			}
 
-			timer(5.seconds) {
-				exit()
+				timer(5.seconds) {
+					exit()
+				}
 			}
 		}
 	}

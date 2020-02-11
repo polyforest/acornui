@@ -21,7 +21,6 @@ package com.acornui.lwjgl
 import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.async.isUiThread
-import com.acornui.async.uiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
@@ -64,6 +63,7 @@ import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.time.start
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import org.lwjgl.glfw.GLFW
 import kotlin.system.exitProcess
 import kotlin.time.Duration
@@ -74,7 +74,7 @@ import org.lwjgl.Version as LwjglVersion
  * @author nbilyk
  */
 @Suppress("unused")
-open class LwjglApplication : ApplicationBase() {
+open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainContext) {
 
 	// If accessing the window id, use bootstrap.on(Window) { }
 	private var _windowId: Long = -1L
@@ -89,23 +89,23 @@ open class LwjglApplication : ApplicationBase() {
 			println("Restarting JVM with -XstartOnFirstThread")
 			exitProcess(0)
 		}
-		uiThread = Thread.currentThread()
-		Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
-			uncaughtExceptionHandler(exception)
-		}
-		println("LWJGL Version: ${LwjglVersion.getVersion()}")
 	}
 
-	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
-		set(AppConfig, appConfig)
-		val context = createContext()
-		val stage = createStage(context)
-		initializeSpecialInteractivity(stage)
-		stage.onReady()
+	override suspend fun onBeforeStart() {
+		check(isUiThread()) { "LwjglApplication#start must be run in the main UI thread. "}
+		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
+	}
 
-		LwjglApplicationRunner(stage).run()
-		context.dispose()
-		dispose()
+	override suspend fun onStageCreated(stage: Stage) {
+		super.onStageCreated(stage)
+		initializeSpecialInteractivity(stage)
+	}
+
+	override suspend fun createLooper(owner: Context): ApplicationLooper {
+		val pollEvents = mainContext.looper.pollEvents
+		if (!pollEvents.contains(GLFW::glfwPollEvents))
+			pollEvents.add(GLFW::glfwPollEvents)
+		return super.createLooper(owner)
 	}
 
 	/**
@@ -236,29 +236,17 @@ open class LwjglApplication : ApplicationBase() {
 		BitmapFontRegistry.dispose()
 		super.dispose()
 	}
-}
 
-private class LwjglApplicationRunner(
-		stage: Stage
-) : JvmApplicationRunner(stage) {
-
-	override fun run() {
-		check(isUiThread()) { "LwjglApplicationRunner must be run in the main UI thread. "}
-		window.refresh.add(::refreshHandler)
-		super.run()
-		window.refresh.remove(::refreshHandler)
-	}
-
-	private fun refreshHandler() {
-		tick(0f)
-	}
-
-	override fun pollEvents() {
-		super.pollEvents()
-		GLFW.glfwPollEvents()
+	companion object {
+		init {
+			Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
+				uncaughtExceptionHandler(exception)
+			}
+			println("LWJGL Version: ${LwjglVersion.getVersion()}")
+		}
 	}
 }
 
-suspend fun lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
-	LwjglApplication().start(appConfig, onReady)
-}
+@Suppress("unused")
+fun MainContext.lwjglApplication(appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit): Job =
+		LwjglApplication(this).startAsync(appConfig, onReady)

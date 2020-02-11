@@ -25,16 +25,16 @@ import kotlin.time.seconds
 
 class ScheduleTest {
 
+	// TODO: CI for Mac has a pretty wide variance
 	@Ignore
 	@Test
 	fun scheduleTest() = runTest(4.seconds) {
 		var isDone = false
 		val mark = MonoClock.markNow()
 		schedule(2.seconds) {
-//			println("mark.elapsedNow().inSeconds ${mark.elapsedNow().inSeconds}")
 			assertClose(2.0, mark.elapsedNow().inSeconds, 0.1)
 			isDone = true
 		}
-		loopFrames { !isDone }
+//		loopFrames { !isDone }
 	}
 }

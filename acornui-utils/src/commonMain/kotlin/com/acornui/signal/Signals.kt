@@ -101,9 +101,11 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	protected var cursor = -1
 	protected var n = -1
 
-	override fun isNotEmpty(): Boolean = handlers.isNotEmpty()
-
+	@Synchronized
 	override fun isEmpty(): Boolean = handlers.isEmpty()
+
+	@Synchronized
+	override fun isNotEmpty(): Boolean = !isEmpty()
 
 	@Synchronized
 	override fun add(handler: T, isOnce: Boolean) {
@@ -119,6 +121,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 		}
 	}
 
+	@Synchronized
 	protected fun removeAt(index: Int) {
 		if (index <= cursor) {
 			cursor--
@@ -136,6 +139,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	/**
 	 * Immediately halts the current dispatch.
 	 */
+	@Synchronized
 	open fun halt() {
 		if (cursor != -1)
 			cursor = 999999999

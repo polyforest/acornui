@@ -16,7 +16,6 @@
 
 package com.acornui.skins
 
-import com.acornui.async.globalAsync
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -44,6 +43,7 @@ import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.input.interaction.enableDownRepeat
 import com.acornui.math.*
+import kotlinx.coroutines.async
 
 open class BasicUiSkin(
 		protected val target: UiComponent,
@@ -118,7 +118,7 @@ open class BasicUiSkin(
 
 	protected open fun textFontStyle() {
 		BitmapFontRegistry.fontResolver = { request ->
-			globalAsync {
+			async {
 				val fontFile = FontPathResolver.getPath(target, theme, request) ?: throw Exception("Font not found: $request")
 				loadFontFromDir(fontFile)
 			}

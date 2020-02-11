@@ -20,7 +20,7 @@ import com.acornui.AppConfig
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
-import com.acornui.async.async
+import kotlinx.coroutines.async
 import com.acornui.async.then
 import com.acornui.collection.fill
 import com.acornui.collection.forEach2

@@ -21,6 +21,8 @@ package com.acornui.async
 import com.acornui.Disposable
 import kotlinx.coroutines.*
 import kotlin.collections.set
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.Duration
 
 typealias Work<R> = suspend () -> R
@@ -96,3 +98,6 @@ suspend fun <T> withTimeout(time: Duration, block: suspend CoroutineScope.() -> 
  * @see kotlinx.coroutines.withTimeoutOrNull
  */
 suspend fun <T> withTimeoutOrNull(time: Duration, block: suspend CoroutineScope.() -> T): T? = withTimeoutOrNull(time.inMilliseconds.toLong(), block)
+
+expect fun <T> runBlocking(context: CoroutineContext, block: suspend CoroutineScope.() -> T): T
+fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T = runBlocking(EmptyCoroutineContext, block)

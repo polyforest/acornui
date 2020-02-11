@@ -38,14 +38,19 @@ val Dispatchers.UI : AcornDispatcher
 @InternalCoroutinesApi
 sealed class AcornDispatcher : MainCoroutineDispatcher(), Delay {
 
-	/** @suppress */
+	/**
+	 * @suppress
+	 */
 	override fun dispatch(context: CoroutineContext, block: Runnable) {
 		callLater {
 			block.run()
 		}
 	}
 
-	/** @suppress */
+	/**
+	 * @suppress
+	 */
+	@UseExperimental(ExperimentalCoroutinesApi::class)
 	override fun scheduleResumeAfterDelay(timeMillis: Long, continuation: CancellableContinuation<Unit>) {
 		val timer = timer(timeMillis / 1000f) {
 			with(continuation) { resumeUndispatched(Unit) }
@@ -53,7 +58,9 @@ sealed class AcornDispatcher : MainCoroutineDispatcher(), Delay {
 		continuation.invokeOnCancellation { timer.dispose() }
 	}
 
-	/** @suppress */
+	/**
+	 * @suppress
+	 */
 	override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
 		val timer = timer(timeMillis / 1000f) {
 			block.run()

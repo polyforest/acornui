@@ -16,19 +16,26 @@
 
 package com.acornui.di
 
-import com.acornui.*
+import com.acornui.Disposable
+import com.acornui.DisposedException
+import com.acornui.Idempotent
+import com.acornui.Lifecycle
 import com.acornui.collection.copy
 import com.acornui.function.as1
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
- * Context 
+ * An Acorn Context
  */
-interface Context {
+interface Context : CoroutineScope {
 
 	/**
 	 * The context that constructed this context.
@@ -74,11 +81,11 @@ fun Context.childContext(): Context = ContextImpl(this, childDependencies)
  * A basic [Context] implementation. 
  */
 open class ContextImpl(
-		final override val owner: Context?,
-		private val dependencies: DependencyMap
+		final override val owner: Context? = null,
+		private val dependencies: DependencyMap = DependencyMap(),
+		override val coroutineContext: CoroutineContext = (owner?.coroutineContext ?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job))
 ) : Context, Disposable {
 
-	constructor() : this(null, DependencyMap())
 	constructor(owner: Context?, dependencies: List<DependencyPair<*>>) : this(owner, DependencyMap(dependencies))
 	constructor(dependencies: DependencyMap) : this(null, dependencies)
 	constructor(owner: Context) : this(owner, owner.childDependencies)
@@ -129,11 +136,20 @@ open class ContextImpl(
 	final override fun dependenciesIterator(): Iterator<DependencyPair<Any>> = dependencies.iterator()
 
 	override fun dispose() {
-		if (isDisposed) throw DisposedException()
+		checkDisposed()
 		isDisposed = true
+		coroutineContext[Job]?.cancel()
 		owner?.disposed?.remove(::dispose.as1)
 		_disposed.dispatch(this)
 		_disposed.dispose()
+	}
+
+	/**
+	 * Throws a [DisposedException] if this component is disposed.
+	 */
+	fun checkDisposed() {
+		if (isDisposed)
+			throw DisposedException()
 	}
 
 	companion object {
@@ -144,6 +160,7 @@ open class ContextImpl(
 
 @Deprecated("Context objects are owned implicitly", ReplaceWith("target"), level = DeprecationLevel.ERROR)
 @JvmName("improperOwn")
+@Suppress("unused", "UNUSED_PARAMETER")
 fun <T : Context> Context.own(target: T): T {
 	error("Context objects are owned implicitly")
 }

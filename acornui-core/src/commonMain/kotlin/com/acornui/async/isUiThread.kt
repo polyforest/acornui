@@ -16,4 +16,12 @@
 
 package com.acornui.async
 
+/**
+ * Sets the UI Thread to the current thread.
+ */
+expect fun setUiThread()
+
+/**
+ * Returns true if the current thread is the UI Thread. (The thread from [com.acornui.runMain])
+ */
 expect fun isUiThread(): Boolean

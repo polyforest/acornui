@@ -18,6 +18,7 @@ package com.acornui.di
 
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
+import com.acornui.async.UI
 import com.acornui.async.Work
 import com.acornui.collection.removeFirst
 import com.acornui.logging.Log
@@ -44,7 +45,7 @@ class Bootstrap(
 	suspend fun <T : Any> get(key: DKey<T>): T {
 		hasStarted = true
 		val d = _map.getOrElse(key) {
-			throw Exception("No task has been registered that provides key $key.")
+			error("No task has been registered that provides key $key.")
 		}
 		@Suppress("UNCHECKED_CAST")
 		return d.await() as T
@@ -61,7 +62,7 @@ class Bootstrap(
 	 */
 	@Synchronized
 	fun <T : Any> set(dKey: DKey<T>, value: T) {
-		check(!hasStarted)  { "Cannot set a dependency after the bootstrap has been started." }
+		check(!hasStarted) { "Cannot set a dependency after the bootstrap has been started." }
 		var p: DKey<*>? = dKey
 		while (p != null) {
 			dependenciesList.removeFirst { it.key == p }
@@ -74,7 +75,7 @@ class Bootstrap(
 	@Synchronized
 	private fun <T : Any> addDependency(dKey: DKey<T>, value: T) {
 		val pair = dKey to value
-		
+
 		if (assertionsEnabled && dependenciesList.any { existingDependency ->
 					var p: DKey<*>? = dKey
 					while (p != null) {
@@ -103,9 +104,9 @@ class Bootstrap(
 	fun <R, T : Any> task(dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
 
 	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
-		check(!hasStarted)  { "Cannot add a task after the bootstrap has been started." }
+		check(!hasStarted) { "Cannot add a task after the bootstrap has been started." }
 		var p: DKey<*>? = dKey
-		val deferred = GlobalScope.async(Dispatchers.Unconfined, CoroutineStart.LAZY) {
+		val deferred = scope.async(start = CoroutineStart.LAZY) {
 			try {
 				withTimeout((timeout * 1000f).toLong()) {
 					val dependency = work()
@@ -117,7 +118,8 @@ class Bootstrap(
 					Log.info("Optional task failed: $name")
 				} else {
 					Log.error("Task failed: $name $e")
-					throw e
+					if (e is TimeoutCancellationException) throw BootstrapTaskTimeoutException(e.message)
+					else throw e
 				}
 			}
 		}
@@ -148,3 +150,5 @@ class Bootstrap(
 		}
 	}
 }
+
+class BootstrapTaskTimeoutException(message: String?) : Exception(message)

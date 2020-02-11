@@ -16,12 +16,10 @@
 
 package com.acornui.webgl
 
-import com.acornui.AppConfig
-import com.acornui.Version
+import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
-import com.acornui.debug
 import com.acornui.di.Context
 import com.acornui.di.dKey
 import com.acornui.error.stack
@@ -46,7 +44,7 @@ import com.acornui.js.html.WebGl
 import com.acornui.js.input.JsClickDispatcher
 import com.acornui.logging.Log
 import com.acornui.system.userInfo
-import com.acornui.uncaughtExceptionHandler
+import kotlinx.coroutines.Job
 import org.khronos.webgl.WebGLContextAttributes
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
@@ -61,7 +59,7 @@ import kotlin.time.seconds
  * @author nbilyk
  */
 @Suppress("unused")
-open class WebGlApplication(private val rootId: String) : BrowserApplicationBase() {
+open class WebGlApplication(mainContext: MainContext, private val rootId: String) : BrowserApplicationBase(mainContext) {
 
 	private val rootElement: HTMLElement by lazy {
 		(document.getElementById(rootId) as HTMLElement?) ?: throw Exception("The root element with id $rootId could not be found.")
@@ -170,9 +168,9 @@ open class WebGlApplication(private val rootId: String) : BrowserApplicationBase
 	}
 }
 
-suspend fun webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit) {
-	WebGlApplication(rootId).start(appConfig, onReady)
-}
+@Suppress("unused")
+fun MainContext.webGlApplication(rootId: String, appConfig: AppConfig = AppConfig(), onReady: Stage.() -> Unit): Job =
+		WebGlApplication(this, rootId).startAsync(appConfig, onReady)
 
 /**
  * A flag for enabling getError() gl checks.

@@ -17,7 +17,9 @@
 package com.acornui.headless
 
 import com.acornui.AppConfig
+import com.acornui.MainContext
 import com.acornui.component.Stage
+import kotlinx.coroutines.Job
 
-expect suspend fun headlessApplication(appConfig: AppConfig, onReady: Stage.() -> Unit)
-suspend fun headlessApplication(onReady: Stage.() -> Unit) = headlessApplication(AppConfig(), onReady)
+expect fun MainContext.headlessApplication(appConfig: AppConfig, onReady: Stage.() -> Unit): Job
+fun MainContext.headlessApplication(onReady: Stage.() -> Unit): Job = headlessApplication(AppConfig(), onReady)

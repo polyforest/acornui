@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.acornui.time
+package com.acornui.async
 
 import kotlinx.coroutines.CoroutineScope
-import kotlin.time.Duration
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.promise
+import kotlin.coroutines.CoroutineContext
 
-actual suspend fun loopWhile(frameTime: Duration, inner: (dT: Float) -> Boolean) {
-}
+actual fun <T> runBlocking(context: CoroutineContext, block: suspend CoroutineScope.() -> T): dynamic = GlobalScope.promise(context) { block() }

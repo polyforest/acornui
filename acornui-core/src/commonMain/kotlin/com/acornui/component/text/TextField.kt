@@ -17,7 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.async.getCompletedOrNull
-import com.acornui.async.launch
+import kotlinx.coroutines.launch
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Styleable

@@ -25,6 +25,8 @@ interface Disposable {
 	fun dispose()
 }
 
+class DisposedException : IllegalStateException("This component has been disposed")
+
 fun <A : Comparable<A>> A?.compareTo(other: A?): Int {
 	if (this == null && other == null) return 0
 	if (this == null) return -1

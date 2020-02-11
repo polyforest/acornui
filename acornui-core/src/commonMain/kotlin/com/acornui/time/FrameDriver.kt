@@ -20,10 +20,9 @@ import com.acornui.Updatable
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlin.time.Duration
-import kotlin.time.seconds
 
 /**
+ * The frame driver is a signal that is invoked every frame before any applications are updated and rendered.
  * @author nbilyk
  */
 object FrameDriver : Signal<FrameCallback>, Clearable {
@@ -67,22 +66,3 @@ fun <T : Updatable> T.start(): T {
 
 val Updatable.isDriven: Boolean
 	get() = FrameDriver.contains(::update)
-
-/**
- * A blocking function to create a frame loop until [inner] returns false.
- * @param frameTime The desired interval between frames. This will have no effect on JS backends.
- * @see loopFrames
- */
-expect suspend fun loopWhile(frameTime: Duration = (1.0 / 50.0).seconds, inner: (dT: Float) -> Boolean)
-
-/**
- * Invokes [FrameDriver.dispatch] and [inner] on every frame until [inner] returns false.
- * @see loopWhile
- */
-suspend fun loopFrames(frameTime: Duration = (1.0 / 50.0).seconds, inner: (dT: Float) -> Boolean) {
-	loopWhile(frameTime) {
-		FrameDriver.dispatch(it)
-		inner(it)
-	}
-}
-

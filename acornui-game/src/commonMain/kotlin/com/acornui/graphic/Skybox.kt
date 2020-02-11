@@ -17,8 +17,8 @@
 package com.acornui.graphic
 
 import com.acornui.asset.loadTexture
-import com.acornui.async.async
-import com.acornui.async.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
 import com.acornui.di.Context

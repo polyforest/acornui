@@ -17,40 +17,25 @@
 package com.acornui.async
 
 import com.acornui.collection.Tuple4
-import com.acornui.component.UiComponentRo
-import com.acornui.component.createOrReuseAttachment
 import com.acornui.di.Context
-import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
-import com.acornui.di.dKey
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 /**
- * @see applicationScope
- */
-val applicationScopeKey: DKey<CoroutineScope> = dKey()
-
-/**
- * The coroutine scope for this application.
- * All jobs started in this scope will be cancelled on application close.
- */
-val Context.applicationScope: CoroutineScope
-	get() = inject(applicationScopeKey)
-
-/**
  * Launches a new coroutine in the Acorn Global Scope with A coroutine dispatcher that is not confined to any specific thread.
  */
+@Deprecated("Use launch", ReplaceWith("launch(context, block)"), DeprecationLevel.ERROR)
 fun Context.globalLaunch(context: CoroutineContext = Dispatchers.Unconfined, block: suspend CoroutineScope.() -> Unit): Job {
-	return applicationScope.launch(context, block = block)
+	throw UnsupportedOperationException()
 }
 
 /**
  * Creates a coroutine and returns its future result as an implementation of [Deferred] in the global scope on the
  * main thread.
  */
+@Deprecated("Use async", ReplaceWith("async(context, block)"), DeprecationLevel.ERROR)
 fun <R> Context.globalAsync(context: CoroutineContext = Dispatchers.Unconfined, block: suspend CoroutineScope.() -> R): Deferred<R> {
-	return applicationScope.async(context, block = block)
+	throw UnsupportedOperationException("")
 }
 
 
@@ -124,40 +109,4 @@ infix fun <T> Deferred<T>.finally(callback: (result: T?) -> Unit): Deferred<T> {
 		}
 	}
 	return this
-}
-
-class CoroutineScopeAttachment(owner: Context) : ContextImpl(owner) {
-
-	private val supervisor = SupervisorJob()
-	val componentScope = CoroutineScope(inject(applicationScopeKey).coroutineContext + supervisor)
-
-	override fun dispose() {
-		super.dispose()
-		supervisor.cancel()
-	}
-
-	companion object
-}
-
-val UiComponentRo.coroutineScopeAttachment: CoroutineScopeAttachment
-	get() = createOrReuseAttachment(CoroutineScopeAttachment) { CoroutineScopeAttachment(this) }
-
-val UiComponentRo.coroutineScope: CoroutineScope
-	get() = coroutineScopeAttachment.componentScope
-
-/**
- * Launches a new coroutine in the scope of this component without blocking the current thread and returns a reference
- * to the coroutine as a [Job].
- * When this component is disposed, the job will automatically be cancelled.
- */
-fun UiComponentRo.launch(coroutineContext: CoroutineContext = Dispatchers.UI, block: suspend CoroutineScope.() -> Unit): Job {
-	return coroutineScope.launch(coroutineContext, block = block)
-}
-
-/**
- * Creates a coroutine in the scope of this component and returns its future result as an implementation of [Deferred].
- * When this component is disposed, the job will automatically be cancelled.
- */
-fun <R> UiComponentRo.async(coroutineContext: CoroutineContext = Dispatchers.UI, block: suspend CoroutineScope.() -> R): Deferred<R> {
-	return coroutineScope.async(coroutineContext, block = block)
 }

@@ -23,13 +23,10 @@ import kotlin.time.Duration
  * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
  */
 actual fun <T> runTest(timeout: Duration, block: suspend CoroutineScope.() -> T) {
-	val supervisor = SupervisorJob()
-	val scope = CoroutineScope(GlobalScope.coroutineContext + supervisor)
-	runBlocking(scope.coroutineContext) {
+	runBlocking {
 		withTimeout(timeout.toLongMilliseconds()) {
 			block()
 			yield()
 		}
 	}
-
 }

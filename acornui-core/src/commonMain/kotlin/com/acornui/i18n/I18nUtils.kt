@@ -22,7 +22,6 @@ import com.acornui.Disposable
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadText
 import com.acornui.async.catch
-import com.acornui.async.globalLaunch
 import com.acornui.async.then
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
@@ -36,6 +35,7 @@ import com.acornui.signal.Signal1
 import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.PropertiesParser
+import kotlinx.coroutines.launch
 
 interface I18n {
 
@@ -152,7 +152,7 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 	private fun loadBundle(locales: List<Locale>, bundleName: String) {
 		val path2 = manifestPath.replace("{bundleName}", bundleName)
-		globalLaunch {
+		launch {
 			val availableLocales = cachedGroup.cacheAsync(path2) {
 				loadText(path2).split(",").map { Locale(it.trim()) }
 			}.await()
@@ -173,7 +173,6 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 	override fun dispose() {
 		super.dispose()
-		cachedGroup.dispose()
 		currentLocaleBinding.dispose()
 	}
 

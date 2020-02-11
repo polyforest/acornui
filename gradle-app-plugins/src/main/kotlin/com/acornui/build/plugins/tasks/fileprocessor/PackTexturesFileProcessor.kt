@@ -16,6 +16,7 @@
 
 package com.acornui.build.plugins.tasks.fileprocessor
 
+import com.acornui.async.runBlocking
 import com.acornui.texturepacker.packAssets
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
@@ -37,7 +38,9 @@ class PackTexturesFileProcessor : DirectoryChangeProcessorBase() {
 	override fun process(sourceDir: File, destinationDir: File, task: Task) {
 		if (sourceDir.exists()) {
 			task.logger.lifecycle("Packing assets: ${sourceDir.path} dest: ${destinationDir.parentFile.path}")
-			packAssets(sourceDir, destinationDir.parentFile, suffix)
+			runBlocking {
+				packAssets(sourceDir, destinationDir.parentFile, suffix)
+			}
 		} else {
 			task.logger.lifecycle("Removing packed assets: " + sourceDir.path)
 			val name = sourceDir.name.removeSuffix(suffix)

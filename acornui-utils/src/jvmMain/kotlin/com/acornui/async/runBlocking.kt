@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@
 
 package com.acornui.async
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlin.coroutines.CoroutineContext
 
 /**
- * JS doesn't have the equivalent of 'runBlocking', but in order to make the JS and JVM backends as consistent as
- * possible we make the [com.acornui.Application.start] method `suspend`, and then wrap the main method in `runMain`.
+ *
  */
-actual fun runMain(block: suspend CoroutineScope.() -> Unit) {
-	mainScope.launch(Dispatchers.Unconfined) {
-		block()
-	}
-}
+actual fun <T> runBlocking(context: CoroutineContext, block: suspend CoroutineScope.() -> T) = kotlinx.coroutines.runBlocking(context) { block() }

@@ -19,6 +19,7 @@ package com.acornui.headless
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.async.delay
+import com.acornui.di.BootstrapTaskTimeoutException
 import com.acornui.di.dKey
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.exit
@@ -26,10 +27,8 @@ import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
+import com.acornui.runMain
 import com.acornui.test.ExpectedException
-import com.acornui.test.runTest
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.runBlocking
 import kotlin.test.*
 import kotlin.time.seconds
 
@@ -37,29 +36,35 @@ class JvmHeadlessApplicationTest {
 
 	private val appConfig = AppConfig()
 
-	@Test fun start() = runBlocking {
-		JvmHeadlessApplication().start(appConfig) {
-			assertEquals(inject(CachedGl20), MockGl20)
-			assertEquals(inject(MouseInput), MockMouseInput)
-			assertEquals(inject(KeyInput), MockKeyInput)
-			assertTrue(inject(Loaders.textLoader) is TextLoader)
-			assertTrue(inject(Loaders.binaryLoader) is BinaryLoader)
-			exit()
+	@Test
+	fun start() {
+		runMain {
+			headlessApplication(appConfig) {
+				assertEquals(inject(CachedGl20), MockGl20)
+				assertEquals(inject(MouseInput), MockMouseInput)
+				assertEquals(inject(KeyInput), MockKeyInput)
+				assertTrue(inject(Loaders.textLoader) is TextLoader)
+				assertTrue(inject(Loaders.binaryLoader) is BinaryLoader)
+				exit()
+			}
 		}
 	}
 
 	/**
 	 * An application with a failing task should terminate.
 	 */
-	@Test fun failedApplicationShouldntStall() = runTest {
+	@Test
+	fun failedApplicationShouldntStall() {
 		assertFailsWith(ExpectedException::class) {
-			object : JvmHeadlessApplication() {
-				@Suppress("unused")
-				val failedTask by task(dKey()) {
-					throw ExpectedException("Should fail")
+			runMain {
+				object : JvmHeadlessApplication(this@runMain) {
+					@Suppress("unused")
+					val failedTask by task(dKey()) {
+						throw ExpectedException("Should fail")
+					}
+				}.startAsync(appConfig) {
+					fail("Application should not start")
 				}
-			}.start(appConfig) {
-				fail("Application should not start")
 			}
 		}
 	}
@@ -68,31 +73,37 @@ class JvmHeadlessApplicationTest {
 	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application
 	 * should not start.
 	 */
-	@Test fun taskTimeout() = runTest {
-		assertFailsWith(TimeoutCancellationException::class) {
-			object : JvmHeadlessApplication() {
+	@Test
+	fun taskTimeout() {
+		assertFailsWith(BootstrapTaskTimeoutException::class) {
+			runMain {
+				object : JvmHeadlessApplication(this@runMain) {
+					@Suppress("unused")
+					val failedTask by task(dKey(), timeout = 1f) {
+						delay(20.seconds)
+					}
+				}.startAsync(appConfig) {
+					fail("Application should not start")
+				}
+			}
+		}
+	}
+
+	/**
+	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application
+	 * should not start.
+	 */
+	@Test
+	fun optionalTaskTimeout() {
+		runMain {
+			object : JvmHeadlessApplication(this@runMain) {
 				@Suppress("unused")
-				val failedTask by task(dKey(), timeout = 1f) {
+				val failedTask by task(dKey(), timeout = 1f, isOptional = true) {
 					delay(20.seconds)
 				}
-			}.start(appConfig) {
-				fail("Application should not start")
+			}.startAsync(appConfig) {
+				exit()
 			}
-		}
-	}
-
-	/**
-	 * Test that boot tasks that take longer than their set timeouts fail, and if the task is optional the application
-	 * should not start.
-	 */
-	@Test fun optionalTaskTimeout() = runTest {
-		object : JvmHeadlessApplication() {
-			@Suppress("unused")
-			val failedTask by task(dKey(), timeout = 1f, isOptional = true) {
-				delay(20.seconds)
-			}
-		}.start(appConfig) {
-			exit()
 		}
 	}
 }

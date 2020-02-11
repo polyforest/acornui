@@ -16,6 +16,5 @@
 
 package com.acornui.async
 
-actual fun isUiThread(): Boolean {
-	return true
-}
+actual fun setUiThread() {}
+actual fun isUiThread() = true

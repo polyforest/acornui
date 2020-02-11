@@ -23,6 +23,7 @@ import com.acornui.component.layout.spacer
 import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
 import com.acornui.math.*
+import com.acornui.runMain
 import com.acornui.test.assertClose
 import com.acornui.test.runTest
 import kotlin.test.Test
@@ -32,26 +33,28 @@ class CanvasTransformableTest {
 	@Test
 	fun localToCanvas() = runTest {
 		val config = AppConfig(window = WindowConfig(initialWidth = 600f, initialHeight = 400f))
-		headlessApplication(config) {
-			val c: UiComponentRo
-			val d: UiComponentRo
-			+container {
-				c = +container {
-					setSize(200f, 100f)
-					moveTo(50f, 75f)
+		runMain {
+			headlessApplication(config) {
+				val c: UiComponentRo
+				val d: UiComponentRo
+				+container {
+					c = +container {
+						setSize(200f, 100f)
+						moveTo(50f, 75f)
 
-					d = +spacer(200f, 100f) {
-						setScaling(2f, 2f)
-						moveTo(120f, 170f)
+						d = +spacer(200f, 100f) {
+							setScaling(2f, 2f)
+							moveTo(120f, 170f)
+						}
 					}
 				}
-			}
-			validate()
-			assertClose(Vector2(50f, 75f), c.localToCanvas(Vector3(0f, 0f, 0f)).toVec2())
-			assertClose(Rectangle(50f, 75f, width = 200f, height = 100f), c.localToCanvas(c.bounds.toRectangle()))
-			assertClose(Rectangle(120f + 50f, 170f + 75f, width = 400f, height = 200f), d.localToCanvas(d.bounds.toRectangle()))
+				validate()
+				assertClose(Vector2(50f, 75f), c.localToCanvas(Vector3(0f, 0f, 0f)).toVec2())
+				assertClose(Rectangle(50f, 75f, width = 200f, height = 100f), c.localToCanvas(c.bounds.toRectangle()))
+				assertClose(Rectangle(120f + 50f, 170f + 75f, width = 400f, height = 200f), d.localToCanvas(d.bounds.toRectangle()))
 
-			exit()
+				exit()
+			}
 		}
 	}
 }

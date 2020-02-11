@@ -18,16 +18,13 @@
 
 package com.acornui.headless
 
-import com.acornui.AppConfig
 import com.acornui.ApplicationBase
-import com.acornui.JvmApplicationRunner
+import com.acornui.MainContext
 import com.acornui.asset.Loaders
-import com.acornui.async.uiThread
-import com.acornui.component.Stage
-import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
+import com.acornui.uncaughtExceptionHandler
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -35,21 +32,10 @@ import kotlin.time.seconds
  * A Headless application initializes utility dependencies, but does not create any windowing, graphics, or input.
  * @author nbilyk
  */
-open class JvmHeadlessApplication : ApplicationBase() {
+open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(mainContext) {
 
-	init {
-		uiThread = Thread.currentThread()
-	}
-
-	override suspend fun start(appConfig: AppConfig, onReady: Stage.() -> Unit) {
-		set(AppConfig, appConfig)
-
-		val context = createContext()
-		val stage = createStage(context)
-		stage.onReady()
-		JvmApplicationRunner(stage).run()
-		context.dispose()
-		dispose()
+	override suspend fun onBeforeStart() {
+		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
 	}
 
 	override suspend fun createContext() = ContextImpl(HeadlessDependencies.create(config()) + bootstrap.dependencies())
@@ -61,6 +47,14 @@ open class JvmHeadlessApplication : ApplicationBase() {
 
 			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
 				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
+			}
+		}
+	}
+
+	companion object {
+		init {
+			Thread.currentThread().setUncaughtExceptionHandler { _, exception ->
+				uncaughtExceptionHandler(exception)
 			}
 		}
 	}

@@ -17,9 +17,10 @@
 package com.acornui.headless
 
 import com.acornui.JsApplicationBase
+import com.acornui.MainContext
 import com.acornui.di.ContextImpl
 
-class JsHeadlessApplication : JsApplicationBase() {
+class JsHeadlessApplication(mainContext: MainContext) : JsApplicationBase(mainContext) {
 
 	/**
 	 * Creates an injector with JS dependencies from the bootstrap, and mock dependencies for input and graphics.

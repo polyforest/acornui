@@ -18,7 +18,6 @@ package com.acornui.component
 
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
-import com.acornui.checkDisposed
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
 import com.acornui.component.layout.intersectsGlobalRay

@@ -102,7 +102,7 @@ class BootstrapTest {
 			delay(1.seconds) // Will cause a timeout
 			"Extended key"
 		}
-		assertFailsWith(TimeoutCancellationException::class) {
+		assertFailsWith(BootstrapTaskTimeoutException::class) {
 			bootstrap.awaitAll()
 		}
 	}

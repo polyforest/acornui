@@ -147,11 +147,3 @@ abstract class UpdatableChildBase : UpdatableChild {
 	override var parent: Parent<UpdatableChild>? = null
 
 }
-
-class DisposedException : IllegalStateException("This component has been disposed")
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun LifecycleRo.checkDisposed() {
-	if (isDisposed)
-		throw DisposedException()
-}

@@ -36,6 +36,7 @@ data class AppConfig(
 
 		/**
 		 * The target number of frames per second.
+		 * NB: This has no effect for browser; browser uses the window's animation frame.
 		 */
 		val frameRate: Int = 60,
 

@@ -17,6 +17,7 @@
 package com.acornui.js
 
 import com.acornui.JsApplicationBase
+import com.acornui.MainContext
 import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
@@ -29,20 +30,15 @@ import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.uncaughtExceptionHandler
-import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.LOADING
-import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * The base class for browser-based Acorn UI applications.
  * This will add boot tasks that initialize input for the target canvas.
  */
 @Suppress("unused")
-abstract class BrowserApplicationBase : JsApplicationBase() {
+abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationBase(mainContext) {
 
 	init {
 		val window = if (jsTypeOf(window) != "undefined") window else error("BrowserApplicationBase can only be used in browser applications.")
@@ -62,16 +58,6 @@ abstract class BrowserApplicationBase : JsApplicationBase() {
 			oBU?.invoke(it)
 			dispose()
 			undefined // Necessary for ie11 not to alert user.
-		}
-	}
-
-	private suspend fun contentLoad() = suspendCoroutine<Unit> { cont ->
-		if (document.readyState == DocumentReadyState.LOADING) {
-			document.addEventListener("DOMContentLoaded", {
-				cont.resume(Unit)
-			})
-		} else {
-			cont.resume(Unit)
 		}
 	}
 
