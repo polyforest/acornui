@@ -89,10 +89,16 @@ abstract class StyleBase : Style, Disposable {
 	override val modTag = ModTagImpl()
 
 	override fun clear() {
+		var hasChanged = false
 		for (i in 0..allProps.lastIndex) {
-			allProps[i].clear()
+			val prop = allProps[i]
+			if (prop.explicitIsSet || prop.calculatedIsSet) {
+				prop.clear()
+				hasChanged = true
+			}
 		}
-		notifyChanged()
+		if (hasChanged)
+			notifyChanged()
 	}
 
 	override val allProps: MutableList<StyleProp<Any?>> = ArrayList()
@@ -155,12 +161,17 @@ fun Writer.styleProperty(style: Style, prop: KProperty<*>): Writer? {
  * Sets this style's explicit values to the calculated values of the given [other] style.
  */
 fun <T : Style> T.set(other: T) {
+	var hasChanged = false
 	for (i in 0..allProps.lastIndex) {
 		val p = allProps[i]
 		val otherP = other.allProps.first2 { it.name == p.name }
-		p.explicitValue = otherP.value
+		if (p.explicitValue != otherP.value) {
+			hasChanged = true
+			p.explicitValue = otherP.value
+		}
 	}
-	notifyChanged()
+	if (hasChanged)
+		notifyChanged()
 }
 
 class StyleProp<T>(
