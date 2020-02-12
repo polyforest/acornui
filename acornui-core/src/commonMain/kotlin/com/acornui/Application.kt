@@ -65,10 +65,6 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected val applicationScope: CoroutineScope = mainContext.scope + applicationJob + Dispatchers.UI
 	protected val bootstrap = Bootstrap(applicationScope)
 
-	init {
-		kotlinBugFixes()
-	}
-
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)

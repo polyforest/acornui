@@ -22,7 +22,6 @@ import com.acornui.component.Stage
 import com.acornui.di.Context
 import com.acornui.input.interaction.ContextMenuManager
 import com.acornui.input.interaction.UndoDispatcher
-import com.acornui.logging.Log
 import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.system.userInfo
@@ -75,15 +74,23 @@ abstract class JsApplicationBase(mainContext: MainContext) : ApplicationBase(mai
 
 	companion object {
 		init {
-			if (::memberRefTest != ::memberRefTest)
-				Log.error("[SEVERE] Member reference equality fix isn't working.")
+			val a = MemberRefTest()
+			if (a::test != a::test)
+				error("Member reference equality fix isn't working.")
+			val b = MemberRefTest()
+			if (a::test == b::test)
+				error("Member reference equality fix isn't working for different receivers.")
+			if (a::test.invoke(1) != 2)
+				error("Member reference equality fix invoke isn't working.")
 
 //			if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
 //				println("Requiring XMLHttpRequest")
 ////			js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 //			}
 		}
-
-		private fun memberRefTest() {}
 	}
+}
+
+private class MemberRefTest {
+	fun test(arg0: Int): Int { return arg0 + 1 }
 }

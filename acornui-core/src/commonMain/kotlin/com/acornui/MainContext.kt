@@ -17,7 +17,6 @@
 package com.acornui
 
 import com.acornui.async.UI
-import com.acornui.async.isUiThread
 import com.acornui.async.setUiThread
 import com.acornui.signal.addOnce
 import kotlinx.coroutines.*
@@ -41,6 +40,7 @@ class MainContext(
 @Suppress("unused")
 fun runMain(block: MainContext.() -> Unit) {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+	kotlinBugFixes()
 	// This check is needed
 	setUiThread()
 	val looper = looper()

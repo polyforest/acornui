@@ -1,7 +1,7 @@
 package com.acornui
 
 /**
- * Applies workarounds to KT-15101 and KT-16379
+ * Applies workarounds to KT-15101
  */
 actual fun kotlinBugFixes() {
 	js( // language=JS
