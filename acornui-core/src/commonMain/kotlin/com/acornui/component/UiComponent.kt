@@ -23,8 +23,8 @@ import com.acornui.Lifecycle
 import com.acornui.LifecycleRo
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.style.Styleable
-import com.acornui.component.style.StyleableRo
+import com.acornui.component.style.Stylable
+import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.input.MouseState
@@ -39,7 +39,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StyleableRo, ChildRo, Focusable {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StylableRo, ChildRo, Focusable {
 
 	override val disposed: Signal<(UiComponentRo) -> Unit>
 	override val activated: Signal<(UiComponentRo) -> Unit>
@@ -163,7 +163,7 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
-interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Styleable, Context {
+interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Stylable, Context {
 
 	override val disposed: Signal<(UiComponent) -> Unit>
 	override val activated: Signal<(UiComponent) -> Unit>

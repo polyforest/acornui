@@ -22,7 +22,7 @@ import com.acornui.collection.*
  * A style calculator is responsible for setting the calculated values
  */
 interface StyleCalculator {
-	fun calculate(target: StyleableRo, out: Style)
+	fun calculate(target: StylableRo, out: Style)
 }
 
 object CascadingStyleCalculator : StyleCalculator {
@@ -36,10 +36,10 @@ object CascadingStyleCalculator : StyleCalculator {
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
-	override fun calculate(target: StyleableRo, out: Style) {
+	override fun calculate(target: StylableRo, out: Style) {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
-		target.walkStyleableAncestry { ancestor ->
+		target.walkStylableAncestry { ancestor ->
 			out.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
 				tmp.forEachReversed2 { entry ->
@@ -87,11 +87,11 @@ object CascadingStyleCalculator : StyleCalculator {
 		entries.clear()
 	}
 
-	fun getDebugInfo(style: Style, target: StyleableRo): List<StyleRuleDebugInfo> {
+	fun getDebugInfo(style: Style, target: StylableRo): List<StyleRuleDebugInfo> {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
 		val appliedRules = ArrayList<StyleRuleDebugInfo>()
-		target.walkStyleableAncestry { ancestor ->
+		target.walkStylableAncestry { ancestor ->
 			style.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
 				tmp.forEachReversed2 { entry ->
@@ -136,7 +136,7 @@ fun List<StyleRuleDebugInfo>.prettyPrint(): String {
 }
 
 class StyleRuleDebugInfo(
-		val ancestor: StyleableRo,
+		val ancestor: StylableRo,
 		val entry: StyleRule<*>) {
 
 	val calculated: MutableMap<String, Any?> = HashMap()

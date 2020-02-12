@@ -20,7 +20,7 @@ package com.acornui.component
 
 import com.acornui.Disposable
 import com.acornui.collection.forEach2
-import com.acornui.component.style.StyleableRo
+import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
@@ -108,7 +108,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	}
 
-	override val styleParent: StyleableRo? = null
+	override val styleParent: StylableRo? = null
 
 	/**
 	 * Invoked when the window's size or scaling has changed.

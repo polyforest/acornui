@@ -63,8 +63,11 @@ interface Style : StyleRo, Clearable {
 	}
 
 	/**
-	 * Dispatches a [changed] signal.
-	 * This should only be invoked if the explicit values have changed.
+	 * Dispatches a [changed] signal and increments the [modTag].
+	 * Style properties created via [StyleBase.prop] will automatically invoke this on change.
+	 *
+	 * Style properties should be immutable, but if you have a style property that can be mutated,
+	 * notifyChanged will need to be invoked explicitly.
 	 */
 	fun notifyChanged()
 
@@ -86,7 +89,7 @@ abstract class StyleBase : Style, Disposable {
 	private val _changed = Signal1<StyleBase>()
 	override val changed = _changed.asRo()
 
-	override val modTag = ModTagImpl()
+	override val modTag: ModTag = modTag()
 
 	override fun clear() {
 		var hasChanged = false
@@ -125,7 +128,7 @@ class StyleValidator(
 		private val calculator: StyleCalculator
 ) {
 
-	fun validate(host: Styleable) {
+	fun validate(host: Stylable) {
 		calculator.calculate(host, style)
 	}
 }

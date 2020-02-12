@@ -28,25 +28,29 @@ class CascadingStyleCalculatorTest {
 		val tagB = styleTag()
 		val tagC = styleTag()
 
-		val a = object : Styleable {
+		// Stylable `a` is the root.
+		// b : a
+		// c : a
+
+		val a = object : Stylable {
 			override val styleTags = arrayListOf(tagA)
 			override val styleRules = arrayListOf<StyleRule<*>>(
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "AForA_bar"
 							},
 							withAncestor(tagA),
 							-1f
 					),
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "InheritanceFail"
 							},
 							withAncestor(tagC),
 							0f
 					),
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "PriorityFail"
 								foo = "PriorityFail"
 							},
@@ -54,33 +58,33 @@ class CascadingStyleCalculatorTest {
 							0f
 					),
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "AForB_bar"
 							},
 							withAncestor(tagB),
 							0f
 					),
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								foo = "AForB_foo"
 							},
 							withAncestor(tagB),
-							1f
+							1f // This higher priority should override the explicit value foo on b
 					)
 			)
 
 			override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = filterRules(type, out)
 
-			override val styleParent: Styleable? = null
+			override val styleParent: Stylable? = null
 
 			override fun invalidateStyles() {}
 		}
 
-		val b = object : Styleable {
+		val stylableB = object : Stylable {
 			override val styleTags = arrayListOf(tagB)
 			override val styleRules = arrayListOf<StyleRule<*>>(
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "PriorityFail"
 								baz = "BForB_bar"
 							},
@@ -91,16 +95,16 @@ class CascadingStyleCalculatorTest {
 
 			override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = filterRules(type, out)
 
-			override val styleParent: Styleable? = a
+			override val styleParent: Stylable? = a
 
 			override fun invalidateStyles() {}
 		}
 
-		val c = object : Styleable {
+		val c = object : Stylable {
 			override val styleTags = arrayListOf(tagC)
 			override val styleRules = arrayListOf<StyleRule<*>>(
 					StyleRule(
-							SimpleStyle().apply {
+							simpleStyle {
 								bar = "CForC_bar"
 							},
 							withAncestor(tagC),
@@ -118,9 +122,11 @@ class CascadingStyleCalculatorTest {
 		val styleC = SimpleStyle()
 		CascadingStyleCalculator.calculate(c, styleC)
 		assertEquals("CForC_bar", styleC.bar)
+		assertEquals("baz", styleC.baz)
+		assertEquals("foo", styleC.foo)
 
 		val styleB = SimpleStyle()
-		CascadingStyleCalculator.calculate(b, styleB)
+		CascadingStyleCalculator.calculate(stylableB, styleB)
 		assertEquals("AForB_bar", styleB.bar)
 		assertEquals("BForB_bar", styleB.baz)
 		assertEquals("AForB_foo", styleB.foo)
@@ -128,11 +134,13 @@ class CascadingStyleCalculatorTest {
 		val styleA = SimpleStyle()
 		CascadingStyleCalculator.calculate(a, styleA)
 		assertEquals("AForA_bar", styleA.bar)
+		assertEquals("baz", styleA.baz)
+		assertEquals("foo", styleA.foo)
 	}
 
 }
 
-private fun <T : StyleRo> Styleable.filterRules(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
+private fun <T : StyleRo> Stylable.filterRules(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
 	out.clear()
 	@Suppress("UNCHECKED_CAST")
 	(styleRules as Iterable<StyleRule<T>>).filterTo(out, { it.style.type == type })
@@ -147,3 +155,5 @@ private class SimpleStyle : StyleBase() {
 
 	companion object : StyleType<SimpleStyle>
 }
+
+private fun simpleStyle(inner: SimpleStyle.() -> Unit): SimpleStyle = SimpleStyle().apply(inner)

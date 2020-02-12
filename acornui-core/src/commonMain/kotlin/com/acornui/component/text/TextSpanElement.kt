@@ -102,13 +102,13 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 }
 
 @Suppress("LeakingThis")
-open class TextSpanElementImpl private constructor() : TextSpanElement, Styleable {
+open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable {
 
 	override var textParent: TextNodeRo? = null
 
 	private lateinit var gl: CachedGl20
 
-	override val styleParent: StyleableRo?
+	override val styleParent: StylableRo?
 		get() = textParent
 
 	private val _elements = ArrayList<TextElement>()
@@ -130,7 +130,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Styleabl
 	}
 
 	//-------------------------------------------------------
-	// Styleable
+	// Stylable
 	//-------------------------------------------------------
 
 	final override val styleTags: MutableList<StyleTag>

@@ -35,7 +35,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 /**
- * A Paragraph component is a container of styleable text spans, to be used inside of a TextField.
+ * A Paragraph component is a container of stylable text spans, to be used inside of a TextField.
  */
 class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParent<TextSpanElement> {
 

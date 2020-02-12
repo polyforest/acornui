@@ -21,6 +21,7 @@ package com.acornui.graphic
 import com.acornui.math.*
 import com.acornui.observe.ModTagImpl
 import com.acornui.observe.ModTagRo
+import com.acornui.observe.modTag
 import com.acornui.reflect.afterChange
 import com.acornui.signal.bind
 import com.acornui.signal.or
@@ -263,13 +264,12 @@ abstract class CameraBase : Camera {
 			return _combined
 		}
 
-	protected val _modTag = ModTagImpl()
+	protected val _modTag = modTag()
 
 	/**
 	 * Incremented whenever something on this camera has changed.
 	 */
-	override val modTag: ModTagRo
-		get() = _modTag
+	override val modTag: ModTagRo = _modTag
 
 	protected val _position = Vector3()
 

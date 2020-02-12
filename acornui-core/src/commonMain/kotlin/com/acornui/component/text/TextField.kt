@@ -20,7 +20,7 @@ import com.acornui.async.getCompletedOrNull
 import kotlinx.coroutines.launch
 import com.acornui.component.*
 import com.acornui.component.style.StyleTag
-import com.acornui.component.style.Styleable
+import com.acornui.component.style.Stylable
 import com.acornui.component.style.addStyleRule
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.clearCursor
@@ -40,7 +40,7 @@ import com.acornui.substringInRange
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Styleable {
+interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableComponent, Stylable {
 
 	/**
 	 * The style object for text flow layout.

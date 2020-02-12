@@ -408,5 +408,10 @@ class ScrollAreaStyle : StyleBase() {
 	 */
 	var autoScrollToFocused by prop(true)
 
+	override fun notifyChanged() {
+		super.notifyChanged()
+		println("Scroll area style changed")
+	}
+
 	companion object : StyleType<ScrollAreaStyle>
 }

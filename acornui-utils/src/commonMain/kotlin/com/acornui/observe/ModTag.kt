@@ -24,6 +24,14 @@ interface ModTagRo {
 
 }
 
+/**
+ * A modification tag allows for quick checking if an object has changed.
+ * This is usually paired with [ModTagWatch].
+ * Example:
+ * ```
+ *
+ * ```
+ */
 interface ModTag : ModTagRo {
 
 	/**
@@ -54,13 +62,15 @@ class ModTagImpl : ModTag {
 
 }
 
+fun modTag(): ModTagImpl = ModTagImpl()
+
 class ModTagWatch : Clearable {
 
 	private var crc = -1L
 
 	/**
 	 * Sets this ModTag to match the source ModTag
-	 * Returns true if there was a change, false if modification tag is current.
+	 * @return Returns true if there was a change, false if modification tag is current.
 	 */
 	fun set(target: ModTagRo): Boolean {
 		if (crc == target.crc) return false
@@ -70,7 +80,7 @@ class ModTagWatch : Clearable {
 
 	/**
 	 * Sets this ModTag to have a crc that matches the list of provided mod tags.
-	 * Returns true if there was a change, false if modification tag is current.
+	 * @return Returns true if there was a change, false if modification tag is current.
 	 */
 	fun set(targets: List<ModTagRo>): Boolean {
 		Crc32.CRC.reset()
@@ -84,6 +94,9 @@ class ModTagWatch : Clearable {
 		return true
 	}
 
+	/**
+	 * Resets the crc value to `-1L`
+	 */
 	override fun clear() {
 		crc = -1L
 	}

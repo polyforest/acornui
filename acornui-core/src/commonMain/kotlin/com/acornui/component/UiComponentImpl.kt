@@ -557,14 +557,14 @@ open class UiComponentImpl(
 	}
 
 	//-----------------------------------------------
-	// Styleable
+	// Stylable
 	//-----------------------------------------------
 
-	override val styleParent: StyleableRo? by lazy {
+	override val styleParent: StylableRo? by lazy {
 		var p: Context? = owner
-		var s: Styleable? = null
+		var s: Stylable? = null
 		while (p != null) {
-			if (p is Styleable) {
+			if (p is Stylable) {
 				s = p
 				break
 			}

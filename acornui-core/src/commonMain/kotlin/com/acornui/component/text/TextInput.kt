@@ -25,7 +25,7 @@ import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
 import com.acornui.component.style.StyleTag
-import com.acornui.component.style.Styleable
+import com.acornui.component.style.Stylable
 import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.function.as2
@@ -45,7 +45,7 @@ import com.acornui.time.tick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-interface TextInput : Focusable, SelectableComponent, Styleable, Clearable {
+interface TextInput : Focusable, SelectableComponent, Stylable, Clearable {
 
 	val charStyle: CharStyle
 	val flowStyle: TextFlowStyle

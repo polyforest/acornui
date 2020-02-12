@@ -29,7 +29,7 @@ import com.acornui.observe.Observable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-interface StyleableRo {
+interface StylableRo {
 
 	/**
 	 * The current [StyleTag] objects added. This list must be unique.
@@ -46,14 +46,14 @@ interface StyleableRo {
 	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>)
 
 	/**
-	 * The next ancestor of this styleable component.
+	 * The next ancestor of this stylable component.
 	 */
-	val styleParent: StyleableRo?
+	val styleParent: StylableRo?
 
 	fun invalidateStyles()
 }
 
-interface Styleable : StyleableRo {
+interface Stylable : StylableRo {
 
 	/**
 	 * The current [StyleTag] objects added. This list must be unique.
@@ -69,11 +69,11 @@ interface Styleable : StyleableRo {
 
 }
 
-fun Styleable.addStyleRule(style: StyleRo, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
+fun Stylable.addStyleRule(style: StyleRo, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
 	styleRules.add(StyleRule(style, filter, priority))
 }
 
-class Styles(private val host: Styleable) : Disposable {
+class Styles(private val host: Stylable) : Disposable {
 
 	val styleTags = ActiveList<StyleTag>()
 	val styleRules = ActiveList<StyleRule<*>>()
@@ -112,9 +112,7 @@ class Styles(private val host: Styleable) : Disposable {
 	}
 
 	private fun add(entry: StyleRule<*>) {
-		if (!entriesByType.containsKey(entry.style.type))
-			entriesByType[entry.style.type] = ArrayList()
-		entriesByType[entry.style.type]!!.add(entry)
+		entriesByType.getOrPut(entry.style.type) { ArrayList() }.add(entry)
 		host.invalidateStyles()
 		entry.style.changed.add(::styleRuleChangedHandler)
 	}
@@ -188,13 +186,12 @@ class Styles(private val host: Styleable) : Disposable {
 	}
 }
 
-
 /**
  * Holds a style object with explicit values that will be applied to the calculated values of the target style object
  * when the filter passes.
  * Entries will be applied in the order from deepest child to highest ancestor (the stage).
  */
-class StyleRule<out T : StyleRo>(
+data class StyleRule<out T : StyleRo>(
 
 		/**
 		 * The explicit values on this style object will be applied to the target if the filter passes.
@@ -237,7 +234,7 @@ inline fun StyleType<*>.walkInheritance(callback: (StyleType<*>) -> Unit) {
  * contains this tag.
  */
 interface StyleTag : StyleFilter {
-	override fun invoke(target: StyleableRo): StyleableRo? {
+	override fun invoke(target: StylableRo): StylableRo? {
 		if (target.styleTags.contains(this)) return target
 		return null
 	}
@@ -248,21 +245,21 @@ interface StyleTag : StyleFilter {
  */
 fun styleTag(): StyleTag = object : StyleTag {}
 
-inline fun StyleableRo.walkStyleableAncestry(callback: (StyleableRo) -> Unit) {
-	var p: StyleableRo? = this
+inline fun StylableRo.walkStylableAncestry(callback: (StylableRo) -> Unit) {
+	var p: StylableRo? = this
 	while (p != null) {
 		callback(p)
 		p = p.styleParent
 	}
 }
 
-class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<Styleable, Boolean> {
+class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<Stylable, Boolean> {
 
-	override fun getValue(thisRef: Styleable, property: KProperty<*>): Boolean {
+	override fun getValue(thisRef: Stylable, property: KProperty<*>): Boolean {
 		return thisRef.styleTags.contains(styleTag)
 	}
 
-	override fun setValue(thisRef: Styleable, property: KProperty<*>, value: Boolean) {
+	override fun setValue(thisRef: Stylable, property: KProperty<*>, value: Boolean) {
 		if (getValue(thisRef, property) != value) {
 			if (value) thisRef.styleTags.add(styleTag)
 			else thisRef.styleTags.remove(styleTag)
