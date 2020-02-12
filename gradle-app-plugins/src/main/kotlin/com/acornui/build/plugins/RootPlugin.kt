@@ -36,13 +36,22 @@ class RootPlugin : Plugin<Project> {
 		target.allprojects {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
-				mavenCentral()
-				jcenter()
-				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-
 				if (acornVersion.endsWith("-SNAPSHOT")) {
 					maven("https://oss.sonatype.org/content/repositories/snapshots")
 					mavenLocal()
+				}
+				mavenCentral()
+				jcenter()
+				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+			}
+
+			project.configurations.configureEach {
+				resolutionStrategy {
+					eachDependency {
+						when {
+							requested.group.startsWith("com.acornui") -> useVersion(acornVersion)
+						}
+					}
 				}
 			}
 

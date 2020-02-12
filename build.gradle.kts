@@ -38,10 +38,10 @@ subprojects {
 	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
 
 	repositories {
+		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-		mavenLocal()
 	}
 
 	afterEvaluate {

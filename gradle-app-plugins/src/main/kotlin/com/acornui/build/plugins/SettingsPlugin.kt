@@ -38,14 +38,14 @@ class SettingsPlugin : Plugin<Settings> {
 					}
 				}
 				repositories {
-					gradlePluginPortal()
-					mavenCentral()
-					jcenter()
-					maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 					if (acornVersion.endsWith("-SNAPSHOT")) {
 						maven("https://oss.sonatype.org/content/repositories/snapshots")
 						mavenLocal()
 					}
+					gradlePluginPortal()
+					mavenCentral()
+					jcenter()
+					maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 				}
 			}
 		}
