@@ -364,8 +364,8 @@ open class BasicUiSkin(
 					{
 						rect {
 							style.backgroundColor = Color(0f, 0f, 0f, 0.6f)
-							minWidth = size
-							minHeight = size
+							defaultWidth = size
+							defaultHeight = size
 						}
 					}
 				}
@@ -375,34 +375,37 @@ open class BasicUiSkin(
 		val track: SkinPart = {
 			rect {
 				style.backgroundColor = Color(1f, 1f, 1f, 0.4f)
+				defaultWidth = size
+				defaultHeight = size
 				enableDownRepeat()
 			}
 		}
 
-		val vScrollBarStyle = ScrollBarStyle()
-		vScrollBarStyle.decrementButton = { spacer(size, 0f) }
-		vScrollBarStyle.incrementButton = { spacer(size, 0f) }
-		vScrollBarStyle.thumb = thumb
-		vScrollBarStyle.track = track
-		vScrollBarStyle.inactiveAlpha = 0.2f
-		target.addStyleRule(vScrollBarStyle, VScrollBar)
+		target.scrollBarStyle(VScrollBar) {
+			decrementButton = { spacer(size, 0f) }
+			incrementButton = { spacer(size, 0f) }
+			this.thumb = thumb
+			this.track = track
+			inactiveAlpha = 0.2f
+		}
 
-		val hScrollBarStyle = ScrollBarStyle()
-		hScrollBarStyle.decrementButton = { spacer(0f, size) }
-		hScrollBarStyle.incrementButton = { spacer(0f, size) }
-		hScrollBarStyle.thumb = thumb
-		hScrollBarStyle.track = track
-		hScrollBarStyle.inactiveAlpha = 0.2f
-		target.addStyleRule(hScrollBarStyle, HScrollBar)
+		target.scrollBarStyle(HScrollBar) {
+			decrementButton = { spacer(0f, size) }
+			incrementButton = { spacer(0f, size) }
+			this.thumb = thumb
+			this.track = track
+			inactiveAlpha = 0.2f
+		}
 	}
 
 	private fun progressBarStyle() {
-		val s = ProgressBarRectStyle()
-		s.borderColors = BorderColors(theme.stroke)
-		s.borderRadii = Corners(0f)
-		s.borderThicknesses = Pad(theme.strokeThickness)
-		s.fillColor = theme.fill
-		s.bgColor = Color(0f, 0f, 0f, 0.2f)
+		val s = ProgressBarRectStyle().apply {
+			borderColors = BorderColors(theme.stroke)
+			borderRadii = Corners(0f)
+			borderThicknesses = Pad(theme.strokeThickness)
+			fillColor = theme.fill
+			bgColor = Color(0f, 0f, 0f, 0.2f)
+		}
 		target.addStyleRule(s, ProgressBarRect)
 	}
 
@@ -463,8 +466,7 @@ open class BasicUiSkin(
 	}
 
 	protected open fun colorPickerStyle() {
-		val colorPaletteStyle = ColorPaletteStyle()
-		colorPaletteStyle.apply {
+		val colorPaletteStyle = ColorPaletteStyle().apply {
 			background = {
 				rect {
 					styleTags.add(CommonStyleTags.themeRect)
@@ -480,8 +482,7 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(colorPaletteStyle, ColorPalette)
 
-		val colorPickerStyle = ColorPickerStyle()
-		colorPickerStyle.apply {
+		val colorPickerStyle = ColorPickerStyle().apply {
 			background = {
 				button {
 					focusEnabled = false

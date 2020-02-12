@@ -160,7 +160,7 @@ open class ContextImpl(
 
 @Deprecated("Context objects are owned implicitly", ReplaceWith("target"), level = DeprecationLevel.ERROR)
 @JvmName("improperOwn")
-@Suppress("unused", "UNUSED_PARAMETER")
+@Suppress("unused")
 fun <T : Context> Context.own(target: T): T {
 	error("Context objects are owned implicitly")
 }

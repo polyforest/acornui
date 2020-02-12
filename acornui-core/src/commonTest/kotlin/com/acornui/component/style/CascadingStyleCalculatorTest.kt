@@ -16,6 +16,9 @@
 
 package com.acornui.component.style
 
+import com.acornui.component.ComponentInit
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -34,89 +37,62 @@ class CascadingStyleCalculatorTest {
 
 		val a = object : Stylable {
 			override val styleTags = arrayListOf(tagA)
-			override val styleRules = arrayListOf<StyleRule<*>>(
-					StyleRule(
-							simpleStyle {
-								bar = "AForA_bar"
-							},
-							withAncestor(tagA),
-							-1f
-					),
-					StyleRule(
-							simpleStyle {
-								bar = "InheritanceFail"
-							},
-							withAncestor(tagC),
-							0f
-					),
-					StyleRule(
-							simpleStyle {
-								bar = "PriorityFail"
-								foo = "PriorityFail"
-							},
-							withAncestor(tagB),
-							0f
-					),
-					StyleRule(
-							simpleStyle {
-								bar = "AForB_bar"
-							},
-							withAncestor(tagB),
-							0f
-					),
-					StyleRule(
-							simpleStyle {
-								foo = "AForB_foo"
-							},
-							withAncestor(tagB),
-							1f // This higher priority should override the explicit value foo on b
-					)
-			)
-
-			override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = filterRules(type, out)
+			override val styleRules = arrayListOf<StyleRule<*>>()
 
 			override val styleParent: Stylable? = null
 
 			override fun invalidateStyles() {}
+
+			init {
+				simpleStyle(withAncestor(tagA), -1f) {
+					bar = "AForA_bar"
+				}
+				simpleStyle(withAncestor(tagC)) {
+					bar = "InheritanceFail"
+				}
+				simpleStyle(withAncestor(tagB)) {
+					bar = "PriorityFail"
+					foo = "PriorityFail"
+				}
+				simpleStyle(withAncestor(tagB)) {
+					bar = "AForB_bar"
+				}
+				// This higher priority should override the explicit value foo on b
+				simpleStyle(withAncestor(tagB), priority = 1f) {
+					foo = "AForB_foo"
+				}
+			}
 		}
 
 		val stylableB = object : Stylable {
 			override val styleTags = arrayListOf(tagB)
-			override val styleRules = arrayListOf<StyleRule<*>>(
-					StyleRule(
-							simpleStyle {
-								bar = "PriorityFail"
-								baz = "BForB_bar"
-							},
-							withAncestor(tagB),
-							-1f
-					)
-			)
-
-			override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = filterRules(type, out)
+			override val styleRules = arrayListOf<StyleRule<*>>()
 
 			override val styleParent: Stylable? = a
 
 			override fun invalidateStyles() {}
+
+			init {
+				simpleStyle(withAncestor(tagB), -1f) {
+					bar = "PriorityFail"
+					baz = "BForB_bar"
+				}
+			}
 		}
 
 		val c = object : Stylable {
 			override val styleTags = arrayListOf(tagC)
-			override val styleRules = arrayListOf<StyleRule<*>>(
-					StyleRule(
-							simpleStyle {
-								bar = "CForC_bar"
-							},
-							withAncestor(tagC),
-							0f
-					)
-			)
-
-			override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = filterRules(type, out)
+			override val styleRules = arrayListOf<StyleRule<*>>()
 
 			override val styleParent = a
 
 			override fun invalidateStyles() {}
+
+			init {
+				simpleStyle(withAncestor(tagC)) {
+					bar = "CForC_bar"
+				}
+			}
 		}
 
 		val styleC = SimpleStyle()
@@ -156,4 +132,8 @@ private class SimpleStyle : StyleBase() {
 	companion object : StyleType<SimpleStyle>
 }
 
-private fun simpleStyle(inner: SimpleStyle.() -> Unit): SimpleStyle = SimpleStyle().apply(inner)
+private fun Stylable.simpleStyle(filter: StyleFilter = AlwaysFilter, priority: Float = 0f, init: ComponentInit<SimpleStyle>) {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	val style = SimpleStyle().apply(init)
+	styleRules.add(StyleRule(style, filter, priority))
+}

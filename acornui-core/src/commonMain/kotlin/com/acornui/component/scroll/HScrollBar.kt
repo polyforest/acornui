@@ -18,7 +18,6 @@ package com.acornui.component.scroll
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.InteractivityMode
-import com.acornui.component.UiComponent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
@@ -39,8 +38,8 @@ open class HScrollBar(
 
 	override fun getModelValue(position: Vector2): Float {
 		val thumb = thumb!!
-		val minX = minTrack()
-		val maxX = maxTrack()
+		val minX = minTrack
+		val maxX = maxTrack
 		val denom = maxOf(0.001f, maxX - minX - thumb.width)
 		var pX = (position.x - minX) / denom
 		if (pX > 0.99f) pX = 1f
@@ -71,7 +70,7 @@ open class HScrollBar(
 		stepDownButton.moveTo(w - stepDownButton.width, 0f)
 
 		val scrollDiff = scrollModel.max - scrollModel.min
-		val thumbAvailable = maxTrack() - minTrack()
+		val thumbAvailable = maxTrack - minTrack
 		thumb.visible = thumbAvailable > maxOf(1f, thumb.minWidth)
 		track.visible = thumb.visible
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
@@ -91,23 +90,17 @@ open class HScrollBar(
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val p = if (scrollDiff <= 0.000001f) 0f else (scrollModel.value - scrollModel.min) / scrollDiff
 
-		val minX = minTrack()
-		val maxX = maxTrack()
+		val minX = minTrack
+		val maxX = maxTrack
 		val w = round(maxX - minX + 0.000001f) - thumb.width
 		thumb.moveTo(p * w + minX, 0f)
 	}
 
-	override fun minTrack(): Float {
-		return decrementButton!!.right()
-	}
+	override val minTrack: Float
+		get() = decrementButton!!.right
 
-	private fun UiComponent.right(): Float {
-		return x + width
-	}
-
-	override fun maxTrack(): Float {
-		return incrementButton!!.x
-	}
+	override val maxTrack: Float
+		get() = incrementButton!!.x
 
 	companion object : StyleTag
 }
@@ -123,14 +116,13 @@ open class HSlider(owner: Context) : HScrollBar(owner) {
 
 	init {
 		styleTags.add(HSlider)
-		pageSize(1f)
+		pageSize = 1f
 	}
 
 	companion object : StyleTag
 }
 
 fun Context.hSlider(init: ComponentInit<HSlider>): HSlider {
-	val h = HSlider(this)
-	h.init()
-	return h
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return HSlider(this).apply(init)
 }

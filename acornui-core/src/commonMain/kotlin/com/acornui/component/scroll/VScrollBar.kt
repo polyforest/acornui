@@ -18,7 +18,6 @@ package com.acornui.component.scroll
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.InteractivityMode
-import com.acornui.component.UiComponent
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
@@ -39,8 +38,8 @@ open class VScrollBar(
 
 	override fun getModelValue(position: Vector2): Float {
 		val thumb = thumb!!
-		val minY = minTrack()
-		val maxY = maxTrack()
+		val minY = minTrack
+		val maxY = maxTrack
 		val denom = maxOf(0.001f, maxY - minY - thumb.height)
 		var pY = (position.y - minY) / denom
 		if (pY > 0.99f) pY = 1f
@@ -71,7 +70,7 @@ open class VScrollBar(
 		stepDownButton.moveTo(0f, h - stepDownButton.height)
 
 		val scrollDiff = scrollModel.max - scrollModel.min
-		val thumbAvailable = maxTrack() - minTrack()
+		val thumbAvailable = maxTrack - minTrack
 		thumb.visible = thumbAvailable > maxOf(1f, thumb.minHeight)
 		track.visible = thumb.visible
 		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
@@ -93,23 +92,17 @@ open class VScrollBar(
 		val scrollDiff = scrollModel.max - scrollModel.min
 		val p = if (scrollDiff <= 0.000001f) 0f else (scrollModel.value - scrollModel.min) / scrollDiff
 
-		val minY = minTrack()
-		val maxY = maxTrack()
+		val minY = minTrack
+		val maxY = maxTrack
 		val h = round(maxY - minY + 0.000001f) - thumb.height
 		thumb.moveTo(0f, p * h + minY)
 	}
 
-	override fun minTrack(): Float {
-		return decrementButton!!.bottom()
-	}
+	override val minTrack: Float
+		get() = decrementButton!!.bottom
 
-	private fun UiComponent.bottom(): Float {
-		return y + height
-	}
-
-	override fun maxTrack(): Float {
-		return incrementButton!!.y
-	}
+	override val maxTrack: Float
+		get() = incrementButton!!.y
 
 	companion object : StyleTag
 }
@@ -125,14 +118,13 @@ open class VSlider(owner: Context) : VScrollBar(owner) {
 
 	init {
 		styleTags.add(VSlider)
-		pageSize(1f)
+		pageSize = 1f
 	}
 
 	companion object : StyleTag
 }
 
 fun Context.vSlider(init: ComponentInit<VSlider>): VSlider {
-	val h = VSlider(this)
-	h.init()
-	return h
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return VSlider(this).apply(init)
 }

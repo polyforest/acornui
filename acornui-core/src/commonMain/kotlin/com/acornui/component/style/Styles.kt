@@ -43,7 +43,11 @@ interface StylableRo {
 	 */
 	val styleRules: List<StyleRule<*>>
 
-	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>)
+	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
+		out.clear()
+		@Suppress("UNCHECKED_CAST")
+		(styleRules as Iterable<StyleRule<T>>).filterTo(out, { it.style.type == type })
+	}
 
 	/**
 	 * The next ancestor of this stylable component.

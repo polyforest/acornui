@@ -242,7 +242,7 @@ fun <T : Any> ButtonState.fallbackWalk(block: (ButtonState) -> T?): T? {
 
 open class ButtonStyle : StyleBase() {
 
-	override val type: StyleType<ButtonStyle> = ButtonStyle
+	override val type: StyleType<ButtonStyle> = Companion
 
 	var skin by prop<Context.() -> ButtonSkin> { basicButtonSkin(Theme()) }
 

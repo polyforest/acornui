@@ -17,9 +17,7 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.*
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.noSkin
+import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
@@ -35,14 +33,14 @@ import com.acornui.math.Vector2
 import com.acornui.time.start
 import com.acornui.tween.killTween
 import com.acornui.tween.tweenAlpha
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 
-	protected val _scrollModel = own(ScrollModelImpl())
-
-	val scrollModel: ClampedScrollModel
-		get() = _scrollModel
+	private val _scrollModel = own(ScrollModelImpl())
+	val scrollModel: ClampedScrollModel = _scrollModel
 
 	val style = bind(ScrollBarStyle())
 
@@ -130,7 +128,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 		mousePosition(positionTmp)
 		val previous = scrollModel.value
 		var newValue = getModelValue(positionTmp)
-		val pageSize = pageSize()
+		val pageSize = pageSize
 		if (newValue > previous + pageSize) newValue = previous + pageSize
 		if (newValue < previous - pageSize) newValue = previous - pageSize
 		scrollModel.value = newValue
@@ -162,28 +160,36 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 	}
 
 	open fun pageUp() {
-		scrollModel.value = (scrollModel.rawValue - pageSize())
+		scrollModel.value = (scrollModel.rawValue - pageSize)
 	}
 
 	open fun pageDown() {
-		scrollModel.value = (scrollModel.rawValue + pageSize())
+		scrollModel.value = (scrollModel.rawValue + pageSize)
 	}
 
 	protected abstract fun refreshThumbPosition()
 	protected abstract fun getModelValue(position: Vector2): Float
-	protected abstract fun minTrack(): Float
-	protected abstract fun maxTrack(): Float
+	protected abstract val minTrack: Float
+	protected abstract val maxTrack: Float
 
 	private var _explicitPageSize: Float? = null
 
 	/**
 	 * Returns the explicit page size if it was set, or the size of the track divided by the modelToPoints ratio.
 	 */
-	fun pageSize(): Float {
-		if (_explicitPageSize != null) return _explicitPageSize!!
-		return (maxTrack() - minTrack()) / modelToPoints
-	}
+	var pageSize: Float
+		get() {
+			if (_explicitPageSize != null) return _explicitPageSize!!
+			return (maxTrack - minTrack) / modelToPoints
+		}
+		set(value) {
+			_explicitPageSize = value
+		}
 
+	/**
+	 * Sets the explicit page size. If set to null, the measured page size will be used.
+	 * Measured size: `((maxTrack - minTrack) / modelToPoints)`
+	 */
 	fun pageSize(value: Float?) {
 		_explicitPageSize = value
 	}
@@ -219,3 +225,8 @@ class ScrollBarStyle : StyleBase() {
 	companion object : StyleType<ScrollBarStyle>
 }
 
+fun Stylable.scrollBarStyle(filter: StyleFilter = AlwaysFilter, priority: Float = 0f, init: ComponentInit<ScrollBarStyle>) {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	val style = ScrollBarStyle().apply(init)
+	styleRules.add(StyleRule(style, filter, priority))
+}
