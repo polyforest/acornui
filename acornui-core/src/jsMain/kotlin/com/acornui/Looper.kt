@@ -24,6 +24,7 @@ import com.acornui.signal.emptySignal
 import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlin.browser.window
 import kotlin.time.Duration
@@ -32,9 +33,6 @@ import kotlin.time.seconds
 actual fun looper(): Looper = JsLooper()
 
 class JsLooper : Looper {
-
-	private val _job = Job()
-	override val job: Job = _job
 
 	/**
 	 * Does nothing on the JS Backend.
@@ -53,26 +51,15 @@ class JsLooper : Looper {
 	 */
 	override val updateAndRender = _updateAndRender.asRo()
 
-	private val _completed = Signal0()
-	override val completed = _completed.asRo()
-
 	private val isBrowser = userInfo.isBrowser
 	private var lastFrameMs = nowMs()
-
-	private var isLooping = false
-
-	override var referenceCount: Int = 0
-		private set
-
-	override fun refInc() { ++referenceCount }
-	override fun refDec() { --referenceCount }
+	private lateinit var mainJob: Job
 
 	/**
 	 * Runs the multi-application loop.
 	 */
-	override fun loop() {
-		if (isLooping) return
-		isLooping = true
+	override fun loop(mainJob: Job) {
+		this.mainJob = mainJob
 		_started.dispatch()
 		scheduleTick()
 	}
@@ -84,7 +71,7 @@ class JsLooper : Looper {
 		lastFrameMs = now
 		FrameDriver.dispatch(dT)
 		_updateAndRender.dispatch(dT)
-		if (referenceCount > 0)
+		if (mainJob.isActive)
 			scheduleTick()
 		else
 			shutdown()
@@ -97,13 +84,11 @@ class JsLooper : Looper {
 			setTimeout(::tick)
 	}
 
+	@UseExperimental(InternalCoroutinesApi::class)
 	private fun shutdown() {
-		isLooping = false
 		_started.clear()
 		_updateAndRender.clear()
-		_job.complete()
-		_completed.dispatch()
-		_completed.clear()
+		mainJob.getCancellationException().cause?.let { throw it }
 	}
 }
 

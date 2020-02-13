@@ -17,7 +17,6 @@
 package com.acornui.headless
 
 import com.acornui.async.delay
-import kotlinx.coroutines.launch
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
@@ -25,12 +24,11 @@ import com.acornui.component.stage
 import com.acornui.di.Context
 import com.acornui.graphic.exit
 import com.acornui.math.Easing
-import com.acornui.runMain
+import com.acornui.runMainTest
 import com.acornui.test.assertClose
-import com.acornui.test.runTest
 import com.acornui.time.start
-import com.acornui.time.timer
 import com.acornui.tween.tweenX
+import kotlinx.coroutines.launch
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.seconds
@@ -38,46 +36,37 @@ import kotlin.time.seconds
 class HeadlessTest {
 
 	@Test
-	fun start() = runTest {
-		runMain {
-			headlessApplication {
-				exit()
-			}
+	fun start() = runMainTest {
+		headlessApplication {
+			exit()
 		}
 	}
 
 	@Test
-	fun addToStage() = runTest {
-		runMain {
-			headlessApplication {
-				stage.addElement(testComponent())
-				+testComponent()
-				exit()
-			}
+	fun addToStage() = runMainTest {
+		headlessApplication {
+			stage.addElement(testComponent())
+			+testComponent()
+			exit()
 		}
 	}
 
 	// TODO: CI for Mac has a pretty wide variance
 	@Ignore
 	@Test
-	fun tweenX() = runTest {
-		runMain {
-			headlessApplication {
-				testComponent {
-					tweenX(4f, Easing.linear, 100f).start()
-					launch {
-						delay(1.seconds)
-						assertClose(25f, x, maxDifference =  5f)
-						delay(1.seconds)
-						assertClose(50f, x, maxDifference =  5f)
-						delay(1.seconds)
-						assertClose(75f, x, maxDifference =  5f)
-						delay(1.seconds)
-						assertClose(100f, x, maxDifference =  5f)
-					}
-				}
-
-				timer(5.seconds) {
+	fun tweenX() = runMainTest {
+		headlessApplication {
+			testComponent {
+				tweenX(4f, Easing.linear, 100f).start()
+				launch {
+					delay(1.seconds)
+					assertClose(25f, x, maxDifference = 5f)
+					delay(1.seconds)
+					assertClose(50f, x, maxDifference = 5f)
+					delay(1.seconds)
+					assertClose(75f, x, maxDifference = 5f)
+					delay(1.seconds)
+					assertClose(100f, x, maxDifference = 5f)
 					exit()
 				}
 			}

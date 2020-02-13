@@ -17,7 +17,9 @@
 package com.acornui
 
 import com.acornui.asset.Loaders
-import com.acornui.async.*
+import com.acornui.async.PendingDisposablesRegistry
+import com.acornui.async.UI
+import com.acornui.async.Work
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
 import com.acornui.di.*
@@ -61,8 +63,8 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 
 	protected suspend fun config() = get(AppConfig)
 
-	protected val applicationJob = Job(mainContext.job)
-	protected val applicationScope: CoroutineScope = mainContext.scope + applicationJob + Dispatchers.UI
+	protected val applicationJob = Job(mainContext.coroutineContext[Job])
+	protected val applicationScope: CoroutineScope = mainContext + applicationJob + Dispatchers.UI
 	protected val bootstrap = Bootstrap(applicationScope)
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
@@ -100,7 +102,6 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 
 	final override fun startAsync(appConfig: AppConfig, onReady: Stage.() -> Unit): Job {
-		mainContext.looper.refInc()
 		applicationScope.launch {
 			set(AppConfig, appConfig)
 			onBeforeStart()
@@ -109,14 +110,12 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 			onStageCreated(stage)
 			val looper = createLooper(stage)
 			looper.disposed.addOnce {
+				// The window has closed
 				context.dispose()
 				dispose()
 				applicationJob.complete()
 			}
 			stage.onReady()
-		}
-		applicationJob.invokeOnCompletion {
-			mainContext.looper.refDec()
 		}
 		return applicationJob
 	}

@@ -23,25 +23,26 @@ import com.acornui.headless.headlessApplication
 import com.acornui.io.file.Path
 import com.acornui.runMain
 import com.acornui.texturepacker.writer.writeAtlas
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.minutes
 
-fun main(args: Array<String>) = runMain {
+fun main(args: Array<String>) {
 	val srcDir = File(args[0])
 	val destDir = File(args[1])
 	val unpackedSuffix: String = args.getOrNull(2) ?: "_unpacked"
-	runBlocking {
-		packAssets(srcDir, destDir, unpackedSuffix)
-	}
+	packAssets(srcDir, destDir, unpackedSuffix)
 }
 
-suspend fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked") = runMain {
+fun packAssets(srcDir: File, destDir: File, unpackedSuffix: String = "_unpacked", timeout: Duration = 10.minutes) = runMain(timeout) {
 	headlessApplication(AppConfig()) {
 		val atlasName = srcDir.name.removeSuffix(unpackedSuffix)
 		val packer = AcornTexturePacker(inject(Loaders.textLoader), inject(Loaders.rgbDataLoader))
-		runBlocking {
+		launch {
 			val packedData = packer.pack(collectSrcPaths(srcDir), quiet = true)
 			writeAtlas("$atlasName.json", "$atlasName{0}", packedData, destDir)
+			println("pack assets completed $destDir")
 			exit()
 		}
 	}

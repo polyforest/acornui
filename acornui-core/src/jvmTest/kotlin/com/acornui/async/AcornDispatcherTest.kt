@@ -16,35 +16,24 @@
 
 package com.acornui.async
 
-import com.acornui.test.runTest
-import com.acornui.time.FrameDriver
+import com.acornui.runMainTest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.seconds
 
 class AcornDispatcherTest {
 
 	@Test
-	fun uiDispatcher() = runTest {
-		val uiThread = Thread.currentThread()
-		var ranUiLaunch = false
-		lateinit var asyncThread: Thread
-		lateinit var launchUiThread: Thread
+	fun uiDispatcher() = runMainTest(timeout = 5.seconds) {
 		launch(Dispatchers.IO) {
-			asyncThread = Thread.currentThread()
+			assertFalse(isUiThread())
 			launch(Dispatchers.UI) {
-				launchUiThread = Thread.currentThread()
-				ranUiLaunch = true
+				assertTrue(isUiThread())
+				exitMain()
 			}
 		}
-		while (!ranUiLaunch) {
-			FrameDriver.dispatch(0f)
-			delay(10)
-		}
-		assertNotEquals(uiThread, asyncThread)
-		assertEquals(uiThread, launchUiThread)
 	}
 }

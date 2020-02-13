@@ -18,7 +18,6 @@ package com.acornui.di
 
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
-import com.acornui.async.UI
 import com.acornui.async.Work
 import com.acornui.collection.removeFirst
 import com.acornui.logging.Log
@@ -151,4 +150,4 @@ class Bootstrap(
 	}
 }
 
-class BootstrapTaskTimeoutException(message: String?) : Exception(message)
+class BootstrapTaskTimeoutException(message: String?) : IllegalStateException(message)

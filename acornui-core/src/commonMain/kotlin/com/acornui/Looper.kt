@@ -39,6 +39,7 @@ interface Looper {
 
 	/**
 	 * Dispatched when the acorn applications should poll for events.
+	 * Note: JS Backends do not poll for events and therefore this will not be dispatched.
 	 */
 	val pollEvents: Signal<() -> Unit>
 
@@ -47,34 +48,15 @@ interface Looper {
 	 */
 	val updateAndRender: Signal<(Float) -> Unit>
 
-	val completed: Signal<() -> Unit>
-
 	/**
 	 * Runs the multi-application loop.
-	 * The loop will remain active as long as [referenceCount] is greater than zero.
+	 * The loop will remain active as long as the provided job is active.
+	 * @param mainJob The job to watch, looping until this job is completed.  If the job completes exceptionally,
+	 * (except [kotlinx.coroutines.CancellationException]) then that exception will be thrown from this loop.
+	 *
+	 * @see Job.cancel
 	 */
-	fun loop()
-
-	/**
-	 * The number of entities (typically Applications) using this looper.
-	 */
-	val referenceCount: Int
-
-	/**
-	 * Increments [referenceCount].
-	 */
-	fun refInc()
-
-	/**
-	 * Decrements [referenceCount].
-	 */
-	fun refDec()
-
-	/**
-	 * A job that will be completed when the loop has completed.
-	 * This can be canceled to stop the loop.
-	 */
-	val job: Job
+	fun loop(mainJob: Job)
 }
 
 expect fun looper(): Looper

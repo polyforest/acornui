@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package com.acornui.test
+package com.acornui.component
 
-import kotlinx.coroutines.*
-import kotlin.time.Duration
+import com.acornui.headless.HeadlessDependencies
+import com.acornui.test.runTest
+import kotlin.test.Test
 
-/**
- * Thanks to https://blog.kotlin-academy.com/testing-common-modules-66b39d641617
- */
-actual fun <T> runTest(timeout: Duration, block: suspend CoroutineScope.() -> T) {
-	runBlocking {
-		withTimeout(timeout.toLongMilliseconds()) {
-			block()
-			yield()
-		}
+class IconButtonTest {
+
+	@Test
+	fun iconButton() = runTest {
+
 	}
 }

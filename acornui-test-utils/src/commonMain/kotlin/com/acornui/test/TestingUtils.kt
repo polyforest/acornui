@@ -18,16 +18,20 @@
 
 package com.acornui.test
 
+import com.acornui.async.toPromiseOrVoid
 import com.acornui.closeTo
 import com.acornui.collection.toList
 import com.acornui.math.RectangleRo
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3Ro
 import com.acornui.time.nanoElapsed
+import kotlinx.coroutines.*
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.fail
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 fun assertListEquals(expected: IntArray, actual: IntArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
@@ -259,9 +263,9 @@ fun <T: Comparable<T>> assertLessThan(expectedMax: T, actual: T) {
  */
 fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, call: () -> Unit): Float {
 	val results = ArrayList<Float>(testCount)
-	for (i in 0..testCount + warmCount - 1) {
+	for (i in 0 until testCount + warmCount) {
 		val startTime = nanoElapsed()
-		for (j in 0..iterations - 1) {
+		for (j in 0 until iterations) {
 			call()
 		}
 		if (i < warmCount) continue
@@ -272,3 +276,14 @@ fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, c
 	results.sort()
 	return results[results.size / 2]
 }
+
+/**
+ * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
+ * @see toPromiseOrVoid
+ */
+fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) = GlobalScope.async {
+	withTimeout(timeout.toLongMilliseconds()) {
+		block()
+		yield()
+	}
+}.toPromiseOrVoid()

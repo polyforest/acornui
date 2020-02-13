@@ -76,7 +76,12 @@ java {
 
 kotlin {
 	sourceSets.configureEach {
-		languageSettings.useExperimentalAnnotation("kotlin.Experimental")
+		languageSettings.apply {
+			enableLanguageFeature("InlineClasses")
+			useExperimentalAnnotation("kotlin.Experimental")
+			useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+			useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+		}
 	}
 	target {
 		compilations.configureEach {

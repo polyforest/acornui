@@ -20,6 +20,7 @@ import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -31,9 +32,6 @@ actual fun looper(): Looper = JvmLooper()
  * rendered.
  */
 class JvmLooper : Looper {
-
-	private val _job = Job()
-	override val job: Job = _job
 
 	override var frameTime: Duration = (1.0 / 60.0).seconds
 
@@ -50,30 +48,19 @@ class JvmLooper : Looper {
 	 */
 	override val updateAndRender = _updateAndRender.asRo()
 
-	private val _completed = Signal0()
-	override val completed = _completed.asRo()
-	
 	private var isLooping = false
-
-	override var referenceCount: Int = 0
-		private set
-
-	@Synchronized
-	override fun refInc() { ++referenceCount }
-
-	@Synchronized
-	override fun refDec() { --referenceCount }
 
 	/**
 	 * Runs the multi-application loop.
 	 */
-	override fun loop() {
+	@UseExperimental(InternalCoroutinesApi::class)
+	override fun loop(mainJob: Job) {
 		if (isLooping) return
 		isLooping = true
 		_started.dispatch()
 		val frameTimeMs = frameTime.toLongMilliseconds()
 		var lastFrameMs = nowMs()
-		while (referenceCount > 0 && !_job.isCancelled) {
+		while (mainJob.isActive) {
 			// Poll for window events. Input callbacks will be invoked at this time.
 			val now = nowMs()
 			val dT = (now - lastFrameMs) / 1000f
@@ -88,8 +75,6 @@ class JvmLooper : Looper {
 		_started.clear()
 		_pollEvents.dispose()
 		_updateAndRender.clear()
-		_job.complete()
-		_completed.dispatch()
-		_completed.clear()
+		mainJob.getCancellationException().cause?.let { throw it }
 	}
 }

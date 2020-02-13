@@ -15,14 +15,16 @@
  */
 
 @file:Suppress("EXPERIMENTAL_API_USAGE")
+@file:JvmName("AsyncUtils")
+@file:JvmMultifileClass
 
 package com.acornui.async
 
 import com.acornui.Disposable
 import kotlinx.coroutines.*
 import kotlin.collections.set
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
 import kotlin.time.Duration
 
 typealias Work<R> = suspend () -> R
@@ -88,7 +90,6 @@ suspend fun delay(time: Duration) {
 	delay(time.toLongMilliseconds())
 }
 
-
 /**
  * @see kotlinx.coroutines.withTimeout
  */
@@ -99,5 +100,24 @@ suspend fun <T> withTimeout(time: Duration, block: suspend CoroutineScope.() -> 
  */
 suspend fun <T> withTimeoutOrNull(time: Duration, block: suspend CoroutineScope.() -> T): T? = withTimeoutOrNull(time.inMilliseconds.toLong(), block)
 
-expect fun <T> runBlocking(context: CoroutineContext, block: suspend CoroutineScope.() -> T): T
-fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T = runBlocking(EmptyCoroutineContext, block)
+/**
+ * To be used with Unit testing or main functions, this returns a Promise on JS backends, or void on JVM backends.
+ */
+expect fun Job.toPromiseOrVoid()
+
+/**
+ * Adds a timeout to an already created job.
+ */
+fun Job.withTimeout(timeout: Duration, scope: CoroutineScope = GlobalScope) {
+	if (timeout > Duration.ZERO && !isCompleted) {
+		val timeoutJob = scope.launch {
+			delay(timeout.toLongMilliseconds())
+			throw TimeoutException(timeout)
+		}
+		this.invokeOnCompletion {
+			timeoutJob.cancel()
+		}
+	}
+}
+
+class TimeoutException(timeout: Duration) : IllegalStateException("Job timed out after ${timeout.inSeconds} seconds.")

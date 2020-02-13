@@ -16,9 +16,13 @@
 
 package com.acornui.async
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.promise
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Job
+import kotlin.js.Promise
 
-actual fun <T> runBlocking(context: CoroutineContext, block: suspend CoroutineScope.() -> T): dynamic = GlobalScope.promise(context) { block() }
+actual fun Job.toPromiseOrVoid(): dynamic = Promise<Unit> { resolve, reject ->
+	invokeOnCompletion {
+		val cause = it?.cause
+		if (cause != null) reject(cause)
+		else resolve(Unit)
+	}
+}

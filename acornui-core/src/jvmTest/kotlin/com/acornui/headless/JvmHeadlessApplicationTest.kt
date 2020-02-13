@@ -27,7 +27,7 @@ import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
-import com.acornui.runMain
+import com.acornui.runMainTest
 import com.acornui.test.ExpectedException
 import kotlin.test.*
 import kotlin.time.seconds
@@ -37,16 +37,14 @@ class JvmHeadlessApplicationTest {
 	private val appConfig = AppConfig()
 
 	@Test
-	fun start() {
-		runMain {
-			headlessApplication(appConfig) {
-				assertEquals(inject(CachedGl20), MockGl20)
-				assertEquals(inject(MouseInput), MockMouseInput)
-				assertEquals(inject(KeyInput), MockKeyInput)
-				assertTrue(inject(Loaders.textLoader) is TextLoader)
-				assertTrue(inject(Loaders.binaryLoader) is BinaryLoader)
-				exit()
-			}
+	fun start() = runMainTest {
+		headlessApplication(appConfig) {
+			assertEquals(inject(CachedGl20), MockGl20)
+			assertEquals(inject(MouseInput), MockMouseInput)
+			assertEquals(inject(KeyInput), MockKeyInput)
+			assertTrue(inject(Loaders.textLoader) is TextLoader)
+			assertTrue(inject(Loaders.binaryLoader) is BinaryLoader)
+			exit()
 		}
 	}
 
@@ -56,8 +54,8 @@ class JvmHeadlessApplicationTest {
 	@Test
 	fun failedApplicationShouldntStall() {
 		assertFailsWith(ExpectedException::class) {
-			runMain {
-				object : JvmHeadlessApplication(this@runMain) {
+			runMainTest {
+				object : JvmHeadlessApplication(this@runMainTest) {
 					@Suppress("unused")
 					val failedTask by task(dKey()) {
 						throw ExpectedException("Should fail")
@@ -76,8 +74,8 @@ class JvmHeadlessApplicationTest {
 	@Test
 	fun taskTimeout() {
 		assertFailsWith(BootstrapTaskTimeoutException::class) {
-			runMain {
-				object : JvmHeadlessApplication(this@runMain) {
+			runMainTest {
+				object : JvmHeadlessApplication(this@runMainTest) {
 					@Suppress("unused")
 					val failedTask by task(dKey(), timeout = 1f) {
 						delay(20.seconds)
@@ -95,8 +93,8 @@ class JvmHeadlessApplicationTest {
 	 */
 	@Test
 	fun optionalTaskTimeout() {
-		runMain {
-			object : JvmHeadlessApplication(this@runMain) {
+		runMainTest {
+			object : JvmHeadlessApplication(this@runMainTest) {
 				@Suppress("unused")
 				val failedTask by task(dKey(), timeout = 1f, isOptional = true) {
 					delay(20.seconds)
