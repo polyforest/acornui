@@ -68,7 +68,7 @@ fun Project.jvmCompilation(compilationName: String, configure: KotlinDependencyH
 val Project.isAcornUiComposite: Boolean
 	get() {
 		val acornUiHome: String? by this
-		return (acornUiHome != null && File(acornUiHome!!).exists())
+		return acornUiHome != null && File(acornUiHome!!).exists()
 	}
 
 /**

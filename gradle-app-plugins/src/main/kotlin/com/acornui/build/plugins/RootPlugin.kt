@@ -45,11 +45,13 @@ class RootPlugin : Plugin<Project> {
 				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 			}
 
-			project.configurations.configureEach {
-				resolutionStrategy {
-					eachDependency {
-						when {
-							requested.group.startsWith("com.acornui") -> useVersion(acornVersion)
+			if (!target.isAcornUiComposite) {
+				project.configurations.configureEach {
+					resolutionStrategy {
+						eachDependency {
+							if (requested.group.startsWith("com.acornui")) {
+								useVersion(acornVersion)
+							}
 						}
 					}
 				}
