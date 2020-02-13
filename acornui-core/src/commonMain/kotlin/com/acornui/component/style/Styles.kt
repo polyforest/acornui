@@ -222,7 +222,7 @@ interface StyleType<out T : StyleRo> {
 		get() = null
 }
 
-inline fun StyleType<*>.walkInheritance(callback: (StyleType<*>) -> Unit) {
+fun StyleType<*>.walkInheritance(callback: (StyleType<*>) -> Unit) {
 	var e: StyleType<*>? = this
 	while (e != null) {
 		callback(e)
