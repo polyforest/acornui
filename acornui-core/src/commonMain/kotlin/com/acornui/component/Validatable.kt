@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.assertionsEnabled
+import com.acornui.collection.removeFirst
 import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
@@ -73,19 +74,29 @@ private class ValidationNode(
 		val flag: Int,
 
 		/**
-		 * The flattened dependents of this node.
-		 * When this node's flag is invalidated, these flags will also be invalidated.
+		 * The direct dependents (no transitive dependents).
 		 */
-		var dependents: Int,
+		var dependentsSelf: Int,
 
 		/**
-		 * The flattened dependencies of this node.
-		 * When flags are being validated, if any of them are in this mask, this node will also be validated.
+		 * The direct dependencies (no transitive dependencies).
 		 */
-		var dependencies: Int,
+		var dependenciesSelf: Int,
 
-		val onValidate: () -> Unit
+		var onValidate: () -> Unit
 ) {
+
+	/**
+	 * The flattened dependents of this node.
+	 * When this node's flag is invalidated, these flags will also be invalidated.
+	 */
+	var dependents: Int = -1
+
+	/**
+	 * The flattened dependencies of this node.
+	 * When flags are being validated, if any of them are in this mask, this node will also be validated.
+	 */
+	var dependencies: Int = -1
 
 	var isValid: Boolean = false
 	var validatedCount = 0
@@ -127,7 +138,8 @@ class ValidationGraph(
 		val toFlagString: Int.() -> String = ValidationFlags::flagToString
 ) {
 
-	private val nodes = ArrayList<ValidationNode>()
+	private var isNodeListValid = false
+	private var nodes = ArrayList<ValidationNode>()
 	private val nodesMap = HashMap<Int, ValidationNode>()
 
 	/**
@@ -145,7 +157,7 @@ class ValidationGraph(
 		}
 
 	/**
-	 * Returns true if this validation graph is currently validating via [validate].
+	 * Returns true if this validation graph is currently validating via [validateNodeList].
 	 */
 	val isValidating: Boolean
 		get() = currentIndex != -1
@@ -166,8 +178,6 @@ class ValidationGraph(
 
 	fun addNode(flag: Int, dependencies: Int, onValidate: () -> Unit) = addNode(flag, dependencies, 0, onValidate)
 
-	fun addNode(flag: Int, dependencies: Int, dependents: Int, onValidate: () -> Unit) = addNode(flag, dependencies, dependents, true, onValidate)
-
 	/**
 	 * Appends a validation node.
 	 * @param flag The target validation bit flag.  This must be a power of two.  UiComponent reserves flags
@@ -175,62 +185,118 @@ class ValidationGraph(
 	 *
 	 * @param dependencies If any of these dependencies become invalid, this node will also become invalid.
 	 * This can be multiple flags by using bitwise OR.  E.g. `ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM`.
+	 * An [IllegalArgumentException] will be thrown if any dependency flags couldn't be found.
 	 *
 	 * @param dependents If [flag] becomes invalid, all of its dependents will also become invalid.
 	 * This can be multiple flags by using bitwise OR.  E.g. `ValidationFlags.LAYOUT or ValidationFlags.TRANSFORM`.
-	 *
-	 * @param checkAllFound If true, all dependencies and dependents provided must exist in this graph. If false,
-	 * future nodes may be listed. For example, if you have a node to add that you wish to invalidate when anything
-	 * else is invalidated, you can use `addNode(1 shl 16, dependencies = -1, dependents = 0, checkAllFound = false) {}`
+	 * An [IllegalArgumentException] will be thrown if any dependent flags couldn't be found.
 	 */
-	fun addNode(flag: Int, dependencies: Int, dependents: Int, checkAllFound: Boolean, onValidate: () -> Unit) {
-		if (assertionsEnabled) require(MathUtils.isPowerOfTwo(flag)) { "flag ${flag.toRadix(2)} is not a power of 2." }
+	fun addNode(flag: Int, dependencies: Int, dependents: Int, onValidate: () -> Unit) {
+		require(MathUtils.isPowerOfTwo(flag)) { "flag ${flag.toRadix(2)} is not a power of 2." }
+		requireFlagsExist(dependencies or dependents)
+
 		// When this node is validated, we should validate dependencies first.
 		// When this node is invalidated, we should also invalidated dependents.
-		val newNode = ValidationNode(flag, dependents or flag, dependencies or flag, onValidate)
-		var dependenciesNotFound = dependencies
-		var dependentsNotFound = dependents
-		var insertIndex = nodes.size
-		for (i in 0..nodes.lastIndex) {
-			val previousNode = nodes[i]
-			if (previousNode.flag == flag)
-				throw Exception("flag ${flag.toFlagString()} already exists.")
-			if (checkAllFound) {
-				val flagInv = previousNode.flag.inv()
-				dependenciesNotFound = dependenciesNotFound and flagInv
-				dependentsNotFound = dependentsNotFound and flagInv
-			}
-			if (previousNode.dependencies and newNode.dependents > 0) {
-				// The existing node is a dependent of the added node.
-				previousNode.addDependencies(newNode.dependencies)
-				newNode.addDependents(previousNode.dependents)
+		val newNode = ValidationNode(flag, dependents, dependencies, onValidate)
+		nodes.add(newNode)
+		isNodeListValid = false
+		_invalidFlags = _invalidFlags or flag
+		_allFlags = _allFlags or flag
+	}
 
-				// Thew new node must come before the existing node.
-				if (insertIndex > i)
-					insertIndex = i
-			}
-			if (previousNode.dependents and newNode.dependencies > 0) {
-				// The existing node is a dependency of the added node.
-				newNode.addDependencies(previousNode.dependencies)
-				previousNode.addDependents(newNode.dependents)
+	/**
+	 * Removes the node for the given flag.
+	 * @return Returns true if the node was found.
+	 */
+	fun removeNode(flag: Int): Boolean {
+		nodes.removeFirst { it.flag == flag } ?: return false
+		isNodeListValid = false
+		_allFlags = _allFlags and flag.inv()
+		_invalidFlags = _invalidFlags and flag.inv()
+		return true
+	}
 
-				// Do not allow cyclical dependencies:
-				check(insertIndex > i) {
-					"Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${dependents.toFlagsString()}"
+	/**
+	 * Adds dependencies for the given [flag].
+	 * @param newDependencies Dependencies to add to the existing dependencies.
+	 */
+	fun addDependencies(flag: Int, newDependencies: Int = 0) {
+		requireFlagsExist(newDependencies)
+
+		val node = nodes.first { it.flag == flag }
+		node.dependenciesSelf = node.dependenciesSelf or newDependencies
+		isNodeListValid = false
+		_invalidFlags = _invalidFlags or flag
+	}
+
+	/**
+	 * Adds dependents for the given [flag].
+	 * @param newDependents Dependents to add to the existing dependents.
+	 */
+	fun addDependents(flag: Int, newDependents: Int = 0) {
+		requireFlagsExist(newDependents)
+		val node = nodes.first { it.flag == flag }
+		node.dependentsSelf = node.dependentsSelf or newDependents
+		isNodeListValid = false
+		_invalidFlags = _invalidFlags or newDependents
+	}
+
+	/**
+	 * Remove dependencies for the given [flag].
+	 * @param dependencies Dependencies to remove from the existing dependencies.
+	 */
+	fun removeDependencies(flag: Int, dependencies: Int = 0) {
+		requireFlagsExist(dependencies)
+		val node = nodes.first { it.flag == flag }
+		node.dependenciesSelf = node.dependenciesSelf and dependencies.inv()
+		isNodeListValid = false
+	}
+
+	/**
+	 * Removes dependents for the given [flag].
+	 * @param dependents Dependents to remove from the existing dependents.
+	 */
+	fun removeDependents(flag: Int, dependents: Int = 0) {
+		requireFlagsExist(dependents)
+		val node = nodes.first { it.flag == flag }
+		node.dependentsSelf = node.dependentsSelf and dependents.inv()
+		isNodeListValid = false
+	}
+
+	private fun validateNodeList() {
+		isNodeListValid = true
+		val pendingNodes = nodes
+		nodes = ArrayList()
+		for (node in pendingNodes) {
+			val flag = node.flag
+			node.dependencies = node.dependenciesSelf or flag
+			node.dependents = node.dependentsSelf or flag
+			var insertIndex = nodes.size
+			for (i in 0..nodes.lastIndex) {
+				val previousNode = nodes[i]
+				require(previousNode.flag != flag) { "flag ${flag.toFlagString()} already exists." }
+				if (previousNode.dependencies and node.dependents > 0) {
+					// The existing node is a dependent of the added node.
+					previousNode.addDependencies(node.dependencies)
+					node.addDependents(previousNode.dependents)
+
+					// Thew new node must come before the existing node.
+					if (insertIndex > i)
+						insertIndex = i
+				}
+				if (previousNode.dependents and node.dependencies > 0) {
+					// The existing node is a dependency of the added node.
+					node.addDependencies(previousNode.dependencies)
+					previousNode.addDependents(node.dependents)
+
+					// Do not allow cyclical dependencies:
+					check(insertIndex > i) {
+						"Validation node cannot be added after dependency ${previousNode.flag.toFlagString()} and before all dependents ${node.dependentsSelf.toFlagsString()}"
+					}
 				}
 			}
-		}
-		nodes.add(insertIndex, newNode)
-		nodesMap[newNode.flag] = newNode
-		_invalidFlags = _invalidFlags or newNode.flag
-		_allFlags = _allFlags or newNode.flag
-		if (checkAllFound) {
-			check(dependentsNotFound == 0) {
-				"validation node added, but the dependent flags: ${dependentsNotFound.toFlagsString()} were not found."
-			}
-			check(dependenciesNotFound == 0) {
-				"validation node added, but the dependency flags: ${dependenciesNotFound.toFlagsString()} were not found."
-			}
+			nodes.add(insertIndex, node)
+			nodesMap[node.flag] = node
 		}
 	}
 
@@ -240,6 +306,7 @@ class ValidationGraph(
 	 * within the [flags] argument.
 	 */
 	fun invalidate(flags: Int = -1): Int {
+		if (!isNodeListValid) validateNodeList()
 		var flagsInvalidated = 0
 		var flagsToInvalidate = flags and _invalidFlags.inv()
 		if (flagsToInvalidate == 0) return 0
@@ -270,6 +337,7 @@ class ValidationGraph(
 	 * @return Returns the flags actually validated.
 	 */
 	fun validate(flags: Int = -1): Int {
+		if (!isNodeListValid) validateNodeList()
 		if (currentIndex != -1) {
 			if (assertionsEnabled) {
 				val node = nodes[currentIndex]
@@ -315,6 +383,12 @@ class ValidationGraph(
 			}
 		}
 		return str
+	}
+
+	private fun requireFlagsExist(flags: Int) {
+		val missingFlags = _allFlags.inv()
+		val missingRequiredFlags = flags and missingFlags
+		require(missingRequiredFlags == 0) { "Required flags not found: ${missingRequiredFlags.toFlagsString()}" }
 	}
 }
 

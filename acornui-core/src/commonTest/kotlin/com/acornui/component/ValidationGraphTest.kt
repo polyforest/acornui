@@ -20,7 +20,7 @@ class ValidationGraphTest {
 
 	@BeforeTest fun before() {
 		assertionsEnabled = true
-		n = validationGraph {
+		n = validationGraph(::toFlagString) {
 			addNode(ONE) {}
 			addNode(TWO, ONE) {}
 			addNode(THREE, TWO) {}
@@ -109,8 +109,14 @@ class ValidationGraphTest {
 	}
 
 	@Test fun dependencyAssertion() {
-		assertFailsWith(Exception::class) {
+		assertFailsWith(IllegalArgumentException::class) {
 			n.addNode(EIGHT, NINE) {}
+		}
+	}
+
+	@Test fun dependentAssertion() {
+		assertFailsWith(IllegalArgumentException::class) {
+			n.addNode(EIGHT, 0, NINE) {}
 		}
 	}
 
@@ -121,7 +127,7 @@ class ValidationGraphTest {
 	}
 
 	@Test fun textComponentsBug() {
-		val validation = validationGraph {
+		val validation = validationGraph(::toFlagString) {
 			ValidationFlags.apply {
 				addNode(STYLES) {}
 				addNode(PROPERTIES, STYLES) {}
@@ -143,86 +149,11 @@ class ValidationGraphTest {
 	}
 
 	@Test fun dependenciesCanBeValidated() {
-		val t = validationGraph {
+		val t = validationGraph(::toFlagString) {
 			addNode(ONE) { validate(TWO) }
 			addNode(TWO, 0, ONE) {}
 		}
 		t.validate()
-	}
-
-	@Test fun checkWithFutureDependencies() {
-		val vG = validationGraph {
-			addNode(THREE, dependencies = TWO or ONE, dependents = 0, checkAllFound = false) {}
-			addNode(ONE, 0) {}
-			addNode(TWO, ONE) {}
-		}
-
-		vG.validate()
-		vG.invalidate(ONE)
-		vG.assertIsNotValid(THREE)
-	}
-
-	@Test fun checkWithFutureDependents() {
-		val vG = validationGraph {
-			addNode(ONE, dependencies = 0, dependents = TWO or THREE, checkAllFound = false) {}
-			addNode(TWO, 0) {}
-			addNode(THREE, TWO) {}
-		}
-
-		vG.validate()
-		vG.invalidate(ONE)
-		vG.assertIsNotValid(ONE, TWO, THREE)
-		vG.validate(TWO)
-		vG.assertIsValid(ONE, TWO)
-		vG.assertIsNotValid(THREE)
-	}
-
-	@Test fun checkWithFutureDependentsAndDependencies() {
-		run {
-			val vG = validationGraph {
-				addNode(TWO, dependencies = ONE, dependents = THREE, checkAllFound = false) {}
-				addNode(ONE) {}
-				addNode(THREE) {}
-			}
-
-			vG.validate()
-			vG.invalidate(ONE)
-			vG.assertIsNotValid(ONE, TWO, THREE)
-			vG.validate(TWO)
-			vG.assertIsValid(ONE, TWO)
-			vG.assertIsNotValid(THREE)
-		}
-
-		run {
-			val vG = validationGraph {
-				addNode(ONE) {}
-				addNode(TWO, dependencies = ONE) {}
-				addNode(FOUR, dependencies = THREE, dependents = FIVE or SIX, checkAllFound = false) {}
-				addNode(THREE) {}
-				addNode(FIVE) {}
-				addNode(SIX, dependencies = FIVE) {}
-				addNode(SEVEN) {}
-			}
-
-			vG.validate()
-			vG.invalidate(THREE)
-			vG.assertIsNotValid(THREE, FOUR, FIVE, SIX)
-			vG.assertIsValid(ONE, TWO, SEVEN)
-		}
-
-		run {
-			val vG = validationGraph(::toFlagString) {
-				addNode(ONE, -1, 0, checkAllFound = false) {}
-				addNode(TWO) {}
-				addNode(THREE) {}
-			}
-
-			vG.validate()
-			vG.invalidate(TWO)
-			vG.assertIsNotValid(ONE, TWO)
-			vG.assertIsValid(THREE)
-		}
-
 	}
 
 	@Test fun containsFlag() {
@@ -230,6 +161,14 @@ class ValidationGraphTest {
 		assertFalse("0101".toInt(2) containsFlag "10".toInt(2))
 		assertTrue("0101".toInt(2) containsFlag "101".toInt(2))
 		assertFalse("0101".toInt(2) containsFlag "111".toInt(2))
+	}
+
+	@Test fun removeNode() {
+		n.invalidate()
+		assertFalse(n.isValid(TWO))
+		assertTrue(n.removeNode(TWO))
+		assertTrue(n.isValid(TWO))
+		assertEquals(0, n.validate(TWO))
 	}
 
 	private fun ValidationGraph.assertIsValid(vararg flags: Int) {
