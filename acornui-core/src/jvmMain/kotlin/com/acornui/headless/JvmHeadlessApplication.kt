@@ -25,6 +25,7 @@ import com.acornui.di.ContextImpl
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
 import com.acornui.uncaughtExceptionHandler
+import kotlinx.coroutines.Job
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -38,7 +39,11 @@ open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(ma
 		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
 	}
 
-	override suspend fun createContext() = ContextImpl(HeadlessDependencies.create(config()) + bootstrap.dependencies())
+	override suspend fun createContext() = ContextImpl(
+			owner = null,
+			dependencies = HeadlessDependencies.create(config()) + bootstrap.dependencies(),
+			coroutineContext = applicationScope.coroutineContext + Job(applicationJob)
+	)
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {

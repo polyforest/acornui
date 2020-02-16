@@ -33,6 +33,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * The common interface to all Acorn UI applications.
@@ -67,14 +69,18 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 
 	protected val applicationJob = Job(mainContext.coroutineContext[Job])
 	protected val applicationScope: CoroutineScope = mainContext + applicationJob
-	protected val bootstrap = Bootstrap(applicationScope)
+	protected val bootstrap = Bootstrap(applicationScope.coroutineContext)
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
 
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
 
-	protected open suspend fun createContext() = ContextImpl(owner = null, dependencies =  bootstrap.dependencies(), coroutineContext = applicationScope.coroutineContext + Job(applicationJob))
+	protected open suspend fun createContext() = ContextImpl(
+			owner = null,
+			dependencies =  bootstrap.dependencies(),
+			coroutineContext = applicationScope.coroutineContext + Job(applicationJob)
+	)
 
 	protected suspend fun awaitAll() {
 		bootstrap.awaitAll()
@@ -101,7 +107,7 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 
 	protected open suspend fun createStage(context: Context): Stage = StageImpl(context)
 
-	fun <T : Any> task(dKey: DKey<T>, timeout: Float = 10f, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
+	fun <T : Any> task(dKey: DKey<T>, timeout: Duration = 10.seconds, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 
 	final override fun startAsync(appConfig: AppConfig, onReady: Stage.() -> Unit): Job {
 		applicationScope.launch {

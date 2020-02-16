@@ -61,7 +61,6 @@ import com.acornui.lwjgl.opengl.loadTexture
 import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.time.start
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import org.lwjgl.glfw.GLFW
 import kotlin.system.exitProcess
@@ -172,7 +171,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	protected open val cursorManagerTask by task(CursorManager) {
-		JvmCursorManager(getWindowId(), GlobalScope) // TODO: Acorn scope
+		JvmCursorManager(getWindowId(), applicationScope)
 	}
 
 	protected open val persistenceTask by task(Persistence) {

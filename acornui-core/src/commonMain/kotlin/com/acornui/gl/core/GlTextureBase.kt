@@ -30,12 +30,10 @@ abstract class GlTextureBase(
 		protected val gl: Gl20
 ) : Texture {
 
-	/**
-	 * The total number of components using this texture.
-	 * This is used to determine whether the texture should be created or deleted from the gpu.
-	 */
-	var refCount: Int = 0
-		private set
+	private var _refCount: Int = 0
+
+	override val refCount: Int
+		get() = _refCount
 
 	override var target: TextureTarget = TextureTarget.TEXTURE_2D
 
@@ -70,7 +68,7 @@ abstract class GlTextureBase(
 	 * this texture will be initialized and uploaded to the GPU.
 	 */
 	override fun refInc() {
-		if (refCount++ == 0) {
+		if (_refCount++ == 0) {
 			create()
 		}
 	}
@@ -129,8 +127,8 @@ abstract class GlTextureBase(
 	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be deleted.
 	 */
 	override fun refDec() {
-		check(refCount > 0) { "Texture refInc/refDec is not paired correctly." }
-		if (--refCount == 0) {
+		check(_refCount > 0) { "Texture refInc/refDec is not paired correctly." }
+		if (--_refCount == 0) {
 			delete()
 		}
 	}

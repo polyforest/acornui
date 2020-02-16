@@ -104,9 +104,10 @@ suspend fun <T> withTimeout(time: Duration, block: suspend CoroutineScope.() -> 
 suspend fun <T> withTimeoutOrNull(time: Duration, block: suspend CoroutineScope.() -> T): T? = withTimeoutOrNull(time.inMilliseconds.toLong(), block)
 
 /**
- * To be used with Unit testing or main functions, this returns a Promise on JS backends, or void on JVM backends.
+ * To be used with Unit testing or main functions, this returns a Promise on JS backends, or blocks on JVM backends.
+ * Exceptions on this job will be propagated to the blocking function or promise.
  */
-expect fun Job.toPromiseOrVoid()
+expect fun Job.toPromiseOrBlocking()
 
 /**
  * Adds a timeout to an already created job.
@@ -115,7 +116,7 @@ fun Job.withTimeout(timeout: Duration, scope: CoroutineScope = GlobalScope) {
 	if (timeout > Duration.ZERO && !isCompleted) {
 		val timeoutJob = scope.launch {
 			delay(timeout.toLongMilliseconds())
-			throw TimeoutException(timeout)
+			this@withTimeout.cancel(MainTimeoutException(timeout))
 		}
 		this.invokeOnCompletion {
 			timeoutJob.cancel()
@@ -123,7 +124,7 @@ fun Job.withTimeout(timeout: Duration, scope: CoroutineScope = GlobalScope) {
 	}
 }
 
-class TimeoutException(timeout: Duration) : IllegalStateException("Job timed out after ${timeout.inSeconds} seconds.")
+class MainTimeoutException(timeout: Duration) : CancellationException("Job timed out after ${timeout.inSeconds} seconds.")
 
 fun CoroutineScope.launchSupervised(
 		context: CoroutineContext = EmptyCoroutineContext,

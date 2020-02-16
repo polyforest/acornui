@@ -20,12 +20,21 @@ import com.acornui.gl.core.*
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 
-object MockTexture : Texture {
+/**
+ * A mock texture with reference counting.
+ */
+class MockTexture : Texture {
+
+	private var _refCount = 0
+	override val refCount: Int
+		get() = _refCount
 
 	override fun refInc() {
+		_refCount++
 	}
 
 	override fun refDec() {
+		_refCount--
 	}
 
 	override var target: TextureTarget = TextureTarget.TEXTURE_2D

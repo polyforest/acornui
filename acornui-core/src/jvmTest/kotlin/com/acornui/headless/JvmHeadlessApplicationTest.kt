@@ -77,7 +77,7 @@ class JvmHeadlessApplicationTest {
 			runMainTest {
 				object : JvmHeadlessApplication(this@runMainTest) {
 					@Suppress("unused")
-					val failedTask by task(dKey(), timeout = 1f) {
+					val failedTask by task(dKey(), timeout = 1.seconds) {
 						delay(20.seconds)
 					}
 				}.startAsync(appConfig) {
@@ -96,7 +96,7 @@ class JvmHeadlessApplicationTest {
 		runMainTest {
 			object : JvmHeadlessApplication(this@runMainTest) {
 				@Suppress("unused")
-				val failedTask by task(dKey(), timeout = 1f, isOptional = true) {
+				val failedTask by task(dKey(), timeout = 1.seconds, isOptional = true) {
 					delay(20.seconds)
 				}
 			}.startAsync(appConfig) {

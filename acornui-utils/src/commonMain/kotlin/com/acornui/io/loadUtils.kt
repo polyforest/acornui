@@ -41,7 +41,7 @@ data class UrlRequestData(
 
 		val formData: MultipartFormDataRo? = null,
 
-		var variables: UrlParams? = null,
+		val variables: UrlParams? = null,
 
 		var body: String? = null,
 

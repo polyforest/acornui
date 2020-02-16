@@ -18,7 +18,7 @@
 
 package com.acornui.test
 
-import com.acornui.async.toPromiseOrVoid
+import com.acornui.async.toPromiseOrBlocking
 import com.acornui.closeTo
 import com.acornui.collection.toList
 import com.acornui.math.RectangleRo
@@ -279,11 +279,10 @@ fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, c
 
 /**
  * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
- * @see toPromiseOrVoid
+ * @see toPromiseOrBlocking
  */
 fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) = GlobalScope.async {
 	withTimeout(timeout.toLongMilliseconds()) {
 		block()
-		yield()
 	}
-}.toPromiseOrVoid()
+}.toPromiseOrBlocking()

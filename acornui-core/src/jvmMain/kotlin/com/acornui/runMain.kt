@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.acornui.component
+package com.acornui
 
-import kotlin.test.Test
+import kotlin.time.Duration
 
-class TextureComponent {
+actual fun runMain(timeout: Duration, block: suspend MainContext.() -> Unit) {
+	runMainJob(timeout, block)
+}
 
-	@Test fun explicitTexture() {
-
-
-	}
+actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit) {
+	runMainJob(timeout, block)
 }

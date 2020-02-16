@@ -18,7 +18,6 @@ package com.acornui
 
 import com.acornui.async.UI
 import com.acornui.async.setUiThread
-import com.acornui.async.toPromiseOrVoid
 import com.acornui.async.withTimeout
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
@@ -26,7 +25,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
-import kotlin.time.minutes
+import kotlin.time.seconds
 
 class MainContext(
 		val looper: Looper,
@@ -44,16 +43,17 @@ class MainContext(
  * On JVM backends this is a blocking function, on JS backends this method returns a `Promise` immediately.
  * This will run a [Looper] until all child coroutines started from [block] have finished.
  *
- * @param timeout If greater than zero, a [com.acornui.async.TimeoutException] will be thrown if the timeout has been
+ * @param timeout If greater than zero, a [com.acornui.async.MainTimeoutException] will be thrown if the timeout has been
  * reached before all work has completed.
  * @param block This will be invoked in place with a main context receiver. Within this block applications may be
  * created.
  *
- * @return Returns `void` on JVM backends, or a `Promise` on JS backends. This is so that runMain can easily be used
+ * @return Returns `Unit` on JVM backends, or a `Promise` on JS backends. This is so that runMain can easily be used
  * in unit tests.
  */
-@Suppress("unused")
-fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit) {
+expect fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit)
+
+internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit): Job {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
 	kotlinBugFixes()
 	setUiThread()
@@ -68,10 +68,10 @@ fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> 
 	// Prefer the main loop outside of a coroutine for easier debugging.
 	// Note that this will not be blocking on JS backends.
 	looper.loop(mainJob)
-	return mainJob.toPromiseOrVoid()
+	return mainJob
 }
 
 /**
  * [runMain] but with a more sensible timeout default for unit tests.
  */
-fun runMainTest(timeout: Duration = 2.minutes, block: suspend MainContext.() -> Unit) = runMain(timeout, block)
+expect fun runMainTest(timeout: Duration = 30.seconds, block: suspend MainContext.() -> Unit)

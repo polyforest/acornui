@@ -44,6 +44,9 @@ open class KotlinJsPlugin : Plugin<Project> {
 							// Assume project is a library, not an application, by default.
 							enabled = false
 						}
+						testTask {
+							useMocha()
+						}
 					}
 //					nodejs()
 

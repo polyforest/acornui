@@ -12,7 +12,7 @@ object MockShaderBatch : ShaderBatch {
 
 	override val isDynamic: Boolean = false
 
-	override val whitePixel: TextureRo = MockTexture
+	override val whitePixel: TextureRo = MockTexture()
 
 	override val currentDrawCall: DrawElementsCallRo = DrawElementsCall.obtain()
 

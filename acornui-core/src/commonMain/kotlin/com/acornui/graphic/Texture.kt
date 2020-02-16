@@ -20,6 +20,12 @@ import com.acornui.gl.core.*
 
 interface TextureRo {
 
+	/**
+	 * The total number of components using this texture.
+	 * This is used to determine whether the texture should be created or deleted from the gpu.
+	 */
+	val refCount: Int
+
 	val target: TextureTarget
 
 	/**

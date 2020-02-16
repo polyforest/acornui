@@ -21,7 +21,9 @@ package com.acornui.di
 import com.acornui.async.delay
 import com.acornui.test.assertUnorderedListEquals
 import com.acornui.test.runTest
-import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.supervisorScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -32,7 +34,7 @@ class BootstrapTest {
 	@Test fun get() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
+		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task1 by bootstrap.task(key1) {
 			delay(0.1.seconds)
 			"dependency 1"
@@ -48,7 +50,7 @@ class BootstrapTest {
 	@Test fun getOrderDoesntMatter() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
+		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
@@ -63,7 +65,7 @@ class BootstrapTest {
 	@Test fun dependenciesList() = runTest {
 		val key1 = dKey<String>()
 		val key2 = dKey<String>()
-		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
+		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
 		}
@@ -80,7 +82,7 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(defaultTaskTimeout = 1f)
+		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task1 by bootstrap.task(key2) {
 			delay(0.1.seconds)
 			"Extended key"
@@ -97,7 +99,9 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
+
+		// Run the bootstrap with a supervisor so we don't fail the runTest scope; we expect the bootstrap to fail.
+		val bootstrap = (this + SupervisorJob()).bootstrap(defaultTaskTimeout = 0.5.seconds)
 		val task1 by bootstrap.task(key2) {
 			delay(1.seconds) // Will cause a timeout
 			"Extended key"
@@ -105,6 +109,7 @@ class BootstrapTest {
 		assertFailsWith(BootstrapTaskTimeoutException::class) {
 			bootstrap.awaitAll()
 		}
+
 	}
 
 	@Test fun optionalTaskTimeout() = runTest {
@@ -112,7 +117,7 @@ class BootstrapTest {
 		val key2 = object : DKey<String> {
 			override val extends: DKey<*>? = key1
 		}
-		val bootstrap = Bootstrap(defaultTaskTimeout = 0.5f)
+		val bootstrap = bootstrap(defaultTaskTimeout = 0.5.seconds)
 		val task1 by bootstrap.task(key2, isOptional = true) {
 			delay(1.seconds) // Will cause a timeout
 			"Extended key"

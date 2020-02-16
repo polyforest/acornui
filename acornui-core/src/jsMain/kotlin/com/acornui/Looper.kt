@@ -24,6 +24,8 @@ import com.acornui.signal.emptySignal
 import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlin.browser.window
@@ -69,8 +71,12 @@ class JsLooper : Looper {
 		val now = nowMs()
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
-		FrameDriver.dispatch(dT)
-		_updateAndRender.dispatch(dT)
+		try {
+			FrameDriver.dispatch(dT)
+			_updateAndRender.dispatch(dT)
+		} catch (e: Throwable) {
+			mainJob.cancel(CancellationException(e.message, e))
+		}
 		if (mainJob.isActive)
 			scheduleTick()
 		else
@@ -88,7 +94,6 @@ class JsLooper : Looper {
 	private fun shutdown() {
 		_started.clear()
 		_updateAndRender.clear()
-		mainJob.getCancellationException().cause?.let { throw it }
 	}
 }
 

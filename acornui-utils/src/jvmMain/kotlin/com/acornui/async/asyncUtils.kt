@@ -16,6 +16,14 @@
 
 package com.acornui.async
 
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 
-actual fun Job.toPromiseOrVoid() {}
+@UseExperimental(InternalCoroutinesApi::class)
+actual fun Job.toPromiseOrBlocking() {
+	runBlocking {
+		join()
+		if (isCancelled) throw getCancellationException()
+	}
+}

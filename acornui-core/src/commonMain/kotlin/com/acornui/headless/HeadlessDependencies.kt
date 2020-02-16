@@ -24,6 +24,7 @@ import com.acornui.di.DependencyMap
 import com.acornui.di.dependencyMapOf
 import com.acornui.focus.FocusManager
 import com.acornui.gl.core.CachedGl20
+import com.acornui.graphic.RgbData
 import com.acornui.graphic.Window
 import com.acornui.input.InteractivityManager
 import com.acornui.input.KeyInput
@@ -41,10 +42,10 @@ object HeadlessDependencies {
 				KeyInput to MockKeyInput,
 				Loaders.binaryLoader to MockLoader(byteBuffer(1)),
 				Loaders.musicLoader to MockLoader(MockMusic),
-				Loaders.rgbDataLoader to MockLoader(MockTexture.rgbData),
+				Loaders.rgbDataLoader to MockLoader(RgbData(1, 1, false)),
 				Loaders.soundLoader to MockLoader(MockSoundFactory),
 				Loaders.textLoader to MockLoader(""),
-				Loaders.textureLoader to MockLoader(MockTexture),
+				Loaders.textureLoader to MockLoader { MockTexture() },
 				InteractivityManager to MockInteractivityManager,
 				FocusManager to MockFocusManager,
 				CachedGl20 to MockGl20

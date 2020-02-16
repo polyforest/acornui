@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package com.acornui.headless
+package com.acornui
 
-import com.acornui.io.Loader
-import com.acornui.io.ProgressReporter
-import com.acornui.io.UrlRequestData
+import com.acornui.async.toPromiseOrBlocking
 import kotlin.time.Duration
-import kotlin.time.seconds
 
-class MockLoader<T>(private val factory: suspend (requestData: UrlRequestData) -> T) : Loader<T> {
+actual fun runMain(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {
+	return runMainJob(timeout, block).toPromiseOrBlocking()
+}
 
-	constructor(default: T) : this({ default })
-
-	override val defaultInitialTimeEstimate: Duration
-		get() = 1.seconds
-
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): T {
-		return factory(requestData)
-	}
+actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {
+	return runMainJob(timeout, block).toPromiseOrBlocking()
 }

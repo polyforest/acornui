@@ -28,9 +28,6 @@ import com.acornui.io.Loader
 import com.acornui.io.file.Path
 import com.acornui.math.IntRectangle
 import com.acornui.serialization.jsonParse
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 
 /**
  * @author nbilyk
@@ -90,14 +87,13 @@ class AcornTexturePacker(private val textLoader: Loader<String>, private val rgb
 		relativePaths.forEach { path ->
 			if (!path.hasExtension("png") && !path.hasExtension("jpg")) return@forEach
 			val metadataFile = path.sibling(path.nameNoExtension + IMAGE_METADATA_EXTENSION)
-			val rgbLoader: Deferred<RgbData> = GlobalScope.async { rgbDataLoader.load(path.value) }
+			var rgbData: RgbData = rgbDataLoader.load(path.value)
 
 			// If the image has a corresponding metadata file, load that, otherwise, use default metadata settings.
 			val metadata: ImageMetadata = if (relativePaths.contains(metadataFile)) {
 				jsonParse(ImageMetadata.serializer(), textLoader.load(metadataFile.value))
 			} else ImageMetadata()
 
-			var rgbData = rgbLoader.await()
 			val padding: List<Int>
 			if (settings.stripWhitespace && rgbData.hasAlpha) {
 				padding = rgbData.calculateWhitespace(settings.alphaThreshold)

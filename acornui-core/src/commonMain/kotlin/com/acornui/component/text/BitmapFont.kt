@@ -185,7 +185,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 	}
 
 	val pageTextures = pageTextureLoaders.awaitAll()
-	val refIncJob = GlobalScope.launch(Dispatchers.UI) {
+	withContext(Dispatchers.UI) {
 		pageTextures.forEach {
 			it.refInc()
 		}
@@ -197,7 +197,6 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 			premultipliedAlpha = false,
 			glyphs = glyphs
 	)
-	refIncJob.join()
 	Log.info("Font loaded $fontPath")
 	return font
 }

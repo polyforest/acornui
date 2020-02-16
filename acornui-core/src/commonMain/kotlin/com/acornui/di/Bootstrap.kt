@@ -20,16 +20,22 @@ import com.acornui.Disposable
 import com.acornui.assertionsEnabled
 import com.acornui.async.Work
 import com.acornui.collection.removeFirst
+import com.acornui.component.ComponentInit
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.Synchronized
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class Bootstrap(
-		private val scope: CoroutineScope = GlobalScope,
-		private val defaultTaskTimeout: Float = 10f
-) : Disposable {
+		override val coroutineContext: CoroutineContext,
+		private val defaultTaskTimeout: Duration = 10.seconds
+) : Disposable, CoroutineScope {
 
 	private val dependenciesList = ArrayList<DependencyPair<*>>()
 	private var hasStarted = false
@@ -65,7 +71,7 @@ class Bootstrap(
 		var p: DKey<*>? = dKey
 		while (p != null) {
 			dependenciesList.removeFirst { it.key == p }
-			_map[p] = scope.async { value }
+			_map[p] = async { value }
 			p = p.extends
 		}
 		dependenciesList.add(dKey to value)
@@ -100,14 +106,14 @@ class Bootstrap(
 		}
 	}
 
-	fun <R, T : Any> task(dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
+	fun <R, T : Any> task(dKey: DKey<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
 
-	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Float = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
+	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
 		check(!hasStarted) { "Cannot add a task after the bootstrap has been started." }
 		var p: DKey<*>? = dKey
-		val deferred = scope.async(start = CoroutineStart.LAZY) {
+		val deferred = async(start = CoroutineStart.LAZY) {
 			try {
-				withTimeout((timeout * 1000f).toLong()) {
+				withTimeout(timeout.toLongMilliseconds()) {
 					val dependency = work()
 					addDependency(dKey, dependency)
 					dependency
@@ -131,7 +137,7 @@ class Bootstrap(
 	class BootTaskProperty<R, T : Any>(
 			private val bootstrap: Bootstrap,
 			private val dKey: DKey<T>,
-			private val timeout: Float,
+			private val timeout: Duration,
 			private val isOptional: Boolean,
 			private val work: Work<T>
 	) : ReadOnlyProperty<R, Work<T>> {
@@ -151,3 +157,8 @@ class Bootstrap(
 }
 
 class BootstrapTaskTimeoutException(message: String?) : IllegalStateException(message)
+
+inline fun CoroutineScope.bootstrap(defaultTaskTimeout: Duration = 10.seconds, init: ComponentInit<Bootstrap> = {}): Bootstrap {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Bootstrap(coroutineContext, defaultTaskTimeout).apply(init)
+}

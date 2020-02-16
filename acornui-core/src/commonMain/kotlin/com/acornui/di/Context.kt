@@ -21,12 +21,15 @@ import com.acornui.DisposedException
 import com.acornui.Idempotent
 import com.acornui.Lifecycle
 import com.acornui.collection.copy
+import com.acornui.component.ComponentInit
 import com.acornui.function.as1
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
 import kotlin.properties.ReadOnlyProperty
@@ -181,6 +184,11 @@ fun <T : Disposable> Context.own(target: T): T {
 	return target
 }
 
+inline fun Context.context(init: ComponentInit<ContextImpl>): ContextImpl {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ContextImpl(this).apply(init)
+}
+
 fun Context?.owns(other: Context?): Boolean {
 	if (this == null) return false
 	var p: Context? = other
@@ -208,7 +216,6 @@ fun Context.ownerWalk(callback: (Context) -> Boolean): Context? {
 	return null
 }
 
-
 /**
  * A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.
  */
@@ -234,8 +241,6 @@ interface DKey<T : Any> {
 }
 
 data class DependencyPair<T : Any>(val key: DKey<T>, val value: T)
-
-
 
 /**
  * A dependency map is a mutable map that enforces that the dependency key is the right type for the value.

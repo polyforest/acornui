@@ -19,10 +19,10 @@ package com.acornui.async
 import kotlinx.coroutines.Job
 import kotlin.js.Promise
 
-actual fun Job.toPromiseOrVoid(): dynamic = Promise<Unit> { resolve, reject ->
+actual fun Job.toPromiseOrBlocking(): dynamic = Promise<Unit> { resolve, reject ->
 	invokeOnCompletion {
-		val cause = it?.cause
-		if (cause != null) reject(cause)
-		else resolve(Unit)
+		if (it != null) {
+			reject(it)
+		} else resolve(Unit)
 	}
 }
