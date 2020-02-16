@@ -19,13 +19,12 @@
 package com.acornui.component.text
 
 import com.acornui.Disposable
-import com.acornui.async.getCompletedOrNull
 import com.acornui.component.*
 import com.acornui.component.scroll.ClampedScrollModel
 import com.acornui.component.scroll.ScrollPolicy
 import com.acornui.component.scroll.scrollArea
-import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Stylable
+import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
 import com.acornui.focus.Focusable
 import com.acornui.function.as2
@@ -207,7 +206,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
 			editableText.validate(ValidationFlags.STYLES)
-			val font = charStyle.getFontAsync()?.getCompletedOrNull()
+			val font = editableText.textField.font
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth(pad.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth))
@@ -452,8 +451,8 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		val w = margin.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth)
 		val rows = rows
 		val h = if (explicitHeight == null && rows != null) {
-			val font = charStyle.getFontAsync()
-			val fontData = font?.getCompletedOrNull()?.data
+			val font = editableText.textField.font
+			val fontData = font?.data
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			textInputStyle.padding.expandHeight(lineHeight * rows)
 		} else {

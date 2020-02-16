@@ -90,7 +90,7 @@ open class SimpleHighlight(
 		val highlighted = highlighted ?: return
 		val w = explicitWidth ?: highlighted.width
 		val h = explicitHeight ?: highlighted.height
-		val splits = highlight.region?.splits
+		val splits = highlight.regionData?.splits
 		if (splits != null) {
 			// left, top, right, bottom
 			// If the highlight is a nine patch, offset the highlight by the padding. This allows for the ability to

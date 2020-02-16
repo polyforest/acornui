@@ -113,6 +113,11 @@ interface Window : Disposable {
 	var continuousRendering: Boolean
 
 	/**
+	 * If there are multiple windows, make this window current.
+	 */
+	fun makeCurrent() {}
+
+	/**
 	 * True if a render and update has been requested, or if [continuousRendering] is true.
 	 * @param clearRenderRequest If true, clears the flag set via [requestRender].
 	 */

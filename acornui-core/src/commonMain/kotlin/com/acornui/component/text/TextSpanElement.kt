@@ -17,15 +17,16 @@
 package com.acornui.component.text
 
 import com.acornui.Disposable
-import com.acornui.async.getCompletedOrNull
-import com.acornui.async.then
+import com.acornui.async.cancellingJobProp
+import com.acornui.async.launchSupervised
 import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
 import com.acornui.di.Context
+import com.acornui.di.ContextImpl
 import com.acornui.gl.core.CachedGl20
-import com.acornui.recycle.ObjectPool
+import kotlinx.coroutines.Job
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 
@@ -63,6 +64,11 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 */
 	val verticalAlign: FlowVAlign?
 
+	/**
+	 * The font for this span. Will be null until the font finishes loading.
+	 */
+	val font: BitmapFont?
+
 	val windowScaleX: Float
 	val windowScaleY: Float
 
@@ -98,15 +104,14 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 	override var textParent: TextNodeRo?
 
 	fun validateStyles()
-
 }
 
-@Suppress("LeakingThis")
-open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable {
+class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement, Stylable {
+
+	private val gl = inject(CachedGl20)
+	private val fontRegistry = inject(BitmapFontRegistry)
 
 	override var textParent: TextNodeRo? = null
-
-	private lateinit var gl: CachedGl20
 
 	override val styleParent: StylableRo?
 		get() = textParent
@@ -114,7 +119,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable
 	private val _elements = ArrayList<TextElement>()
 	override val elements: MutableList<TextElement> = _elements
 
-	protected val styles = Styles(this)
+	private val styles = Styles(this)
 
 	val charStyle = styles.bind(CharStyle())
 
@@ -126,17 +131,19 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable
 	override var windowScaleX: Float = 1f
 	override var windowScaleY: Float = 1f
 
-	init {
-	}
+	private var fontJob by cancellingJobProp<Job>()
+
+	override var font: BitmapFont? = null
+		private set
 
 	//-------------------------------------------------------
 	// Stylable
 	//-------------------------------------------------------
 
-	final override val styleTags: MutableList<StyleTag>
+	override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
 
-	final override val styleRules: MutableList<StyleRule<*>>
+	override val styleRules: MutableList<StyleRule<*>>
 		get() = styles.styleRules
 
 	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = styles.getRulesByType(type, out)
@@ -148,13 +155,12 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable
 	override fun validateStyles() {
 		styles.validateStyles()
 		_charElementStyle.set(charStyle)
-		_charElementStyle.font?.then {
+
+		fontJob = launchSupervised {
+			font = fontRegistry.getFont(charStyle.createFontRequest())
 			textParent?.invalidate(ValidationFlags.LAYOUT)
 		}
 	}
-
-	private val font: BitmapFont?
-		get() = _charElementStyle.font?.getCompletedOrNull()
 
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f) / scaleY
@@ -213,7 +219,7 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable
 
 	operator fun String?.unaryPlus() {
 		if (this == null) return
-		for (i in 0..length - 1) {
+		for (i in 0 until length) {
 			addElement(char(this[i]))
 		}
 	}
@@ -239,22 +245,12 @@ open class TextSpanElementImpl private constructor() : TextSpanElement, Stylable
 
 	override fun dispose() {
 		clearElements(true)
-		pool.free(this)
-	}
-
-	companion object {
-		private val pool = ObjectPool { TextSpanElementImpl() }
-
-		fun obtain(gl: CachedGl20): TextSpanElementImpl {
-			val s = pool.obtain()
-			s.gl = gl
-			return s
-		}
+		super.dispose()
 	}
 }
 
 fun Context.span(init: ComponentInit<TextSpanElementImpl> = {}): TextSpanElementImpl {
-	val s = TextSpanElementImpl.obtain(inject(CachedGl20))
+	val s = TextSpanElementImpl(this)
 	s.init()
 	return s
 }

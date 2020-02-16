@@ -12,7 +12,7 @@ import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.reflect.afterChangeWithInit
+import com.acornui.properties.afterChangeWithInit
 
 private class BasicButtonSkin(
 		owner: Context,

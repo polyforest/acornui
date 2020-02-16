@@ -17,7 +17,7 @@ import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import com.acornui.reflect.afterChangeWithInit
+import com.acornui.properties.afterChangeWithInit
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 

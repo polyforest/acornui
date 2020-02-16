@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.acornui.component
 
 import com.acornui.AppConfig
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadAndCacheJsonAsync
-import kotlinx.coroutines.async
-import com.acornui.async.then
+import com.acornui.async.launchSupervised
 import com.acornui.collection.fill
 import com.acornui.collection.forEach2
 import com.acornui.di.Context
@@ -30,7 +31,7 @@ import com.acornui.graphic.*
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
 import com.acornui.time.onTick
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -70,20 +71,17 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 
 	private var elapsed: Float = 0f
 
-	var animation: LoadedAnimation? = null
-		private set
-
 	init {
 		onTick { dT ->
-			val loadedAnimation = animation
-			if (!paused && loadedAnimation != null) {
+			val animation = animation
+			if (!paused && animation != null) {
 				val tickTime = tickTime
 
 				elapsed += dT
 				while (elapsed >= tickTime) {
 					// Tick a frame
 					elapsed -= tickTime
-					val end = if (endFrame < 0) loadedAnimation.frames.lastIndex else endFrame
+					val end = if (endFrame < 0) animation.frames.lastIndex else endFrame
 					if (currentFrame >= end) {
 						if (loops)
 							currentFrame = startFrame
@@ -96,22 +94,67 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 		}
 	}
 
-	private var group: CachedGroup? = null
+	/**
+	 * The [Job] set from loading a texture from a path.
+	 * This may be cancelled to stop loading.
+	 */
+	var loaderJob: Job? = null
+		private set(value) {
+			field?.cancel()
+			field = value
+		}
 
-	fun setRegion(atlasPath: String, regionName: String): Deferred<LoadedAnimation> {
+	/**
+	 * Reference counting to the textures loaded.
+	 */
+	private var cachedGroup: CachedGroup? = null
+		private set(value) {
+			field?.dispose()
+			field = value
+		}
+
+	/**
+	 * The current animation being used.
+	 * This can be set by one of the animation setters: `animation(...)`
+	 */
+	var animation: LoadedAnimation? = null
+		private set(value) {
+			val old = field
+			if (old == value) return
+			field = value
+			if (isActive) {
+				old?.refDec()
+				value?.refInc()
+			}
+			invalidateLayout()
+		}
+
+	/**
+	 * Loads the sprite animation within the specified texture atlas region.
+	 * @return Returns a [Job] that represents the load and set work. This may be cancelled.
+	 * NB: This does not clear the current animation immediately, only after loading has completed. To clear
+	 * immediately, use [clear].
+	 */
+	fun animation(atlasPath: String, regionName: String): Job {
 		clear()
-		group = cachedGroup()
-		return async { loadSpriteAnimation(atlasPath, regionName, group!!) } then { loadedAnimation ->
-			setAnimation(loadedAnimation)
+		cachedGroup = cachedGroup()
+		return launchSupervised {
+			animation = loadSpriteAnimation(atlasPath, regionName, cachedGroup!!)
+		}.also {
+			loaderJob = it
 		}
 	}
 
-	override fun clear() {
-		group?.dispose()
-		group = null
-		if (isActive) animation?.refDec()
-		animation = null
-		invalidateLayout()
+	/**
+	 * If the animation was set via `animation(value: LoadedAnimation)`, this will return that value.
+	 */
+	var explicitAnimation: LoadedAnimation? = null
+		private set
+
+	fun animation(value: LoadedAnimation?) {
+		if (explicitAnimation == value) return
+		clear()
+		this.animation = value
 	}
 
 	override fun onActivated() {
@@ -122,13 +165,6 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 	override fun onDeactivated() {
 		super.onDeactivated()
 		animation?.refDec()
-	}
-
-	fun setAnimation(value: LoadedAnimation) {
-		clear()
-		animation = value
-		if (isActive) value.refInc()
-		invalidateLayout()
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -151,14 +187,16 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 		animation?.frames?.getOrNull(currentFrame - startFrame)?.render()
 	}
 
-	override fun dispose() {
-		super.dispose()
-		group?.dispose()
-		group = null
+	override fun clear() {
+		loaderJob = null
+		cachedGroup = null
+		explicitAnimation = null
+		invalidateLayout()
 	}
 
-	companion object {
-		private const val VERTICES = ValidationFlags.RESERVED_1
+	override fun dispose() {
+		clear()
+		super.dispose()
 	}
 }
 
@@ -191,15 +229,14 @@ suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, g
 			}
 		}
 	}
-
 	val textures = ArrayList<Texture>()
 	val frames = ArrayList<Atlas>()
 	for (i in 0..regions.lastIndex) {
-		val (region, page) = regions[i] ?: continue
-		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+		val (regionData, page) = regions[i] ?: continue
+		val texture = loadAndCacheAtlasPage(atlasPath, page, group)
 		if (!textures.contains(texture)) textures.add(texture)
 		val atlas = Atlas(inject(CachedGl20))
-		atlas.setRegionAndTexture(texture, region)
+		atlas.region(AtlasRegion(texture, regionData))
 		frames.add(atlas)
 	}
 	return LoadedAnimation(textures, frames)
@@ -225,7 +262,7 @@ private fun String.calculateFrameIndex(name: String): Int {
 inline fun Context.spriteAnimation(atlasPath: String, regionName: String, init: ComponentInit<SpriteAnimation> = {}): SpriteAnimation  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = SpriteAnimation(this)
-	s.setRegion(atlasPath, regionName)
+	s.animation(atlasPath, regionName)
 	s.init()
 	return s
 }

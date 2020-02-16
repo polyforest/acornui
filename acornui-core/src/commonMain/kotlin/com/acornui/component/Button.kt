@@ -30,7 +30,7 @@ import com.acornui.focus.Focusable
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.skins.Theme

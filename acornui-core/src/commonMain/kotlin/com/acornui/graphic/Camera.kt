@@ -19,10 +19,9 @@
 package com.acornui.graphic
 
 import com.acornui.math.*
-import com.acornui.observe.ModTagImpl
 import com.acornui.observe.ModTagRo
 import com.acornui.observe.modTag
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.bind
 import com.acornui.signal.or
 import kotlin.properties.ReadWriteProperty

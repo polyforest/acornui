@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.getCompletedOrNull
 import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
@@ -29,7 +28,6 @@ import com.acornui.math.Vector3
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.string.isBreaking
-import kotlinx.coroutines.Deferred
 import kotlin.math.floor
 
 /**
@@ -46,20 +44,11 @@ class CharElement private constructor() : TextElement, Clearable {
 	override var char: Char = CHAR_PLACEHOLDER
 	override var parentSpan: TextSpanElementRo<TextElementRo>? = null
 
+	private val glyph: Glyph?
+		get() = parentSpan?.font?.getGlyphSafe(char)
+
 	private val style: CharElementStyleRo?
 		get() = parentSpan?.charElementStyle
-
-	private var glyphCacheIsSet = false
-	private var glyphCache: Glyph? = null
-	val glyph: Glyph?
-		get() {
-			if (glyphCacheIsSet) return glyphCache
-			if (style?.font?.isCompleted == true) {
-				glyphCacheIsSet = true
-				glyphCache =  style?.font?.getCompletedOrNull()?.getGlyphSafe(char)
-			}
-			return glyphCache
-		}
 
 	override var x = 0f
 	override var y = 0f
@@ -319,8 +308,6 @@ class CharElement private constructor() : TextElement, Clearable {
 		v2 = 0f
 		visible = false
 		kerning = 0f
-		glyphCacheIsSet = false
-		glyphCache = null
 	}
 
 	companion object {
@@ -333,48 +320,5 @@ class CharElement private constructor() : TextElement, Clearable {
 			c.gl = gl
 			return c
 		}
-	}
-}
-
-interface CharElementStyleRo {
-	val font: Deferred<BitmapFont>?
-	val underlined: Boolean
-	val strikeThrough: Boolean
-	val lineThickness: Float
-	val selectedTextColorTint: ColorRo
-	val selectedBackgroundColor: ColorRo
-	val textColorTint: ColorRo
-	val backgroundColor: ColorRo
-	val scaleX: Float
-	val scaleY: Float
-}
-
-/**
- * A [TextSpanElement] will decorate the span's characters all the same way. This class is used to store those
- * calculated properties.
- */
-class CharElementStyle : CharElementStyleRo {
-	override var font: Deferred<BitmapFont>? = null
-	override var underlined: Boolean = false
-	override var strikeThrough: Boolean = false
-	override var lineThickness: Float = 1f
-	override val selectedTextColorTint = Color()
-	override val selectedBackgroundColor = Color()
-	override val textColorTint = Color()
-	override val backgroundColor = Color()
-	override var scaleX: Float = 1f
-	override var scaleY: Float = 1f
-
-	fun set(charStyle: CharStyle) {
-		font = charStyle.getFontAsync()
-		underlined = charStyle.underlined
-		strikeThrough = charStyle.strikeThrough
-		lineThickness = charStyle.lineThickness
-		selectedTextColorTint.set(charStyle.selectedColorTint)
-		selectedBackgroundColor.set(charStyle.selectedBackgroundColor)
-		textColorTint.set(charStyle.colorTint)
-		backgroundColor.set(charStyle.backgroundColor)
-		scaleX = charStyle.scaleX
-		scaleY = charStyle.scaleY
 	}
 }

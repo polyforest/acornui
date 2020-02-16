@@ -19,8 +19,12 @@ package com.acornui.component
 import com.acornui.assertionsEnabled
 import com.acornui.collection.removeFirst
 import com.acornui.math.MathUtils
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.string.toRadix
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * A component that has an invalidate/validate cycle.
@@ -63,6 +67,18 @@ interface Validatable {
 	 * @return Returns the flags actually validated.
 	 */
 	fun validate(flags: Int = -1): Int
+
+	/**
+	 * Returns true if the given flag is currently valid.
+	 */
+	fun isValid(flag: Int): Boolean {
+		return invalidFlags and flag == 0
+	}
+
+	/**
+	 * Returns the number of times the given flag has been validated.
+	 */
+	fun getValidatedCount(flag: Int): Int
 
 }
 
@@ -411,4 +427,49 @@ fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToStri
 	val v = ValidationGraph(toFlagString)
 	v.init()
 	return v
+}
+
+/**
+ * Returns a property delegate where when set invalidates the given flag.
+ */
+fun <T> validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> = validationProp(initialValue, flags, { it })
+
+/**
+ * Returns a property delegate where when set, copies the set value and invalidates the given flag.
+ */
+fun <T> validationProp(initialValue: T, flags: Int, copy: (T) -> T): ReadWriteProperty<Validatable, T> {
+	return object : ReadWriteProperty<Validatable, T> {
+		private var backingValue: T = copy(initialValue)
+		override fun getValue(thisRef: Validatable, property: KProperty<*>): T = backingValue
+		override fun setValue(thisRef: Validatable, property: KProperty<*>, value: T) {
+			if (value == backingValue) return // no-op
+			backingValue = copy(value)
+			thisRef.invalidate(flags)
+		}
+	}
+}
+
+/**
+ * Returns a read-only property delegate that caches a calculated result.
+ *
+ * The calculated result will be recalculated when this property is read and the given flag has validated since the
+ * last read.
+ */
+fun <T> validationProp(flag: Int, getter: () -> T): ReadOnlyProperty<Validatable, T> = ValidationProperty(flag, getter)
+
+private class ValidationProperty<T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<Validatable, T> {
+
+	private var lastValidatedCount = -1
+	private var cached: T? = null
+
+	override fun getValue(thisRef: Validatable, property: KProperty<*>): T {
+		thisRef.validate(flag)
+		val c = thisRef.getValidatedCount(flag)
+		if (lastValidatedCount != c) {
+			cached = calculator()
+			lastValidatedCount = c
+		}
+		@Suppress("UNCHECKED_CAST")
+		return cached as T
+	}
 }

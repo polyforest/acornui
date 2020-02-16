@@ -62,7 +62,7 @@ class RepeatingTexture(
 inline fun Context.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val g = RepeatingTexture(this)
-	g.path = path
+	g.texture(path)
 	g.init()
 	return g
 }

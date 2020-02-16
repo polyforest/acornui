@@ -50,7 +50,7 @@ interface Cache : Clearable {
 	 * @param key The key to use for the cache index.
 	 * @return Returns the cached value.
 	 */
-	fun <T : Any> cache(key: String, factory: () -> T): T {
+	fun <T : Any> getOrPut(key: String, factory: () -> T): T {
 		if (containsKey(key)) return get(key)!!
 		val value = factory()
 		set(key, value)
@@ -59,7 +59,8 @@ interface Cache : Clearable {
 
 	/**
 	 * Decrements the use count for the cache value with the given key.
-	 * If the use count reaches zero, the cache value will be removed and if it's [Disposable], disposed.
+	 * If the use count reaches zero, and remains at zero for a certain number of frames, the cache value will be
+	 * removed and disposed if the value implements [Disposable].
 	 */
 	fun refDec(key: String)
 
@@ -207,7 +208,7 @@ class CachedGroup(
 	 */
 	fun <T : Any> cacheAsync(key: String, context: CoroutineContext = Dispatchers.Default, factory: suspend () -> T): Deferred<T> {
 		checkDisposed()
-		val r = cache.cache(key) {
+		val r = cache.getOrPut(key) {
 			async(context) {
 				factory()
 			}
@@ -218,7 +219,7 @@ class CachedGroup(
 
 	fun <T : Any> cache(key: String, factory: () -> T): T {
 		checkDisposed()
-		val r = cache.cache(key, factory)
+		val r = cache.getOrPut(key, factory)
 		add(key)
 		return r
 	}

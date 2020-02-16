@@ -27,7 +27,6 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.Corners
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
-import kotlinx.coroutines.Deferred
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -265,17 +264,15 @@ class CharStyle : StyleBase() {
 	companion object : StyleType<CharStyle>
 }
 
-fun CharStyle.getFontAsync(): Deferred<BitmapFont>? {
-	val family = fontFamily ?: return null
-	return BitmapFontRegistry.getFontAsync(BitmapFontRequest(
-			family,
+fun CharStyle.createFontRequest(): BitmapFontRequest {
+	return BitmapFontRequest(
+			fontFamily ?: error("fontFamily is expected to be provided by the skin."),
 			fontSize,
 			fontWeight,
 			fontStyle,
 			fontPixelDensity = scaleY
-	))
+	)
 }
-
 
 fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 	val c = CharStyle()

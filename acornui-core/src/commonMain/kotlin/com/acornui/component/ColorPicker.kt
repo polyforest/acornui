@@ -35,7 +35,7 @@ import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown
 import com.acornui.math.*
 import com.acornui.popup.lift
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.toInt

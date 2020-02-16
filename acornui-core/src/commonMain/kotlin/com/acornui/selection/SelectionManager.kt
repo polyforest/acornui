@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ConvertTwoComparisonsToRangeCheck")
+
 package com.acornui.selection
 
 import com.acornui.Disposable

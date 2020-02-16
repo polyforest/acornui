@@ -33,7 +33,7 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GLUtil
+import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import kotlin.math.ceil
@@ -48,6 +48,7 @@ class GlfwWindowImpl(
 		debug: Boolean
 ) : Window {
 
+	private var capabilities: GLCapabilities
 	private val cancel = Cancel()
 	private val _closeRequested = Signal1<Cancel>()
 	override val closeRequested = _closeRequested.asRo()
@@ -100,6 +101,8 @@ class GlfwWindowImpl(
 		private set
 
 	private var forceClose = false
+	
+	
 
 	init {
 //		if (debug)
@@ -147,7 +150,7 @@ class GlfwWindowImpl(
 		// LWJGL detects the context that is current in the current thread,
 		// creates the GLCapabilities instance and makes the OpenGL
 		// bindings available for use.
-		GL.createCapabilities()
+		capabilities = GL.createCapabilities()
 
 		// Enable v-sync
 		if (glConfig.vSync)
@@ -278,6 +281,13 @@ class GlfwWindowImpl(
 		renderRequested = true
 	}
 
+	override fun makeCurrent() {
+		if (currentWindowId == windowId) return
+		currentWindowId = windowId
+		glfwMakeContextCurrent(windowId)
+		GL.setCapabilities(capabilities)
+	}
+
 	override fun renderBegin() {
 	}
 
@@ -355,5 +365,9 @@ class GlfwWindowImpl(
 		glfwDestroyWindow(windowId)
 		glfwTerminate()
 		glfwSetErrorCallback(null)?.free()
+	}
+
+	companion object {
+		private var currentWindowId = -1L
 	}
 }

@@ -88,7 +88,6 @@ suspend fun <T> load(
 			throw FileNotFoundException(urlStr)
 		process(FileInputStream(file)) //.also { _bytesLoaded = bytesTotal }
 	}
-
 }
 
 private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {

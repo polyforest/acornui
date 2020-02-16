@@ -34,7 +34,8 @@ abstract class GlTextureBase(
 	 * The total number of components using this texture.
 	 * This is used to determine whether the texture should be created or deleted from the gpu.
 	 */
-	private var refCount: Int = 0
+	var refCount: Int = 0
+		private set
 
 	override var target: TextureTarget = TextureTarget.TEXTURE_2D
 
@@ -128,8 +129,7 @@ abstract class GlTextureBase(
 	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be deleted.
 	 */
 	override fun refDec() {
-		if (refCount == 0)
-			throw Exception("Texture refInc/refDec is not paired correctly.")
+		check(refCount > 0) { "Texture refInc/refDec is not paired correctly." }
 		if (--refCount == 0) {
 			delete()
 		}

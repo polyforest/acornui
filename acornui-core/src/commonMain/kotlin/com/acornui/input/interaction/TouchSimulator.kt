@@ -27,7 +27,7 @@ import com.acornui.di.ContextImpl
 import com.acornui.graphic.Color
 import com.acornui.input.*
 import com.acornui.math.Vector2
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 
 class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 

@@ -43,7 +43,6 @@ import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.input.interaction.enableDownRepeat
 import com.acornui.math.*
-import kotlinx.coroutines.async
 
 open class BasicUiSkin(
 		protected val target: UiComponent,
@@ -117,11 +116,9 @@ open class BasicUiSkin(
 	}
 
 	protected open fun textFontStyle() {
-		BitmapFontRegistry.fontResolver = { request ->
-			async {
-				val fontFile = FontPathResolver.getPath(target, theme, request) ?: throw Exception("Font not found: $request")
-				loadFontFromDir(fontFile)
-			}
+		inject(BitmapFontRegistry).setFontResolver { request ->
+			val fontFile = FontPathResolver.getPath(target, theme, request) ?: throw Exception("Font not found: $request")
+			loadFontFromDir(fontFile)
 		}
 		theme.bodyFont.addStyles()
 		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading))

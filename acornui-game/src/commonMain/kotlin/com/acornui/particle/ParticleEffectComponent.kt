@@ -19,7 +19,6 @@ package com.acornui.particle
 import com.acornui.Disposable
 import com.acornui.Updatable
 import com.acornui.asset.*
-import com.acornui.async.UI
 import com.acornui.component.InteractivityMode
 import com.acornui.component.Sprite
 import com.acornui.component.UiComponentImpl
@@ -33,7 +32,6 @@ import com.acornui.serialization.binaryParse
 import com.acornui.serialization.jsonParse
 import com.acornui.time.onTick
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class ParticleEffectComponent(
@@ -177,13 +175,13 @@ suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
-		val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+		val texture = loadAndCacheAtlasPage(atlasPath, page, group)
 
 		val sprite = Sprite(gl)
 		sprite.blendMode = emitter.blendMode
 		sprite.premultipliedAlpha = emitter.premultipliedAlpha
 		sprite.texture = texture
-		sprite.setRegion(region.bounds, region.isRotated)
+		sprite.region(region.bounds, region.isRotated)
 		sprite
 	}
 	return loadParticleEffect(particleEffect, group, spriteResolver, maxParticlesScale)

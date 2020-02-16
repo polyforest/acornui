@@ -22,7 +22,15 @@ import com.acornui.di.Context
 import com.acornui.io.file.Path
 import kotlinx.coroutines.Deferred
 
-fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
+suspend fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CachedGroup): Texture {
+	val atlasFile = Path(atlasPath)
+	val textureFile = atlasFile.sibling(page.texturePath)
+	return group.cacheAsync(textureFile.value) {
+		page.configure(loadTexture(textureFile.value))
+	}.await()
+}
+
+fun Context.loadAndCacheAtlasPageAsync(atlasPath: String, page: AtlasPageData, group: CachedGroup): Deferred<Texture> {
 	val atlasFile = Path(atlasPath)
 	val textureFile = atlasFile.sibling(page.texturePath)
 	return group.cacheAsync(textureFile.value) {

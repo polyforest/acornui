@@ -20,13 +20,11 @@ package com.acornui.component
 
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import kotlinx.coroutines.async
-import com.acornui.async.catch
+import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.*
-import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -39,35 +37,64 @@ import kotlin.contracts.contract
  */
 open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), Clearable {
 
-	var region: AtlasRegionData? = null
-		private set
-
-	private var texture: Texture? = null
-
 	override val renderable = Atlas(gl)
 
+	val region: AtlasRegion?
+		get() = renderable.region
+
+	val regionData: AtlasRegionData?
+		get() = renderable.region?.data
+
+	val texture: Texture?
+		get() = renderable.region?.texture
+
+	protected open fun setRegionInternal(value: AtlasRegion?) {
+		if (region == value) return
+		val oldTexture = region?.texture
+		renderable.region(value)
+		if (isActive) {
+			value?.texture?.refInc()
+			oldTexture?.refDec()
+		}
+	}
+
+	fun region(value: AtlasRegion?) {
+		clear()
+		setRegionInternal(value)
+	}
+
+	fun region(texture: Texture, data: AtlasRegionData) = region(AtlasRegion(texture, data))
+
+	/**
+	 * The [Job] set from loading an atlas from a path.
+	 * This may be cancelled to stop loading.
+	 */
+	var loaderJob: Job? = null
+		private set(value) {
+			field?.cancel()
+			field = value
+		}
+
 	private var group: CachedGroup? = null
+		set(value) {
+			field?.dispose()
+			field = value
+		}
 
 	/**
 	 * Sets the region of the atlas component.
 	 * @param atlasPath The atlas json file.
 	 * @param regionName The name of the region within the atlas.
 	 *
-	 * This load can be cancelled using [clear].
+	 * @return Returns a supervised [Job] handle representing completion after the region is loaded and set.
 	 */
-	fun setRegion(atlasPath: String, regionName: String, warnOnNotFound: Boolean = true): Deferred<LoadedAtlasRegion> {
+	fun region(atlasPath: String, regionName: String): Job {
 		clear()
-		this.group = cachedGroup()
-		return async {
-			val loadedRegion = try {
-				loadAndCacheAtlasRegion(atlasPath, regionName, group!!)
-			} catch (e: RegionNotFoundException) {
-				if (warnOnNotFound)
-					Log.warn(e)
-				throw e
-			}
-			setRegionAndTexture(loadedRegion.texture, loadedRegion.region)
-			loadedRegion
+		group = cachedGroup()
+		return launchSupervised {
+			setRegionInternal(loadAndCacheAtlasRegion(atlasPath, regionName, group!!))
+		}.also {
+			loaderJob = it
 		}
 	}
 
@@ -76,18 +103,6 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 		set(value) {
 			renderable.blendMode = value
 		}
-
-	private fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
-		this.region = region
-		val oldTexture = this.texture
-		this.texture = texture
-		if (isActive) {
-			texture.refInc()
-			oldTexture?.refDec()
-		}
-		renderable.setRegionAndTexture(texture, region)
-		invalidateLayout()
-	}
 
 	override fun onActivated() {
 		super.onActivated()
@@ -100,10 +115,8 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	}
 
 	override fun clear() {
-		group?.dispose()
 		group = null
-		if (isActive) texture?.refDec()
-		texture = null
+		setRegionInternal(null)
 		renderable.clear()
 		invalidateLayout()
 	}
@@ -124,7 +137,7 @@ inline fun Context.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasCompone
 inline fun Context.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
-	a.setRegion(atlasPath, region).catch { throw it }
+	a.region(atlasPath, region)
 	a.init()
 	return a
 }
@@ -132,6 +145,6 @@ inline fun Context.atlas(atlasPath: String, region: String, init: ComponentInit<
 /**
  * Creates a texture component and uses it as the contents
  */
-fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String): Deferred<LoadedAtlasRegion> {
-	return createOrReuseElement { atlas() }.setRegion(atlasPath, region)
+fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPath: String, region: String): Job {
+	return createOrReuseElement { atlas() }.region(atlasPath, region)
 }

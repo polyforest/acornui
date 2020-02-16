@@ -23,8 +23,13 @@ package com.acornui.async
 import com.acornui.Disposable
 import kotlinx.coroutines.*
 import kotlin.collections.set
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
+import kotlin.properties.ObservableProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 import kotlin.time.Duration
 
 typealias Work<R> = suspend () -> R
@@ -62,14 +67,12 @@ object PendingDisposablesRegistry {
 fun <T : Disposable> disposeOnShutdown(disposable: T): T = PendingDisposablesRegistry.register(disposable)
 
 /**
- * Wraps await in a try/catch block, returning null if there was an exception.
+ * Suspends the coroutine until this job is complete, then returns the result if the job has completed, or null if
+ * the job was cancelled.
  */
 suspend fun <T> Deferred<T>.awaitOrNull(): T? {
-	return try {
-		await()
-	} catch (e: Throwable) {
-		null
-	}
+	join()
+	return getCompletedOrNull()
 }
 
 /**
@@ -121,3 +124,26 @@ fun Job.withTimeout(timeout: Duration, scope: CoroutineScope = GlobalScope) {
 }
 
 class TimeoutException(timeout: Duration) : IllegalStateException("Job timed out after ${timeout.inSeconds} seconds.")
+
+fun CoroutineScope.launchSupervised(
+		context: CoroutineContext = EmptyCoroutineContext,
+		start: CoroutineStart = CoroutineStart.DEFAULT,
+		block: suspend CoroutineScope.() -> Unit
+): Job {
+	return launch(context, start) {
+		supervisorScope {
+			block()
+		}
+	}
+}
+
+/**
+ * Returns a property for type Job, where upon setting will cancel the previously set job.
+ */
+fun <T : Job> cancellingJobProp(): ReadWriteProperty<Any?, T?> {
+	return object : ObservableProperty<T?>(null) {
+		override fun afterChange(property: KProperty<*>, oldValue: T?, newValue: T?) {
+			oldValue?.cancel()
+		}
+	}
+}

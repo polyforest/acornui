@@ -21,14 +21,11 @@ package com.acornui.i18n
 import com.acornui.Disposable
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadText
-import com.acornui.async.catch
-import com.acornui.async.then
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.DKey
-import com.acornui.logging.Log
 import com.acornui.observe.Observable
 import com.acornui.observe.bind
 import com.acornui.signal.Signal1
@@ -162,11 +159,10 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 			if (matchedLocale != null) {
 				val path = i18nPath.replace("{locale}", matchedLocale.value).replace("{bundleName}", bundleName)
-				cachedGroup.cacheAsync(path) {
+				val values = cachedGroup.cacheAsync(path) {
 					PropertiesParser.parse(loadText(path))
-				}.then {
-					setBundleValues(matchedLocale, bundleName, it)
-				}.catch { Log.error(it) }
+				}.await()
+				setBundleValues(matchedLocale, bundleName, values)
 			}
 		}
 	}

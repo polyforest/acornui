@@ -41,7 +41,7 @@ import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.DateTimeFormatStyle

@@ -32,7 +32,7 @@ import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.math.fractionDigits
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal1
 import com.acornui.text.NumberFormatter
 import com.acornui.text.numberFormatter

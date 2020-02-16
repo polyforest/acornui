@@ -21,7 +21,6 @@ package com.acornui.webgl
 import com.acornui.WindowConfig
 import com.acornui.browser.Location
 import com.acornui.function.as1
-import com.acornui.gl.core.Gl20
 import com.acornui.graphic.Window
 import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
@@ -37,8 +36,7 @@ import kotlin.math.ceil
  */
 class WebGlWindowImpl(
 		private val canvas: HTMLCanvasElement,
-		config: WindowConfig,
-		gl: Gl20) : Window {
+		config: WindowConfig) : Window {
 
 	private val cancel = Cancel()
 	private val _closeRequested = Signal1<Cancel>()
@@ -92,10 +90,6 @@ class WebGlWindowImpl(
 
 		watchForVisibilityChanges()
 
-		// Clear as soon as possible to avoid a frame of black
-		gl.clearColor(config.backgroundColor)
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
-		
 		document.addEventListener("fullscreenchange", ::fullScreenChangedHandler.as1)
 		val oBU = window.onbeforeunload
 		window.onbeforeunload = { event ->

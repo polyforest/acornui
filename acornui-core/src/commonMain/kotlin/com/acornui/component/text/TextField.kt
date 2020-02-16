@@ -16,11 +16,11 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.getCompletedOrNull
-import kotlinx.coroutines.launch
+import com.acornui.async.cancellingJobProp
+import com.acornui.async.launchSupervised
 import com.acornui.component.*
-import com.acornui.component.style.StyleTag
 import com.acornui.component.style.Stylable
+import com.acornui.component.style.StyleTag
 import com.acornui.component.style.addStyleRule
 import com.acornui.cursor.StandardCursors
 import com.acornui.cursor.clearCursor
@@ -30,13 +30,17 @@ import com.acornui.function.as2
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.clipboardCopy
-import com.acornui.input.interaction.*
+import com.acornui.input.interaction.ClipboardItemType
+import com.acornui.input.interaction.CopyInteractionRo
+import com.acornui.input.interaction.DragAttachment
+import com.acornui.input.interaction.DragInteractionRo
 import com.acornui.math.Bounds
 import com.acornui.selection.Selectable
 import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.substringInRange
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -49,6 +53,7 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 
 	/**
 	 * The style object for glyph decoration.
+	 * Note that child [TextSpanElement] objects may override this style.
 	 */
 	val charStyle: CharStyle
 
@@ -86,10 +91,6 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	 */
 	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
 
-//	fun <T : TextNode> replaceTextRange(startIndex: Int, endIndex: Int, newContent: T): T {
-//
-//	}
-
 	companion object : StyleTag
 }
 
@@ -104,6 +105,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	override val charStyle = bind(CharStyle())
 
 	private val selectionManager = inject(SelectionManager)
+	private val fontRegistry = inject(BitmapFontRegistry)
 
 	/**
 	 * The Selectable target to use for the selection range.
@@ -120,6 +122,16 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
 
+	/**
+	 * The font for the root character style.
+	 * Note that it's up to the span element character styles to decide what font to use for glyphs. This root
+	 * font is only used for sizing the text field when there are no text elements.
+	 */
+	var font: BitmapFont? by validationProp(null, ValidationFlags.LAYOUT)
+		private set
+
+	private var fontJob by cancellingJobProp<Job>()
+
 	init {
 		element = _textContents
 		// Add the styles as rules so that they cascade down into the text spans:
@@ -128,9 +140,8 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		styleTags.add(TextField)
 
 		watch(charStyle) { cS ->
-			launch {
-				cS.getFontAsync()?.await()
-				invalidateLayout()
+			fontJob = launchSupervised {
+				font = fontRegistry.getFont(cS.createFontRequest())
 			}
 
 			if (cS.selectable) {
@@ -216,8 +227,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
-			val font = charStyle.getFontAsync()
-			val fontData = font?.getCompletedOrNull()?.data
+			val fontData = font?.data
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			out.height = padding.expandHeight(lineHeight)

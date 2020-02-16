@@ -29,7 +29,7 @@ import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.math.Bounds
 import com.acornui.math.colorTransformation
 import com.acornui.math.grayscale
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 
 /**
  * A button that tints a single element (typically a white image).

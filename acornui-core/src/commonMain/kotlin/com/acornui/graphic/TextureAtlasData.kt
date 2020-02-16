@@ -20,7 +20,7 @@ package com.acornui.graphic
 
 import com.acornui.asset.CachedGroup
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCacheJsonAsync
+import com.acornui.asset.loadAndCacheJson
 import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
@@ -193,14 +193,17 @@ data class AtlasRegionData(
 		get() = if (isRotated) bounds.width else bounds.height
 }
 
-data class LoadedAtlasRegion(val texture: Texture, val region: AtlasRegionData)
+data class AtlasRegion(
+		val texture: Texture,
+		val data: AtlasRegionData
+)
 
-suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAtlasRegion {
-	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): AtlasRegion {
+	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
 	val (page, region) = atlasData.findRegion(regionName)
 			?: throw RegionNotFoundException(atlasPath, regionName)
-	val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
-	return LoadedAtlasRegion(texture, region)
+	val texture = loadAndCacheAtlasPage(atlasPath, page, group)
+	return AtlasRegion(texture, region)
 }
 
 class RegionNotFoundException(val atlasPath: String, val regionName: String) : Exception("Region '$regionName' not found in atlas $atlasPath.")

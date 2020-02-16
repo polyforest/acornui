@@ -21,6 +21,12 @@ import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.DeserializationStrategy
 
+suspend fun <R : Any> Context.loadAndCacheJson(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): R {
+	return group.cacheAsync(path) {
+		jsonParse(deserializer, loadText(path))
+	}.await()
+}
+
 fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): Deferred<R> {
 	return group.cacheAsync(path) {
 		jsonParse(deserializer, loadText(path))

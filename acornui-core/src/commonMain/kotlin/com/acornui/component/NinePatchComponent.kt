@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component
 
-import com.acornui.asset.CachedGroup
-import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
-import com.acornui.async.then
+import com.acornui.async.cancellingJobProp
+import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.TextureRo
+import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
+import com.acornui.recycle.Clearable
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
  * @author nbilyk
  */
-class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(owner) {
+class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(owner), Clearable {
 
 	override val renderable: NinePatch = NinePatch(gl)
-
-	private var cached: CachedGroup? = null
 
 	override fun onActivated() {
 		super.onActivated()
@@ -46,29 +49,46 @@ class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(
 		renderable.texture?.refDec()
 	}
 
-	private var _path: String? = null
-	var path: String?
-		get() = _path
-		set(value) {
-			if (_path == value) return
-			cached?.dispose()
-			cached = cachedGroup()
-			if (value != null) {
-				cached!!.cacheAsync(value) { loadTexture(value) }.then {
-					setTextureInternal(it)
-				}
-			} else {
-				setTextureInternal(null)
-			}
-		}
-
-	var texture: TextureRo?
+	/**
+	 * @return Returns the texture rendered. This will either be the explicit texture set via [texture] or the loaded
+	 * texture from [path].
+	 */
+	val texture: TextureRo?
 		get() = renderable.texture
-		set(value) {
-			if (renderable.texture == value) return
-			path = null
-			setTextureInternal(value)
+
+	var explicitTexture: TextureRo? = null
+		private set
+
+	/**
+	 * The [Job] set from loading a texture from a path.
+	 * This may be cancelled to stop loading.
+	 */
+	var loaderJob: Job? by cancellingJobProp()
+		private set
+
+	/**
+	 * Sets the texture directly, as opposed to loading a Texture from [path].
+	 */
+	fun texture(value: TextureRo?) {
+		if (explicitTexture == value) return
+		clear()
+		explicitTexture = value
+		setTextureInternal(value)
+	}
+
+	/**
+	 * Loads the texture from the given url request and sets the texture on completion.
+	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
+	 */
+	fun texture(path: String): Job = texture(path.toUrlRequestData())
+
+	fun texture(requestData: UrlRequestData): Job {
+		clear()
+		loaderJob = launchSupervised {
+			setTextureInternal(loadTexture(requestData))
 		}
+		return loaderJob!!
+	}
 
 	val naturalWidth: Float
 		get() = renderable.naturalWidth
@@ -95,27 +115,25 @@ class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(
 	private fun setTextureInternal(value: TextureRo?) {
 		if (renderable.texture == value) return
 		val oldTexture = renderable.texture
-		if (isActive) {
-			oldTexture?.refDec()
-		}
 		renderable.texture = value
 		if (isActive) {
-			renderable.texture?.refInc()
+			value?.refInc()
+			oldTexture?.refDec()
 		}
 		invalidateLayout()
 	}
 
-	fun setRegion(region: IntRectangleRo, isRotated: Boolean) {
-		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
+	fun region(region: IntRectangleRo, isRotated: Boolean) {
+		region(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
-	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
-		renderable.setRegion(x, y, width, height, isRotated)
+	fun region(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
+		renderable.region(x, y, width, height, isRotated)
 		invalidateLayout()
 	}
 
-	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
-		renderable.setRegion(u,  v, u2, v2, isRotated)
+	fun uv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
+		renderable.region(u,  v, u2, v2, isRotated)
 		invalidateLayout()
 	}
 
@@ -128,8 +146,14 @@ class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(
 		invalidateLayout()
 	}
 
+	override fun clear() {
+		loaderJob = null
+		explicitTexture = null
+		setTextureInternal(null)
+	}
+
 	override fun dispose() {
-		path = null
+		clear()
 		super.dispose()
 	}
 }

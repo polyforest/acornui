@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.acornui.component
 
 import com.acornui.gl.core.CachedGl20
@@ -24,10 +26,14 @@ import com.acornui.math.Matrix4Ro
 
 class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
-	var region: AtlasRegionData? = null
+	var region: AtlasRegion? = null
 		private set
 
-	private var texture: Texture? = null
+	val regionData: AtlasRegionData?
+		get() = region?.data
+
+	val texture: TextureRo?
+		get() = region?.texture
 
 	private val drawable: BasicRenderable?
 		get() = sprite ?: ninePatch
@@ -51,10 +57,20 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	/**
 	 * Sets the region and texture for what should be drawn.
+	 * NB: This component isn't responsible for incrementing or decrementing the texture reference counts.
 	 */
-	fun setRegionAndTexture(texture: Texture, region: AtlasRegionData) {
+	fun region(value: AtlasRegion?) {
+		if (this.region == value) return
+		this.region = value
+		if (value == null) {
+			ninePatch = null
+			sprite = null
+			return
+		}
+		val texture = value.texture
+		val data = value.data
 		val r = this
-		if (region.splits == null) {
+		if (data.splits == null) {
 			ninePatch = null
 			if (sprite == null) {
 				sprite = Sprite(gl).apply {
@@ -64,7 +80,7 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 				}
 			}
 			val t = sprite!!
-			t.setRegion(region.bounds, region.isRotated)
+			t.region(data.bounds, data.isRotated)
 		} else {
 			sprite = null
 			if (ninePatch == null) {
@@ -75,19 +91,17 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 				}
 			}
 			val t = ninePatch!!
-			val splits = region.splits
+			val splits = data.splits
 			t.split(
-					maxOf(0f, splits[0] - region.padding[0]),
-					maxOf(0f, splits[1] - region.padding[1]),
-					maxOf(0f, splits[2] - region.padding[2]),
-					maxOf(0f, splits[3] - region.padding[3])
+					maxOf(0f, splits[0] - data.padding[0]),
+					maxOf(0f, splits[1] - data.padding[1]),
+					maxOf(0f, splits[2] - data.padding[2]),
+					maxOf(0f, splits[3] - data.padding[3])
 			)
-			t.setRegion(region.bounds, region.isRotated)
+			t.region(data.bounds, data.isRotated)
 		}
 		sprite?.texture = texture
 		ninePatch?.texture = texture
-		this.region = region
-		this.texture = texture
 	}
 
 	/**
@@ -119,14 +133,14 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	override val naturalWidth: Float
 		get() {
-			val region = region ?: return 0f
+			val region = regionData ?: return 0f
 			val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
 			return (region.padding[0] + regionWidth + region.padding[2]).toFloat()
 		}
 
 	override val naturalHeight: Float
 		get() {
-			val region = region ?: return 0f
+			val region = regionData ?: return 0f
 			val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
 			return (region.padding[1] + regionHeight + region.padding[3]).toFloat()
 		}
@@ -146,7 +160,7 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 	}
 
 	private fun updatePadding(width: Float, height: Float) {
-		val region = region ?: return
+		val region = regionData ?: return
 
 		val paddingLeft = region.padding[0].toFloat()
 		val paddingTop = region.padding[1].toFloat()
@@ -181,13 +195,9 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 	}
 
 	override fun clear() {
-		texture = null
 		region = null
 		ninePatch = null
 		sprite = null
-		setScaling(1f, 1f)
-		blendMode = BlendMode.NORMAL
-		premultipliedAlpha = false
 	}
 
 	companion object {

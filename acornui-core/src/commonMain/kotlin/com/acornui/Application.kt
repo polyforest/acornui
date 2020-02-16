@@ -18,7 +18,6 @@ package com.acornui
 
 import com.acornui.asset.Loaders
 import com.acornui.async.PendingDisposablesRegistry
-import com.acornui.async.UI
 import com.acornui.async.Work
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
@@ -30,7 +29,10 @@ import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.logging.Log
 import com.acornui.signal.addOnce
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 /**
  * The common interface to all Acorn UI applications.
@@ -64,7 +66,7 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected suspend fun config() = get(AppConfig)
 
 	protected val applicationJob = Job(mainContext.coroutineContext[Job])
-	protected val applicationScope: CoroutineScope = mainContext + applicationJob + Dispatchers.UI
+	protected val applicationScope: CoroutineScope = mainContext + applicationJob
 	protected val bootstrap = Bootstrap(applicationScope)
 
 	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
@@ -72,7 +74,7 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
 	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
 
-	protected open suspend fun createContext() = ContextImpl(owner = null, dependencies =  bootstrap.dependencies(), coroutineContext = applicationScope.coroutineContext + Job(applicationJob) + Dispatchers.UI)
+	protected open suspend fun createContext() = ContextImpl(owner = null, dependencies =  bootstrap.dependencies(), coroutineContext = applicationScope.coroutineContext + Job(applicationJob))
 
 	protected suspend fun awaitAll() {
 		bootstrap.awaitAll()
@@ -106,11 +108,14 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 			set(AppConfig, appConfig)
 			onBeforeStart()
 			val context = createContext()
+			val window = context.inject(Window)
+			window.makeCurrent()
 			val stage = createStage(context)
 			onStageCreated(stage)
 			val looper = createLooper(stage)
 			looper.disposed.addOnce {
 				// The window has closed
+				window.makeCurrent()
 				context.dispose()
 				dispose()
 				applicationJob.complete()
@@ -163,10 +168,12 @@ open class ApplicationLooperImpl(
 	}
 
 	protected fun tick() {
-		window.updateAndRender(stage)
 		if (window.isCloseRequested()) {
 			Log.debug("Window closed")
 			dispose()
+		} else {
+			window.makeCurrent()
+			window.updateAndRender(stage)
 		}
 	}
 

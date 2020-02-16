@@ -19,7 +19,7 @@ package com.acornui.text
 import com.acornui.collection.copy
 import com.acornui.i18n.Locale
 import com.acornui.logging.Log
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.system.userInfo
 import com.acornui.time.DateRo
 import java.text.DateFormat

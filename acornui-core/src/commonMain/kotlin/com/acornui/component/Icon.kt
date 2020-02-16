@@ -18,8 +18,7 @@ package com.acornui.component
 
 import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
-import com.acornui.async.catch
-import com.acornui.async.then
+import com.acornui.async.launchSupervised
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
@@ -40,24 +39,24 @@ inline fun Context.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasCom
 inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val iconAtlas = iconAtlas {
-		setRegion(atlasPath, region)
+		region(atlasPath, region)
 	}
 	iconAtlas.init()
 	return iconAtlas
 }
 
-inline fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image  {
+fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val image = IconImageComponent(this)
 	image.element = textureC {
-		cachedGroup().cacheAsync(imagePath) {
-			loadTexture(imagePath).apply {
-				filterMag = TextureMagFilter.LINEAR
-				filterMin = TextureMinFilter.LINEAR
-			}
-		} then {
-			texture = it
-		} catch (TextureComponent.errorHandler)
+		launchSupervised {
+			texture(cachedGroup().cacheAsync(imagePath) {
+				loadTexture(imagePath).apply {
+					filterMag = TextureMagFilter.LINEAR
+					filterMin = TextureMinFilter.LINEAR
+				}
+			}.await())
+		}
 	}
 	image.init()
 	return image
@@ -75,6 +74,7 @@ class IconStyle : StyleBase() {
 class IconAtlasComponent(owner: Context) : AtlasComponent(owner) {
 	init {
 		val style = bind(IconStyle())
+		validation.addDependencies(ValidationFlags.COLOR_TINT, newDependencies = ValidationFlags.STYLES)
 		watch(style) {
 			colorTint = it.iconColor
 		}
@@ -84,6 +84,7 @@ class IconAtlasComponent(owner: Context) : AtlasComponent(owner) {
 class IconImageComponent(owner: Context) : Image(owner) {
 	init {
 		val style = bind(IconStyle())
+		validation.addDependencies(ValidationFlags.COLOR_TINT, newDependencies = ValidationFlags.STYLES)
 		watch(style) {
 			colorTint = it.iconColor
 		}

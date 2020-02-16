@@ -26,7 +26,6 @@ import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
 import com.acornui.component.UiComponentImpl
-import com.acornui.component.text.BitmapFontRegistry
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.error.stack
@@ -109,24 +108,25 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	/**
-	 * Sets the [CachedGl20] dependency.
-	 */
-	protected open val glTask by task(CachedGl20) {
-		Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20())
-	}
-
-	/**
 	 * Sets the [Window] dependency.
 	 */
 	private val windowTask by task(Window) {
 		val config = config()
-		val gl = get(Gl20)
 		val window = GlfwWindowImpl(config.window, config.gl, debug)
-		// Clear as soon as possible to avoid a frame of black
-		gl.clearColor(config.window.backgroundColor)
-		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
 		_windowId = window.windowId
 		window
+	}
+
+	/**
+	 * Sets the [CachedGl20] dependency.
+	 */
+	protected open val glTask by task(CachedGl20) {
+		val config = config()
+		val gl = Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20(), get(Window))
+		// Clear as soon as possible to avoid frames of black
+		gl.clearColor(config.window.backgroundColor)
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+		gl
 	}
 
 	protected open val uncaughtExceptionHandlerTask by task(uncaughtExceptionHandlerKey) {
@@ -137,7 +137,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 			Log.error(message)
 			if (debug)
 				window.alert(message)
-			System.exit(1)
+			exitProcess(1)
 		}
 		uncaughtExceptionHandler
 	}
@@ -230,11 +230,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 		FakeFocusMouse(owner)
 		UndoDispatcher(owner)
 		ContextMenuManager(owner)
-	}
-
-	override fun dispose() {
-		BitmapFontRegistry.dispose()
-		super.dispose()
 	}
 
 	companion object {

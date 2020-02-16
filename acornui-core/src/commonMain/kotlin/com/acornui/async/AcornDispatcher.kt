@@ -17,13 +17,14 @@
 package com.acornui.async
 
 
+import com.acornui.async.Acorn.delay
 import com.acornui.time.callLater
 import com.acornui.time.timer
 import kotlinx.coroutines.*
-import kotlin.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 /**
- * Dispatches execution onto Acorn event dispatching thread and provides native [delay] support.
+ * Dispatches execution onto Acorn UI Thread.
  */
 @UseExperimental(InternalCoroutinesApi::class)
 @Suppress("unused")

@@ -17,7 +17,7 @@
 package com.acornui.graphic
 
 import com.acornui.asset.cachedGroup
-import com.acornui.asset.loadAndCacheJsonAsync
+import com.acornui.asset.loadAndCacheJson
 import com.acornui.asset.loadTexture
 import com.acornui.di.Context
 import com.acornui.math.IntRectangle
@@ -105,8 +105,8 @@ suspend fun Context.calculatePerimeter(path: String, alphaThreshold: Float = 0.1
 
 suspend fun Context.calculatePerimeter(atlasPath: String, regionName: String, alphaThreshold: Float = 0.1f): List<Int> {
 	val group = cachedGroup()
-	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
 	val (page, region) = atlasData.findRegion(regionName) ?: throw Exception("Region '$regionName' not found in atlas.")
-	val texture = loadAndCacheAtlasPage(atlasPath, page, group).await()
+	val texture = loadAndCacheAtlasPage(atlasPath, page, group)
 	return ExtrudeUtil.calculatePerimeter(texture, region.bounds, alphaThreshold)
 }

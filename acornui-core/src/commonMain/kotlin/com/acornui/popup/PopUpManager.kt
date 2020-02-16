@@ -45,7 +45,7 @@ import com.acornui.isAncestorOf
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.recycle.Clearable
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce

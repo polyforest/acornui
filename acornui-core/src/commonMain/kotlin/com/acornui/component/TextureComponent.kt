@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.component
 
-import com.acornui.asset.CachedGroup
-import com.acornui.asset.cachedGroup
 import com.acornui.asset.loadTexture
-import com.acornui.async.catch
-import com.acornui.async.then
+import com.acornui.async.cancellingJobProp
+import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureRo
-import com.acornui.logging.Log
+import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -61,63 +63,72 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 		}
 
 	constructor (owner: Context, path: String) : this(owner) {
-		this.path = path
+		texture(path)
 	}
 
 	constructor (owner: Context, texture: Texture) : this(owner) {
-		this.texture = texture
+		texture(texture)
 	}
 
-	private var cached: CachedGroup? = null
+	/**
+	 * If the texture was set explicitly via `texture(value: Texture?)`, that value can be retrieved here.
+	 * @see texture
+	 */
+	var explicitTexture: TextureRo? = null
+		private set
 
 	/**
-	 * Loads a texture from the given path.
-	 * When the texture is done loading, it can be accessed via [internalTexture].
+	 * The [Job] set from loading a texture from a path.
+	 * This may be cancelled to stop loading.
 	 */
-	var path: String? = null
-		set(value) {
-			if (field == value) return
-			field = value
-			texture = null
-			cached?.dispose()
-			cached = null
-			if (value != null) {
-				cached = cachedGroup()
-				cached!!.cacheAsync(value) {
-					loadTexture(value)
-				}.then {
-					setTextureInternal(it)
-				} catch(errorHandler)
-			}
-		}
+	var loaderJob: Job? by cancellingJobProp()
+		private set
 
 	/**
-	 * Sets the texture directly, as opposed to loading a Texture from [path].
-	 * [internalTexture]
+	 * The current texture rendered.
 	 */
-	var texture: Texture? = null
-		set(value) {
-			field = value
-			path = null
-			setTextureInternal(value)
-		}
+	val texture: TextureRo?
+		get() = renderable.texture
 
 	protected open fun setTextureInternal(value: Texture?) {
 		if (renderable.texture == value) return
 		val oldTexture = renderable.texture
-		if (isActive)
+		if (isActive) {
+			value?.refInc()
 			oldTexture?.refDec()
+		}
 		renderable.texture = value
-		if (isActive)
-			renderable.texture?.refInc()
 		invalidateLayout()
 	}
 
 	/**
-	 * Returns the texture rendered.
+	 * Sets the explicit texture.
 	 */
-	val internalTexture: TextureRo?
-		get() = renderable.texture
+	fun texture(value: Texture?) {
+		if (explicitTexture == value) return
+		clear()
+		explicitTexture = value
+		setTextureInternal(value)
+	}
+
+	/**
+	 * Loads the texture at the given path and sets the texture on completion.
+	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
+	 */
+	fun texture(path: String): Job = texture(path.toUrlRequestData())
+
+	/**
+	 * Loads the texture from the given url request and sets the texture on completion.
+	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
+	 */
+	fun texture(request: UrlRequestData): Job {
+		clear()
+		return launchSupervised {
+			setTextureInternal(loadTexture(request))
+		}.also {
+			loaderJob = it
+		}
+	}
 
 	/**
 	 * If true, the texture's region is rotated.
@@ -146,64 +157,48 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	/**
 	 * Sets the region of the texture to display.
 	 */
-	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false) {
-		renderable.setRegion(x, y, width, height, isRotated)
+	fun region(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean = false) {
+		renderable.region(x, y, width, height, isRotated)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
 	/**
 	 * Sets the region of the texture to display.
 	 */
-	fun setRegion(region: RectangleRo, isRotated: Boolean = false) {
-		setRegion(region.x, region.y, region.width, region.height, isRotated)
+	fun region(region: RectangleRo, isRotated: Boolean = false) {
+		region(region.x, region.y, region.width, region.height, isRotated)
 	}
 
-	fun setRegion(region: IntRectangleRo, isRotated: Boolean = false) {
-		setRegion(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
+	fun region(region: IntRectangleRo, isRotated: Boolean = false) {
+		region(region.x.toFloat(), region.y.toFloat(), region.width.toFloat(), region.height.toFloat(), isRotated)
 	}
 
+	/**
+	 * Clears the current texture. If a texture is currently being loaded via `texture(path)`, the loading will cancel.
+	 */
 	override fun clear() {
-		cached?.dispose()
-		cached = null
-		setTextureInternal(null)
-		path = null
-		texture = null
+		loaderJob = null
+		explicitTexture = null
+		invalidateLayout()
 	}
 
 	override fun dispose() {
 		clear()
 		super.dispose()
 	}
-
-	companion object {
-
-		/**
-		 * The error handler when loading textures via [TextureComponent.path] and the texture is not found.
-		 */
-		var errorHandler: (e: Throwable) -> Unit = { Log.error(it) }
-	}
 }
 
 inline fun Context.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val textureComponent = TextureComponent(this)
-	textureComponent.init()
-	return textureComponent
+	return TextureComponent(this).apply(init)
 }
 
 inline fun Context.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val textureComponent = TextureComponent(this)
-	textureComponent.path = path
-	textureComponent.init()
-	return textureComponent
+	return TextureComponent(this, path).apply(init)
 }
 
 inline fun Context.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val textureComponent = TextureComponent(this)
-	textureComponent.texture = texture
-	textureComponent.init()
-	return textureComponent
+	return TextureComponent(this, texture).apply(init)
 }
-

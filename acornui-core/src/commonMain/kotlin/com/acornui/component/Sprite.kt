@@ -98,15 +98,15 @@ class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 		updateUv()
 	}
 
-	fun setRegion(bounds: RectangleRo, isRotated: Boolean) {
-		setRegion(bounds.x, bounds.y, bounds.width, bounds.height, isRotated)
+	fun region(bounds: RectangleRo, isRotated: Boolean) {
+		region(bounds.x, bounds.y, bounds.width, bounds.height, isRotated)
 	}
 
-	fun setRegion(bounds: IntRectangleRo, isRotated: Boolean) {
-		setRegion(bounds.x.toFloat(), bounds.y.toFloat(), bounds.width.toFloat(), bounds.height.toFloat(), isRotated)
+	fun region(bounds: IntRectangleRo, isRotated: Boolean) {
+		region(bounds.x.toFloat(), bounds.y.toFloat(), bounds.width.toFloat(), bounds.height.toFloat(), isRotated)
 	}
 
-	fun setRegion(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
+	fun region(x: Float, y: Float, width: Float, height: Float, isRotated: Boolean) {
 		region[0] = x
 		region[1] = y
 		region[2] = width + x

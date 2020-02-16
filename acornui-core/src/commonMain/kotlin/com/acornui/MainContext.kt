@@ -20,6 +20,7 @@ import com.acornui.async.UI
 import com.acornui.async.setUiThread
 import com.acornui.async.toPromiseOrVoid
 import com.acornui.async.withTimeout
+import com.acornui.logging.Log
 import kotlinx.coroutines.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -58,7 +59,7 @@ fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> 
 	setUiThread()
 	val looper = looper()
 
-	val scope = GlobalScope + Dispatchers.UI
+	val scope = GlobalScope + Dispatchers.UI + Log.uncaughtExceptionHandler
 	val mainJob = scope.async {
 		val mainContext = MainContext(looper, coroutineContext)
 		mainContext.block()

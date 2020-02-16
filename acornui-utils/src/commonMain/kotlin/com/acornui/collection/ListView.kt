@@ -18,7 +18,7 @@ package com.acornui.collection
 
 import com.acornui.Disposable
 import com.acornui.recycle.ClearableObjectPool
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2

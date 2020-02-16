@@ -39,15 +39,12 @@ import com.acornui.input.MouseState
 import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.nonZero
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
 import kotlin.properties.Delegates
-import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * The base for every AcornUi component.
@@ -616,6 +613,8 @@ open class UiComponentImpl(
 	final override val isValidating: Boolean
 		get() = validation.isValidating
 
+	final override fun getValidatedCount(flag: Int): Int = validation.getValidatedCount(flag)
+
 	//-----------------------------------------------
 	// Transformable
 	//-----------------------------------------------
@@ -919,42 +918,6 @@ open class UiComponentImpl(
 		}
 		bubbleSignals.clear()
 		attachments.clear()
-	}
-
-
-	protected fun <T> validationProp(initialValue: T, flags: Int, copy: (T) -> T): ReadWriteProperty<Validatable, T> {
-		return object : ReadWriteProperty<Validatable, T> {
-			private var backingValue: T = copy(initialValue)
-			override fun getValue(thisRef: Validatable, property: KProperty<*>): T = backingValue
-			override fun setValue(thisRef: Validatable, property: KProperty<*>, value: T) {
-				if (value == backingValue) return // no-op
-				backingValue = copy(value)
-				invalidate(flags)
-			}
-		}
-	}
-
-
-	protected fun <T> validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> =
-			afterChange(initialValue) { invalidate(flags) }
-
-	protected fun <T> validationProp(flag: Int, getter: () -> T) = ValidationProperty(flag, getter)
-
-	protected inner class ValidationProperty<T>(private val flag: Int, private val calculator: () -> T) : ReadOnlyProperty<UiComponentImpl, T> {
-
-		private var lastValidatedCount = -1
-		private var cached: T? = null
-
-		override fun getValue(thisRef: UiComponentImpl, property: KProperty<*>): T {
-			validate(flag)
-			val c = validation.getValidatedCount(flag)
-			if (lastValidatedCount != c) {
-				cached = calculator()
-				lastValidatedCount = c
-			}
-			@Suppress("UNCHECKED_CAST")
-			return cached as T
-		}
 	}
 
 	companion object {

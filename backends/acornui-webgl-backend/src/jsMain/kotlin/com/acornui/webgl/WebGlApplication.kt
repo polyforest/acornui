@@ -80,8 +80,13 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 		canvas
 	}
 
+	override val windowTask by task(Window) {
+		WebGlWindowImpl(get(CANVAS), config().window)
+	}
+
 	protected open val glTask by task(CachedGl20) {
-		val glConfig = config().gl
+		val config = config()
+		val glConfig = config.gl
 		val attributes = WebGLContextAttributes()
 		attributes.alpha = glConfig.alpha
 		attributes.antialias = glConfig.antialias
@@ -92,11 +97,12 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
-		Gl20CachedImpl(if (glDebug) WebGl20Debug(context) else WebGl20(context))
-	}
 
-	override val windowTask by task(Window) {
-		WebGlWindowImpl(get(CANVAS), config().window, get(Gl20))
+		val gl = Gl20CachedImpl(if (glDebug) WebGl20Debug(context) else WebGl20(context), get(Window))
+		// Clear as soon as possible to avoid frames of black
+		gl.clearColor(config.window.backgroundColor)
+		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
+		gl
 	}
 
 	protected open val uncaughtExceptionHandlerTask by task(uncaughtExceptionHandlerKey) {

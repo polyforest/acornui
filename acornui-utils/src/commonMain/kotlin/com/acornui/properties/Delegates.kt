@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.reflect
+package com.acornui.properties
 
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty

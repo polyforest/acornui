@@ -16,12 +16,11 @@
 
 package com.acornui.component.text
 
-import com.acornui.Disposable
 import com.acornui.asset.*
 import com.acornui.async.UI
-import com.acornui.async.catch
-import com.acornui.async.then
 import com.acornui.di.Context
+import com.acornui.di.ContextImpl
+import com.acornui.di.DKey
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Texture
@@ -346,9 +345,36 @@ data class BitmapFontRequest(
 	}
 }
 
-typealias FontResolver = (request: BitmapFontRequest) -> Deferred<BitmapFont>
+typealias FontResolver = suspend (request: BitmapFontRequest) -> BitmapFont
 
-object BitmapFontRegistry : Clearable, Disposable {
+interface BitmapFontRegistry {
+
+
+	/**
+	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
+	 * the given key.
+	 */
+	fun setFontResolver(value: FontResolver)
+
+	/**
+	 * Returns the font registered to the given style.
+	 */
+	suspend fun getFont(request: BitmapFontRequest): BitmapFont
+
+	/**
+	 * Removes a font from the registry, decrementing the references to its textures.
+	 * @return Returns true if the font was found.
+	 */
+	fun clearFont(request: BitmapFontRequest): Boolean
+
+	companion object : DKey<BitmapFontRegistry> {
+		override fun factory(context: Context): BitmapFontRegistry? {
+			return BitmapFontRegistryImpl(context)
+		}
+	}
+}
+
+class BitmapFontRegistryImpl(owner: Context) : ContextImpl(owner), BitmapFontRegistry, Clearable {
 
 	/**
 	 * family, size, weight, style -> Deferred<BitmapFont>
@@ -359,36 +385,44 @@ object BitmapFontRegistry : Clearable, Disposable {
 	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
 	 * the given key.
 	 */
-	lateinit var fontResolver: FontResolver
+	private var fontResolver: FontResolver? = null
+
+	override fun setFontResolver(value: FontResolver) {
+		fontResolver = value
+	}
 
 	/**
 	 * Returns the font registered to the given style. Logs an exception if the font is not registered.
 	 */
-	fun getFontAsync(request: BitmapFontRequest): Deferred<BitmapFont> {
+	override suspend fun getFont(request: BitmapFontRequest): BitmapFont {
 		return registry.getOrPut(request) {
-			fontResolver.invoke(request).then {
-				for (page in it.pages) {
-					page.refInc()
+			async {
+				fontResolver!!.invoke(request).apply {
+					pages.forEach(Texture::refInc)
 				}
-			}.catch {
-				Log.error(it)
 			}
-		}
+		}.await()
+	}
+
+	@UseExperimental(ExperimentalCoroutinesApi::class)
+	override fun clearFont(request: BitmapFontRequest): Boolean {
+		return registry[request]?.apply {
+			invokeOnCompletion {
+				if (it != null)
+					getCompleted().pages.forEach(Texture::refDec)
+			}
+			cancel()
+		} != null
 	}
 
 	override fun clear() {
-		registry.values.forEach { bitmapFont ->
-			bitmapFont.then {
-				for (page in it.pages) {
-					page.refDec()
-				}
-			}
-		}
+		registry.keys.forEach { clearFont(it) }
 		registry.clear()
 	}
 
 	override fun dispose() {
 		clear()
+		super.dispose()
 	}
 
 }

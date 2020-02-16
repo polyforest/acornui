@@ -17,8 +17,8 @@
 package com.acornui.gl.core
 
 import com.acornui.collection.*
-import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
+import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
 
 /**
@@ -27,11 +27,12 @@ import com.acornui.io.NativeReadBuffer
  * gl.activeTexture(Gl20.TEXTURE0)
  * gl.getParameter(Gl20.ACTIVE_TEXTURE) // No need to query GPU, returns Gl20.TEXTURE0 from ram.
  */
-class Gl20CachedImpl(protected val wrapped: Gl20) : CachedGl20 {
+class Gl20CachedImpl(private val wrapped: Gl20, private val window: Window) : CachedGl20 {
 
 	override var changeCount: Int = 0
 		private set(value) {
 			field = value
+//			window.makeCurrent()
 			batch.flush()
 		}
 

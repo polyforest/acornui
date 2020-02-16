@@ -69,12 +69,15 @@ inline fun Context.image(atlasPath: String, region: String, init: ComponentInit<
  * Creates a texture component and uses it as the element of a single element container.
  */
 fun SingleElementContainer<UiComponent>.contentsImage(value: String?) {
-	createOrReuseElement { textureC() }.path = value
+	createOrReuseElement { textureC() }.apply {
+		if (value == null) clear()
+		else texture(value)
+	}
 }
 
 /**
  * Creates a texture component and uses it as the element of a single element container.
  */
 fun SingleElementContainer<UiComponent>.contentsTexture(value: Texture?) {
-	createOrReuseElement { textureC() }.texture = value
+	createOrReuseElement { textureC() }.texture(value)
 }

@@ -16,18 +16,17 @@
 
 package com.acornui.component.text
 
+import com.acornui.Disposable
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.layout.SizableRo
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.Disposable
-import com.acornui.selection.SelectionRange
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMaxRo
+import com.acornui.selection.SelectionRange
 
 /**
  * The smallest unit that can be inside of a TextField.

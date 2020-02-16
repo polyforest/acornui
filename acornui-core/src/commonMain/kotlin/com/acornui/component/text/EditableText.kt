@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.async.getCompletedOrNull
 import com.acornui.component.ContainerImpl
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
@@ -36,7 +35,7 @@ import com.acornui.math.MathUtils
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.commander
 import com.acornui.mvc.invokeCommand
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.repeat2
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
@@ -166,7 +165,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		host.char().add {
 			if (editable && !it.defaultPrevented()) {
-				val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
+				val glyphs = getFontAtSelection()?.glyphs
 				if (glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
@@ -180,7 +179,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				it.handled = true
 				val str = it.getItemByType(ClipboardItemType.PLAIN_TEXT)
 				if (str != null) {
-					val glyphs = host.charStyle.getFontAsync()?.getCompletedOrNull()?.glyphs
+					val glyphs = getFontAtSelection()?.glyphs
 					replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
 					currentGroup = CommandGroup()
 					_input.dispatch()
@@ -258,6 +257,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				_changed.dispatch()
 			}
 		}
+	}
+
+	private fun getFontAtSelection(): BitmapFont? {
+		val firstSelection = firstSelection ?: return null
+		return textField.element?.textElements?.get(firstSelection.endIndex)?.parentSpan?.font
 	}
 
 	override fun updateStyles() {

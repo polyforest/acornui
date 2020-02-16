@@ -25,7 +25,7 @@ import com.acornui.graphic.Window
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.RectangleRo
 import com.acornui.observe.Observable
-import com.acornui.reflect.afterChange
+import com.acornui.properties.afterChange
 import com.acornui.signal.Signal1
 import kotlin.properties.ReadWriteProperty
 
