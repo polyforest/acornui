@@ -18,15 +18,14 @@ package com.acornui.io
 
 import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
-import com.acornui.recycle.Clearable
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
-
-// TODO: make serializable
 
 /**
  * A model with the necessary information to make an http request.
  * This is also used for file requests.
  */
+@Serializable
 data class UrlRequestData(
 
 		val url: String = "",
@@ -39,7 +38,7 @@ data class UrlRequestData(
 
 		val password: String? = null,
 
-		val formData: MultipartFormDataRo? = null,
+		val formData: MultipartFormData? = null,
 
 		val variables: UrlParams? = null,
 
@@ -53,7 +52,7 @@ data class UrlRequestData(
 
 	fun toUrlStr(): String {
 		return if (method == UrlRequestMethod.GET && variables != null)
-			url + "?" + variables!!.toQueryString() else url
+			url + "?" + variables.toQueryString() else url
 	}
 
 	companion object {
@@ -90,46 +89,29 @@ open class ResponseException(val status: Short, message: String?, val detail: St
 	}
 }
 
-interface MultipartFormDataRo {
-	val items: List<FormDataItem>
-}
-
-class MultipartFormData : Clearable, MultipartFormDataRo {
-
-	private val _items = ArrayList<FormDataItem>()
-	override val items: List<FormDataItem>
-		get() = _items
-
-	fun append(name: String, value: NativeReadByteBuffer, filename: String? = null) {
-		_items.add(ByteArrayFormItem(name, value, filename))
-	}
-
-	fun append(name: String, value: String) {
-		_items.add(StringFormItem(name, value))
-	}
-
-	override fun clear() {
-		_items.clear()
-	}
-}
+@Serializable
+data class MultipartFormData(val items: List<FormDataItem>)
 
 /**
  * A marker interface for items that can be in the list of [MultipartFormData.items]
  */
-interface FormDataItem {
-	val name: String
+@Serializable
+sealed class FormDataItem {
+	abstract val name: String
 }
 
+@Serializable
 class ByteArrayFormItem(
 		override val name: String,
 		val value: NativeReadByteBuffer,
 		val filename: String?
-) : FormDataItem
+) : FormDataItem()
 
+@Serializable
 class StringFormItem(
 		override val name: String,
 		val value: String
-) : FormDataItem
+) : FormDataItem()
 
 interface Loader<out T> {
 
