@@ -16,25 +16,39 @@
 
 package com.acornui.browser
 
-import com.acornui.recycle.Clearable
-import com.acornui.collection.firstOrNull2
-import com.acornui.collection.indexOfFirst2
+import kotlinx.serialization.Serializable
 
-interface UrlParams {
+fun String.toUrlParams(): UrlParams {
+	val items = ArrayList<Pair<String, String>>()
+	val split = split("&")
+	for (entry in split) {
+		val i = entry.indexOf("=")
+		if (i != -1)
+			items.add(entry.substring(0, i) to decodeUriComponent2(entry.substring(i + 1)))
+	}
+	return UrlParams(items)
+}
+
+@Serializable
+data class UrlParams(val items: List<Pair<String, String>>) {
 
 	/**
 	 * Retrieves the first parameter with the given name.
 	 */
-	fun get(name: String): String?
+	fun get(name: String): String? {
+		return items.firstOrNull { it.first == name }?.second
+	}
 
 	/**
-	 * Retrieves all parameters with the given name.
+	 * Retrieves all [items] with the given name.
 	 */
-	fun getAll(name: String): List<String>
+	fun getAll(name: String): List<String> {
+		return items.filter { it.first == name }.map { it.second }
+	}
 
-	fun contains(name: String): Boolean
-
-	val items: List<Pair<String, String>>
+	fun contains(name: String): Boolean {
+		return items.firstOrNull { it.first == name } != null
+	}
 
 	fun toQueryString(): String {
 		val result = StringBuilder()
@@ -52,93 +66,5 @@ interface UrlParams {
 	}
 }
 
-fun String.toUrlParams(): UrlParamsImpl {
-	val p = UrlParamsImpl()
-	val split = split("&")
-	for (entry in split) {
-		val i = entry.indexOf("=")
-		if (i != -1)
-			p.append(entry.substring(0, i), decodeUriComponent2(entry.substring(i + 1)))
-	}
-	return p
-}
-
-class UrlParamsImpl() : Clearable, UrlParams {
-
-	private val _items = ArrayList<Pair<String, String>>()
-
-	override val items: List<Pair<String, String>>
-		get() = _items
-
-	constructor(params: List<Pair<String, String>>) : this() {
-		for ((name, value) in params) {
-			append(name, value)
-		}
-	}
-
-	fun append(name: String, value: String) {
-		_items.add(Pair(name, value))
-	}
-
-	fun appendAll(entries: Iterable<Pair<String, String>>) {
-		for (entry in entries) {
-			append(entry.first, entry.second)
-		}
-	}
-
-	fun remove(name: String): Boolean {
-		val i = _items.indexOfFirst2 { it.first == name }
-		if (i == -1) return false
-		_items.removeAt(i)
-		return true
-	}
-
-	override fun get(name: String): String? {
-		return _items.firstOrNull2 { it: Pair<String, String> -> it.first == name }?.second
-	}
-
-	override fun getAll(name: String): List<String> {
-		val list = ArrayList<String>()
-		for (item in _items) {
-			if (item.first == name) list.add(item.second)
-		}
-		return list
-	}
-
-	fun set(name: String, value: String) {
-		val index = _items.indexOfFirst2 { it.first == name }
-		if (index == -1) {
-			_items.add(Pair(name, value))
-		} else {
-			_items[index] = Pair(name, value)
-		}
-	}
-
-	override fun contains(name: String): Boolean {
-		return _items.firstOrNull2 { it: Pair<String, String> -> it.first == name } != null
-	}
-
-	override fun clear() {
-		_items.clear()
-	}
-
-}
-
 expect fun encodeUriComponent2(str: String): String
 expect fun decodeUriComponent2(str: String): String
-
-/**
- * Appends a url parameter to a url string, returning the new string.
- */
-fun String.appendParam(paramName: String, paramValue: String): String {
-	return this + if (contains("?")) "&" else "?" + "$paramName=${encodeUriComponent2(paramValue)}"
-}
-
-fun String.appendOrUpdateParam(paramName: String, paramValue: String): String {
-	val qIndex = indexOf("?")
-	if (qIndex == -1) return "$this?$paramName=${encodeUriComponent2(paramValue)}"
-	val queryStr = substring(qIndex + 1)
-	val query = queryStr.toUrlParams()
-	query.set(paramName, paramValue)
-	return "${substring(0, qIndex)}?${query.toQueryString()}"
-}

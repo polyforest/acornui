@@ -29,7 +29,7 @@ class MockLoader<T>(private val factory: suspend (requestData: UrlRequestData) -
 	override val defaultInitialTimeEstimate: Duration
 		get() = 1.seconds
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): T {
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): T {
 		return factory(requestData)
 	}
 }

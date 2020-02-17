@@ -23,9 +23,9 @@ import com.acornui.graphic.Texture
 import com.acornui.io.*
 import java.nio.ByteBuffer
 import kotlin.time.Duration
-import kotlin.time.seconds
 
 /**
+ * A
  * @author nbilyk
  */
 class JvmTexture(gl: Gl20,
@@ -47,6 +47,6 @@ class JvmTexture(gl: Gl20,
 /**
  * Creates an http request, processing the results as a [Texture].
  */
-suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000): Texture {
-	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate))
+suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
+	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout))
 }

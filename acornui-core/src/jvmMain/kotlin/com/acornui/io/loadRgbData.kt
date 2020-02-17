@@ -26,10 +26,9 @@ import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
 import kotlin.time.Duration
-import kotlin.time.seconds
 
-suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 100_000): RgbData {
-	return load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
+suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
+	return load(requestData, progressReporter, initialTimeEstimate, connectTimeout) { inputStream ->
 		try {
 			createImageData(inputStream)
 		} catch (e: CancellationException) {

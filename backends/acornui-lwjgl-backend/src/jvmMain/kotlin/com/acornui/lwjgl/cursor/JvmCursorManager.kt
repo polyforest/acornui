@@ -17,21 +17,19 @@
 package com.acornui.lwjgl.cursor
 
 import com.acornui.LifecycleBase
-import com.acornui.async.UI
+import com.acornui.asset.load
 import com.acornui.cursor.Cursor
 import com.acornui.cursor.CursorManagerBase
 import com.acornui.cursor.StandardCursors
 import com.acornui.graphic.RgbData
 import com.acornui.io.JvmBufferUtil
-import com.acornui.io.UrlRequestData
-import com.acornui.io.loadRgbData
+import com.acornui.io.Loader
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 
-class JvmCursorManager(private val window: Long, scope: CoroutineScope) : CursorManagerBase() {
+class JvmCursorManager(window: Long, rgbDataLoader: Loader<RgbData>, scope: CoroutineScope) : CursorManagerBase() {
 
 	val cursorsPath = "assets/uiskin/cursors/"
 
@@ -44,18 +42,18 @@ class JvmCursorManager(private val window: Long, scope: CoroutineScope) : Cursor
 			HAND = JvmStandardCursor(window, GLFW.GLFW_HAND_CURSOR)
 			RESIZE_EW = JvmStandardCursor(window, GLFW.GLFW_HRESIZE_CURSOR)
 			RESIZE_NS = JvmStandardCursor(window, GLFW.GLFW_VRESIZE_CURSOR)
-			ALIAS = JvmTextureCursor(window, scope, cursorsPath + "Alias.png", 2, 2)
-			ALL_SCROLL = JvmTextureCursor(window, scope, cursorsPath + "AllScroll.png", 12, 12)
-			CELL = JvmTextureCursor(window, scope, cursorsPath + "Cell.png", 12, 12)
-			COPY = JvmTextureCursor(window, scope, cursorsPath + "Copy.png", 2, 2)
-			HELP = JvmTextureCursor(window, scope, cursorsPath + "Help.png", 2, 2)
-			MOVE = JvmTextureCursor(window, scope, cursorsPath + "Move.png", 12, 12)
+			ALIAS = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Alias.png", 2, 2)
+			ALL_SCROLL = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "AllScroll.png", 12, 12)
+			CELL = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Cell.png", 12, 12)
+			COPY = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Copy.png", 2, 2)
+			HELP = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Help.png", 2, 2)
+			MOVE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Move.png", 12, 12)
 			NONE = HiddenCursor(window)
-			NOT_ALLOWED = JvmTextureCursor(window, scope, cursorsPath + "NotAllowed.png", 12, 12)
-			POINTER_WAIT = JvmTextureCursor(window, scope, cursorsPath + "PointerWait.png", 1, 3)
-			RESIZE_NE = JvmTextureCursor(window, scope, cursorsPath + "ResizeNE.png", 13, 13)
-			RESIZE_SE = JvmTextureCursor(window, scope, cursorsPath + "ResizeSE.png", 13, 13)
-			WAIT = JvmTextureCursor(window, scope, cursorsPath + "Wait.png", 6, 2)
+			NOT_ALLOWED = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "NotAllowed.png", 12, 12)
+			POINTER_WAIT = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "PointerWait.png", 1, 3)
+			RESIZE_NE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeNE.png", 13, 13)
+			RESIZE_SE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeSE.png", 13, 13)
+			WAIT = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Wait.png", 6, 2)
 		}
 	}
 }
@@ -65,6 +63,7 @@ class JvmCursorManager(private val window: Long, scope: CoroutineScope) : Cursor
  */
 class JvmTextureCursor(
 		private val window: Long,
+		val rgbDataLoader: Loader<RgbData>,
 		scope: CoroutineScope,
 		texturePath: String,
 		val hotX: Int,
@@ -74,8 +73,8 @@ class JvmTextureCursor(
 	private var cursor: Long = -1L
 
 	init {
-		scope.launch(Dispatchers.UI) {
-			setTexture(loadRgbData(UrlRequestData(texturePath)))
+		scope.launch {
+			setTexture(rgbDataLoader.load(texturePath))
 		}
 	}
 

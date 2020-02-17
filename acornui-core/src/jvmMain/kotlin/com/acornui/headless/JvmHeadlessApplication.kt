@@ -47,11 +47,12 @@ open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(ma
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		object : Loader<RgbData> {
+
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
-				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
+				return loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 			}
 		}
 	}
@@ -64,5 +65,3 @@ open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(ma
 		}
 	}
 }
-
-

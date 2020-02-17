@@ -35,9 +35,10 @@ object Loaders {
 }
 
 suspend fun <T> Loader<T>.load(url: String,
-				 progressReporter: ProgressReporter = GlobalProgressReporter,
-				 initialTimeEstimate: Duration = defaultInitialTimeEstimate
-): T = load(url.toUrlRequestData(), progressReporter, initialTimeEstimate)
+							   progressReporter: ProgressReporter = GlobalProgressReporter,
+							   initialTimeEstimate: Duration = defaultInitialTimeEstimate,
+							   connectTimeout: Duration = defaultConnectTimeout
+): T = load(url.toUrlRequestData(), progressReporter, initialTimeEstimate, connectTimeout)
 
 /**
  * Requests a [String] resource.
@@ -45,9 +46,10 @@ suspend fun <T> Loader<T>.load(url: String,
 suspend fun Context.loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout
 ): String {
-	return inject(Loaders.textLoader).load(requestData, progressReporter, initialTimeEstimate)
+	return inject(Loaders.textLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -56,9 +58,10 @@ suspend fun Context.loadText(
 suspend fun Context.loadText(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.textLoader).defaultConnectTimeout
 ): String {
-	return inject(Loaders.textLoader).load(path, progressReporter, initialTimeEstimate)
+	return inject(Loaders.textLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -67,9 +70,10 @@ suspend fun Context.loadText(
 suspend fun Context.loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.binaryLoader).defaultConnectTimeout
 ): ReadByteBuffer {
-	return inject(Loaders.binaryLoader).load(requestData, progressReporter, initialTimeEstimate)
+	return inject(Loaders.binaryLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -78,9 +82,10 @@ suspend fun Context.loadBinary(
 suspend fun Context.loadBinary(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.binaryLoader).defaultConnectTimeout
 ): ReadByteBuffer {
-	return inject(Loaders.binaryLoader).load(path, progressReporter, initialTimeEstimate)
+	return inject(Loaders.binaryLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -89,9 +94,10 @@ suspend fun Context.loadBinary(
 suspend fun Context.loadTexture(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout
 ): Texture {
-	return inject(Loaders.textureLoader).load(requestData, progressReporter, initialTimeEstimate)
+	return inject(Loaders.textureLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -109,9 +115,10 @@ suspend fun Context.loadTexture(
 suspend fun Context.loadMusic(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.musicLoader).defaultConnectTimeout
 ): Music {
-	return inject(Loaders.musicLoader).load(requestData, progressReporter, initialTimeEstimate)
+	return inject(Loaders.musicLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -120,9 +127,10 @@ suspend fun Context.loadMusic(
 suspend fun Context.loadMusic(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.musicLoader).defaultConnectTimeout
 ): Music {
-	return inject(Loaders.musicLoader).load(path, progressReporter, initialTimeEstimate)
+	return inject(Loaders.musicLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -131,9 +139,10 @@ suspend fun Context.loadMusic(
 suspend fun Context.loadSound(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.soundLoader).defaultConnectTimeout
 ): SoundFactory {
-	return inject(Loaders.soundLoader).load(requestData, progressReporter, initialTimeEstimate)
+	return inject(Loaders.soundLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 }
 
 /**
@@ -142,7 +151,8 @@ suspend fun Context.loadSound(
 suspend fun Context.loadSound(
 		path: String,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate
+		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.soundLoader).defaultConnectTimeout
 ): SoundFactory {
-	return inject(Loaders.soundLoader).load(path, progressReporter, initialTimeEstimate)
+	return inject(Loaders.soundLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
 }

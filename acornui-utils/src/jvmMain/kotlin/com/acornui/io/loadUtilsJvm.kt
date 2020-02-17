@@ -16,7 +16,6 @@
 
 package com.acornui.io
 
-import com.acornui.logging.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -51,6 +50,7 @@ suspend fun <T> load(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
 		initialTimeEstimate: Duration,
+		connectTimeout: Duration,
 		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
 	// TODO: cookies, cancellation and progress
@@ -62,7 +62,7 @@ suspend fun <T> load(
 		val con = url.openConnection()
 		var result: T? = null
 		if (con is HttpURLConnection) {
-			configure(con, requestData)
+			configure(con, requestData, connectTimeout)
 			try {
 				con.connect()
 				val status = con.responseCode
@@ -90,14 +90,14 @@ suspend fun <T> load(
 	}
 }
 
-private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
+private fun configure(con: HttpURLConnection, requestData: UrlRequestData, connectTimeout: Duration) {
 	if (requestData.user != null) {
 		val userPass = "${requestData.user}:${requestData.password}"
 		val basicAuth = "Basic " + Base64.getEncoder().encodeToString(userPass.toByteArray())
 		con.setRequestProperty("Authorization", basicAuth)
 	}
 	con.requestMethod = requestData.method
-	con.connectTimeout = (requestData.timeout * 1000f).toInt()
+	con.connectTimeout = connectTimeout.inMilliseconds.toInt()
 	for ((key, value) in requestData.headers) {
 		con.setRequestProperty(key, value)
 	}
@@ -105,23 +105,19 @@ private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
 		when {
 			requestData.variables != null -> {
 				con.doOutput = true
-				con.outputStream.writeTextAndClose(requestData.variables!!.toQueryString())
+				con.outputStream.writeTextAndClose(requestData.variables.toQueryString())
 			}
 			requestData.formData != null -> {
 				con.doOutput = true
 				val out = DataOutputStream(con.outputStream)
-				val items = requestData.formData.items
-				for (i in 0..items.lastIndex) {
-					val item = items[i]
+				for ((i, item) in requestData.formData.items.withIndex()) {
 					if (i != 0) out.writeBytes("&")
 					out.writeBytes("$item.name=")
 					when (item) {
 						is ByteArrayFormItem -> out.write(item.value.toByteArray())
 						is StringFormItem -> out.writeBytes(item.value)
-						else -> Log.warn("Unknown form item type $item")
 					}
 				}
-
 				out.flush()
 				out.close()
 			}
@@ -136,8 +132,9 @@ private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
 suspend fun loadText(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = Bandwidth.downBpsInv.seconds * 1_000
-) = load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
+		initialTimeEstimate: Duration,
+		connectTimeout: Duration
+) = load(requestData, progressReporter, initialTimeEstimate, connectTimeout) { inputStream ->
 	inputStream.readTextAndClose()
 }
 
@@ -145,16 +142,17 @@ actual class TextLoader : Loader<String> {
 	override val defaultInitialTimeEstimate: Duration
 		get() = Bandwidth.downBpsInv.seconds * 1_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): String {
-		return loadText(requestData, progressReporter, initialTimeEstimate)
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): String {
+		return loadText(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 	}
 }
 
 suspend fun loadBinary(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration
-): ReadByteBuffer = load(requestData, progressReporter, initialTimeEstimate) { inputStream ->
+		initialTimeEstimate: Duration,
+		connectTimeout: Duration
+): ReadByteBuffer = load(requestData, progressReporter, initialTimeEstimate, connectTimeout) { inputStream ->
 	val byteArray = inputStream.use {
 		it.readAllBytes2()
 	}
@@ -167,7 +165,7 @@ actual class BinaryLoader : Loader<ReadByteBuffer> {
 	override val defaultInitialTimeEstimate: Duration
 		get() = Bandwidth.downBpsInv.seconds * 10_000
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): ReadByteBuffer {
-		return loadBinary(requestData, progressReporter, initialTimeEstimate)
+	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): ReadByteBuffer {
+		return loadBinary(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 	}
 }

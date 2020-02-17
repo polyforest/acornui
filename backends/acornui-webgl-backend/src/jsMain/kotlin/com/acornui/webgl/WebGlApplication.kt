@@ -144,7 +144,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
 				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
 			}
 		}
@@ -157,7 +157,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
 				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate).rgbData
 			}
 		}

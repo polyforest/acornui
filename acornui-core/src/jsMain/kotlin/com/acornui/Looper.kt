@@ -25,9 +25,9 @@ import com.acornui.system.userInfo
 import com.acornui.time.FrameDriver
 import com.acornui.time.nowMs
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
+import setTimeout
 import kotlin.browser.window
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -96,13 +96,3 @@ class JsLooper : Looper {
 		_updateAndRender.clear()
 	}
 }
-
-/**
- * For nodejs
- */
-private external fun setTimeout(handler: dynamic, timeout: Int = definedExternally, vararg arguments: Any?): Int
-
-/**
- * For nodejs
- */
-private external fun clearTimeout(handle: Int = definedExternally)

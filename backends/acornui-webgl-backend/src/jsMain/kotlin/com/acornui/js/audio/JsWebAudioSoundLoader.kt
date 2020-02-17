@@ -29,11 +29,11 @@ import kotlin.time.Duration
  *
  * @author nbilyk
  */
-suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): SoundFactory {
+suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): SoundFactory {
 	if (!audioContextSupported) {
 		throw Exception("Audio not supported in this browser.")
 	}
-	val audioData = loadArrayBuffer(urlRequestData, progressReporter, initialTimeEstimate)
+	val audioData = loadArrayBuffer(urlRequestData, progressReporter, initialTimeEstimate, connectTimeout)
 	val context = JsAudioContext.instance
 	val decodedData = context.decodeAudioData(audioData)
 	return JsWebAudioSoundFactory(audioManager, context, decodedData.await())

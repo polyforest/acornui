@@ -170,10 +170,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
 	}
 
-	protected open val cursorManagerTask by task(CursorManager) {
-		JvmCursorManager(getWindowId(), applicationScope)
-	}
-
 	protected open val persistenceTask by task(Persistence) {
 		JvmPersistence(get(Version), config().window.title)
 	}
@@ -207,8 +203,8 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): Texture {
-				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
+				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate, connectTimeout)
 			}
 		}
 	}
@@ -218,10 +214,14 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 			override val defaultInitialTimeEstimate: Duration
 				get() = Bandwidth.downBpsInv.seconds * 100_000
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration): RgbData {
-				return loadRgbData(requestData, progressReporter, initialTimeEstimate)
+			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
+				return loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout)
 			}
 		}
+	}
+
+	protected open val cursorManagerTask by task(CursorManager) {
+		JvmCursorManager(getWindowId(), get(Loaders.rgbDataLoader), applicationScope)
 	}
 
 	protected open fun initializeSpecialInteractivity(owner: Context) {

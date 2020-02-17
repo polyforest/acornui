@@ -20,6 +20,7 @@ import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * A model with the necessary information to make an http request.
@@ -42,25 +43,12 @@ data class UrlRequestData(
 
 		val variables: UrlParams? = null,
 
-		var body: String? = null,
-
-		/**
-		 * The number of seconds a request can take before automatically being terminated.
-		 */
-		val timeout: Float = defaultRequestTimeout
+		var body: String? = null
 ) {
 
 	fun toUrlStr(): String {
 		return if (method == UrlRequestMethod.GET && variables != null)
 			url + "?" + variables.toQueryString() else url
-	}
-
-	companion object {
-
-		/**
-		 * When new requests are made, this will be the default timeout unless specified explicitly.
-		 */
-		var defaultRequestTimeout: Float = 30f
 	}
 }
 
@@ -116,10 +104,13 @@ class StringFormItem(
 interface Loader<out T> {
 
 	val defaultInitialTimeEstimate: Duration
+	val defaultConnectTimeout: Duration
+		get() = 30.seconds
 
 	suspend fun load(requestData: UrlRequestData,
 					 progressReporter: ProgressReporter,
-					 initialTimeEstimate: Duration = defaultInitialTimeEstimate
+					 initialTimeEstimate: Duration = defaultInitialTimeEstimate,
+					 connectTimeout: Duration = defaultConnectTimeout
 	): T
 }
 

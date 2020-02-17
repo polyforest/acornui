@@ -20,6 +20,9 @@ import com.acornui.di.Context
 import com.acornui.graphic.RgbData
 import com.acornui.io.byteBuffer
 
+/**
+ * A texture wrapping an [RgbData] instance.
+ */
 class RgbTexture(
 		gl: Gl20,
 		override val rgbData: RgbData
