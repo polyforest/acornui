@@ -59,10 +59,10 @@ interface TextureRo {
 	val hasWhitePixel: Boolean
 
 	/**
-	 * Returns an RgbData object representing the bitmap data for this texture.
-	 * TODO: Not all Texture implementations currently support this feature.
+	 * Returns an RgbData object representing the bitmap data for this texture, or null if the texture implementation
+	 * doesn't support rasterization.
 	 */
-	val rgbData: RgbData
+	val rgbData: RgbData?
 
 	/**
 	 * The natural width of this texture, in pixels.
@@ -125,7 +125,7 @@ interface Texture : TextureRo {
 	/**
 	 * Returns an RgbData object representing the bitmap data for this texture.
 	 */
-	override val rgbData: RgbData
+	override val rgbData: RgbData?
 
 	override val widthPixels: Int
 

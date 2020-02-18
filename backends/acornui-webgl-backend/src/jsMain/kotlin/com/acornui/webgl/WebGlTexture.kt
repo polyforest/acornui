@@ -16,7 +16,6 @@
 
 package com.acornui.webgl
 
-import com.acornui.graphic.BlendMode
 import com.acornui.graphic.RgbData
 import com.acornui.io.BufferFactory
 import com.acornui.gl.core.*
@@ -41,14 +40,10 @@ class WebGlTexture(
 	val image = document.createElement("img") as HTMLImageElement
 
 	override val widthPixels: Int
-		get() {
-			return image.naturalWidth
-		}
+		get() = image.naturalWidth
 
 	override val heightPixels: Int
-		get() {
-			return image.naturalHeight
-		}
+		get() = image.naturalHeight
 
 	private val _rgbData by lazy {
 		// Creates a temporary frame buffer, draws the image to that, uses gl readPixels to get the data, then disposes.

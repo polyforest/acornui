@@ -118,10 +118,7 @@ abstract class GlTextureBase(
 	 * Returns an RgbData object representing the bitmap data for this texture.
 	 * Not all Texture implementations support this feature.
 	 */
-	override val rgbData: RgbData
-		get() {
-			throw UnsupportedOperationException("This Texture implementation not support rgbData")
-		}
+	override val rgbData: RgbData? = null
 
 	/**
 	 * Decrements the number of places this Texture is used. If the count reaches zero, the texture will be deleted.
