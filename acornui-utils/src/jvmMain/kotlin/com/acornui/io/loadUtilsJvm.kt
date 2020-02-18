@@ -34,14 +34,24 @@ private object Resource {
 	val classLoader: ClassLoader? = javaClass.classLoader
 }
 
+/**
+ * Parses a String into a [URL].
+ * If this String starts with a valid url scheme defined in [validSchemes], a [URL] object is returned from its
+ * constructor. Otherwise checks the class loader's resources.
+
+ * @return Returns a URL object for reading the resource or null if this string is neither a valid url or a found
+ * resource.
+ */
 fun String.toUrl(): URL? {
-	val resourceUrl = Resource.classLoader?.getResource(this)
-	if (resourceUrl != null) return resourceUrl
-	if (!validSchemes.any { startsWith(it, ignoreCase = true) }) return null
-	return try {
-		URL(this)
-	} catch (e: MalformedURLException) {
-		return null
+	val isValidUrlScheme = validSchemes.any { startsWith(it, ignoreCase = true) }
+	return if (isValidUrlScheme) {
+		try {
+			URL(this)
+		} catch (e: MalformedURLException) {
+			return null
+		}
+	} else {
+		Resource.classLoader?.getResource(this)
 	}
 }
 
@@ -54,7 +64,7 @@ suspend fun <T> load(
 		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
 	// TODO: cookies, cancellation and progress
-	val urlStr = requestData.toUrlStr()
+	val urlStr = requestData.urlStr
 	val url = urlStr.toUrl()
 
 	if (url != null) {
@@ -105,7 +115,7 @@ private fun configure(con: HttpURLConnection, requestData: UrlRequestData, conne
 		when {
 			requestData.variables != null -> {
 				con.doOutput = true
-				con.outputStream.writeTextAndClose(requestData.variables.toQueryString())
+				con.outputStream.writeTextAndClose(requestData.variables.queryString)
 			}
 			requestData.formData != null -> {
 				con.doOutput = true
