@@ -41,14 +41,16 @@ open class KotlinJsPlugin : Plugin<Project> {
 				js {
 					browser {
 						webpackTask {
-							// Assume project is a library, not an application, by default.
+							// Assume project is a library by default, not an application.
 							enabled = false
 						}
 						testTask {
-							useMocha()
+							useMocha {
+								// To be consistent, asynchronous tests should use `runTest`, which has its own timeout.
+								timeout = "30s"
+							}
 						}
 					}
-//					nodejs()
 
 					compilations.configureEach {
 						kotlinOptions {
@@ -79,7 +81,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 							implementation(kotlin("test-js", version = kotlinVersion))
 							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
 							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
-//							implementation(npm("xmlhttprequest", "1.8.0"))
+							implementation(npm("xmlhttprequest", "1.8.0"))
 						}
 					}
 				}

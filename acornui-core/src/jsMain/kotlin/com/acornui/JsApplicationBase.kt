@@ -37,6 +37,10 @@ import kotlin.coroutines.suspendCoroutine
 @Suppress("unused")
 abstract class JsApplicationBase(mainContext: MainContext) : ApplicationBase(mainContext) {
 
+	init {
+		Companion // paranoia, ensure companion object init isn't stripped by DCE.
+	}
+
 	override suspend fun onBeforeStart() {
 		contentLoad()
 	}
@@ -82,11 +86,6 @@ abstract class JsApplicationBase(mainContext: MainContext) : ApplicationBase(mai
 				error("Member reference equality fix isn't working for different receivers.")
 			if (a::test.invoke(1) != 2)
 				error("Member reference equality fix invoke isn't working.")
-
-//			if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
-//				println("Requiring XMLHttpRequest")
-////			js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
-//			}
 		}
 	}
 }
