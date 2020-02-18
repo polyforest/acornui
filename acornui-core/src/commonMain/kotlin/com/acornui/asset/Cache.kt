@@ -82,12 +82,13 @@ interface Cache : Clearable {
  * A key-value store that keeps track of references. When references reach zero, and stay at zero for a certain number
  * of frames, the cached asset will be disposed.
  */
-open class CacheImpl(
+class CacheImpl(
 
 		/**
 		 * The number of frames before an unreferenced cache item is removed and destroyed.
 		 */
-		private val gcFrames: Int = 500) : Cache {
+		private val gcFrames: Int = 500
+) : Cache {
 
 	private val cache = stringMapOf<CacheValue>()
 
