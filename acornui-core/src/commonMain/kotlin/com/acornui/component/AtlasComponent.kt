@@ -51,11 +51,12 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	protected open fun setRegionInternal(value: AtlasRegion?) {
 		if (region == value) return
 		val oldTexture = region?.texture
-		renderable.region(value)
 		if (isActive) {
 			value?.texture?.refInc()
 			oldTexture?.refDec()
 		}
+		renderable.region(value)
+		invalidateLayout()
 	}
 
 	fun region(value: AtlasRegion?) {
