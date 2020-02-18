@@ -46,10 +46,8 @@ data class UrlRequestData(
 		var body: String? = null
 ) {
 
-	fun toUrlStr(): String {
-		return if (method == UrlRequestMethod.GET && variables != null)
-			url + "?" + variables.toQueryString() else url
-	}
+	val urlStr: String = if (method == UrlRequestMethod.GET && variables != null)
+		url + "?" + variables.queryString else url
 }
 
 /**
@@ -57,7 +55,7 @@ data class UrlRequestData(
  * This will be unique to a set of url, method, and variables, and does not contain the headers, password, or body.
  */
 val UrlRequestData.cacheKey: String
-	get() = "UrlRequestData($url&$method&$variables)"
+	get() = "UrlRequestData($url&$method&${variables?.queryString})"
 
 fun String.toUrlRequestData(): UrlRequestData {
 	val qIndex = indexOf("?")

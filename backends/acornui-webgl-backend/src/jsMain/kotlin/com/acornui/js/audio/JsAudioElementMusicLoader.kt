@@ -29,5 +29,5 @@ fun Audio(source: String): HTMLAudioElement {
 }
 
 fun loadMusic(audioManager: AudioManager, urlRequestData: UrlRequestData): Music {
-	return JsAudioElementMusic(audioManager, Audio(urlRequestData.toUrlStr()))
+	return JsAudioElementMusic(audioManager, Audio(urlRequestData.urlStr))
 }

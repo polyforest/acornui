@@ -17,7 +17,6 @@
 package com.acornui.js.audio
 
 import com.acornui.audio.AudioManager
-import com.acornui.audio.SoundFactory
 import com.acornui.io.UrlRequestData
 import kotlinx.coroutines.CompletableDeferred
 import org.w3c.dom.Audio
@@ -35,7 +34,7 @@ fun Audio.unload() {
  * Works in IE.
  */
 fun loadAudioElement(audioManager: AudioManager, urlRequestData: UrlRequestData) {
-	val path = urlRequestData.toUrlStr()
+	val path = urlRequestData.urlStr
 	val c = CompletableDeferred<JsAudioElementSoundFactory>()
 	val element = Audio(path)
 

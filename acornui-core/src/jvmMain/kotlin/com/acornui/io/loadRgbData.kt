@@ -34,7 +34,7 @@ suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressR
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Throwable) {
-			throw Exception("Could not load image at path \"${requestData.toUrlStr()}\"", e)
+			throw Exception("Could not load image at path \"${requestData.urlStr}\"", e)
 		}
 	}
 }

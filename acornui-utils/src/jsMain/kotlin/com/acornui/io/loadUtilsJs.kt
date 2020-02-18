@@ -52,7 +52,7 @@ suspend fun <T> load(
 
 	val async = true
 	val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
-		requestData.url + "?" + requestData.variables.toQueryString() else requestData.url
+		requestData.url + "?" + requestData.variables.queryString else requestData.url
 
 	httpRequest.onreadystatechange = {
 		if (httpRequest.readyState == XMLHttpRequest.DONE) {
@@ -86,7 +86,7 @@ suspend fun <T> load(
 	} else {
 		when {
 			requestData.variables != null -> {
-				val data = requestData.variables.toQueryString()
+				val data = requestData.variables.queryString
 				httpRequest.send(data)
 			}
 			requestData.formData != null -> {

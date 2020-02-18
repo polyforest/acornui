@@ -26,7 +26,7 @@ import com.acornui.io.UrlRequestData
  */
 fun loadAudioMusic(audioManager: AudioManager, requestData: UrlRequestData): Music {
 	if (!audioContextSupported) throw Exception("Audio not supported in this browser.")
-	val path = requestData.toUrlStr()
+	val path = requestData.urlStr
 	val element = Audio(path)
 	element.load()
 	return JsWebAudioMusic(audioManager, JsAudioContext.instance, element)

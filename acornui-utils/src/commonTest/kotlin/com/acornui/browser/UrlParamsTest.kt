@@ -25,9 +25,9 @@ class UrlParamsTest {
 
 	@Test
 	fun toQueryString() {
-		assertEquals("one=1&two=2&three=3", UrlParams("one" to "1", "two" to "2", "three" to "3").toQueryString())
-		assertEquals("one=1", UrlParams("one" to "1").toQueryString())
-		assertEquals("one=1&two=%26%3B%23%40", UrlParams("one" to "1", "two" to "&;#@").toQueryString())
+		assertEquals("one=1&two=2&three=3", UrlParams("one" to "1", "two" to "2", "three" to "3").queryString)
+		assertEquals("one=1", UrlParams("one" to "1").queryString)
+		assertEquals("one=1&two=%26%3B%23%40", UrlParams("one" to "1", "two" to "&;#@").queryString)
 	}
 
 	@Test

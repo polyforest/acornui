@@ -52,27 +52,28 @@ data class UrlParams(val items: List<Pair<String, String>>) {
 		return items.firstOrNull { it.first == name } != null
 	}
 
-	private var queryString: String? = null
+	private var _queryString: String? = null
 
 	/**
 	 * Returns a uri encoded querystring in the form: foo=one&bar=two&baz=three
 	 */
-	fun toQueryString(): String {
-		if (queryString != null) return queryString!!
-		val result = StringBuilder()
-		for ((key, value) in items) {
-			result.append(encodeUriComponent2(key))
-			result.append("=")
-			result.append(encodeUriComponent2(value))
-			result.append("&")
+	val queryString: String
+		get() {
+			if (_queryString != null) return _queryString!!
+			val result = StringBuilder()
+			for ((key, value) in items) {
+				result.append(encodeUriComponent2(key))
+				result.append("=")
+				result.append(encodeUriComponent2(value))
+				result.append("&")
+			}
+			val resultString = result.toString()
+			this._queryString = if (resultString.isNotEmpty())
+				resultString.substring(0, resultString.length - 1)
+			else
+				resultString
+			return _queryString!!
 		}
-		val resultString = result.toString()
-		this.queryString =  if (resultString.isNotEmpty())
-			resultString.substring(0, resultString.length - 1)
-		else
-			resultString
-		return queryString!!
-	}
 }
 
 expect fun encodeUriComponent2(str: String): String
