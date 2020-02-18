@@ -25,8 +25,9 @@ import com.acornui.io.byteBuffer
  */
 class RgbTexture(
 		gl: Gl20,
-		override val rgbData: RgbData
-) : GlTextureBase(gl) {
+		override val rgbData: RgbData,
+		displayName: String? = null
+) : GlTextureBase(gl, displayName) {
 
 	init {
 		pixelFormat = if (rgbData.hasAlpha) TexturePixelFormat.RGBA else TexturePixelFormat.RGB
@@ -49,14 +50,8 @@ class RgbTexture(
 }
 
 
-fun rgbTexture(gl: Gl20, rgbData: RgbData, init: RgbTexture.() -> Unit = {}): RgbTexture {
-	val r = RgbTexture(gl, rgbData)
-	r.init()
-	return r
-}
+fun rgbTexture(gl: Gl20, rgbData: RgbData, displayName: String? = null, init: RgbTexture.() -> Unit = {}) =
+		RgbTexture(gl, rgbData, displayName).apply(init)
 
-fun Context.rgbTexture(rgbData: RgbData, init: RgbTexture.() -> Unit = {}): RgbTexture {
-	val r = RgbTexture(inject(CachedGl20), rgbData)
-	r.init()
-	return r
-}
+fun Context.rgbTexture(rgbData: RgbData, displayName: String? = null, init: RgbTexture.() -> Unit = {}) = 
+		RgbTexture(inject(CachedGl20), rgbData, displayName).apply(init)

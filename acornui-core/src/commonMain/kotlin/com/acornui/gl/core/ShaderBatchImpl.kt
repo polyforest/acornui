@@ -35,13 +35,18 @@ import com.acornui.recycle.freeAll
  */
 open class ShaderBatchImpl(
 
-		private val gl: CachedGl20,
+		private val gl: Gl20,
 
 		/**
 		 * If true, when this batch is flushed, the data will be uploaded to the gpu, rendered, then cleared.
 		 */
 		override var isDynamic: Boolean = true
 ) : ShaderBatch, Disposable {
+
+	/**
+	 * Unwraps the cached gl [CachedGl20.wrapped]
+	 */
+	constructor(gl: CachedGl20, isDynamic: Boolean = true) : this(gl.wrapped, isDynamic)
 
 	override val vertexAttributes: VertexAttributes = standardVertexAttributes
 
@@ -65,13 +70,7 @@ open class ShaderBatchImpl(
 	override val drawCalls: MutableList<DrawElementsCall> = ArrayList()
 	private var _highestIndex: Short = -1
 
-	private val defaultWhitePixel by lazy {
-		rgbTexture(gl, rgbData(1, 1, hasAlpha = true) { setPixel(0, 0, Color.WHITE) }) {
-			filterMin = TextureMinFilter.NEAREST
-			filterMag = TextureMagFilter.NEAREST
-			refInc()
-		}
-	}
+	private val defaultWhitePixel: RgbTexture = getWhitePixel(gl).also { it.refInc() }
 
 	override val whitePixel: TextureRo
 		get() = if (drawCall.texture?.hasWhitePixel == true) drawCall.texture!! else defaultWhitePixel
@@ -204,7 +203,7 @@ open class ShaderBatchImpl(
 	override fun render() {
 		require(vertexComponentsBuffer != null) { "StaticShaderBatch must be uploaded first." }
 		if (drawCalls.isEmpty()) return
-		gl.batch.flush()
+		flush()
 		ShaderBatch.totalDrawCalls += drawCalls.size
 		bind()
 		gl.activeTexture()
@@ -229,13 +228,29 @@ open class ShaderBatchImpl(
 	}
 
 	override fun dispose() {
+		defaultWhitePixel.refDec()
 		clear()
 		delete()
+	}
+
+	companion object {
+
+		private val whitePixelCache = HashMap<Gl20, RgbTexture>()
+
+		private fun getWhitePixel(gl: Gl20): RgbTexture {
+			return whitePixelCache.getOrPut(gl) {
+				val whitePixelData = rgbData(1, 1, hasAlpha = true) { setPixel(0, 0, Color.WHITE) }
+				rgbTexture(gl, whitePixelData, "whitePixel") {
+					filterMin = TextureMinFilter.NEAREST
+					filterMag = TextureMagFilter.NEAREST
+				}
+			}
+		}
 	}
 }
 
 fun Context.shaderBatch(): ShaderBatchImpl {
-	return ShaderBatchImpl(inject(CachedGl20))
+	return ShaderBatchImpl(inject(CachedGl20).wrapped)
 }
 
 interface DrawElementsCallRo {

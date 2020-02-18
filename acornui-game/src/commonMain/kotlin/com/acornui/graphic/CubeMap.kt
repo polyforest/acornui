@@ -35,8 +35,9 @@ class CubeMap(
 		negativeZ: Texture,
 
 		gl: Gl20,
-		private val writeMode: Boolean = false
-) : GlTextureBase(gl) {
+		private val writeMode: Boolean = false,
+		displayName: String? = null
+) : GlTextureBase(gl, displayName) {
 
 	private val sides = arrayOf(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ)
 

@@ -82,7 +82,7 @@ class LightingRenderer(
 		// Point lights.
 		pointShadowsFbo.begin()
 		pointLightShadowMaps = Array(numShadowPointLights) {
-			val sides = Array(6) { BufferTexture(gl, pointShadowsResolution, pointShadowsResolution) }
+			val sides = Array(6) { BufferTexture(gl, pointShadowsResolution, pointShadowsResolution, "LightingRendererShadows") }
 			val cubeMap = CubeMap(sides[0], sides[1], sides[2], sides[3], sides[4], sides[5], gl, writeMode = true)
 			cubeMap.refInc()
 			cubeMap

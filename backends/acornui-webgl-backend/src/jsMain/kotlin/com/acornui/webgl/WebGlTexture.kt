@@ -34,8 +34,9 @@ import kotlin.time.Duration
  * @author nbilyk
  */
 class WebGlTexture(
-		gl: CachedGl20
-) : GlTextureBase(gl) {
+		gl: CachedGl20,
+		displayName: String? = null
+) : GlTextureBase(gl, displayName) {
 
 	val image = document.createElement("img") as HTMLImageElement
 
@@ -89,8 +90,8 @@ suspend fun loadTexture(
 ): Texture {
 	// TODO: handle progress reporter
 	val completion = CompletableDeferred<Texture>()
-	val path = requestData.toUrlStr()
-	val jsTexture = WebGlTexture(gl)
+	val path = requestData.urlStr
+	val jsTexture = WebGlTexture(gl, requestData.urlStr)
 	if (js("URL.prototype != undefined") == true) {
 		// Not supported in IE
 		if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {

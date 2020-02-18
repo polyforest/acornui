@@ -20,8 +20,10 @@ import com.acornui.gl.core.*
 import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
 
-object MockGl20 : CachedGl20 {
+object MockCachedGl20 : CachedGl20, Gl20 by MockGl20 {
 
+	override val wrapped: Gl20 = MockGl20
+	
 	override val changeCount: Int = 0
 	override var batch: ShaderBatch = MockShaderBatch
 
@@ -30,6 +32,9 @@ object MockGl20 : CachedGl20 {
 	override val renderbuffer: GlRenderbufferRef? = null
 
 	override val uniforms: Uniforms = EmptyUniforms
+}
+
+object MockGl20 : Gl20 {
 
 	override fun activeTexture(texture: Int) {
 	}

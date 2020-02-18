@@ -39,7 +39,7 @@ class JvmHeadlessApplicationTest {
 	@Test
 	fun start() = runMainTest {
 		headlessApplication(appConfig) {
-			assertEquals(inject(CachedGl20), MockGl20)
+			assertEquals(inject(CachedGl20), MockCachedGl20)
 			assertEquals(inject(MouseInput), MockMouseInput)
 			assertEquals(inject(KeyInput), MockKeyInput)
 			assertTrue(inject(Loaders.textLoader) is TextLoader)

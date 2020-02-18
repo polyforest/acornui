@@ -166,7 +166,7 @@ class StaticMesh(
 	private val _boundingBox = Box()
 	val boundingBox: BoxRo = _boundingBox
 
-	private val batch = ShaderBatchImpl(gl, isDynamic = false)
+	private val batch = ShaderBatchImpl(gl.wrapped, isDynamic = false)
 	private val textures = HashSet<TextureRo>()
 	private val oldTextures = ArrayList<TextureRo>()
 

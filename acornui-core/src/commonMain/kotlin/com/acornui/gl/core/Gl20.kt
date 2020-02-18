@@ -1305,6 +1305,11 @@ interface GlUniformLocationRef
 interface CachedGl20 : Gl20 {
 
 	/**
+	 * The uncached GL API this wraps.
+	 */
+	val wrapped: Gl20
+
+	/**
 	 * Increments when state has changed. Note that this will not change when objects are created and destroyed,
 	 * only when state has changed.
 	 */

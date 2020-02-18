@@ -48,7 +48,7 @@ object HeadlessDependencies {
 				Loaders.textureLoader to MockLoader { MockTexture() },
 				InteractivityManager to MockInteractivityManager,
 				FocusManager to MockFocusManager,
-				CachedGl20 to MockGl20
+				CachedGl20 to MockCachedGl20
 		)
 	}
 }

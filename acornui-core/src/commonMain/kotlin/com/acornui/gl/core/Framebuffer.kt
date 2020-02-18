@@ -274,8 +274,9 @@ fun Framebuffer.camera(camera: Camera = OrthographicCamera().apply { yDown(false
 
 class BufferTexture(gl: Gl20,
 					override val widthPixels: Int = 0,
-					override val heightPixels: Int = 0
-) : GlTextureBase(gl) {
+					override val heightPixels: Int = 0,
+					displayName: String? = null
+) : GlTextureBase(gl, displayName) {
 
 	override fun uploadTexture() {
 		gl.texImage2Db(target.value, 0, pixelFormat.value, widthPixels, heightPixels, 0, pixelFormat.value, pixelType.value, null)

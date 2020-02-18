@@ -29,24 +29,23 @@ import kotlin.time.Duration
  * @author nbilyk
  */
 class JvmTexture(gl: Gl20,
-				 private val _rgbData: RgbData
-) : GlTextureBase(gl) {
+				 override val rgbData: RgbData,
+				 displayName: String? = null
+) : GlTextureBase(gl, displayName) {
 
-	var bytes: ByteBuffer? = JvmBufferUtil.wrap(_rgbData.bytes)
+	var bytes: ByteBuffer? = JvmBufferUtil.wrap(rgbData.bytes)
 
 	override val widthPixels: Int
-		get() = _rgbData.width
+		get() = rgbData.width
 
 	override val heightPixels: Int
-		get() = _rgbData.height
+		get() = rgbData.height
 
-	override val rgbData: RgbData
-		get() = _rgbData
 }
 
 /**
  * Creates an http request, processing the results as a [Texture].
  */
 suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
-	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout))
+	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout), requestData.urlStr)
 }

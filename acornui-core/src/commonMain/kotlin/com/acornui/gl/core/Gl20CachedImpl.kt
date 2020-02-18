@@ -27,7 +27,10 @@ import com.acornui.io.NativeReadBuffer
  * gl.activeTexture(Gl20.TEXTURE0)
  * gl.getParameter(Gl20.ACTIVE_TEXTURE) // No need to query GPU, returns Gl20.TEXTURE0 from ram.
  */
-class Gl20CachedImpl(private val wrapped: Gl20, private val window: Window) : CachedGl20 {
+class Gl20CachedImpl(
+		override val wrapped: Gl20,
+		private val window: Window
+) : CachedGl20 {
 
 	override var changeCount: Int = 0
 		private set(value) {
@@ -829,7 +832,7 @@ class Gl20CachedImpl(private val wrapped: Gl20, private val window: Window) : Ca
 
 	override fun getSupportedExtensions(): List<String> = supportedExtensionsCache
 
-	override var batch: ShaderBatch = ShaderBatchImpl(this)
+	override var batch: ShaderBatch = ShaderBatchImpl(wrapped)
 		set(value) {
 			field.flush()
 			field = value

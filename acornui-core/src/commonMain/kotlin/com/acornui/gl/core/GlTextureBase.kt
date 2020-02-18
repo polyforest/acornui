@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.gl.core
 
 import com.acornui.graphic.RgbData
@@ -24,12 +26,17 @@ import com.acornui.math.MathUtils.isPowerOfTwo
 /**
  * Textures are provided by the AssetManager. The Renderer implementation will cast the Texture to the back-end's
  * implementation.
- * @author nbilyk
  */
 abstract class GlTextureBase(
-		protected val gl: Gl20
+		protected val gl: Gl20,
+
+		/**
+		 * Optional, for debugging purposes.
+		 */
+		val displayName: String? = null
 ) : Texture {
 
+	private val id = ++Companion.id
 	private var _refCount: Int = 0
 
 	override val refCount: Int
@@ -83,7 +90,7 @@ abstract class GlTextureBase(
 		this.textureHandle = textureHandle
 		gl.activeTexture(Gl20.TEXTURE0 + unit)
 		gl.bindTexture(target.value, textureHandle)
-
+		Log.verbose("Creating: $this")
 		uploadTexture()
 		gl.texParameteri(target.value, Gl20.TEXTURE_MAG_FILTER, filterMag.value)
 		gl.texParameteri(target.value, Gl20.TEXTURE_MIN_FILTER, filterMin.value)
@@ -140,8 +147,21 @@ abstract class GlTextureBase(
 		gl.bindTexture(target.value, null)
 		gl.deleteTexture(textureHandle!!)
 		textureHandle = null
+		Log.verbose("Deleting: $this")
 	}
 
+	/**
+	 * Overridden to use the [displayName] if not null.
+	 */
+	override fun toString(): String {
+		return if (displayName == null)
+			super.toString()
+		else "${this::class.simpleName}_$id(\"$displayName\")"
+	}
+
+	companion object {
+		private var id: Int = 0
+	}
 }
 
 
