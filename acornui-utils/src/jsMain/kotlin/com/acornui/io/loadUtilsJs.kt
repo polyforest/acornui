@@ -18,6 +18,7 @@ package com.acornui.io
 
 
 import clearTimeout
+import com.acornui.system.userInfo
 import kotlinx.coroutines.CompletableDeferred
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
@@ -36,6 +37,10 @@ suspend fun <T> load(
 		process: (httpRequest: XMLHttpRequest) -> T
 
 ): T {
+	if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
+		js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
+	}
+
 	val progress = progressReporter.addChild(ProgressImpl(total = initialTimeEstimate))
 	val httpRequest = XMLHttpRequest()
 	val deferred = CompletableDeferred<T>()

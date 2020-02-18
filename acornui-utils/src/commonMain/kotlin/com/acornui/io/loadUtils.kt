@@ -52,6 +52,13 @@ data class UrlRequestData(
 	}
 }
 
+/**
+ * Returns a cache key suitable for mapping a request to its result.
+ * This will be unique to a set of url, method, and variables, and does not contain the headers, password, or body.
+ */
+val UrlRequestData.cacheKey: String
+	get() = "UrlRequestData($url&$method&$variables)"
+
 fun String.toUrlRequestData(): UrlRequestData {
 	val qIndex = indexOf("?")
 	if (qIndex == -1) return UrlRequestData(this)

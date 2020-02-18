@@ -32,6 +32,8 @@ fun String.toUrlParams(): UrlParams {
 @Serializable
 data class UrlParams(val items: List<Pair<String, String>>) {
 
+	constructor(vararg items: Pair<String, String>) : this(items.toList())
+
 	/**
 	 * Retrieves the first parameter with the given name.
 	 */
@@ -50,7 +52,13 @@ data class UrlParams(val items: List<Pair<String, String>>) {
 		return items.firstOrNull { it.first == name } != null
 	}
 
+	private var queryString: String? = null
+
+	/**
+	 * Returns a uri encoded querystring in the form: foo=one&bar=two&baz=three
+	 */
 	fun toQueryString(): String {
+		if (queryString != null) return queryString!!
 		val result = StringBuilder()
 		for ((key, value) in items) {
 			result.append(encodeUriComponent2(key))
@@ -59,10 +67,11 @@ data class UrlParams(val items: List<Pair<String, String>>) {
 			result.append("&")
 		}
 		val resultString = result.toString()
-		return if (resultString.isNotEmpty())
+		this.queryString =  if (resultString.isNotEmpty())
 			resultString.substring(0, resultString.length - 1)
 		else
 			resultString
+		return queryString!!
 	}
 }
 
