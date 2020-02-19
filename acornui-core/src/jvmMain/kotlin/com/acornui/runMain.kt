@@ -18,10 +18,6 @@ package com.acornui
 
 import kotlin.time.Duration
 
-actual fun runMain(timeout: Duration, block: suspend MainContext.() -> Unit) {
-	runMainJob(timeout, block)
-}
-
 actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit) {
 	runMainJob(timeout, block)
 }

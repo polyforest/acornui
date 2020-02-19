@@ -16,8 +16,8 @@
 
 package com.acornui
 
-import com.acornui.async.UI
 import com.acornui.async.setUiThread
+import com.acornui.async.toPromiseOrBlocking
 import com.acornui.async.withTimeout
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
@@ -51,7 +51,9 @@ class MainContext(
  * @return Returns `Unit` on JVM backends, or a `Promise` on JS backends. This is so that runMain can easily be used
  * in unit tests.
  */
-expect fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit)
+fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit) {
+	runMainJob(timeout, block).toPromiseOrBlocking()
+}
 
 internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit): Job {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
@@ -59,7 +61,7 @@ internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainCo
 	setUiThread()
 	val looper = looper()
 
-	val scope = GlobalScope + Dispatchers.UI + Log.uncaughtExceptionHandler
+	val scope = GlobalScope + Dispatchers.Main + Log.uncaughtExceptionHandler
 	val mainJob = scope.async {
 		val mainContext = MainContext(looper, coroutineContext)
 		mainContext.block()

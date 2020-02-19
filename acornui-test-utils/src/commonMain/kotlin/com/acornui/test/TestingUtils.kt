@@ -277,11 +277,13 @@ fun benchmark(iterations: Int = 1000, testCount: Int = 10, warmCount: Int = 2, c
 	return results[results.size / 2]
 }
 
+private val testScope = GlobalScope + SupervisorJob()
+
 /**
  * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
  * @see toPromiseOrBlocking
  */
-fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) = GlobalScope.async {
+fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) = testScope.async {
 	withTimeout(timeout.toLongMilliseconds()) {
 		block()
 	}

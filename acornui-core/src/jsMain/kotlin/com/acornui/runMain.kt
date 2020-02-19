@@ -19,10 +19,6 @@ package com.acornui
 import com.acornui.async.toPromiseOrBlocking
 import kotlin.time.Duration
 
-actual fun runMain(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {
-	return runMainJob(timeout, block).toPromiseOrBlocking()
-}
-
 actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {
 	return runMainJob(timeout, block).toPromiseOrBlocking()
 }
