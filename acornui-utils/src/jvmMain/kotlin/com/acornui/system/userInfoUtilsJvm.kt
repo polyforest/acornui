@@ -22,7 +22,10 @@ import com.acornui.i18n.Locale
  * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.
  */
 actual val userInfo: UserInfo = UserInfo(
-		isDesktop = true,
+		isJvm = true,
+		isJs = false,
+		isBrowser = false,
+		isMobile = false,
 		userAgent = "jvm",
 		platformStr = System.getProperty("os.name") ?: UserInfo.UNKNOWN_PLATFORM,
 		systemLocale = listOf(Locale(java.util.Locale.getDefault().toLanguageTag()))

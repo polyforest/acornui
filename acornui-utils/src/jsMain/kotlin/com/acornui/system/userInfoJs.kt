@@ -33,6 +33,8 @@ check;
 		@Suppress("USELESS_ELVIS") // Kotlin bug - window.navigator.languages should be nullable
 		val languages = window.navigator.languages ?: arrayOf(window.navigator.language)
 		UserInfo(
+				isJs = true,
+				isJvm = false,
 				isBrowser = true,
 				isMobile = isMobile,
 				userAgent = window.navigator.userAgent,
@@ -42,6 +44,8 @@ check;
 	} else {
 		// TODO: Get system locale and platform from nodejs environment.
 		UserInfo(
+				isJs = true,
+				isJvm = false,
 				isBrowser = false,
 				isMobile = false,
 				userAgent = "nodejs",

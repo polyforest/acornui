@@ -15,11 +15,26 @@ expect val userInfo: UserInfo
  */
 data class UserInfo(
 
-		val isBrowser: Boolean = false,
+		/**
+		 * True if the platform is JS based.
+		 */
+		val isJs: Boolean,
 
-		val isDesktop: Boolean = false,
+		/**
+		 * True if the platform is JVM based.
+		 */
+		val isJvm: Boolean,
 
-		val isMobile: Boolean = false,
+		/**
+		 * True if this is a browser environment.
+		 */
+		val isBrowser: Boolean,
+
+		/**
+		 * True if the user agent hints this is a mobile device.
+		 * Note that this should only be used for informational purposes.
+		 */
+		val isMobile: Boolean,
 
 		val userAgent: String,
 
@@ -62,6 +77,12 @@ data class UserInfo(
 			else -> Platform.OTHER
 		}
 	}
+
+	/**
+	 * Returns true if the current platform is NodeJS.
+	 */
+	val isNodeJs: Boolean
+		get() = isJs && !isBrowser
 
 	override fun toString(): String {
 		return "UserInfo(isBrowser=$isBrowser isMobile=$isMobile languages=${systemLocale.joinToString(",")})"

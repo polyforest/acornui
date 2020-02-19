@@ -177,7 +177,7 @@ val standardVertexAttributes = VertexAttributes(listOf(
 
 val DEFAULT_SHADER_HEADER: String
 	get() = """
-#version ${if (userInfo.isDesktop) "120" else "100"}
+#version ${if (userInfo.isJvm) "120" else "100"}
 #ifdef GL_ES
 #define LOW_P lowp
 #define MED_P mediump
