@@ -16,31 +16,39 @@
 
 package com.acornui.io
 
+import com.acornui.async.withTimeout
+import com.acornui.logging.Log
+import com.acornui.logging.Logger
 import com.acornui.serialization.binaryParse
-import com.acornui.system.userInfo
 import com.acornui.test.runTest
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 import kotlin.time.seconds
 
 class LoadKtTest {
 
 	/**
-	 * Yuck...
+	 * Yuck... https://github.com/polyforest/acornui/issues/254
+	 * https://youtrack.jetbrains.com/issue/KT-36824
 	 */
-	private val root = if (userInfo.isBrowser) "../../../../../acornui-utils/build/processedResources/js/test/" else "./"
+	private val root = "https://raw.githubusercontent.com/polyforest/acornui/f9d37ef39a218ea2bac7ca766ae02bbb16a1dfab/acornui-utils/src/jvmTest/resources"
 
+	@BeforeTest
+	fun setup() {
+		Log.level = Logger.VERBOSE
+	}
+	
 	@Test
-	fun loadTextLocal() = runTest {
+	fun loadText() = runTest {
 		val progressReporter = ProgressReporterImpl()
 		val request = "$root/textToLoad.txt".toUrlRequestData()
 		assertEquals("text to load contents", TextLoader().load(request, progressReporter))
 	}
 
+	@Ignore
 	@Test
-	fun loadBinaryLocal() = runTest {
+	fun loadBinary() = runTest {
 		val progressReporter = ProgressReporterImpl()
 		val request = "$root/binaryToLoad.bin".toUrlRequestData()
 		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request, progressReporter).toByteArray()))
@@ -56,8 +64,20 @@ class LoadKtTest {
 	fun connectTimeout() = runTest {
 		val progressReporter = ProgressReporterImpl()
 		val request = "http://10.255.255.1".toUrlRequestData()
-		assertFailsWith(Throwable::class) {
-			TextLoader().load(request, progressReporter, connectTimeout = 5.seconds)
+		assertFailsWith(ResponseConnectTimeoutException::class) {
+			TextLoader().load(request, progressReporter, connectTimeout = 2.seconds)
+		}
+	}
+	
+	@Ignore
+	@Test
+	fun loadTimeout() = runTest {
+		val progressReporter = ProgressReporterImpl()
+		val request = "http://10.255.255.2".toUrlRequestData()
+		assertFailsWith(CancellationException::class) {
+			withTimeout(0.5.seconds) {
+				TextLoader().load(request, progressReporter, connectTimeout = 5.seconds)
+			}
 		}
 	}
 

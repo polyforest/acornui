@@ -16,15 +16,18 @@
 
 package com.acornui.io
 
-
 import clearTimeout
+import com.acornui.logging.Log
 import com.acornui.system.userInfo
-import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.await
+import kotlinx.coroutines.coroutineScope
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Uint8Array
 import org.w3c.files.Blob
 import org.w3c.xhr.*
 import setTimeout
+import kotlin.js.Promise
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -34,76 +37,111 @@ suspend fun <T> load(
 		progressReporter: ProgressReporter,
 		initialTimeEstimate: Duration,
 		connectTimeout: Duration,
-		process: (httpRequest: XMLHttpRequest) -> T
-
-): T {
-	if (!userInfo.isBrowser && jsTypeOf(XMLHttpRequest) == "undefined") {
+		process: (xhr: XMLHttpRequest) -> T
+): T = coroutineScope {
+	if (userInfo.isNodeJs && jsTypeOf(XMLHttpRequest) == "undefined") {
 		js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 	}
-
-	val progress = progressReporter.addChild(ProgressImpl(total = initialTimeEstimate))
-	val httpRequest = XMLHttpRequest()
-	val deferred = CompletableDeferred<T>()
-	httpRequest.onprogress = { event ->
-		progress.loaded = Bandwidth.downBpsInv.seconds * event.loaded.toDouble()
-		progress.total = Bandwidth.downBpsInv.seconds * event.total.toDouble()
-		Unit
-	}
-
-	val async = true
 	val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
 		requestData.url + "?" + requestData.variables.queryString else requestData.url
 
-	httpRequest.onreadystatechange = {
-		if (httpRequest.readyState == XMLHttpRequest.DONE) {
-			httpRequest.onreadystatechange = null
-			if (httpRequest.status == 200.toShort() || httpRequest.status == 304.toShort()) {
-				val result = process(httpRequest)
-				deferred.complete(result)
-			} else {
-				deferred.completeExceptionally(ResponseException(httpRequest.status, url + " " + httpRequest.statusText, httpRequest.response?.toString()
-						?: ""))
+	Log.verbose("Load request: url: $url connectTimeout: $connectTimeout responseType: $responseType")
+	val progress = progressReporter.addChild(ProgressImpl(total = initialTimeEstimate))
+	val xhr = XMLHttpRequest()
+	xhr.responseType = responseType
+
+	val promise = Promise<T> { resolve, reject ->
+		var timeoutId = setTimeout({
+			Log.verbose("Load connect timeout: $url")
+			reject(ResponseConnectTimeoutException(requestData, connectTimeout))
+			xhr.abort()
+		}, connectTimeout.inMilliseconds.toInt())
+
+		xhr.addEventListener("progress", { event ->
+			event as ProgressEvent
+			progress.loaded = Bandwidth.downBpsInv.seconds * event.loaded.toDouble()
+			progress.total = Bandwidth.downBpsInv.seconds * event.total.toDouble()
+
+			if (timeoutId >= 0 && event.loaded.toDouble() > 0) {
+				clearTimeout(timeoutId)
+				timeoutId = -1
 			}
-		}
-	}
+			Unit
+		})
 
-	httpRequest.open(requestData.method, url, async, requestData.user, requestData.password)
-	httpRequest.responseType = responseType
+		xhr.addEventListener("error", {
+			Log.verbose("Load error: $url ${xhr.readyState} ${xhr.status}")
+			reject(ResponseException(
+					xhr.status,
+					"$url ${xhr.status} ${xhr.statusText}",
+					xhr.response?.toString() ?: ""
+			))
+		})
 
-
-	val timeoutHandle = setTimeout({
-		httpRequest.abort()
-	}, timeout = connectTimeout.inMilliseconds.toInt())
-
-	httpRequest.onloadstart = {
-		clearTimeout(timeoutHandle)
-	}
-	for ((key, value) in requestData.headers) {
-		httpRequest.setRequestHeader(key, value)
-	}
-	if (requestData.method == UrlRequestMethod.GET) {
-		httpRequest.send()
-	} else {
-		when {
-			requestData.variables != null -> {
-				val data = requestData.variables.queryString
-				httpRequest.send(data)
-			}
-			requestData.formData != null -> {
-				val formData = FormData()
-				for (item in requestData.formData.items) {
-					when (item) {
-						is ByteArrayFormItem -> formData.append(item.name, Blob(arrayOf(item.value.native)))
-						is StringFormItem -> formData.append(item.name, item.value)
-					}
+		xhr.addEventListener("load", {
+			clearTimeout(timeoutId)
+			Log.verbose("Load complete: $url ${xhr.readyState} ${xhr.status}")
+			Log.verbose("responseText: " + xhr.responseText + " : " + jsTypeOf(xhr.responseText))
+			if (xhr.status == 200.toShort() || xhr.status == 304.toShort()) {
+				var result: T? = null
+				val success = try {
+					result = process(xhr)
+					true
+				} catch (e: Throwable) {
+					reject(e)
+					false
 				}
-				httpRequest.send(formData)
+				@Suppress("UNCHECKED_CAST")
+				if (success)
+					resolve(result as T)
+			} else {
+				reject(ResponseException(
+						xhr.status,
+						"$url ${xhr.status} ${xhr.statusText}",
+						xhr.responseText
+				))
 			}
-			requestData.body != null -> httpRequest.send(requestData.body!!)
-			else -> httpRequest.send()
+		})
+
+		val async = true
+		xhr.open(requestData.method, url, async, requestData.user, requestData.password)
+
+		for ((key, value) in requestData.headers) {
+			xhr.setRequestHeader(key, value)
+		}
+		if (requestData.method == UrlRequestMethod.GET) {
+			xhr.send()
+		} else {
+			when {
+				requestData.variables != null -> {
+					val data = requestData.variables.queryString
+					xhr.send(data)
+				}
+				requestData.formData != null -> {
+					val formData = FormData()
+					for (item in requestData.formData.items) {
+						when (item) {
+							is ByteArrayFormItem -> formData.append(item.name, Blob(arrayOf(item.value.native)))
+							is StringFormItem -> formData.append(item.name, item.value)
+						}
+					}
+					xhr.send(formData)
+				}
+				requestData.body != null -> xhr.send(requestData.body!!)
+				else -> xhr.send()
+			}
 		}
 	}
-	return deferred.await().also { progressReporter.removeChild(progress) }
+	try {
+		promise.await().also {
+			progressReporter.removeChild(progress)
+		}
+	} catch (e: CancellationException) {
+		// If the parent coroutine is cancelled.
+		Log.verbose("Load cancelled: $url")
+		xhr.abort()
+		throw e
+	}
 }
 
 suspend fun loadText(
@@ -113,7 +151,7 @@ suspend fun loadText(
 		connectTimeout: Duration
 ): String {
 	return load(requestData, XMLHttpRequestResponseType.TEXT, progressReporter, initialTimeEstimate, connectTimeout) { httpRequest ->
-		httpRequest.response!! as String
+		httpRequest.responseText
 	}
 }
 
@@ -133,6 +171,7 @@ suspend fun loadBinary(
 		connectTimeout: Duration
 ): ReadByteBuffer {
 	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, progressReporter, initialTimeEstimate, connectTimeout) { httpRequest ->
+		println("Array buffer? ${httpRequest.response}")
 		JsByteBuffer(Uint8Array(httpRequest.response!! as ArrayBuffer))
 	}
 }

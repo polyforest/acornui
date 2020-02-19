@@ -18,6 +18,7 @@ package com.acornui.io
 
 import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -74,6 +75,8 @@ object UrlRequestMethod {
 	val PUT: String = "PUT"
 	val DELETE: String = "DELETE"
 }
+
+open class ResponseConnectTimeoutException(val requestData: UrlRequestData, val connectTimeout: Duration) : Throwable("The request ${requestData.urlStr} timed out after $connectTimeout")
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 

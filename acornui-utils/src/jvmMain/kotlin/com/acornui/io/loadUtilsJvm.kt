@@ -16,16 +16,16 @@
 
 package com.acornui.io
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.acornui.logging.Log
+import kotlinx.coroutines.*
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
+import java.net.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
+import kotlin.coroutines.*
 import kotlin.time.Duration
+import kotlin.time.milliseconds
 import kotlin.time.seconds
 
 var validSchemes = listOf("http", "https", "ftp", "ftps")
@@ -55,7 +55,6 @@ fun String.toUrl(): URL? {
 	}
 }
 
-
 suspend fun <T> load(
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter = GlobalProgressReporter,
@@ -63,51 +62,57 @@ suspend fun <T> load(
 		connectTimeout: Duration,
 		process: suspend (inputStream: InputStream) -> T
 ): T = withContext(Dispatchers.IO) {
-	// TODO: cookies, cancellation and progress
+	// TODO: cookies and progress
 	val urlStr = requestData.urlStr
 	val url = urlStr.toUrl()
+	Log.verbose("Load: $url")
 
-	if (url != null) {
+	val inputStream: InputStream = if (url != null) {
 		// Is a url or a classpath resource.
 		val con = url.openConnection()
-		var result: T? = null
+		con.connectTimeout = connectTimeout.inMilliseconds.toInt()
 		if (con is HttpURLConnection) {
-			configure(con, requestData, connectTimeout)
-			try {
-				con.connect()
-				val status = con.responseCode
-				if (status == 200 || status == 304) {
-					result = process(con.inputStream!!)
-				} else {
-					val errorMsg = con.errorStream?.readTextAndClose() ?: ""
-					throw ResponseException(status.toShort(), "", errorMsg)
-				}
-			} finally {
-				con.disconnect()
+			configure(con, requestData)
+			con.connectInternal(requestData)
+			val status = con.responseCode
+			if (status != 200 && status != 304) {
+				val errorMsg = con.errorStream?.readTextAndClose() ?: ""
+				throw ResponseException(status.toShort(), "$status", errorMsg)
 			}
+			con.inputStream!!
 		} else {
-			con.connect()
-			result = process(con.inputStream!!)
+			con.connectInternal(requestData)
 		}
-		result!!
+		con.inputStream!!
 	} else {
 		// Is a file
 		val file = File(urlStr)
 //		_bytesTotal = file.length().toInt()
 		if (!file.exists())
 			throw FileNotFoundException(urlStr)
-		process(FileInputStream(file)) //.also { _bytesLoaded = bytesTotal }
+		FileInputStream(file)
+	}
+	process(inputStream)
+	//.also { _bytesLoaded = bytesTotal }
+}
+
+@UseExperimental(InternalCoroutinesApi::class)
+private suspend fun URLConnection.connectInternal(requestData: UrlRequestData) = withContext(Dispatchers.IO) {
+	try {
+		connect()
+	} catch (e: SocketTimeoutException) {
+		// Rethrow the error as a ResponseConnectTimeoutException for platform consistency.
+		throw ResponseConnectTimeoutException(requestData, connectTimeout.milliseconds)
 	}
 }
 
-private fun configure(con: HttpURLConnection, requestData: UrlRequestData, connectTimeout: Duration) {
+private fun configure(con: HttpURLConnection, requestData: UrlRequestData) {
 	if (requestData.user != null) {
 		val userPass = "${requestData.user}:${requestData.password}"
 		val basicAuth = "Basic " + Base64.getEncoder().encodeToString(userPass.toByteArray())
 		con.setRequestProperty("Authorization", basicAuth)
 	}
 	con.requestMethod = requestData.method
-	con.connectTimeout = connectTimeout.inMilliseconds.toInt()
 	for ((key, value) in requestData.headers) {
 		con.setRequestProperty(key, value)
 	}

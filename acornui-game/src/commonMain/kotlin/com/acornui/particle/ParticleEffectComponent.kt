@@ -169,7 +169,7 @@ suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, gro
 }
 
 suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
-	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
 	val gl = inject(CachedGl20)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
