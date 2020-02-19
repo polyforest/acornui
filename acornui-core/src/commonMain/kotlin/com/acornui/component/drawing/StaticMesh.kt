@@ -16,7 +16,6 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
@@ -224,7 +223,7 @@ class StaticMesh(
 				textures.forEach {
 					it.refInc()
 				}
-				oldTextures.forEach2 {
+				oldTextures.forEach {
 					it.refDec()
 				}
 				oldTextures.clear()

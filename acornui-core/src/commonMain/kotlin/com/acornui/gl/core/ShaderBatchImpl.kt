@@ -48,6 +48,10 @@ open class ShaderBatchImpl(
 	 */
 	constructor(gl: CachedGl20, isDynamic: Boolean = true) : this(gl.wrapped, isDynamic)
 
+	init {
+		require(gl !is CachedGl20) { "ShaderBatchImpl requires either the unwrapped Gl20 instance or use the CachedGl20 constructor" }
+	}
+
 	override val vertexAttributes: VertexAttributes = standardVertexAttributes
 
 	/**
@@ -178,15 +182,19 @@ open class ShaderBatchImpl(
 		flush()
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
+		indices.mark()
 		indices.flip()
 		gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, usage) // Allocate
 		gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, usage) // Upload
+		indices.reset()
 
+		vertexComponents.mark()
 		vertexComponents.flip()
 		gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, usage) // Allocate
 		gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, usage) // Upload
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
 		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
+		vertexComponents.reset()
 	}
 
 	/**
