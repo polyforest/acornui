@@ -44,6 +44,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 							// Assume project is a library by default, not an application.
 							enabled = false
 						}
+
 						testTask {
 							useMocha {
 								// To be consistent, asynchronous tests should use `runTest`, which has its own timeout.
@@ -79,9 +80,9 @@ open class KotlinJsPlugin : Plugin<Project> {
 						dependencies {
 							implementation(kotlin("test", version = kotlinVersion))
 							implementation(kotlin("test-js", version = kotlinVersion))
-							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
-							implementation(npm("xmlhttprequest", "1.8.0"))
+//							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
+//							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
+							runtimeOnly(npm("xmlhttprequest", "1.8.0"))
 						}
 					}
 				}

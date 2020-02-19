@@ -18,7 +18,7 @@ jobs:
       uses: eskatos/gradle-command-action@v1
       if: "!contains(github.event.head_commit.message, 'skip-tests')"
       with:
-        arguments: build -x jsBrowserTest --stacktrace
+        arguments: build --stacktrace
     - name: Upload Test Reports
       uses: actions/upload-artifact@v1
       if: always() && !contains(github.event.head_commit.message, 'skip-tests')
