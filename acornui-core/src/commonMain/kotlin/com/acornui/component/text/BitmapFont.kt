@@ -17,7 +17,6 @@
 package com.acornui.component.text
 
 import com.acornui.asset.*
-import com.acornui.async.UI
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.DKey
@@ -150,7 +149,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, group: CachedGroup = cache
  * @param imagesDir The directory of images.
  * @param group The caching group, to allow the loaded assets to be disposed as one.
  */
-suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont {
+suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: CachedGroup = cachedGroup()): BitmapFont = withContext(Dispatchers.Default) {
 	val dir = Path(imagesDir)
 	val bitmapFontData = group.cacheAsync(fontPath) {
 		AngelCodeParser.parse(loadText(fontPath))
@@ -185,7 +184,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 	}
 
 	val pageTextures = pageTextureLoaders.awaitAll()
-	withContext(Dispatchers.UI) {
+	withContext(Dispatchers.Main) {
 		pageTextures.forEach {
 			it.refInc()
 		}
@@ -198,7 +197,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 			glyphs = glyphs
 	)
 	Log.info("Font loaded $fontPath")
-	return font
+	font
 }
 
 suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CachedGroup = cachedGroup()): BitmapFont {

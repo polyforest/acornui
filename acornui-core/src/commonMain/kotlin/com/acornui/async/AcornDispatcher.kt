@@ -21,13 +21,16 @@ import com.acornui.async.Acorn.delay
 import com.acornui.time.callLater
 import com.acornui.time.timer
 import kotlinx.coroutines.*
+import kotlinx.coroutines.internal.MainDispatcherFactory
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmStatic
 
 /**
  * Dispatches execution onto Acorn UI Thread.
  */
 @UseExperimental(InternalCoroutinesApi::class)
 @Suppress("unused")
+@Deprecated("Use Dispatchers.Main", ReplaceWith("Dispatchers.Main"))
 val Dispatchers.UI : AcornDispatcher
 	get() = Acorn
 
@@ -95,4 +98,17 @@ internal object Acorn : AcornDispatcher() {
 		get() = ImmediateAcornDispatcher
 
 	override fun toString() = "Acorn UI"
+}
+
+@Suppress("unused")
+@UseExperimental(InternalCoroutinesApi::class)
+class AcornDispatcherFactory : MainDispatcherFactory {
+	companion object {
+		@JvmStatic // accessed reflectively from core
+		fun getDispatcher(): MainCoroutineDispatcher = Acorn
+	}
+
+	override fun createDispatcher(allFactories: List<MainDispatcherFactory>): MainCoroutineDispatcher = Acorn
+
+	override val loadPriority: Int get() = Int.MAX_VALUE
 }
