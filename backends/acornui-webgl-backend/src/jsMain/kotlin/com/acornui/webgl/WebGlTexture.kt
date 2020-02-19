@@ -80,16 +80,16 @@ class WebGlTexture(
 
 
 /**
- * Creates an http request, processing the results as a [Texture].
+ * Creates an http request, processing the results as a [WebGlTexture].
  */
 suspend fun loadTexture(
 		gl: CachedGl20,
 		requestData: UrlRequestData,
 		progressReporter: ProgressReporter,
 		initialTimeEstimate: Duration
-): Texture {
+): WebGlTexture {
 	// TODO: handle progress reporter
-	val completion = CompletableDeferred<Texture>()
+	val completion = CompletableDeferred<WebGlTexture>()
 	val path = requestData.urlStr
 	val jsTexture = WebGlTexture(gl, requestData.urlStr)
 	if (js("URL.prototype != undefined") == true) {

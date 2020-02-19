@@ -36,7 +36,7 @@ object ExtrudeUtil {
 	 * @return a clockwise list of x,y,... perimeter points. The last point will always be the same as the first point.
 	 */
 	fun calculatePerimeter(texture: Texture, region: IntRectangleRo, alphaThreshold: Float = 0.1f): List<Int> {
-		val rgbData = texture.rgbData
+		val rgbData = texture.rgbData!!
 		// Find starting location
 		val start = getStartingLocation(rgbData, region, alphaThreshold)
 				?: return listOf(region.left, region.top, region.right, region.top, region.right, region.bottom, region.left, region.bottom, region.left, region.top) // No pixel was below the alpha threshold.

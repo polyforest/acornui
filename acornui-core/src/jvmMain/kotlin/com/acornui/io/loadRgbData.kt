@@ -16,7 +16,6 @@
 
 package com.acornui.io
 
-import com.acornui.async.UI
 import com.acornui.graphic.RgbData
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +52,7 @@ suspend fun createImageData(inputStream: InputStream): RgbData = withContext(Dis
 		ImageIO.read(byteArrayInputStream)
 	} catch (e: Throwable) {
 		@Suppress("BlockingMethodInNonBlockingContext")
-		withContext(Dispatchers.UI) {
+		withContext(Dispatchers.Main) {
 			byteArrayInputStream.reset()
 			ImageIO.read(byteArrayInputStream)
 		}
