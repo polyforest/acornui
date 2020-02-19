@@ -206,7 +206,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
 			editableText.validate(ValidationFlags.STYLES)
-			val font = editableText.textField.font
+			val font = editableText.textField.loadedFont
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth(pad.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth))
@@ -451,7 +451,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		val w = margin.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth)
 		val rows = rows
 		val h = if (explicitHeight == null && rows != null) {
-			val font = editableText.textField.font
+			val font = editableText.textField.loadedFont
 			val fontData = font?.data
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			textInputStyle.padding.expandHeight(lineHeight * rows)

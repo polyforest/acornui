@@ -261,7 +261,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun getFontAtSelection(): BitmapFont? {
 		val firstSelection = firstSelection ?: return null
-		return textField.element?.textElements?.get(firstSelection.endIndex)?.parentSpan?.font
+		return textField.getLoadedFontAtIndex(firstSelection.endIndex)
 	}
 
 	override fun updateStyles() {

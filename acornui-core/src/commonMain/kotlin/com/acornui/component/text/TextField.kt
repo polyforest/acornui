@@ -75,6 +75,13 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	var allowClipping: Boolean
 
 	/**
+	 * The font for the root character style.
+	 * Note that it's up to the span element character styles to decide what font to use for glyphs. This root
+	 * font is only used for sizing the text field when there are no text elements.
+	 */
+	val loadedFont: BitmapFont?
+
+	/**
 	 * Replaces the given range with the provided text. This method doesn't destroy text node structure (therefore
 	 * styling) outside of the range. Nodes entirely contained within this range, however, will be removed.
 	 *
@@ -92,6 +99,17 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
 
 	companion object : StyleTag
+}
+
+/**
+ * Returns the loaded [BitmapFont] at the given text element index.
+ * If the font hasn't loaded yet, null will be returned.
+ */
+fun TextField.getLoadedFontAtIndex(index: Int): BitmapFont? {
+	if (index < 0) return loadedFont
+	val elements = element?.textElements ?: return loadedFont
+	if (index >= elements.size) return loadedFont
+	return elements[index].parentSpan?.font
 }
 
 /**
@@ -122,12 +140,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
 
-	/**
-	 * The font for the root character style.
-	 * Note that it's up to the span element character styles to decide what font to use for glyphs. This root
-	 * font is only used for sizing the text field when there are no text elements.
-	 */
-	var font: BitmapFont? by validationProp(null, ValidationFlags.LAYOUT)
+	final override var loadedFont: BitmapFont? by validationProp(null, ValidationFlags.LAYOUT)
 		private set
 
 	private var fontJob by cancellingJobProp<Job>()
@@ -141,7 +154,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 		watch(charStyle) { cS ->
 			fontJob = launchSupervised {
-				font = fontRegistry.getFont(cS.createFontRequest())
+				loadedFont = fontRegistry.getFont(cS.createFontRequest())
 			}
 
 			if (cS.selectable) {
@@ -227,7 +240,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
-			val fontData = font?.data
+			val fontData = loadedFont?.data
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			out.height = padding.expandHeight(lineHeight)
