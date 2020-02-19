@@ -80,8 +80,6 @@ open class KotlinJsPlugin : Plugin<Project> {
 						dependencies {
 							implementation(kotlin("test", version = kotlinVersion))
 							implementation(kotlin("test-js", version = kotlinVersion))
-//							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
-//							implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlinCoroutinesVersion")
 							runtimeOnly(npm("xmlhttprequest", "1.8.0"))
 						}
 					}

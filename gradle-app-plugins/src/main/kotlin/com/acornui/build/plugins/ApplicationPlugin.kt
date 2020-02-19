@@ -14,6 +14,8 @@ import java.io.File
 open class AcornUiApplicationPlugin : Plugin<Project> {
 
 	override fun apply(project: Project) {
+		val acornVersion: String by project
+		println("Applying application plugin acornVersion=$acornVersion")
 		project.extensions.create<AcornUiApplicationExtension>("acornuiApp").apply {
 			www = project.buildDir.resolve("www")
 			wwwProd = project.buildDir.resolve("wwwProd")
@@ -43,6 +45,8 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					sourceMaps = true
 				}
 			}
+
+			nodejs()
 		}
 
 		sourceSets {
@@ -52,14 +56,14 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val commonMain by getting {
 				dependencies {
-					implementation(acorn(target,"utils"))
-					implementation(acorn(target,"core"))
+					api(acorn(target,"utils"))
+					api(acorn(target,"core"))
 				}
 			}
 
 			val jvmMain by getting {
 				dependencies {
-					implementation(acorn(target,"lwjgl-backend"))
+					api(acorn(target,"lwjgl-backend"))
 
 					val lwjglVersion: String by target
 					val jorbisVersion: String by target
@@ -79,7 +83,7 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val jsMain by getting {
 				dependencies {
-					implementation(acorn(target,"webgl-backend"))
+					api(acorn(target,"webgl-backend"))
 				}
 			}
 		}
