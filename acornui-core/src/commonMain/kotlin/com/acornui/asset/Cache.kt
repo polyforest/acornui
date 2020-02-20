@@ -21,7 +21,7 @@ import com.acornui.collection.MutableListIteratorImpl
 import com.acornui.collection.stringMapOf
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.recycle.Clearable
 import com.acornui.time.tick
 import kotlinx.coroutines.*
@@ -72,9 +72,11 @@ interface Cache : Clearable {
 	 */
 	fun refInc(key: String)
 
-	companion object : DKey<Cache> {
+	companion object : Context.Key<Cache> {
 
-		override fun factory(context: Context): Cache? = CacheImpl()
+		override val factory = dependencyFactory {
+			CacheImpl()
+		}
 	}
 }
 
@@ -89,6 +91,11 @@ class CacheImpl(
 		 */
 		private val gcFrames: Int = 500
 ) : Cache {
+
+	init {
+
+		println("Cache")
+	}
 
 	private val cache = stringMapOf<CacheValue>()
 

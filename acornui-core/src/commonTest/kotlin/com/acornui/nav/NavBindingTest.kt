@@ -9,10 +9,9 @@ import kotlin.test.assertEquals
 
 class NavBindingTest {
 
-	private val mockContext = ContextImpl()
+	private val context = ContextImpl(null, dependencies = listOf(NavigationManager to NavigationManagerImpl(ContextImpl())))
 
-	private val navMan: NavigationManager
-		get() = mockContext.inject(NavigationManager)
+	private val navMan: NavigationManager = context.inject(NavigationManager)
 
 	@Test fun pathStr() {
 		val b = NavBindingImpl(mockBindable(0), "")
@@ -26,7 +25,7 @@ class NavBindingTest {
 	}
 
 	private fun mockBindable(depth: Int): NavBindable {
-		return MockNavBindable(mockContext, depth)
+		return MockNavBindable(context, depth)
 	}
 
 	@Test fun pathStrWithParams() {

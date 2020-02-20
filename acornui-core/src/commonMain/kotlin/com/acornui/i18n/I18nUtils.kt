@@ -25,7 +25,7 @@ import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.observe.Observable
 import com.acornui.observe.bind
 import com.acornui.signal.Signal1
@@ -49,9 +49,11 @@ interface I18n {
 	 */
 	fun getBundle(locales: List<Locale>, bundleName: String): I18nBundleRo
 
-	companion object : DKey<I18n> {
+	companion object : Context.Key<I18n> {
 
-		override fun factory(context: Context): I18n? = I18nImpl(context)
+		override val factory = dependencyFactory {
+			I18nImpl(it)
+		}
 	}
 }
 

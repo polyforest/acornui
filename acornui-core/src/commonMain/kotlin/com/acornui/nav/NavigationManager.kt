@@ -27,7 +27,7 @@ import com.acornui.component.showAssetLoadingBar
 import com.acornui.component.style.SkinPart
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.disposeInstance
 import com.acornui.input.interaction.click
@@ -87,9 +87,11 @@ interface NavigationManager : Clearable {
 		return pathToString(path())
 	}
 
-	companion object : DKey<NavigationManager> {
+	companion object : Context.Key<NavigationManager> {
 
-		override fun factory(context: Context) = NavigationManagerImpl(context)
+		override val factory = dependencyFactory {
+			NavigationManagerImpl(it)
+		}
 
 		fun pathToString(path: List<NavNode>): String {
 			return "" + path.joinToString("/")

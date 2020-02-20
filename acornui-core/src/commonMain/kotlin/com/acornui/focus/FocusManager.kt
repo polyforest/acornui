@@ -27,7 +27,6 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import com.acornui.di.owns
 import com.acornui.isAncestorOf
 import com.acornui.signal.Cancel
@@ -114,7 +113,7 @@ interface FocusManager : Disposable {
 
 	fun highlightFocused()
 
-	companion object : DKey<FocusManager>
+	companion object : Context.Key<FocusManager>
 }
 
 /**

@@ -17,7 +17,6 @@
 package com.acornui
 
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -60,7 +59,7 @@ data class Version(
 
 	override fun toString(): String = toVersionString()
 
-	companion object : DKey<Version> {
+	companion object : Context.Key<Version> {
 		fun fromStr(value: String): Version {
 			val split = value.split(".")
 			if (split.size != 4 && split.size != 3) throw IllegalArgumentException("Version '$value' is not in the format major.minor.patch.[build]")

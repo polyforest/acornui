@@ -17,7 +17,6 @@
 package com.acornui
 
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import kotlinx.serialization.Serializable
@@ -64,7 +63,7 @@ data class AppConfig(
 		get() = 1f / frameRate.toFloat()
 
 
-	companion object : DKey<AppConfig>
+	companion object : Context.Key<AppConfig>
 
 }
 

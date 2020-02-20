@@ -20,7 +20,6 @@ import com.acornui.Disposable
 import com.acornui.browser.Location
 import com.acornui.component.Stage
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 
@@ -172,7 +171,7 @@ interface Window : Disposable {
 
 	val location: Location
 
-	companion object : DKey<Window>
+	companion object : Context.Key<Window>
 
 }
 

@@ -17,7 +17,7 @@
 package com.acornui.file
 
 import com.acornui.Disposable
-import com.acornui.di.DKey
+import com.acornui.di.Context
 
 /**
  * An object which allows for selecting file(s) with native pickers for the purposes of reading or writing to disk.
@@ -71,7 +71,7 @@ interface FileIoManager : Disposable {
 	 */
 	fun saveBinary(data: ByteArray, fileFilterGroups: List<FileFilterGroup>? = null, defaultFilename: String, defaultExtension: String? = null)
 
-	companion object : DKey<FileIoManager>
+	companion object : Context.Key<FileIoManager>
 }
 
 /**

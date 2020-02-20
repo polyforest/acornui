@@ -19,6 +19,9 @@ package com.acornui
 import com.acornui.async.setUiThread
 import com.acornui.async.toPromiseOrBlocking
 import com.acornui.async.withTimeout
+import com.acornui.di.ContextImpl
+import com.acornui.di.ContextMarker
+import com.acornui.di.DependencyMap
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
 import kotlin.contracts.InvocationKind
@@ -29,8 +32,8 @@ import kotlin.time.seconds
 
 class MainContext(
 		val looper: Looper,
-		override val coroutineContext: CoroutineContext
-) : CoroutineScope {
+		coroutineContext: CoroutineContext
+) : ContextImpl(null, DependencyMap(), coroutineContext, ContextMarker.MAIN) {
 
 	/**
 	 * Cancels the main loop, exits all applications, and cancels all child coroutines.

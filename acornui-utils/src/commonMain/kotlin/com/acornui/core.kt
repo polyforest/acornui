@@ -52,13 +52,3 @@ fun (()->Any?).toDisposable(): Disposable {
  */
 @Experimental(Experimental.Level.WARNING)
 annotation class ExperimentalAcorn
-
-/**
- * Marks that a method where no matter how many times it's invoked, given the same inputs will always return the same
- * outputs.
- * 
- * Currently this is just a marker interface, but may be used for caching purposes in the future.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-annotation class Idempotent

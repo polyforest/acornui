@@ -18,7 +18,7 @@ package com.acornui.input
 
 import com.acornui.component.UiComponent
 import com.acornui.di.Context
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.observe.Observable
 
 interface SoftKeyboardManager : Observable {
@@ -31,9 +31,10 @@ interface SoftKeyboardManager : Observable {
 	fun show(type: String = SoftKeyboardType.DEFAULT)
 	fun hide()
 
-	companion object : DKey<SoftKeyboardManager> {
-		override fun factory(context: Context): SoftKeyboardManager? {
-			return SoftKeyboardManagerImpl(context)
+	companion object : Context.Key<SoftKeyboardManager> {
+
+		override val factory = dependencyFactory {
+			SoftKeyboardManagerImpl(it)
 		}
 	}
 }

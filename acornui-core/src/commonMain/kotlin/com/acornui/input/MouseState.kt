@@ -17,7 +17,7 @@
 package com.acornui.input
 
 import com.acornui.Disposable
-import com.acornui.di.DKey
+import com.acornui.di.Context
 import com.acornui.input.interaction.MouseInteractionRo
 import com.acornui.input.interaction.TouchInteractionRo
 import com.acornui.input.interaction.TouchRo
@@ -93,7 +93,7 @@ interface MouseState : Disposable {
 
 	fun mouseIsDown(button: WhichButton): Boolean
 
-	companion object : DKey<MouseState>
+	companion object : Context.Key<MouseState>
 
 }
 
@@ -154,8 +154,8 @@ interface MouseInput : MouseState {
 	 */
 	val mouseWheel: Signal<(WheelInteractionRo) -> Unit>
 
-	companion object : DKey<MouseInput> {
-		override val extends: DKey<*>? = MouseState
+	companion object : Context.Key<MouseInput> {
+		override val extends: Context.Key<*>? = MouseState
 	}
 }
 

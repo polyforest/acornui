@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
-import com.acornui.di.dKey
+import com.acornui.di.contextKey
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -29,7 +29,7 @@ interface HtmlComponent : UiComponent {
 	var html: String
 
 	companion object : StyleTag {
-		val FACTORY_KEY = dKey<(owner: Context) -> HtmlComponent>()
+		val FACTORY_KEY = contextKey<(owner: Context) -> HtmlComponent>()
 	}
 }
 

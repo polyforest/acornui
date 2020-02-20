@@ -32,7 +32,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.graphic.Color
@@ -89,9 +89,10 @@ interface PopUpManager : Clearable {
 	 */
 	override fun clear()
 
-	companion object : DKey<PopUpManager>, StyleTag {
-		override fun factory(context: Context): PopUpManager? {
-			return PopUpManagerImpl(context)
+	companion object : Context.Key<PopUpManager>, StyleTag {
+
+		override val factory = dependencyFactory {
+			PopUpManagerImpl(it)
 		}
 	}
 }

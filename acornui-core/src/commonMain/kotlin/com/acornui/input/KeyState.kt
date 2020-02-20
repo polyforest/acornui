@@ -17,7 +17,7 @@
 package com.acornui.input
 
 import com.acornui.Disposable
-import com.acornui.di.DKey
+import com.acornui.di.Context
 import com.acornui.input.interaction.*
 import com.acornui.signal.Signal
 
@@ -31,7 +31,7 @@ interface KeyState : Disposable {
 	 */
 	fun keyIsDown(keyCode: Int, location: KeyLocation = KeyLocation.UNKNOWN): Boolean
 
-	companion object : DKey<KeyState>
+	companion object : Context.Key<KeyState>
 }
 
 /**
@@ -62,7 +62,7 @@ interface KeyInput : KeyState {
 	 */
 	val char: Signal<(CharInteractionRo) -> Unit>
 
-	companion object : DKey<KeyInput> {
-		override val extends: DKey<*>? = KeyState
+	companion object : Context.Key<KeyInput> {
+		override val extends: Context.Key<*>? = KeyState
 	}
 }

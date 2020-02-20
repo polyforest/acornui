@@ -146,8 +146,10 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 		return out.set(sprite)
 	}
 
+	private var blurShader: ShaderProgram? = null
+
 	companion object {
-		private var blurShader: ShaderProgram? = null
+//		private var blurShader: ShaderProgram? = null
 	}
 }
 

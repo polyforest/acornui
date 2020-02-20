@@ -16,7 +16,7 @@
 
 package com.acornui.input
 
-import com.acornui.di.DKey
+import com.acornui.di.Context
 
 interface Clipboard {
 
@@ -37,5 +37,5 @@ interface Clipboard {
 	 */
 	fun triggerCopy(): Boolean
 
-	companion object : DKey<Clipboard>
+	companion object : Context.Key<Clipboard>
 }

@@ -20,7 +20,7 @@ import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.async.delay
 import com.acornui.di.BootstrapTaskTimeoutException
-import com.acornui.di.dKey
+import com.acornui.di.contextKey
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.exit
 import com.acornui.input.KeyInput
@@ -57,7 +57,7 @@ class JvmHeadlessApplicationTest {
 			runMainTest {
 				object : JvmHeadlessApplication(this@runMainTest) {
 					@Suppress("unused")
-					val failedTask by task(dKey()) {
+					val failedTask by task(contextKey()) {
 						throw ExpectedException("Should fail")
 					}
 				}.startAsync(appConfig) {
@@ -77,7 +77,7 @@ class JvmHeadlessApplicationTest {
 			runMainTest {
 				object : JvmHeadlessApplication(this@runMainTest) {
 					@Suppress("unused")
-					val failedTask by task(dKey(), timeout = 1.seconds) {
+					val failedTask by task(contextKey(), timeout = 1.seconds) {
 						delay(20.seconds)
 					}
 				}.startAsync(appConfig) {
@@ -96,7 +96,7 @@ class JvmHeadlessApplicationTest {
 		runMainTest {
 			object : JvmHeadlessApplication(this@runMainTest) {
 				@Suppress("unused")
-				val failedTask by task(dKey(), timeout = 1.seconds, isOptional = true) {
+				val failedTask by task(contextKey(), timeout = 1.seconds, isOptional = true) {
 					delay(20.seconds)
 				}
 			}.startAsync(appConfig) {

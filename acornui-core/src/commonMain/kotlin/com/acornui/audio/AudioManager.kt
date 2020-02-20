@@ -23,7 +23,7 @@ import com.acornui.collection.ActiveList
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.di.DKey
+import com.acornui.di.Context
 
 
 interface AudioManagerRo {
@@ -48,7 +48,7 @@ interface AudioManagerRo {
 	 */
 	val activeMusics: List<Music>
 
-	companion object : DKey<AudioManagerRo>
+	companion object : Context.Key<AudioManagerRo>
 
 }
 
@@ -73,9 +73,9 @@ interface AudioManager : AudioManagerRo, UpdatableChild {
 	fun registerMusic(music: Music)
 	fun unregisterMusic(music: Music)
 
-	companion object : DKey<AudioManager> {
+	companion object : Context.Key<AudioManager> {
 
-		override val extends: DKey<AudioManagerRo>? = AudioManagerRo
+		override val extends: Context.Key<AudioManagerRo>? = AudioManagerRo
 	}
 }
 

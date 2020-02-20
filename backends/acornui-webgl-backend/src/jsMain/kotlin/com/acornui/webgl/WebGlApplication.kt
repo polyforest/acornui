@@ -21,7 +21,7 @@ import com.acornui.asset.Loaders
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
 import com.acornui.di.Context
-import com.acornui.di.dKey
+import com.acornui.di.contextKey
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
 import com.acornui.focus.FakeFocusMouse
@@ -98,7 +98,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 		val context = WebGl.getContext(get(CANVAS), attributes)
 				?: throw Exception("Browser does not support WebGL") // TODO: Make this a better UX
 
-		val gl = Gl20CachedImpl(if (glDebug) WebGl20Debug(context) else WebGl20(context), get(Window))
+		val gl = Gl20CachedImpl(if (glDebug) WebGl20Debug(context) else WebGl20(context))
 		// Clear as soon as possible to avoid frames of black
 		gl.clearColor(config.window.backgroundColor)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)
@@ -170,7 +170,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	}
 
 	companion object {
-		protected val CANVAS = dKey<HTMLCanvasElement, HTMLElement>(BrowserApplicationBase.CANVAS)
+		protected val CANVAS = contextKey<HTMLCanvasElement, HTMLElement>(BrowserApplicationBase.CANVAS)
 	}
 }
 

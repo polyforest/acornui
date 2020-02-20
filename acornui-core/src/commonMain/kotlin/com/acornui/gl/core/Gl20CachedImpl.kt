@@ -28,14 +28,12 @@ import com.acornui.io.NativeReadBuffer
  * gl.getParameter(Gl20.ACTIVE_TEXTURE) // No need to query GPU, returns Gl20.TEXTURE0 from ram.
  */
 class Gl20CachedImpl(
-		override val wrapped: Gl20,
-		private val window: Window
+		override val wrapped: Gl20
 ) : CachedGl20 {
 
 	override var changeCount: Int = 0
 		private set(value) {
 			field = value
-//			window.makeCurrent()
 			batch.flush()
 		}
 

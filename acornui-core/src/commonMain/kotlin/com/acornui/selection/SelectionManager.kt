@@ -22,7 +22,7 @@ import com.acornui.Disposable
 import com.acornui.component.UiComponent
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -43,9 +43,10 @@ interface SelectionManager : Disposable, Clearable {
 		selection = listOf()
 	}
 
-	companion object : DKey<SelectionManager> {
-		override fun factory(context: Context): SelectionManager? {
-			return SelectionManagerImpl(context)
+	companion object : Context.Key<SelectionManager> {
+
+		override val factory = dependencyFactory {
+			SelectionManagerImpl(it)
 		}
 	}
 }

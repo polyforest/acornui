@@ -21,7 +21,7 @@ import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.component.UiComponentRo
 import com.acornui.di.Context
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.input.interaction.redo
 import com.acornui.input.interaction.undo
 import com.acornui.logging.Log
@@ -130,9 +130,10 @@ class StateCommandHistory : Disposable {
 		CommandDispatcher.commandInvoked.remove(commandInvokedHandler)
 	}
 
-	companion object : DKey<StateCommandHistory> {
-		override fun factory(context: Context): StateCommandHistory? {
-			return StateCommandHistory()
+	companion object : Context.Key<StateCommandHistory> {
+
+		override val factory = dependencyFactory {
+			StateCommandHistory()
 		}
 	}
 }

@@ -20,7 +20,6 @@ import com.acornui.Lifecycle
 import com.acornui.LifecycleBase
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 
@@ -37,7 +36,7 @@ interface CursorManager {
 
 	fun removeCursor(cursorReference: CursorReference)
 
-	companion object : DKey<CursorManager>
+	companion object : Context.Key<CursorManager>
 }
 
 interface Cursor : Lifecycle

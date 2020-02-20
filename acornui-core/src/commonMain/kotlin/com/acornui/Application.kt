@@ -71,15 +71,16 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected val applicationScope: CoroutineScope = mainContext + applicationJob
 	protected val bootstrap = Bootstrap(applicationScope.coroutineContext)
 
-	protected fun <T : Any> set(key: DKey<T>, value: T) = bootstrap.set(key, value)
+	protected fun <T : Any> set(key: Context.Key<T>, value: T) = bootstrap.set(key, value)
 
-	protected suspend fun <T : Any> get(key: DKey<T>): T = bootstrap.get(key)
-	protected suspend fun <T : Any> getOptional(key: DKey<T>): T? = bootstrap.getOptional(key)
+	protected suspend fun <T : Any> get(key: Context.Key<T>): T = bootstrap.get(key)
+	protected suspend fun <T : Any> getOptional(key: Context.Key<T>): T? = bootstrap.getOptional(key)
 
 	protected open suspend fun createContext() = ContextImpl(
-			owner = null,
-			dependencies =  bootstrap.dependencies(),
-			coroutineContext = applicationScope.coroutineContext + Job(applicationJob)
+			owner = mainContext,
+			dependencies = bootstrap.dependencies(),
+			coroutineContext = applicationScope.coroutineContext + Job(applicationJob),
+			marker = ContextMarker.APPLICATION
 	)
 
 	protected suspend fun awaitAll() {
@@ -107,13 +108,15 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 
 	protected open suspend fun createStage(context: Context): Stage = StageImpl(context)
 
-	fun <T : Any> task(dKey: DKey<T>, timeout: Duration = 10.seconds, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
+	fun <T : Any> task(dKey: Context.Key<T>, timeout: Duration = 10.seconds, isOptional: Boolean = false, work: Work<T>) = bootstrap.task<ApplicationBase, T>(dKey, timeout, isOptional, work)
 
 	final override fun startAsync(appConfig: AppConfig, onReady: Stage.() -> Unit): Job {
 		applicationScope.launch {
 			set(AppConfig, appConfig)
 			onBeforeStart()
 			val context = createContext()
+			require(context.marker == ContextMarker.APPLICATION)
+			require(context.findOwner { it.marker == ContextMarker.MAIN } != null)
 			val window = context.inject(Window)
 			window.makeCurrent()
 			val stage = createStage(context)
@@ -150,7 +153,7 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	open suspend fun createLooper(owner: Context): ApplicationLooper = ApplicationLooperImpl(owner, mainContext.looper)
 
 	companion object {
-		val uncaughtExceptionHandlerKey: DKey<(error: Throwable) -> Unit> = dKey()
+		val uncaughtExceptionHandlerKey: Context.Key<(error: Throwable) -> Unit> = contextKey()
 	}
 }
 
@@ -174,16 +177,17 @@ open class ApplicationLooperImpl(
 	}
 
 	protected fun tick() {
+//		window.makeCurrent()
 		if (window.isCloseRequested()) {
 			Log.debug("Window closed")
 			dispose()
 		} else {
-			window.makeCurrent()
 			window.updateAndRender(stage)
 		}
 	}
 
 	override fun dispose() {
+		window.makeCurrent()
 		window.refresh.remove(::tick)
 		mainLooper.updateAndRender.remove(::tick.as1)
 		super.dispose()

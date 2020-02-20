@@ -22,6 +22,7 @@ import com.acornui.ApplicationBase
 import com.acornui.MainContext
 import com.acornui.asset.Loaders
 import com.acornui.di.ContextImpl
+import com.acornui.di.ContextMarker
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
 import com.acornui.uncaughtExceptionHandler
@@ -40,9 +41,10 @@ open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(ma
 	}
 
 	override suspend fun createContext() = ContextImpl(
-			owner = null,
+			owner = mainContext,
 			dependencies = HeadlessDependencies.create(config()) + bootstrap.dependencies(),
-			coroutineContext = applicationScope.coroutineContext + Job(applicationJob)
+			coroutineContext = applicationScope.coroutineContext + Job(applicationJob),
+			marker = ContextMarker.APPLICATION
 	)
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {

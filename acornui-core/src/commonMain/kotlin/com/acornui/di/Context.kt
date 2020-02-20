@@ -18,7 +18,6 @@ package com.acornui.di
 
 import com.acornui.Disposable
 import com.acornui.DisposedException
-import com.acornui.Idempotent
 import com.acornui.Lifecycle
 import com.acornui.collection.copy
 import com.acornui.component.ComponentInit
@@ -36,7 +35,11 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
- * An Acorn Context
+ * An Acorn Context is the base object for providing:
+ *  - Ownership hierarchy
+ *  - Dependency injection
+ *  - Coroutine scoping
+ *  - Disposable cleanup
  */
 interface Context : CoroutineScope {
 
@@ -44,6 +47,12 @@ interface Context : CoroutineScope {
 	 * The context that constructed this context.
 	 */
 	val owner: Context?
+
+	/**
+	 * If this context represents a special scope (e.g. [ContextMarker.MAIN] or [ContextMarker.APPLICATION]),
+	 * this will be set.
+	 */
+	val marker: ContextMarker?
 
 	/**
 	 * The dependencies to use when constructing new objects.
@@ -63,16 +72,80 @@ interface Context : CoroutineScope {
 	/**
 	 * Returns true if this context contains a dependency with the given key.
 	 */
-	fun containsKey(key: DKey<*>): Boolean
+	fun containsKey(key: Key<*>): Boolean
 
-	fun <T : Any> injectOptional(key: DKey<T>): T?
+	fun <T : Any> injectOptional(key: Key<T>): T?
 
-	fun <T : Any> inject(key: DKey<T>): T
+	fun <T : Any> inject(key: Key<T>): T
 
 	/**
-	 * Returns an iterator for iterating over all dependencies.
+	 * Returns an iterator for all dependencies.
 	 */
 	fun dependenciesIterator(): Iterator<DependencyPair<*>>
+
+	/**
+	 * A context key is used for getting and setting dependencies on a [Context].
+	 */
+	interface Key<T : Any> {
+
+		/**
+		 * This key's supertype.
+		 * If not null, when the context installs a dependency with this key, it will also install that dependency for
+		 * this supertype key.
+		 *
+		 * The parameterized type of this key should be Key<S> where S : T.
+		 */
+		val extends: Key<*>?
+			get() = null
+
+		/**
+		 * When a dependency is requested that isn't found, this factory (if not null) will be used to construct a new
+		 * instance.
+		 */
+		val factory: DependencyFactory<T>?
+			get() = null
+
+		operator fun provideDelegate(
+				thisRef: Context,
+				prop: KProperty<*>
+		): ReadOnlyProperty<Context, T> = LazyDependency(this)
+
+		infix fun to(value: T): DependencyPair<T> = DependencyPair(this, value)
+	}
+
+	/**
+	 * A factory for providing dependency instances.
+	 */
+	interface DependencyFactory<out T : Any> {
+
+		/**
+		 * Constructs the new dependency using the context found where [Context.marker] == [installTo].
+		 * The new dependency will be installed on that matching context and will be reused on the next injection
+		 * from that context and its children.
+		 *
+		 * @param context The context found where [Context.marker] == [installTo]
+		 */
+		operator fun invoke(context: Context): T
+
+		/**
+		 * Returns the scope for which the new dependency should be installed.
+		 * If the scope isn't found, a [ContextMarkerNotFoundException] exception will be thrown.
+		 */
+		val installTo: ContextMarker
+			get() = ContextMarker.APPLICATION
+	}
+
+	class ContextMarkerNotFoundException(val key: Key<*>) : IllegalStateException("Scope \"${key.factory!!.installTo.value}\" not found for Context.Key $key")
+}
+
+/**
+ * Creates a new dependency factory for the given scope and constructor.
+ */
+fun <T : Any> dependencyFactory(scope: ContextMarker = ContextMarker.APPLICATION, create: (context: Context) -> T): Context.DependencyFactory<T> {
+	return object : Context.DependencyFactory<T> {
+		override val installTo: ContextMarker = scope
+		override fun invoke(context: Context): T = create(context)
+	}
 }
 
 /**
@@ -81,12 +154,14 @@ interface Context : CoroutineScope {
 fun Context.childContext(): Context = ContextImpl(this, childDependencies)
 
 /**
- * A basic [Context] implementation. 
+ * A basic [Context] implementation.
  */
 open class ContextImpl(
 		final override val owner: Context? = null,
-		private val dependencies: DependencyMap = DependencyMap(),
-		override val coroutineContext: CoroutineContext = (owner?.coroutineContext ?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job))
+		private var dependencies: DependencyMap = DependencyMap(),
+		override val coroutineContext: CoroutineContext = (owner?.coroutineContext
+				?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job)),
+		override val marker: ContextMarker? = null
 ) : Context, Disposable {
 
 	constructor(owner: Context?, dependencies: List<DependencyPair<*>>) : this(owner, DependencyMap(dependencies))
@@ -99,32 +174,41 @@ open class ContextImpl(
 
 	final override var childDependencies: DependencyMap = dependencies
 
-	final override fun containsKey(key: DKey<*>): Boolean {
+	final override fun containsKey(key: Context.Key<*>): Boolean {
 		return dependencies.containsKey(key)
 	}
 
-	final override fun <T : Any> injectOptional(key: DKey<T>): T? {
+	final override fun <T : Any> injectOptional(key: Context.Key<T>): T? {
 		return dependencies[key] ?: run {
-			// Dependency not found
-			@Suppress("UNCHECKED_CAST")
-			val defaultDependencies = defaultDependencies as MutableMap<DKey<T>, T?>
-			if (defaultDependencies.containsKey(key)) {
-				defaultDependencies[key]
-			} else {
-				if (constructing.contains(key))
-					throw CyclicDependencyException("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
-				constructing.add(key)
-				var root: Context = this
-				while (root.owner != null) root = root.owner!!
-				val fromFactory = key.factory(root)
-				constructing.remove(key)
-				defaultDependencies[key] = fromFactory
-				fromFactory
-			}
+			val factory = key.factory ?: return null
+			val factoryScope = factory.installTo
+			val contextWithScope = findOwner { it.marker === factoryScope  }
+					?: throw Context.ContextMarkerNotFoundException(key)
+			if (contextWithScope != this)
+				return install(key, contextWithScope.injectOptional(key))
+			if (constructing.contains(key))
+				throw CyclicDependencyException("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
+			constructing.add(key)
+			val newInstance: T = factory(this)
+			install(key, newInstance)
+			constructing.remove(key)
+			return newInstance
 		}
 	}
 
-	final override fun <T : Any> inject(key: DKey<T>): T {
+	@JvmName("installNullable")
+	private fun <T : Any> install(key: Context.Key<T>, instance: T?): T? {
+		return if (instance == null) null else install(key, instance)
+	}
+
+	private fun <T : Any> install(key: Context.Key<T>, instance: T): T {
+		val newDependency = key to instance
+		dependencies += newDependency
+		childDependencies += newDependency
+		return instance
+	}
+
+	final override fun <T : Any> inject(key: Context.Key<T>): T {
 		@Suppress("UNCHECKED_CAST")
 		return injectOptional(key) ?: error("Dependency not found for key: $key")
 	}
@@ -156,8 +240,26 @@ open class ContextImpl(
 	}
 
 	companion object {
-		private val defaultDependencies = HashMap<DKey<*>, Any?>()
-		private val constructing = ArrayList<DKey<*>>()
+		private val constructing = ArrayList<Context.Key<*>>()
+	}
+}
+
+/**
+ * A `ContextMarker` marks special [Context] objects.
+ */
+class ContextMarker(val value: String) {
+
+	companion object {
+
+		/**
+		 * The context created from `runMain`. This will typically be the most global scope.
+		 */
+		val MAIN = ContextMarker("Main")
+
+		/**
+		 * The context created from an application. There may be multiple applications created from a single `runMain`.
+		 */
+		val APPLICATION = ContextMarker("Application")
 	}
 }
 
@@ -200,8 +302,8 @@ fun Context?.owns(other: Context?): Boolean {
 }
 
 /**
- * Traverses this Owned object's ownership lineage, invoking a callback on each owner up the chain.
- * (including this object)
+ * Traverses this Owned object's ownership lineage (starting with `this`), invoking a callback on each owner up the
+ * chain.
  * @param callback The callback to invoke on each owner ancestor. If this callback returns true, iteration will
  * continue, if it returns false, iteration will be halted.
  * @return If [callback] returned false, this method returns the element on which the iteration halted.
@@ -217,38 +319,29 @@ fun Context.ownerWalk(callback: (Context) -> Boolean): Context? {
 }
 
 /**
+ * Traverses this Owned object's ownership lineage (starting with `this`), returning the first [Context] where
+ * [callback] returns true.
+ *
+ * @param callback Invoked on each ancestor until true is returned.
+ * @return Returns the first ancestor for which [callback] returned true.
+ */
+inline fun Context.findOwner(crossinline callback: (Context) -> Boolean): Context? = ownerWalk { !callback(it) }
+
+/**
  * A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.
  */
-@Suppress("AddVarianceModifier")
-interface DKey<T : Any> {
+@Deprecated("Use Context.Key", ReplaceWith("Context.Key<T>"))
+typealias DKey<T> = Context.Key<T>
 
-	val extends: DKey<*>?
-		get() = null
-
-	/**
-	 * A dependency key has an optional factory method, where if it provides a non-null value, the
-	 * dependency doesn't need to be set before use, and the factory method will produce the default implementation.
-	 */
-	@Idempotent
-	fun factory(context: Context): T? = null
-
-	operator fun provideDelegate(
-			thisRef: Context,
-			prop: KProperty<*>
-	): ReadOnlyProperty<Context, T> = LazyDependency(this)
-
-	infix fun to(value: T): DependencyPair<T> = DependencyPair(this, value)
-}
-
-data class DependencyPair<T : Any>(val key: DKey<T>, val value: T)
+data class DependencyPair<T : Any>(val key: Context.Key<T>, val value: T)
 
 /**
  * A dependency map is a mutable map that enforces that the dependency key is the right type for the value.
  */
-class DependencyMap private constructor(private val inner: Map<DKey<*>, Any>) : Iterable<DependencyPair<Any>> {
+class DependencyMap private constructor(private val inner: Map<Context.Key<*>, Any>) : Iterable<DependencyPair<Any>> {
 
 	constructor(dependencies: Iterable<DependencyPair<*>>) : this(dependencies.toDependencyMap())
-	
+
 	constructor() : this(emptyMap())
 
 	/**
@@ -269,13 +362,13 @@ class DependencyMap private constructor(private val inner: Map<DKey<*>, Any>) : 
 	/**
 	 * Returns `true` if the map contains the specified [key].
 	 */
-	fun containsKey(key: DKey<*>): Boolean = inner.containsKey(key)
+	fun containsKey(key: Context.Key<*>): Boolean = inner.containsKey(key)
 
-	operator fun <T : Any> get(key: DKey<T>): T? {
+	operator fun <T : Any> get(key: Context.Key<T>): T? {
 		@Suppress("UNCHECKED_CAST")
 		return inner[key] as T?
 	}
-	
+
 	/**
 	 * Creates a new read-only dependency map by replacing or adding entries to this map from another.
 	 */
@@ -284,7 +377,7 @@ class DependencyMap private constructor(private val inner: Map<DKey<*>, Any>) : 
 		if (isEmpty()) return other
 		return DependencyMap(inner + other.inner)
 	}
-	
+
 	/**
 	 * Creates a new read-only dependency map by replacing or adding entries to this map from another.
 	 */
@@ -312,7 +405,7 @@ class DependencyMap private constructor(private val inner: Map<DKey<*>, Any>) : 
 			override fun next(): DependencyPair<Any> {
 				val n = innerIt.next()
 				@Suppress("UNCHECKED_CAST")
-				return n.key as DKey<Any> to n.value
+				return n.key as Context.Key<Any> to n.value
 			}
 		}
 	}
@@ -330,10 +423,10 @@ class DependencyMap private constructor(private val inner: Map<DKey<*>, Any>) : 
 	}
 }
 
-private fun Iterable<DependencyPair<*>>.toDependencyMap(): Map<DKey<*>, Any> {
-	val map = HashMap<DKey<*>, Any>()
+private fun Iterable<DependencyPair<*>>.toDependencyMap(): Map<Context.Key<*>, Any> {
+	val map = HashMap<Context.Key<*>, Any>()
 	for ((key, value) in this) {
-		var p: DKey<*>? = key
+		var p: Context.Key<*>? = key
 		while (p != null) {
 			map[p] = value
 			p = p.extends
@@ -342,22 +435,25 @@ private fun Iterable<DependencyPair<*>>.toDependencyMap(): Map<DKey<*>, Any> {
 	return map
 }
 
-fun dependencyMapOf(vararg dependencies: DependencyPair<*>) = DependencyMap(dependencies.toList())
+val emptyDependencies = DependencyMap()
+
+fun dependencyMapOf(vararg dependencies: DependencyPair<*>) =
+		if (dependencies.isEmpty()) emptyDependencies else DependencyMap(dependencies.toList())
 
 /**
  * Creates a dependency key with the given factory function.
  */
-fun <T : Any> dKey(): DKey<T> {
-	return object : DKey<T> {}
+fun <T : Any> contextKey(): Context.Key<T> {
+	return object : Context.Key<T> {}
 }
 
-fun <T : SuperKey, SuperKey : Any> dKey(extends: DKey<SuperKey>): DKey<T> {
-	return object : DKey<T> {
-		override val extends: DKey<SuperKey>? = extends
+fun <T : SuperKey, SuperKey : Any> contextKey(extends: Context.Key<SuperKey>): Context.Key<T> {
+	return object : Context.Key<T> {
+		override val extends: Context.Key<SuperKey>? = extends
 	}
 }
 
-private class LazyDependency<T : Any>(private val key: DKey<T>) : ReadOnlyProperty<Context, T> {
+private class LazyDependency<T : Any>(private val key: Context.Key<T>) : ReadOnlyProperty<Context, T> {
 
 	private var value: T? = null
 

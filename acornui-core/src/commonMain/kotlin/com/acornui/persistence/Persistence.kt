@@ -17,7 +17,7 @@
 package com.acornui.persistence
 
 import com.acornui.Version
-import com.acornui.di.DKey
+import com.acornui.di.Context
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.jsonParse
@@ -50,7 +50,7 @@ interface Persistence : Clearable {
 	fun removeItem(key: String)
 	override fun clear()
 
-	companion object : DKey<Persistence>
+	companion object : Context.Key<Persistence>
 }
 
 /**

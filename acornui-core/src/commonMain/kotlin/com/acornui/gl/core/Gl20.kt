@@ -23,7 +23,7 @@
 
 package com.acornui.gl.core
 
-import com.acornui.di.DKey
+import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
@@ -34,7 +34,7 @@ import com.acornui.math.Matrix4
 
 interface Gl20 {
 
-	companion object : DKey<Gl20> {
+	companion object : Context.Key<Gl20> {
 
 		const val TRUE = 1
 		const val FALSE = 0
@@ -1341,7 +1341,7 @@ interface CachedGl20 : Gl20 {
 	 */
 	val uniforms: Uniforms
 
-	companion object : DKey<CachedGl20> {
-		override val extends: DKey<*>? = Gl20
+	companion object : Context.Key<CachedGl20> {
+		override val extends: Context.Key<*>? = Gl20
 	}
 }

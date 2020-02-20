@@ -23,7 +23,6 @@ import com.acornui.test.assertUnorderedListEquals
 import com.acornui.test.runTest
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.supervisorScope
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -32,8 +31,8 @@ import kotlin.time.seconds
 class BootstrapTest {
 
 	@Test fun get() = runTest {
-		val key1 = dKey<String>()
-		val key2 = dKey<String>()
+		val key1 = contextKey<String>()
+		val key2 = contextKey<String>()
 		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task1 by bootstrap.task(key1) {
 			delay(0.1.seconds)
@@ -48,8 +47,8 @@ class BootstrapTest {
 	}
 
 	@Test fun getOrderDoesntMatter() = runTest {
-		val key1 = dKey<String>()
-		val key2 = dKey<String>()
+		val key1 = contextKey<String>()
+		val key2 = contextKey<String>()
 		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
@@ -63,8 +62,8 @@ class BootstrapTest {
 	}
 
 	@Test fun dependenciesList() = runTest {
-		val key1 = dKey<String>()
-		val key2 = dKey<String>()
+		val key1 = contextKey<String>()
+		val key2 = contextKey<String>()
 		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task2 by bootstrap.task(key2) {
 			"dependency 2: ${bootstrap.get(key1)}"
@@ -78,9 +77,9 @@ class BootstrapTest {
 	}
 
 	@Test fun extendedKeys() = runTest {
-		val key1 = dKey<String>()
-		val key2 = object : DKey<String> {
-			override val extends: DKey<*>? = key1
+		val key1 = contextKey<String>()
+		val key2 = object : Context.Key<String> {
+			override val extends: Context.Key<*>? = key1
 		}
 		val bootstrap = bootstrap(defaultTaskTimeout = 1.seconds)
 		val task1 by bootstrap.task(key2) {
@@ -95,9 +94,9 @@ class BootstrapTest {
 	}
 
 	@Test fun timeout() = runTest {
-		val key1 = dKey<String>()
-		val key2 = object : DKey<String> {
-			override val extends: DKey<*>? = key1
+		val key1 = contextKey<String>()
+		val key2 = object : Context.Key<String> {
+			override val extends: Context.Key<*>? = key1
 		}
 
 		// Run the bootstrap with a supervisor so we don't fail the runTest scope; we expect the bootstrap to fail.
@@ -113,9 +112,9 @@ class BootstrapTest {
 	}
 
 	@Test fun optionalTaskTimeout() = runTest {
-		val key1 = dKey<String>()
-		val key2 = object : DKey<String> {
-			override val extends: DKey<*>? = key1
+		val key1 = contextKey<String>()
+		val key2 = object : Context.Key<String> {
+			override val extends: Context.Key<*>? = key1
 		}
 		val bootstrap = bootstrap(defaultTaskTimeout = 0.5.seconds)
 		val task1 by bootstrap.task(key2, isOptional = true) {

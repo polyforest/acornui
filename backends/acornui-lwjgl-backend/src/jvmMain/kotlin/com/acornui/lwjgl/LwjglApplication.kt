@@ -36,6 +36,7 @@ import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.Gl20
 import com.acornui.gl.core.Gl20CachedImpl
+import com.acornui.gl.core.WrappedGl20
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
@@ -57,12 +58,14 @@ import com.acornui.lwjgl.input.GlfwMouseInput
 import com.acornui.lwjgl.input.JvmClipboard
 import com.acornui.lwjgl.opengl.JvmGl20Debug
 import com.acornui.lwjgl.opengl.LwjglGl20
+import com.acornui.lwjgl.opengl.getErrorString
 import com.acornui.lwjgl.opengl.loadTexture
 import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.time.start
 import kotlinx.coroutines.Job
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.GL11
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -121,7 +124,21 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	 */
 	protected open val glTask by task(CachedGl20) {
 		val config = config()
-		val gl = Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20(), get(Window))
+		val window = get(Window)
+		val innerGl = WrappedGl20(
+				wrapped = LwjglGl20(),
+				before = {
+					window.makeCurrent()
+				},
+				after = if (debug) { {
+					val errorCode = GL11.glGetError()
+					if (errorCode != GL11.GL_NO_ERROR) {
+						error("GL ERROR: code: $errorCode ${getErrorString(errorCode)}")
+					}
+				} } else { {} }
+		)
+//		val gl = Gl20CachedImpl(if (debug) JvmGl20Debug() else LwjglGl20())
+		val gl = Gl20CachedImpl(innerGl)
 		// Clear as soon as possible to avoid frames of black
 		gl.clearColor(config.window.backgroundColor)
 		gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT or Gl20.STENCIL_BUFFER_BIT)

@@ -40,7 +40,7 @@ class JvmGl20Debug : WrappedGl20(LwjglGl20(), {}, {
  *
  * @return the error description
  */
-private fun getErrorString(errorCode: Int): String {
+fun getErrorString(errorCode: Int): String {
 	return when (errorCode) {
 		GL_NO_ERROR -> "No error"
 		GL_INVALID_ENUM -> "Enum argument out of range"

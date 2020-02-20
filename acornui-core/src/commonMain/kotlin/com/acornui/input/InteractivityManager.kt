@@ -20,7 +20,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
 import com.acornui.Disposable
-import com.acornui.di.DKey
+import com.acornui.di.Context
 import com.acornui.signal.Stoppable
 import com.acornui.signal.StoppableSignal
 
@@ -64,7 +64,7 @@ interface InteractivityManager : Disposable {
 	 */
 	fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true)
 
-	companion object : DKey<InteractivityManager>
+	companion object : Context.Key<InteractivityManager>
 }
 
 @Suppress("unused")

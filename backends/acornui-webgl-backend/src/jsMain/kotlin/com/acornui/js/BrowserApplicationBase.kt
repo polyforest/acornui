@@ -21,7 +21,7 @@ import com.acornui.MainContext
 import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
-import com.acornui.di.dKey
+import com.acornui.di.contextKey
 import com.acornui.focus.FocusManager
 import com.acornui.graphic.Window
 import com.acornui.input.*
@@ -91,7 +91,7 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 	}
 
 	companion object {
-		protected val CANVAS = dKey<HTMLElement>()
+		protected val CANVAS = contextKey<HTMLElement>()
 	}
 
 }

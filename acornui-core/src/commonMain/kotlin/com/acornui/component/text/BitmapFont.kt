@@ -19,7 +19,7 @@ package com.acornui.component.text
 import com.acornui.asset.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
+import com.acornui.di.dependencyFactory
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Texture
@@ -365,9 +365,10 @@ interface BitmapFontRegistry {
 	 */
 	fun clearFont(request: BitmapFontRequest): Boolean
 
-	companion object : DKey<BitmapFontRegistry> {
-		override fun factory(context: Context): BitmapFontRegistry? {
-			return BitmapFontRegistryImpl(context)
+	companion object : Context.Key<BitmapFontRegistry> {
+
+		override val factory = dependencyFactory {
+			BitmapFontRegistryImpl(it)
 		}
 	}
 }

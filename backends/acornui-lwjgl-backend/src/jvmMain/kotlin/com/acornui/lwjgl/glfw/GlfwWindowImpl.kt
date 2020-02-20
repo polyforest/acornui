@@ -126,7 +126,6 @@ class GlfwWindowImpl(
 		val windowScaleYArr = FloatArray(1)
 		glfwGetMonitorContentScale(primaryMonitor, windowScaleXArr, windowScaleYArr)
 		val wSX = windowScaleXArr[0]
-		val wSY = windowScaleYArr[0]
 		Log.info("Window scale: $wSX")
 
 		// Create the window
@@ -284,6 +283,7 @@ class GlfwWindowImpl(
 	override fun makeCurrent() {
 		if (currentWindowId == windowId) return
 		currentWindowId = windowId
+		println("current $windowId")
 		glfwMakeContextCurrent(windowId)
 		GL.setCapabilities(capabilities)
 	}

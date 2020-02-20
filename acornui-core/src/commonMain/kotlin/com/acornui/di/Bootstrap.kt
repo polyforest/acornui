@@ -45,9 +45,9 @@ class Bootstrap(
 		return DependencyMap(dependenciesList)
 	}
 
-	private val _map = HashMap<DKey<*>, Deferred<Any>>()
+	private val _map = HashMap<Context.Key<*>, Deferred<Any>>()
 
-	suspend fun <T : Any> get(key: DKey<T>): T {
+	suspend fun <T : Any> get(key: Context.Key<T>): T {
 		hasStarted = true
 		val d = _map.getOrElse(key) {
 			error("No task has been registered that provides key $key.")
@@ -56,7 +56,7 @@ class Bootstrap(
 		return d.await() as T
 	}
 
-	suspend fun <T : Any> getOptional(key: DKey<T>): T? {
+	suspend fun <T : Any> getOptional(key: Context.Key<T>): T? {
 		val d = _map[key] ?: return null
 		@Suppress("UNCHECKED_CAST")
 		return d.await() as T
@@ -66,9 +66,9 @@ class Bootstrap(
 	 * Sets a dependency directly without creating a task.
 	 */
 	@Synchronized
-	fun <T : Any> set(dKey: DKey<T>, value: T) {
+	fun <T : Any> set(dKey: Context.Key<T>, value: T) {
 		check(!hasStarted) { "Cannot set a dependency after the bootstrap has been started." }
-		var p: DKey<*>? = dKey
+		var p: Context.Key<*>? = dKey
 		while (p != null) {
 			dependenciesList.removeFirst { it.key == p }
 			_map[p] = async { value }
@@ -78,11 +78,11 @@ class Bootstrap(
 	}
 
 	@Synchronized
-	private fun <T : Any> addDependency(dKey: DKey<T>, value: T) {
+	private fun <T : Any> addDependency(dKey: Context.Key<T>, value: T) {
 		val pair = dKey to value
 
 		if (assertionsEnabled && dependenciesList.any { existingDependency ->
-					var p: DKey<*>? = dKey
+					var p: Context.Key<*>? = dKey
 					while (p != null) {
 						if (existingDependency.key == p)
 							return@any true
@@ -106,11 +106,11 @@ class Bootstrap(
 		}
 	}
 
-	fun <R, T : Any> task(dKey: DKey<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
+	fun <R, T : Any> task(dKey: Context.Key<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) = BootTaskProperty<R, T>(this, dKey, timeout, isOptional, work)
 
-	fun <T : Any> task(name: String, dKey: DKey<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
+	fun <T : Any> task(name: String, dKey: Context.Key<T>, timeout: Duration = defaultTaskTimeout, isOptional: Boolean = false, work: Work<T>) {
 		check(!hasStarted) { "Cannot add a task after the bootstrap has been started." }
-		var p: DKey<*>? = dKey
+		var p: Context.Key<*>? = dKey
 		val deferred = async(start = CoroutineStart.LAZY) {
 			try {
 				withTimeout(timeout.toLongMilliseconds()) {
@@ -136,7 +136,7 @@ class Bootstrap(
 
 	class BootTaskProperty<R, T : Any>(
 			private val bootstrap: Bootstrap,
-			private val dKey: DKey<T>,
+			private val dKey: Context.Key<T>,
 			private val timeout: Duration,
 			private val isOptional: Boolean,
 			private val work: Work<T>

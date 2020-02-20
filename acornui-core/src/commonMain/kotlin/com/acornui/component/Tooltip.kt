@@ -26,7 +26,6 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.di.DKey
 import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.input.interaction.rollOut
@@ -145,7 +144,7 @@ interface TooltipManager {
 
 	fun createTooltip(value: String): Tooltip<String>
 
-	companion object : DKey<TooltipManager>
+	companion object : Context.Key<TooltipManager>
 }
 
 class TooltipManagerImpl(private val popUpManager: PopUpManager, stage: Stage) : TooltipManager, Disposable {

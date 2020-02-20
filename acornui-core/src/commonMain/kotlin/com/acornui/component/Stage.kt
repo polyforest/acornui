@@ -19,7 +19,6 @@ package com.acornui.component
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
-import com.acornui.di.DKey
 import com.acornui.focus.Focusable
 import com.acornui.graphic.ColorRo
 
@@ -30,7 +29,7 @@ interface Stage : ElementContainer<UiComponent>, StageRo {
 	val style: StageStyle
 	var showWaitingForSkinMessage: Boolean
 
-	companion object : DKey<Stage>
+	companion object : Context.Key<Stage>
 }
 
 val Stage.stage: Stage

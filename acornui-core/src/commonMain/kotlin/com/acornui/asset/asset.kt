@@ -19,19 +19,19 @@ package com.acornui.asset
 import com.acornui.audio.Music
 import com.acornui.audio.SoundFactory
 import com.acornui.di.Context
-import com.acornui.di.dKey
+import com.acornui.di.contextKey
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.io.*
 import kotlin.time.Duration
 
 object Loaders {
-	val textLoader = dKey<Loader<String>>()
-	val binaryLoader = dKey<Loader<ReadByteBuffer>>()
-	val textureLoader = dKey<Loader<Texture>>()
-	val rgbDataLoader = dKey<Loader<RgbData>>()
-	val musicLoader = dKey<Loader<Music>>()
-	val soundLoader = dKey<Loader<SoundFactory>>()
+	val textLoader = contextKey<Loader<String>>()
+	val binaryLoader = contextKey<Loader<ReadByteBuffer>>()
+	val textureLoader = contextKey<Loader<Texture>>()
+	val rgbDataLoader = contextKey<Loader<RgbData>>()
+	val musicLoader = contextKey<Loader<Music>>()
+	val soundLoader = contextKey<Loader<SoundFactory>>()
 }
 
 suspend fun <T> Loader<T>.load(url: String,

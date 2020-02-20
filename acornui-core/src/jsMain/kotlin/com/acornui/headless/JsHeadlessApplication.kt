@@ -19,6 +19,7 @@ package com.acornui.headless
 import com.acornui.JsApplicationBase
 import com.acornui.MainContext
 import com.acornui.di.ContextImpl
+import com.acornui.di.ContextMarker
 import kotlinx.coroutines.Job
 
 class JsHeadlessApplication(mainContext: MainContext) : JsApplicationBase(mainContext) {
@@ -27,8 +28,9 @@ class JsHeadlessApplication(mainContext: MainContext) : JsApplicationBase(mainCo
 	 * Creates an injector with JS dependencies from the bootstrap, and mock dependencies for input and graphics.
 	 */
 	override suspend fun createContext() = ContextImpl(
-			owner = null,
+			owner = mainContext,
 			dependencies = HeadlessDependencies.create(config()) + bootstrap.dependencies(),
-			coroutineContext = applicationScope.coroutineContext + Job(applicationJob)
+			coroutineContext = applicationScope.coroutineContext + Job(applicationJob),
+			marker = ContextMarker.APPLICATION
 	)
 }
