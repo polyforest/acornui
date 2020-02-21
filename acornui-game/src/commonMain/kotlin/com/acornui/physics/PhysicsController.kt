@@ -30,8 +30,10 @@ import com.acornui.mvc.Command
 import com.acornui.mvc.CommandType
 import com.acornui.mvc.commander
 import com.acornui.mvc.invokeCommand
+import com.acornui.time.FrameDriverRo
 
 class PhysicsController(
+		override val frameDriver: FrameDriverRo,
 		entities: List<Entity>
 ) : Updatable, Disposable {
 

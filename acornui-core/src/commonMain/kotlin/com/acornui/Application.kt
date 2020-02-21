@@ -17,21 +17,22 @@
 package com.acornui
 
 import com.acornui.asset.Loaders
+import com.acornui.async.AcornDispatcher
+import com.acornui.async.MainDispatcherKey
 import com.acornui.async.Work
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
 import com.acornui.di.*
-import com.acornui.function.as1
 import com.acornui.graphic.Window
 import com.acornui.graphic.updateAndRender
 import com.acornui.io.BinaryLoader
 import com.acornui.io.TextLoader
 import com.acornui.logging.Log
 import com.acornui.signal.addOnce
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
+import com.acornui.time.FrameDriver
+import com.acornui.time.FrameDriverImpl
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -66,7 +67,10 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 
 	protected suspend fun config() = get(AppConfig)
 
-	protected val applicationJob = Job(mainContext.coroutineContext[Job])
+	private val appFrameDriver = FrameDriverImpl()
+	@UseExperimental(InternalCoroutinesApi::class)
+	private val appDispatcher: MainCoroutineDispatcher = AcornDispatcher(appFrameDriver)
+	private val applicationJob = Job(mainContext.coroutineContext[Job])
 	protected val applicationScope: CoroutineScope = mainContext + applicationJob
 	protected val bootstrap = Bootstrap(applicationScope.coroutineContext)
 
@@ -75,16 +79,26 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected suspend fun <T : Any> get(key: Context.Key<T>): T = bootstrap.get(key)
 	protected suspend fun <T : Any> getOptional(key: Context.Key<T>): T? = bootstrap.getOptional(key)
 
+	/**
+	 * The coroutine context to be used in the application.
+	 * This
+	 */
+	protected fun createCoroutineContext(): CoroutineContext
+		= mainContext.coroutineContext + appDispatcher + Job(applicationJob)
+
 	protected open suspend fun createContext() = ContextImpl(
 			owner = mainContext,
 			dependencies = bootstrap.dependencies(),
-			coroutineContext = applicationScope.coroutineContext + Job(applicationJob),
+			coroutineContext = createCoroutineContext(),
 			marker = ContextMarker.APPLICATION
 	)
 
 	protected suspend fun awaitAll() {
 		bootstrap.awaitAll()
 	}
+
+	private val frameDriverTask by task(FrameDriver) { appFrameDriver }
+	private val appDispatcherTask by task(MainDispatcherKey) { appDispatcher }
 
 	protected open val versionTask by task(Version) {
 		//		// Copy the app config and set the build number.
@@ -139,6 +153,7 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	 */
 	protected open fun dispose() {
 		Log.debug("Application disposing")
+		appFrameDriver.clear()
 		bootstrap.dispose()
 	}
 
@@ -168,16 +183,20 @@ open class ApplicationLooperImpl(
 
 	protected val stage = inject(Stage)
 	protected val window = inject(Window)
+	protected val frameDriver = inject(FrameDriver)
 
 	init {
-		mainLooper.updateAndRender.add(::tick.as1)
-		window.refresh.add(::tick)
+		mainLooper.frameDriver.add(::tick)
+		window.refresh.add(::refreshHandler)
 	}
 
-	protected fun tick() {
-//		window.makeCurrent()
+	private fun refreshHandler() = tick(0f)
+
+	protected fun tick(dT: Float) {
+		window.makeCurrent()
+		frameDriver.dispatch(dT)
 		if (window.isCloseRequested()) {
-			Log.debug("Window closed")
+			Log.debug("Window closed: $window")
 			dispose()
 		} else {
 			window.updateAndRender(stage)
@@ -185,9 +204,9 @@ open class ApplicationLooperImpl(
 	}
 
 	override fun dispose() {
+		window.refresh.remove(::refreshHandler)
+		mainLooper.frameDriver.remove(::tick)
 		window.makeCurrent()
-		window.refresh.remove(::tick)
-		mainLooper.updateAndRender.remove(::tick.as1)
 		super.dispose()
 	}
 }

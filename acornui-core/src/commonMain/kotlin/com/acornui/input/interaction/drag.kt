@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.input.interaction
 
 import com.acornui.Disposable
-import com.acornui.LifecycleRo
 import com.acornui.component.*
 import com.acornui.di.ContextImpl
+import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.math.Vector2
@@ -93,7 +95,7 @@ class DragAttachment(
 	private var isTouch: Boolean = false
 	private var enterFrameHandle: Disposable? = null
 
-	private fun targetDeactivatedHandler(c: LifecycleRo) {
+	private fun targetDeactivatedHandler() {
 		stop()
 	}
 
@@ -172,7 +174,7 @@ class DragAttachment(
 			position.set(startPosition)
 			previousPosition.set(startPosition)
 			startPositionLocal.set(t.localX, t.localY)
-			if (allowTouchDragStart(event)) {
+			if (allowTouchDragStart()) {
 				setIsDragging(true)
 			}
 		}
@@ -187,7 +189,7 @@ class DragAttachment(
 		return enabled && !event.handled
 	}
 
-	private fun allowTouchDragStart(event: TouchInteractionRo): Boolean {
+	private fun allowTouchDragStart(): Boolean {
 		return position.manhattanDst(startPosition) >= affordance
 	}
 
@@ -323,7 +325,7 @@ class DragAttachment(
 	}
 
 	init {
-		target.deactivated.add(::targetDeactivatedHandler)
+		target.deactivated.add(::targetDeactivatedHandler.as1)
 		target.mouseDown().add(::mouseDownHandler)
 		target.touchStart().add(::touchStartHandler)
 	}
@@ -335,7 +337,7 @@ class DragAttachment(
 		_drag.dispose()
 		_dragEnd.dispose()
 
-		target.deactivated.remove(::targetDeactivatedHandler)
+		target.deactivated.remove(::targetDeactivatedHandler.as1)
 		target.mouseDown().remove(::mouseDownHandler)
 		target.touchStart().remove(::touchStartHandler)
 	}

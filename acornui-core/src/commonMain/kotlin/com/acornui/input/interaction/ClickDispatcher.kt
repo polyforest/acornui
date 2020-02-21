@@ -27,6 +27,7 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.time.timer
+import kotlin.time.seconds
 
 
 /**
@@ -113,7 +114,7 @@ abstract class ClickDispatcher(
 		release(WhichButton.LEFT, first.canvasX, first.canvasY, event.timestamp, true)
 		preventMouse = true
 		preventMouseTimer?.dispose()
-		preventMouseTimer = timer(2.5f, 1) {
+		preventMouseTimer = timer(2.5.seconds, 1) {
 			preventMouse = false
 			preventMouseTimer = null
 		}

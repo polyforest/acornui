@@ -16,10 +16,11 @@
 
 package com.acornui.audio
 
+import com.acornui.di.Context
+import com.acornui.math.Interpolation
 import com.acornui.tween.Tween
 import com.acornui.tween.createPropertyTween
-import com.acornui.math.Interpolation
 
-fun Music.tweenVolume(duration: Float, ease: Interpolation, toVolume: Float, delay: Float = 0f): Tween {
-	return createPropertyTween(this, "volume", duration, ease, { volume }, { volume = it }, toVolume, delay)
+fun Context.tweenVolume(music: Music, duration: Float, ease: Interpolation, toVolume: Float, delay: Float = 0f): Tween {
+	return createPropertyTween(this, "volume", duration, ease, { music.volume }, { music.volume = it }, toVolume, delay)
 }

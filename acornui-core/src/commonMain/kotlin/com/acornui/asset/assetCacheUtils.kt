@@ -30,7 +30,7 @@ suspend fun <R : Any> Context.loadAndCacheJson(deserializer: DeserializationStra
 		loadAndCacheJsonAsync(deserializer, request, group).await()
 
 fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CacheSet = cacheSet()): Deferred<R> =
-		loadAndCacheJsonAsync(deserializer, path, group)
+		loadAndCacheJsonAsync(deserializer, path.toUrlRequestData(), group)
 
 fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, request: UrlRequestData, group: CacheSet = cacheSet()): Deferred<R> {
 	return group.getOrPutAsync(request) {

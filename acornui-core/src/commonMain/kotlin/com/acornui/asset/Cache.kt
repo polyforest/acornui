@@ -25,7 +25,10 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.dependencyFactory
 import com.acornui.di.own
-import com.acornui.time.tick
+import com.acornui.start
+import com.acornui.time.FrameDriver
+import com.acornui.time.FrameDriverRo
+import com.acornui.time.Tick
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -87,12 +90,14 @@ interface Cache {
 	companion object : Context.Key<Cache> {
 
 		override val factory = dependencyFactory {
-			it.own(CacheImpl())
+			it.own(CacheImpl(it.inject(FrameDriver)))
 		}
 	}
 }
 
 class CacheImpl(
+
+		frameDriver: FrameDriverRo,
 
 		/**
 		 * The number of frames before an unreferenced cache item is removed and destroyed.
@@ -112,7 +117,7 @@ class CacheImpl(
 	private var timerPending = checkInterval
 
 	init {
-		tickHandle = tick {
+		tickHandle = Tick(frameDriver) {
 			if (--timerPending <= 0) {
 				timerPending = checkInterval
 				deathPoolIterator.clear()
@@ -127,7 +132,7 @@ class CacheImpl(
 					}
 				}
 			}
-		}
+		}.start()
 	}
 
 	@Synchronized

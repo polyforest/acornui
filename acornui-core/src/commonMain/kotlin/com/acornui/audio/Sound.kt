@@ -17,7 +17,6 @@
 package com.acornui.audio
 
 import com.acornui.Disposable
-import com.acornui.math.MathUtils
 import com.acornui.math.PI
 import com.acornui.signal.Signal
 import kotlin.math.cos

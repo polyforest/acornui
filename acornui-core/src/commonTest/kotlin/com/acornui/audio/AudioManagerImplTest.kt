@@ -1,12 +1,13 @@
 package com.acornui.audio
 
 import com.acornui.test.assertListEquals
+import com.acornui.time.FrameDriverImpl
 import kotlin.test.Test
 
 class AudioManagerImplTest {
 
 	@Test fun registerWithPriority() {
-		val m = AudioManagerImpl(simultaneousSounds = 4)
+		val m = AudioManagerImpl(FrameDriverImpl(), simultaneousSounds = 4)
 		val s0 = MockSound(2f, "s0")
 		m.registerSound(s0)
 		val s1 = MockSound(2f, "s1")
@@ -22,7 +23,10 @@ class AudioManagerImplTest {
 	}
 }
 
-class MockSound(override val priority: Float, val name: String) : Sound {
+class MockSound(
+		override val priority: Float,
+		private val name: String
+) : Sound {
 	override var onCompleted: (() -> Unit)? = null
 	override var loop: Boolean = false
 	override var volume: Float = 0f

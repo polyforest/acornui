@@ -49,7 +49,7 @@ import com.acornui.properties.afterChange
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce
-import com.acornui.time.start
+import com.acornui.start
 import com.acornui.tween.Tween
 import com.acornui.tween.tweenAlpha
 

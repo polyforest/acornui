@@ -87,9 +87,8 @@ class OpenAlMusic(
 		audioManager.registerMusic(this)
 	}
 
-	private var _isPlaying: Boolean = false
-	override val isPlaying: Boolean
-		get() = _isPlaying
+	override var isPlaying: Boolean = false
+		private set
 
 	override var loop: Boolean = false
 
@@ -106,8 +105,8 @@ class OpenAlMusic(
 			return renderedSeconds + AL10.alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)
 		}
 		set(value) {
-			val wasPlaying = _isPlaying
-			_isPlaying = false
+			val wasPlaying = isPlaying
+			isPlaying = false
 			AL10.alSourceStop(sourceId)
 			AL10.alSourceUnqueueBuffers(sourceId, buffers)
 			renderedSeconds += secondsPerBuffer * bufferCount
@@ -133,29 +132,29 @@ class OpenAlMusic(
 			AL10.alSourcef(sourceId, AL11.AL_SEC_OFFSET, value - renderedSeconds)
 			if (wasPlaying) {
 				AL10.alSourcePlay(sourceId)
-				_isPlaying = true
+				isPlaying = true
 			}
 		}
 
 	override fun play() {
-		if (!_isPlaying) {
-			_isPlaying = true
+		if (!isPlaying) {
+			isPlaying = true
 			update()
 			AL10.alSourcePlay(sourceId)
 		}
 	}
 
 	override fun stop() {
-		if (!_isPlaying) return
+		if (!isPlaying) return
 		streamReader.reset()
 		renderedSeconds = 0f
-		_isPlaying = false
+		isPlaying = false
 		AL10.alSourceStop(sourceId)
 	}
 
 	override fun pause() {
 		AL10.alSourcePause(sourceId)
-		_isPlaying = false
+		isPlaying = false
 	}
 
 	private fun fill(bufferId: Int): Boolean {
@@ -195,7 +194,7 @@ class OpenAlMusic(
 		}
 
 		// A buffer underflow will cause the source to stop.
-		if (_isPlaying && AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) AL10.alSourcePlay(sourceId)
+		if (isPlaying && AL10.alGetSourcei(sourceId, AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) AL10.alSourcePlay(sourceId)
 	}
 
 
@@ -210,9 +209,9 @@ class OpenAlMusic(
 	}
 
 	companion object {
-		private val bufferSize = 4096 * 10
-		private val bufferCount = 3
-		private val bytesPerSample = 2
+		private const val bufferSize = 4096 * 10
+		private const val bufferCount = 3
+		private const val bytesPerSample = 2
 		private val tempBytes = ByteArray(bufferSize)
 		private val tempBuffer = BufferUtils.createByteBuffer(bufferSize)
 	}

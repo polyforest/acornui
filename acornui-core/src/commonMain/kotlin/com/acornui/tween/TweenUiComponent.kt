@@ -20,6 +20,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.alpha
 import com.acornui.graphic.Color
 import com.acornui.math.Interpolation
+import com.acornui.time.FrameDriverRo
 
 fun UiComponent.tweenAlpha(duration: Float, ease: Interpolation, toAlpha: Float, delay: Float = 0f): Tween {
 	return createPropertyTween(this, "alpha", duration, ease, { alpha }, { alpha = it }, toAlpha, delay)
@@ -61,7 +62,7 @@ fun UiComponent.tweenTint(duration: Float, ease: Interpolation, toTint: Color, d
 	TweenRegistry.kill(this, "tint", finish = true)
 	val fromTint = colorTint.copy()
 	val tint = Color()
-	val tween = TweenImpl(duration, ease, delay, loop = false) {
+	val tween = TweenImpl(inject(FrameDriverRo), duration, ease, delay, loop = false) {
 		previousAlpha: Float, currentAlpha: Float ->
 		tint.set(fromTint).lerp(toTint, currentAlpha)
 	}

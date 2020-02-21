@@ -18,13 +18,14 @@ package com.acornui.tween
 
 import com.acornui.Disposable
 import com.acornui.Updatable
+import com.acornui.di.Context
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
 import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import com.acornui.time.FrameDriver
-import com.acornui.time.stop
+import com.acornui.stop
+import com.acornui.time.FrameDriverRo
 
 /**
  * A Tween is an object representing an interpolation over time.
@@ -140,7 +141,7 @@ interface Tween : Updatable, Disposable {
 	 *
 	 * Use [finish] to first set this tween's progress to 100% and stop.
 	 *
-	 * If this tween is being driven by the [FrameDriver], it will be stopped.
+	 * If this tween is being driven by the [FrameDriverRo], it will be stopped.
 	 * @see [Updatable.stop]
 	 */
 	fun complete()
@@ -177,9 +178,9 @@ interface Tween : Updatable, Disposable {
 /**
  * A standard base class for tweens. It handles the signals, easing, and looping. Just override [updateToTime].
  */
-abstract class TweenBase : Tween {
+abstract class TweenBase(override val frameDriver: FrameDriverRo) : Tween {
 
-	protected val _completed = Signal1<Tween>()
+	private val _completed = Signal1<Tween>()
 	override val completed = _completed.asRo()
 
 	override var loopBefore: Boolean = false
@@ -191,7 +192,7 @@ abstract class TweenBase : Tween {
 
 	protected var ease: Interpolation = Easing.linear
 
-	protected var _currentTime: Float = 0f
+	private var _currentTime: Float = 0f
 
 	override var currentTime: Float
 		get() = _currentTime
@@ -248,8 +249,6 @@ abstract class TweenBase : Tween {
 
 	override fun complete() {
 		_completed.dispatch(this)
-
-		// If this tween is being driven, remove it from the frame driver.
 		stop()
 	}
 
@@ -259,11 +258,16 @@ abstract class TweenBase : Tween {
 }
 
 /**
- * A tween instance with pooling.
- * Use [tween] to obtain a new Tween instance.
- * Pooled tweens are recycled on completion. (See [completed] signal)
+ *
  */
-class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolean, private val tween: (previousAlpha: Float, currentAlpha: Float) -> Unit) : TweenBase() {
+class TweenImpl(
+		frameDriver: FrameDriverRo,
+		duration: Float,
+		ease: Interpolation,
+		delay: Float,
+		loop: Boolean,
+		private val tween: (previousAlpha: Float, currentAlpha: Float) -> Unit
+) : TweenBase(frameDriver) {
 
 	private var previousAlpha = 0f
 
@@ -284,31 +288,33 @@ class TweenImpl(duration: Float, ease: Interpolation, delay: Float, loop: Boolea
 	}
 }
 
-fun tween(duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, tween: (previousAlpha: Float, currentAlpha: Float) -> Unit): Tween {
-	return TweenImpl(duration, ease, delay, loop, tween)
+/**
+ * Creates a new Tween.
+ * This tween is not automatically started.
+ * @see Updatable.start
+ */
+fun Context.tween(duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, tween: (previousAlpha: Float, currentAlpha: Float) -> Unit): Tween {
+	return TweenImpl(inject(FrameDriverRo), duration, ease, delay, loop, tween)
 }
 
-fun toFromTween(start: Float, end: Float, duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, setter: (Float) -> Unit): Tween {
+fun Context.toFromTween(start: Float, end: Float, duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, setter: (Float) -> Unit): Tween {
 	val d = (end - start)
-	val tweenInstance = TweenImpl(duration, ease, delay, loop) {
-		previousAlpha: Float, currentAlpha: Float ->
+	return TweenImpl(inject(FrameDriverRo), duration, ease, delay, loop) {
+		_: Float, currentAlpha: Float ->
 		setter(d * currentAlpha + start)
 	}
-	return tweenInstance
 }
 
-fun relativeTween(delta: Float, duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, getter: () -> Float, setter: (Float) -> Unit): Tween {
-	val tweenInstance = TweenImpl(duration, ease, delay, loop) {
+fun Context.relativeTween(delta: Float, duration: Float, ease: Interpolation, delay: Float = 0f, loop: Boolean = false, getter: () -> Float, setter: (Float) -> Unit): Tween {
+	return TweenImpl(inject(FrameDriverRo), duration, ease, delay, loop) {
 		previousAlpha: Float, currentAlpha: Float ->
 		setter(getter() + (currentAlpha - previousAlpha) * delta)
 	}
-	return tweenInstance
 }
 
-fun tweenCall(delay: Float = 0f, setter: () -> Unit): Tween {
-	val tweenInstance = TweenImpl(0f, Easing.linear, delay, false) {
-		previousAlpha: Float, currentAlpha: Float ->
+fun Context.tweenCall(delay: Float = 0f, setter: () -> Unit): Tween {
+	return TweenImpl(inject(FrameDriverRo), 0f, Easing.linear, delay, false) {
+		_: Float, _: Float ->
 		setter()
 	}
-	return tweenInstance
 }

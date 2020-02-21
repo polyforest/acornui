@@ -17,6 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.asset.*
+import com.acornui.async.MainDispatcher
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.dependencyFactory
@@ -184,7 +185,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 	}
 
 	val pageTextures = pageTextureLoaders.awaitAll()
-	withContext(Dispatchers.Main) {
+	withContext(MainDispatcher) {
 		pageTextures.forEach {
 			it.refInc()
 		}

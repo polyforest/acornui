@@ -36,6 +36,7 @@ import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.popup.PopUpManager
 import com.acornui.time.timer
+import kotlin.time.seconds
 
 /**
  * @author nbilyk
@@ -76,7 +77,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	init {
 		cameraOverride = cam
-		skinCheckTimer = timer(5f, 10, callback = ::skinCheck)
+		skinCheckTimer = timer(5.seconds, 10, callback = ::skinCheck)
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)

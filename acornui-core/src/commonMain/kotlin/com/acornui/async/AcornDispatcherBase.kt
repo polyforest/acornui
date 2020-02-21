@@ -16,23 +16,15 @@
 
 package com.acornui.async
 
-
-import com.acornui.async.Acorn.delay
-import com.acornui.time.callLater
-import com.acornui.time.timer
+import com.acornui.di.Context
+import com.acornui.signal.addOnce
+import com.acornui.start
+import com.acornui.time.FrameDriverRo
+import com.acornui.time.Timer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.internal.MainDispatcherFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmStatic
-
-/**
- * Dispatches execution onto Acorn UI Thread.
- */
-@UseExperimental(InternalCoroutinesApi::class)
-@Suppress("unused")
-@Deprecated("Use Dispatchers.Main", ReplaceWith("Dispatchers.Main"))
-val Dispatchers.UI : AcornDispatcher
-	get() = Acorn
 
 /**
  * Dispatcher for Acorn event dispatching thread.
@@ -40,13 +32,15 @@ val Dispatchers.UI : AcornDispatcher
  * This class provides type-safety and a point for future extensions.
  */
 @InternalCoroutinesApi
-sealed class AcornDispatcher : MainCoroutineDispatcher(), Delay {
+sealed class AcornDispatcherBase(
+		private val frameDriver: FrameDriverRo
+) : MainCoroutineDispatcher(), Delay {
 
 	/**
 	 * @suppress
 	 */
 	override fun dispatch(context: CoroutineContext, block: Runnable) {
-		callLater {
+		frameDriver.addOnce {
 			block.run()
 		}
 	}
@@ -56,9 +50,9 @@ sealed class AcornDispatcher : MainCoroutineDispatcher(), Delay {
 	 */
 	@UseExperimental(ExperimentalCoroutinesApi::class)
 	override fun scheduleResumeAfterDelay(timeMillis: Long, continuation: CancellableContinuation<Unit>) {
-		val timer = timer(timeMillis / 1000f) {
+		val timer = Timer(frameDriver,timeMillis / 1000f) {
 			with(continuation) { resumeUndispatched(Unit) }
-		}
+		}.start()
 		continuation.invokeOnCancellation { timer.dispose() }
 	}
 
@@ -66,19 +60,18 @@ sealed class AcornDispatcher : MainCoroutineDispatcher(), Delay {
 	 * @suppress
 	 */
 	override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
-		val timer = timer(timeMillis / 1000f) {
+		val timer = Timer(frameDriver,timeMillis / 1000f) {
 			block.run()
-		}
+		}.start()
 		return object : DisposableHandle {
-			override fun dispose() {
-				timer.dispose()
-			}
+			override fun dispose() = timer.dispose()
 		}
 	}
 }
 
 @InternalCoroutinesApi
-private object ImmediateAcornDispatcher : AcornDispatcher() {
+private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
+
 	override val immediate: MainCoroutineDispatcher
 		get() = this
 
@@ -93,22 +86,43 @@ private object ImmediateAcornDispatcher : AcornDispatcher() {
  * Dispatches execution onto Acorn event dispatching thread and provides native [delay] support.
  */
 @InternalCoroutinesApi
-internal object Acorn : AcornDispatcher() {
-	override val immediate: MainCoroutineDispatcher
-		get() = ImmediateAcornDispatcher
+internal class AcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
+	override val immediate: MainCoroutineDispatcher = ImmediateAcornDispatcher(frameDriver)
 
 	override fun toString() = "Acorn UI"
 }
 
+/**
+ * Acorn does provide a service for supplying [Dispatchers.Main], however it's recommended to use the
+ * [MainDispatcher] dependency. [Dispatchers.Main] will guarantee invocation on the main thread, but
+ */
 @Suppress("unused")
 @UseExperimental(InternalCoroutinesApi::class)
 class AcornDispatcherFactory : MainDispatcherFactory {
+
 	companion object {
+
+		lateinit var frameDriver: FrameDriverRo
+
 		@JvmStatic // accessed reflectively from core
-		fun getDispatcher(): MainCoroutineDispatcher = Acorn
+		fun getDispatcher(): MainCoroutineDispatcher = AcornDispatcher(frameDriver)
 	}
 
-	override fun createDispatcher(allFactories: List<MainDispatcherFactory>): MainCoroutineDispatcher = Acorn
+	override fun createDispatcher(allFactories: List<MainDispatcherFactory>): MainCoroutineDispatcher = AcornDispatcher(frameDriver)
 
 	override val loadPriority: Int get() = Int.MAX_VALUE
 }
+
+/**
+ * The dependency key for the Application coroutine dispatcher that:
+ * 1) Dispatches in the Main thread.
+ * 2) Dispatches with the application's window set to current
+ * 3) Cancels scheduling on application close.
+ */
+object MainDispatcherKey : Context.Key<MainCoroutineDispatcher>
+
+/**
+ * The [MainDispatcherKey] instance.
+ */
+val Context.MainDispatcher: MainCoroutineDispatcher
+	get() = inject(MainDispatcherKey)

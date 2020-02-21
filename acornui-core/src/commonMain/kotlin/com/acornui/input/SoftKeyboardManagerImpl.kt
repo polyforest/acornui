@@ -16,8 +16,8 @@ import com.acornui.observe.Observable
 import com.acornui.observe.dataBinding
 import com.acornui.signal.Signal1
 import com.acornui.signal.bind
-import com.acornui.time.start
-import com.acornui.time.stop
+import com.acornui.start
+import com.acornui.stop
 import com.acornui.tween.Tween
 import com.acornui.tween.tween
 

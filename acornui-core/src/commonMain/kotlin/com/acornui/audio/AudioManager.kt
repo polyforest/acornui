@@ -16,14 +16,13 @@
 
 package com.acornui.audio
 
-import com.acornui.Disposable
-import com.acornui.UpdatableChild
-import com.acornui.UpdatableChildBase
+import com.acornui.*
 import com.acornui.collection.ActiveList
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.di.Context
+import com.acornui.time.FrameDriverRo
 
 
 interface AudioManagerRo {
@@ -52,7 +51,7 @@ interface AudioManagerRo {
 
 }
 
-interface AudioManager : AudioManagerRo, UpdatableChild {
+interface AudioManager : AudioManagerRo, Updatable {
 
 	val simultaneousSounds: Int
 
@@ -79,11 +78,14 @@ interface AudioManager : AudioManagerRo, UpdatableChild {
 	}
 }
 
-open class AudioManagerImpl(final override val simultaneousSounds: Int = 8) : UpdatableChildBase(), AudioManager, Disposable {
+open class AudioManagerImpl(
+		override val frameDriver: FrameDriverRo,
+		final override val simultaneousSounds: Int = 8
+) : AudioManager, Disposable {
 
 	override val activeSounds = ActiveList<Sound>(simultaneousSounds)
 	override val activeMusics = ActiveList<Music>()
-	protected val soundSources = ArrayList<SoundFactory>()
+	private val soundSources = ArrayList<SoundFactory>()
 
 	private val soundPriorityComparator = {
 		o1: Sound?, o2: Sound? ->
@@ -162,7 +164,7 @@ open class AudioManagerImpl(final override val simultaneousSounds: Int = 8) : Up
 	}
 
 	override fun dispose() {
-		remove()
+		stop()
 		while (activeSounds.isNotEmpty()) {
 			activeSounds.poll().dispose()
 		}

@@ -30,6 +30,7 @@ import com.acornui.graphic.loadAndCacheAtlasPage
 import com.acornui.math.Matrix4Ro
 import com.acornui.serialization.binaryParse
 import com.acornui.serialization.jsonParse
+import com.acornui.time.FrameDriverRo
 import com.acornui.time.onTick
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -112,6 +113,8 @@ class ParticleEffectComponent(
 }
 
 class LoadedParticleEffect(
+
+		override val frameDriver: FrameDriverRo,
 
 		val effectInstance: ParticleEffectInstance,
 
@@ -204,7 +207,7 @@ suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: Ca
 		}
 		emitterRenderers.add(ParticleEmitterRenderer2d(emitterInstance, sprites))
 	}
-	return LoadedParticleEffect(effectInstance, emitterRenderers, group)
+	return LoadedParticleEffect(inject(FrameDriverRo), effectInstance, emitterRenderers, group)
 }
 
 interface ParticleEmitterRenderer {

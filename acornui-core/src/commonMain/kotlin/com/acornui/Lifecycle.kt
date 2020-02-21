@@ -18,6 +18,7 @@ package com.acornui
 
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+import com.acornui.time.FrameDriverRo
 
 /**
  * An object with a lifecycle. Create, Dispose, Activate, Deactivate
@@ -127,23 +128,38 @@ abstract class LifecycleBase : Lifecycle {
 interface Updatable {
 
 	/**
+	 * The frame driver this Updatable instance will use when [start] is called.
+	 */
+	val frameDriver: FrameDriverRo
+
+	/**
 	 * Updates this object.
 	 * @param dT The number of seconds since the last update. This will be at most [AppConfig.frameTime].
 	 */
 	fun update(dT: Float)
 }
 
-interface UpdatableChild : Updatable, ChildRo {
-
-	override var parent: Parent<UpdatableChild>?
-
-	fun remove() {
-		parent?.removeChild(this)
-	}
+/**
+ * Removes this instance's [Updatable.update] from the frame driver.
+ * @return Returns `this`
+ */
+fun <T : Updatable> T.stop(): T {
+	frameDriver.remove(::update)
+	return this
 }
 
-abstract class UpdatableChildBase : UpdatableChild {
-
-	override var parent: Parent<UpdatableChild>? = null
-
+/**
+ * Adds this instance's [Updatable.update] to the frame driver.
+ * @return Returns `this`
+ */
+fun <T : Updatable> T.start(): T {
+	frameDriver.add(::update)
+	return this
 }
+
+/**
+ * Returns true if this updatable instance is currently being driven.
+ * @see start
+ */
+val Updatable.isDriven: Boolean
+	get() = frameDriver.contains(::update)

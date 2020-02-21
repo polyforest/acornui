@@ -28,6 +28,8 @@ import com.acornui.math.Vector2
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.time.timer
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  *
@@ -35,7 +37,7 @@ import com.acornui.time.timer
 private class LongPressAttachment(
 		private val target: UiComponentRo,
 		private val isCapture: Boolean,
-		private val longPressTime: Float = DEFAULT_LONG_PRESS_TIME,
+		private val longPressTime: Duration = DEFAULT_LONG_PRESS_TIME,
 		private val affordance: Float = DragAttachment.DEFAULT_AFFORDANCE
 ) : ContextImpl(target) {
 
@@ -106,7 +108,7 @@ private class LongPressAttachment(
 	}
 
 	companion object {
-		const val DEFAULT_LONG_PRESS_TIME = 0.45f
+		val DEFAULT_LONG_PRESS_TIME = 0.45.seconds
 	}
 }
 
@@ -116,7 +118,7 @@ private class LongPressAttachment(
  */
 fun UiComponentRo.longPress(
 		isCapture: Boolean = false,
-		longPressTime: Float = DEFAULT_LONG_PRESS_TIME,
+		longPressTime: Duration = DEFAULT_LONG_PRESS_TIME,
 		affordance: Float = DragAttachment.DEFAULT_AFFORDANCE
 ): Signal<() -> Unit> {
 	return createOrReuseAttachment("LongPress_$isCapture") {

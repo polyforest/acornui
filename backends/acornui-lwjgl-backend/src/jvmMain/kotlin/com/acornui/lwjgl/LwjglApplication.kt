@@ -56,13 +56,12 @@ import com.acornui.lwjgl.glfw.GlfwWindowImpl
 import com.acornui.lwjgl.input.GlfwKeyInput
 import com.acornui.lwjgl.input.GlfwMouseInput
 import com.acornui.lwjgl.input.JvmClipboard
-import com.acornui.lwjgl.opengl.JvmGl20Debug
 import com.acornui.lwjgl.opengl.LwjglGl20
 import com.acornui.lwjgl.opengl.getErrorString
 import com.acornui.lwjgl.opengl.loadTexture
 import com.acornui.persistence.JvmPersistence
 import com.acornui.persistence.Persistence
-import com.acornui.time.start
+import com.acornui.time.FrameDriverRo
 import kotlinx.coroutines.Job
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
@@ -171,7 +170,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	private val audioManagerTask by task(AudioManager, isOptional = true) {
-		val audioManager = OpenAlAudioManager()
+		val audioManager = OpenAlAudioManager(get(FrameDriverRo))
 		// Audio
 		try {
 			registerDefaultMusicDecoders()

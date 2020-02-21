@@ -147,7 +147,7 @@ interface TooltipManager {
 	companion object : Context.Key<TooltipManager>
 }
 
-class TooltipManagerImpl(private val popUpManager: PopUpManager, stage: Stage) : TooltipManager, Disposable {
+class TooltipManagerImpl(private val popUpManager: PopUpManager, private val stage: Stage) : TooltipManager, Disposable {
 
 	private val _tooltips = ActiveList<Tooltip<*>>()
 	override val tooltips: MutableList<Tooltip<*>> = _tooltips
@@ -190,11 +190,11 @@ class TooltipManagerImpl(private val popUpManager: PopUpManager, stage: Stage) :
 		set(value) {
 			if (field != value) {
 				field = value
-				if (value) {
-					enterFrameHandle = tick(callback = ::frameHandler.as2)
+				enterFrameHandle = if (value) {
+					stage.tick(callback = ::frameHandler.as2)
 				} else {
 					enterFrameHandle?.dispose()
-					enterFrameHandle = null
+					null
 				}
 			}
 		}

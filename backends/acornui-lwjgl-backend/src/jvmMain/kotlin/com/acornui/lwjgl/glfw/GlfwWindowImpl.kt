@@ -102,18 +102,17 @@ class GlfwWindowImpl(
 
 	private var forceClose = false
 	
-	
-
 	init {
 //		if (debug)
 //			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE)
 
-		GLFWErrorCallback.createPrint(System.err).set()
+		if (activeWindowsCount++ == 0) {
+			GLFWErrorCallback.createPrint(System.err).set()
+			// Initialize GLFW. Most GLFW functions will not work before doing this.
+			check(glfwInit()) { "Unable to initialize GLFW" }
+		}
 
-		// Initialize GLFW. Most GLFW functions will not work before doing this.
-		check(glfwInit()) { "Unable to initialize GLFW" }
-
-		// Configure our window
+		// Configure hints for the window to be created with glfwCreateWindow:
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
 		glfwWindowHint(GLFW_SAMPLES, if (glConfig.antialias) 4 else 1)
 		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL11.GL_TRUE)
@@ -283,7 +282,6 @@ class GlfwWindowImpl(
 	override fun makeCurrent() {
 		if (currentWindowId == windowId) return
 		currentWindowId = windowId
-		println("current $windowId")
 		glfwMakeContextCurrent(windowId)
 		GL.setCapabilities(capabilities)
 	}
@@ -363,11 +361,19 @@ class GlfwWindowImpl(
 		_isVisibleChanged.dispose()
 		Callbacks.glfwFreeCallbacks(windowId)
 		glfwDestroyWindow(windowId)
-		glfwTerminate()
-		glfwSetErrorCallback(null)?.free()
+		if (--activeWindowsCount == 0) {
+			glfwTerminate()
+			glfwSetErrorCallback(null)?.free()
+		}
+
+	}
+
+	override fun toString(): String {
+		return "GlfwWindowImpl(windowId=$windowId)"
 	}
 
 	companion object {
 		private var currentWindowId = -1L
+		private var activeWindowsCount = 0
 	}
 }

@@ -22,7 +22,8 @@ import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
 import com.acornui.signal.emptySignal
 import com.acornui.system.userInfo
-import com.acornui.time.FrameDriver
+import com.acornui.time.FrameDriverImpl
+import com.acornui.time.FrameDriverRo
 import com.acornui.time.nowMs
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -36,6 +37,9 @@ actual fun looper(): Looper = JsLooper()
 
 class JsLooper : Looper {
 
+	private val _frameDriver = FrameDriverImpl()
+	override val frameDriver: FrameDriverRo = _frameDriver
+
 	/**
 	 * Does nothing on the JS Backend.
 	 */
@@ -47,11 +51,6 @@ class JsLooper : Looper {
 	override val pollEvents: Signal<() -> Unit> = emptySignal()
 
 	private val _updateAndRender = Signal1<Float>()
-
-	/**
-	 * Dispatched when the acorn applications should update and render.
-	 */
-	override val updateAndRender = _updateAndRender.asRo()
 
 	private val isBrowser = userInfo.isBrowser
 	private var lastFrameMs = nowMs()
@@ -72,8 +71,7 @@ class JsLooper : Looper {
 		val dT = (now - lastFrameMs) / 1000f
 		lastFrameMs = now
 		try {
-			FrameDriver.dispatch(dT)
-			_updateAndRender.dispatch(dT)
+			_frameDriver.dispatch(dT)
 		} catch (e: Throwable) {
 			mainJob.cancel(CancellationException(e.message, e))
 		}

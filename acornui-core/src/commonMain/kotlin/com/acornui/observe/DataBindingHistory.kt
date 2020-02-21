@@ -13,6 +13,7 @@ import com.acornui.input.interaction.redo
 import com.acornui.input.interaction.undo
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal0
+import com.acornui.time.FrameDriverRo
 import com.acornui.time.delayedCallback
 
 class DataBindingHistory<T>(
@@ -46,7 +47,7 @@ class DataBindingHistory<T>(
 
 	private var isDispatching = false
 
-	private val delayedPush = delayedCallback(0.7f, ::pushState)
+	private val delayedPush = delayedCallback(host.inject(FrameDriverRo), 0.7f, ::pushState)
 
 	/**
 	 * Only values that pass this filter will be added to the history.

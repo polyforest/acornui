@@ -25,8 +25,8 @@ import com.acornui.di.Context
 import com.acornui.graphic.exit
 import com.acornui.math.Easing
 import com.acornui.runMainTest
+import com.acornui.start
 import com.acornui.test.assertClose
-import com.acornui.time.start
 import com.acornui.tween.tweenX
 import kotlinx.coroutines.launch
 import kotlin.test.Ignore

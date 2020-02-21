@@ -14,25 +14,59 @@
  * limitations under the License.
  */
 
+@file:Suppress("ConvertTwoComparisonsToRangeCheck")
+
 package com.acornui.time
 
 import com.acornui.Disposable
 import com.acornui.Updatable
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
+import com.acornui.di.Context
+import com.acornui.di.own
+import com.acornui.start
+import com.acornui.stop
 import kotlin.time.Duration
 
 /**
+ * A Timer invokes a [callback] after a set amount of time.
+ *
+ * Constructing a Timer object from the constructor will not automatically [start] the timer, however constructing
+ * from the dsl methods will.
+ *
  * @author nbilyk
  */
-private class Timer private constructor() : Updatable, Clearable, Disposable {
+class Timer(
 
-	private var isActive = false
-	private var duration: Float = 0f
-	private var repetitions: Int = 1
-	private var currentTime: Float = 0f
+		/**
+		 * The frame loop.
+		 */
+		override val frameDriver: FrameDriverRo,
+
+		/**
+		 * The interval between callbacks.
+		 */
+		val duration: Float = 0f,
+
+		/**
+		 * The number of repetitions before stopping.
+		 * If this is negative, the timer will continue until it's stopped manually.
+		 * @see stop
+		 */
+		val repetitions: Int = 1,
+
+		/**
+		 * The first callback will be invoked at `delay + duration`.
+		 */
+		val delay: Float = 0f,
+
+		/**
+		 * The callback to invoke on each repetition.
+		 */
+		val callback: () -> Unit
+
+) : Updatable, Disposable {
+
+	private var currentTime: Float = -delay
 	private var currentRepetition: Int = 0
-	private var callback: () -> Unit = NOOP
 
 	override fun update(dT: Float) {
 		currentTime += dT
@@ -46,66 +80,29 @@ private class Timer private constructor() : Updatable, Clearable, Disposable {
 		}
 	}
 
-	override fun clear() {
-		repetitions = 1
-		duration = 0f
-		currentTime = 0f
-		currentRepetition = 0
-		callback = NOOP
-	}
-
 	/**
-	 * Sets the duration to 0f and the current repetition to 0
+	 * Sets the [currentTime] to 0f and the current repetition to 0
 	 */
 	fun rewind() {
-		duration = 0f
+		currentTime = 0f
 		currentRepetition = 0
 	}
 
 	override fun dispose() {
-		if (!isActive) return
-		isActive = false
 		stop()
-		pool.free(this)
-	}
-
-	companion object {
-
-		private val NOOP = {}
-
-		private val pool = ClearableObjectPool { Timer() }
-
-		internal fun obtain(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
-			val timer = pool.obtain()
-			timer.isActive = true
-			timer.currentTime = -delay
-			timer.duration = duration
-			timer.callback = callback
-			timer.repetitions = repetitions
-			timer.start()
-			return timer
-		}
 	}
 }
 
 /**
- * @param duration The number of seconds between repetitions.
- * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
- * until disposal.
- * @param callback The function to call after every repetition.
- */
-fun timer(duration: Float, repetitions: Int = 1, delay: Float = 0f, callback: () -> Unit): Disposable {
-	require(repetitions != 0) { "repetitions argument may not be zero." }
-	return Timer.obtain(duration, repetitions, delay, callback)
-}
-
-/**
+ * Creates a [Timer] object and immediately starts it.
+ * The [Timer] object is automatically owned by the receiver Context.
+ *
  * @param duration The duration between repetitions.
  * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
  * until disposal.
  * @param callback The function to call after every repetition.
  */
-fun timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: () -> Unit): Disposable {
+fun Context.timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: () -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
-	return Timer.obtain(duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback)
+	return own(Timer(inject(FrameDriverRo), duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback).start())
 }

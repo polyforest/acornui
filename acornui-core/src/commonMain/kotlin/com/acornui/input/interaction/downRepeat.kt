@@ -27,6 +27,8 @@ import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.time.nowMs
 import com.acornui.time.timer
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class DownRepeat(
 		private val target: UiComponentRo
@@ -107,7 +109,7 @@ fun UiComponentRo.enableDownRepeat(): DownRepeat {
  * @param repeatInterval Once the repeat dispatching begins, subsequent events are dispatched at this interval (in
  * seconds).
  */
-fun UiComponentRo.enableDownRepeat(repeatDelay: Float, repeatInterval: Float): DownRepeat {
+fun UiComponentRo.enableDownRepeat(repeatDelay: Duration, repeatInterval: Duration): DownRepeat {
 	return createOrReuseAttachment(DownRepeat) {
 		val dR = DownRepeat(this)
 		dR.style.repeatDelay = repeatDelay
@@ -123,8 +125,8 @@ fun UiComponentRo.disableDownRepeat() {
 class DownRepeatStyle : StyleBase() {
 	override val type = Companion
 
-	var repeatDelay by prop(0.24f)
-	var repeatInterval by prop(0.02f)
+	var repeatDelay by prop(0.24.seconds)
+	var repeatInterval by prop(0.02.seconds)
 
 	companion object : StyleType<DownRepeatStyle>
 }

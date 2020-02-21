@@ -17,6 +17,7 @@
 package com.acornui.tween
 
 import com.acornui.collection.*
+import com.acornui.di.Context
 import com.acornui.math.Interpolation
 import com.acornui.signal.addOnce
 
@@ -57,7 +58,7 @@ object TweenRegistry {
 	}
 }
 
-fun createPropertyTween(target: Any, property: String, duration: Float, ease: Interpolation, getter: () -> Float, setter: (Float) -> Unit, targetValue: Float, delay: Float = 0f, loop: Boolean = false): Tween {
+fun Context.createPropertyTween(target: Any, property: String, duration: Float, ease: Interpolation, getter: () -> Float, setter: (Float) -> Unit, targetValue: Float, delay: Float = 0f, loop: Boolean = false): Tween {
 	TweenRegistry.kill(target, property, finish = true)
 	val tween = toFromTween(getter(), targetValue, duration, ease, delay, loop, setter)
 	TweenRegistry.register(target, property, tween)

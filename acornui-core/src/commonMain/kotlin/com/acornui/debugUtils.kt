@@ -22,9 +22,9 @@ import com.acornui.math.maxOf4
 import com.acornui.math.minOf4
 import com.acornui.time.callLater
 
-
+@ExperimentalAcorn
 fun debugWhyCantSee(target: UiComponent) {
-	callLater { canSee(target) }
+	target.callLater { canSee(target) }
 }
 
 private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {
@@ -111,6 +111,7 @@ private fun isInBounds(target: UiComponentRo, print: Boolean): Boolean {
 	return canSee
 }
 
+@ExperimentalAcorn
 fun debugFullPath(target: UiComponentRo): String {
 	val ancestry = target.ancestry(ArrayList())
 	ancestry.reverse()

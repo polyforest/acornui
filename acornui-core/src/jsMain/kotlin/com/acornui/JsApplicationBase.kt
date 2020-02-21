@@ -25,6 +25,7 @@ import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.persistence.JsPersistence
 import com.acornui.persistence.Persistence
 import com.acornui.system.userInfo
+import com.acornui.time.FrameDriverRo
 import org.w3c.dom.DocumentReadyState
 import org.w3c.dom.LOADING
 import kotlin.browser.document
@@ -61,8 +62,8 @@ abstract class JsApplicationBase(mainContext: MainContext) : ApplicationBase(mai
 	}
 
 	protected open val audioManagerTask by task(AudioManager) {
-		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't add it to the TimeDriver.
-		AudioManagerImpl()
+		// JS Audio doesn't need to be updated like OpenAL audio does, so we don't need to call `start`.
+		AudioManagerImpl(get(FrameDriverRo))
 	}
 
 	protected open val persistenceTask by task(Persistence) {

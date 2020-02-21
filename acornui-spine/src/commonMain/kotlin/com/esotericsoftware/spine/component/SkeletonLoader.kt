@@ -16,7 +16,7 @@
 
 package com.esotericsoftware.spine.component
 
-import com.acornui.asset.CachedGroup
+import com.acornui.asset.CacheSet
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.asset.loadText
 import com.acornui.async.awaitAll
@@ -65,8 +65,8 @@ class LoadedSkin(
  * Loads the skeleton from the specified JSON file and texture atlas.
  * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CachedGroup): Deferred<LoadedSkeleton> = async {
-	val skeletonDataLoader = cachedGroup.cacheAsync(skeletonDataPath) {
+fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CacheSet): Deferred<LoadedSkeleton> = async {
+	val skeletonDataLoader = cachedGroup.getOrPutAsync(skeletonDataPath) {
 		parseJson(loadText(skeletonDataPath), SkeletonDataSerializer)
 	}
 	val textureAtlasLoader = loadAndCacheJsonAsync(TextureAtlasData.serializer(), textureAtlasPath, cachedGroup)
@@ -88,7 +88,7 @@ fun Context.loadSkeletonSkin(
 		textureAtlasData: TextureAtlasData,
 		skin: String,
 		skinsDirectory: String,
-		cachedGroup: CachedGroup
+		cacheSet: CacheSet
 ): Deferred<LoadedSkin> = async {
 
 	val skinData = skeletonData.findSkin(skin) ?: throw Exception("Could not find skin $skin")
@@ -97,7 +97,7 @@ fun Context.loadSkeletonSkin(
 		val (page, _) = textureAtlasData.findRegion(i.attachmentName) ?: throw Exception("Region ${i.attachmentName} not found in atlas.")
 		if (!pageTextures.contains(page.texturePath)) {
 			val pagePath = "$skinsDirectory/${page.texturePath}"
-			pageTextures[page.texturePath] = loadAndCacheAtlasPage(pagePath, page, cachedGroup)
+			pageTextures[page.texturePath] = loadAndCacheAtlasPage(pagePath, page, cacheSet)
 		}
 	}
 	LoadedSkin(pageTextures)

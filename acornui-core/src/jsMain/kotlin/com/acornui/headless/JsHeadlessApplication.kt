@@ -30,7 +30,7 @@ class JsHeadlessApplication(mainContext: MainContext) : JsApplicationBase(mainCo
 	override suspend fun createContext() = ContextImpl(
 			owner = mainContext,
 			dependencies = HeadlessDependencies.create(config()) + bootstrap.dependencies(),
-			coroutineContext = applicationScope.coroutineContext + Job(applicationJob),
+			coroutineContext = createCoroutineContext(),
 			marker = ContextMarker.APPLICATION
 	)
 }

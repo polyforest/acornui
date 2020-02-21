@@ -20,12 +20,12 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.math.Interpolation
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-
+import com.acornui.time.FrameDriverRo
 
 /**
  * A Tween that does nothing but invoke callbacks when the play head scrubs through the requested time.
  */
-class CallbackTween(duration: Float, ease: Interpolation, delay: Float, loop: Boolean) : TweenBase() {
+class CallbackTween(frameDriver: FrameDriverRo, duration: Float, ease: Interpolation, delay: Float, loop: Boolean) : TweenBase(frameDriver) {
 
 	private val watchedTimes = ArrayList<Float>()
 	private val watchedTimeSignals = ArrayList<Signal1<Tween>>()
@@ -48,13 +48,13 @@ class CallbackTween(duration: Float, ease: Interpolation, delay: Float, loop: Bo
 	 */
 	fun watchTime(time: Float): Signal<(Tween) -> Unit> {
 		val insertionIndex = watchedTimes.sortedInsertionIndex(time)
-		if (insertionIndex < watchedTimes.size && watchedTimes[insertionIndex] == time) {
-			return watchedTimeSignals[insertionIndex]
+		return if (insertionIndex < watchedTimes.size && watchedTimes[insertionIndex] == time) {
+			watchedTimeSignals[insertionIndex]
 		} else {
 			val signal = Signal1<Tween>()
 			watchedTimes.add(insertionIndex, time)
 			watchedTimeSignals.add(insertionIndex, signal)
-			return signal
+			signal
 		}
 	}
 

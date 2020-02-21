@@ -16,13 +16,14 @@
 
 package com.acornui
 
-import com.acornui.async.setUiThread
-import com.acornui.async.toPromiseOrBlocking
-import com.acornui.async.withTimeout
+import com.acornui.async.*
+import com.acornui.async.AcornDispatcher
 import com.acornui.di.ContextImpl
 import com.acornui.di.ContextMarker
 import com.acornui.di.DependencyMap
+import com.acornui.di.dependencyMapOf
 import com.acornui.logging.Log
+import com.acornui.time.FrameDriverRo
 import kotlinx.coroutines.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -32,8 +33,9 @@ import kotlin.time.seconds
 
 class MainContext(
 		val looper: Looper,
+		dependencies: DependencyMap = DependencyMap(),
 		coroutineContext: CoroutineContext
-) : ContextImpl(null, DependencyMap(), coroutineContext, ContextMarker.MAIN) {
+) : ContextImpl(null, dependencies, coroutineContext, ContextMarker.MAIN) {
 
 	/**
 	 * Cancels the main loop, exits all applications, and cancels all child coroutines.
@@ -63,10 +65,12 @@ internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainCo
 	kotlinBugFixes()
 	setUiThread()
 	val looper = looper()
-
-	val scope = GlobalScope + Dispatchers.Main + Log.uncaughtExceptionHandler
+	AcornDispatcherFactory.frameDriver = looper.frameDriver // Used
+	@UseExperimental(InternalCoroutinesApi::class)
+	val dispatcher = AcornDispatcher(looper.frameDriver)
+	val scope = GlobalScope + dispatcher + Log.uncaughtExceptionHandler
 	val mainJob = scope.async {
-		val mainContext = MainContext(looper, coroutineContext)
+		val mainContext = MainContext(looper, dependencyMapOf(MainDispatcherKey to dispatcher, FrameDriverRo to looper.frameDriver), coroutineContext)
 		mainContext.block()
 	}
 	mainJob.withTimeout(timeout, scope)

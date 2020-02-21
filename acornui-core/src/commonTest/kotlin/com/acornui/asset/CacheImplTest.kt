@@ -1,6 +1,6 @@
 package com.acornui.asset
 
-import com.acornui.time.FrameDriver
+import com.acornui.time.FrameDriverImpl
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,51 +8,53 @@ import kotlin.test.assertEquals
 
 class CacheImplTest {
 
+	private val frameDriver = FrameDriverImpl()
+
 	@BeforeTest
 	fun setup() {
-		FrameDriver.clear()
+		frameDriver.clear()
 	}
 
 	@Test fun testSet() {
-		val cache = CacheImpl()
+		val cache = CacheImpl(frameDriver)
 		val key = "key"
 		cache[key] = "Test"
 		assertEquals<String?>("Test", cache[key])
 	}
 
 	@Test fun testGc() {
-		val cache = CacheImpl(gcFrames = 10)
+		val cache = CacheImpl(frameDriver, gcFrames = 10)
 		val key = "key"
 		cache[key] = "Test"
 
 		// Ensure keys with a reference are not discarded.
 		cache.refInc(key)
-		for (i in 0..20) FrameDriver.dispatch(0f)
+		for (i in 0..20) frameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 
 		// Ensure keys without a reference are discarded, but only after at least gcFrames.
 		cache.refDec(key)
-		FrameDriver.dispatch(0f)
-		FrameDriver.dispatch(0f)
+		frameDriver.dispatch(0f)
+		frameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
-		for (i in 0..20) FrameDriver.dispatch(0f)
+		for (i in 0..20) frameDriver.dispatch(0f)
 		assertEquals<String?>(null, cache[key])
 	}
 
 	@Test fun testGc2() {
-		val cache = CacheImpl(gcFrames = 10)
+		val cache = CacheImpl(frameDriver = frameDriver, gcFrames = 10)
 		val key = "key"
 		cache[key] = "Test"
 
 		// Ensure keys with no references are not immediately discarded.
 		cache.refInc(key)
 		cache.refDec(key)
-		FrameDriver.dispatch(0f)
-		FrameDriver.dispatch(0f)
-		FrameDriver.dispatch(0f)
+		frameDriver.dispatch(0f)
+		frameDriver.dispatch(0f)
+		frameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 		cache.refInc(key)
-		for (i in 0..20) FrameDriver.dispatch(0f)
+		for (i in 0..20) frameDriver.dispatch(0f)
 		assertEquals<String?>("Test", cache[key])
 
 	}

@@ -16,15 +16,15 @@
 
 package com.acornui.time
 
-import com.acornui.Disposable
-import com.acornui.LifecycleRo
-import com.acornui.UpdatableChildBase
+import com.acornui.*
 import com.acornui.component.UiComponentRo
 
 private class OnTick(
 		private val component: UiComponentRo,
 		private val callback: (tickTime: Float) -> Unit
-) : UpdatableChildBase(), Disposable {
+) : Updatable, Disposable {
+
+	override val frameDriver: FrameDriverRo = component.inject(FrameDriverRo)
 
 	private val componentActivatedHandler: (LifecycleRo) -> Unit = {
 		start()
@@ -61,7 +61,8 @@ private class OnTick(
 }
 
 /**
- * While the receiver component is activated, every time driver tick will invoke the callback.
+ * Invokes a callback every frame this receiver is active.
+ * When the receiver component is disposed, this handle will also be disposed.
  *
  * @return An instance that can be disposed to stop watching ticks.
  */

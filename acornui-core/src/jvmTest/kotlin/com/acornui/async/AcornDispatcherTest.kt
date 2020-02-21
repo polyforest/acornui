@@ -30,7 +30,7 @@ class AcornDispatcherTest {
 	fun uiDispatcher() = runMainTest(timeout = 5.seconds) {
 		launch(Dispatchers.IO) {
 			assertFalse(isUiThread())
-			launch(Dispatchers.Main) {
+			launch(MainDispatcher) {
 				assertTrue(isUiThread())
 				exitMain()
 			}

@@ -16,14 +16,15 @@
 
 package com.acornui.time
 
-import com.acornui.Disposable
-import com.acornui.Updatable
+import com.acornui.*
+import com.acornui.di.Context
 
 interface CallbackWrapper : Disposable {
 	operator fun invoke()
 }
 
-internal class LimitedCallback(
+private class LimitedCallback(
+		override val frameDriver: FrameDriverRo,
 		val duration: Float,
 		val callback: () -> Unit
 ) : Updatable, CallbackWrapper {
@@ -68,11 +69,16 @@ internal class LimitedCallback(
  * is invoked while this timed lock is in place, the callback will be invoked at the end of the lock.
  * Note that calls to the wrapper from within the callback will be ignored.
  */
-fun limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
-	return LimitedCallback(duration, callback)
+fun Context.limitedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
+	return LimitedCallback(inject(FrameDriverRo), duration, callback)
 }
 
-internal class DelayedCallback(
+fun limitedCallback(frameDriver: FrameDriverRo, duration: Float, callback: () -> Unit): CallbackWrapper {
+	return LimitedCallback(frameDriver, duration, callback)
+}
+
+private class DelayedCallback(
+		override val frameDriver: FrameDriverRo,
 		val duration: Float,
 		val callback: () -> Unit
 ) : Updatable, CallbackWrapper {
@@ -116,6 +122,10 @@ internal class DelayedCallback(
  * @param duration The number of seconds before the [callback] is invoked.
  * @param callback The function to call after [duration] seconds.
  */
-fun delayedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
-	return DelayedCallback(duration, callback)
+fun Context.delayedCallback(duration: Float, callback: () -> Unit): CallbackWrapper {
+	return DelayedCallback(inject(FrameDriverRo), duration, callback)
+}
+
+fun delayedCallback(frameDriver: FrameDriverRo, duration: Float, callback: () -> Unit): CallbackWrapper {
+	return DelayedCallback(frameDriver, duration, callback)
 }

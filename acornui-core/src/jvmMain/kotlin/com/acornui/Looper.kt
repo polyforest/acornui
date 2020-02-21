@@ -18,7 +18,8 @@ package com.acornui
 
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
-import com.acornui.time.FrameDriver
+import com.acornui.time.FrameDriverImpl
+import com.acornui.time.FrameDriverRo
 import com.acornui.time.nowMs
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -28,10 +29,13 @@ import kotlin.time.seconds
 actual fun looper(): Looper = JvmLooper()
 
 /**
- * The looper is a loop where first the [FrameDriver] is invoked, then each application's windows are updated and
+ * The looper is a loop where first the [FrameDriverRo] is invoked, then each application's windows are updated and
  * rendered.
  */
 class JvmLooper : Looper {
+
+	private val _frameDriver = FrameDriverImpl()
+	override val frameDriver: FrameDriverRo = _frameDriver
 
 	override var frameTime: Duration = (1.0 / 60.0).seconds
 
@@ -40,13 +44,6 @@ class JvmLooper : Looper {
 
 	private val _pollEvents = Signal0()
 	override val pollEvents = _pollEvents.asRo()
-
-	private val _updateAndRender = Signal1<Float>()
-
-	/**
-	 * Dispatched when the acorn applications should update and render.
-	 */
-	override val updateAndRender = _updateAndRender.asRo()
 
 	private var isLooping = false
 
@@ -66,15 +63,14 @@ class JvmLooper : Looper {
 			val dT = (now - lastFrameMs) / 1000f
 			lastFrameMs = now
 			_pollEvents.dispatch()
-			FrameDriver.dispatch(dT)
-			_updateAndRender.dispatch(dT)
+			_frameDriver.dispatch(dT)
 			val sleepTime = lastFrameMs + frameTimeMs - nowMs()
 			if (sleepTime > 0) Thread.sleep(sleepTime)
 		}
 		isLooping = false
 		_started.clear()
 		_pollEvents.dispose()
-		_updateAndRender.clear()
+		_frameDriver.clear()
 		mainJob.getCancellationException().cause?.let { throw it }
 	}
 }

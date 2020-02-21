@@ -17,14 +17,16 @@
 package com.acornui.tween
 
 import com.acornui.component.ComponentInit
+import com.acornui.di.Context
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
+import com.acornui.time.FrameDriverRo
 
 
 /**
  * A Tween timeline that allows for a sequence of tweens.
  */
-class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBase() {
+class TimelineTween(frameDriver: FrameDriverRo, ease: Interpolation, delay: Float, loop: Boolean) : TweenBase(frameDriver) {
 
 	private val _children = ArrayList<Tween>()
 	private val _offsets = ArrayList<Float>()
@@ -126,8 +128,8 @@ class TimelineTween(ease: Interpolation, delay: Float, loop: Boolean) : TweenBas
 	}
 }
 
-fun timelineTween(ease: Interpolation = Easing.linear, delay: Float = 0f, loop: Boolean = false, inner: ComponentInit<TimelineTween> = {}): TimelineTween {
-	val t = TimelineTween(ease, delay, loop)
+fun Context.timelineTween(ease: Interpolation = Easing.linear, delay: Float = 0f, loop: Boolean = false, inner: ComponentInit<TimelineTween> = {}): TimelineTween {
+	val t = TimelineTween(inject(FrameDriverRo), ease, delay, loop)
 	t.inner()
 	return t
 }

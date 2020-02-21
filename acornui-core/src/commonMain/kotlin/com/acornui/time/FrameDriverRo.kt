@@ -16,16 +16,34 @@
 
 package com.acornui.time
 
-import com.acornui.Updatable
+import com.acornui.di.Context
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
+
+interface FrameDriverRo : Signal<FrameCallback> {
+
+	companion object : Context.Key<FrameDriverRo>
+}
+
+interface FrameDriver : FrameDriverRo, Clearable {
+
+	/**
+	 * Dispatches the frame driver.
+	 */
+	fun dispatch(dT: Float)
+
+	companion object : Context.Key<FrameDriver> {
+		override val extends: Context.Key<*>?
+			get() = FrameDriverRo
+	}
+}
 
 /**
  * The frame driver is a signal that is invoked every frame before any applications are updated and rendered.
  * @author nbilyk
  */
-object FrameDriver : Signal<FrameCallback>, Clearable {
+class FrameDriverImpl : FrameDriver {
 
 	private val signal = Signal1<Float>()
 
@@ -40,29 +58,9 @@ object FrameDriver : Signal<FrameCallback>, Clearable {
 	override fun addBinding(callback: () -> Unit) = signal.addBinding(callback)
 	override fun removeBinding(callback: () -> Unit) = signal.removeBinding(callback)
 
-	fun dispatch(dT: Float) {
-		signal.dispatch(dT)
-	}
+	override fun dispatch(dT: Float) = signal.dispatch(dT)
+
 	override fun clear() = signal.clear()
 }
 
 typealias FrameCallback = (dT: Float) -> Unit
-
-/**
- * Removes this instance's [Updatable.update] from the frame driver.
- */
-fun <T : Updatable> T.stop(): T {
-	FrameDriver.remove(::update)
-	return this
-}
-
-/**
- * Adds this instance's [Updatable.update] to the frame driver.
- */
-fun <T : Updatable> T.start(): T {
-	FrameDriver.add(::update)
-	return this
-}
-
-val Updatable.isDriven: Boolean
-	get() = FrameDriver.contains(::update)

@@ -17,6 +17,7 @@
 package com.acornui
 
 import com.acornui.signal.Signal
+import com.acornui.time.FrameDriverRo
 import kotlinx.coroutines.Job
 import kotlin.time.Duration
 
@@ -24,6 +25,11 @@ import kotlin.time.Duration
  * GlobalLooper is responsible for setting up the frame loop to be used by one or many acorn applications.
  */
 interface Looper {
+
+	/**
+	 * A Signal dispatched on every frame.
+	 */
+	val frameDriver: FrameDriverRo
 
 	/**
 	 * The interval between each frame. This will be set to
@@ -42,11 +48,6 @@ interface Looper {
 	 * Note: JS Backends do not poll for events and therefore this will not be dispatched.
 	 */
 	val pollEvents: Signal<() -> Unit>
-
-	/**
-	 * Dispatched when the acorn applications should update and render.
-	 */
-	val updateAndRender: Signal<(Float) -> Unit>
 
 	/**
 	 * Runs the multi-application loop.

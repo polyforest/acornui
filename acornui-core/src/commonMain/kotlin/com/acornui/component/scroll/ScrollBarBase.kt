@@ -30,7 +30,7 @@ import com.acornui.input.mouseDown
 import com.acornui.input.mouseOver
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
-import com.acornui.time.start
+import com.acornui.start
 import com.acornui.tween.killTween
 import com.acornui.tween.tweenAlpha
 import kotlin.contracts.InvocationKind

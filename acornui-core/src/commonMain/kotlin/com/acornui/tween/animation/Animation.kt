@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.tween.animation
 
 import com.acornui.Updatable
@@ -24,6 +26,7 @@ import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.logging.Log
 import com.acornui.math.*
+import com.acornui.time.FrameDriverRo
 import com.acornui.tween.TimelineTween
 import com.acornui.tween.TweenBase
 import com.acornui.tween.timelineTween
@@ -64,6 +67,7 @@ class AnimationInstance(
 		override val libraryItem: LibraryItem.AnimationLibraryItem
 ) : ElementContainerImpl<SymbolInstance>(owner), SymbolInstance, Updatable {
 
+	override val frameDriver = inject(FrameDriverRo)
 	val tween: TimelineTween = timelineTween()
 
 	init {
@@ -88,7 +92,7 @@ private class LayerTween(
 		layer: Layer,
 		private val target: UiComponent,
 		globalEasings: Map<String, FloatArray>
-) : TweenBase() {
+) : TweenBase(target.inject(FrameDriverRo)) {
 
 	private val frames = ArrayList<KeyFrame>()
 

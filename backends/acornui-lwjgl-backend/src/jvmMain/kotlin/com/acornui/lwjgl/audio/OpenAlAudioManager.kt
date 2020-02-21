@@ -19,6 +19,7 @@ package com.acornui.lwjgl.audio
 import com.acornui.collection.poll
 import com.acornui.collection.pop
 import com.acornui.audio.AudioManagerImpl
+import com.acornui.time.FrameDriverRo
 import org.lwjgl.BufferUtils
 import org.lwjgl.openal.AL
 import org.lwjgl.openal.AL10
@@ -32,7 +33,7 @@ import java.nio.IntBuffer
 /**
  * @author nbilyk
  */
-class OpenAlAudioManager : AudioManagerImpl() {
+class OpenAlAudioManager(frameDriver: FrameDriverRo) : AudioManagerImpl(frameDriver) {
 
 	private var device: Long = 0
 	private var context: Long = 0
@@ -57,7 +58,7 @@ class OpenAlAudioManager : AudioManagerImpl() {
 		}
 		AL.createCapabilities(deviceCapabilities)
 
-		for (i in 0..simultaneousSounds - 1) {
+		for (i in 0 until simultaneousSounds) {
 			val sourceId = AL10.alGenSources()
 			if (AL10.alGetError() != AL10.AL_NO_ERROR) break
 			idleSources.add(sourceId)

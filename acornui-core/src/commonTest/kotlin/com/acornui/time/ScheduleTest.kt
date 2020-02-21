@@ -16,25 +16,20 @@
 
 package com.acornui.time
 
+import com.acornui.runMainTest
 import com.acornui.test.assertClose
-import com.acornui.test.runTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.time.MonoClock
 import kotlin.time.seconds
 
 class ScheduleTest {
 
-	// TODO: CI for Mac has a pretty wide variance
-	@Ignore
 	@Test
-	fun scheduleTest() = runTest(4.seconds) {
-		var isDone = false
+	fun scheduleTest() = runMainTest(timeout = 4.seconds) {
 		val mark = MonoClock.markNow()
 		schedule(2.seconds) {
-			assertClose(2.0, mark.elapsedNow().inSeconds, 0.1)
-			isDone = true
+			assertClose(2.0, mark.elapsedNow().inSeconds, 1.0) // CI For mac has an unusually high variance
+			exitMain()
 		}
-//		loopFrames { !isDone }
 	}
 }
