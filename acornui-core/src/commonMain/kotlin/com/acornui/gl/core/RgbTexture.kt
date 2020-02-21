@@ -38,7 +38,7 @@ class RgbTexture(
 
 	override val heightPixels: Int
 		get() = rgbData.height
-	
+
 	override fun uploadTexture() {
 		val buffer = byteBuffer(rgbData.bytes.size)
 		for (i in 0..rgbData.bytes.lastIndex) {
@@ -53,5 +53,5 @@ class RgbTexture(
 fun rgbTexture(gl: Gl20, rgbData: RgbData, displayName: String? = null, init: RgbTexture.() -> Unit = {}) =
 		RgbTexture(gl, rgbData, displayName).apply(init)
 
-fun Context.rgbTexture(rgbData: RgbData, displayName: String? = null, init: RgbTexture.() -> Unit = {}) = 
+fun Context.rgbTexture(rgbData: RgbData, displayName: String? = null, init: RgbTexture.() -> Unit = {}) =
 		RgbTexture(inject(CachedGl20), rgbData, displayName).apply(init)

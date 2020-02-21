@@ -849,7 +849,7 @@ interface Gl20 {
 	fun getActiveUniform(program: GlProgramRef, index: Int): GlActiveInfoRef
 
 	/**
-	 * return the handles of the shader objects attached to a program object.
+	 * Return the handles of the shader objects attached to a program object.
 	 */
 	fun getAttachedShaders(program: GlProgramRef): Array<GlShaderRef>
 

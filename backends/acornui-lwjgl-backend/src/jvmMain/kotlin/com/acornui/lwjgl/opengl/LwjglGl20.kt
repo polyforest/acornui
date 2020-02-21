@@ -414,8 +414,7 @@ open class LwjglGl20 : Gl20 {
 	}
 
 	override fun texImage2Db(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Byte>?) {
-		val p: ByteBuffer? = if (pixels == null) null else pixels.native as ByteBuffer
-		GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, p)
+		GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels?.asNative())
 	}
 
 	override fun texImage2Df(target: Int, level: Int, internalFormat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: NativeReadBuffer<Float>?) {
@@ -684,5 +683,10 @@ class JvmGlActiveInfo(
 
 class JvmGlUniformLocation(val o: Int) : GlUniformLocationRef
 
+@JvmName("asNativeF")
 @Suppress("CAST_NEVER_SUCCEEDS")
-private fun NativeReadBuffer<Float>.asNative(): FloatBuffer = native as FloatBuffer
+private fun NativeReadBuffer<Float>.asNative() = native as FloatBuffer
+
+@JvmName("asNativeB")
+@Suppress("CAST_NEVER_SUCCEEDS")
+private fun NativeReadBuffer<Byte>.asNative() = native as ByteBuffer

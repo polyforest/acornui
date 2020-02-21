@@ -25,15 +25,18 @@ import java.nio.ByteBuffer
 import kotlin.time.Duration
 
 /**
- * A
+ * A texture implementation for the JVM backend.
+ * This differs from [com.acornui.gl.core.RgbTexture] in that its data is not expected to change.
+ *
  * @author nbilyk
  */
-class JvmTexture(gl: Gl20,
-				 override val rgbData: RgbData,
-				 displayName: String? = null
+class JvmTexture(
+		gl: Gl20,
+		override val rgbData: RgbData,
+		displayName: String? = null
 ) : GlTextureBase(gl, displayName) {
 
-	var bytes: ByteBuffer? = JvmBufferUtil.wrap(rgbData.bytes)
+	val bytes: ByteBuffer? = JvmBufferUtil.wrap(rgbData.bytes)
 
 	override val widthPixels: Int
 		get() = rgbData.width
