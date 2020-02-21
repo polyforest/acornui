@@ -83,7 +83,6 @@ private class LongPressAttachment(
 			event.preventDefault()
 			preventTouchEnd = false
 		}
-		println("Touch end")
 		stopTimer()
 	}
 
