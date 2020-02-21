@@ -22,7 +22,6 @@ package com.acornui.async
 
 import com.acornui.Disposable
 import kotlinx.coroutines.*
-import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.jvm.JvmMultifileClass
@@ -34,37 +33,8 @@ import kotlin.time.Duration
 
 typealias Work<R> = suspend () -> R
 
-object PendingDisposablesRegistry {
-
-	private val allDisposables = HashMap<Disposable, Unit>()
-	private var isDisposing = false
-
-	fun <T : Disposable> register(disposable: T): T {
-		if (isDisposing) throw IllegalStateException("Cannot register a disposable instance with PendingDisposablesRegistry on dispose.")
-		allDisposables[disposable] = Unit
-		return disposable
-	}
-
-	fun unregister(disposable: Disposable) {
-		if (isDisposing) return
-		allDisposables.remove(disposable)
-	}
-
-	/**
-	 * Disposes all pending disposables.
-	 */
-	fun disposeAll() {
-		if (isDisposing) return
-		isDisposing = true
-		for (disposable in allDisposables.keys) {
-			disposable.dispose()
-		}
-		allDisposables.clear()
-		isDisposing = false
-	}
-}
-
-fun <T : Disposable> disposeOnShutdown(disposable: T): T = PendingDisposablesRegistry.register(disposable)
+@Deprecated("No longer used.", level = DeprecationLevel.ERROR)
+fun <T : Disposable> disposeOnShutdown(disposable: T): T = error("Unused")
 
 /**
  * Suspends the coroutine until this job is complete, then returns the result if the job has completed, or null if

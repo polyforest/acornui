@@ -120,7 +120,7 @@ class LoadedParticleEffect(
 		/**
 		 * The cached group the particle effect used to load all the files.
 		 */
-		private val cachedGroup: CachedGroup
+		private val cacheSet: CacheSet
 ) : Updatable, Disposable {
 
 	private val emitterInstances = effectInstance.emitterInstances
@@ -144,7 +144,7 @@ class LoadedParticleEffect(
 	}
 
 	override fun dispose() {
-		cachedGroup.dispose()
+		cacheSet.dispose()
 	}
 
 	fun render(transform: Matrix4Ro, tint: ColorRo) {
@@ -156,7 +156,7 @@ class LoadedParticleEffect(
 
 typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
 
-suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, group: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	@Suppress("DeferredResultUnused")
 	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
@@ -168,7 +168,7 @@ suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, gro
 	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
 }
 
-suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CachedGroup = cachedGroup(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
 	val gl = inject(CachedGl20)
 
@@ -191,7 +191,7 @@ suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath
  * Given a particle effect and a sprite resolver, creates a particle effect instance, and requests a [Sprite] for every
  * emitter.
  */
-suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: CachedGroup = cachedGroup(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: CacheSet = cacheSet(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
 	val effectInstance = particleEffect.createInstance(maxParticlesScale)
 

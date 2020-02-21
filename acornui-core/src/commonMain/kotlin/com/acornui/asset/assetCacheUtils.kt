@@ -17,18 +17,23 @@
 package com.acornui.asset
 
 import com.acornui.di.Context
+import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlRequestData
 import com.acornui.serialization.jsonParse
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.DeserializationStrategy
 
-suspend fun <R : Any> Context.loadAndCacheJson(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): R {
-	return group.cacheAsync(path) {
-		jsonParse(deserializer, loadText(path))
-	}.await()
-}
+suspend fun <R : Any> Context.loadAndCacheJson(deserializer: DeserializationStrategy<R>, path: String, group: CacheSet = cacheSet()): R =
+		loadAndCacheJsonAsync(deserializer, path.toUrlRequestData(), group).await()
 
-fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CachedGroup = cachedGroup()): Deferred<R> {
-	return group.cacheAsync(path) {
-		jsonParse(deserializer, loadText(path))
+suspend fun <R : Any> Context.loadAndCacheJson(deserializer: DeserializationStrategy<R>, request: UrlRequestData, group: CacheSet = cacheSet()): R =
+		loadAndCacheJsonAsync(deserializer, request, group).await()
+
+fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, path: String, group: CacheSet = cacheSet()): Deferred<R> =
+		loadAndCacheJsonAsync(deserializer, path, group)
+
+fun <R : Any> Context.loadAndCacheJsonAsync(deserializer: DeserializationStrategy<R>, request: UrlRequestData, group: CacheSet = cacheSet()): Deferred<R> {
+	return group.getOrPutAsync(request) {
+		jsonParse(deserializer, loadText(request))
 	}
 }

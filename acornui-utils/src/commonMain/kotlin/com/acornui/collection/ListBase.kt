@@ -47,24 +47,13 @@ abstract class ListBase<out E> : List<E> {
 		return false
 	}
 
-	override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean {
-		for (element in elements) {
-			if (!contains(element)) return false
-		}
-		return true
-	}
+	override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean = !elements.any { !contains(it) }
 
-	override fun isEmpty(): Boolean {
-		return size == 0
-	}
+	override fun isEmpty(): Boolean = size == 0
 
-	override fun iterator(): Iterator<E> {
-		return ListIteratorImpl(this)
-	}
+	override fun iterator(): Iterator<E> = ListIteratorImpl(this)
 
-	override fun listIterator(): ListIterator<E> {
-		return ListIteratorImpl(this)
-	}
+	override fun listIterator(): ListIterator<E> = ListIteratorImpl(this)
 
 	override fun listIterator(index: Int): ListIterator<E> {
 		val t = ListIteratorImpl(this)
@@ -77,6 +66,9 @@ abstract class ListBase<out E> : List<E> {
 	}
 }
 
+/**
+ * Provides a partial implementation of the [MutableList] interface.
+ */
 abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 
 	override fun add(element: E): Boolean {
@@ -85,6 +77,7 @@ abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 	}
 
 	override fun addAll(index: Int, elements: Collection<E>): Boolean {
+		if (elements.isEmpty()) return false
 		var i = index
 		for (element in elements) {
 			add(i++, element)
@@ -93,6 +86,7 @@ abstract class MutableListBase<E> : ListBase<E>(), Clearable, MutableList<E> {
 	}
 
 	override fun addAll(elements: Collection<E>): Boolean {
+		if (elements.isEmpty()) return false
 		for (element in elements) {
 			add(element)
 		}

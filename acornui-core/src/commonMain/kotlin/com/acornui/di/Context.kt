@@ -263,13 +263,6 @@ class ContextMarker(val value: String) {
 	}
 }
 
-@Deprecated("Context objects are owned implicitly", ReplaceWith("target"), level = DeprecationLevel.ERROR)
-@JvmName("improperOwn")
-@Suppress("unused")
-fun <T : Context> Context.own(target: T): T {
-	error("Context objects are owned implicitly")
-}
-
 /**
  * When this object is disposed, the target will also be disposed.
  */
@@ -284,6 +277,13 @@ fun <T : Disposable> Context.own(target: T): T {
 		}
 	}
 	return target
+}
+
+@Deprecated("Context objects are owned implicitly", ReplaceWith("target"), level = DeprecationLevel.ERROR)
+@JvmName("improperOwn")
+@Suppress("unused")
+fun Context.own(target: Context): Context {
+	error("Context objects are owned implicitly")
 }
 
 inline fun Context.context(init: ComponentInit<ContextImpl>): ContextImpl {

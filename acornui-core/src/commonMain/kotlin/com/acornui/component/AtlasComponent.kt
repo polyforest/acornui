@@ -18,8 +18,8 @@
 
 package com.acornui.component
 
-import com.acornui.asset.CachedGroup
-import com.acornui.asset.cachedGroup
+import com.acornui.asset.CacheSet
+import com.acornui.asset.cacheSet
 import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.*
@@ -76,7 +76,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 			field = value
 		}
 
-	private var group: CachedGroup? = null
+	private var group: CacheSet? = null
 		set(value) {
 			field?.dispose()
 			field = value
@@ -91,7 +91,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	 */
 	fun region(atlasPath: String, regionName: String): Job {
 		clear()
-		group = cachedGroup()
+		group = cacheSet()
 		return launchSupervised {
 			setRegionInternal(loadAndCacheAtlasRegion(atlasPath, regionName, group!!))
 		}.also {

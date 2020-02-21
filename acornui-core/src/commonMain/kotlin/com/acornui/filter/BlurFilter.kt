@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.filter
 
-import com.acornui.async.disposeOnShutdown
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.di.Context
+import com.acornui.di.dependencyFactory
 import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
@@ -48,6 +50,8 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 	private val framebufferFilter = FramebufferFilter(this)
 	private val blurDirX = Vector3()
 	private val blurDirY = Vector3()
+
+	private val blurShader by BlurShaderKey
 
 	init {
 		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
@@ -94,11 +98,7 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 		val textureToBlur = framebufferFilter.texture
 
 		gl.bindTexture(textureToBlur)
-
-		if (blurShader == null) 
-			blurShader = disposeOnShutdown(BlurShader(gl))
 		
-		val blurShader = blurShader!!
 		gl.useProgram(blurShader.program) {
 			val uniforms = gl.uniforms
 			uniforms.put("u_resolutionInv", 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
@@ -144,12 +144,6 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 	 */
 	fun drawable(out: Sprite = Sprite(gl)): Sprite {
 		return out.set(sprite)
-	}
-
-	private var blurShader: ShaderProgram? = null
-
-	companion object {
-//		private var blurShader: ShaderProgram? = null
 	}
 }
 
@@ -209,4 +203,11 @@ enum class BlurQuality(val passes: Int) {
 	NORMAL(2),
 	HIGH(3),
 	BEST(4),
+}
+
+/**
+ * The shader used to create a gaussian blur.
+ */
+object BlurShaderKey : Context.Key<ShaderProgram> {
+	override val factory: Context.DependencyFactory<ShaderProgram> = dependencyFactory { BlurShader(it.inject(CachedGl20)) }
 }

@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.asset.cachedGroup
+import com.acornui.asset.cacheSet
 import com.acornui.asset.loadTexture
 import com.acornui.async.launchSupervised
 import com.acornui.component.style.StyleBase
@@ -50,7 +50,7 @@ fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image
 	val image = IconImageComponent(this)
 	image.element = textureC {
 		launchSupervised {
-			texture(cachedGroup().cacheAsync(imagePath) {
+			texture(cacheSet().getOrPutAsync(imagePath) {
 				loadTexture(imagePath).apply {
 					filterMag = TextureMagFilter.LINEAR
 					filterMin = TextureMinFilter.LINEAR

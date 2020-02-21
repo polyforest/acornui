@@ -19,7 +19,7 @@
 package com.acornui.i18n
 
 import com.acornui.Disposable
-import com.acornui.asset.cachedGroup
+import com.acornui.asset.cacheSet
 import com.acornui.asset.loadText
 import com.acornui.collection.stringMapOf
 import com.acornui.component.Labelable
@@ -83,7 +83,7 @@ fun I18nBundleRo.getOrElse(key: String, default: String = "") = get(key) ?: defa
 
 class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
-	private val cachedGroup = cachedGroup()
+	private val cacheSet = cacheSet()
 
 	/**
 	 * A key to represent the bundles that change depending on the user's current locale.
@@ -152,7 +152,7 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 	private fun loadBundle(locales: List<Locale>, bundleName: String) {
 		val path2 = manifestPath.replace("{bundleName}", bundleName)
 		launch {
-			val availableLocales = cachedGroup.cacheAsync(path2) {
+			val availableLocales = cacheSet.getOrPutAsync(path2) {
 				loadText(path2).split(",").map { Locale(it.trim()) }
 			}.await()
 
@@ -161,7 +161,7 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 			if (matchedLocale != null) {
 				val path = i18nPath.replace("{locale}", matchedLocale.value).replace("{bundleName}", bundleName)
-				val values = cachedGroup.cacheAsync(path) {
+				val values = cacheSet.getOrPutAsync(path) {
 					PropertiesParser.parse(loadText(path))
 				}.await()
 				setBundleValues(matchedLocale, bundleName, values)

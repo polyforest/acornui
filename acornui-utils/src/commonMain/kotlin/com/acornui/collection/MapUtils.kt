@@ -64,7 +64,11 @@ fun <K, V> Map<K, V?>.toNotNull(): MutableMap<K, V> {
 	return newMap
 }
 
-
+/**
+ * For JVM backends, this is the same as [mutableMapOf].
+ * For JS backends, this constructs the specialized implementation of [HashMap] with [String] keys, which stores the
+ * keys as properties of JS object without hashing them.
+ */
 expect fun <V> stringMapOf(vararg pairs: Pair<String, V>): MutableMap<String, V>
 
 class HashMapWithDefault<K, V>(private val wrapped: MutableMap<K, V> = HashMap(), private val defaultProvider: (K) -> V) : MutableMap<K, V> by wrapped, MutableMapWithDefault<K, V> {

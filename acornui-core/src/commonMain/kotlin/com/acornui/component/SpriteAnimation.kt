@@ -19,8 +19,8 @@
 package com.acornui.component
 
 import com.acornui.AppConfig
-import com.acornui.asset.CachedGroup
-import com.acornui.asset.cachedGroup
+import com.acornui.asset.CacheSet
+import com.acornui.asset.cacheSet
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.async.launchSupervised
 import com.acornui.collection.fill
@@ -107,7 +107,7 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 	/**
 	 * Reference counting to the textures loaded.
 	 */
-	private var cachedGroup: CachedGroup? = null
+	private var cacheSet: CacheSet? = null
 		private set(value) {
 			field?.dispose()
 			field = value
@@ -137,9 +137,9 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 	 */
 	fun animation(atlasPath: String, regionName: String): Job {
 		clear()
-		cachedGroup = cachedGroup()
+		cacheSet = cacheSet()
 		return launchSupervised {
-			animation = loadSpriteAnimation(atlasPath, regionName, cachedGroup!!)
+			animation = loadSpriteAnimation(atlasPath, regionName, cacheSet!!)
 		}.also {
 			loaderJob = it
 		}
@@ -189,7 +189,7 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 
 	override fun clear() {
 		loaderJob = null
-		cachedGroup = null
+		cacheSet = null
 		explicitAnimation = null
 		invalidateLayout()
 	}
@@ -217,7 +217,7 @@ data class LoadedAnimation(
 	}
 }
 
-suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, group: CachedGroup = cachedGroup()): LoadedAnimation {
+suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, group: CacheSet = cacheSet()): LoadedAnimation {
 	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
 	val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
 	for (page in atlasData.pages) {

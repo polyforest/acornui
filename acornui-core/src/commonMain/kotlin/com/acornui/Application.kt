@@ -17,7 +17,6 @@
 package com.acornui
 
 import com.acornui.asset.Loaders
-import com.acornui.async.PendingDisposablesRegistry
 import com.acornui.async.Work
 import com.acornui.component.Stage
 import com.acornui.component.StageImpl
@@ -140,7 +139,6 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	 */
 	protected open fun dispose() {
 		Log.debug("Application disposing")
-		PendingDisposablesRegistry.disposeAll()
 		bootstrap.dispose()
 	}
 

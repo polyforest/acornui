@@ -16,16 +16,15 @@
 
 package com.acornui.component
 
-import com.acornui.async.disposeOnShutdown
+import com.acornui.asset.Cache
+import com.acornui.asset.MockCache
 import com.acornui.component.drawing.putIdtQuad
 import com.acornui.di.Context
+import com.acornui.di.dependencyFactory
 import com.acornui.gl.core.*
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Window
 import kotlin.math.ceil
-
-
-private var curvedShader: ShaderProgram? = null
 
 private data class SmoothCornerKey(
 		val cornerRadiusX: Float,
@@ -33,8 +32,6 @@ private data class SmoothCornerKey(
 		val strokeThicknessX: Float?,
 		val strokeThicknessY: Float?
 )
-
-private val smoothCornerMap: MutableMap<SmoothCornerKey, Framebuffer> = HashMap()
 
 /**
  * Generates a smooth, antialiased corner.
@@ -59,6 +56,8 @@ fun Context.createSmoothCorner(
 		useCache: Boolean = true
 ): Sprite {
 	val window = inject(Window)
+	val cache = if (useCache) inject(Cache) else MockCache
+	val curvedShader = inject(CurvedRectShaderKey)
 	val scaleX = window.scaleX
 	val scaleY = window.scaleY
 	val sX = (strokeThicknessX ?: cornerRadiusX + 1f) * scaleX
@@ -70,15 +69,10 @@ fun Context.createSmoothCorner(
 		return spriteOut
 	}
 	val cacheKey = SmoothCornerKey(cRX, cRY, strokeThicknessX, strokeThicknessY)
-	val framebuffer = if (useCache && smoothCornerMap.containsKey(cacheKey)) {
-		smoothCornerMap[cacheKey]!!
-	} else {
+	val framebuffer = cache.getOrPut(cacheKey) {
 		val gl = inject(CachedGl20)
 		val batch = gl.batch
-		if (curvedShader == null)
-			curvedShader = disposeOnShutdown(CurvedRectShaderProgram(gl))
 		val framebuffer = framebuffer(ceil(cRX).toInt(), ceil(cRY).toInt())
-		val curvedShader = curvedShader!!
 		gl.useProgram(curvedShader.program) {
 			val uniforms = gl.uniforms
 			framebuffer.begin()
@@ -89,10 +83,9 @@ fun Context.createSmoothCorner(
 			batch.putIdtQuad()
 			framebuffer.end()
 		}
-		if (useCache)
-			smoothCornerMap[cacheKey] = disposeOnShutdown(framebuffer)
 		framebuffer
 	}
+	cache.refInc(cacheKey)
 	val fBW = framebuffer.widthPixels.toFloat()
 	val fBH = framebuffer.heightPixels.toFloat()
 	val pW = cRX / fBW
@@ -122,7 +115,7 @@ fun Context.createSmoothCorner(
 	return spriteOut
 }
 
-private class CurvedRectShaderProgram(gl: CachedGl20) : ShaderProgramBase(
+private class CurvedRectShader(gl: CachedGl20) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
 
 $DEFAULT_SHADER_HEADER
@@ -160,3 +153,10 @@ void main() {
 }""",
 		vertexAttributes = mapOf(VertexAttributeLocation.POSITION to CommonShaderAttributes.A_POSITION)
 )
+
+/**
+ * The shader used to create the smooth corners.
+ */
+object CurvedRectShaderKey : Context.Key<ShaderProgram> {
+	override val factory: Context.DependencyFactory<ShaderProgram> = dependencyFactory { CurvedRectShader(it.inject(CachedGl20)) }
+}
