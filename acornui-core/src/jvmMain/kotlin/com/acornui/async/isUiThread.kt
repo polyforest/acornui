@@ -16,16 +16,4 @@
 
 package com.acornui.async
 
-/**
- * This is set by the jvm application; it should not be used directly.
- * @see isUiThread
- */
-private lateinit var uiThread: Thread
-
-actual fun setUiThread() {
-	uiThread = Thread.currentThread()
-}
-
-actual fun isUiThread(): Boolean {
-	return Thread.currentThread() == uiThread
-}
+actual fun getCurrentThread() = ThreadRef(Thread.currentThread().name)

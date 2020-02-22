@@ -63,7 +63,6 @@ fun runMain(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> 
 internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainContext.() -> Unit): Job {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
 	kotlinBugFixes()
-	setUiThread()
 	val looper = looper()
 	AcornDispatcherFactory.frameDriver = looper.frameDriver // Used
 	@UseExperimental(InternalCoroutinesApi::class)

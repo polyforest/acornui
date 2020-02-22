@@ -16,5 +16,6 @@
 
 package com.acornui.async
 
-actual fun setUiThread() {}
-actual fun isUiThread() = true
+actual fun getCurrentThread() = mainThread
+
+private val mainThread = ThreadRef("main")

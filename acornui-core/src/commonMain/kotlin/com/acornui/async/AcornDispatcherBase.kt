@@ -72,11 +72,13 @@ sealed class AcornDispatcherBase(
 @InternalCoroutinesApi
 private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
 
+	private val threadRef: ThreadRef = getCurrentThread()
+
 	override val immediate: MainCoroutineDispatcher
 		get() = this
 
 	override fun isDispatchNeeded(context: CoroutineContext): Boolean {
-		return !isUiThread()
+		return getCurrentThread() != threadRef
 	}
 
 	override fun toString() = "Acorn UI [immediate]"

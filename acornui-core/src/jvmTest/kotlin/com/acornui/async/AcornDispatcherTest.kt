@@ -20,18 +20,18 @@ import com.acornui.runMainTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertNotEquals
 import kotlin.time.seconds
 
 class AcornDispatcherTest {
 
 	@Test
 	fun uiDispatcher() = runMainTest(timeout = 5.seconds) {
+		val mainThread = getCurrentThread()
 		launch(Dispatchers.IO) {
-			assertFalse(isUiThread())
+			assertNotEquals(mainThread, getCurrentThread())
 			launch(MainDispatcher) {
-				assertTrue(isUiThread())
+				assertNotEquals(mainThread, getCurrentThread())
 				exitMain()
 			}
 		}
