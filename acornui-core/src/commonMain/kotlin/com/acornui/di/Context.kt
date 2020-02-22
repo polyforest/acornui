@@ -169,6 +169,8 @@ open class ContextImpl(
 	constructor(owner: Context) : this(owner, owner.childDependencies)
 	constructor(dependencies: List<DependencyPair<*>>) : this(null, dependencies)
 
+	private val constructing = ArrayList<Context.Key<*>>()
+
 	private val _disposed = Signal1<Context>()
 	override val disposed = _disposed.asRo()
 
@@ -237,10 +239,6 @@ open class ContextImpl(
 	fun checkDisposed() {
 		if (isDisposed)
 			throw DisposedException()
-	}
-
-	companion object {
-		private val constructing = ArrayList<Context.Key<*>>()
 	}
 }
 
