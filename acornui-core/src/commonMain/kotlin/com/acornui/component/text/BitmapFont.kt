@@ -138,8 +138,8 @@ class Glyph(
 /**
  * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-suspend fun Context.loadFontFromDir(fontPath: String, group: CacheSet = cacheSet()): BitmapFont {
-	return loadFontFromDir(fontPath, Path(fontPath).parent.value, group)
+suspend fun Context.loadFontFromDir(fontPath: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
+	return loadFontFromDir(fontPath, Path(fontPath).parent.value, cacheSet)
 }
 
 /**
@@ -148,11 +148,11 @@ suspend fun Context.loadFontFromDir(fontPath: String, group: CacheSet = cacheSet
  * in the AngelCode format, but this can be changed by associating a different type of loader for the
  * BitmapFontData asset type.)
  * @param imagesDir The directory of images.
- * @param group The caching group, to allow the loaded assets to be disposed as one.
+ * @param cacheSet The caching group, to allow the loaded assets to be disposed as one.
  */
-suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: CacheSet = cacheSet()): BitmapFont = withContext(Dispatchers.Default) {
+suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, cacheSet: CacheSet = cacheSet()): BitmapFont = withContext(Dispatchers.Default) {
 	val dir = Path(imagesDir)
-	val bitmapFontData = group.getOrPutAsync(fontPath) {
+	val bitmapFontData = cacheSet.getOrPutAsync(fontPath) {
 		AngelCodeParser.parse(loadText(fontPath))
 	}.await()
 
@@ -161,7 +161,7 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 	for (i in 0 until n) {
 		val page = bitmapFontData.pages[i]
 		val imageFile = dir.resolve(page.imagePath)
-		pageTextureLoaders.add(group.getOrPutAsync(imageFile.value) {
+		pageTextureLoaders.add(cacheSet.getOrPutAsync(imageFile.value) {
 			configureFontTexture(loadTexture(imageFile.value))
 		})
 	}
@@ -201,19 +201,19 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, group: 
 	font
 }
 
-suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, group: CacheSet = cacheSet()): BitmapFont {
+suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
 	val atlasFile = Path(atlasPath)
 
-	val bitmapFontData = group.getOrPutAsync(fontKey) {
+	val bitmapFontData = cacheSet.getOrPutAsync(fontKey) {
 		AngelCodeParser.parse(loadText(fontKey))
 	}.await()
-	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, cacheSet).await()
 	val atlasPageTextures = ArrayList<Deferred<Texture>>()
 
 	for (atlasPageIndex in 0..atlasData.pages.lastIndex) {
 		val atlasPageData = atlasData.pages[atlasPageIndex]
 		val textureEntry = atlasFile.sibling(atlasPageData.texturePath)
-		atlasPageTextures.add(group.getOrPutAsync(textureEntry.value) {
+		atlasPageTextures.add(cacheSet.getOrPutAsync(textureEntry.value) {
 			atlasPageData.configure(loadTexture(textureEntry.value))
 		})
 	}

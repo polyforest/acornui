@@ -217,8 +217,8 @@ data class LoadedAnimation(
 	}
 }
 
-suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, group: CacheSet = cacheSet()): LoadedAnimation {
-	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group).await()
+suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, cacheSet: CacheSet = cacheSet()): LoadedAnimation {
+	val atlasData = loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, cacheSet).await()
 	val regions = ArrayList<Pair<AtlasRegionData, AtlasPageData>?>()
 	for (page in atlasData.pages) {
 		for (region in page.regions) {
@@ -233,7 +233,7 @@ suspend fun Context.loadSpriteAnimation(atlasPath: String, regionName: String, g
 	val frames = ArrayList<Atlas>()
 	for (i in 0..regions.lastIndex) {
 		val (regionData, page) = regions[i] ?: continue
-		val texture = loadAndCacheAtlasPage(atlasPath, page, group)
+		val texture = loadAndCacheAtlasPage(atlasPath, page, cacheSet)
 		if (!textures.contains(texture)) textures.add(texture)
 		val atlas = Atlas(inject(CachedGl20))
 		atlas.region(AtlasRegion(texture, regionData))

@@ -198,11 +198,11 @@ data class AtlasRegion(
 		val data: AtlasRegionData
 )
 
-suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, group: CacheSet = cacheSet()): AtlasRegion {
-	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
+suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: String, cacheSet: CacheSet = cacheSet()): AtlasRegion {
+	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, cacheSet)
 	val (page, region) = atlasData.findRegion(regionName)
 			?: throw RegionNotFoundException(atlasPath, regionName)
-	val texture = loadAndCacheAtlasPage(atlasPath, page, group)
+	val texture = loadAndCacheAtlasPage(atlasPath, page, cacheSet)
 	return AtlasRegion(texture, region)
 }
 

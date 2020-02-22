@@ -65,11 +65,11 @@ class LoadedSkin(
  * Loads the skeleton from the specified JSON file and texture atlas.
  * @param skins A list of skins to load by name. If this is null, all skins will be loaded.
  */
-fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cachedGroup: CacheSet): Deferred<LoadedSkeleton> = async {
-	val skeletonDataLoader = cachedGroup.getOrPutAsync(skeletonDataPath) {
+fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, skins: List<String>?, cacheSet: CacheSet): Deferred<LoadedSkeleton> = async {
+	val skeletonDataLoader = cacheSet.getOrPutAsync(skeletonDataPath) {
 		parseJson(loadText(skeletonDataPath), SkeletonDataSerializer)
 	}
-	val textureAtlasLoader = loadAndCacheJsonAsync(TextureAtlasData.serializer(), textureAtlasPath, cachedGroup)
+	val textureAtlasLoader = loadAndCacheJsonAsync(TextureAtlasData.serializer(), textureAtlasPath, cacheSet)
 
 	val skeletonData = skeletonDataLoader.await()
 	val textureAtlasData = textureAtlasLoader.await()
@@ -78,7 +78,7 @@ fun Context.loadSkeleton(skeletonDataPath: String, textureAtlasPath: String, ski
 	val skinsDirectory = textureAtlasPath.substringBeforeLast("/")
 	val loadedSkins = stringMapOf<Deferred<LoadedSkin>>()
 	for (skinName in skinsToLoad) {
-		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory, cachedGroup)
+		loadedSkins[skinName] = loadSkeletonSkin(skeletonData, textureAtlasData, skinName, skinsDirectory, cacheSet)
 	}
 	LoadedSkeleton(skeletonData, textureAtlasData, loadedSkins.awaitAll())
 }

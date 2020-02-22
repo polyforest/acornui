@@ -76,7 +76,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 			field = value
 		}
 
-	private var group: CacheSet? = null
+	private var cacheSet: CacheSet? = null
 		set(value) {
 			field?.dispose()
 			field = value
@@ -91,9 +91,9 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	 */
 	fun region(atlasPath: String, regionName: String): Job {
 		clear()
-		group = cacheSet()
+		cacheSet = cacheSet()
 		return launchSupervised {
-			setRegionInternal(loadAndCacheAtlasRegion(atlasPath, regionName, group!!))
+			setRegionInternal(loadAndCacheAtlasRegion(atlasPath, regionName, cacheSet!!))
 		}.also {
 			loaderJob = it
 		}
@@ -116,7 +116,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	}
 
 	override fun clear() {
-		group = null
+		cacheSet = null
 		setRegionInternal(null)
 		renderable.clear()
 		invalidateLayout()

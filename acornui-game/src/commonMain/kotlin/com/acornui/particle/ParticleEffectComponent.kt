@@ -159,26 +159,26 @@ class LoadedParticleEffect(
 
 typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: ParticleImageEntry) -> Sprite
 
-suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, group: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, cacheSet: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	@Suppress("DeferredResultUnused")
-	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, group) // Start the atlas loading and parsing in parallel.
+	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, cacheSet) // Start the atlas loading and parsing in parallel.
 	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
 		// Binary
 		binaryParse(ParticleEffect.serializer(), loadBinary(pDataPath))
 	} else {
 		jsonParse(ParticleEffect.serializer(), loadText(pDataPath))
 	}
-	return loadParticleEffect(particleEffect, atlasPath, group, maxParticlesScale)
+	return loadParticleEffect(particleEffect, atlasPath, cacheSet, maxParticlesScale)
 }
 
-suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, group: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
-	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, group)
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath: String, cacheSet: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
+	val atlasData = loadAndCacheJson(TextureAtlasData.serializer(), atlasPath, cacheSet)
 	val gl = inject(CachedGl20)
 
 	val spriteResolver: SpriteResolver = { emitter, imageEntry ->
 		val (page, region) = atlasData.findRegion(imageEntry.path)
 				?: throw Exception("Could not find \"${imageEntry.path}\" in the atlas $atlasPath")
-		val texture = loadAndCacheAtlasPage(atlasPath, page, group)
+		val texture = loadAndCacheAtlasPage(atlasPath, page, cacheSet)
 
 		val sprite = Sprite(gl)
 		sprite.blendMode = emitter.blendMode
@@ -187,14 +187,14 @@ suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, atlasPath
 		sprite.region(region.bounds, region.isRotated)
 		sprite
 	}
-	return loadParticleEffect(particleEffect, group, spriteResolver, maxParticlesScale)
+	return loadParticleEffect(particleEffect, cacheSet, spriteResolver, maxParticlesScale)
 }
 
 /**
  * Given a particle effect and a sprite resolver, creates a particle effect instance, and requests a [Sprite] for every
  * emitter.
  */
-suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: CacheSet = cacheSet(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
+suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, cacheSet: CacheSet = cacheSet(), spriteResolver: SpriteResolver, maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	val emitterRenderers = ArrayList<ParticleEmitterRenderer>(particleEffect.emitters.size)
 	val effectInstance = particleEffect.createInstance(maxParticlesScale)
 
@@ -207,7 +207,7 @@ suspend fun Context.loadParticleEffect(particleEffect: ParticleEffect, group: Ca
 		}
 		emitterRenderers.add(ParticleEmitterRenderer2d(emitterInstance, sprites))
 	}
-	return LoadedParticleEffect(inject(FrameDriverRo), effectInstance, emitterRenderers, group)
+	return LoadedParticleEffect(inject(FrameDriverRo), effectInstance, emitterRenderers, cacheSet)
 }
 
 interface ParticleEmitterRenderer {

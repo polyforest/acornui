@@ -64,16 +64,34 @@ class TextureComponentTest {
 	@Test fun pathRefCount() = runMainTest {
 		headlessApplication {
 			context {
+				var constructedTextures = 0
 				childDependencies += Loaders.textureLoader to MockLoader {
-					delay(100L)
+					constructedTextures++
+					delay(200L)
 					MockTextureWithRequest(it, MockTexture())
 				}
 
 				launch {
 					val texC = +textureC()
 					texC.texture("path0").join()
+					assertEquals(1, constructedTextures)
 					assertEquals(1, texC.texture?.refCount)
 					texC.texture("path0").join()
+					assertEquals(1, texC.texture?.refCount)
+					assertEquals(1, constructedTextures)
+					val previousTexture = texC.texture
+					texC.texture("path1").join()
+					assertEquals(1, texC.texture?.refCount)
+					assertEquals(0, previousTexture?.refCount)
+					assertEquals(2, constructedTextures)
+					val previousTexture2 = texC.texture
+					val job = texC.texture("path2")
+					assertEquals(0, previousTexture?.refCount)
+					assertEquals(0, previousTexture2?.refCount)
+
+					job.join()
+					assertEquals(3, constructedTextures)
+					assertEquals(1, texC.texture?.refCount)
 
 					exit()
 				}

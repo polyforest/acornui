@@ -229,8 +229,6 @@ private class CacheValue<V : Any>(
 /**
  * CacheSet is a set of keys that are reference incremented on the [Cache] when added, and
  * reference decremented when this group is disposed.
- *
- *
  */
 class CacheSet(
 		owner: Context

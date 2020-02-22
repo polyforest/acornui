@@ -51,7 +51,10 @@ sealed class AcornDispatcherBase(
 	@UseExperimental(ExperimentalCoroutinesApi::class)
 	override fun scheduleResumeAfterDelay(timeMillis: Long, continuation: CancellableContinuation<Unit>) {
 		val timer = Timer(frameDriver,timeMillis / 1000f) {
-			with(continuation) { resumeUndispatched(Unit) }
+			with(continuation) {
+				if (isActive)
+					resumeUndispatched(Unit)
+			}
 		}.start()
 		continuation.invokeOnCancellation { timer.dispose() }
 	}
@@ -60,12 +63,9 @@ sealed class AcornDispatcherBase(
 	 * @suppress
 	 */
 	override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
-		val timer = Timer(frameDriver,timeMillis / 1000f) {
+		return Timer(frameDriver,timeMillis / 1000f) {
 			block.run()
 		}.start()
-		return object : DisposableHandle {
-			override fun dispose() = timer.dispose()
-		}
 	}
 }
 

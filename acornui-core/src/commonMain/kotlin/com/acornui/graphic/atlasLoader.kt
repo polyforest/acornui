@@ -21,10 +21,10 @@ import com.acornui.asset.loadTexture
 import com.acornui.di.Context
 import com.acornui.io.file.Path
 
-suspend fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, group: CacheSet): Texture {
+suspend fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, cacheSet: CacheSet): Texture {
 	val atlasFile = Path(atlasPath)
 	val textureFile = atlasFile.sibling(page.texturePath)
-	return group.getOrPutAsync(textureFile.value) {
+	return cacheSet.getOrPutAsync(textureFile.value) {
 		page.configure(loadTexture(textureFile.value))
 	}.await()
 }

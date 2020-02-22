@@ -24,6 +24,7 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.start
 import com.acornui.stop
+import kotlinx.coroutines.DisposableHandle
 import kotlin.time.Duration
 
 /**
@@ -63,7 +64,9 @@ class Timer(
 		 */
 		val callback: () -> Unit
 
-) : Updatable, Disposable {
+) : Updatable, Disposable, DisposableHandle {
+	// For convenience, Timer implements both com.acornui.Disposable and kotlinx.coroutines.DisposableHandle
+	// This is so that timers used in scheduled dispatchers don't need to wrap the Disposable reference.
 
 	private var currentTime: Float = -delay
 	private var currentRepetition: Int = 0

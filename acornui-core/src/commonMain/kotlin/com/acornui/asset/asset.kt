@@ -101,6 +101,21 @@ suspend fun Context.loadTexture(
 }
 
 /**
+ * Loads and caches a [Texture] resource.
+ */
+suspend fun Context.loadAndCacheTexture(
+		requestData: UrlRequestData,
+		progressReporter: ProgressReporter = GlobalProgressReporter,
+		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
+		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout,
+		cacheSet: CacheSet = cacheSet()
+): Texture {
+	return cacheSet.getOrPutAsync(requestData) {
+		loadTexture(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+	}.await()
+}
+
+/**
  * Requests a [Texture] resource.
  */
 suspend fun Context.loadTexture(

@@ -18,6 +18,8 @@
 
 package com.acornui.component
 
+import com.acornui.asset.CacheSet
+import com.acornui.asset.loadAndCacheTexture
 import com.acornui.asset.loadTexture
 import com.acornui.async.cancellingJobProp
 import com.acornui.async.launchSupervised
@@ -25,6 +27,8 @@ import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureRo
+import com.acornui.io.GlobalProgressReporter
+import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
 import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
@@ -90,6 +94,12 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	val texture: TextureRo?
 		get() = renderable.texture
 
+	private var cacheSet: CacheSet? = null
+		set(value) {
+			field?.dispose()
+			field = value
+		}
+
 	protected open fun setTextureInternal(value: Texture?) {
 		if (renderable.texture == value) return
 		val oldTexture = renderable.texture
@@ -119,12 +129,14 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 
 	/**
 	 * Loads the texture from the given url request and sets the texture on completion.
+	 * This will immediately cancel and clear any current texture.
 	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
 	 */
-	fun texture(request: UrlRequestData): Job {
+	fun texture(request: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter): Job {
 		clear()
+		cacheSet = CacheSet(this)
 		return launchSupervised {
-			setTextureInternal(loadTexture(request))
+			setTextureInternal(loadAndCacheTexture(request, progressReporter, cacheSet = cacheSet!!))
 		}.also {
 			loaderJob = it
 		}
@@ -177,8 +189,10 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * Clears the current texture. If a texture is currently being loaded via `texture(path)`, the loading will cancel.
 	 */
 	override fun clear() {
+		setTextureInternal(null)
 		loaderJob = null
 		explicitTexture = null
+		cacheSet = null
 		invalidateLayout()
 	}
 
