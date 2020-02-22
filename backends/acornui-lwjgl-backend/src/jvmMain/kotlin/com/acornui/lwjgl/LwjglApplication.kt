@@ -20,7 +20,6 @@ package com.acornui.lwjgl
 
 import com.acornui.*
 import com.acornui.asset.Loaders
-import com.acornui.async.isUiThread
 import com.acornui.audio.AudioManager
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
@@ -92,7 +91,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	override suspend fun onBeforeStart() {
-		check(isUiThread()) { "LwjglApplication#start must be run in the main UI thread. "}
 		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
 	}
 
