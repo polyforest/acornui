@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.component.layout.clampWidth
 import com.acornui.component.style.StyleTag
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.input.interaction.DragInteractionRo
@@ -51,7 +51,7 @@ open class HDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 			val dividerBar = addChild(it.divideBar(this))
 			_dividerBar = dividerBar
 			dividerBar.drag().add(::dividerDragHandler)
-			dividerBar.cursor(StandardCursors.RESIZE_EW)
+			dividerBar.cursor(StandardCursor.RESIZE_EW)
 			val handle = addChild(it.handle(this))
 			_handle = handle
 			handle.interactivityMode = InteractivityMode.NONE

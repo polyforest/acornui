@@ -29,7 +29,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
 import com.acornui.component.text.text
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -150,7 +150,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected va
 		cascadingFlags = cascadingFlags or ValidationFlags.PROPERTIES
 		styleTags.add(Companion)
 
-		hGroup.cursor(StandardCursors.HAND)
+		hGroup.cursor(StandardCursor.HAND)
 		hGroup.click().add {
 			val d = _data
 			if (d != null) {

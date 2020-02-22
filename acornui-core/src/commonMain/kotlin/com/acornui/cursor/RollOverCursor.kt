@@ -18,74 +18,107 @@ package com.acornui.cursor
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
+import com.acornui.component.mouseIsOver
 import com.acornui.di.ContextImpl
-import com.acornui.input.interaction.MouseInteractionRo
+import com.acornui.function.as1
 import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
+import com.acornui.properties.afterChange
+import com.acornui.properties.afterChangeWithInit
+import com.acornui.time.callLater
 
 /**
  * An attachment that changes the cursor on roll over.
  */
 class RollOverCursor(
-		private val target: UiComponentRo,
-		var cursor: Cursor,
-		var priority: Float = CursorPriority.ACTIVE) : ContextImpl(target) {
+		private val target: UiComponentRo
+) : ContextImpl(target) {
+
+	var cursor: Cursor? by afterChange<Cursor?>(null) {
+		showIfOver()
+	}
+
+	var priority: Float = CursorPriority.ACTIVE
 
 	private val cursorManager = injectOptional(CursorManager)
 
 	private var cursorRef: CursorReference? = null
 
-	var enabled: Boolean = false
-		set(value) {
-			if (field != value) {
-				field = value
-				if (value) {
-					target.rollOver().add(::rollOverHandler)
-					target.rollOut().add(::rollOutHandler)
-				} else {
-					cursorRef?.remove()
-					cursorRef = null
-					target.rollOver().remove(::rollOverHandler)
-					target.rollOut().remove(::rollOutHandler)
-				}
-			}
+	var enabled: Boolean by afterChangeWithInit(true) { value ->
+		if (value) {
+			target.rollOver().add(::rollOverHandler.as1)
+			target.rollOut().add(::rollOutHandler.as1)
+			showIfOver()
+		} else {
+			hide()
+			target.rollOver().remove(::rollOverHandler.as1)
+			target.rollOut().remove(::rollOutHandler.as1)
 		}
-
-	init {
-		enabled = true
 	}
 
-	private fun rollOverHandler(event: MouseInteractionRo) {
-		cursorRef?.remove()
+	private fun rollOverHandler() {
+		show()
+	}
+
+	private fun rollOutHandler() {
+		hide()
+	}
+
+	private fun showIfOver() {
+		target.callLater {
+			if (enabled && target.mouseIsOver())
+				show()
+		}
+	}
+
+	private fun show() {
+		hide()
+		val cursor = cursor ?: return
 		cursorRef = cursorManager?.addCursor(cursor, priority)
 	}
 
-	private fun rollOutHandler(event: MouseInteractionRo) {
-		cursorRef?.remove()
+	private fun hide() {
+		cursorRef?.dispose()
 		cursorRef = null
 	}
 
 	override fun dispose() {
 		super.dispose()
-		cursorRef?.remove()
-		cursorRef = null
-		target.rollOver().remove(::rollOverHandler)
-		target.rollOut().remove(::rollOutHandler)
+		enabled = false
 	}
 
 	companion object
 }
 
+/**
+ * Disposes the roll over cursor attachment.
+ */
 fun UiComponentRo.clearCursor() {
 	removeAttachment<RollOverCursor>(RollOverCursor)?.dispose()
 }
 
+/**
+ * Sets the roll over cursor to be used on this component.
+ * Setting this will replace any previous roll over cursor.
+ * @return Returns a disposable reference to the [RollOverCursor] attachment.
+ * @see clearCursor
+ */
 fun UiComponentRo.cursor(cursor: Cursor?, priority: Float = CursorPriority.ACTIVE): RollOverCursor? {
 	return if (cursor == null) {
 		clearCursor()
 		null
-	} else createOrReuseAttachment(RollOverCursor) { RollOverCursor(this, cursor, priority) }.also { 
+	} else createOrReuseAttachment(RollOverCursor) { RollOverCursor(this) }.also {
 		it.cursor = cursor
 		it.priority = priority
 	}
+}
+
+/**
+ * Sets the roll over cursor to be used on this component.
+ * Setting this will replace any previous roll over cursor.
+ * @return Returns a disposable reference to the [RollOverCursor] attachment.
+ * @see clearCursor
+ */
+fun UiComponentRo.cursor(cursor: StandardCursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor? {
+	return cursor(inject(CursorManager).getStandardCursor(cursor), priority)
 }

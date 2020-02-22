@@ -19,32 +19,36 @@ package com.acornui.js.cursor
 import com.acornui.LifecycleBase
 import com.acornui.cursor.Cursor
 import com.acornui.cursor.CursorManagerBase
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 
 class JsCursorManager(private val canvas: HTMLElement) : CursorManagerBase() {
 
-	init {
-		with (StandardCursors) {
-			ALIAS = JsStandardCursor("alias", canvas)
-			ALL_SCROLL = JsStandardCursor("all-scroll", canvas)
-			CELL = JsStandardCursor("cell", canvas)
-			COPY = JsStandardCursor("copy", canvas)
-			CROSSHAIR = JsStandardCursor("crosshair", canvas)
-			DEFAULT = JsStandardCursor("default", canvas)
-			HAND = JsStandardCursor("pointer", canvas)
-			HELP = JsStandardCursor("help", canvas)
-			IBEAM = JsStandardCursor("text", canvas)
-			MOVE = JsStandardCursor("move", canvas)
-			NONE = JsStandardCursor("none", canvas)
-			NOT_ALLOWED = JsStandardCursor("not-allowed", canvas)
-			POINTER_WAIT = JsStandardCursor("progress", canvas)
-			RESIZE_EW = JsStandardCursor("ew-resize", canvas)
-			RESIZE_NS = JsStandardCursor("ns-resize", canvas)
-			RESIZE_NE = JsStandardCursor("ne-resize", canvas)
-			RESIZE_SE = JsStandardCursor("se-resize", canvas)
-			WAIT = JsStandardCursor("wait", canvas)
+	private val standardCursors = HashMap<StandardCursor, Cursor>()
+
+	override fun getStandardCursor(cursor: StandardCursor): Cursor {
+		return standardCursors.getOrPut(cursor) {
+			when (cursor) {
+				StandardCursor.ALIAS -> JsStandardCursor("alias", canvas)
+				StandardCursor.ALL_SCROLL -> JsStandardCursor("all-scroll", canvas)
+				StandardCursor.CELL -> JsStandardCursor("cell", canvas)
+				StandardCursor.COPY -> JsStandardCursor("copy", canvas)
+				StandardCursor.CROSSHAIR -> JsStandardCursor("crosshair", canvas)
+				StandardCursor.DEFAULT -> JsStandardCursor("default", canvas)
+				StandardCursor.HAND -> JsStandardCursor("pointer", canvas)
+				StandardCursor.HELP -> JsStandardCursor("help", canvas)
+				StandardCursor.IBEAM -> JsStandardCursor("text", canvas)
+				StandardCursor.MOVE -> JsStandardCursor("move", canvas)
+				StandardCursor.NONE -> JsStandardCursor("none", canvas)
+				StandardCursor.NOT_ALLOWED -> JsStandardCursor("not-allowed", canvas)
+				StandardCursor.POINTER_WAIT -> JsStandardCursor("progress", canvas)
+				StandardCursor.RESIZE_EW -> JsStandardCursor("ew-resize", canvas)
+				StandardCursor.RESIZE_NS -> JsStandardCursor("ns-resize", canvas)
+				StandardCursor.RESIZE_NE -> JsStandardCursor("ne-resize", canvas)
+				StandardCursor.RESIZE_SE -> JsStandardCursor("se-resize", canvas)
+				StandardCursor.WAIT -> JsStandardCursor("wait", canvas)
+			}
 		}
 	}
 }
@@ -60,9 +64,6 @@ class JsTextureCursor(
 		private val hotY: Int,
 		private val canvas: HTMLCanvasElement
 ) : LifecycleBase(), Cursor {
-
-	init {
-	}
 
 	override fun onActivated() {
 		canvas.style.cursor = "url(\"$texturePath\") $hotX $hotY, default"

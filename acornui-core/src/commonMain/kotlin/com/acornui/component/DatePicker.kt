@@ -22,7 +22,7 @@ import com.acornui.component.layout.algorithm.GridLayoutStyle
 import com.acornui.component.style.*
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -124,7 +124,7 @@ open class DatePicker(
 		textInput.editable = it
 		textInput.selectable = it
 		handCursor?.dispose()
-		if (it) handCursor = cursor(StandardCursors.HAND)
+		if (it) handCursor = cursor(StandardCursor.HAND)
 	}
 
 	/**
@@ -199,7 +199,7 @@ open class DatePicker(
 			downArrow?.dispose()
 			val downArrow = addChild(it.downArrow(this))
 			downArrow.focusEnabled = true
-			downArrow.cursor(StandardCursors.HAND)
+			downArrow.cursor(StandardCursor.HAND)
 			downArrow.click().add { e ->
 				if (!e.handled) {
 					e.handled = true

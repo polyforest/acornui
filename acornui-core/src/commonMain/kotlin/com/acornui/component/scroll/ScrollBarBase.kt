@@ -18,7 +18,7 @@ package com.acornui.component.scroll
 
 import com.acornui.component.*
 import com.acornui.component.style.*
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -76,7 +76,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 			track?.dispose()
 			track = addChild(it.track(this))
 			val track = track!!
-			track.cursor(StandardCursors.HAND)
+			track.cursor(StandardCursor.HAND)
 
 			decrementButton?.dispose()
 			decrementButton = addChild(it.decrementButton(this))
@@ -91,7 +91,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 			val thumb = thumb!!
 			thumb.focusEnabled = false
 			thumb.alpha = oldThumbAlpha
-			thumb.cursor(StandardCursors.HAND)
+			thumb.cursor(StandardCursor.HAND)
 			if (it.pageMode) {
 				track.mouseDown().add(::trackPressHandler)
 				val thumbDrag = thumb.dragAttachment(0f)

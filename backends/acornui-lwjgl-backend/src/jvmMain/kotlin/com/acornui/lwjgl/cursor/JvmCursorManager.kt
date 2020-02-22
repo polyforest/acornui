@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.acornui.lwjgl.cursor
 
 import com.acornui.LifecycleBase
 import com.acornui.asset.load
 import com.acornui.cursor.Cursor
 import com.acornui.cursor.CursorManagerBase
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.graphic.RgbData
 import com.acornui.io.JvmBufferUtil
 import com.acornui.io.Loader
@@ -29,31 +31,38 @@ import kotlinx.coroutines.launch
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 
-class JvmCursorManager(window: Long, rgbDataLoader: Loader<RgbData>, scope: CoroutineScope) : CursorManagerBase() {
+class JvmCursorManager(
+		private val window: Long,
+		private val rgbDataLoader: Loader<RgbData>,
+		private val scope: CoroutineScope,
 
-	val cursorsPath = "assets/uiskin/cursors/"
+		val cursorsPath: String = "assets/uiskin/cursors/"
+) : CursorManagerBase() {
 
-	init {
-		// Cursors
-		with (StandardCursors) {
-			DEFAULT = JvmStandardCursor(window, GLFW.GLFW_ARROW_CURSOR)
-			IBEAM = JvmStandardCursor(window, GLFW.GLFW_IBEAM_CURSOR)
-			CROSSHAIR = JvmStandardCursor(window, GLFW.GLFW_CROSSHAIR_CURSOR)
-			HAND = JvmStandardCursor(window, GLFW.GLFW_HAND_CURSOR)
-			RESIZE_EW = JvmStandardCursor(window, GLFW.GLFW_HRESIZE_CURSOR)
-			RESIZE_NS = JvmStandardCursor(window, GLFW.GLFW_VRESIZE_CURSOR)
-			ALIAS = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Alias.png", 2, 2)
-			ALL_SCROLL = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "AllScroll.png", 12, 12)
-			CELL = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Cell.png", 12, 12)
-			COPY = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Copy.png", 2, 2)
-			HELP = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Help.png", 2, 2)
-			MOVE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Move.png", 12, 12)
-			NONE = HiddenCursor(window)
-			NOT_ALLOWED = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "NotAllowed.png", 12, 12)
-			POINTER_WAIT = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "PointerWait.png", 1, 3)
-			RESIZE_NE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeNE.png", 13, 13)
-			RESIZE_SE = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeSE.png", 13, 13)
-			WAIT = JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Wait.png", 6, 2)
+	private val standardCursors = HashMap<StandardCursor, Cursor>()
+
+	override fun getStandardCursor(cursor: StandardCursor): Cursor {
+		return standardCursors.getOrPut(cursor) {
+			when (cursor) {
+				StandardCursor.DEFAULT -> JvmStandardCursor(window, GLFW.GLFW_ARROW_CURSOR)
+				StandardCursor.IBEAM -> JvmStandardCursor(window, GLFW.GLFW_IBEAM_CURSOR)
+				StandardCursor.CROSSHAIR -> JvmStandardCursor(window, GLFW.GLFW_CROSSHAIR_CURSOR)
+				StandardCursor.HAND -> JvmStandardCursor(window, GLFW.GLFW_HAND_CURSOR)
+				StandardCursor.RESIZE_EW -> JvmStandardCursor(window, GLFW.GLFW_HRESIZE_CURSOR)
+				StandardCursor.RESIZE_NS -> JvmStandardCursor(window, GLFW.GLFW_VRESIZE_CURSOR)
+				StandardCursor.ALIAS -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Alias.png", 2, 2)
+				StandardCursor.ALL_SCROLL -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "AllScroll.png", 12, 12)
+				StandardCursor.CELL -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Cell.png", 12, 12)
+				StandardCursor.COPY -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Copy.png", 2, 2)
+				StandardCursor.HELP -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Help.png", 2, 2)
+				StandardCursor.MOVE -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Move.png", 12, 12)
+				StandardCursor.NONE -> HiddenCursor(window)
+				StandardCursor.NOT_ALLOWED -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "NotAllowed.png", 12, 12)
+				StandardCursor.POINTER_WAIT -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "PointerWait.png", 1, 3)
+				StandardCursor.RESIZE_NE -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeNE.png", 13, 13)
+				StandardCursor.RESIZE_SE -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "ResizeSE.png", 13, 13)
+				StandardCursor.WAIT -> JvmTextureCursor(window, rgbDataLoader, scope, cursorsPath + "Wait.png", 6, 2)
+			}
 		}
 	}
 }

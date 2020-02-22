@@ -28,7 +28,7 @@ import com.acornui.component.layout.algorithm.virtual.VirtualLayoutAlgorithm
 import com.acornui.component.layout.algorithm.virtual.VirtualLayoutDirection
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -155,7 +155,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		isFocusContainer = true
 		focusEnabled = true
 		styleTags.add(DataScroller)
-		cursor(StandardCursors.HAND)
+		cursor(StandardCursor.HAND)
 
 		maxItems = 15
 		scrollModel.changed.add {

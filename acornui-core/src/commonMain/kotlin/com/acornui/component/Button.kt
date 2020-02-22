@@ -22,7 +22,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.disabledTag
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -84,7 +84,7 @@ open class ButtonImpl(
 				setUserToggled(!toggled)
 			}
 		}
-		cursor(StandardCursors.HAND)
+		cursor(StandardCursor.HAND)
 
 		watch(style) {
 			skin?.dispose()

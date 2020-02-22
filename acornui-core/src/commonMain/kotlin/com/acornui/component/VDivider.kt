@@ -21,7 +21,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkin
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.input.interaction.DragInteractionRo
@@ -55,7 +55,7 @@ open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 			val dividerBar = addChild(it.divideBar(this))
 			_dividerBar = dividerBar
 			dividerBar.drag().add(::dividerDragHandler)
-			dividerBar.cursor(StandardCursors.RESIZE_NS)
+			dividerBar.cursor(StandardCursor.RESIZE_NS)
 			val handle = addChild(it.handle(this))
 			handle.interactivityMode = InteractivityMode.NONE
 			_handle = handle

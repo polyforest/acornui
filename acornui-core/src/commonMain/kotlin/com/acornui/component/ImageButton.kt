@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.collection.addAll
 import com.acornui.component.style.*
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -49,7 +49,7 @@ class ImageButton(
 		focusEnabledChildren = false
 		styleTags.addAll(Companion)
 
-		cursor(StandardCursors.HAND)
+		cursor(StandardCursor.HAND)
 
 		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
 	}

@@ -22,7 +22,7 @@ import com.acornui.component.*
 import com.acornui.component.style.Stylable
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.addStyleRule
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.clearCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
@@ -158,7 +158,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 			}
 
 			if (cS.selectable) {
-				cursor(StandardCursors.IBEAM)
+				cursor(StandardCursor.IBEAM)
 				createOrReuseAttachment(DRAG_ATTACHMENT_KEY) { DragAttachment(this, 0f).apply {
 					drag.add(::dragHandler)
 				} }

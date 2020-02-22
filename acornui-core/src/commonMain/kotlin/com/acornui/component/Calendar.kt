@@ -27,7 +27,7 @@ import com.acornui.component.style.*
 import com.acornui.component.text.TextField
 import com.acornui.component.text.selectable
 import com.acornui.component.text.text
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -488,7 +488,7 @@ open class CalendarItemRendererImpl(owner: Context) : ContainerImpl(owner), Cale
 		styleTags.add(Companion)
 		styleTags.add(INACTIVE)
 		focusEnabled = true
-		cursor(StandardCursors.HAND)
+		cursor(StandardCursor.HAND)
 		watch(style) {
 			refreshLabel()
 			refreshColor()

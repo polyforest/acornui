@@ -31,7 +31,7 @@ import com.acornui.component.style.*
 import com.acornui.component.text.TextInput
 import com.acornui.component.text.selectable
 import com.acornui.component.text.textInput
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -152,7 +152,7 @@ open class OptionList<E : Any>(
 		textInput.editable = it
 		textInput.selectable = it
 		handCursor?.dispose()
-		if (!it) handCursor = cursor(StandardCursors.HAND)
+		if (!it) handCursor = cursor(StandardCursor.HAND)
 	}
 
 	/**
@@ -475,7 +475,7 @@ open class OptionList<E : Any>(
 		val w = pad.reduceWidth(explicitWidth)
 		val h = pad.reduceHeight(explicitHeight)
 		val downArrow = downArrow!!
-		downArrow.cursor(StandardCursors.HAND)
+		downArrow.cursor(StandardCursor.HAND)
 		textInput.setSize(if (w == null) null else w - style.hGap - downArrow.width, h)
 		textInput.setPosition(pad.left, pad.top)
 		downArrow.moveTo(pad.left + textInput.width + style.hGap, pad.top + (textInput.height - downArrow.height) * 0.5f)

@@ -20,7 +20,7 @@ import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.style.*
 import com.acornui.component.text.*
-import com.acornui.cursor.StandardCursors
+import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -251,7 +251,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 				Color(1f, 1f, 1f, 0f),
 				Color(1f, 1f, 1f, 1f)
 		)
-		cursor(StandardCursors.CROSSHAIR)
+		cursor(StandardCursor.CROSSHAIR)
 
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
@@ -487,7 +487,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner) {
 	private val text = text("") {
 		focusEnabled = true
 		selectable = false
-		cursor(StandardCursors.HAND)
+		cursor(StandardCursor.HAND)
 	}
 
 	private val colorPicker: ColorPicker = colorPicker {
