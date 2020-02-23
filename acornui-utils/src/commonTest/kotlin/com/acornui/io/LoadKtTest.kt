@@ -26,6 +26,7 @@ import kotlinx.serialization.Serializable
 import kotlin.test.*
 import kotlin.time.seconds
 
+@Ignore // Problems with npm test-only dependencies: https://discuss.kotlinlang.org/t/js-test-npm-dependencies/16450
 class LoadKtTest {
 
 	/**
@@ -41,17 +42,15 @@ class LoadKtTest {
 	
 	@Test
 	fun loadText() = runTest {
-		val progressReporter = ProgressReporterImpl()
 		val request = "$root/textToLoad.txt".toUrlRequestData()
-		assertEquals("text to load contents", TextLoader().load(request, progressReporter))
+		assertEquals("text to load contents", TextLoader().load(request))
 	}
 
 	@Ignore
 	@Test
 	fun loadBinary() = runTest {
-		val progressReporter = ProgressReporterImpl()
 		val request = "$root/binaryToLoad.bin".toUrlRequestData()
-		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request, progressReporter).toByteArray()))
+		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request).toByteArray()))
 	}
 
 	@Test
@@ -62,21 +61,20 @@ class LoadKtTest {
 
 	@Test
 	fun connectTimeout() = runTest {
-		val progressReporter = ProgressReporterImpl()
 		val request = "http://10.255.255.1".toUrlRequestData()
 		assertFailsWith(ResponseConnectTimeoutException::class) {
-			TextLoader().load(request, progressReporter, connectTimeout = 2.seconds)
+			val textLoader = TextLoader()
+			textLoader.load(request, textLoader.requestSettings.copy(connectTimeout = 2.seconds))
 		}
 	}
 	
 	@Ignore
 	@Test
 	fun loadTimeout() = runTest {
-		val progressReporter = ProgressReporterImpl()
 		val request = "http://10.255.255.2".toUrlRequestData()
 		assertFailsWith(CancellationException::class) {
 			withTimeout(0.5.seconds) {
-				TextLoader().load(request, progressReporter, connectTimeout = 5.seconds)
+				TextLoader().load(request)
 			}
 		}
 	}

@@ -33,18 +33,13 @@ open class KotlinJsPlugin : Plugin<Project> {
 	companion object {
 
 		fun configure(project: Project) {
+			// We have a problem with jsTest nodejs dependencies trying to get resolved from
 			project.extensions.configure<KotlinMultiplatformExtension> {
 				val kotlinVersion: String by project
 				val kotlinSerializationVersion: String by project
 				val kotlinCoroutinesVersion: String by project
-
 				js {
 					browser {
-						webpackTask {
-							// Assume project is a library by default, not an application.
-							enabled = false
-						}
-
 						testTask {
 							useMocha {
 								// To be consistent, asynchronous tests should use `runTest`, which has its own timeout.
@@ -80,7 +75,6 @@ open class KotlinJsPlugin : Plugin<Project> {
 						dependencies {
 							implementation(kotlin("test", version = kotlinVersion))
 							implementation(kotlin("test-js", version = kotlinVersion))
-							runtimeOnly(npm("xmlhttprequest", "1.8.0"))
 						}
 					}
 				}
