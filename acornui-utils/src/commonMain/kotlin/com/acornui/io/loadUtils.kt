@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.acornui.io
 
 import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -45,18 +46,28 @@ data class UrlRequestData(
 		val variables: UrlParams? = null,
 
 		var body: String? = null
-) {
+)
 
-	val urlStr: String = if (method == UrlRequestMethod.GET && variables != null)
-		url + "?" + variables.queryString else url
-}
+private val absolutePathRegex = Regex("""^([a-z0-9]*:|.{0})\/\/.*${'$'}""", RegexOption.IGNORE_CASE)
 
 /**
- * Returns a cache key suitable for mapping a request to its result.
- * This will be unique to a set of url, method, and variables, and does not contain the headers, password, or body.
+ * Returns true if the requested path starts with a scheme. (e.g. https://, http://, ftp://)
+ * Note - This is case insensitive and does not validate if it's a known scheme.
  */
-val UrlRequestData.cacheKey: String
-	get() = "UrlRequestData($url&$method&${variables?.queryString})"
+val UrlRequestData.isAbsolutePath: Boolean
+	get() = url.matches(absolutePathRegex)
+
+/**
+ * @return Returns `!isAbsolutePath`
+ */
+val UrlRequestData.isRelativePath: Boolean
+	get() = !isAbsolutePath
+
+fun UrlRequestData.toUrlStr(rootPath: String): String {
+	val prependedUrl = if (isRelativePath) rootPath + url else url
+	return if (method == UrlRequestMethod.GET && variables != null)
+		prependedUrl + "?" + variables.queryString else prependedUrl
+}
 
 fun String.toUrlRequestData(): UrlRequestData {
 	val qIndex = indexOf("?")
@@ -70,13 +81,13 @@ fun String.toUrlRequestData(): UrlRequestData {
  * The possible values for [UrlRequestData.method].
  */
 object UrlRequestMethod {
-	val GET: String = "GET"
-	val POST: String = "POST"
-	val PUT: String = "PUT"
-	val DELETE: String = "DELETE"
+	const val GET: String = "GET"
+	const val POST: String = "POST"
+	const val PUT: String = "PUT"
+	const val DELETE: String = "DELETE"
 }
 
-open class ResponseConnectTimeoutException(val requestData: UrlRequestData, val connectTimeout: Duration) : Throwable("The request ${requestData.urlStr} timed out after $connectTimeout")
+open class ResponseConnectTimeoutException(val requestData: UrlRequestData, val connectTimeout: Duration) : Throwable("The request ${requestData.url} timed out after $connectTimeout")
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 
@@ -111,16 +122,48 @@ class StringFormItem(
 
 interface Loader<out T> {
 
-	val defaultInitialTimeEstimate: Duration
-	val defaultConnectTimeout: Duration
-		get() = 30.seconds
+	/**
+	 * Default request settings.
+	 */
+	val requestSettings: RequestSettings
 
-	suspend fun load(requestData: UrlRequestData,
-					 progressReporter: ProgressReporter,
-					 initialTimeEstimate: Duration = defaultInitialTimeEstimate,
-					 connectTimeout: Duration = defaultConnectTimeout
-	): T
+	/**
+	 * Begins loading the given request.
+	 *
+	 * @param settings Configuration for the request. To change settings, use [RequestSettings.copy] on the
+	 * [requestSettings] object.
+	 */
+	suspend fun load(requestData: UrlRequestData, settings: RequestSettings = requestSettings): T
 }
 
-expect class TextLoader() : Loader<String>
-expect class BinaryLoader() : Loader<ReadByteBuffer>
+suspend fun <T> Loader<T>.load(path: String, settings: RequestSettings = requestSettings): T = load(path.toUrlRequestData(), settings)
+
+data class RequestSettings(
+
+		/**
+		 * If the request is to a relative path, this value will be prepended.
+		 */
+		val rootPath: String = "",
+
+		/**
+		 * The progress reporter allows the loader to report its progress.
+		 */
+		val progressReporter: ProgressReporter = ProgressReporterImpl(),
+
+		/**
+		 * Before a connection has been made, a guess can be made for how long the request will take. This will
+		 * affect the total values given by the progress reporter until the actual estimate is calculated.
+		 */
+		val initialTimeEstimate: Duration = 1.seconds,
+
+		/**
+		 * If the connection hasn't been made within this timespan, a [com.acornui.io.ResponseConnectTimeoutException]
+		 * will be thrown.
+		 * This is just the timeout for the connection, not the total request. To add a read timeout, wrap your request
+		 * in [com.acornui.async.withTimeout].
+		 */
+		val connectTimeout: Duration = 30.seconds
+)
+
+expect class TextLoader(defaultSettings: RequestSettings = RequestSettings()) : Loader<String>
+expect class BinaryLoader(defaultSettings: RequestSettings = RequestSettings()) : Loader<ReadByteBuffer>

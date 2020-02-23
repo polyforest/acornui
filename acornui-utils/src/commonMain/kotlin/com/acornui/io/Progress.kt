@@ -95,5 +95,3 @@ open class ProgressReporterImpl : ProgressReporter {
 	override val total: Duration
 		get() = _children.sumByDuration { it.total }
 }
-
-object GlobalProgressReporter : ProgressReporterImpl()

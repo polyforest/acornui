@@ -36,7 +36,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					main = "call"
 				}
 			}
-
 			browser {
 				webpackTask {
 					enabled = true
@@ -45,8 +44,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 					sourceMaps = true
 				}
 			}
-
-			nodejs()
 		}
 
 		sourceSets {

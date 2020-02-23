@@ -29,7 +29,9 @@ import com.acornui.graphic.Window
 import com.acornui.input.InteractivityManager
 import com.acornui.input.KeyInput
 import com.acornui.input.MouseInput
+import com.acornui.io.ProgressReporterImpl
 import com.acornui.io.byteBuffer
+import com.acornui.io.progressReporterKey
 
 object HeadlessDependencies {
 
@@ -40,6 +42,7 @@ object HeadlessDependencies {
 				Window to HeadlessWindow(config.window),
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
+				progressReporterKey to ProgressReporterImpl(),
 				Loaders.binaryLoader to MockLoader(byteBuffer(1)),
 				Loaders.musicLoader to MockLoader(MockMusic),
 				Loaders.rgbDataLoader to MockLoader(RgbData(1, 1, false)),

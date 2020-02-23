@@ -20,15 +20,12 @@ package com.acornui.component
 
 import com.acornui.asset.CacheSet
 import com.acornui.asset.loadAndCacheTexture
-import com.acornui.asset.loadTexture
 import com.acornui.async.cancellingJobProp
 import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureRo
-import com.acornui.io.GlobalProgressReporter
-import com.acornui.io.ProgressReporter
 import com.acornui.io.UrlRequestData
 import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
@@ -132,11 +129,11 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * This will immediately cancel and clear any current texture.
 	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
 	 */
-	fun texture(request: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter): Job {
+	fun texture(request: UrlRequestData): Job {
 		clear()
 		cacheSet = CacheSet(this)
 		return launchSupervised {
-			setTextureInternal(loadAndCacheTexture(request, progressReporter, cacheSet = cacheSet!!))
+			setTextureInternal(loadAndCacheTexture(request, cacheSet = cacheSet!!))
 		}.also {
 			loaderJob = it
 		}

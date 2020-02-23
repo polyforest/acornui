@@ -25,8 +25,7 @@ import com.acornui.component.StageImpl
 import com.acornui.di.*
 import com.acornui.graphic.Window
 import com.acornui.graphic.updateAndRender
-import com.acornui.io.BinaryLoader
-import com.acornui.io.TextLoader
+import com.acornui.io.*
 import com.acornui.logging.Log
 import com.acornui.signal.addOnce
 import com.acornui.time.FrameDriver
@@ -111,12 +110,18 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 		Version(0, 0, 0) // TODO
 	}
 
+	protected open val progressReporterTask by task(progressReporterKey) { ProgressReporterImpl() }
+
+	protected open val defaultRequestSettingsTask by task(defaultRequestSettingsKey) {
+		RequestSettings(config().rootPath, get(progressReporterKey))
+	}
+
 	protected open val textLoader by task(Loaders.textLoader) {
-		TextLoader()
+		TextLoader(get(defaultRequestSettingsKey))
 	}
 
 	protected open val binaryLoader by task(Loaders.binaryLoader) {
-		BinaryLoader()
+		BinaryLoader(get(defaultRequestSettingsKey))
 	}
 
 	protected open suspend fun createStage(context: Context): Stage = StageImpl(context)
@@ -166,7 +171,9 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	open suspend fun createLooper(owner: Context): ApplicationLooper = ApplicationLooperImpl(owner, mainContext.looper)
 
 	companion object {
+
 		val uncaughtExceptionHandlerKey: Context.Key<(error: Throwable) -> Unit> = contextKey()
+		val defaultRequestSettingsKey: Context.Key<RequestSettings> = contextKey()
 	}
 }
 

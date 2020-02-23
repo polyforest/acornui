@@ -18,25 +18,28 @@ package com.acornui.lwjgl.audio
 
 import com.acornui.audio.Music
 import com.acornui.collection.stringMapOf
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
-import com.acornui.io.toUrl
+import com.acornui.io.toJavaUrl
+import com.acornui.io.toUrlStr
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-fun loadOpenAlMusic(audioManager: OpenAlAudioManager, requestData: UrlRequestData): Music {
+fun loadOpenAlMusic(audioManager: OpenAlAudioManager, requestData: UrlRequestData, settings: RequestSettings): Music {
 	val extension = requestData.url.extension()
 	if (!MusicDecoders.hasDecoder(extension)) throw Exception("No decoder found for music extension: $extension")
 
-	val url = requestData.url.toUrl()
+	val url = requestData.toJavaUrl(settings.rootPath)
 	val inputStreamFactory: () -> InputStream
 	@Suppress("LiftReturnOrAssignment")
 	if (url != null) {
 		inputStreamFactory = { url.openStream() }
 	} else {
-		val file = File(requestData.url)
-		if (!file.exists()) throw FileNotFoundException(requestData.url)
+		val path = requestData.toUrlStr(settings.rootPath)
+		val file = File(path)
+		if (!file.exists()) throw FileNotFoundException(path)
 		inputStreamFactory = { FileInputStream(file) }
 	}
 	val streamReader = MusicDecoders.createReader(extension, inputStreamFactory)

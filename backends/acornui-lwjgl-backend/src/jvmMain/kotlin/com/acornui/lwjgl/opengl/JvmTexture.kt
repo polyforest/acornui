@@ -22,7 +22,6 @@ import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.io.*
 import java.nio.ByteBuffer
-import kotlin.time.Duration
 
 /**
  * A texture implementation for the JVM backend.
@@ -49,6 +48,6 @@ class JvmTexture(
 /**
  * Creates an http request, processing the results as a [Texture].
  */
-suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
-	return JvmTexture(gl, loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout), requestData.urlStr)
+suspend fun loadTexture(gl: Gl20, requestData: UrlRequestData, settings: RequestSettings): Texture {
+	return JvmTexture(gl, loadRgbData(requestData, settings), displayName = requestData.toUrlStr(settings.rootPath))
 }

@@ -23,7 +23,6 @@ import com.acornui.di.contextKey
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.io.*
-import kotlin.time.Duration
 
 object Loaders {
 	val textLoader = contextKey<Loader<String>>()
@@ -34,46 +33,33 @@ object Loaders {
 	val soundLoader = contextKey<Loader<SoundFactory>>()
 }
 
-suspend fun <T> Loader<T>.load(url: String,
-							   progressReporter: ProgressReporter = GlobalProgressReporter,
-							   initialTimeEstimate: Duration = defaultInitialTimeEstimate,
-							   connectTimeout: Duration = defaultConnectTimeout
-): T = load(url.toUrlRequestData(), progressReporter, initialTimeEstimate, connectTimeout)
+suspend fun <T> Loader<T>.load(url: String, settings: RequestSettings): T =
+		load(url.toUrlRequestData(), settings)
 
 /**
  * Requests a [String] resource.
  */
 suspend fun Context.loadText(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout
-): String {
-	return inject(Loaders.textLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.textLoader).requestSettings
+): String = inject(Loaders.textLoader).load(requestData, settings)
 
 /**
  * Requests a [String] resource.
  */
 suspend fun Context.loadText(
 		path: String,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.textLoader).defaultConnectTimeout
-): String {
-	return inject(Loaders.textLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.textLoader).requestSettings
+): String = loadText(path.toUrlRequestData(), settings)
 
 /**
  * Requests a [ReadByteBuffer] resource.
  */
 suspend fun Context.loadBinary(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.binaryLoader).defaultConnectTimeout
+		settings: RequestSettings = inject(Loaders.binaryLoader).requestSettings
 ): ReadByteBuffer {
-	return inject(Loaders.binaryLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+	return inject(Loaders.binaryLoader).load(requestData, settings)
 }
 
 /**
@@ -81,23 +67,17 @@ suspend fun Context.loadBinary(
  */
 suspend fun Context.loadBinary(
 		path: String,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.binaryLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.binaryLoader).defaultConnectTimeout
-): ReadByteBuffer {
-	return inject(Loaders.binaryLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.binaryLoader).requestSettings
+): ReadByteBuffer = loadBinary(path.toUrlRequestData(), settings)
 
 /**
  * Requests a [Texture] resource.
  */
 suspend fun Context.loadTexture(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout
+		settings: RequestSettings = inject(Loaders.textureLoader).requestSettings
 ): Texture {
-	return inject(Loaders.textureLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+	return inject(Loaders.textureLoader).load(requestData, settings)
 }
 
 /**
@@ -105,13 +85,11 @@ suspend fun Context.loadTexture(
  */
 suspend fun Context.loadAndCacheTexture(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.textureLoader).defaultConnectTimeout,
+		settings: RequestSettings = inject(Loaders.textureLoader).requestSettings,
 		cacheSet: CacheSet = cacheSet()
 ): Texture {
 	return cacheSet.getOrPutAsync(requestData) {
-		loadTexture(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+		loadTexture(requestData, settings)
 	}.await()
 }
 
@@ -120,54 +98,37 @@ suspend fun Context.loadAndCacheTexture(
  */
 suspend fun Context.loadTexture(
 		path: String,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.textureLoader).defaultInitialTimeEstimate
-): Texture = inject(Loaders.textureLoader).load(path, progressReporter, initialTimeEstimate)
+		settings: RequestSettings = inject(Loaders.textureLoader).requestSettings
+): Texture = loadTexture(path.toUrlRequestData(), settings)
 
 /**
  * Requests a [Music] resource.
  */
 suspend fun Context.loadMusic(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.musicLoader).defaultConnectTimeout
-): Music {
-	return inject(Loaders.musicLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.musicLoader).requestSettings
+): Music = inject(Loaders.musicLoader).load(requestData, settings)
 
 /**
  * Requests a [Music] resource.
  */
 suspend fun Context.loadMusic(
 		path: String,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.musicLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.musicLoader).defaultConnectTimeout
-): Music {
-	return inject(Loaders.musicLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.musicLoader).requestSettings
+): Music = loadMusic(path.toUrlRequestData(), settings)
 
 /**
  * Requests a [SoundFactory] resource.
  */
 suspend fun Context.loadSound(
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.soundLoader).defaultConnectTimeout
-): SoundFactory {
-	return inject(Loaders.soundLoader).load(requestData, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.soundLoader).requestSettings
+): SoundFactory = inject(Loaders.soundLoader).load(requestData, settings)
 
 /**
  * Requests a [SoundFactory] resource.
  */
 suspend fun Context.loadSound(
 		path: String,
-		progressReporter: ProgressReporter = GlobalProgressReporter,
-		initialTimeEstimate: Duration = inject(Loaders.soundLoader).defaultInitialTimeEstimate,
-		connectTimeout: Duration = inject(Loaders.soundLoader).defaultConnectTimeout
-): SoundFactory {
-	return inject(Loaders.soundLoader).load(path, progressReporter, initialTimeEstimate, connectTimeout)
-}
+		settings: RequestSettings = inject(Loaders.soundLoader).requestSettings
+): SoundFactory = loadSound(path.toUrlRequestData(), settings)

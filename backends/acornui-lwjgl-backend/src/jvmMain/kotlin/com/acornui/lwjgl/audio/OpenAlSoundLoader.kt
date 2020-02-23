@@ -17,14 +17,13 @@
 package com.acornui.lwjgl.audio
 
 import com.acornui.collection.stringMapOf
-import com.acornui.io.ProgressReporter
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
 import com.acornui.io.load
 import java.io.InputStream
-import kotlin.time.Duration
 
-suspend fun loadSound(audioManager: OpenAlAudioManager, requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration) {
-	load(requestData, progressReporter, initialTimeEstimate, connectTimeout) { inputStream ->
+suspend fun loadSound(audioManager: OpenAlAudioManager, requestData: UrlRequestData, settings: RequestSettings) {
+	load(requestData, settings) { inputStream ->
 		val data = SoundDecoders.decode(requestData.url.extension(), inputStream)
 		OpenAlSoundFactory(audioManager, data.pcm, data.channels, data.sampleRate)
 	}

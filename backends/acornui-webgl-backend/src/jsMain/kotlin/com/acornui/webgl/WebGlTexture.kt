@@ -16,19 +16,18 @@
 
 package com.acornui.webgl
 
+import com.acornui.gl.core.*
 import com.acornui.graphic.RgbData
 import com.acornui.io.BufferFactory
-import com.acornui.gl.core.*
-import com.acornui.graphic.Texture
-import com.acornui.io.ProgressReporter
-import com.acornui.math.Matrix4
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlStr
+import com.acornui.math.Matrix4
 import kotlinx.coroutines.CompletableDeferred
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.url.URL
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.time.Duration
 
 /**
  * @author nbilyk
@@ -85,13 +84,12 @@ class WebGlTexture(
 suspend fun loadTexture(
 		gl: CachedGl20,
 		requestData: UrlRequestData,
-		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration
+		settings: RequestSettings
 ): WebGlTexture {
 	// TODO: handle progress reporter
 	val completion = CompletableDeferred<WebGlTexture>()
-	val path = requestData.urlStr
-	val jsTexture = WebGlTexture(gl, requestData.urlStr)
+	val path = requestData.toUrlStr(settings.rootPath)
+	val jsTexture = WebGlTexture(gl, path)
 	if (js("URL.prototype != undefined") == true) {
 		// Not supported in IE
 		if (path.startsWith("http", ignoreCase = true) && URL(path).origin !== window.location.origin) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.acornui.js.audio
+package com.acornui.io
 
-import org.w3c.dom.HTMLAudioElement
-import kotlin.browser.document
+import com.acornui.di.Context
+import com.acornui.di.contextKey
 
-fun Audio(source: String): HTMLAudioElement {
-	val audio = document.createElement("AUDIO") as HTMLAudioElement
-	audio.src = source
-	return audio
-}
+val progressReporterKey = contextKey<ProgressReporter>()
+
+val Context.progressReporter: ProgressReporter
+	get() = inject(progressReporterKey)

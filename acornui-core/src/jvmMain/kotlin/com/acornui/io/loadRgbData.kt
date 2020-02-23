@@ -24,16 +24,15 @@ import kotlinx.io.ByteArrayInputStream
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import javax.imageio.ImageIO
-import kotlin.time.Duration
 
-suspend fun loadRgbData(requestData: UrlRequestData, progressReporter: ProgressReporter = GlobalProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
-	return load(requestData, progressReporter, initialTimeEstimate, connectTimeout) { inputStream ->
+suspend fun loadRgbData(requestData: UrlRequestData, settings: RequestSettings): RgbData {
+	return load(requestData, settings) { inputStream ->
 		try {
 			createImageData(inputStream)
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Throwable) {
-			throw Exception("Could not load image at path \"${requestData.urlStr}\"", e)
+			throw Exception("Could not load image at path \"${requestData.toUrlStr(settings.rootPath)}\"", e)
 		}
 	}
 }

@@ -212,24 +212,26 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
 		val gl = get(Gl20)
-
+		val defaultSettings = get(defaultRequestSettingsKey)
 		object : Loader<Texture> {
-			override val defaultInitialTimeEstimate: Duration
-				get() = Bandwidth.downBpsInv.seconds * 100_000
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
-				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate, connectTimeout)
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): Texture {
+				return loadTexture(gl, requestData, settings)
 			}
 		}
 	}
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
-		object : Loader<RgbData> {
-			override val defaultInitialTimeEstimate: Duration
-				get() = Bandwidth.downBpsInv.seconds * 100_000
+		val defaultSettings = get(defaultRequestSettingsKey)
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
-				return loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+		object : Loader<RgbData> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): RgbData {
+				return loadRgbData(requestData, settings)
 			}
 		}
 	}

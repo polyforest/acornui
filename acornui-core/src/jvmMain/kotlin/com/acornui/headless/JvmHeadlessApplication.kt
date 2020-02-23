@@ -26,8 +26,6 @@ import com.acornui.di.ContextMarker
 import com.acornui.graphic.RgbData
 import com.acornui.io.*
 import com.acornui.uncaughtExceptionHandler
-import kotlinx.coroutines.Job
-import kotlin.time.Duration
 import kotlin.time.seconds
 
 /**
@@ -48,13 +46,14 @@ open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(ma
 	)
 
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
+		val defaultSettings = get(defaultRequestSettingsKey)
+
 		object : Loader<RgbData> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
 
-			override val defaultInitialTimeEstimate: Duration
-				get() = Bandwidth.downBpsInv.seconds * 100_000
-
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
-				return loadRgbData(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): RgbData {
+				return loadRgbData(requestData, settings)
 			}
 		}
 	}

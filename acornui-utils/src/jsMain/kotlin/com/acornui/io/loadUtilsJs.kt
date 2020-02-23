@@ -28,34 +28,30 @@ import org.w3c.files.Blob
 import org.w3c.xhr.*
 import setTimeout
 import kotlin.js.Promise
-import kotlin.time.Duration
 import kotlin.time.seconds
 
 suspend fun <T> load(
 		requestData: UrlRequestData,
 		responseType: XMLHttpRequestResponseType,
-		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration,
-		connectTimeout: Duration,
+		settings: RequestSettings,
 		process: (xhr: XMLHttpRequest) -> T
 ): T = coroutineScope {
 	if (userInfo.isNodeJs && jsTypeOf(XMLHttpRequest) == "undefined") {
 		js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 	}
-	val url = if (requestData.method == UrlRequestMethod.GET && requestData.variables != null)
-		requestData.url + "?" + requestData.variables.queryString else requestData.url
+	val url = requestData.toUrlStr(settings.rootPath)
 
-	Log.verbose("Load request: url: $url connectTimeout: $connectTimeout responseType: $responseType")
-	val progress = progressReporter.addChild(ProgressImpl(total = initialTimeEstimate))
+	Log.verbose("Load request: url: $url connectTimeout: ${settings.connectTimeout} responseType: $responseType")
+	val progress = settings.progressReporter.addChild(ProgressImpl(total = settings.initialTimeEstimate))
 	val xhr = XMLHttpRequest()
 	xhr.responseType = responseType
 
 	val promise = Promise<T> { resolve, reject ->
 		var timeoutId = setTimeout({
 			Log.verbose("Load connect timeout: $url")
-			reject(ResponseConnectTimeoutException(requestData, connectTimeout))
+			reject(ResponseConnectTimeoutException(requestData, settings.connectTimeout))
 			xhr.abort()
-		}, connectTimeout.inMilliseconds.toInt())
+		}, settings.connectTimeout.inMilliseconds.toInt())
 
 		xhr.addEventListener("progress", { event ->
 			event as ProgressEvent
@@ -134,7 +130,7 @@ suspend fun <T> load(
 	}
 	try {
 		promise.await().also {
-			progressReporter.removeChild(progress)
+			settings.progressReporter.removeChild(progress)
 		}
 	} catch (e: CancellationException) {
 		// If the parent coroutine is cancelled.
@@ -144,54 +140,40 @@ suspend fun <T> load(
 	}
 }
 
-suspend fun loadText(
-		requestData: UrlRequestData,
-		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration,
-		connectTimeout: Duration
-): String {
-	return load(requestData, XMLHttpRequestResponseType.TEXT, progressReporter, initialTimeEstimate, connectTimeout) { httpRequest ->
+suspend fun loadText(requestData: UrlRequestData, settings: RequestSettings): String {
+	return load(requestData, XMLHttpRequestResponseType.TEXT, settings) { httpRequest ->
 		httpRequest.responseText
 	}
 }
 
-actual class TextLoader : Loader<String> {
-	override val defaultInitialTimeEstimate: Duration
-		get() = Bandwidth.downBpsInv.seconds * 1_000
+actual class TextLoader actual constructor(defaultSettings: RequestSettings) : Loader<String> {
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): String {
-		return loadText(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+	override val requestSettings: RequestSettings =
+			defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 1_000)
+
+	override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): String {
+		return loadText(requestData, settings)
 	}
 }
 
-suspend fun loadBinary(
-		requestData: UrlRequestData,
-		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration,
-		connectTimeout: Duration
-): ReadByteBuffer {
-	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, progressReporter, initialTimeEstimate, connectTimeout) { httpRequest ->
-		println("Array buffer? ${httpRequest.response}")
+suspend fun loadBinary(requestData: UrlRequestData, settings: RequestSettings): ReadByteBuffer {
+	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, settings) { httpRequest ->
 		JsByteBuffer(Uint8Array(httpRequest.response!! as ArrayBuffer))
 	}
 }
 
-actual class BinaryLoader : Loader<ReadByteBuffer> {
-	override val defaultInitialTimeEstimate: Duration
-		get() = Bandwidth.downBpsInv.seconds * 10_000
+actual class BinaryLoader actual constructor(defaultSettings: RequestSettings) : Loader<ReadByteBuffer> {
 
-	override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): ReadByteBuffer {
-		return loadBinary(requestData, progressReporter, initialTimeEstimate, connectTimeout)
+	override val requestSettings: RequestSettings =
+			defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 10_000)
+
+	override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): ReadByteBuffer {
+		return loadBinary(requestData, settings)
 	}
 }
 
-suspend fun loadArrayBuffer(
-		requestData: UrlRequestData,
-		progressReporter: ProgressReporter,
-		initialTimeEstimate: Duration,
-		connectTimeout: Duration
-): ArrayBuffer {
-	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, progressReporter, initialTimeEstimate, connectTimeout) { httpRequest ->
+suspend fun loadArrayBuffer(requestData: UrlRequestData, settings: RequestSettings): ArrayBuffer {
+	return load(requestData, XMLHttpRequestResponseType.ARRAYBUFFER, settings) { httpRequest ->
 		httpRequest.response as ArrayBuffer
 	}
 }

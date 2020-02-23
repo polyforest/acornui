@@ -23,9 +23,9 @@ import com.acornui.component.style.StyleType
 import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.io.GlobalProgressReporter
 import com.acornui.io.Progress
 import com.acornui.io.isLoading
+import com.acornui.io.progressReporterKey
 import com.acornui.io.remaining
 import com.acornui.math.*
 import com.acornui.popup.PopUpInfo
@@ -139,12 +139,12 @@ inline fun Context.progressBarRect(init: ComponentInit<ProgressBarRect> = {}): P
  */
 var progressBar: Context.()->UiComponent = {
 	val progressBar = progressBarRect()
-	progressBar.watch(GlobalProgressReporter)
+	progressBar.watch(inject(progressReporterKey))
 	progressBar
 }
 
 private var progressBarPopUp: PopUpInfo<UiComponent>? = null
-fun Context.showAssetLoadingBar(progress: Progress = GlobalProgressReporter, onCompleted: () -> Unit = {}) {
+fun Context.showAssetLoadingBar(progress: Progress = inject(progressReporterKey), onCompleted: () -> Unit = {}) {
 	if (progress.remaining < 0.4.seconds) return onCompleted() // Close enough
 
 	if (progressBarPopUp == null) {

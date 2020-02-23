@@ -35,7 +35,7 @@ import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.io.Bandwidth
 import com.acornui.io.Loader
-import com.acornui.io.ProgressReporter
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
 import com.acornui.js.BrowserApplicationBase
 import com.acornui.js.file.JsFileIoManager
@@ -51,7 +51,6 @@ import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.dom.clear
-import kotlin.time.Duration
 import kotlin.time.seconds
 
 /**
@@ -140,12 +139,13 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	protected open val textureLoader by task(Loaders.textureLoader) {
 		val gl = get(CachedGl20)
 
+		val defaultSettings = get(defaultRequestSettingsKey)
 		object : Loader<Texture> {
-			override val defaultInitialTimeEstimate: Duration
-				get() = Bandwidth.downBpsInv.seconds * 100_000
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): Texture {
-				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate)
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): Texture {
+				return loadTexture(gl, requestData, settings)
 			}
 		}
 	}
@@ -153,12 +153,14 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	protected open val rgbDataLoader by task(Loaders.rgbDataLoader) {
 		val gl = get(CachedGl20)
 
-		object : Loader<RgbData> {
-			override val defaultInitialTimeEstimate: Duration
-				get() = Bandwidth.downBpsInv.seconds * 100_000
+		val defaultSettings = get(defaultRequestSettingsKey)
 
-			override suspend fun load(requestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): RgbData {
-				return loadTexture(gl, requestData, progressReporter, initialTimeEstimate).rgbData
+		object : Loader<RgbData> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): RgbData {
+				return loadTexture(gl, requestData, settings).rgbData
 			}
 		}
 	}

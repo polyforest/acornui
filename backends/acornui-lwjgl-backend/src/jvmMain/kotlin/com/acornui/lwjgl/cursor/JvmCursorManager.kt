@@ -26,6 +26,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.graphic.RgbData
 import com.acornui.io.JvmBufferUtil
 import com.acornui.io.Loader
+import com.acornui.io.load
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.lwjgl.glfw.GLFW

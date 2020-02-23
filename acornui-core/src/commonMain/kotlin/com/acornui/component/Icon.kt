@@ -26,6 +26,8 @@ import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlRequestData
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -45,7 +47,10 @@ inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentI
 	return iconAtlas
 }
 
-fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image  {
+fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image =
+		iconImage(imagePath.toUrlRequestData(), init)
+
+fun Context.iconImage(imagePath: UrlRequestData, init: ComponentInit<Image> = {}): Image  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val image = IconImageComponent(this)
 	image.element = textureC {

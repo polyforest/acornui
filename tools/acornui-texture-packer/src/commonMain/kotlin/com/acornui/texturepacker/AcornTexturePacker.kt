@@ -16,7 +16,6 @@
 
 package com.acornui.texturepacker
 
-import com.acornui.asset.load
 import com.acornui.collection.ArrayIterator
 import com.acornui.collection.ArrayList
 import com.acornui.gl.core.TexturePixelFormat
@@ -26,6 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.RgbData
 import com.acornui.io.Loader
 import com.acornui.io.file.Path
+import com.acornui.io.load
 import com.acornui.math.IntRectangle
 import com.acornui.serialization.jsonParse
 
