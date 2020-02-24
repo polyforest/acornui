@@ -34,12 +34,6 @@ data class AppConfig(
 		val rootPath: String = "",
 
 		/**
-		 * The target number of frames per second.
-		 * NB: This has no effect for browser; browser uses the window's animation frame.
-		 */
-		val frameRate: Int = 60,
-
-		/**
 		 * The properties for the Window.
 		 */
 		val window: WindowConfig = WindowConfig(),
@@ -54,14 +48,6 @@ data class AppConfig(
 		 */
 		val input: InputConfig = InputConfig()
 ) {
-
-	/**
-	 * The number of seconds between each frame.
-	 * (The inverse of [frameRate])
-	 */
-	val frameTime: Float
-		get() = 1f / frameRate.toFloat()
-
 
 	companion object : Context.Key<AppConfig>
 
@@ -142,9 +128,3 @@ data class GlConfig(
  */
 val Context.config: AppConfig
 	get() = inject(AppConfig)
-
-/**
- * The number of seconds between each time driver tick.
- */
-val Context.tickTime: Float
-	get() = config.frameTime

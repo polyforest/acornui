@@ -18,7 +18,6 @@
 
 package com.acornui.component
 
-import com.acornui.AppConfig
 import com.acornui.asset.CacheSet
 import com.acornui.asset.cacheSet
 import com.acornui.asset.loadAndCacheJsonAsync
@@ -28,6 +27,7 @@ import com.acornui.collection.forEach2
 import com.acornui.di.Context
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.*
+import com.acornui.mainContext
 import com.acornui.math.Bounds
 import com.acornui.recycle.Clearable
 import com.acornui.time.onTick
@@ -54,14 +54,20 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 	 */
 	var endFrame: Int = -1
 
-	var frameRate: Int = inject(AppConfig).frameRate
+	/**
+	 * The number of frames per second. By default this will match the main looper's framerate.
+	 */
+	var frameRate: Int = mainContext.looper.frameRate
 
 	/**
 	 * If true, when the animation hits [endFrame] it will loop back to [startFrame]
 	 */
 	var loops = true
 
-	val tickTime: Float
+	/**
+	 * The time interval between frames, in seconds.
+	 */
+	val frameTimeS: Float
 		get() = 1f / frameRate.toFloat()
 
 	/**
@@ -75,7 +81,7 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 		onTick { dT ->
 			val animation = animation
 			if (!paused && animation != null) {
-				val tickTime = tickTime
+				val tickTime = frameTimeS
 
 				elapsed += dT
 				while (elapsed >= tickTime) {

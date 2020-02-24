@@ -32,6 +32,7 @@ import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
 import com.acornui.input.mouseDown
 import com.acornui.input.touchStart
+import com.acornui.mainContext
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.math.Vector2
@@ -48,7 +49,7 @@ class TooltipAttachment(val target: UiComponentRo) : ContextImpl(target) {
 	private var timerHandle: Disposable? = null
 	private var showCountdown = showDelay
 	private var hideCountdown = hideDelay
-	private val dT = inject(AppConfig).frameTime
+	private val dT = mainContext.looper.frameTime.inSeconds.toFloat()
 
 	init {
 		target.rollOver(isCapture = true).add(::targetRollOverHandler.as1)

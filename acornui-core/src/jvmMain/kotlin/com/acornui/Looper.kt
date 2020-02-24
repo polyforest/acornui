@@ -37,7 +37,11 @@ class JvmLooper : Looper {
 	private val _frameDriver = FrameDriverImpl()
 	override val frameDriver: FrameDriverRo = _frameDriver
 
-	override var frameTime: Duration = (1.0 / 60.0).seconds
+	override var frameRate = 60
+		set(value) {
+			field = value
+			frameTimeMs = (1000 / value).toLong()
+		}
 
 	private val _started = Signal0()
 	override val started = _started.asRo()
@@ -45,17 +49,14 @@ class JvmLooper : Looper {
 	private val _pollEvents = Signal0()
 	override val pollEvents = _pollEvents.asRo()
 
-	private var isLooping = false
+	private var frameTimeMs: Long = (1000 / frameRate).toLong()
 
 	/**
 	 * Runs the multi-application loop.
 	 */
 	@UseExperimental(InternalCoroutinesApi::class)
 	override fun loop(mainJob: Job) {
-		if (isLooping) return
-		isLooping = true
 		_started.dispatch()
-		val frameTimeMs = frameTime.toLongMilliseconds()
 		var lastFrameMs = nowMs()
 		while (mainJob.isActive) {
 			// Poll for window events. Input callbacks will be invoked at this time.
@@ -67,7 +68,6 @@ class JvmLooper : Looper {
 			val sleepTime = lastFrameMs + frameTimeMs - nowMs()
 			if (sleepTime > 0) Thread.sleep(sleepTime)
 		}
-		isLooping = false
 		_started.clear()
 		_pollEvents.dispose()
 		_frameDriver.clear()

@@ -18,10 +18,7 @@ package com.acornui
 
 import com.acornui.async.*
 import com.acornui.async.AcornDispatcher
-import com.acornui.di.ContextImpl
-import com.acornui.di.ContextMarker
-import com.acornui.di.DependencyMap
-import com.acornui.di.dependencyMapOf
+import com.acornui.di.*
 import com.acornui.logging.Log
 import com.acornui.time.FrameDriverRo
 import kotlinx.coroutines.*
@@ -42,6 +39,19 @@ class MainContext(
 	 */
 	fun exitMain() = cancel()
 }
+
+/**
+ * Finds the [MainContext] on the owner ancestry.
+ */
+val Context.mainContext: MainContext
+	get() = findOwner { it.marker == ContextMarker.MAIN }!! as MainContext
+
+/**
+ * The [mainContext] looper's frameTime in seconds.
+ */
+val Context.frameTimeS: Float
+	get() = mainContext.looper.frameTime.inSeconds.toFloat()
+
 
 /**
  * Invokes the main entry point and initializes the global frame loop.

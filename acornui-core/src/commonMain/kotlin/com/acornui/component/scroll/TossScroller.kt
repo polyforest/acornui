@@ -22,7 +22,6 @@ import com.acornui.Disposable
 import com.acornui.collection.poll
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.config
 import com.acornui.di.ContextImpl
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
@@ -53,8 +52,6 @@ class TossScroller(
 
 		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
 ) : ContextImpl(target) {
-
-	private val tickTime = target.config.frameTime
 
 	private val _tossStart = StoppableSignalImpl<DragInteraction>()
 

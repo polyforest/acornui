@@ -34,10 +34,6 @@ import kotlin.time.seconds
  */
 open class JvmHeadlessApplication(mainContext: MainContext) : ApplicationBase(mainContext) {
 
-	override suspend fun onBeforeStart() {
-		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
-	}
-
 	override suspend fun createContext() = ContextImpl(
 			owner = mainContext,
 			dependencies = HeadlessDependencies.create(config()) + bootstrap.dependencies(),

@@ -392,7 +392,7 @@ class BitmapFontRegistryImpl(owner: Context) : ContextImpl(owner), BitmapFontReg
 	}
 
 	/**
-	 * Returns the font registered to the given style. Logs an exception if the font is not registered.
+	 * Returns the font registered to the given style.
 	 */
 	override suspend fun getFont(request: BitmapFontRequest): BitmapFont {
 		return registry.getOrPut(request) {

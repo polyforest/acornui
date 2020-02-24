@@ -20,6 +20,7 @@ import com.acornui.signal.Signal
 import com.acornui.time.FrameDriverRo
 import kotlinx.coroutines.Job
 import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * GlobalLooper is responsible for setting up the frame loop to be used by one or many acorn applications.
@@ -32,11 +33,13 @@ interface Looper {
 	val frameDriver: FrameDriverRo
 
 	/**
-	 * The interval between each frame. This will be set to
+	 * The number of frames per second.
 	 * This has no effect on JS backends; they use window animation frames.
-	 * This will be initialized to [AppConfig.frameRate].
 	 */
-	var frameTime: Duration
+	var frameRate: Int
+
+	val frameTime: Duration
+		get() = 1.seconds / frameRate.toDouble()
 
 	/**
 	 * Dispatched when the global loop has begun.

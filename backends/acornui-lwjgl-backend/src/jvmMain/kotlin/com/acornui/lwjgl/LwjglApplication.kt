@@ -65,7 +65,6 @@ import kotlinx.coroutines.Job
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
 import kotlin.system.exitProcess
-import kotlin.time.Duration
 import kotlin.time.seconds
 import org.lwjgl.Version as LwjglVersion
 
@@ -88,10 +87,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 			println("Restarting JVM with -XstartOnFirstThread")
 			exitProcess(0)
 		}
-	}
-
-	override suspend fun onBeforeStart() {
-		mainContext.looper.frameTime = config().frameTime.toDouble().seconds
 	}
 
 	override suspend fun onStageCreated(stage: Stage) {

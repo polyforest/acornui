@@ -27,9 +27,11 @@ import com.acornui.component.style.Stylable
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
 import com.acornui.focus.Focusable
+import com.acornui.frameTimeS
 import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.mainContext
 import com.acornui.math.*
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.invokeCommand
@@ -39,7 +41,6 @@ import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.signal.Signal
-import com.acornui.tickTime
 import com.acornui.time.tick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -389,7 +390,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	private val contents
 		get() = editableText.textField.element
 
-	private val maxScrollSpeed = 1000f * tickTime
+	private val maxScrollSpeed = 1000f * frameTimeS
 	private val bufferP = 0.2f
 	private val innerBufferMax = 80f
 	private val outerBufferMax = 200f
@@ -417,24 +418,20 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		if (hScrollPolicy != ScrollPolicy.OFF) {
 			val width = width
 			val b = maxOf(0f, minOf4(innerBufferMax, width * bufferP, startMouse.x, width - startMouse.x))
-			val speed = if (currentMouse.x < b) {
-				-(1f - (currentMouse.x + outerBufferMax) / (b + outerBufferMax))
-			} else if (currentMouse.x > width - b) {
-				(currentMouse.x - width + b) / (b + outerBufferMax)
-			} else {
-				0f
+			val speed = when {
+				currentMouse.x < b -> -(1f - (currentMouse.x + outerBufferMax) / (b + outerBufferMax))
+				currentMouse.x > width - b -> (currentMouse.x - width + b) / (b + outerBufferMax)
+				else -> 0f
 			}
 			hScrollModel.value += speed * maxScrollSpeed
 		}
 		if (vScrollPolicy != ScrollPolicy.OFF) {
 			val height = height
 			val b = maxOf(0f, minOf4(innerBufferMax, height * bufferP, startMouse.y, height - startMouse.y))
-			val speed = if (currentMouse.y < b) {
-				-(1f - (currentMouse.y + outerBufferMax) / (b + outerBufferMax))
-			} else if (currentMouse.y > height - b) {
-				(currentMouse.y - height + b) / (b + outerBufferMax)
-			} else {
-				0f
+			val speed = when {
+				currentMouse.y < b -> -(1f - (currentMouse.y + outerBufferMax) / (b + outerBufferMax))
+				currentMouse.y > height - b -> (currentMouse.y - height + b) / (b + outerBufferMax)
+				else -> 0f
 			}
 			vScrollModel.value += speed * maxScrollSpeed
 		}

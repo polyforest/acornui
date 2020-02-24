@@ -30,8 +30,6 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import setTimeout
 import kotlin.browser.window
-import kotlin.time.Duration
-import kotlin.time.seconds
 
 actual fun looper(): Looper = JsLooper()
 
@@ -41,9 +39,11 @@ class JsLooper : Looper {
 	override val frameDriver: FrameDriverRo = _frameDriver
 
 	/**
-	 * Does nothing on the JS Backend.
+	 * Setting this does nothing on the JS Backend. Frames are determined by [org.w3c.dom.Window.requestAnimationFrame]
 	 */
-	override var frameTime: Duration = (1.0 / 60.0).seconds
+	@Suppress("UNUSED_PARAMETER", "SetterBackingFieldAssignment")
+	override var frameRate: Int = 60
+		set(value) {}
 
 	private val _started = Signal0()
 	override val started = _started.asRo()
