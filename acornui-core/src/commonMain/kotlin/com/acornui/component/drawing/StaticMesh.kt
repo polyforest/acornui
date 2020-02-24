@@ -234,10 +234,7 @@ class StaticMesh(
 	private fun updateBoundingBox() {
 		_boundingBox.inf()
 		batch.iterateVertexAttribute(VertexAttributeLocation.POSITION) {
-			val x = it.get()
-			val y = it.get()
-			val z = it.get()
-			_boundingBox.ext(x, y, z)
+			_boundingBox.ext(it.get(), it.get(), it.get())
 		}
 	}
 
@@ -251,6 +248,7 @@ class StaticMesh(
 		val positionOffset = vertexAttributes.getOffsetByUsage(VertexAttributeLocation.POSITION) ?: return false
 		val c = vertexAttributes.getAttributeByUsage(VertexAttributeLocation.POSITION)!!.numComponents
 
+		val vertexComponentsP = vertexComponents.position
 		for (i in batch.drawCalls.lastIndex downTo 0) {
 			val drawCall = batch.drawCalls[i]
 			if (drawCall.count != 0) {
@@ -264,6 +262,7 @@ class StaticMesh(
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
 						v2.set(vertexComponents.get(), vertexComponents.get(), if (c >= 3) vertexComponents.get() else 0f)
 						if (localRay.intersectsTriangle(v0, v1, v2, intersection)) {
+							vertexComponents.position = vertexComponentsP
 							return true
 						}
 					}
@@ -272,6 +271,7 @@ class StaticMesh(
 				}
 			}
 		}
+		vertexComponents.position = vertexComponentsP
 		return false
 	}
 

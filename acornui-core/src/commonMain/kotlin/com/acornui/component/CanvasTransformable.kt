@@ -234,21 +234,3 @@ fun Uniforms.useCamera(component: CanvasTransformableRo, useModel: Boolean = fal
 	if (useModel) useCamera(component.viewProjectionTransform, component.viewTransform, component.transformGlobal, inner)
 	else useCamera(component.viewProjectionTransform, component.viewTransform, Matrix4.IDENTITY, inner)
 }
-
-//fun CanvasTransformableRo.localToScreen(bounds: RectangleRo, out: IntRectangle): IntRectangle {
-//
-//}
-//
-///**
-// * Takes the box in canvas coordinates (unscaled, yDown, floats), and converts it to screen coordinates
-// * (dpi scaled, yUp, ints)
-// */
-//fun CanvasTransformableRo.canvasToScreen(bounds: RectangleRo, out: IntRectangle): IntRectangle {
-//	val sX = scaleX
-//	val sY = scaleY
-//	val newX = (bounds.x * sX + 0.001f).toInt()
-//	val newY = (bounds.y * sY + 0.001f).toInt()
-//	val newR = ceilInt(bounds.right * sX - 0.001f)
-//	val newB = ceilInt(bounds.bottom * sY - 0.001f)
-//	return out.set(newX, if (yDown) newY else height - newB, newR - newX, newB - newY)
-//}

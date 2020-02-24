@@ -62,9 +62,6 @@ abstract class BufferBase(
 		return this
 	}
 
-	override val hasRemaining: Boolean
-		get() = _position < _limit
-
 	override val limit: Int
 		get() = _limit
 
@@ -174,9 +171,10 @@ interface Buffer {
 	 *         {@code false} otherwise.
 	 */
 	val hasRemaining: Boolean
+		get() = position < limit
 
 	/**
-	 * The capacity of this buffer. This typically will never change.
+	 * The capacity of this buffer. This will never change.
 	 */
 	val capacity: Int
 

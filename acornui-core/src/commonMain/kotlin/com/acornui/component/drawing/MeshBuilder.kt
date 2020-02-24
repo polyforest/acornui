@@ -104,22 +104,21 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 	 * Multiply the vertices colorTint property by [colorTint]
 	 */
 	fun colorTransform(colorTint: ColorRo) {
-		val v = batch.vertexComponents
 		batch.iterateVertexAttribute(VertexAttributeLocation.COLOR_TINT, this.startVertexPosition) {
-			val r = v.get()
-			val g = v.get()
-			val b = v.get()
-			val a = v.get()
+			val r = it.get()
+			val g = it.get()
+			val b = it.get()
+			val a = it.get()
 			tmpColor.set(r, g, b, a).mul(colorTint)
-			v.position -= 4
-			v.put(tmpColor.r)
-			v.put(tmpColor.g)
-			v.put(tmpColor.b)
-			v.put(tmpColor.a)
+			it.position -= 4
+			it.put(tmpColor.r)
+			it.put(tmpColor.g)
+			it.put(tmpColor.b)
+			it.put(tmpColor.a)
 		}
 	}
 
-	private inline fun iterateVector3Attribute(usage: Int, inner: (v: Vector3) -> Unit) {
+	private fun iterateVector3Attribute(usage: Int, inner: (v: Vector3) -> Unit) {
 		batch.iterateVertexAttribute(usage, this.startVertexPosition) {
 			val x = it.get()
 			val y = it.get()

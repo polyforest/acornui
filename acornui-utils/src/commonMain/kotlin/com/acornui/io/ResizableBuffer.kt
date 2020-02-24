@@ -35,12 +35,10 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 
 	override fun flip(): Buffer {
 		_limit = position
+		_mark = BufferBase.UNSET_MARK
 		_wrapped.flip()
 		return this
 	}
-
-	override val hasRemaining: Boolean
-		get() = position < _limit
 
 	override val capacity: Int = Int.MAX_VALUE
 

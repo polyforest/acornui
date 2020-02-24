@@ -23,6 +23,7 @@ import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.TextureRo
 import com.acornui.graphic.rgbData
+import com.acornui.io.floatBuffer
 import com.acornui.io.resizableFloatBuffer
 import com.acornui.io.resizableShortBuffer
 import com.acornui.recycle.Clearable
@@ -100,6 +101,9 @@ open class ShaderBatchImpl(
 	}
 
 	override fun begin(texture: TextureRo, blendMode: BlendMode, premultipliedAlpha: Boolean, drawMode: Int) {
+		if (assertionsEnabled) {
+			checkVertexComponents()
+		}
 		if (drawCall.texture == texture &&
 				drawCall.blendMode == blendMode &&
 				drawCall.premultipiedAlpha == premultipliedAlpha &&
@@ -116,26 +120,20 @@ open class ShaderBatchImpl(
 	}
 
 	override fun flush() {
-		val vertexComponentsL = vertexComponents.position
-		val indicesL = indices.position
-		if (vertexComponentsL == 0) {
-			check(indicesL == 0) { "Indices pushed, but no vertices" }
-			return
-		}
-		if (assertionsEnabled) {
-			// If assertions are enabled, check that we have rational vertex and index counts.
-			val vertexSize = vertexAttributes.vertexSize
-			check(vertexComponentsL % vertexSize == 0) { "vertexData size $vertexComponentsL not evenly divisible by vertexSize value $vertexSize" }
-			if (drawCall.drawMode == Gl20.LINES) {
-				check(indicesL % 2 == 0) { "indices size $indicesL not evenly divisible by 2" }
-			} else if (drawCall.drawMode == Gl20.TRIANGLES) {
-				check(indicesL % 3 == 0) { "indices size $indicesL not evenly divisible by 3" }
-			}
-		}
+		if (assertionsEnabled)
+			checkVertexComponents()
 		val lastDrawCall = drawCalls.lastOrNull()
 		val offset = if (lastDrawCall == null) 0 else lastDrawCall.offset + lastDrawCall.count
 		val count = indices.position - offset
 		if (count <= 0) return // Nothing to draw.
+
+		if (assertionsEnabled) {
+			if (drawCall.drawMode == Gl20.LINES) {
+				check(count % 2 == 0) { "indices flushed <$count> not evenly divisible by 2 (Gl20.LINES)" }
+			} else if (drawCall.drawMode == Gl20.TRIANGLES) {
+				check(count % 3 == 0) { "indices flushed <$count> not evenly divisible by 3 (Gl20.TRIANGLES)" }
+			}
+		}
 		require(highestIndex < count + offset)
 		drawCall.offset = offset
 		drawCall.count = count
@@ -147,6 +145,13 @@ open class ShaderBatchImpl(
 			render()
 			clear()
 		}
+	}
+
+	private fun checkVertexComponents() {
+		// If assertions are enabled, check that we have rational vertex and index counts.
+		val vertexComponentsL = vertexComponents.position
+		val vertexSize = vertexAttributes.vertexSize
+		check(vertexComponentsL % vertexSize == 0) { "vertexData size $vertexComponentsL not evenly divisible by vertexSize value $vertexSize" }
 	}
 
 	override val highestIndex: Short
@@ -180,21 +185,21 @@ open class ShaderBatchImpl(
 			indicesBuffer = gl.createBuffer()
 		}
 		flush()
-		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
-		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-		indices.mark()
+		val indicesP = indices.position
 		indices.flip()
+		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, indicesBuffer)
 		gl.bufferData(Gl20.ELEMENT_ARRAY_BUFFER, indices.limit shl 1, usage) // Allocate
 		gl.bufferDatasv(Gl20.ELEMENT_ARRAY_BUFFER, indices, usage) // Upload
-		indices.reset()
+		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
+		indices.position = indicesP
 
-		vertexComponents.mark()
+		val vertexComponentsP = vertexComponents.position
 		vertexComponents.flip()
+		gl.bindBuffer(Gl20.ARRAY_BUFFER, vertexComponentsBuffer)
 		gl.bufferData(Gl20.ARRAY_BUFFER, vertexComponents.limit shl 2, usage) // Allocate
 		gl.bufferDatafv(Gl20.ARRAY_BUFFER, vertexComponents, usage) // Upload
 		gl.bindBuffer(Gl20.ARRAY_BUFFER, null)
-		gl.bindBuffer(Gl20.ELEMENT_ARRAY_BUFFER, null)
-		vertexComponents.reset()
+		vertexComponents.position = vertexComponentsP
 	}
 
 	/**

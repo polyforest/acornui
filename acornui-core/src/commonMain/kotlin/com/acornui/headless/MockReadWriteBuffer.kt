@@ -9,7 +9,6 @@ class MockReadWriteBuffer<T> : ReadWriteBuffer<T> {
 		return this
 	}
 
-	override val hasRemaining: Boolean = false
 	override val capacity: Int = 0
 	override val limit: Int = 0
 

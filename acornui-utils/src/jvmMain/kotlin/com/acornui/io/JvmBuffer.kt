@@ -32,20 +32,11 @@ abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeReadWr
 		return this
 	}
 
-	override val hasRemaining: Boolean
-		get() {
-			return _buffer.hasRemaining()
-		}
-
 	override val capacity: Int
-		get() {
-			return _buffer.capacity()
-		}
+		get() = _buffer.capacity()
 
 	override val limit: Int
-		get() {
-			return _buffer.limit()
-		}
+		get() = _buffer.limit()
 
 	override fun limit(newLimit: Int): Buffer {
 		_buffer.limit(newLimit)
@@ -58,9 +49,7 @@ abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeReadWr
 	}
 
 	override var position: Int
-		get() {
-			return _buffer.position()
-		}
+		get() = _buffer.position()
 		set(value) {
 			_buffer.position(value)
 		}
@@ -76,18 +65,14 @@ abstract class JvmBuffer<T>(private val _buffer: java.nio.Buffer) : NativeReadWr
 	}
 
 	override val native: Any
-		get() {
-			return _buffer
-		}
+		get() = _buffer
 }
 
 class JvmByteBuffer(private val buffer: java.nio.ByteBuffer) : JvmBuffer<Byte>(buffer), NativeReadWriteByteBuffer {
 
 	override val dataSize: Int = 1
 
-	override fun get(): Byte {
-		return buffer.get()
-	}
+	override fun get(): Byte = buffer.get()
 
 	override fun put(value: Byte) {
 		buffer.put(value)
@@ -180,9 +165,7 @@ class JvmDoubleBuffer(private val buffer: java.nio.DoubleBuffer) : JvmBuffer<Dou
 
 	override val dataSize: Int = 8
 
-	override fun get(): Double {
-		return buffer.get()
-	}
+	override fun get(): Double = buffer.get()
 
 	override fun put(value: Double) {
 		buffer.put(value)

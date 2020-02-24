@@ -116,14 +116,15 @@ fun ShaderBatch.putVertex(positionX: Float, positionY: Float, positionZ: Float, 
 	putVertex(positionX, positionY, positionZ, normal.x, normal.y, normal.z, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u, v)
 }
 
-inline fun ShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, endPosition: Int = vertexComponentsCount, inner: (ReadWriteBuffer<Float>) -> Unit) {
+fun ShaderBatch.iterateVertexAttribute(usage: Int, startPosition: Int = 0, endPosition: Int = vertexComponentsCount, inner: (ReadWriteBuffer<Float>) -> Unit) {
 	val offset = vertexAttributes.getOffsetByUsage(usage) ?: return
+	val vertexSize = vertexAttributes.vertexSize
 	val previousPosition = vertexComponents.position
 	var i = startPosition + offset
 	while (i < endPosition) {
 		vertexComponents.position = i
 		inner(vertexComponents)
-		i += vertexAttributes.vertexSize
+		i += vertexSize
 	}
 	vertexComponents.position = previousPosition
 }
