@@ -27,23 +27,14 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmStatic
 
 /**
- * Dispatcher for Acorn event dispatching thread.
- *
- * This class provides type-safety and a point for future extensions.
+ * The base class for scheduling coroutines with a [frameDriver].
  */
 @InternalCoroutinesApi
 sealed class AcornDispatcherBase(
-		private val frameDriver: FrameDriverRo
+		protected val frameDriver: FrameDriverRo
 ) : MainCoroutineDispatcher(), Delay {
 
-	/**
-	 * @suppress
-	 */
-	override fun dispatch(context: CoroutineContext, block: Runnable) {
-		frameDriver.addOnce {
-			block.run()
-		}
-	}
+	private val threadRef: ThreadRef = getCurrentThread()
 
 	/**
 	 * @suppress
@@ -67,29 +58,42 @@ sealed class AcornDispatcherBase(
 			block.run()
 		}.start()
 	}
-}
-
-@InternalCoroutinesApi
-private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
-
-	private val threadRef: ThreadRef = getCurrentThread()
-
-	override val immediate: MainCoroutineDispatcher
-		get() = this
 
 	override fun isDispatchNeeded(context: CoroutineContext): Boolean {
 		return getCurrentThread() != threadRef
 	}
+}
+
+/**
+ * When the current thread is the main thread, invoke the dispatch block immediately.
+ */
+@InternalCoroutinesApi
+private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
+
+	override val immediate: MainCoroutineDispatcher
+		get() = this
+
+	override fun dispatch(context: CoroutineContext, block: Runnable) = block.run()
 
 	override fun toString() = "Acorn UI [immediate]"
 }
 
 /**
- * Dispatches execution onto Acorn event dispatching thread and provides native [delay] support.
+ * Dispatches execution onto Main UI thread and provides coroutine scheduling, delay, and timeout support.
  */
 @InternalCoroutinesApi
 internal class AcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
+
 	override val immediate: MainCoroutineDispatcher = ImmediateAcornDispatcher(frameDriver)
+
+	/**
+	 * @suppress
+	 */
+	override fun dispatch(context: CoroutineContext, block: Runnable) {
+		frameDriver.addOnce {
+			block.run()
+		}
+	}
 
 	override fun toString() = "Acorn UI"
 }
