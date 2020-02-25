@@ -22,6 +22,7 @@ import com.acornui.Disposable
 import com.acornui.ExperimentalAcorn
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
+import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.lighting.*
 import com.acornui.math.Matrix4
@@ -34,8 +35,8 @@ class LightingRenderer(
 		context: Context,
 		val numPointLights: Int = 10,
 		val numShadowPointLights: Int = 3,
-		private val directionalShadowMapShader: ShaderProgram = DirectionalShadowShader(context.inject(CachedGl20)),
-		private val pointShadowMapShader: ShaderProgram = PointShadowShader(context.inject(CachedGl20)),
+		directionalShadowMapShader: ShaderProgram? = null,
+		pointShadowMapShader: ShaderProgram? = null,
 
 		directionalShadowsResolution: Int = 1024,
 		pointShadowsResolution: Int = 1024,
@@ -48,18 +49,21 @@ class LightingRenderer(
 		hasStencil: Boolean = false
 ) : ContextImpl(context), Disposable {
 
+	private val directionalShadowMapShader: ShaderProgram = directionalShadowMapShader ?: own(DirectionalShadowShader(context.inject(CachedGl20)))
+	private val pointShadowMapShader: ShaderProgram = pointShadowMapShader ?: own(PointShadowShader(context.inject(CachedGl20)))
+
 	var directionalShadowUnit = 1
 	var pointShadowUnit = 2
 
 	private val gl = inject(CachedGl20)
 	private val window = inject(Window)
 
-	private val directionalShadowsFbo = framebuffer(directionalShadowsResolution, directionalShadowsResolution, hasDepth = true, hasStencil = hasStencil)
+	private val directionalShadowsFbo = own(framebuffer(directionalShadowsResolution, directionalShadowsResolution, hasDepth = true, hasStencil = hasStencil))
 	val directionalLightCamera = DirectionalLightCamera()
 
 	// Point lights
 	private val pointLightShadowMaps: Array<CubeMap>
-	private val pointShadowsFbo = framebuffer(pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil)
+	private val pointShadowsFbo = own(framebuffer(pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil))
 	private val pointLightCamera = PointLightCamera(window, pointShadowsResolution.toFloat())
 
 	private val bias = Matrix4().apply {
@@ -109,9 +113,9 @@ class LightingRenderer(
 
 		// Reset the gl properties
 		gl.disable(Gl20.DEPTH_TEST)
-		if (previousBlendingEnabled) gl.enable(Gl20.BLEND)
+		if (previousBlendingEnabled)
+			gl.enable(Gl20.BLEND)
 		gl.useProgram(previousProgram)
-		gl.batch.flush()
 	}
 
 	private fun directionalLightShadows(directionalShadowMapShader: ShaderProgram, camera: CameraRo, directionalLight: DirectionalLight, renderOcclusion: () -> Unit) {
@@ -154,9 +158,7 @@ class LightingRenderer(
 								Gl20.TEXTURE_CUBE_MAP_POSITIVE_X + j, pointLightShadowMap.textureHandle!!, 0)
 						gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 						if (pointLight.shadowSidesEnabled[j]) {
-
 							pointLightCamera.update(pointLight, j)
-							gl.batch.flush()
 							uniforms.put(u_pointLightMvp, pointLightCamera.camera.combined)
 							renderOcclusion()
 
@@ -194,14 +196,12 @@ class LightingRenderer(
 			}
 			put("u_ambient", ambientLight.color.r, ambientLight.color.g, ambientLight.color.b, ambientLight.color.a)
 			put("u_directional", directionalLight.color.r, directionalLight.color.g, directionalLight.color.b, directionalLight.color.a)
-			getUniformLocation("u_directionalLightDir")?.let {
-				put(it, directionalLight.direction)
-			}
+			putOptional("u_directionalLightDir", directionalLight.direction)
 			useCamera(camera) {
 				renderWorld()
 			}
-			gl.useProgram(previousProgram)
 		}
+		gl.useProgram(previousProgram)
 	}
 
 	private fun Uniforms.pointLightUniforms(pointLights: List<PointLight>) {
@@ -218,9 +218,6 @@ class LightingRenderer(
 		for (i in 0..pointLightShadowMaps.lastIndex) {
 			pointLightShadowMaps[i].refDec()
 		}
-		// Dispose the shadow buffers.
-		pointShadowsFbo.dispose()
-		directionalShadowsFbo.dispose()
 	}
 
 }
