@@ -95,6 +95,9 @@ interface Cache {
 	}
 }
 
+val Context.cache: Cache
+	get() = inject(Cache)
+
 class CacheImpl(
 
 		frameDriver: FrameDriverRo,
