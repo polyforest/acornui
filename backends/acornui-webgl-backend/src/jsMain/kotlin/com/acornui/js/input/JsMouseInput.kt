@@ -203,10 +203,11 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 	}
 
 	private fun populateMouseEvent(jsEvent: MouseEvent) {
+		val bounds = canvas.getBoundingClientRect()
 		mouseEvent.clear()
 		mouseEvent.timestamp = jsEvent.timeStamp.toLong()
-		mouseEvent.canvasX = jsEvent.clientX.toFloat() - canvas.offsetLeft.toFloat()
-		mouseEvent.canvasY = jsEvent.clientY.toFloat() - canvas.offsetTop.toFloat()
+		mouseEvent.canvasX = jsEvent.clientX.toFloat() - bounds.left.toFloat()
+		mouseEvent.canvasY = jsEvent.clientY.toFloat() - bounds.top.toFloat()
 		mouseEvent.button = getWhichButton(jsEvent.button.toInt())
 		mouseX = mouseEvent.canvasX
 		mouseY = mouseEvent.canvasY

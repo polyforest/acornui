@@ -73,7 +73,6 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 		canvas.style.apply {
 			width = "100%"
 			height = "100%"
-			position = "absolute"
 		}
 		root.appendChild(canvas)
 		canvas
