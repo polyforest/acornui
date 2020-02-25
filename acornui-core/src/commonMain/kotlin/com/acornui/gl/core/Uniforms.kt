@@ -417,8 +417,11 @@ fun Uniforms.getCamera(viewProjectionOut: Matrix4, viewTransformOut: Matrix4, mo
 	} else {
 		get(uViewTrans, viewTransformOut)
 	}
-	getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS)?.let {
-		get(it, modelTransformOut)
+	val uModelTrans = getUniformLocation(CommonShaderUniforms.U_MODEL_TRANS)
+	if (uModelTrans == null) {
+		modelTransformOut.idt()
+	} else {
+		get(uModelTrans, modelTransformOut)
 	}
 }
 

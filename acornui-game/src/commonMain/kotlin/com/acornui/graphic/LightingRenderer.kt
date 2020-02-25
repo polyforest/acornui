@@ -19,6 +19,7 @@
 package com.acornui.graphic
 
 import com.acornui.Disposable
+import com.acornui.ExperimentalAcorn
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.gl.core.*
@@ -28,6 +29,7 @@ import com.acornui.math.Matrix4
 /**
  * @author nbilyk
  */
+@ExperimentalAcorn
 class LightingRenderer(
 		context: Context,
 		val numPointLights: Int = 10,
@@ -71,9 +73,6 @@ class LightingRenderer(
 	@Suppress("MemberVisibilityCanBePrivate")
 	var allowShadows: Boolean = true
 
-	private val shadowsBatch = shaderBatch()
-	private val lightingBatch = shaderBatch()
-
 	//--------------------------------------------
 	// DrivableComponent methods
 	//--------------------------------------------
@@ -101,8 +100,6 @@ class LightingRenderer(
 		if (!allowShadows) return
 		val previousProgram = gl.program
 		val previousBlendingEnabled = gl.isEnabled(Gl20.BLEND)
-		val previousBatch = gl.batch
-		gl.batch = shadowsBatch
 		gl.disable(Gl20.BLEND)
 		gl.enable(Gl20.DEPTH_TEST)
 		gl.depthFunc(Gl20.LESS)
@@ -113,7 +110,6 @@ class LightingRenderer(
 		// Reset the gl properties
 		gl.disable(Gl20.DEPTH_TEST)
 		if (previousBlendingEnabled) gl.enable(Gl20.BLEND)
-		gl.batch = previousBatch
 		gl.useProgram(previousProgram)
 		gl.batch.flush()
 	}
@@ -185,7 +181,7 @@ class LightingRenderer(
 			// Prepare uniforms.
 			put("u_resolutionInv", 1.0f / directionalShadowsFbo.widthPixels.toFloat(), 1.0f / directionalShadowsFbo.heightPixels.toFloat())
 			put("u_directionalShadowMap", directionalShadowUnit)
-			for (i in 0..numShadowPointLights - 1) {
+			for (i in 0 until numShadowPointLights) {
 				put("u_pointLightShadowMaps[$i]", pointShadowUnit + i)
 			}
 
@@ -201,20 +197,15 @@ class LightingRenderer(
 			getUniformLocation("u_directionalLightDir")?.let {
 				put(it, directionalLight.direction)
 			}
-
-			BlendMode.NORMAL.applyBlending(gl)
-			val previousBatch = gl.batch
-			gl.batch = lightingBatch
 			useCamera(camera) {
 				renderWorld()
 			}
-			gl.batch = previousBatch
 			gl.useProgram(previousProgram)
 		}
 	}
 
 	private fun Uniforms.pointLightUniforms(pointLights: List<PointLight>) {
-		for (i in 0..numPointLights - 1) {
+		for (i in 0 until numPointLights) {
 			val pointLight = if (i < pointLights.size) pointLights[i] else PointLight.EMPTY_POINT_LIGHT
 			put("u_pointLights[$i].radius", pointLight.radius)
 			put("u_pointLights[$i].position", pointLight.position)
