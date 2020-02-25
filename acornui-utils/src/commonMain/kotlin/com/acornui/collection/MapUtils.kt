@@ -86,3 +86,21 @@ interface MapWithDefault<K, out V> : Map<K, V> {
 }
 
 interface MutableMapWithDefault<K, V> : MutableMap<K, V>, MapWithDefault<K, V>
+
+/**
+ * Similar to getOrPut except if the map contains a null value for the given key, null will be returned.
+ *
+ * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
+ * puts its result into the map under the given key and returns it.
+ *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ */
+inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> V): V {
+	@Suppress("UNCHECKED_CAST")
+	return if (containsKey(key)) get(key) as V
+	else {
+		val answer = defaultValue()
+		put(key, answer)
+		answer
+	}
+}
