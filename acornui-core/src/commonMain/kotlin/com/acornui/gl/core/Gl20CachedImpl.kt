@@ -18,14 +18,10 @@ package com.acornui.gl.core
 
 import com.acornui.collection.*
 import com.acornui.graphic.Texture
-import com.acornui.graphic.Window
 import com.acornui.io.NativeReadBuffer
 
 /**
  * A wrapper to [Gl20] that caches properties for faster access.
- * Example:
- * gl.activeTexture(Gl20.TEXTURE0)
- * gl.getParameter(Gl20.ACTIVE_TEXTURE) // No need to query GPU, returns Gl20.TEXTURE0 from ram.
  */
 class Gl20CachedImpl(
 		override val wrapped: Gl20
@@ -69,10 +65,8 @@ class Gl20CachedImpl(
 	override val uniforms: Uniforms = UniformsImpl(this)
 
 	override fun activeTexture(texture: Int) {
-		parametersI.cached(Gl20.ACTIVE_TEXTURE, texture) {
-			changeCount++
-			wrapped.activeTexture(texture)
-		}
+		changeCount++
+		wrapped.activeTexture(texture)
 	}
 
 	override fun attachShader(program: GlProgramRef, shader: GlShaderRef) {
@@ -385,7 +379,7 @@ class Gl20CachedImpl(
 	}
 
 	override fun getUniformLocation(program: GlProgramRef, name: String): GlUniformLocationRef? {
-		return programs[program]!!.uniformLocationCache.getOrPut(name) {
+		return programs[program]!!.uniformLocationCache.getOrPutNullable(name) {
 			wrapped.getUniformLocation(program, name)
 		}
 	}
