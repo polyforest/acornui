@@ -44,7 +44,6 @@ suspend fun <T> load(
 	Log.verbose("Load request: url: $url connectTimeout: ${settings.connectTimeout} responseType: $responseType")
 	val progress = settings.progressReporter.addChild(ProgressImpl(total = settings.initialTimeEstimate))
 	val xhr = XMLHttpRequest()
-	xhr.responseType = responseType
 
 	val promise = Promise<T> { resolve, reject ->
 		var timeoutId = setTimeout({
@@ -101,6 +100,7 @@ suspend fun <T> load(
 
 		val async = true
 		xhr.open(requestData.method, url, async, requestData.user, requestData.password)
+		xhr.responseType = responseType
 
 		for ((key, value) in requestData.headers) {
 			xhr.setRequestHeader(key, value)
