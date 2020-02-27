@@ -76,7 +76,6 @@ suspend fun <T> load(
 		xhr.addEventListener("load", {
 			clearTimeout(timeoutId)
 			Log.verbose("Load complete: $url ${xhr.readyState} ${xhr.status}")
-			Log.verbose("responseText: " + xhr.responseText + " : " + jsTypeOf(xhr.responseText))
 			if (xhr.status == 200.toShort() || xhr.status == 304.toShort()) {
 				var result: T? = null
 				val success = try {
