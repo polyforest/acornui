@@ -29,7 +29,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * @author nbilyk
@@ -57,10 +57,10 @@ class WebGlWindowImpl(
 	private val _refresh = Signal0()
 	override val refresh = _refresh.asRo()
 
-	override var width: Float = canvas.offsetWidth.toFloat()
+	override var width: Float = 0f
 		private set
 
-	override var height: Float = canvas.offsetHeight.toFloat()
+	override var height: Float = 0f
 		private set
 
 	private var sizeIsDirty: Boolean = true
@@ -76,6 +76,7 @@ class WebGlWindowImpl(
 	private var scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
 
 	init {
+		resizeHandler()
 		window.addEventListener("resize", ::resizeHandler.as1)
 		canvas.addEventListener("webglcontextrestored", ::webGlContextRestoredHandler.as1)
 		window.addEventListener("blur", ::blurHandler.as1)
@@ -107,16 +108,16 @@ class WebGlWindowImpl(
 		val oldScaleX = scaleX
 		val oldScaleY = scaleY
 		val newScale = window.devicePixelRatio.toFloat()
-		if (newScale != oldScaleX || newScale != oldScaleY) {
-			Log.debug("Window scale changed to: $newScale")
-			scaleX = newScale
-			scaleY = newScale
-			sizeIsDirty = true
-			scaleQuery.removeListener(::scaleChangedHandler.as1)
-			scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
-			scaleQuery.addListener(::scaleChangedHandler.as1)
-			_scaleChanged.dispatch(newScale, newScale)
-		}
+		if (newScale == oldScaleX && newScale == oldScaleY) return
+		Log.debug("Window scale changed to: $newScale")
+		scaleX = newScale
+		scaleY = newScale
+		sizeIsDirty = true
+		scaleQuery.removeListener(::scaleChangedHandler.as1)
+		scaleQuery = window.matchMedia("(resolution: ${window.devicePixelRatio}dppx")
+		scaleQuery.addListener(::scaleChangedHandler.as1)
+		_scaleChanged.dispatch(newScale, newScale)
+		requestRender()
 	}
 
 	// TODO: Study context loss
@@ -139,8 +140,12 @@ class WebGlWindowImpl(
 	}
 
 	private fun resizeHandler() {
-		this.width = canvas.offsetWidth.toFloat()
-		this.height = canvas.offsetHeight.toFloat()
+		val newWidth = canvas.offsetWidth.toFloat()
+		val newHeight = canvas.offsetHeight.toFloat()
+		if (newWidth == this.width && newHeight == this.height) return
+		Log.verbose("Window resize handler: $newWidth, $newHeight")
+		this.width = newWidth
+		this.height = newHeight
 		sizeIsDirty = true
 		_sizeChanged.dispatch(width, height)
 		requestRender()
@@ -187,10 +192,10 @@ class WebGlWindowImpl(
 		}
 
 	override val framebufferWidth: Int
-		get() = ceil(width * scaleX).toInt()
+		get() = floor(width * scaleX).toInt()
 
 	override val framebufferHeight: Int
-		get() = ceil(height * scaleY).toInt()
+		get() = floor(height * scaleY).toInt()
 
 	override var scaleX: Float = window.devicePixelRatio.toFloat()
 		private set
@@ -200,17 +205,18 @@ class WebGlWindowImpl(
 
 	override fun setSize(width: Float, height: Float) {
 		if (this.width == width && this.height == height) return
+		Log.verbose("Setting size: $width, $height")
 		this.width = width
 		this.height = height
-		canvas.style.width = "${width.toInt()}px"
-		canvas.style.height = "${height.toInt()}px"
 		sizeIsDirty = true
+		requestRender()
 	}
 
 	override var continuousRendering: Boolean = false
 	private var _renderRequested: Boolean = true
 
 	override fun shouldRender(clearRenderRequest: Boolean): Boolean {
+//		resizeHandler()
 		val bool = continuousRendering || _renderRequested
 		if (clearRenderRequest && _renderRequested) _renderRequested = false
 		return bool
