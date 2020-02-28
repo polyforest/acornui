@@ -195,6 +195,8 @@ abstract class ClickDispatcher(
 		stage.mouseUp().remove(::rootMouseUpHandler)
 		stage.touchEnd().remove(::rootTouchEndHandler)
 		stage.touchCancel(isCapture = true).remove(::rootTouchCancelHandler)
+		preventMouseTimer?.dispose()
+		preventMouseTimer = null
 		for (i in 0..downButtons.lastIndex) {
 			val list = downButtons[i]
 			if (list != null) {

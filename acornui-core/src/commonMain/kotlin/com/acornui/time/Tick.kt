@@ -16,12 +16,9 @@
 
 package com.acornui.time
 
-import com.acornui.Disposable
-import com.acornui.Updatable
+import com.acornui.*
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.start
-import com.acornui.stop
 
 /**
  * Invokes [callback] on every time driver tick until disposed.
@@ -49,6 +46,8 @@ class Tick(
 
 ) : Updatable, Disposable {
 
+	private var isDisposed = false
+
 	init {
 		require(repetitions != 0) { "repetitions argument may not be zero." }
 		require(startFrame > 0) { "startFrame must be greater than zero. " }
@@ -57,6 +56,8 @@ class Tick(
 	private var currentFrame: Int = 0
 
 	override fun update(dT: Float) {
+		if (isDisposed)
+			throw DisposedException()
 		++currentFrame
 		if (currentFrame >= startFrame)
 			this.callback(dT)
@@ -66,6 +67,7 @@ class Tick(
 	}
 
 	override fun dispose() {
+		isDisposed = true
 		stop()
 	}
 }

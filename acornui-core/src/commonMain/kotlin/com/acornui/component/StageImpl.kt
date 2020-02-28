@@ -22,6 +22,7 @@ import com.acornui.Disposable
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
+import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.function.as1
 import com.acornui.function.as2
@@ -77,7 +78,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	init {
 		cameraOverride = cam
-		skinCheckTimer = timer(5.seconds, 10, callback = ::skinCheck)
+		skinCheckTimer = own(timer(5.seconds, 10, callback = ::skinCheck))
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)

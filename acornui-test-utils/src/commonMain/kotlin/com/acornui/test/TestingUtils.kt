@@ -21,6 +21,7 @@ package com.acornui.test
 import com.acornui.async.toPromiseOrBlocking
 import com.acornui.closeTo
 import com.acornui.collection.toList
+import com.acornui.kotlinBugFixes
 import com.acornui.math.RectangleRo
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3Ro
@@ -283,8 +284,11 @@ private val testScope = GlobalScope + SupervisorJob()
  * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
  * @see toPromiseOrBlocking
  */
-fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) = testScope.async {
-	withTimeout(timeout.toLongMilliseconds()) {
-		block()
-	}
-}.toPromiseOrBlocking()
+fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) {
+	kotlinBugFixes()
+	testScope.async {
+		withTimeout(timeout.toLongMilliseconds()) {
+			block()
+		}
+	}.toPromiseOrBlocking()
+}

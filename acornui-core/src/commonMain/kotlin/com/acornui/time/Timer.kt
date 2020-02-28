@@ -98,7 +98,6 @@ class Timer(
 
 /**
  * Creates a [Timer] object and immediately starts it.
- * The [Timer] object is automatically owned by the receiver Context.
  *
  * @param duration The duration between repetitions.
  * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
@@ -107,5 +106,5 @@ class Timer(
  */
 fun Context.timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: () -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
-	return own(Timer(inject(FrameDriverRo), duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback).start())
+	return Timer(inject(FrameDriverRo), duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback).start()
 }
