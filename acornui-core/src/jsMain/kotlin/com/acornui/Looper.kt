@@ -53,8 +53,10 @@ class JsLooper : Looper {
 	private val _updateAndRender = Signal1<Float>()
 
 	private val isBrowser = userInfo.isBrowser
-	private var lastFrameMs = nowMs()
+	private val maxFrameTimeS = maxFrameTime.inSeconds.toFloat()
 	private lateinit var mainJob: Job
+
+	private var lastFrameMs = nowMs()
 
 	/**
 	 * Runs the multi-application loop.
@@ -65,10 +67,16 @@ class JsLooper : Looper {
 		scheduleTick()
 	}
 
-	private fun tick() {
+	// Don't use member references or function .as1 in frame loop -- keep as performant as possible.
+	
+	private val tick0 = {
+		tick(0)
+	}
+
+	private val tick = { _: Number ->
 		// Poll for window events. Input callbacks will be invoked at this time.
 		val now = nowMs()
-		val dT = (now - lastFrameMs) / 1000f
+		val dT = minOf(maxFrameTimeS,(now - lastFrameMs) / 1000f)
 		lastFrameMs = now
 		try {
 			_frameDriver.dispatch(dT)
@@ -83,9 +91,9 @@ class JsLooper : Looper {
 
 	private fun scheduleTick() {
 		if (isBrowser)
-			window.requestAnimationFrame(::tick.as1)
+			window.requestAnimationFrame(tick)
 		else
-			setTimeout(::tick)
+			setTimeout(tick0)
 	}
 
 	@UseExperimental(InternalCoroutinesApi::class)

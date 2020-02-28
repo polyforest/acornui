@@ -42,6 +42,13 @@ interface Looper {
 		get() = 1.seconds / frameRate.toDouble()
 
 	/**
+	 * If a frame hangs, the delta provided will be capped to this value.
+	 * This is so that animations and timers aren't entirely skipped.
+	 */
+	val maxFrameTime: Duration
+		get() = 0.1.seconds
+
+	/**
 	 * Dispatched when the global loop has begun.
 	 */
 	val started: Signal<() -> Unit>

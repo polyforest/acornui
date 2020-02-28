@@ -50,6 +50,7 @@ class JvmLooper : Looper {
 	override val pollEvents = _pollEvents.asRo()
 
 	private var frameTimeMs: Long = (1000 / frameRate).toLong()
+	private val maxFrameTimeS = maxFrameTime.inSeconds.toFloat()
 
 	/**
 	 * Runs the multi-application loop.
@@ -61,7 +62,7 @@ class JvmLooper : Looper {
 		while (mainJob.isActive) {
 			// Poll for window events. Input callbacks will be invoked at this time.
 			val now = nowMs()
-			val dT = (now - lastFrameMs) / 1000f
+			val dT = minOf(maxFrameTimeS, (now - lastFrameMs) / 1000f)
 			lastFrameMs = now
 			_pollEvents.dispatch()
 			_frameDriver.dispatch(dT)
