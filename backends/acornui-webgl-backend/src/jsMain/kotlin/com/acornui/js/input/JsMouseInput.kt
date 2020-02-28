@@ -24,6 +24,7 @@ import com.acornui.input.interaction.*
 import com.acornui.js.html.TouchEvent
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
+import org.w3c.dom.DOMRect
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -222,25 +223,26 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 	}
 
 	private fun TouchInteraction.set(jsEvent: TouchEvent) {
+		val bounds = canvas.getBoundingClientRect()
 		timestamp = jsEvent.timeStamp.toLong()
 		clearTouches()
 		for (i in 0..jsEvent.changedTouches.lastIndex) {
 			val changedTouch = jsEvent.changedTouches[i]
 			val t = Touch.obtain()
-			t.set(changedTouch)
+			t.set(changedTouch, bounds)
 			changedTouches.add(t)
 		}
 		for (i in 0..jsEvent.touches.lastIndex) {
 			val touch = jsEvent.touches[i]
 			val t = Touch.obtain()
-			t.set(touch)
+			t.set(touch, bounds)
 			touches.add(t)
 		}
 	}
 
-	private fun Touch.set(jsTouch: com.acornui.js.html.Touch) {
-		canvasX = jsTouch.clientX.toFloat() - canvas.offsetLeft.toFloat()
-		canvasY = jsTouch.clientY.toFloat() - canvas.offsetTop.toFloat()
+	private fun Touch.set(jsTouch: com.acornui.js.html.Touch, bounds: DOMRect) {
+		canvasX = jsTouch.clientX.toFloat() - bounds.left.toFloat()
+		canvasY = jsTouch.clientY.toFloat() - bounds.top.toFloat()
 		identifier = jsTouch.identifier
 	}
 
