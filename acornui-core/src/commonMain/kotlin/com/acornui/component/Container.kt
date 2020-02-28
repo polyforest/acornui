@@ -270,7 +270,7 @@ open class ContainerImpl(
 			check(!element.isDisposed) { "Added child is disposed." }
 			check(index >= 0 && index <= list.size) { "index is out of bounds." }
 			val maybeLayout = if (!isValidatingLayout && element.layoutInvalidatingFlags and ValidationFlags.LAYOUT_ENABLED > 0) ValidationFlags.LAYOUT else 0
-			if (element.parent == this@ContainerImpl) {
+			if (element.parent === this@ContainerImpl) {
 				// Reorder child.
 				val oldIndex = list.indexOf(element)
 				val newIndex = if (index > oldIndex) index - 1 else index
@@ -280,7 +280,10 @@ open class ContainerImpl(
 				element.invalidateFocusOrderDeep()
 				return
 			} else {
-				check(element.parent == null) { "Remove child first." }
+				check(element.parent == null) {
+					@Suppress("RemoveCurlyBracesFromTemplate")
+					"Attempted adding child <${element}> to ${this@ContainerImpl} but was already a child of <${element.parent}>. Remove child first."
+				}
 			}
 
 			configureChild(element)
