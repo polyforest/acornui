@@ -29,7 +29,6 @@ class ScheduleTest {
 		val mark = MonoClock.markNow()
 		schedule(2.seconds) {
 			assertClose(2.0, mark.elapsedNow().inSeconds, 1.0) // CI For mac has an unusually high variance
-			exitMain()
 		}
 	}
 }

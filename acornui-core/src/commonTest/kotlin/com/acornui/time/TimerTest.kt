@@ -32,7 +32,6 @@ class TimerTest {
 		val mark = MonoClock.markNow()
 		timer(0.5.seconds) {
 			assertClose(0.5, mark.elapsedNow().inSeconds, 1.0) // CI For mac has an unusually high variance
-			exitMain()
 		}
 	}
 
@@ -45,17 +44,15 @@ class TimerTest {
 			handle.dispose()
 		}
 		delay(1.seconds)
-		exitMain()
 	}
 
 	@Test fun disposeOnCallback() = runMainTest {
 		var c = 0
 		timer(0.1.seconds) {
 			c++
-			dispose()
+			it.dispose()
 		}
 		delay(0.5.seconds)
 		assertEquals(1, c)
-		exitMain()
 	}
 }

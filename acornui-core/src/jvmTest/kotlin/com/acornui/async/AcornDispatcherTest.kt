@@ -32,7 +32,6 @@ class AcornDispatcherTest {
 			assertNotEquals(mainThread, getCurrentThread())
 			launch(MainDispatcher) {
 				assertNotEquals(mainThread, getCurrentThread())
-				exitMain()
 			}
 		}
 	}

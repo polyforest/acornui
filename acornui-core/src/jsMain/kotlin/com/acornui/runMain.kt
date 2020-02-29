@@ -16,9 +16,17 @@
 
 package com.acornui
 
-import com.acornui.async.toPromiseOrBlocking
+import kotlinx.coroutines.CancellationException
+import kotlin.js.Promise
 import kotlin.time.Duration
 
 actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {
-	return runMainJob(timeout, block).toPromiseOrBlocking()
+	return Promise<Unit> { resolve, reject ->
+		runMainJob(timeout, block).invokeOnCompletion {
+			if (it == null || it is CancellationException) resolve(Unit)
+			else {
+				reject(it)
+			}
+		}
+	}
 }

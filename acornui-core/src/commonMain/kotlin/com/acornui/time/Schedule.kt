@@ -49,7 +49,7 @@ class Schedule(
 		/**
 		 * The callback to invoke once [date] has been passed.
 		 */
-		private val callback: Disposable.() -> Unit
+		private val callback: () -> Unit
 ) : Updatable, Disposable {
 
 	override fun update(dT: Float) {
@@ -68,10 +68,10 @@ class Schedule(
  * Schedules a callback for a certain timestamp.
  * Immediately started.
  */
-fun Context.schedule(date: DateRo, callback: Disposable.() -> Unit): Schedule = Schedule(inject(FrameDriverRo), date, callback).start()
+fun Context.schedule(date: DateRo, callback: () -> Unit): Schedule = Schedule(inject(FrameDriverRo), date, callback).start()
 
 /**
  * Schedules a callback [duration] in the future.
  * Immediately started.
  */
-fun Context.schedule(duration: Duration, callback: Disposable.() -> Unit): Schedule = Schedule(inject(FrameDriverRo), Date() + duration, callback).start()
+fun Context.schedule(duration: Duration, callback: () -> Unit): Schedule = Schedule(inject(FrameDriverRo), Date() + duration, callback).start()

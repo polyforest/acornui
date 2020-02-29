@@ -41,7 +41,8 @@ class AsyncUtilsTest {
 	@Test fun launchSupervisedShouldCatchExceptions() = runTest {
 		launchSupervised(exceptionHandler) {
 			error("Should be caught")
-		}
+		}.join()
+
 		assertListEquals(listOf("Should be caught"), caughtExceptions.map { it.message })
 	}
 
@@ -50,8 +51,11 @@ class AsyncUtilsTest {
 			launchSupervised {
 				delay(1.seconds)
 				fail("Should be cancelled.")
+			}.invokeOnCompletion {
+				println("Complete $it")
 			}
 			delay(0.1.seconds)
+			println("Cancelling...")
 			cancel()
 		}
 	}

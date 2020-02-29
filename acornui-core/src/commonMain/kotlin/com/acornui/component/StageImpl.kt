@@ -36,6 +36,7 @@ import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.popup.PopUpManager
+import com.acornui.time.Timer
 import com.acornui.time.timer
 import kotlin.time.seconds
 
@@ -59,7 +60,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	private val softKeyboardManager by SoftKeyboardManager
 	private var softKeyboardView: UiComponent? = null
 
-	private var skinCheckTimer: Disposable? = null
 	private val cam = orthographicCamera(false)
 
 	private val _windowRegion = MinMax()
@@ -78,7 +78,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	init {
 		cameraOverride = cam
-		skinCheckTimer = own(timer(5.seconds, 10, callback = ::skinCheck))
+		own(timer(5.seconds, 10, callback = ::skinCheck))
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
 		interactivity.init(this)
@@ -102,11 +102,11 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 		}
 	}
 	
-	private fun skinCheck() {
+	private fun skinCheck(timer: Timer) {
 		if (showWaitingForSkinMessage && styleRules.isEmpty())
 			Log.debug("Awaiting skin...")
 		else
-			skinCheckTimer?.dispose()
+			timer.dispose()
 
 	}
 

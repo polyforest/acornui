@@ -21,7 +21,6 @@ package com.acornui.time
 import com.acornui.Disposable
 import com.acornui.Updatable
 import com.acornui.di.Context
-import com.acornui.di.own
 import com.acornui.start
 import com.acornui.stop
 import kotlinx.coroutines.DisposableHandle
@@ -62,7 +61,7 @@ class Timer(
 		/**
 		 * The callback to invoke on each repetition.
 		 */
-		val callback: () -> Unit
+		val callback: (timer: Timer) -> Unit
 
 ) : Updatable, Disposable, DisposableHandle {
 	// For convenience, Timer implements both com.acornui.Disposable and kotlinx.coroutines.DisposableHandle
@@ -76,7 +75,7 @@ class Timer(
 		while (currentTime > duration) {
 			currentTime -= duration
 			currentRepetition++
-			callback()
+			callback(this)
 			if (repetitions >= 0 && currentRepetition >= repetitions) {
 				dispose()
 			}
@@ -104,7 +103,7 @@ class Timer(
  * until disposal.
  * @param callback The function to call after every repetition.
  */
-fun Context.timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: () -> Unit): Disposable {
+fun Context.timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: (timer: Timer) -> Unit): Disposable {
 	require(repetitions != 0) { "repetitions argument may not be zero." }
 	return Timer(inject(FrameDriverRo), duration.inSeconds.toFloat(), repetitions, delay.inSeconds.toFloat(), callback).start()
 }

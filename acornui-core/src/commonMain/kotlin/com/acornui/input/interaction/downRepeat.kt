@@ -24,6 +24,7 @@ import com.acornui.component.stage
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.ContextImpl
+import com.acornui.function.as1
 import com.acornui.input.*
 import com.acornui.time.nowMs
 import com.acornui.time.timer
@@ -64,7 +65,7 @@ class DownRepeat(
 	private fun mouseDownHandler(event: MouseInteractionRo) {
 		if (event !== mouseDownRepeat) {
 			repeatTimer?.dispose()
-			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, ::mouseRepeatHandler)
+			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, ::mouseRepeatHandler.as1)
 			stage.mouseUp().add(::rawMouseUpHandler, true)
 		}
 	}
