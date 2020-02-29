@@ -99,7 +99,6 @@ class TextureComponentTest {
 		}
 	}
 
-	@Ignore() // TODO: Currently textures aren't being reused for paths.
 	@Test fun pathReusesTextures() = runMainTest {
 		headlessApplication {
 			context {
