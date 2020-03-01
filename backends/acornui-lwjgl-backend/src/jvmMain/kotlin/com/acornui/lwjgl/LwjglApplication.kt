@@ -21,6 +21,7 @@ package com.acornui.lwjgl
 import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.audio.AudioManager
+import com.acornui.browser.Location
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
 import com.acornui.component.Stage
@@ -49,6 +50,7 @@ import com.acornui.lwjgl.audio.NoAudioException
 import com.acornui.lwjgl.audio.OpenAlAudioManager
 import com.acornui.lwjgl.audio.registerDefaultMusicDecoders
 import com.acornui.lwjgl.audio.registerDefaultSoundDecoders
+import com.acornui.lwjgl.browser.JvmLocation
 import com.acornui.lwjgl.cursor.JvmCursorManager
 import com.acornui.lwjgl.files.JvmFileIoManager
 import com.acornui.lwjgl.glfw.GlfwWindowImpl
@@ -109,6 +111,10 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 		val window = GlfwWindowImpl(config.window, config.gl, debug)
 		_windowId = window.windowId
 		window
+	}
+	
+	private val locationTask by task(Location) {
+		JvmLocation()
 	}
 
 	/**

@@ -20,7 +20,6 @@ import com.acornui.JsApplicationBase
 import com.acornui.MainContext
 import com.acornui.di.ContextImpl
 import com.acornui.di.ContextMarker
-import kotlinx.coroutines.Job
 
 class JsHeadlessApplication(mainContext: MainContext) : JsApplicationBase(mainContext) {
 

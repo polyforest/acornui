@@ -119,7 +119,6 @@ class HeadlessWindow(config: WindowConfig) : Window {
 	override val fullScreenChanged: Signal<() -> Unit> = emptySignal()
 	override val fullScreenEnabled: Boolean = false
 	override var fullScreen: Boolean = false
-	override val location: Location = MockLocation
 
 	override fun dispose() {
 		_closeRequested.dispose()

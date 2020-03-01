@@ -169,7 +169,9 @@ interface Window : Disposable {
 	 */
 	var fullScreen: Boolean
 
+	@Deprecated("Use Context.location")
 	val location: Location
+		get() = throw UnsupportedOperationException("Use Context.location")
 
 	companion object : Context.Key<Window>
 

@@ -16,6 +16,7 @@
 
 package com.acornui.browser
 
+import com.acornui.di.Context
 import com.acornui.graphic.PopUpSpecs
 
 
@@ -80,4 +81,8 @@ interface Location {
 	fun navigateToUrl(url: String, target: String) = navigateToUrl(url, target, null)
 	fun navigateToUrl(url: String, name: String, specs: PopUpSpecs?)
 
+	companion object : Context.Key<Location>
 }
+
+val Context.location: Location
+	get() = inject(Location)

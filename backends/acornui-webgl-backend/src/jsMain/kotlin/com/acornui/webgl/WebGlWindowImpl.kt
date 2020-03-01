@@ -19,10 +19,8 @@
 package com.acornui.webgl
 
 import com.acornui.WindowConfig
-import com.acornui.browser.Location
 import com.acornui.function.as1
 import com.acornui.graphic.Window
-import com.acornui.js.window.JsLocation
 import com.acornui.logging.Log
 import com.acornui.signal.*
 import org.w3c.dom.HTMLCanvasElement
@@ -143,7 +141,7 @@ class WebGlWindowImpl(
 		val newWidth = canvas.offsetWidth.toFloat()
 		val newHeight = canvas.offsetHeight.toFloat()
 		if (newWidth == this.width && newHeight == this.height) return
-		Log.verbose("Window resize handler: $newWidth, $newHeight")
+		Log.verbose("Window size changed to: $newWidth, $newHeight")
 		this.width = newWidth
 		this.height = newHeight
 		sizeIsDirty = true
@@ -260,10 +258,6 @@ class WebGlWindowImpl(
 			}
 			requestRender()
 		}
-
-	private val _location by lazy { JsLocation(window.location) }
-	override val location: Location
-		get() = _location
 
 	override fun alert(message: String) {
 		window.alert(message)

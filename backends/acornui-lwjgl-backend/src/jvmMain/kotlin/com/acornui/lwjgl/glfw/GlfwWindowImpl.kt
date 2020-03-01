@@ -345,8 +345,6 @@ class GlfwWindowImpl(
 			}
 		}
 
-	override val location: Location = JvmLocation()
-
 	override fun alert(message: String) {
 		TinyFileDialogs.tinyfd_notifyPopup(null, message.substringInRange(0, 2000), "error")
 	}

@@ -18,6 +18,7 @@ package com.acornui.headless
 
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
+import com.acornui.browser.Location
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.DependencyMap
@@ -40,6 +41,7 @@ object HeadlessDependencies {
 	fun create(config: AppConfig): DependencyMap {
 		return dependencyMapOf(
 				Window to HeadlessWindow(config.window),
+				Location to MockLocation,
 				MouseInput to MockMouseInput,
 				KeyInput to MockKeyInput,
 				progressReporterKey to ProgressReporterImpl(),

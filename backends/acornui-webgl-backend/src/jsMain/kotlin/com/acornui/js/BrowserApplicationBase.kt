@@ -18,6 +18,7 @@ package com.acornui.js
 
 import com.acornui.JsApplicationBase
 import com.acornui.MainContext
+import com.acornui.browser.Location
 import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
@@ -29,6 +30,7 @@ import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
+import com.acornui.js.window.JsLocation
 import com.acornui.uncaughtExceptionHandler
 import org.w3c.dom.HTMLElement
 import kotlin.browser.window
@@ -64,6 +66,10 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 	abstract val canvasTask: suspend () -> HTMLElement
 	abstract val windowTask: suspend () -> Window
 	abstract val componentsTask: suspend () -> (owner: Context) -> HtmlComponent
+
+	protected open val location by task(Location) {
+		JsLocation(window.location)
+	}
 
 	protected open val mouseInputTask by task(MouseInput) {
 		JsMouseInput(get(CANVAS))
