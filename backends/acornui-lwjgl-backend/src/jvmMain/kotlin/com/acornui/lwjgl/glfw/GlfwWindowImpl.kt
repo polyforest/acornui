@@ -18,10 +18,8 @@ package com.acornui.lwjgl.glfw
 
 import com.acornui.GlConfig
 import com.acornui.WindowConfig
-import com.acornui.browser.Location
 import com.acornui.graphic.Window
 import com.acornui.logging.Log
-import com.acornui.lwjgl.browser.JvmLocation
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
@@ -44,8 +42,7 @@ import kotlin.math.ceil
  */
 class GlfwWindowImpl(
 		windowConfig: WindowConfig,
-		private val glConfig: GlConfig,
-		debug: Boolean
+		private val glConfig: GlConfig
 ) : Window {
 
 	private var capabilities: GLCapabilities
@@ -315,7 +312,7 @@ class GlfwWindowImpl(
 		get() = _fullScreen
 		set(value) {
 			if (_fullScreen != value) {
-				Log.info("Fullscreen: $value")
+				Log.verbose("Fullscreen: $value")
 				val primaryMonitor = glfwGetPrimaryMonitor()
 				val videoMode = glfwGetVideoMode(primaryMonitor) ?: return
 				_fullScreen = value

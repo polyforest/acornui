@@ -108,7 +108,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	 */
 	private val windowTask by task(Window) {
 		val config = config()
-		val window = GlfwWindowImpl(config.window, config.gl, debug)
+		val window = GlfwWindowImpl(config.window, config.gl)
 		_windowId = window.windowId
 		window
 	}
