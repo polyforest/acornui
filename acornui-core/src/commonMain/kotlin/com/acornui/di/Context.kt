@@ -159,7 +159,7 @@ fun Context.childContext(): Context = ContextImpl(this, childDependencies)
 open class ContextImpl(
 		final override val owner: Context? = null,
 		private var dependencies: DependencyMap = DependencyMap(),
-		override val coroutineContext: CoroutineContext = (owner?.coroutineContext
+		final override val coroutineContext: CoroutineContext = (owner?.coroutineContext
 				?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job)),
 		override val marker: ContextMarker? = null
 ) : Context, Disposable {
