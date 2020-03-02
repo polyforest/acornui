@@ -24,24 +24,29 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		project.extensions.configure(multiPlatformConfig(project))
 
 		project.configureResourceProcessingTasks()
-		project.configureWebTasks()
-		project.configureRunJvmTask()
-		project.configureUberJarTask()
+		if (project.jsEnabled)
+			project.configureWebTasks()
+		if (project.jvmEnabled) {
+			project.configureRunJvmTask()
+			project.configureUberJarTask()
+		}
 	}
 
 	private fun multiPlatformConfig(target: Project): KotlinMultiplatformExtension.() -> Unit = {
-		js {
-			compilations.named("main") {
-				kotlinOptions {
-					main = "call"
+		if (target.jsEnabled) {
+			js {
+				compilations.named("main") {
+					kotlinOptions {
+						main = "call"
+					}
 				}
-			}
-			browser {
-				webpackTask {
-					enabled = true
-					val baseConventions = project.convention.plugins["base"] as BasePluginConvention?
-					outputFileName =  baseConventions?.archivesBaseName + "-${mode.code}.js"
-					sourceMaps = true
+				browser {
+					webpackTask {
+						enabled = true
+						val baseConventions = project.convention.plugins["base"] as BasePluginConvention?
+						outputFileName = baseConventions?.archivesBaseName + "-${mode.code}.js"
+						sourceMaps = true
+					}
 				}
 			}
 		}
@@ -53,34 +58,38 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 
 			val commonMain by getting {
 				dependencies {
-					api(acorn(target,"utils"))
-					api(acorn(target,"core"))
+					api(acorn(target, "utils"))
+					api(acorn(target, "core"))
 				}
 			}
 
-			val jvmMain by getting {
-				dependencies {
-					api(acorn(target,"lwjgl-backend"))
+			if (target.jvmEnabled) {
+				val jvmMain by getting {
+					dependencies {
+						api(acorn(target, "lwjgl-backend"))
 
-					val lwjglVersion: String by target
-					val jorbisVersion: String by target
-					val jlayerVersion: String by target
-					val lwjglGroup = "org.lwjgl"
-					val lwjglName = "lwjgl"
-					val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
+						val lwjglVersion: String by target
+						val jorbisVersion: String by target
+						val jlayerVersion: String by target
+						val lwjglGroup = "org.lwjgl"
+						val lwjglName = "lwjgl"
+						val extensions = arrayOf("glfw", "jemalloc", "opengl", "openal", "stb", "nfd", "tinyfd")
 
-					for (os in listOf("linux", "macos", "windows")) {
-						runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
-						extensions.forEach {
-							runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+						for (os in listOf("linux", "macos", "windows")) {
+							runtimeOnly("$lwjglGroup:$lwjglName:$lwjglVersion:natives-$os")
+							extensions.forEach {
+								runtimeOnly("$lwjglGroup:$lwjglName-$it:$lwjglVersion:natives-$os")
+							}
 						}
 					}
 				}
 			}
 
-			val jsMain by getting {
-				dependencies {
-					api(acorn(target,"webgl-backend"))
+			if (target.jsEnabled) {
+				val jsMain by getting {
+					dependencies {
+						api(acorn(target, "webgl-backend"))
+					}
 				}
 			}
 		}

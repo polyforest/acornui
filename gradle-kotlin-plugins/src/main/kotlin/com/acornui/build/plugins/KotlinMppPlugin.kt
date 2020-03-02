@@ -20,6 +20,7 @@ package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.provideDelegate
 
 @Suppress("unused")
 open class KotlinMppPlugin : Plugin<Project> {
@@ -32,8 +33,22 @@ open class KotlinMppPlugin : Plugin<Project> {
 
 		fun configure(project: Project) {
 			KotlinCommonOptions.configure(project)
-			KotlinJsPlugin.configure(project)
-			KotlinJvmPlugin.configure(project)
+			if (project.jsEnabled)
+				KotlinJsPlugin.configure(project)
+			if (project.jvmEnabled)
+				KotlinJvmPlugin.configure(project)
 		}
 	}
 }
+
+val Project.jsEnabled: Boolean
+	get() {
+		val jsEnabled: String? by this
+		return jsEnabled?.toBoolean() ?: true
+	}
+
+val Project.jvmEnabled: Boolean
+	get() {
+		val jvmEnabled: String? by this
+		return jvmEnabled?.toBoolean() ?: true
+	}
