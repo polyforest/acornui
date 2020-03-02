@@ -53,7 +53,7 @@ class JsFileIoManager(private val root: HTMLElement) : FileIoManager {
 				null
 			} else {
 				val tempList = mutableListOf<JsFileReader>()
-				for (i in 0..fileList.length - 1) {
+				for (i in 0 until fileList.length) {
 					tempList.add(JsFileReader(fileList[i] ?: continue))
 				}
 				tempList
@@ -122,9 +122,16 @@ class JsFileIoManager(private val root: HTMLElement) : FileIoManager {
 	override fun saveBinary(data: ByteArray, fileFilterGroups: List<FileFilterGroup>?, defaultFilename: String, defaultExtension: String?) {
 		saveData(data, defaultFilename)
 	}
+	
+	fun saveBinary(data: Blob, defaultFilename: String) {
+		saveData(data, defaultFilename)
+	}
 
 	private fun saveData(data: Any, defaultFilename: String) {
-		val file = Blob(arrayOf(data), BlobPropertyBag(type = "application/octet-stream"))
+		saveData(Blob(arrayOf(data), BlobPropertyBag(type = "application/octet-stream")), defaultFilename)
+	}
+	
+	private fun saveData(file: Blob, defaultFilename: String) {
 		val nav = window.navigator.asDynamic()
 		@Suppress("UnsafeCastFromDynamic")
 		if (nav.msSaveOrOpenBlob) // IE10+
