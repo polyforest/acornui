@@ -191,6 +191,7 @@ open class ApplicationLooperImpl(
 	protected val stage = inject(Stage)
 	protected val window = inject(Window)
 	protected val frameDriver = inject(FrameDriver)
+	protected val applicationJob = coroutineContext[Job]!!
 
 	init {
 		mainLooper.frameDriver.add(::tick)
@@ -202,7 +203,7 @@ open class ApplicationLooperImpl(
 	protected fun tick(dT: Float) {
 		window.makeCurrent()
 		frameDriver.dispatch(dT)
-		if (window.isCloseRequested()) {
+		if (window.isCloseRequested() || !applicationJob.isActive) {
 			Log.debug("Window closed: $window")
 			dispose()
 		} else {
