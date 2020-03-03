@@ -85,7 +85,7 @@ class JsClipboard(
 			pasteEvent.type = PasteInteractionRo.PASTE
 			pasteEvent.set(it as ClipboardEvent)
 			interactivityManager.dispatch(focused, pasteEvent)
-			it.preventDefault()
+			if (pasteEvent.defaultPrevented()) it.preventDefault()
 		}
 	}
 
@@ -96,7 +96,7 @@ class JsClipboard(
 			copyEvent.type = CopyInteractionRo.COPY
 			copyEvent.set(it as ClipboardEvent)
 			interactivityManager.dispatch(focused, copyEvent)
-			it.preventDefault()
+			if (copyEvent.defaultPrevented()) it.preventDefault()
 		}
 	}
 
@@ -107,7 +107,7 @@ class JsClipboard(
 			copyEvent.type = CopyInteractionRo.CUT
 			copyEvent.set(it as ClipboardEvent)
 			interactivityManager.dispatch(focused, copyEvent)
-			it.preventDefault()
+			if (copyEvent.defaultPrevented()) it.preventDefault()
 		}
 	}
 
