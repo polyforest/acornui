@@ -34,7 +34,9 @@ import kotlin.time.seconds
  * Watches the stage for mouse and touch events that constitute a 'click', then dispatches the click event on the
  * interactivity manager.
  *
- * This will respond to mouse and touch, but not both.
+ * This will respond to mouse and touch, but not both at the same time. That is, if touch interaction is detected,
+ * mouse interaction will be disabled for a certain interval. This is to prevent strange behavior with browser duck
+ * typing.
  */
 abstract class ClickDispatcher(
 		context: Context

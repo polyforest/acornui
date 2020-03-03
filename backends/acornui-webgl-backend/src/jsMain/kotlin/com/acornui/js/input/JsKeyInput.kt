@@ -86,10 +86,14 @@ class JsKeyInput(
 		if (!captureAllKeyboardInput && !canvas.hasAttribute("tabIndex")) {
 			canvas.tabIndex = 0
 		}
-		eventTarget.addEventListener("keydown", keyDownHandler)
-		eventTarget.addEventListener("keyup", keyUpHandler)
-		eventTarget.addEventListener("keypress", keyPressHandler)
-		eventTarget.addEventListener("blur", blurHandler)
+		val options = js("{}")
+		options["capture"] = true
+		options["passive"] = false
+
+		eventTarget.addEventListener("keydown", keyDownHandler, options)
+		eventTarget.addEventListener("keyup", keyUpHandler, options)
+		eventTarget.addEventListener("keypress", keyPressHandler, options)
+		eventTarget.addEventListener("blur", blurHandler, options)
 	}
 
 	override fun keyIsDown(keyCode: Int, location: KeyLocation): Boolean {
@@ -102,10 +106,10 @@ class JsKeyInput(
 	}
 
 	override fun dispose() {
-		eventTarget.removeEventListener("keydown", keyDownHandler)
-		eventTarget.removeEventListener("keyup", keyUpHandler)
-		eventTarget.removeEventListener("keypress", keyPressHandler)
-		eventTarget.removeEventListener("blur", blurHandler)
+		eventTarget.removeEventListener("keydown", keyDownHandler, true)
+		eventTarget.removeEventListener("keyup", keyUpHandler, true)
+		eventTarget.removeEventListener("keypress", keyPressHandler, true)
+		eventTarget.removeEventListener("blur", blurHandler, true)
 		_keyDown.dispose()
 		_keyUp.dispose()
 		_char.dispose()

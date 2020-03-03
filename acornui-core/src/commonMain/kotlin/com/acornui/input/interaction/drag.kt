@@ -57,6 +57,12 @@ class DragAttachment(
 		private set
 
 	/**
+	 * If true, the touchMove event will have default prevented.
+	 * This will prevent drag scrolling on mobile.
+	 */
+	var preventDefaultOnTouchMove = true
+
+	/**
 	 * Returns true if the user is currently interacting.
 	 * Note: This will be true even before the movement has passed the [affordance] threshold.
 	 * @see isDragging
@@ -116,7 +122,6 @@ class DragAttachment(
 
 	private fun stageMouseMoveHandler(event: MouseInteractionRo) {
 		event.handled = true
-		event.preventDefault()
 	}
 
 	//--------------------------------------------------------------
@@ -214,7 +219,8 @@ class DragAttachment(
 
 	private fun stageTouchMoveHandler(event: TouchInteractionRo) {
 		event.handled = true
-		event.preventDefault()
+		if (preventDefaultOnTouchMove)
+			event.preventDefault()
 	}
 
 	private fun stageTouchEndHandler(event: TouchInteractionRo) {

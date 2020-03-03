@@ -186,21 +186,24 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 
 	init {
 		// Touch
-		window.addEventListener("touchstart", touchStartHandler, true)
-		window.addEventListener("touchend", touchEndHandler, true)
-		window.addEventListener("touchmove", touchMoveHandler, true)
-		window.addEventListener("touchcancel", touchCancelHandler, true)
-		canvas.addEventListener("touchleave", mouseLeaveHandler, true)
-		window.addEventListener("touchleave", mouseLeaveHandler, true)
+		val options = js("{}")
+		options["capture"] = true
+		options["passive"] = false
+		window.addEventListener("touchstart", touchStartHandler, options)
+		window.addEventListener("touchend", touchEndHandler, options)
+		window.addEventListener("touchmove", touchMoveHandler, options)
+		window.addEventListener("touchcancel", touchCancelHandler, options)
+		canvas.addEventListener("touchleave", mouseLeaveHandler, options)
+		window.addEventListener("touchleave", mouseLeaveHandler, options)
 
 		// Mouse
-		canvas.addEventListener("mouseenter", mouseEnterHandler, true)
-		window.addEventListener("mouseleave", mouseLeaveHandler, true)
-		canvas.addEventListener("mouseleave", mouseLeaveHandler, true)
-		window.addEventListener("mousemove", mouseMoveHandler, true)
-		window.addEventListener("mousedown", mouseDownHandler, true)
-		window.addEventListener("mouseup", mouseUpHandler, true)
-		canvas.addEventListener("wheel", mouseWheelHandler, true)
+		canvas.addEventListener("mouseenter", mouseEnterHandler, options)
+		window.addEventListener("mouseleave", mouseLeaveHandler, options)
+		canvas.addEventListener("mouseleave", mouseLeaveHandler, options)
+		window.addEventListener("mousemove", mouseMoveHandler, options)
+		window.addEventListener("mousedown", mouseDownHandler, options)
+		window.addEventListener("mouseup", mouseUpHandler, options)
+		canvas.addEventListener("wheel", mouseWheelHandler, options)
 	}
 
 	private fun populateMouseEvent(jsEvent: MouseEvent) {

@@ -110,6 +110,16 @@ class TossScroller(
 		get() = dragAttachment.isDragging
 
 	/**
+	 * If true, the touchMove event will have default prevented.
+	 * This will prevent drag scrolling on mobile.
+	 */
+	var preventDefaultOnTouchMove: Boolean
+		get() = dragAttachment.preventDefaultOnTouchMove
+		set(value) {
+			dragAttachment.preventDefaultOnTouchMove = value
+		}
+
+	/**
 	 * Returns true if the toss scrolling currently has momentum.
 	 * @see stop
 	 */

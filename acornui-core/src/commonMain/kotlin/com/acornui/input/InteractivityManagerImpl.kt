@@ -69,7 +69,7 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun rawTouchMoveHandler(event: TouchInteractionRo) {
-//		mouseOverTarget(touchHandler(TouchInteractionRo.TOUCH_MOVE, event))
+		touchHandler(TouchInteractionRo.TOUCH_MOVE, event)
 	}
 
 	private fun rawMouseDownHandler(event: MouseInteractionRo) {
