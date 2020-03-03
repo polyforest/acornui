@@ -16,37 +16,25 @@
 
 package com.acornui.async
 
-import com.acornui.test.assertListEquals
 import com.acornui.test.runTest
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.seconds
 
 class AsyncUtilsTest {
 
-	private val caughtExceptions = ArrayList<Throwable>()
-	@BeforeTest
-	fun setup() {
-		caughtExceptions.clear()
-	}
 
-	private val exceptionHandler = CoroutineExceptionHandler { _, e ->
-		caughtExceptions += e
-	}
-
-	@Test fun launchSupervisedShouldCatchExceptions() = runTest {
-		launchSupervised(exceptionHandler) {
+	@Test
+	fun launchSupervisedShouldCatchExceptions() = runTest {
+		launchSupervised {
 			error("Should be caught")
-		}.join()
-
-		assertListEquals(listOf("Should be caught"), caughtExceptions.map { it.message })
+		}
 	}
 
-	@Test fun launchSupervisedCancelParentShouldCancelChild() = runTest {
+	@Test
+	fun launchSupervisedCancelParentShouldCancelChild() = runTest {
 		launch {
 			launchSupervised {
 				delay(1.seconds)

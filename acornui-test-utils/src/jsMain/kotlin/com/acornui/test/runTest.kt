@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui.async
+package com.acornui.test
 
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlin.time.Duration
 
-actual fun Job.toPromiseOrBlocking(): dynamic {
-	return Promise<Unit> { resolve, reject ->
-		invokeOnCompletion {
-			if (it != null) {
-				reject(it)
-			} else {
-				resolve(Unit)
-			}
-		}
-	}
-}
+actual fun <R> runTest(timeout: Duration, block: suspend CoroutineScope.() -> R): dynamic =
+		runTestInternal(timeout, block)

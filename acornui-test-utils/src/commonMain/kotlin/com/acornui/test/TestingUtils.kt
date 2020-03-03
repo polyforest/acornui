@@ -284,11 +284,14 @@ private val testScope = GlobalScope + SupervisorJob()
  * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
  * @see toPromiseOrBlocking
  */
-fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R) {
+expect fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R)
+
+internal fun <R> runTestInternal(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R): Any {
 	kotlinBugFixes()
-	testScope.async {
+	return testScope.async {
 		withTimeout(timeout.toLongMilliseconds()) {
 			block()
 		}
 	}.toPromiseOrBlocking()
 }
+

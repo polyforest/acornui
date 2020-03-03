@@ -106,8 +106,14 @@ fun CoroutineScope.launchSupervised(
 		context: CoroutineContext = EmptyCoroutineContext,
 		start: CoroutineStart = CoroutineStart.DEFAULT,
 		block: suspend CoroutineScope.() -> Unit
-): Job = launch(context + SupervisorJob(context[Job]), start) {
-	block()
+): Job {
+	return launch(context, start) {
+		try {
+			supervisorScope {
+				block()
+			}
+		} catch (ignore: Throwable) {}
+	}
 }
 
 /**
