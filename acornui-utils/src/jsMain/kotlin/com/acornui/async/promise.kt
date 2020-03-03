@@ -16,15 +16,14 @@
 
 package com.acornui.async
 
-import kotlinx.coroutines.Job
+import com.acornui.system.userInfo
 
-actual fun Job.toPromiseOrBlocking(): dynamic {
-
-	return Promise<Unit> { resolve, reject ->
-		invokeOnCompletion {
-			if (it != null) {
-				reject(it)
-			} else resolve(Unit)
-		}
+/**
+ * Constructs a JS Promise. If Promise is undefined, the polyfill will be required.
+ */
+fun <T> Promise(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit): kotlin.js.Promise<T> {
+	if (userInfo.isBrowser && jsTypeOf(kotlin.js.Promise) == "undefined") {
+		js("""var Promise = require('promise-polyfill').default;""")
 	}
+	return kotlin.js.Promise(executor)
 }

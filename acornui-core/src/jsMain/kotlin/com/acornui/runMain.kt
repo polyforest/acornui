@@ -16,8 +16,8 @@
 
 package com.acornui
 
+import com.acornui.async.Promise
 import kotlinx.coroutines.CancellationException
-import kotlin.js.Promise
 import kotlin.time.Duration
 
 actual fun runMainTest(timeout: Duration, block: suspend MainContext.() -> Unit): dynamic {

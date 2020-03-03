@@ -17,6 +17,7 @@
 package com.acornui.io
 
 import clearTimeout
+import com.acornui.async.Promise
 import com.acornui.logging.Log
 import com.acornui.system.userInfo
 import kotlinx.coroutines.CancellationException
@@ -27,7 +28,6 @@ import org.khronos.webgl.Uint8Array
 import org.w3c.files.Blob
 import org.w3c.xhr.*
 import setTimeout
-import kotlin.js.Promise
 import kotlin.time.seconds
 
 suspend fun <T> load(
