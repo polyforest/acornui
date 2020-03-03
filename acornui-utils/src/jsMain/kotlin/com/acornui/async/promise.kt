@@ -16,14 +16,10 @@
 
 package com.acornui.async
 
-import com.acornui.system.userInfo
-
 /**
  * Constructs a JS Promise. If Promise is undefined, the polyfill will be required.
  */
 fun <T> Promise(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit): kotlin.js.Promise<T> {
-	if (userInfo.isBrowser && jsTypeOf(kotlin.js.Promise) == "undefined") {
-		js("""var Promise = require('promise-polyfill').default;""")
-	}
+	js("""if (typeof(Promise) == "undefined") { window.Promise = require('promise-polyfill').default; }""")
 	return kotlin.js.Promise(executor)
 }

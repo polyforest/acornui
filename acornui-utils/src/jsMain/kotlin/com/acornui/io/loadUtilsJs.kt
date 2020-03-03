@@ -36,9 +36,7 @@ suspend fun <T> load(
 		settings: RequestSettings,
 		process: (xhr: XMLHttpRequest) -> T
 ): T = coroutineScope {
-	if (userInfo.isNodeJs && jsTypeOf(XMLHttpRequest) == "undefined") {
-		js("""global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
-	}
+	js("""if (typeof(XMLHttpRequest) == "undefined") global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;""")
 	val url = requestData.toUrlStr(settings.rootPath)
 
 	Log.verbose("Load request: url: $url connectTimeout: ${settings.connectTimeout} responseType: $responseType")
