@@ -34,6 +34,6 @@ jobs:
           host: bandbox.dreamhost.com
           username: ${{ secrets.BANDBOX_FTP_USERNAME }}
           password: ${{ secrets.BANDBOX_FTP_PASSWORD }}
-          source: "build/distributions,build/templates/release.txt"
+          source: "build/distributions,build/templates/release-staging.txt"
           target: "~/artifacts.acornui.com/templates/"
           strip_components: 2
