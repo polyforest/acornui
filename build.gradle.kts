@@ -87,9 +87,12 @@ val buildTemplatesTask = tasks.register<Sync>("buildTemplates") {
 	exclude("**/build")
 	exclude("**/.idea")
 	exclude("**/.gradle")
-	from("templates")
 	into(buildDir.resolve("templates"))
-	filter(mapOf("tokens" to mapOf("acornVersion" to version)), ReplaceTokens::class.java)
+	from("templates") {
+		filesMatching("**/*.properties") {
+			filter(mapOf("tokens" to mapOf("acornVersion" to version)), ReplaceTokens::class.java)
+		}
+	}
 }
 
 val archiveBasicTemplate = tasks.register<Zip>("archiveBasicTemplate") {
