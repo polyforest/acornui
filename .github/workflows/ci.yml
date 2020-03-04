@@ -39,9 +39,9 @@ jobs:
       # First publish locally, then test the templates, then publish to sonatype.
       - name: Publish artifacts
         run: |
-          ./gradlew publishToMavenLocal -x check -s
+          ./gradlew publishToMavenLocal -s
           ./build/templates/basic/gradlew build -s
-          ./gradlew publish -x check -s
+          ./gradlew publish -s
         env:
           ORG_GRADLE_PROJECT_ossrhUsername: ${{secrets.OSSRH_USERNAME}}
           ORG_GRADLE_PROJECT_ossrhPassword: ${{secrets.OSSRH_PASSWORD}}
