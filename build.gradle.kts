@@ -93,7 +93,7 @@ val buildTemplatesTask = tasks.register<Sync>("buildTemplates") {
 			filter(mapOf("tokens" to mapOf("acornVersion" to version)), ReplaceTokens::class.java)
 		}
 		filesMatching("**/*.txt") {
-			filter(mapOf("tokens" to mapOf("acornVersion" to version)), ReplaceTokens::class.java)
+			filter(mapOf("tokens" to mapOf("acornVersion" to version, "date" to java.util.Date().toString())), ReplaceTokens::class.java)
 		}
 	}
 }
