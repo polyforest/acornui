@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
 	base
 	idea
@@ -26,6 +28,12 @@ plugins {
 	kotlin("jvm") apply false
 	kotlin("js") apply false
 	kotlin("multiplatform") apply false
+}
+
+idea {
+	module {
+		excludeDirs = excludeDirs + file("templates")
+	}
 }
 
 buildscript {
@@ -73,4 +81,27 @@ for (taskName in listOf("check", "build", "publish", "publishToMavenLocal")) {
 	tasks.named(taskName) {
 		dependsOn(gradle.includedBuild("gradle-kotlin-plugins").task(":$taskName"))
 	}
+}
+
+val buildTemplatesTask = tasks.register<Sync>("buildTemplates") {
+	exclude("**/build")
+	exclude("**/.idea")
+	exclude("**/.gradle")
+	from("templates")
+	into(buildDir.resolve("templates"))
+	filter(mapOf("tokens" to mapOf("acornVersion" to version)), ReplaceTokens::class.java)
+}
+
+val archiveBasicTemplate = tasks.register<Zip>("archiveBasicTemplate") {
+	exclude("**/build")
+	exclude("**/.idea")
+	exclude("**/.gradle")
+	group = "publishing"
+	dependsOn(buildTemplatesTask)
+	archiveBaseName.set("acornUi")
+	from(buildDir.resolve("templates/basic"))
+}
+
+tasks.named("build") {
+	dependsOn(archiveBasicTemplate)
 }
