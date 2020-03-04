@@ -56,3 +56,4 @@ jobs:
           password: ${{ secrets.BANDBOX_FTP_PASSWORD }}
           source: "build/distributions,build/templates/latest.txt"
           target: "~/artifacts.acornui.com/templates/"
+          strip_components: 2
