@@ -102,6 +102,10 @@ val archiveBasicTemplate = tasks.register<Zip>("archiveBasicTemplate") {
 	from(buildDir.resolve("templates/basic"))
 }
 
-tasks.named("build") {
+tasks.named("publishToMavenLocal") {
+	dependsOn(archiveBasicTemplate)
+}
+
+tasks.named("publish") {
 	dependsOn(archiveBasicTemplate)
 }

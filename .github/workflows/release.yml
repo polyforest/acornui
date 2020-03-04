@@ -28,3 +28,11 @@ jobs:
           ORG_GRADLE_PROJECT_signingKeyId: ${{secrets.SIGNING_KEY_ID}}
           ORG_GRADLE_PROJECT_signingPassword: ${{secrets.SIGNING_PASSWORD}}
           ORG_GRADLE_PROJECT_signingKey: ${{secrets.SIGNING_KEY}}
+      - name: Upload Templates
+          uses: appleboy/scp-action@v0.0.5
+          with:
+            host: bandbox.dreamhost.com
+            username: ${{ secrets.BANDBOX_FTP_USERNAME }}
+            password: ${{ secrets.BANDBOX_FTP_PASSWORD }}
+            source: "build/distributions,build/templates/release.txt"
+            target: "~/artifacts.acornui.com/templates/"
