@@ -300,6 +300,17 @@ fun Context?.owns(other: Context?): Boolean {
 }
 
 /**
+ * Returns a new context where the new context's owner is `this` and the [Context.coroutineContext] contains elements
+ * of both this [Context.coroutineContext] and [context].
+ *
+ * @see [CoroutineContext.plus]
+ */
+operator fun Context.plus(context: CoroutineContext) : Context {
+	return ContextImpl(owner = this, dependencies = childDependencies, coroutineContext = coroutineContext + context)
+}
+
+
+/**
  * Traverses this Owned object's ownership lineage (starting with `this`), invoking a callback on each owner up the
  * chain.
  * @param callback The callback to invoke on each owner ancestor. If this callback returns true, iteration will
