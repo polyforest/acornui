@@ -191,7 +191,8 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	private fun refreshModalBlocker() {
-		view.modalIndex = _currentPopUps.indexOfLast { it.isModal }
+		if (!view.isDisposed)
+			view.modalIndex = _currentPopUps.indexOfLast { it.isModal }
 	}
 
 	override fun clear() {
@@ -215,7 +216,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
-		removePopUp(popUpInfo, allowDisposal = false)
+		removePopUp(popUpInfo.child, allowDisposal = false)
 		val child = popUpInfo.child
 		if (child is Closeable)
 			child.closed.add(::childClosedHandler)
@@ -304,15 +305,19 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		}
 	})
 
-	var modalIndex: Int by afterChange(-1) { value ->
-		// Reorder the modal fill container and set its visibility.
-		if (value == -1) {
-			showModal = false
-		} else {
-			showModal = true
-			_children.addBefore(modalFillContainer, elements[value])
+	var modalIndex: Int = -1
+		set(value) {
+			if (value >= elements.size)
+				throw IllegalArgumentException("modalIndex must be less than elements.size")
+			field = value
+			// Reorder the modal fill container and set its visibility.
+			if (value == -1) {
+				showModal = false
+			} else {
+				showModal = true
+				_children.addBefore(modalFillContainer, elements[value])
+			}
 		}
-	}
 
 	private var tween: Tween? = null
 	private var showModal: Boolean by afterChange(false) { value ->
