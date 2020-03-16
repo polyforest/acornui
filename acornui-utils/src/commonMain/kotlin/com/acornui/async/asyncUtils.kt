@@ -97,7 +97,7 @@ fun Job.withTimeout(timeout: Duration, scope: CoroutineScope = GlobalScope) {
 class MainTimeoutException(timeout: Duration) : CancellationException("Job timed out after ${timeout.inSeconds} seconds.")
 
 /**
- * Launches a coroutine with a [SupervisorJob] whose parent is set to the current scope's job.
+ * Launches a coroutine inside a supervisor scope.
  *
  * - Exceptions thrown in this supervised job will not cancel the parent job.
  * - Cancellations in the parent job will cancel this supervised job.
