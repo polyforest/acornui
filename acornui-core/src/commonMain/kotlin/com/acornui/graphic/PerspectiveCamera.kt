@@ -40,8 +40,7 @@ open class PerspectiveCamera : CameraBase() {
 	private val tmp2: Vector2 = Vector2()
 
 	protected open fun updateProjection() {
-		val aspect = viewportWidth / viewportHeight
-		_projection.setToProjection(abs(near), abs(far), fieldOfView, aspect)
+		_projection.setToProjection(abs(near), abs(far), fieldOfView, viewport.width / viewport.height)
 	}
 
 	protected open fun updateView() {
@@ -51,12 +50,12 @@ open class PerspectiveCamera : CameraBase() {
 	override fun updateViewProjection() {
 		updateProjection()
 		updateView()
-		_combined.set(_projection)
-		_combined.mul(_view)
+		_viewProjection.set(_projection)
+		_viewProjection.mul(_view)
 	}
 
 	override fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling) {
-		scaling.apply(viewportWidth, viewportHeight, width, height, tmp2)
+		scaling.apply(viewport.width, viewport.height, width, height, tmp2)
 		val (newW, newH) = tmp2
 		val distance = (newH * 0.5f) / tan(fieldOfView * 0.5f)
 		moveToLookAtPoint(x + newW * 0.5f, y + newH * 0.5f, 0f, distance)

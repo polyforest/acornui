@@ -64,7 +64,7 @@ class LightingRenderer(
 	// Point lights
 	private val pointLightShadowMaps: Array<CubeMap>
 	private val pointShadowsFbo = own(framebuffer(pointShadowsResolution, pointShadowsResolution, hasDepth = true, hasStencil = hasStencil))
-	private val pointLightCamera = PointLightCamera(window, pointShadowsResolution.toFloat())
+	private val pointLightCamera = PointLightCamera(pointShadowsResolution.toFloat())
 
 	private val bias = Matrix4().apply {
 		scl(0.5f, 0.5f, 0.5f)
@@ -159,7 +159,7 @@ class LightingRenderer(
 						gl.clear(Gl20.COLOR_BUFFER_BIT or Gl20.DEPTH_BUFFER_BIT)
 						if (pointLight.shadowSidesEnabled[j]) {
 							pointLightCamera.update(pointLight, j)
-							uniforms.put(u_pointLightMvp, pointLightCamera.camera.combined)
+							uniforms.put(u_pointLightMvp, pointLightCamera.camera.viewProjectionTransform)
 							renderOcclusion()
 
 							gl.batch.flush()

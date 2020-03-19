@@ -17,21 +17,20 @@
 package com.acornui.graphic.lighting
 
 import com.acornui.graphic.PerspectiveCamera
-import com.acornui.graphic.Window
+import com.acornui.graphic.setViewport
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector3
 
 /**
  * @author nbilyk
  */
-class PointLightCamera(window: Window, resolution: Float) {
+class PointLightCamera(resolution: Float) {
 
 	val camera = PerspectiveCamera()
 
 	init {
 		camera.fieldOfView = 90f * MathUtils.degRad
-		camera.viewportWidth = resolution
-		camera.viewportHeight = resolution
+		camera.setViewport(resolution, resolution)
 	}
 
 	fun update(pointLight: PointLight, direction: Int) {

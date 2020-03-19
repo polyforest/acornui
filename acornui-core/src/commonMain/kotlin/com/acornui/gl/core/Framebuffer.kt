@@ -21,10 +21,7 @@ import com.acornui.DisposedException
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.di.Context
-import com.acornui.graphic.Camera
-import com.acornui.graphic.OrthographicCamera
-import com.acornui.graphic.Texture
-import com.acornui.graphic.yDown
+import com.acornui.graphic.*
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
@@ -262,14 +259,13 @@ class Framebuffer constructor(
  * Configures a Camera to match the viewport used in this framebuffer.
  * This will set the viewport and positioning to 'see' the framebuffer.
  *
- * @param camera The camera to configure. (A newly constructed Sprite is the default)
+ * @param camera The camera to configure. (A newly constructed Orthographic camera is the default)
  */
 fun Framebuffer.camera(camera: Camera = OrthographicCamera().apply { yDown(false) }): Camera {
 	val viewport = viewport
-	return camera.apply {
-		setViewport(viewport.width.toFloat() / scaleX, viewport.height.toFloat() / scaleY)
-		moveToLookAtRect(viewport.x.toFloat() / scaleX, viewport.y.toFloat() / scaleY, viewportWidth, viewportHeight)
-	}
+	camera.setViewport(viewport.width.toFloat() / scaleX, viewport.height.toFloat() / scaleY)
+	camera.moveToLookAtRect(viewport.x.toFloat() / scaleX, viewport.y.toFloat() / scaleY, camera.viewport.width, camera.viewport.height)
+	return camera
 }
 
 class BufferTexture(gl: Gl20,

@@ -23,9 +23,10 @@ import com.acornui.component.ValidationFlags.LAYOUT
 import com.acornui.component.ValidationFlags.VIEW_PROJECTION
 import com.acornui.di.Context
 import com.acornui.gl.core.useCamera
-import com.acornui.gl.core.useViewportFromCanvasTransform
+import com.acornui.gl.core.useViewport
 import com.acornui.graphic.Camera
 import com.acornui.graphic.OrthographicCamera
+import com.acornui.graphic.setViewport
 import com.acornui.math.*
 
 /**
@@ -47,7 +48,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	/**
 	 * The canvas transformation for the scene will be based on
 	 */
-	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.DRAW_REGION) {
+	override val viewport: RectangleRo by validationProp(ValidationFlags.DRAW_REGION) {
 		canvasTransformOverride ?: run {
 			parent?.localToCanvas(_canvasTransform.set(x, y, right, bottom).translate(-originX, -originY))
 			_canvasTransform
@@ -79,7 +80,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	override fun render() {
 		if (visible && colorTint.a > 0f) {
 			gl.uniforms.useCamera(camera) {
-				gl.useViewportFromCanvasTransform(canvasTransform, window.scaleX, window.scaleY) {
+				gl.useViewport(viewport, window.scaleX, window.scaleY) {
 					draw()
 				}
 			}

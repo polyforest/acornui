@@ -18,6 +18,7 @@
 
 package com.acornui.graphic
 
+import com.acornui.component.CameraTransformableRo
 import com.acornui.math.*
 import com.acornui.observe.ModTagRo
 import com.acornui.observe.modTag
@@ -26,7 +27,7 @@ import com.acornui.signal.bind
 import com.acornui.signal.or
 import kotlin.properties.ReadWriteProperty
 
-interface CameraRo {
+interface CameraRo : CameraTransformableRo {
 
 	/**
 	 * Incremented whenever something on this camera has changed.
@@ -34,133 +35,38 @@ interface CameraRo {
 	val modTag: ModTagRo
 
 	/**
-	 * The combined projection and view matrix.
-	 */
-	val combined: Matrix4Ro
-
-	/**
 	 * The position of the camera
 	 */
 	val position: Vector3Ro
 
 	/**
-	 * The unit length direction vector of the camera
+	 * The unit length direction vector of the camera.
 	 */
 	val direction: Vector3Ro
 
 	/**
-	 * The unit length up vector of the camera
+	 * The unit length up vector of the camera.
 	 */
 	val up: Vector3Ro
 
 	/**
-	 * The projection matrix.
-	 */
-	val projection: Matrix4Ro
-
-	/**
-	 * The view matrix.
-	 */
-	val view: Matrix4Ro
-
-	/**
-	 * The near clipping plane distance, has to be positive
+	 * The near clipping plane distance, must be positive.
 	 */
 	val near: Float
 
 	/**
-	 * The far clipping plane distance, has to be positive
+	 * The far clipping plane distance, must be positive.
 	 */
 	val far: Float
 
 	/**
-	 * The viewport width
-	 */
-	var viewportWidth: Float
-
-	/**
-	 * The viewport height
-	 */
-	var viewportHeight: Float
-
-	/**
-	 * The frustum
+	 * The region of space that may appear on the screen.
 	 */
 	val frustum: FrustumRo
-
-	/**
-	 * The inverse combined projection and view matrix
-	 */
-	val combinedInv: Matrix4Ro
-
-}
-
-val CameraRo.aspect: Float
-	get() = viewportWidth / viewportHeight
-
-/**
- * Translates a point given in window coordinates to global space. The x- and y-coordinate of vec are assumed to be
- * in window coordinates (origin is the top left corner, y pointing down, x pointing to the right) as reported by
- * the canvas coordinates in input events. A z-coordinate of 0 will return a point on the near plane, a z-coordinate
- * of 1 will return a point on the far plane.
- * @param canvasCoords the point in canvas coordinates (origin top left). This will be mutated.
- * @param viewportX the coordinate of the bottom left corner of the viewport in glViewport coordinates.
- * @param viewportY the coordinate of the bottom left corner of the viewport in glViewport coordinates.
- * @param viewportWidth the width of the viewport in pixels
- * @param viewportHeight the height of the viewport in pixels
- */
-fun CameraRo.canvasToGlobal(canvasCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-	canvasCoords.x = 2f * (canvasCoords.x - viewportX) / viewportWidth - 1f
-	canvasCoords.y = -2f * (canvasCoords.y - viewportY) / viewportHeight + 1f
-	canvasCoords.z = 2f * canvasCoords.z - 1f
-	combinedInv.prj(canvasCoords)
-	return canvasCoords
-}
-
-/**
- * Projects [globalCoords] given in global space to window coordinates. The window coordinate system has its
- * origin in the top left, with the y-axis pointing downwards and the x-axis pointing to the right.
- *
- * @param viewportX the coordinate of the top left corner of the viewport in glViewport coordinates.
- * @param viewportY the coordinate of the top left corner of the viewport in glViewport coordinates.
- * @param viewportWidth the width of the viewport in pixels
- * @param viewportHeight the height of the viewport in pixels
- */
-fun CameraRo.project(globalCoords: Vector3, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float): Vector3 {
-	combined.prj(globalCoords) // Global coords become clip coords.
-	// Convert clip coords to canvas coords.
-	globalCoords.x = viewportWidth * (globalCoords.x + 1f) * 0.5f + viewportX
-	globalCoords.y = viewportHeight * (-globalCoords.y + 1f) * 0.5f + viewportY
-	globalCoords.z = (globalCoords.z + 1f) * 0.5f
-	return globalCoords
 }
 
 private val originTmp = Vector3()
 private val directionTmp = Vector3()
-
-/**
- * Creates a picking [Ray] from the coordinates given in global coordinates. The global coordinates origin
- * is assumed to be in the top left corner, its y-axis pointing down, the x-axis  pointing to the right.
- *
- * @param viewportX the x coordinate of the bottom left corner of the viewport in glViewport coordinates.
- * @param viewportY the y coordinate of the bottom left corner of the viewport in glViewport coordinates.
- * @param viewportWidth the width of the viewport in pixels
- * @param viewportHeight the height of the viewport in pixels
- * @return The [out] parameter. The Ray will be in global coordinate space.
- */
-fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewportX: Float, viewportY: Float, viewportWidth: Float, viewportHeight: Float, out: Ray): Ray {
-	canvasToGlobal(originTmp.set(canvasX, canvasY, -1f), viewportX, viewportY, viewportWidth, viewportHeight)
-	canvasToGlobal(directionTmp.set(canvasX, canvasY, 0f), viewportX, viewportY, viewportWidth, viewportHeight)
-	directionTmp.sub(originTmp)
-	out.set(originTmp, directionTmp)
-	return out
-}
-
-fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: MinMaxRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.xMin, viewport.yMin, viewport.width, viewport.height, out)
-fun CameraRo.getPickRay(canvasX: Float, canvasY: Float, viewport: RectangleRo, out: Ray): Ray = getPickRay(canvasX, canvasY, viewport.x, viewport.y, viewport.width, viewport.height, out)
-
-fun CameraRo.project(globalCoords: Vector3, viewport: MinMaxRo): Vector3 = project(globalCoords, viewport.xMin, viewport.yMin, viewport.width, viewport.height)
-fun CameraRo.project(globalCoords: Vector3, viewport: RectangleRo): Vector3 = project(globalCoords, viewport.x, viewport.y, viewport.width, viewport.height)
 
 interface Camera : CameraRo {
 
@@ -180,19 +86,16 @@ interface Camera : CameraRo {
 	fun setUp(value: Vector3Ro) = setUp(value.x, value.y, value.z)
 
 	/**
-	 * The near clipping plane distance, has to be positive
+	 * The near clipping plane distance, must be positive.
 	 */
 	override var near: Float
 
 	/**
-	 * The far clipping plane distance, has to be positive
+	 * The far clipping plane distance, must be positive.
 	 */
 	override var far: Float
 
-	fun setViewport(width: Float, height: Float) {
-		viewportWidth = maxOf(1f, width)
-		viewportHeight = maxOf(1f, height)
-	}
+	override var viewport: RectangleRo
 
 	fun pointToLookAt(target: Vector3Ro) = pointToLookAt(target.x, target.y, target.z)
 
@@ -214,6 +117,20 @@ interface Camera : CameraRo {
 	 * @param scaling The scaling type to fit to the given width/height. This may not be a stretch type.
 	 */
 	fun moveToLookAtRect(x: Float, y: Float, width: Float, height: Float, scaling: Scaling = Scaling.FIT)
+}
+
+/**
+ * Sets the [Camera.viewport].
+ */
+fun Camera.setViewport(width: Float, height: Float) {
+	viewport = Rectangle(0f, 0f, width, height)
+}
+
+/**
+ * Sets the [Camera.viewport].
+ */
+fun Camera.setViewport(x: Float, y: Float, width: Float, height: Float) {
+	viewport = Rectangle(x, y, width, height)
 }
 
 fun Camera.moveToLookAtRect(region: RectangleRo, scaling: Scaling = Scaling.FIT) = moveToLookAtRect(region.x, region.y, region.width, region.height, scaling)
@@ -256,25 +173,19 @@ fun Camera.yDown(value: Boolean) {
 
 abstract class CameraBase : Camera {
 
-	protected val _combined: Matrix4 = Matrix4()
-	override val combined: Matrix4Ro
+	protected val _viewProjection: Matrix4 = Matrix4()
+	override val viewProjectionTransform: Matrix4Ro
 		get() {
 			validateViewProjection()
-			return _combined
+			return _viewProjection
 		}
 
 	protected val _modTag = modTag()
 
-	/**
-	 * Incremented whenever something on this camera has changed.
-	 */
 	override val modTag: ModTagRo = _modTag
 
 	protected val _position = Vector3()
 
-	/**
-	 * The position of the camera
-	 */
 	override val position: Vector3Ro
 		get() = _position
 
@@ -286,17 +197,11 @@ abstract class CameraBase : Camera {
 
 	protected val _direction = Vector3.Z.copy()
 
-	/**
-	 * The unit length direction vector of the camera
-	 */
 	override val direction: Vector3Ro
 		get() = _direction
 
 	protected val _up: Vector3 = Vector3.NEG_Y.copy()
 
-	/**
-	 * The unit length up vector of the camera
-	 */
 	override val up: Vector3Ro
 		get() = _up
 
@@ -307,10 +212,7 @@ abstract class CameraBase : Camera {
 
 	protected val _projection: Matrix4 = Matrix4()
 
-	/**
-	 * The projection matrix
-	 */
-	override val projection: Matrix4Ro
+	override val projectionTransform: Matrix4Ro
 		get() {
 			validateViewProjection()
 			return _projection
@@ -318,34 +220,20 @@ abstract class CameraBase : Camera {
 
 	protected val _view: Matrix4 = Matrix4()
 
-	/**
-	 * The view matrix
-	 */
-	override val view: Matrix4Ro
+	override val viewTransform: Matrix4Ro
 		get() {
 			validateViewProjection()
 			return _view
 		}
 
-	/**
-	 * The near clipping plane distance, has to be positive
-	 */
 	override var near by bindable(1f)
 
 	/**
-	 * The far clipping plane distance, has to be positive
+	 * The far clipping plane distance, must be positive.
 	 */
 	override var far by bindable(3000f)
 
-	/**
-	 * The viewport width
-	 */
-	override var viewportWidth by bindable(1f)
-
-	/**
-	 * The viewport height
-	 */
-	override var viewportHeight by bindable(1f)
+	override var viewport: RectangleRo by bindable(Rectangle(0f, 0f, 1f, 1f))
 
 	//------------------------------------
 	// Set after update()
@@ -353,9 +241,6 @@ abstract class CameraBase : Camera {
 
 	protected val _frustum: Frustum = Frustum()
 
-	/**
-	 * The frustum
-	 */
 	override val frustum: FrustumRo
 		get() {
 			validateFrustum()
@@ -364,10 +249,7 @@ abstract class CameraBase : Camera {
 
 	protected val _combinedInv: Matrix4 = Matrix4()
 
-	/**
-	 * The inverse combined projection and view matrix
-	 */
-	override val combinedInv: Matrix4Ro
+	override val viewProjectionTransformInv: Matrix4Ro
 		get() {
 			validateCombinedInv()
 			return _combinedInv
@@ -379,9 +261,6 @@ abstract class CameraBase : Camera {
 
 	private val tmpVec = Vector3()
 
-	/**
-	 * Sets the camera's direction, keeping the up vector orthonormal.
-	 */
 	override fun setDirection(x: Float, y: Float, z: Float, keepUpOrthonormal: Boolean) {
 		if (x == 0f && y == 0f && z == 0f) return
 		if (keepUpOrthonormal) {
@@ -402,9 +281,6 @@ abstract class CameraBase : Camera {
 		dirty()
 	}
 
-	/**
-	 * Recalculates the direction of the camera to look at the point (x, y, z).
-	 */
 	override fun pointToLookAt(x: Float, y: Float, z: Float) {
 		setDirection(x - position.x, y - position.y, z - position.z)
 	}
@@ -575,11 +451,11 @@ abstract class CameraBase : Camera {
 	protected abstract fun updateViewProjection()
 
 	protected open fun updateInvCombined() {
-		_combinedInv.set(_combined).inv()
+		_combinedInv.set(_viewProjection).inv()
 	}
 
 	protected open fun updateFrustum() {
-		_frustum.update(combinedInv)
+		_frustum.update(viewProjectionTransformInv)
 	}
 
 	protected fun <T> bindable(initial: T): ReadWriteProperty<Any?, T> = afterChange(initial) {

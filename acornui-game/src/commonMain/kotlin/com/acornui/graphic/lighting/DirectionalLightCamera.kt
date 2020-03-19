@@ -54,7 +54,7 @@ class DirectionalLightCamera {
 	fun setClipSpaceFromWorld(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float, viewCamera: CameraRo) {
 		setClipSpace(left, right, bottom, top, near, far)
 		for (i in 0..clipSpace.lastIndex) {
-			viewCamera.combined.prj(clipSpace[i])
+			viewCamera.viewProjectionTransform.prj(clipSpace[i])
 		}
 	}
 
@@ -114,7 +114,7 @@ class DirectionalLightCamera {
 		bounds.inf()
 		for (i in 0..clipSpace.lastIndex) {
 			lastClipSpace[i].set(clipSpace[i]) // For no-op check.
-			viewCam.combinedInv.prj(tmp.set(clipSpace[i])) // Convert the screen boundary to world space.
+			viewCam.viewProjectionTransformInv.prj(tmp.set(clipSpace[i])) // Convert the screen boundary to world space.
 			view.prj(tmp) // Project with the light's direction.
 			bounds.ext(tmp)
 		}

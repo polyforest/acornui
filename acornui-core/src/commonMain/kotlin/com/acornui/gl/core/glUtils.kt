@@ -78,15 +78,15 @@ inline fun Gl20.useViewport(x: Int, y: Int, width: Int, height: Int, inner: () -
 
 inline fun Gl20.useViewport(region: IntRectangleRo, inner: () -> Unit) = useViewport(region.x, region.y, region.width, region.height, inner)
 
-private val viewport = IntArray(4)
+private val viewportTmp = IntArray(4)
 
-fun Gl20.useViewportFromCanvasTransform(canvasTransform: RectangleRo, scaleX: Float, scaleY: Float, inner: () -> Unit) {
-	getParameteriv(Gl20.VIEWPORT, viewport)
+fun Gl20.useViewport(viewport: RectangleRo, scaleX: Float, scaleY: Float, inner: () -> Unit) {
+	getParameteriv(Gl20.VIEWPORT, viewportTmp)
 	useViewport(
-			floor(canvasTransform.x * scaleX).toInt(),
-			floor((viewport[3] - canvasTransform.bottom * scaleY)).toInt(),
-			ceil(canvasTransform.width * scaleX).toInt(),
-			ceil(canvasTransform.height * scaleY).toInt(),
+			floor(viewport.x * scaleX).toInt(),
+			floor((viewportTmp[3] - viewport.bottom * scaleY)).toInt(),
+			ceil(viewport.width * scaleX).toInt(),
+			ceil(viewport.height * scaleY).toInt(),
 			inner
 	)
 }

@@ -453,7 +453,7 @@ fun Uniforms.setCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, mode
 	}
 }
 
-fun Uniforms.setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = setCamera(camera.combined, camera.view, model)
+fun Uniforms.setCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY) = setCamera(camera.viewProjectionTransform, camera.viewTransform, model)
 
 /**
  * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
@@ -472,5 +472,5 @@ fun Uniforms.useCamera(viewProjection: Matrix4Ro, viewTransform: Matrix4Ro, mode
  * Temporarily uses a camera, resetting the uniforms when [inner] has completed.
  */
 fun Uniforms.useCamera(camera: CameraRo, model: Matrix4Ro = Matrix4.IDENTITY, inner: () -> Unit) {
-	useCamera(camera.combined, camera.view, model, inner)
+	useCamera(camera.viewProjectionTransform, camera.viewTransform, model, inner)
 }

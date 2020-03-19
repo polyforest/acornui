@@ -18,7 +18,6 @@
 
 package com.acornui.component
 
-import com.acornui.Disposable
 import com.acornui.collection.forEach2
 import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
@@ -68,12 +67,12 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 		canvasClipRegionOverride ?: _windowRegion
 	}
 
-	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
+	override val viewport: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
 		canvasTransformOverride ?: _windowRegion
 	}
 
 	override val viewProjectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.combined ?: parent?.viewProjectionTransform ?: Matrix4.IDENTITY
+		cameraOverride?.viewProjectionTransform ?: parent?.viewProjectionTransform ?: Matrix4.IDENTITY
 	}
 
 	init {

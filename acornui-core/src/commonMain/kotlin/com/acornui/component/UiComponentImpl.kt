@@ -215,11 +215,11 @@ open class UiComponentImpl(
 	}
 
 	override val projectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.projection ?: parent?.projectionTransform ?: Matrix4.IDENTITY
+		cameraOverride?.projectionTransform ?: parent?.projectionTransform ?: Matrix4.IDENTITY
 	}
 
 	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		cameraOverride?.view ?: parent?.viewTransform ?: Matrix4.IDENTITY
+		cameraOverride?.viewTransform ?: parent?.viewTransform ?: Matrix4.IDENTITY
 	}
 
 	/**
@@ -227,12 +227,14 @@ open class UiComponentImpl(
 	 * If set, this will transform to canvas coordinates and [canvasClipRegion] will be the intersection of the
 	 * parent clip region and this region.
 	 */
+	@Suppress("RemoveExplicitTypeArguments")
 	protected var clipRegionLocal: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.DRAW_REGION) { it?.copy() }
 
 	/**
 	 * If set, [canvasClipRegion] will be set to this, and not the intersection of [clipRegionLocal] and the
 	 * parent clipping.
 	 */
+	@Suppress("RemoveExplicitTypeArguments") // Type inference failed error
 	var canvasClipRegionOverride: MinMaxRo? by validationProp<MinMaxRo?>(null, ValidationFlags.DRAW_REGION) { it?.copy() }
 
 	private val _clipRegionIntersection = MinMax()
@@ -245,12 +247,12 @@ open class UiComponentImpl(
 	}
 
 	/**
-	 * If set, [canvasTransform] will use this explicit value.
+	 * If set, [viewport] will use this explicit value.
 	 */
 	var canvasTransformOverride: RectangleRo? by validationProp<RectangleRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
 
-	override val canvasTransform: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		canvasTransformOverride ?: parent?.canvasTransform ?: RectangleRo.EMPTY
+	override val viewport: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
+		canvasTransformOverride ?: parent?.viewport ?: RectangleRo.EMPTY
 	}
 
 	init {
