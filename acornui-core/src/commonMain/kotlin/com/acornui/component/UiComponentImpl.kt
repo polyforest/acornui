@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("PropertyName")
+
 package com.acornui.component
 
 import com.acornui.Disposable
@@ -128,7 +130,7 @@ open class UiComponentImpl(
 	private var _inheritedInteractivityMode = InteractivityMode.ALL
 	final override val interactivityModeInherited: InteractivityMode
 		get() {
-			validate(ValidationFlags.INHERITED_PROPERTIES)
+			validate(ValidationFlags.INTERACTIVITY_MODE)
 			return _inheritedInteractivityMode
 		}
 
@@ -144,7 +146,7 @@ open class UiComponentImpl(
 					else -> {
 					}
 				}
-				invalidate(ValidationFlags.INHERITED_PROPERTIES)
+				invalidate(ValidationFlags.INTERACTIVITY_MODE)
 			}
 		}
 
@@ -261,7 +263,7 @@ open class UiComponentImpl(
 				addNode(HIERARCHY_ASCENDING, LAYOUT, ::updateHierarchyAscending)
 				addNode(TRANSFORM, ::updateTransform)
 				addNode(COLOR_TINT, ::updateColorTint)
-				addNode(INHERITED_PROPERTIES, ::updateInheritedProperties)
+				addNode(INTERACTIVITY_MODE, ::updateInheritedProperties)
 				addNode(VERTICES_GLOBAL, LAYOUT or TRANSFORM or COLOR_TINT, ::updateVerticesGlobal)
 				addNode(VIEW_PROJECTION, ::updateViewProjection)
 				addNode(DRAW_REGION, LAYOUT or TRANSFORM or VIEW_PROJECTION, ::updateDrawRegion)
@@ -871,6 +873,12 @@ open class UiComponentImpl(
 		return flagsInvalidated
 	}
 
+	/**
+	 * Invoked when this component has been invalidated.
+	 * @param flagsInvalidated The bit flags invalidated. This can be checked like:
+	 * `flagsInvalidated containsFlag ValidationFlags.LAYOUT`
+	 * @see ValidationFlags
+	 */
 	protected open fun onInvalidated(flagsInvalidated: Int) {
 	}
 

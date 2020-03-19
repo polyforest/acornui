@@ -67,7 +67,7 @@ interface Context : CoroutineScope {
 	/**
 	 * Dispatched when this object has been disposed.
 	 */
-	val disposed: Signal<(Context) -> Unit>
+	val disposed: Signal<(self: Context) -> Unit>
 
 	/**
 	 * Returns true if this context contains a dependency with the given key.

@@ -228,16 +228,18 @@ open class ContainerImpl(
 		get() = validation.currentFlag == ValidationFlags.LAYOUT
 
 	protected open fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
+		if (flagsInvalidated == 0) return
+		var flagsToInvalidate = flagsInvalidated and bubblingFlags
 		if (flagsInvalidated and child.layoutInvalidatingFlags > 0) {
 			// A child has invalidated a flag marked as layout invalidating.
 			if (!isValidatingLayout && (child.shouldLayout || flagsInvalidated and ValidationFlags.LAYOUT_ENABLED > 0)) {
 				// If we are currently within a layout validation, do not attempt another invalidation.
 				// If the child isn't laid out (invisible or includeInLayout is false), don't invalidate the layout
 				// unless shouldLayout has just changed.
-				invalidateLayout()
+				flagsToInvalidate = flagsToInvalidate or ValidationFlags.LAYOUT
 			}
 		}
-		invalidate(flagsInvalidated and bubblingFlags)
+		invalidate(flagsToInvalidate)
 	}
 
 	protected open fun onChildDisposed(child: UiComponent) {
@@ -349,7 +351,7 @@ open class ContainerImpl(
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
 				ValidationFlags.STYLES or
-				ValidationFlags.INHERITED_PROPERTIES or
+				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.TRANSFORM or
 				ValidationFlags.COLOR_TINT or
 				ValidationFlags.VIEW_PROJECTION

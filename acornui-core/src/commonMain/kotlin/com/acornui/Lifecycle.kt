@@ -30,17 +30,17 @@ interface LifecycleRo {
 	/**
 	 * Dispatched when this object has been activated.
 	 */
-	val activated: Signal<(LifecycleRo) -> Unit>
+	val activated: Signal<(self: LifecycleRo) -> Unit>
 
 	/**
 	 * Dispatched when this object has been deactivated.
 	 */
-	val deactivated: Signal<(LifecycleRo) -> Unit>
+	val deactivated: Signal<(self: LifecycleRo) -> Unit>
 
 	/**
 	 * Dispatched when this object has been disposed.
 	 */
-	val disposed: Signal<(LifecycleRo) -> Unit>
+	val disposed: Signal<(self: LifecycleRo) -> Unit>
 
 	/**
 	 * Returns true if this object is currently active.

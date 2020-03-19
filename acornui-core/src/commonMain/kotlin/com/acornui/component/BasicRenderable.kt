@@ -35,6 +35,10 @@ interface BasicRenderable {
 
 	/**
 	 * Updates the world vertices based on the model transform and color tint.
+	 * @param width The width of the renderable. Default is [naturalWidth].
+	 * @param height The height  of the renderable. Default is [naturalHeight].
+	 * @param transform The transformation matrix to go from local to global vertices.
+	 * @param tint The color multiplier to go from local to global color tint.
 	 */
 	fun updateGlobalVertices(width: Float = naturalWidth, height: Float = naturalHeight, transform: Matrix4Ro = Matrix4.IDENTITY, tint: ColorRo = Color.WHITE)
 

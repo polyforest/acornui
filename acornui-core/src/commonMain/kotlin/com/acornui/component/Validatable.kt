@@ -35,6 +35,11 @@ interface Validatable {
 
 	/**
 	 * Dispatched when this component has been invalidated.
+	 *
+	 * The handler is invoked with two arguments:
+	 * this
+	 * flags - The bit flags for what was invalidated.
+	 * @see ValidationFlags
 	 */
 	val invalidated: Signal<(Validatable, flags: Int) -> Unit>
 

@@ -41,10 +41,10 @@ typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
 interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StylableRo, ChildRo, Focusable {
 
-	override val disposed: Signal<(UiComponentRo) -> Unit>
-	override val activated: Signal<(UiComponentRo) -> Unit>
-	override val deactivated: Signal<(UiComponentRo) -> Unit>
-	override val invalidated: Signal<(UiComponentRo, Int) -> Unit>
+	override val disposed: Signal<(self: UiComponentRo) -> Unit>
+	override val activated: Signal<(self: UiComponentRo) -> Unit>
+	override val deactivated: Signal<(self: UiComponentRo) -> Unit>
+	override val invalidated: Signal<(self: UiComponentRo, Int) -> Unit>
 
 	override val parent: ContainerRo?
 
@@ -165,9 +165,9 @@ fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.is
 
 interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Stylable, Context {
 
-	override val disposed: Signal<(UiComponent) -> Unit>
-	override val activated: Signal<(UiComponent) -> Unit>
-	override val deactivated: Signal<(UiComponent) -> Unit>
+	override val disposed: Signal<(self: UiComponent) -> Unit>
+	override val activated: Signal<(self: UiComponent) -> Unit>
+	override val deactivated: Signal<(self: UiComponent) -> Unit>
 
 	/**
 	 * The parent on the display graph.
@@ -175,7 +175,7 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 */
 	override var parent: ContainerRo?
 
-	override val invalidated: Signal<(UiComponent, Int) -> Unit>
+	override val invalidated: Signal<(self: UiComponent, flags: Int) -> Unit>
 
 	override var visible: Boolean
 

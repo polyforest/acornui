@@ -26,8 +26,15 @@ import kotlin.math.log2
  */
 object ValidationFlags {
 
+	/**
+	 * A style property has changed. (Cascades)
+	 */
 	const val STYLES: Int = 1 shl 0
 
+	/**
+	 * A flag reserved for the general properties of a component. UiComponentImpl does not contain a validation node
+	 * for this by default.
+	 */
 	const val PROPERTIES: Int = 1 shl 1
 
 	/**
@@ -40,13 +47,30 @@ object ValidationFlags {
 	 */
 	const val HIERARCHY_DESCENDING: Int = 1 shl 3
 
+	/**
+	 * The size and position of this component's children need to be changed.
+	 */
 	const val LAYOUT: Int = 1 shl 4
+
+	/**
+	 * Whether a component should be included in layout has changed. (includeInLayout or visible)
+	 */
 	const val LAYOUT_ENABLED: Int = 1 shl 5
 
+	/**
+	 * The global transformation of a component. (Cascades)
+	 */
 	const val TRANSFORM: Int = 1 shl 6
+
+	/**
+	 * The global color tint of a component. (Cascades)
+	 */
 	const val COLOR_TINT: Int = 1 shl 7
 
-	const val INHERITED_PROPERTIES: Int = 1 shl 8
+	/**
+	 * [InteractiveElementRo.interactivityModeInherited]. (Cascades)
+	 */
+	const val INTERACTIVITY_MODE: Int = 1 shl 8
 
 	const val VIEW_PROJECTION: Int = 1 shl 9
 	const val VERTICES_GLOBAL: Int = 1 shl 10
@@ -56,7 +80,6 @@ object ValidationFlags {
 	const val RESERVED_2: Int = 1 shl 13
 	const val RESERVED_3: Int = 1 shl 14
 	const val RESERVED_4: Int = 1 shl 15
-
 
 	/**
 	 * Prints out the name of the flag for reserved flags, or the power of two for non-reserved flags.
@@ -68,10 +91,11 @@ object ValidationFlags {
 		HIERARCHY_DESCENDING -> "HIERARCHY_DESCENDING"
 		LAYOUT -> "LAYOUT"
 		LAYOUT_ENABLED -> "LAYOUT_ENABLED"
+
 		TRANSFORM -> "TRANSFORM"
 		COLOR_TINT -> "COLOR_TINT"
 
-		INHERITED_PROPERTIES -> "INHERITED_PROPERTIES"
+		INTERACTIVITY_MODE -> "INTERACTIVITY_MODE"
 
 		VIEW_PROJECTION -> "VIEW_PROJECTION"
 		VERTICES_GLOBAL -> "VERTICES_GLOBAL"
@@ -101,19 +125,10 @@ object ValidationFlags {
 		}
 		return str
 	}
-
 }
 
 fun Validatable.invalidateLayout() {
 	invalidate(ValidationFlags.LAYOUT)
-}
-
-fun Validatable.invalidateViewProjection() {
-	invalidate(ValidationFlags.VIEW_PROJECTION)
-}
-
-fun Validatable.invalidateDrawRegion() {
-	invalidate(ValidationFlags.DRAW_REGION)
 }
 
 fun Validatable.invalidateProperties() {

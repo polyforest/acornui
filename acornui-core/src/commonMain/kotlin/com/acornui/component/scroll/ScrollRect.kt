@@ -100,7 +100,7 @@ class ScrollRectImpl(
 		_bounds.x = x
 		_bounds.y = y
 		clipRegionLocal = clipRegion.set(_bounds)
-		invalidateViewProjection()
+		invalidate(ValidationFlags.VIEW_PROJECTION)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
