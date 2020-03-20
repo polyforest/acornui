@@ -2,8 +2,8 @@ package com.acornui.graphic
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.abs
 
 /**
@@ -105,15 +105,14 @@ class Hsl(
 @Serializer(forClass = Hsl::class)
 object HslSerializer : KSerializer<Hsl> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Hsl")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Hsl", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: Hsl) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.h, obj.s, obj.l, obj.a))
+	override fun serialize(encoder: Encoder, value: Hsl) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.h, value.s, value.l, value.a))
 	}
 
 	override fun deserialize(decoder: Decoder): Hsl {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Hsl(values[0], values[1], values[2], values[3])
 	}
 }

@@ -26,7 +26,6 @@ import com.acornui.time.FrameDriverImpl
 import com.acornui.time.FrameDriverRo
 import com.acornui.time.nowMs
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import setTimeout
 import kotlin.browser.window
@@ -96,7 +95,6 @@ class JsLooper : Looper {
 			setTimeout(tick0)
 	}
 
-	@UseExperimental(InternalCoroutinesApi::class)
 	private fun shutdown() {
 		_started.clear()
 		_updateAndRender.clear()

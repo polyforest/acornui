@@ -49,8 +49,8 @@ class LoadKtTest {
 	@Ignore
 	@Test
 	fun loadBinary() = runTest {
-		val request = "$root/binaryToLoad.bin".toUrlRequestData()
-		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request).toByteArray()))
+//		val request = "$root/binaryToLoad.bin".toUrlRequestData()
+//		assertEquals(TestData("binary to load contents"), binaryParse(TestData.serializer(), BinaryLoader().load(request).toByteArray()))
 	}
 
 	@Test

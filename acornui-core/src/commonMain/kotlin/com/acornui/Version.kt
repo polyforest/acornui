@@ -18,7 +18,6 @@ package com.acornui
 
 import com.acornui.di.Context
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A major.minor.patch.build representation
@@ -74,11 +73,10 @@ val Context.version: Version
 @Serializer(forClass = Version::class)
 object VersionSerializer : KSerializer<Version> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("VersionSerializer")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("VersionSerializer", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: Version) {
-		encoder.encodeString(obj.toVersionString())
+	override fun serialize(encoder: Encoder, value: Version) {
+		encoder.encodeString(value.toVersionString())
 	}
 
 	override fun deserialize(decoder: Decoder): Version {

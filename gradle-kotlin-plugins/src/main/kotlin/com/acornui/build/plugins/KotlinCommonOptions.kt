@@ -49,6 +49,8 @@ object KotlinCommonOptions {
 						useExperimentalAnnotation("kotlin.Experimental")
 						useExperimentalAnnotation("kotlin.time.ExperimentalTime")
 						useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+						useExperimentalAnnotation("kotlinx.serialization.ImplicitReflectionSerializer")
+						useExperimentalAnnotation("kotlinx.coroutines.InternalCoroutinesApi")
 					}
 				}
 

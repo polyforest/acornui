@@ -19,8 +19,8 @@ package com.acornui.math
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -554,15 +554,16 @@ class Vector2(
 @Serializer(forClass = Vector2::class)
 object Vector2Serializer : KSerializer<Vector2> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Vector2")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Vector2") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Vector2) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.x, obj.y))
+	override fun serialize(encoder: Encoder, value: Vector2) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.x, value.y))
 	}
 
 	override fun deserialize(decoder: Decoder): Vector2 {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Vector2(
 				x = values[0],
 				y = values[1]

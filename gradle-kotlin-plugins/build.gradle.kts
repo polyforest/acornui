@@ -45,7 +45,7 @@ logger.lifecycle("Kotlin plugins $group:$name:$version")
 repositories {
     jcenter()
     gradlePluginPortal()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+//    maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 }
 
 val kotlinVersion: String by project

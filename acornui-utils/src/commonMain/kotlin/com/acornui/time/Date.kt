@@ -321,11 +321,10 @@ object Months {
 @Serializer(forClass = Date::class)
 object DateSerializer : KSerializer<Date> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("DateSerializer")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Date", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: Date) {
-		encoder.encodeString(obj.toIsoString())
+	override fun serialize(encoder: Encoder, value: Date) {
+		encoder.encodeString(value.toIsoString())
 	}
 
 	override fun deserialize(decoder: Decoder): Date {

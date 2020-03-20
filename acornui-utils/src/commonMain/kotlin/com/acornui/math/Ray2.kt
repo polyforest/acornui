@@ -19,8 +19,8 @@ package com.acornui.math
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 
 
 @Serializable(with = Ray2Serializer::class)
@@ -269,17 +269,18 @@ class Ray2() : Clearable, Ray2Ro {
 @Serializer(forClass = Ray2::class)
 object Ray2Serializer : KSerializer<Ray2> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Ray2")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Ray2") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Ray2) {
-		val origin = obj.origin
-		val direction = obj.direction
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(origin.x, origin.y, direction.x, direction.y))
+	override fun serialize(encoder: Encoder, value: Ray2) {
+		val origin = value.origin
+		val direction = value.direction
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(origin.x, origin.y, direction.x, direction.y))
 	}
 
 	override fun deserialize(decoder: Decoder): Ray2 {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Ray2().set(values[0], values[1], values[2], values[3])
 	}
 }

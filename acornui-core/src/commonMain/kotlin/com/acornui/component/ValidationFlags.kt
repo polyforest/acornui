@@ -72,8 +72,20 @@ object ValidationFlags {
 	 */
 	const val INTERACTIVITY_MODE: Int = 1 shl 8
 
+	/**
+	 * View-projection matrix. (Cascades)
+	 * When the camera is changed, this should be invalidated.
+	 */
 	const val VIEW_PROJECTION: Int = 1 shl 9
+
+	/**
+	 * Global vertices.
+	 */
 	const val VERTICES_GLOBAL: Int = 1 shl 10
+
+	/**
+	 * The canvas region to which the component draws.
+	 */
 	const val DRAW_REGION: Int = 1 shl 11
 
 	const val RESERVED_1: Int = 1 shl 12
@@ -133,4 +145,8 @@ fun Validatable.invalidateLayout() {
 
 fun Validatable.invalidateProperties() {
 	invalidate(ValidationFlags.PROPERTIES)
+}
+
+fun Validatable.invalidateViewProjection() {
+	invalidate(ValidationFlags.VIEW_PROJECTION)
 }

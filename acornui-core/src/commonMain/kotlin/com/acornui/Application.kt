@@ -67,7 +67,6 @@ abstract class ApplicationBase(protected val mainContext: MainContext) : Applica
 	protected suspend fun config() = get(AppConfig)
 
 	private val appFrameDriver = FrameDriverImpl()
-	@UseExperimental(InternalCoroutinesApi::class)
 	private val appDispatcher: MainCoroutineDispatcher = AcornDispatcher(appFrameDriver)
 	private val applicationJob = Job(mainContext.coroutineContext[Job])
 	protected val applicationScope: CoroutineScope = mainContext + applicationJob

@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.abs
 
 @Serializable(with = BoxSerializer::class)
@@ -556,15 +556,14 @@ class Box(
 @Serializer(forClass = MinMax::class)
 object BoxSerializer : KSerializer<Box> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Box")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Box", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: Box) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.min.x, obj.min.y, obj.min.z, obj.max.x, obj.max.y, obj.max.z))
+	override fun serialize(encoder: Encoder, value: Box) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.min.x, value.min.y, value.min.z, value.max.x, value.max.y, value.max.z))
 	}
 
 	override fun deserialize(decoder: Decoder): Box {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Box().set(values[0], values[1], values[2], values[3], values[4], values[5])
 	}
 }

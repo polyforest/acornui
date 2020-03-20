@@ -21,8 +21,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.internal.IntSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.*
 
 /**
  * The read-only interface to [IntRectangle].
@@ -343,14 +342,14 @@ class IntRectangle(
 object IntRectangleSerializer : KSerializer<IntRectangle> {
 
 	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("IntRectangle")
+			PrimitiveDescriptor("IntRectangle", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: IntRectangle) {
-		encoder.encodeSerializableValue(IntSerializer.list, listOf(obj.x, obj.y, obj.width, obj.height))
+	override fun serialize(encoder: Encoder, value: IntRectangle) {
+		encoder.encodeSerializableValue(Int.serializer().list, listOf(value.x, value.y, value.width, value.height))
 	}
 
 	override fun deserialize(decoder: Decoder): IntRectangle {
-		val values = decoder.decodeSerializableValue(IntSerializer.list)
+		val values = decoder.decodeSerializableValue(Int.serializer().list)
 		return IntRectangle(
 				x = values[0],
 				y = values[1],

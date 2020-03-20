@@ -37,12 +37,12 @@ class RootPlugin : Plugin<Project> {
 			AcornDependencies.putVersionProperties(project.extra)
 			repositories {
 				if (acornVersion.endsWith("-SNAPSHOT")) {
-					maven("https://oss.sonatype.org/content/repositories/snapshots")
 					mavenLocal()
+					maven("https://oss.sonatype.org/content/repositories/snapshots")
 				}
 				mavenCentral()
 				jcenter()
-				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+//				maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 			}
 
 			if (!target.isAcornUiComposite) {

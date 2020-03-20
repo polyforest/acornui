@@ -16,11 +16,9 @@
 
 package com.acornui.async
 
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 
-@UseExperimental(InternalCoroutinesApi::class)
 actual fun Job.toPromiseOrBlocking() {
 	runBlocking {
 		join()

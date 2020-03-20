@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.*
-import kotlinx.serialization.internal.ListLikeDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 
 @Serializable(with = CornersSerializer2::class)
 interface CornersRo {
@@ -39,10 +39,14 @@ interface CornersRo {
 }
 
 private object CornersSerializer2 : KSerializer<CornersRo> {
-	override val descriptor: SerialDescriptor = ListDescriptor("com.acornui.math.Corners", FloatDescriptor)
+
+	@ImplicitReflectionSerializer
+	override val descriptor: SerialDescriptor = SerialDescriptor("Corners") {
+		listDescriptor<Float>()
+	}
 
 	override fun deserialize(decoder: Decoder): Corners {
-		val arr = decoder.decodeSerializableValue(FloatSerializer.list)
+		val arr = decoder.decodeSerializableValue(Float.serializer().list)
 		return when (arr.size) {
 			1 -> Corners(arr[0])
 			4 -> Corners(arr[0], arr[1], arr[2], arr[3])
@@ -51,16 +55,16 @@ private object CornersSerializer2 : KSerializer<CornersRo> {
 		}
 	}
 
-	override fun serialize(encoder: Encoder, obj: CornersRo) {
+	override fun serialize(encoder: Encoder, value: CornersRo) {
 		val list = listOf(
-				obj.topLeft.x,
-				obj.topLeft.y,
-				obj.topRight.x,
-				obj.topRight.y,
-				obj.bottomRight.x,
-				obj.bottomRight.y,
-				obj.bottomLeft.x,
-				obj.bottomLeft.y
+				value.topLeft.x,
+				value.topLeft.y,
+				value.topRight.x,
+				value.topRight.y,
+				value.bottomRight.x,
+				value.bottomRight.y,
+				value.bottomLeft.x,
+				value.bottomLeft.y
 		)
 		var allEqual = true
 		var pairsEqual = true
@@ -76,35 +80,35 @@ private object CornersSerializer2 : KSerializer<CornersRo> {
 			}
 		}
 		when {
-			allEqual -> encoder.encodeSerializableValue(FloatSerializer.list, listOf(first))
-			pairsEqual -> encoder.encodeSerializableValue(FloatSerializer.list, listOf(list[0], list[2], list[4], list[6]))
-			else -> encoder.encodeSerializableValue(FloatSerializer.list, list)
+			allEqual -> encoder.encodeSerializableValue(Float.serializer().list, listOf(first))
+			pairsEqual -> encoder.encodeSerializableValue(Float.serializer().list, listOf(list[0], list[2], list[4], list[6]))
+			else -> encoder.encodeSerializableValue(Float.serializer().list, list)
 		}
 	}
 }
 
-private class ListDescriptor(override val name: String, val elementDesc: SerialDescriptor) : SerialDescriptor {
-	override val kind: SerialKind get() = StructureKind.LIST
-	override val elementsCount: Int = 1
-	override fun getElementName(index: Int): String = index.toString()
-	override fun getElementIndex(name: String): Int =
-			name.toIntOrNull() ?: throw IllegalArgumentException("$name is not a valid list index")
-
-	override fun getElementDescriptor(index: Int): SerialDescriptor = elementDesc
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is ListLikeDescriptor) return false
-
-		if (elementDesc == other.elementDesc && name == other.name) return true
-
-		return false
-	}
-
-	override fun hashCode(): Int {
-		return elementDesc.hashCode() * 31 + name.hashCode()
-	}
-}
+//private class ListDescriptor(override val name: String, val elementDesc: SerialDescriptor) : SerialDescriptor {
+//	override val kind: SerialKind get() = StructureKind.LIST
+//	override val elementsCount: Int = 1
+//	override fun getElementName(index: Int): String = index.toString()
+//	override fun getElementIndex(name: String): Int =
+//			name.toIntOrNull() ?: throw IllegalArgumentException("$name is not a valid list index")
+//
+//	override fun getElementDescriptor(index: Int): SerialDescriptor = elementDesc
+//
+//	override fun equals(other: Any?): Boolean {
+//		if (this === other) return true
+//		if (other !is ListLikeDescriptor) return false
+//
+//		if (elementDesc == other.elementDesc && name == other.name) return true
+//
+//		return false
+//	}
+//
+//	override fun hashCode(): Int {
+//		return elementDesc.hashCode() * 31 + name.hashCode()
+//	}
+//}
 
 
 /**

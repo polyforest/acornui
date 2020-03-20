@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 
 /**
  * A MinMax object represents a minimum and maximum cartesian point.
@@ -235,14 +235,14 @@ class MinMax(
 object MinMaxSerializer : KSerializer<MinMax> {
 
 	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("MinMax")
+			PrimitiveDescriptor("MinMax", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: MinMax) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.xMin, obj.yMin, obj.xMax, obj.yMax))
+	override fun serialize(encoder: Encoder, value: MinMax) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.xMin, value.yMin, value.xMax, value.yMax))
 	}
 
 	override fun deserialize(decoder: Decoder): MinMax {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return MinMax(
 				xMin = values[0],
 				yMin = values[1],

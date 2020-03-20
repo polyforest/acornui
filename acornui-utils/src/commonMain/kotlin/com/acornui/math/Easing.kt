@@ -21,7 +21,6 @@ package com.acornui.math
 import com.acornui.collection.getInsertionIndex
 import com.acornui.collection.scl
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -627,14 +626,13 @@ object Easing {
 @Serializer(forClass = Interpolation::class)
 object InterpolationSerializer : KSerializer<Interpolation> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Interpolation")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Interpolation", PrimitiveKind.STRING)
 
 	override fun deserialize(decoder: Decoder): Interpolation {
 		return Easing.fromStr(decoder.decodeString())
 	}
 
-	override fun serialize(encoder: Encoder, obj: Interpolation) {
-		encoder.encodeString(Easing.toString(obj) ?: error("Interpolation was not registered"))
+	override fun serialize(encoder: Encoder, value: Interpolation) {
+		encoder.encodeString(Easing.toString(value) ?: error("Interpolation was not registered"))
 	}
 }

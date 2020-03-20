@@ -20,7 +20,6 @@ import com.acornui.collection.stringMapOf
 import com.acornui.io.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.cbor.Cbor
 
 /**
  * A factory that provides a Reader and Writer for ReadBuffer<Byte>
@@ -377,18 +376,4 @@ fun <T> binaryParse(binary: ReadByteBuffer, factory: From<T>): T {
 @Deprecated("use kotlinx serialization")
 fun <T> toBinary(value: T, factory: To<T>): ReadByteBuffer {
 	return BinarySerializer.write(value, factory)
-}
-
-private val cbor = Cbor()
-
-fun <T> binaryParse(deserializer: DeserializationStrategy<T>, binary: ByteArray): T {
-	return cbor.load(deserializer, binary)
-}
-
-fun <T> binaryParse(deserializer: DeserializationStrategy<T>, binary: ReadByteBuffer): T {
-	return cbor.load(deserializer, binary.toByteArray())
-}
-
-fun <T> binaryDump(serializer: SerializationStrategy<T>, value: T): ByteArray {
-	return cbor.dump(serializer, value)
 }

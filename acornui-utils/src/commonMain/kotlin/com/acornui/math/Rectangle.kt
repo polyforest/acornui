@@ -21,8 +21,8 @@ package com.acornui.math
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 
 /**
  * A read-only interface to [Rectangle]
@@ -507,15 +507,16 @@ class Rectangle(
 @Serializer(forClass = Rectangle::class)
 object RectangleSerializer : KSerializer<Rectangle> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Rectangle")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Rectangle") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Rectangle) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.x, obj.y, obj.width, obj.height))
+	override fun serialize(encoder: Encoder, value: Rectangle) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.x, value.y, value.width, value.height))
 	}
 
 	override fun deserialize(decoder: Decoder): Rectangle {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Rectangle(
 				x = values[0],
 				y = values[1],

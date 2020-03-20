@@ -75,7 +75,6 @@ internal fun runMainJob(timeout: Duration = Duration.ZERO, block: suspend MainCo
 	kotlinBugFixes()
 	val looper = looper()
 	AcornDispatcherFactory.frameDriver = looper.frameDriver // Used
-	@UseExperimental(InternalCoroutinesApi::class)
 	val dispatcher = AcornDispatcher(looper.frameDriver)
 	val scope = GlobalScope + dispatcher + Log.uncaughtExceptionHandler
 	val mainJob = scope.async {

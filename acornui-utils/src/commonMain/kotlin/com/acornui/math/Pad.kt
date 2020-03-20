@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.ceil
 
 /**
@@ -244,15 +244,16 @@ class Pad(
 @Serializer(forClass = Pad::class)
 object PadSerializer : KSerializer<Pad> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Pad")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Pad") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Pad) {
-		encoder.encodeSerializableValue(FloatSerializer.list, listOf(obj.top, obj.right, obj.bottom, obj.left))
+	override fun serialize(encoder: Encoder, value: Pad) {
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.top, value.right, value.bottom, value.left))
 	}
 
 	override fun deserialize(decoder: Decoder): Pad {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Pad(
 				top = values[0],
 				right = values[1],

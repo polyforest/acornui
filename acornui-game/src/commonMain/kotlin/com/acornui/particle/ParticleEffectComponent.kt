@@ -162,12 +162,7 @@ typealias SpriteResolver = suspend (emitter: ParticleEmitter, imageEntry: Partic
 suspend fun Context.loadParticleEffect(pDataPath: String, atlasPath: String, cacheSet: CacheSet = cacheSet(), maxParticlesScale: Float = 1f): LoadedParticleEffect {
 	@Suppress("DeferredResultUnused")
 	loadAndCacheJsonAsync(TextureAtlasData.serializer(), atlasPath, cacheSet) // Start the atlas loading and parsing in parallel.
-	val particleEffect = if (pDataPath.endsWith("bin", ignoreCase = true)) {
-		// Binary
-		binaryParse(ParticleEffect.serializer(), loadBinary(pDataPath))
-	} else {
-		jsonParse(ParticleEffect.serializer(), loadText(pDataPath))
-	}
+	val particleEffect = jsonParse(ParticleEffect.serializer(), loadText(pDataPath))
 	return loadParticleEffect(particleEffect, atlasPath, cacheSet, maxParticlesScale)
 }
 

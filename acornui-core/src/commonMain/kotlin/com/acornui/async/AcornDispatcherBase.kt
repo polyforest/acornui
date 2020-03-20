@@ -29,7 +29,6 @@ import kotlin.jvm.JvmStatic
 /**
  * The base class for scheduling coroutines with a [frameDriver].
  */
-@InternalCoroutinesApi
 sealed class AcornDispatcherBase(
 		protected val frameDriver: FrameDriverRo
 ) : MainCoroutineDispatcher(), Delay {
@@ -67,7 +66,6 @@ sealed class AcornDispatcherBase(
 /**
  * When the current thread is the main thread, invoke the dispatch block immediately.
  */
-@InternalCoroutinesApi
 private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
 
 	override val immediate: MainCoroutineDispatcher
@@ -81,7 +79,6 @@ private class ImmediateAcornDispatcher(frameDriver: FrameDriverRo) : AcornDispat
 /**
  * Dispatches execution onto Main UI thread and provides coroutine scheduling, delay, and timeout support.
  */
-@InternalCoroutinesApi
 internal class AcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase(frameDriver) {
 
 	override val immediate: MainCoroutineDispatcher = ImmediateAcornDispatcher(frameDriver)
@@ -103,7 +100,6 @@ internal class AcornDispatcher(frameDriver: FrameDriverRo) : AcornDispatcherBase
  * [MainDispatcher] dependency. [Dispatchers.Main] will guarantee invocation on the main thread, but
  */
 @Suppress("unused")
-@UseExperimental(InternalCoroutinesApi::class)
 class AcornDispatcherFactory : MainDispatcherFactory {
 
 	companion object {

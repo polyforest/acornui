@@ -18,7 +18,6 @@ package com.acornui.io
 
 import com.acornui.logging.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.net.*
@@ -94,7 +93,6 @@ suspend fun <T> load(
 	//.also { _bytesLoaded = bytesTotal }
 }
 
-@UseExperimental(InternalCoroutinesApi::class)
 private suspend fun URLConnection.connectInternal(requestData: UrlRequestData) = withContext(Dispatchers.IO) {
 	try {
 		connect()

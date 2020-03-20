@@ -16,7 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.serialization.binaryDump
 import com.acornui.serialization.binaryParse
 import com.acornui.serialization.jsonParse
 import com.acornui.serialization.jsonStringify
@@ -78,10 +77,5 @@ class Ray2Test {
 		val ray2 = jsonParse(Ray2.serializer(), str)
 		assertClose(ray.origin, ray2.origin)
 		assertClose(ray.direction, ray2.direction)
-
-		val bin = binaryDump(Ray2.serializer(), ray)
-		val ray3 = binaryParse(Ray2.serializer(), bin)
-		assertClose(ray.origin, ray3.origin)
-		assertClose(ray.direction, ray3.direction)
 	}
 }

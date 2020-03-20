@@ -20,7 +20,6 @@ import com.acornui.collection.copy
 import com.acornui.collection.stringMapOf
 import com.acornui.gl.core.Gl20
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 
 
 /**
@@ -81,13 +80,13 @@ open class BlendMode(
 object BlendModeSerializer : KSerializer<BlendMode> {
 
 	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("BlendMode")
+			PrimitiveDescriptor("BlendMode", PrimitiveKind.STRING)
 
 	override fun deserialize(decoder: Decoder): BlendMode {
 		return BlendMode.fromStr(decoder.decodeString())
 	}
 
-	override fun serialize(encoder: Encoder, obj: BlendMode) {
-		encoder.encodeString(obj.name)
+	override fun serialize(encoder: Encoder, value: BlendMode) {
+		encoder.encodeString(value.name)
 	}
 }

@@ -19,7 +19,7 @@ pluginManagement {
 	repositories {
 		gradlePluginPortal()
 		jcenter()
-		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+//		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 	resolutionStrategy {
 		eachPlugin {
@@ -38,7 +38,7 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
-		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
+//		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
 }
 

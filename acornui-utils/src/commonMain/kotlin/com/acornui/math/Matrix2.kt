@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.ObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -58,18 +58,18 @@ interface Matrix2Ro {
 class Matrix2() : Matrix2Ro {
 
 	override val values = floatArrayOf(
-		1f, 0f,
-		0f, 1f)
+			1f, 0f,
+			0f, 1f)
 
 	/**
 	 * Constructs this 2x2 matrix with column-major values.
 	 */
-	constructor (m00:Float, m10:Float, m01:Float, m11:Float) : this(floatArrayOf(m00, m10, m01, m11))
-	
+	constructor (m00: Float, m10: Float, m01: Float, m11: Float) : this(floatArrayOf(m00, m10, m01, m11))
+
 	constructor(values: FloatArray) : this() {
 		set(values)
 	}
-	
+
 	constructor(values: List<Float>) : this() {
 		set(values)
 	}
@@ -211,7 +211,7 @@ class Matrix2() : Matrix2Ro {
 	 * 4 will be copied.
 	 *
 	 * @param v The matrix, in float form, that is to be copied. Remember that this matrix is in <a
-	*           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
+	 *           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(v: List<Float>): Matrix2 {
@@ -221,13 +221,13 @@ class Matrix2() : Matrix2Ro {
 		}
 		return this
 	}
-	
+
 	/**
 	 * Sets the matrix to the given matrix as a float array. The float array must have at least 4 elements; the first
 	 * 4 will be copied.
 	 *
 	 * @param v The matrix, in float form, that is to be copied. Remember that this matrix is in <a
-	*           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
+	 *           href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> order.
 	 * @return This matrix for the purpose of chaining methods together.
 	 */
 	fun set(v: FloatArray): Matrix2 {
@@ -391,19 +391,19 @@ class Matrix2() : Matrix2Ro {
 	}
 }
 
-
 @Serializer(forClass = Matrix2::class)
 object Matrix2Serializer : KSerializer<Matrix2> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Matrix2")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Matrix2") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Matrix2) {
-		encoder.encodeSerializableValue(FloatSerializer.list, obj.values.toList())
+	override fun serialize(encoder: Encoder, value: Matrix2) {
+		encoder.encodeSerializableValue(Float.serializer().list, value.values.toList())
 	}
 
 	override fun deserialize(decoder: Decoder): Matrix2 {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Matrix2(values)
 	}
 }

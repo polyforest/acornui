@@ -27,7 +27,6 @@ import com.acornui.serialization.Reader
 import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlin.math.abs
 
 @Serializable(with = ColorSerializer::class)
@@ -596,11 +595,10 @@ data class Color(
 @Serializer(forClass = Color::class)
 object ColorSerializer : KSerializer<Color> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Color")
+	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Color", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: Color) {
-		encoder.encodeString("#" + obj.toRgbaString())
+	override fun serialize(encoder: Encoder, value: Color) {
+		encoder.encodeString("#" + value.toRgbaString())
 	}
 
 	override fun deserialize(decoder: Decoder): Color {

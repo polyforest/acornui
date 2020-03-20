@@ -5,7 +5,7 @@ package com.acornui.build.plugins.util
 import com.acornui.build.plugins.acornuiApp
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
+import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
@@ -65,7 +65,7 @@ fun Project.configureWebTasks() {
 		group = "application"
 		description = "An alias for jsAcornBrowserProductionDistribution"
 	}
-	tasks.named<Copy>("jsBrowserDistribution").configure {
+	tasks.named<Task>("jsBrowserDistribution").configure {
 		enabled = false
 		//finalizedBy("jsAcornBrowserDevelopmentDistribution", "jsAcornBrowserProductionDistribution")
 	}

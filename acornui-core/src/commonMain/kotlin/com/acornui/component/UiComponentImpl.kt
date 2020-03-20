@@ -640,7 +640,10 @@ open class UiComponentImpl(
 			return _transformLocal
 		}
 
+	@Suppress("RemoveExplicitTypeArguments")
 	override var transformOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
+
+	@Suppress("RemoveExplicitTypeArguments")
 	var transformGlobalOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
 
 	override var rotationX: Float
@@ -757,7 +760,6 @@ open class UiComponentImpl(
 		if (_scale.x == x2 && _scale.y == y2 && _scale.z == z2) return
 		_scale.set(x2, y2, z2)
 		invalidate(ValidationFlags.TRANSFORM)
-		return
 	}
 
 	override var originX: Float

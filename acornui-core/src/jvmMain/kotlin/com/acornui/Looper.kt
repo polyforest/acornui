@@ -17,14 +17,10 @@
 package com.acornui
 
 import com.acornui.signal.Signal0
-import com.acornui.signal.Signal1
 import com.acornui.time.FrameDriverImpl
 import com.acornui.time.FrameDriverRo
 import com.acornui.time.nowMs
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlin.time.Duration
-import kotlin.time.seconds
 
 actual fun looper(): Looper = JvmLooper()
 
@@ -55,7 +51,6 @@ class JvmLooper : Looper {
 	/**
 	 * Runs the multi-application loop.
 	 */
-	@UseExperimental(InternalCoroutinesApi::class)
 	override fun loop(mainJob: Job) {
 		_started.dispatch()
 		var lastFrameMs = nowMs()

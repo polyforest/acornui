@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.ObjectPool
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.FloatSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.math.tan
@@ -1601,15 +1601,16 @@ val Matrix4Ro.isIdentity: Boolean
 @Serializer(forClass = Matrix4::class)
 object Matrix4Serializer : KSerializer<Matrix4> {
 
-	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("Matrix4")
+	override val descriptor: SerialDescriptor = SerialDescriptor("Matrix4") {
+		listDescriptor<Float>()
+	}
 
-	override fun serialize(encoder: Encoder, obj: Matrix4) {
-		encoder.encodeSerializableValue(FloatSerializer.list, obj.values.asList())
+	override fun serialize(encoder: Encoder, value: Matrix4) {
+		encoder.encodeSerializableValue(Float.serializer().list, value.values.asList())
 	}
 
 	override fun deserialize(decoder: Decoder): Matrix4 {
-		val values = decoder.decodeSerializableValue(FloatSerializer.list)
+		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Matrix4(values)
 	}
 }

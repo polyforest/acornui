@@ -16,7 +16,10 @@
 
 package com.acornui.math
 
+import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
@@ -70,5 +73,11 @@ class Vector3Test {
 	@Test fun equalsTest() {
 		assertTrue(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 3f))
 		assertFalse(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 4f))
+	}
+
+	@OptIn(UnstableDefault::class)
+	@Test fun serialize() {
+		val v3Str = jsonStringify(Vector3.serializer(), Vector3(1f, 2f, 3f))
+		println(v3Str)
 	}
 }

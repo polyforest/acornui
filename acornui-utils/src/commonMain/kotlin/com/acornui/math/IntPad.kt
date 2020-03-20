@@ -18,8 +18,8 @@ package com.acornui.math
 
 import com.acornui.recycle.Clearable
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.IntSerializer
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.serializer
 
 /**
  * A read-only interface to [IntPad]
@@ -211,14 +211,14 @@ class IntPad(
 object IntPadSerializer : KSerializer<IntPad> {
 
 	override val descriptor: SerialDescriptor =
-			StringDescriptor.withName("IntPad")
+			PrimitiveDescriptor("IntPad", PrimitiveKind.STRING)
 
-	override fun serialize(encoder: Encoder, obj: IntPad) {
-		encoder.encodeSerializableValue(IntSerializer.list, listOf(obj.top, obj.right, obj.bottom, obj.left))
+	override fun serialize(encoder: Encoder, value: IntPad) {
+		encoder.encodeSerializableValue(Int.serializer().list, listOf(value.top, value.right, value.bottom, value.left))
 	}
 
 	override fun deserialize(decoder: Decoder): IntPad {
-		val values = decoder.decodeSerializableValue(IntSerializer.list)
+		val values = decoder.decodeSerializableValue(Int.serializer().list)
 		return IntPad(
 				top = values[0],
 				right = values[1],
