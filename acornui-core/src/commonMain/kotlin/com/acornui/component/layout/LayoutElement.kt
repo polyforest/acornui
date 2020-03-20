@@ -19,46 +19,31 @@ package com.acornui.component.layout
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
 
+/**
+ * An element with a size, position, 3d transformation, and minimum dimensions.
+ */
 interface LayoutElementRo : BasicLayoutElementRo, TransformableRo {
 
 	/**
-	 * Returns true if visible and the includeInLayout flag is true. If this is false, this layout element will not
-	 * be included in layout algorithms.
+	 * The minimum width this element can be.
 	 */
-	val shouldLayout: Boolean
-
-	/**
-	 * Given a canvas position, casts a ray in the direction of the camera, and returns true if that ray intersects
-	 * with this component. This will always return false if this element is not active (on the stage)
-	 * @param canvasX
-	 * @param canvasY
-	 */
-	fun containsCanvasPoint(canvasX: Float, canvasY: Float): Boolean
-
-	/**
-	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
-	 * If there was an intersection, the intersection vector will be set to the intersection point.
-	 *
-	 * @param globalRay The ray (in world coordinates) to cast.
-	 *
-	 * @return Returns true if the ray intersects with the bounding box of this layout element.
-	 */
-	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean
-
 	val minWidth: Float
+
+	/**
+	 * The minimum height this element can be.
+	 */
 	val minHeight: Float
+
+	/**
+	 * The maximum width this element can be.
+	 */
 	val maxWidth: Float
+
+	/**
+	 * The maximum height this element can be.
+	 */
 	val maxHeight: Float
 }
-
-private val tmpVec = Vector3()
-
-/**
- * Returns true if this primitive intersects with the provided ray (in world coordinates)
- *
- * @return Returns true if the ray intersects with the bounding box of this layout element.
- */
-fun LayoutElementRo.intersectsGlobalRay(globalRay: RayRo): Boolean = intersectsGlobalRay(globalRay, tmpVec)
 
 fun LayoutElementRo.clampWidth(value: Float?): Float? {
 	return clamp(value, minWidth, maxWidth)
@@ -75,12 +60,23 @@ fun LayoutElementRo.clampHeight(value: Float?): Float? {
 interface LayoutElement : LayoutElementRo, BasicLayoutElement, Transformable {
 
 	override var minWidth: Float
+
 	override var minHeight: Float
+
 	override var maxWidth: Float
+
 	override var maxHeight: Float
 }
 
+/**
+ * An element with a size and position.
+ */
 interface BasicLayoutElementRo : SizableRo, PositionableRo {
+
+	/**
+	 * If this is false, this layout element will not be included in layout algorithms.
+	 */
+	val shouldLayout: Boolean
 
 	/**
 	 * The left boundary (x + bounds.left)

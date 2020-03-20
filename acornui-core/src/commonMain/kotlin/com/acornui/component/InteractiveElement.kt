@@ -22,6 +22,8 @@ import com.acornui.di.Context
 import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
+import com.acornui.math.RayRo
+import com.acornui.math.Vector3
 import com.acornui.signal.StoppableSignal
 
 interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, AttachmentHolder, Context {
@@ -44,6 +46,24 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 	 */
 	val interactivityMode: InteractivityMode
 
+	/**
+	 * Given a canvas position, casts a ray in the direction of the camera, and returns true if that ray intersects
+	 * with this component. This will always return false if this element is not active (on the stage)
+	 * @param canvasX
+	 * @param canvasY
+	 */
+	fun containsCanvasPoint(canvasX: Float, canvasY: Float): Boolean
+
+	/**
+	 * Returns true if this primitive intersects with the provided ray (in world coordinates)
+	 * If there was an intersection, the intersection vector will be set to the intersection point.
+	 *
+	 * @param globalRay The ray (in world coordinates) to cast.
+	 *
+	 * @return Returns true if the ray intersects with the bounding box of this layout element.
+	 */
+	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean
+
 	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean
 	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
 
@@ -57,6 +77,16 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 
 	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false)
 }
+
+private val tmpVec = Vector3()
+
+/**
+ * Returns true if this primitive intersects with the provided ray (in world coordinates)
+ *
+ * @return Returns true if the ray intersects with the bounding box of this layout element.
+ */
+fun InteractiveElementRo.intersectsGlobalRay(globalRay: RayRo): Boolean = intersectsGlobalRay(globalRay, tmpVec)
+
 
 /**
  * InteractiveElement provides a way to add and use signals for interaction events.

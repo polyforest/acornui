@@ -22,7 +22,6 @@ import com.acornui.Disposable
 import com.acornui.assertionsEnabled
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
-import com.acornui.component.layout.intersectsGlobalRay
 import com.acornui.component.style.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
@@ -357,6 +356,10 @@ open class UiComponentImpl(
 			return _bounds
 		}
 
+	/**
+	 * Returns true if visible and the includeInLayout flag is true. If this is false, this layout element will not
+	 * be included in layout algorithms.
+	 */
 	override val shouldLayout: Boolean
 		get() = includeInLayout && visible
 
