@@ -184,7 +184,7 @@ open class ContainerImpl(
 		if (!visible || (onlyInteractive && interactivityModeInherited == InteractivityMode.NONE)) return out
 		val ray = rayCache ?: getPickRay(canvasX, canvasY, rayTmp)
 		if (interactivityMode == InteractivityMode.ALWAYS || intersectsGlobalRay(ray)) {
-			if ((returnAll || out.isEmpty())) {
+			if (returnAll || out.isEmpty()) {
 				_children.forEachReversed2 { child ->
 					val childRayCache = if (child.cameraEquals(this)) ray else null
 					child.getChildrenUnderPoint(canvasX, canvasY, onlyInteractive, returnAll, out, childRayCache)
