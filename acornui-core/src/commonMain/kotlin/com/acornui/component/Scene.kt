@@ -61,7 +61,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		cameraOverride = camera
 		transformGlobalOverride = Matrix4.IDENTITY
 		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
-		validation.addNode(1 shl 16, LAYOUT, VIEW_PROJECTION) {} // Update layout changes camera
+		validation.addDependencies(VIEW_PROJECTION, LAYOUT) // Update layout changes camera
 	}
 
 	override fun onChildInvalidated(child: UiComponent, flagsInvalidated: Int) {
