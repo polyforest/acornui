@@ -93,6 +93,9 @@ fun CameraTransformableRo.canvasToGlobal(canvasCoords: Vector3): Vector3 {
 private val originTmp = Vector3()
 private val directionTmp = Vector3()
 
+/**
+ * Given a canvas point, configures [out] as a [Ray] pointing into the screen.
+ */
 fun CameraTransformableRo.getPickRay(canvasX: Float, canvasY: Float, out: Ray): Ray {
 	canvasToGlobal(originTmp.set(canvasX, canvasY, -1f))
 	canvasToGlobal(directionTmp.set(canvasX, canvasY, 0f))

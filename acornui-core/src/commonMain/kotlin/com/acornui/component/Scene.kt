@@ -33,7 +33,7 @@ import com.acornui.math.*
 /**
  * A Scene renders its children within an unrotated window according to its explicit size and position.
  *
- * Does not support z translation, rotations, or custom transformations.
+ * Does not support z translation, rotations, scaling, or custom transformations.
  */
 @ExperimentalAcorn
 open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
@@ -48,11 +48,11 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	private val _viewport = MinMax()
 
 	/**
-	 * The canvas transformation for the scene will be based on
+	 * The viewport for this scene will be based on the layout bounds.
 	 */
 	override val viewport: RectangleRo by validationProp(ValidationFlags.DRAW_REGION) {
 		viewportOverride ?: run {
-			parent?.localToCanvas(_viewport.set(x, y, right, bottom).translate(-originX, -originY))
+			parent?.localToCanvas(_viewport.set(x, y, right, bottom).translate(-originX, -originY)) // Because localToCanvas uses the viewport, we must use parent, not self.
 			_viewport
 		}
 	}
