@@ -330,20 +330,17 @@ open class UiComponentImpl(
 		return b
 	}
 
+	private val topLeft = Vector3()
+	private val topRight = Vector3()
+	private val bottomRight = Vector3()
+	private val bottomLeft = Vector3()
+
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		val bounds = bounds
-		val topLeft = Vector3()
-		val topRight = Vector3()
-		val bottomRight = Vector3()
-		val bottomLeft = Vector3()
-		topLeft.set(bounds.left, bounds.top, 0f)
-		topRight.set(bounds.right, bounds.top, 0f)
-		bottomRight.set(bounds.right, bounds.bottom, 0f)
-		bottomLeft.set(bounds.left, bounds.bottom, 0f)
-		localToGlobal(topLeft)
-		localToGlobal(topRight)
-		localToGlobal(bottomRight)
-		localToGlobal(bottomLeft)
+		localToGlobal(topLeft.set(bounds.left, bounds.top, 0f))
+		localToGlobal(topRight.set(bounds.right, bounds.top, 0f))
+		localToGlobal(bottomRight.set(bounds.right, bounds.bottom, 0f))
+		localToGlobal(bottomLeft.set(bounds.left, bounds.bottom, 0f))
 		return globalRay.intersectsTriangle(topLeft, topRight, bottomRight, intersection) ||
 				globalRay.intersectsTriangle(topLeft, bottomLeft, bottomRight, intersection)
 	}
