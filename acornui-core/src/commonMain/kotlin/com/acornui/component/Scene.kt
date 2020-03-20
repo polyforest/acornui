@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER")
+@file:Suppress("UNUSED_PARAMETER", "unused")
 
 package com.acornui.component
 
+import com.acornui.ExperimentalAcorn
 import com.acornui.collection.forEach2
 import com.acornui.component.ValidationFlags.LAYOUT
 import com.acornui.component.ValidationFlags.VIEW_PROJECTION
@@ -34,24 +35,25 @@ import com.acornui.math.*
  *
  * Does not support z translation, rotations, or custom transformations.
  */
+@ExperimentalAcorn
 open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 
 	var camera: Camera = OrthographicCamera()
 		set(value) {
 			field = value
 			cameraOverride = field
-			invalidate(ValidationFlags.LAYOUT)
+			invalidate(LAYOUT)
 		}
 
-	private val _canvasTransform = MinMax()
+	private val _viewport = MinMax()
 
 	/**
 	 * The canvas transformation for the scene will be based on
 	 */
 	override val viewport: RectangleRo by validationProp(ValidationFlags.DRAW_REGION) {
-		canvasTransformOverride ?: run {
-			parent?.localToCanvas(_canvasTransform.set(x, y, right, bottom).translate(-originX, -originY))
-			_canvasTransform
+		viewportOverride ?: run {
+			parent?.localToCanvas(_viewport.set(x, y, right, bottom).translate(-originX, -originY))
+			_viewport
 		}
 	}
 
@@ -88,6 +90,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	}
 }
 
+@ExperimentalAcorn
 fun Context.scene(init: ComponentInit<Scene>): Scene {
 	val s = Scene(this)
 	s.init()

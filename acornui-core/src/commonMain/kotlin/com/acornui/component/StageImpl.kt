@@ -68,7 +68,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	}
 
 	override val viewport: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		canvasTransformOverride ?: _windowRegion
+		viewportOverride ?: _windowRegion
 	}
 
 	override val viewProjectionTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {

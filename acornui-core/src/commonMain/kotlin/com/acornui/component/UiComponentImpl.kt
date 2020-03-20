@@ -248,10 +248,11 @@ open class UiComponentImpl(
 	/**
 	 * If set, [viewport] will use this explicit value.
 	 */
-	var canvasTransformOverride: RectangleRo? by validationProp<RectangleRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
+	@Suppress("RemoveExplicitTypeArguments")
+	var viewportOverride: RectangleRo? by validationProp<RectangleRo?>(null, ValidationFlags.VIEW_PROJECTION) { it?.copy() }
 
 	override val viewport: RectangleRo by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		canvasTransformOverride ?: parent?.viewport ?: RectangleRo.EMPTY
+		viewportOverride ?: parent?.viewport ?: RectangleRo.EMPTY
 	}
 
 	init {
