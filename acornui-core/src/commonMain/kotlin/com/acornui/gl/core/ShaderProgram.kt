@@ -36,6 +36,10 @@ object CommonShaderAttributes {
 
 object CommonShaderUniforms {
 
+	/**
+	 * The combined view and projection matrix.
+	 * If the shader doesn't have a uniform for u_modelTrans, this is expected to be a combined model, view, projection.
+	 */
 	const val U_PROJ_TRANS: String = "u_projTrans"
 	const val U_MODEL_TRANS: String = "u_modelTrans"
 	const val U_VIEW_TRANS: String = "u_viewTrans"

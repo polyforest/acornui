@@ -143,6 +143,12 @@ fun Uniforms.setCamera(component: CanvasTransformableRo, useModel: Boolean = fal
 /**
  * Sets the camera uniforms using the given [component], calls [inner], then sets the camera back to what it
  * previously was.
+ *
+ * @param component The component whose view projection, view, and model transforms to use.
+ * @param useModel If true, the vertices are expected to be in local space and [CanvasTransformableRo.transformGlobal]
+ * will be set as the model matrix on the shader. If the shader doesn't have a uniform for
+ * [com.acornui.gl.core.CommonShaderUniforms.U_MODEL_TRANS], the transform global matrix will be multiplied into
+ * [com.acornui.gl.core.CommonShaderUniforms.U_PROJ_TRANS]
  */
 fun Uniforms.useCamera(component: CanvasTransformableRo, useModel: Boolean = false, inner: () -> Unit) {
 	if (useModel) useCamera(component.viewProjectionTransform, component.viewTransform, component.transformGlobal, inner)

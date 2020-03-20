@@ -17,6 +17,7 @@
 package com.acornui.component.text
 
 import com.acornui.component.ContainerImpl
+import com.acornui.component.InteractivityMode
 import com.acornui.component.ValidationFlags
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.component.rect
@@ -71,6 +72,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	var pageHeight: Float = 400f
 
 	private val textCursor = addChild(rect {
+		interactivityMode = InteractivityMode.NONE
 		style.backgroundColor = Color.WHITE
 		layoutInvalidatingFlags = ValidationFlags.LAYOUT // Allows us to toggle visibility on this cursor and not affect layout.
 		setOrigin(1f, 0f)
