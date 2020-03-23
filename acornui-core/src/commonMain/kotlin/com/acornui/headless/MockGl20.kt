@@ -19,6 +19,7 @@ package com.acornui.headless
 import com.acornui.gl.core.*
 import com.acornui.graphic.Texture
 import com.acornui.io.NativeReadBuffer
+import com.acornui.math.*
 
 object MockCachedGl20 : CachedGl20, Gl20 by MockGl20 {
 
@@ -31,7 +32,7 @@ object MockCachedGl20 : CachedGl20, Gl20 by MockGl20 {
 	override val framebuffer: GlFramebufferRef? = null
 	override val renderbuffer: GlRenderbufferRef? = null
 
-	override val uniforms: Uniforms = EmptyUniforms
+	override val uniforms: Uniforms = MockUniforms
 }
 
 object MockGl20 : Gl20 {
@@ -430,4 +431,62 @@ object MockGlActiveInfoRef : GlActiveInfoRef {
 	override var name: String = ""
 	override var size: Int = 0
 	override var type: Int = 0
+}
+
+
+/**
+ * A [Uniforms] implementation that does nothing.
+ */
+object MockUniforms : Uniforms {
+
+	override fun getUniformLocation(name: String): GlUniformLocationRef? = null
+
+	override fun getb(location: GlUniformLocationRef): Boolean = false
+
+	override fun geti(location: GlUniformLocationRef): Int = 0
+
+	override fun get(location: GlUniformLocationRef, out: IntArray): IntArray = out
+
+	override fun getf(location: GlUniformLocationRef): Float = 0f
+
+	override fun get(location: GlUniformLocationRef, out: FloatArray): FloatArray = out
+
+	override fun get(location: GlUniformLocationRef, out: Matrix2): Matrix2 = out
+
+	override fun get(location: GlUniformLocationRef, out: Matrix3): Matrix3 = out
+
+	override fun get(location: GlUniformLocationRef, out: Matrix4): Matrix4 = out
+
+	override fun put(location: GlUniformLocationRef, x: Float) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Float, y: Float, z: Float, w: Float) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int) {
+	}
+
+	override fun put(location: GlUniformLocationRef, x: Int, y: Int, z: Int, w: Int) {
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix2Ro) {
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix3Ro) {
+	}
+
+	override fun put(location: GlUniformLocationRef, value: Matrix4Ro) {
+	}
 }
