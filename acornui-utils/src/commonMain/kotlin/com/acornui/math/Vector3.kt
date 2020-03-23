@@ -223,17 +223,16 @@ class Vector3 (
 	}
 
 	/**
-	 * Adds the given value to all three components of the vector.
-	 *
-	 * @param values The value
-	 * @return This vector for chaining
+	 * Modifies [other] by adding this vector to [other]
+	 * @return [other].
 	 */
-	fun add(values: Float): Vector3 {
-		return this.set(this.x + values, this.y + values, this.z + values)
+	fun prj(other: Vector3): Vector3 {
+		other.add(this)
+		return other
 	}
 
-	fun sub(a_vec: Vector3Ro): Vector3 {
-		return this.sub(a_vec.x, a_vec.y, a_vec.z)
+	fun sub(value: Vector3Ro): Vector3 {
+		return this.sub(value.x, value.y, value.z)
 	}
 
 	/**
@@ -246,17 +245,6 @@ class Vector3 (
 	 */
 	fun sub(x: Float, y: Float, z: Float): Vector3 {
 		return this.set(this.x - x, this.y - y, this.z - z)
-	}
-
-	/**
-	 * Subtracts the given value from all components of this vector
-	 *
-	 * @param value The value
-	 * @return This vector for chaining
-
-	 */
-	fun sub(value: Float): Vector3 {
-		return this.set(this.x - value, this.y - value, this.z - value)
 	}
 
 	fun scl(scalar: Float): Vector3 {

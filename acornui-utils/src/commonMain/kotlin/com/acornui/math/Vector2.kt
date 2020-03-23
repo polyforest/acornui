@@ -219,6 +219,15 @@ class Vector2(
 		return this
 	}
 
+	/**
+	 * Modifies [other] by adding this vector to [other]
+	 * @return [other].
+	 */
+	fun prj(other: Vector2): Vector2 {
+		other.add(this)
+		return other
+	}
+
 	override fun dot(v: Vector2Ro): Float {
 		return x * v.x + y * v.y
 	}
