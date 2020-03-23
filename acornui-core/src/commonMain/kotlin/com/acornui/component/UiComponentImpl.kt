@@ -500,6 +500,7 @@ open class UiComponentImpl(
 	 * If set, the [colorTintGlobal] value won't be calculated as the multiplication of [colorTint] and the parent
 	 * context's global color tint; it will be this explicit value.
 	 */
+	@Suppress("RemoveExplicitTypeArguments")
 	var colorTintGlobalOverride: ColorRo? by validationProp<ColorRo?>(null, ValidationFlags.COLOR_TINT) { it?.copy() }
 
 	/**
