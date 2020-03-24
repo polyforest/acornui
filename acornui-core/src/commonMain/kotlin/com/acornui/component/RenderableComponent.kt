@@ -18,9 +18,10 @@ package com.acornui.component
 
 import com.acornui.di.Context
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 
 /**
- * @author nbilyk
+ * A RenderableComponent renders a single [BasicRenderable] element.
  */
 abstract class RenderableComponent<T : BasicRenderable?>(
 		owner: Context
@@ -33,10 +34,12 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
 	}
 
+	private val translationTransform = Matrix4()
+
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		if (width <= 0f || height <= 0f) return
-		renderable?.updateGlobalVertices(width, height, transformGlobal, colorTintGlobal)
+		renderable?.updateGlobalVertices(width, height, translationTransform.setTranslation(vertexTranslation), colorTintGlobal)
 	}
 
 	override fun draw() {

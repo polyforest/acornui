@@ -57,8 +57,10 @@ open class SimpleHighlight(
 	override val transformGlobal: Matrix4Ro
 		get() = highlighted?.transformGlobal ?: Matrix4.IDENTITY
 
-//	override val colorTintGlobal: ColorRo
-//		get() = highlighted?.colorTintGlobal ?: Color.WHITE
+	/**
+	 * SimpleHighlight overrides [transformGlobal] and therefore must override [useTransforms].
+	 */
+	override val useTransforms: Boolean = true
 
 	/**
 	 * The target being highlighted.
@@ -69,8 +71,6 @@ open class SimpleHighlight(
 				field?.invalidated?.remove(::highlightedInvalidatedHandler)
 				field = value
 				field?.invalidated?.add(::highlightedInvalidatedHandler)
-//				_renderContext.parentContext = value?.renderContext ?: defaultRenderContext
-				// TODO: Put this back together
 				invalidate(ValidationFlags.LAYOUT or ValidationFlags.VIEW_PROJECTION)
 			}
 		}
@@ -102,12 +102,6 @@ open class SimpleHighlight(
 			highlight.moveTo(0f, 0f)
 		}
 		out.set(highlight.bounds)
-	}
-
-	override fun draw() {
-		gl.uniforms.useCamera(this) {
-			super.draw()
-		}
 	}
 
 	override fun dispose() {

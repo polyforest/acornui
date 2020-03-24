@@ -25,7 +25,7 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Bounds
 import com.acornui.math.BoundsRo
-import com.acornui.math.Matrix4Ro
+import com.acornui.math.Vector3Ro
 import com.acornui.selection.SelectionRange
 
 /**
@@ -144,9 +144,10 @@ interface TextElement : TextElementRo, Disposable {
 	fun updateVertices(leftClip: Float, topClip: Float, rightClip: Float, bottomClip: Float)
 
 	/**
-	 * Converts the local coordinates to global.
+	 * @param translation The value to add to local positions for rendering.
+	 * @param tint The color value to multiply against local colors for rendering.
 	 */
-	fun updateVerticesGlobal(transform: Matrix4Ro, tint: ColorRo)
+	fun updateVerticesGlobal(translation: Vector3Ro, tint: ColorRo)
 
 	/**
 	 * Renders the background, such as the selection color, underline, strikethrough, etc.

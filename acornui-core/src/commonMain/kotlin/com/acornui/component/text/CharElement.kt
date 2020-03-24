@@ -21,10 +21,7 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.Bounds
-import com.acornui.math.BoundsRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.Vector3
+import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.string.isBreaking
@@ -84,7 +81,6 @@ class CharElement private constructor() : TextElement, Clearable {
 	 */
 	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 	private val charVerticesGlobal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val normalGlobal = Vector3()
 
 	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
 	private val backgroundVerticesGlobal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
@@ -198,24 +194,23 @@ class CharElement private constructor() : TextElement, Clearable {
 		}
 	}
 
-	override fun updateVerticesGlobal(transform: Matrix4Ro, tint: ColorRo) {
+	override fun updateVerticesGlobal(translation: Vector3Ro, tint: ColorRo) {
 		val style = style ?: return
 
 		fontColorGlobal.set(if (selected) style.selectedTextColorTint else style.textColorTint).mul(tint)
 		backgroundColorGlobal.set(if (selected) style.selectedBackgroundColor else style.backgroundColor).mul(tint)
-		transform.rot(normalGlobal.set(Vector3.NEG_Z)).nor()
 
 		for (i in 0..3) {
-			transform.prj(charVerticesGlobal[i].set(charVertices[i]))
+			translation.prj(charVerticesGlobal[i].set(charVertices[i]))
 		}
 
 		for (i in 0..3) {
-			transform.prj(backgroundVerticesGlobal[i].set(backgroundVertices[i]))
+			translation.prj(backgroundVerticesGlobal[i].set(backgroundVertices[i]))
 		}
 
 		if (style.underlined || style.strikeThrough) {
 			for (i in 0..3) {
-				transform.prj(lineVerticesGlobal[i].set(lineVertices[i]))
+				translation.prj(lineVerticesGlobal[i].set(lineVertices[i]))
 			}
 		}
 	}
@@ -227,18 +222,18 @@ class CharElement private constructor() : TextElement, Clearable {
 		val backgroundColorGlobal = backgroundColorGlobal
 		val fontColorGlobal = fontColorGlobal
 		val backgroundVerticesGlobal = backgroundVerticesGlobal
-		val normalGlobal = normalGlobal
+		val normal = Vector3.NEG_Z
 
 		if (backgroundColorGlobal.a > 0f) {
 			batch.begin()
 			// Top left
-			batch.putVertex(backgroundVerticesGlobal[0], normalGlobal, backgroundColorGlobal, 0f, 0f)
+			batch.putVertex(backgroundVerticesGlobal[0], normal, backgroundColorGlobal, 0f, 0f)
 			// Top right
-			batch.putVertex(backgroundVerticesGlobal[1], normalGlobal, backgroundColorGlobal, 0f, 0f)
+			batch.putVertex(backgroundVerticesGlobal[1], normal, backgroundColorGlobal, 0f, 0f)
 			// Bottom right
-			batch.putVertex(backgroundVerticesGlobal[2], normalGlobal, backgroundColorGlobal, 0f, 0f)
+			batch.putVertex(backgroundVerticesGlobal[2], normal, backgroundColorGlobal, 0f, 0f)
 			// Bottom left
-			batch.putVertex(backgroundVerticesGlobal[3], normalGlobal, backgroundColorGlobal, 0f, 0f)
+			batch.putVertex(backgroundVerticesGlobal[3], normal, backgroundColorGlobal, 0f, 0f)
 			batch.putQuadIndices()
 		}
 
@@ -247,13 +242,13 @@ class CharElement private constructor() : TextElement, Clearable {
 			val lineVerticesGlobal = lineVerticesGlobal
 
 			// Top left
-			batch.putVertex(lineVerticesGlobal[0], normalGlobal, fontColorGlobal, 0f, 0f)
+			batch.putVertex(lineVerticesGlobal[0], normal, fontColorGlobal, 0f, 0f)
 			// Top right
-			batch.putVertex(lineVerticesGlobal[1], normalGlobal, fontColorGlobal, 0f, 0f)
+			batch.putVertex(lineVerticesGlobal[1], normal, fontColorGlobal, 0f, 0f)
 			// Bottom right
-			batch.putVertex(lineVerticesGlobal[2], normalGlobal, fontColorGlobal, 0f, 0f)
+			batch.putVertex(lineVerticesGlobal[2], normal, fontColorGlobal, 0f, 0f)
 			// Bottom left
-			batch.putVertex(lineVerticesGlobal[3], normalGlobal, fontColorGlobal, 0f, 0f)
+			batch.putVertex(lineVerticesGlobal[3], normal, fontColorGlobal, 0f, 0f)
 			batch.putQuadIndices()
 		}
 
@@ -265,29 +260,29 @@ class CharElement private constructor() : TextElement, Clearable {
 		val batch = gl.batch
 		
 		val fontColorGlobal = fontColorGlobal
-		val normalGlobal = normalGlobal
+		val normal = Vector3.NEG_Z
 		val charVerticesGlobal = charVerticesGlobal
 		if (u == u2 || v == v2 || glyph.width <= 0f || glyph.height <= 0f || fontColorGlobal.a <= 0f) return // Nothing to draw
 		batch.begin(glyph.texture, premultipliedAlpha = glyph.premultipliedAlpha)
 
 		if (glyph.isRotated) {
 			// Top left
-			batch.putVertex(charVerticesGlobal[0], normalGlobal, fontColorGlobal, u2, v)
+			batch.putVertex(charVerticesGlobal[0], normal, fontColorGlobal, u2, v)
 			// Top right
-			batch.putVertex(charVerticesGlobal[1], normalGlobal, fontColorGlobal, u2, v2)
+			batch.putVertex(charVerticesGlobal[1], normal, fontColorGlobal, u2, v2)
 			// Bottom right
-			batch.putVertex(charVerticesGlobal[2], normalGlobal, fontColorGlobal, u, v2)
+			batch.putVertex(charVerticesGlobal[2], normal, fontColorGlobal, u, v2)
 			// Bottom left
-			batch.putVertex(charVerticesGlobal[3], normalGlobal, fontColorGlobal, u, v)
+			batch.putVertex(charVerticesGlobal[3], normal, fontColorGlobal, u, v)
 		} else {
 			// Top left
-			batch.putVertex(charVerticesGlobal[0], normalGlobal, fontColorGlobal, u, v)
+			batch.putVertex(charVerticesGlobal[0], normal, fontColorGlobal, u, v)
 			// Top right
-			batch.putVertex(charVerticesGlobal[1], normalGlobal, fontColorGlobal, u2, v)
+			batch.putVertex(charVerticesGlobal[1], normal, fontColorGlobal, u2, v)
 			// Bottom right
-			batch.putVertex(charVerticesGlobal[2], normalGlobal, fontColorGlobal, u2, v2)
+			batch.putVertex(charVerticesGlobal[2], normal, fontColorGlobal, u2, v2)
 			// Bottom left
-			batch.putVertex(charVerticesGlobal[3], normalGlobal, fontColorGlobal, u, v2)
+			batch.putVertex(charVerticesGlobal[3], normal, fontColorGlobal, u, v2)
 		}
 		batch.putQuadIndices()
 	}

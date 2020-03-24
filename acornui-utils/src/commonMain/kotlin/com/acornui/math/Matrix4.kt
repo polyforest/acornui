@@ -232,9 +232,7 @@ class Matrix4() : Matrix4Ro {
 				MatrixMode.FULL -> throw Exception("Unreachable")
 			}
 		} else {
-			for (i in 0 until 16) {
-				values[i] = other.values[i]
-			}
+			other.values.copyInto(values)
 			_mode = other.mode
 		}
 		return this

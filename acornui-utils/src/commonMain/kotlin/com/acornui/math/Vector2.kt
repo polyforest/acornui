@@ -118,6 +118,15 @@ interface Vector2Ro {
 		return Vector2(x * other, y * other)
 	}
 
+	/**
+	 * Modifies [other] by adding this vector to [other]
+	 * @return [other].
+	 */
+	fun prj(other: Vector2): Vector2 {
+		other.add(this)
+		return other
+	}
+
 	fun copy(x: Float = this.x, y: Float = this.y): Vector2 {
 		return Vector2(x, y)
 	}
@@ -217,15 +226,6 @@ class Vector2(
 		this.x += x
 		this.y += y
 		return this
-	}
-
-	/**
-	 * Modifies [other] by adding this vector to [other]
-	 * @return [other].
-	 */
-	fun prj(other: Vector2): Vector2 {
-		other.add(this)
-		return other
 	}
 
 	override fun dot(v: Vector2Ro): Float {

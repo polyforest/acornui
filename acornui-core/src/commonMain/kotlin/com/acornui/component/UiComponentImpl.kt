@@ -642,6 +642,28 @@ open class UiComponentImpl(
 			return _transformLocal
 		}
 
+	/**
+	 * If true, this component's model view and transform matrices should be pushed to the gpu.
+	 * If false, the local transform is assumed to be translation only and [vertexTranslation] will be set.
+	 *
+	 * Override this to be true if [viewProjectionTransform], [viewTransform], or [transformGlobal] is overridden.
+	 */
+	protected open val useTransforms: Boolean
+		get() = cameraOverride != null ||
+				_transformLocal.mode != MatrixMode.IDENTITY &&
+				_transformLocal.mode != MatrixMode.TRANSLATION
+
+	private val _vertexTranslation = Vector3()
+
+	/**
+	 * Vertices rendered should be local position with this added translation.
+	 */
+	override val vertexTranslation: Vector3Ro
+		get() {
+			validate(ValidationFlags.TRANSFORM)
+			return _vertexTranslation
+		}
+
 	@Suppress("RemoveExplicitTypeArguments")
 	override var transformOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
 
@@ -799,9 +821,12 @@ open class UiComponentImpl(
 
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
+	 *
+	 * NB: If this is overridden, [useTransforms] must be overridden as well.
 	 */
 	override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
-		_transformGlobal
+		if (transformGlobalOverride != null) _transformGlobal.set(transformGlobalOverride!!)
+		else _transformGlobal.set(parent?.transformGlobal ?: Matrix4.IDENTITY).mul(_transformLocal)
 	}
 
 	private val _transformGlobalInv = Matrix4()
@@ -845,9 +870,10 @@ open class UiComponentImpl(
 			if (!_origin.isZero())
 				mat.translate(-_origin.x, -_origin.y, -_origin.z)
 		}
-
-		if (transformGlobalOverride != null) _transformGlobal.set(transformGlobalOverride!!)
-		else _transformGlobal.set(parent?.transformGlobal ?: Matrix4.IDENTITY).mul(mat)
+		if (useTransforms)
+			_vertexTranslation.clear()
+		else
+			_vertexTranslation.set(parent?.vertexTranslation ?: Vector3.ZERO).add(mat.translationX, mat.translationY, mat.translationZ)
 	}
 
 	protected open fun updateColorTint() {
@@ -900,7 +926,13 @@ open class UiComponentImpl(
 		if (validation.invalidFlags != 0)
 			Log.error("render $this with invalid flags ${ValidationFlags.flagsToString(validation.invalidFlags)}")
 		if (visible && colorTint.a > 0f) {
-			draw()
+			if (useTransforms) {
+				gl.uniforms.useCamera(this, true) {
+					draw()
+				}
+			} else {
+				draw()
+			}
 		}
 	}
 

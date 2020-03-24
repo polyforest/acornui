@@ -21,6 +21,12 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 
+/**
+ * The minimal interface required for something that has vertices and can be rendered.
+ *
+ * [updateGlobalVertices] is called first, setting the size, applying transformation and color tinting.
+ * Then rendering is done via [render].
+ */
 interface BasicRenderable {
 
 	/**

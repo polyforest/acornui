@@ -52,7 +52,6 @@ open class Rect(
 		val innerRect = Array(4) { Vector3() }
 		val fillColor = Color()
 		val borderColors = BorderColors()
-		val normal = Vector3()
 	}
 
 	private inner class ComplexMode {
@@ -455,7 +454,7 @@ open class Rect(
 
 	override fun draw() {
 		val tint = colorTintGlobal
-		val transform = transformGlobal
+		val transform = vertexTranslation
 		val margin = style.margin
 		val w = margin.reduceWidth(_bounds.width)
 		val h = margin.reduceHeight(_bounds.height)
@@ -464,6 +463,7 @@ open class Rect(
 		if (simpleMode) {
 			simpleModeObj.apply {
 				val borderThicknesses = style.borderThicknesses
+				val normal = Vector3.NEG_Z
 
 				val innerX = margin.left + borderThicknesses.left
 				val innerY = margin.top + borderThicknesses.top
@@ -482,8 +482,6 @@ open class Rect(
 					transform.prj(outerRect[2].set(outerX + w, outerY + h, 0f))
 					transform.prj(outerRect[3].set(outerX, outerY + h, 0f))
 				}
-
-				transform.rot(normal.set(Vector3.NEG_Z)).nor()
 
 				fillColor.set(style.backgroundColor).mul(tint)
 				borderColors.set(style.borderColors).mul(tint)

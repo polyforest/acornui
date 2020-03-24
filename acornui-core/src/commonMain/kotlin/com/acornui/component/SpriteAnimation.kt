@@ -29,6 +29,7 @@ import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.*
 import com.acornui.mainContext
 import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.recycle.Clearable
 import com.acornui.time.onTick
 import kotlinx.coroutines.Job
@@ -180,12 +181,14 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 		out.set(w, h)
 	}
 
+	private val translationTransform = Matrix4()
+
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		val animation = animation ?: return
 		if (width <= 0f || height <= 0f) return
 		animation.frames.forEach2 {
-			it.updateGlobalVertices(width, height, transformGlobal, colorTintGlobal)
+			it.updateGlobalVertices(width, height, translationTransform.setTranslation(vertexTranslation), colorTintGlobal)
 		}
 	}
 

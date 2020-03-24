@@ -57,6 +57,8 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
+	override val useTransforms: Boolean = true
+
 	init {
 		cameraOverride = camera
 		transformGlobalOverride = Matrix4.IDENTITY

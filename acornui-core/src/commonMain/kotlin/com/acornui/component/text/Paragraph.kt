@@ -332,10 +332,10 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		val textElements = _textElements
-		val transform = transformGlobal
+		val translation = vertexTranslation
 		val tint = colorTintGlobal
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].updateVerticesGlobal(transform, tint)
+			textElements[i].updateVerticesGlobal(translation, tint)
 		}
 	}
 

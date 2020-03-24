@@ -131,6 +131,15 @@ interface Vector3Ro {
 		return Vector3(x * other, y * other, z * other)
 	}
 
+	/**
+	 * Modifies [vec] by adding this vector to [vec]
+	 * @return [vec].
+	 */
+	fun prj(vec: Vector3): Vector3 {
+		vec.add(this)
+		return vec
+	}
+
 	fun copy(x: Float = this.x, y: Float = this.y, z: Float = this.z): Vector3 {
 		return Vector3(x, y, z)
 	}
@@ -220,15 +229,6 @@ class Vector3 (
 	 */
 	fun add(x: Float, y: Float, z: Float): Vector3 {
 		return this.set(this.x + x, this.y + y, this.z + z)
-	}
-
-	/**
-	 * Modifies [other] by adding this vector to [other]
-	 * @return [other].
-	 */
-	fun prj(other: Vector3): Vector3 {
-		other.add(this)
-		return other
 	}
 
 	fun sub(value: Vector3Ro): Vector3 {

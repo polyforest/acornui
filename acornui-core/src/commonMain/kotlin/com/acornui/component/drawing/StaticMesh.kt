@@ -101,13 +101,16 @@ open class StaticMeshComponent(
 		mesh?.refDec()
 	}
 
+	/**
+	 * Static mesh components should always upload their model matrix.
+	 */
+	override val useTransforms: Boolean = true
+
 	override fun draw() {
 		val mesh = mesh ?: return
 		colorTransformation.tint(colorTintGlobal)
 		gl.uniforms.useColorTransformation(colorTransformation) {
-			gl.uniforms.useCamera(this, useModel = true) {
-				mesh.render()
-			}
+			mesh.render()
 		}
 	}
 

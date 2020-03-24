@@ -27,8 +27,7 @@ import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.loadAndCacheAtlasPage
-import com.acornui.math.Matrix4Ro
-import com.acornui.serialization.binaryParse
+import com.acornui.math.Vector3Ro
 import com.acornui.serialization.jsonParse
 import com.acornui.time.FrameDriverRo
 import com.acornui.time.onTick
@@ -102,8 +101,7 @@ class ParticleEffectComponent(
 		get() = _effect?.effectInstance
 
 	override fun draw() {
-		val effect = _effect ?: return
-		effect.render(transformGlobal, colorTintGlobal)
+		_effect?.render(vertexTranslation, colorTintGlobal)
 	}
 
 	override fun dispose() {
@@ -150,9 +148,9 @@ class LoadedParticleEffect(
 		cacheSet.dispose()
 	}
 
-	fun render(transform: Matrix4Ro, tint: ColorRo) {
+	fun render(translation: Vector3Ro, tint: ColorRo) {
 		for (i in 0..renderers.lastIndex) {
-			renderers[i].render(transform, tint)
+			renderers[i].render(translation, tint)
 		}
 	}
 }
@@ -211,7 +209,7 @@ interface ParticleEmitterRenderer {
 
 	fun refDec()
 
-	fun render(transform: Matrix4Ro, tint: ColorRo)
+	fun render(translation: Vector3Ro, tint: ColorRo)
 
 }
 

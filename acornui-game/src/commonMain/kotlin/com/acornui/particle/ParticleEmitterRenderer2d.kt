@@ -39,13 +39,13 @@ class ParticleEmitterRenderer2d(
 		}
 	}
 
-	override fun render(transform: Matrix4Ro, tint: ColorRo) {
+	override fun render(translation: Vector3Ro, tint: ColorRo) {
 		if (!emitterInstance.emitter.enabled) return
 		val particles = emitterInstance.particles
 		for (i in 0..particles.lastIndex) {
 			val particle = particles[i]
 			if (particle.active) {
-				particle.draw(transform, tint)
+				particle.draw(translation, tint)
 			}
 		}
 	}
@@ -53,7 +53,7 @@ class ParticleEmitterRenderer2d(
 	private val transform = Matrix4()
 	private val tint = Color()
 
-	private fun Particle.draw(emitterTransform: Matrix4Ro, emitterTint: ColorRo) {
+	private fun Particle.draw(emitterTranslation: Vector3Ro, emitterTint: ColorRo) {
 		val sprite = sprites.getOrNull(imageIndex) ?: return
 		val emitter = emitterInstance.emitter
 
@@ -79,7 +79,7 @@ class ParticleEmitterRenderer2d(
 			if (!origin.isZero())
 				translate(-origin.x * sprite.naturalWidth, -origin.y * sprite.naturalHeight)
 		}
-		transform.mulLeft(emitterTransform)
+		transform.trn(emitterTranslation)
 		tint.set(emitterTint).mul(colorTint)
 		sprite.updateGlobalVertices(transform = transform, tint = tint)
 		sprite.render()

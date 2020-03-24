@@ -31,6 +31,7 @@ import com.acornui.input.MouseState
 import com.acornui.math.MinMaxRo
 import com.acornui.math.RayRo
 import com.acornui.math.Vector2
+import com.acornui.math.Vector3Ro
 import com.acornui.signal.Signal
 
 @DslMarker
@@ -99,6 +100,11 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * This is not done automatically; it is the responsibility of the component.
 	 */
 	val canvasClipRegion: MinMaxRo
+
+	/**
+	 * Vertices rendered should be local position with this added translation.
+	 */
+	val vertexTranslation: Vector3Ro
 
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.LAYOUT or
