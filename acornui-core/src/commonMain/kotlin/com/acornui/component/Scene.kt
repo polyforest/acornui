@@ -79,13 +79,9 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	override fun render() {
-		if (visible && colorTint.a > 0f) {
-			gl.uniforms.useCamera(camera) {
-				gl.useViewport(viewport, window.scaleX, window.scaleY) {
-					draw()
-				}
-			}
+	override fun draw() {
+		gl.useViewport(viewport, window.scaleX, window.scaleY) {
+			super.draw()
 		}
 	}
 }
