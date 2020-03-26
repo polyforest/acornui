@@ -20,6 +20,7 @@ pluginManagement {
 	val kotlinVersion: String by settings
 	val dokkaVersion: String by settings
 	repositories {
+		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 //		maven("https://dl.bintray.com/kotlin/kotlin-eap/")

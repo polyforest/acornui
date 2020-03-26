@@ -42,15 +42,17 @@ buildscript {
 	}
 }
 
-subprojects {
-	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
-
+allprojects {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 		jcenter()
 //		maven("https://dl.bintray.com/kotlin/kotlin-eap/")
 	}
+}
+
+subprojects {
+	apply(from = "$rootDir/gradle/mavenPublish.gradle.kts")
 
 	afterEvaluate {
 		tasks {
