@@ -25,7 +25,7 @@ import com.acornui.collection.ActiveList
 import com.acornui.collection.addSorted
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.removeFirst
-import com.acornui.observe.Observable
+import com.acornui.function.as1
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -107,7 +107,7 @@ class Styles(private val host: Stylable) : Disposable {
 		styleRules.reset.add {
 			for (list in entriesByType.values) {
 				for (entry in list) {
-					entry.style.changed.remove(::styleRuleChangedHandler)
+					entry.style.changed.remove(::invalidateStyles.as1)
 				}
 			}
 			entriesByType.clear()
@@ -117,17 +117,17 @@ class Styles(private val host: Stylable) : Disposable {
 
 	private fun add(entry: StyleRule<*>) {
 		entriesByType.getOrPut(entry.style.type) { ArrayList() }.add(entry)
-		host.invalidateStyles()
-		entry.style.changed.add(::styleRuleChangedHandler)
+		invalidateStyles()
+		entry.style.changed.add(::invalidateStyles.as1)
 	}
 
 	private fun remove(entry: StyleRule<*>) {
 		entriesByType[entry.style.type]?.remove(entry)
-		host.invalidateStyles()
-		entry.style.changed.remove(::styleRuleChangedHandler)
+		invalidateStyles()
+		entry.style.changed.remove(::invalidateStyles.as1)
 	}
 
-	private fun styleRuleChangedHandler(style: StyleRo) {
+	private fun invalidateStyles() {
 		host.invalidateStyles()
 	}
 
@@ -141,14 +141,14 @@ class Styles(private val host: Stylable) : Disposable {
 
 	fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
 		if (isDisposed) throw DisposedException()
-		style.changed.add(::styleChangedHandler)
+		style.changed.add(::invalidateStyles.as1)
 		styleValidators.add(StyleValidator(style, calculator))
-		host.invalidateStyles()
+		invalidateStyles()
 		return style
 	}
 
 	fun unbind(style: StyleRo) {
-		style.changed.remove(::styleChangedHandler)
+		style.changed.remove(::invalidateStyles.as1)
 		styleValidators.removeFirst { it.style === style }
 	}
 
@@ -173,15 +173,11 @@ class Styles(private val host: Stylable) : Disposable {
 		}
 	}
 
-	private fun styleChangedHandler(o: Observable) {
-		host.invalidateStyles()
-	}
-
 	override fun dispose() {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		for (i in 0..styleValidators.lastIndex) {
-			styleValidators[i].style.changed.remove(::styleChangedHandler)
+			styleValidators[i].style.changed.remove(::invalidateStyles.as1)
 		}
 		styleWatchers.clear()
 		styleValidators.clear()
