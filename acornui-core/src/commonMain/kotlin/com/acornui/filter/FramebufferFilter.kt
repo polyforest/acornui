@@ -29,7 +29,7 @@ import com.acornui.graphic.Texture
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.MinMax
-import com.acornui.math.RectangleRo
+import com.acornui.math.Rectangle
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.ceil
@@ -54,50 +54,38 @@ class FramebufferFilter(
 
 	private val sprite = Sprite(gl)
 
+	private val regionScaled = MinMax()
+	private val regionUnscaled = MinMax()
 	private val _transform = Matrix4()
-	
-	/**
-	 * When rendering to this frame buffer, the canvas region gets expanded out to the next pixel.
-	 * This translation matrix represents the canvas coordinate position of the [drawable].
-	 */
-	val transform: Matrix4Ro = _transform
 
-	private val regionScreen = MinMax()
-	private val regionCanvasCeiled = MinMax()
-
-	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		regionScreen.set(regionCanvas).scl(scaleX, scaleY).ceil()
-		regionCanvasCeiled.set(regionScreen).scl(1f / scaleX, 1f / scaleY)
-		_transform.setTranslation(regionCanvasCeiled.x, regionCanvasCeiled.y)
-		framebuffer.setSize(regionScreen.width, regionScreen.height, scaleX, scaleY)
-		framebuffer.drawable(sprite)
-		sprite.updateGlobalVertices(transform = _transform, tint = tint)
-		return this.regionCanvasCeiled
+	override fun region(region: Rectangle) {
+		regionScaled.set(region).scl(scaleX, scaleY).ceil()
+		regionUnscaled.set(regionScaled).scl(1f / scaleX, 1f / scaleY)
+		framebuffer.setSize(regionScaled.width, regionScaled.height, scaleX, scaleY)
 	}
 
-	override fun render(inner: () -> Unit) {
-		drawToFramebuffer(inner)
-		drawToScreen()
+	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
+		//_transform.set(transform).translate(-regionUnscaled.x, -regionUnscaled.y)
+		sprite.updateGlobalVertices(transform = transform, tint = tint)
 	}
 
-	private val previousViewport = IntArray(4)
-
-	fun drawToFramebuffer(inner: () -> Unit) {
-		gl.getParameteriv(Gl20.VIEWPORT, previousViewport)
+	override fun renderLocal(inner: () -> Unit) {
 		framebuffer.begin()
-		gl.viewport(-regionScreen.x.toInt(), -(previousViewport[3] - (regionScreen.y + framebuffer.heightPixels)).toInt(), previousViewport[2], previousViewport[3])
+		gl.viewport(-regionScaled.left.toInt(), -(window.framebufferHeight - regionScaled.bottom.toInt()), window.framebufferWidth, window.framebufferHeight)
 		gl.clearAndReset(clearColor, clearMask)
 		inner()
-		framebuffer.end()
+		framebuffer.end() // Previous viewport set in framebuffer end.
+		framebuffer.drawable(sprite)
 	}
 
-	fun drawToScreen() {
+	override fun render(inner: () -> Unit) = render()
+
+	fun render() {
 		sprite.render()
 	}
 
 	/**
 	 * Configures a drawable to match what was last rendered. The world vertices will not be updated.
-	 * @see transform
 	 */
 	fun drawable(out: Sprite = Sprite(gl)): Sprite {
 		return out.set(sprite)

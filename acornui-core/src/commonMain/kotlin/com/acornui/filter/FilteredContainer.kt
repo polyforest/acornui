@@ -19,16 +19,27 @@
 package com.acornui.filter
 
 import com.acornui.collection.WatchedElementsActiveList
+import com.acornui.collection.forEach2
+import com.acornui.collection.forEachReversed2
 import com.acornui.component.*
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.gl.core.useCamera
+import com.acornui.graphic.orthographicCamera
+import com.acornui.graphic.setViewport
+import com.acornui.math.Bounds
+import com.acornui.math.Matrix4
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
-import com.acornui.math.RectangleRo
 import com.acornui.signal.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * An element container which supports a list of [RenderFilter] objects to decorate its rendering.
+ *
+ * This container uses a [FillLayout].
+ */
 class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner) {
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
@@ -37,7 +48,12 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
 
+	private val camera = orthographicCamera(false)
+
+	override val useTransforms: Boolean = true
+
 	init {
+//		cameraOverride = camera
 		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
 	}
 
@@ -51,24 +67,67 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 		return this
 	}
 
-	private var expandedDrawRegion: RectangleRo = RectangleRo.EMPTY
+	private val localDrawRegion = Rectangle()
+
+	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+		super.updateLayout(explicitWidth, explicitHeight, out)
+		localDrawRegion.set(_bounds)
+		_renderFilters.forEachReversed2 {
+			it.region(localDrawRegion)
+		}
+	}
 
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
-		var drawRegionCanvas: RectangleRo = localToCanvas(Rectangle(0f, 0f, _bounds.width, _bounds.height))
 		val model = transformGlobal
 		val tint = colorTintGlobal
-		for (i in _renderFilters.lastIndex downTo 0) {
-			val renderFilter = _renderFilters[i]
-			drawRegionCanvas = renderFilter.updateGlobalVertices(drawRegionCanvas, model, tint)
+		_renderFilters.forEach2 {
+			it.updateGlobalVertices(model, tint)
 		}
-		expandedDrawRegion = drawRegionCanvas
+	}
+
+	override fun render() {
+		if (visible && colorTint.a > 0f) {
+			draw()
+		}
 	}
 
 	override fun draw() {
-		draw(_renderFilters.lastIndex)
+		val w = window.width
+		val h = window.height
+		camera.setViewport(w, h)
+		camera.moveToLookAtRect(0f, 0f, w, h)
+//		println(transformGlobalInv)
+//		modelInv.set(transformGlobalInv)
+
+		cameraOverride = camera
+		transformGlobalOverride = Matrix4.IDENTITY
+		update()
+		gl.uniforms.useCamera(camera) {
+			drawLocal(_renderFilters.lastIndex)
+		}
+		cameraOverride = null
+		transformGlobalOverride = null
+		update()
+
+		val p = parent ?: return
+		gl.uniforms.useCamera(p.viewProjectionTransform, p.viewTransform, Matrix4.IDENTITY) {
+			draw(_renderFilters.lastIndex)
+		}
+
 	}
-	
+
+	private fun drawLocal(filterIndex: Int) {
+		return if (filterIndex == -1) {
+			super.draw()
+		} else {
+			val filter = _renderFilters[filterIndex]
+			filter.renderLocal {
+				drawLocal(filterIndex - 1)
+			}
+		}
+	}
+
 	private fun draw(filterIndex: Int) {
 		if (filterIndex == -1)
 			super.draw()
@@ -79,7 +138,6 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 			}
 		}
 	}
-
 }
 
 inline fun Context.filtered(init: ComponentInit<FilteredContainer> = {}): FilteredContainer  {

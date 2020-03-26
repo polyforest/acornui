@@ -32,11 +32,11 @@ open class GlowFilter(owner: Context) : RenderFilterBase(owner) {
 
 	private val blurFilter = BlurFilter(this)
 
-	var blurX by bindableAndCall(1f) {
+	var blurX by bindableAndCall(5f) {
 		blurFilter.blurX = it
 	}
 
-	var blurY by bindableAndCall(1f) {
+	var blurY by bindableAndCall(5f) {
 		blurFilter.blurY = it
 	}
 
@@ -51,32 +51,30 @@ open class GlowFilter(owner: Context) : RenderFilterBase(owner) {
 
 	private val blurSprite = Sprite(gl)
 
-	private val offsetGlobal = Vector3()
-	private val transform = Matrix4()
+	override fun region(region: Rectangle) {
+		blurFilter.region(region)
+		region.inflate(
+				top = maxOf(0f, -offset.y),
+				right = maxOf(0f, offset.x),
+				bottom = maxOf(0f, offset.y),
+				left = maxOf(0f, -offset.x))
+	}
 
-	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		transform.rot(offsetGlobal.set(offset))
-		val blurredRegion = blurFilter.updateGlobalVertices(regionCanvas, transform, tint)
+	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
+		blurFilter.updateGlobalVertices(transform, Color.WHITE)
 		blurFilter.drawable(blurSprite)
-		this.transform.set(blurFilter.transform).translate(offsetGlobal)
-		blurSprite.updateGlobalVertices(transform = this.transform, tint = tint)
-		return blurredRegion.copy().inflate(
-				top = maxOf(0f, -offsetGlobal.y),
-				right = maxOf(0f, offsetGlobal.x),
-				bottom = maxOf(0f, offsetGlobal.y),
-				left = maxOf(0f, -offsetGlobal.x))
+		blurSprite.updateGlobalVertices(transform = transform, tint = tint)
+	}
+
+	override fun renderLocal(inner: () -> Unit) {
+		blurFilter.renderLocal(inner)
 	}
 
 	override fun render(inner: () -> Unit) {
-		drawToFramebuffer(inner)
 		gl.uniforms.useColorTransformation(colorTransformation) {
 			blurSprite.render()
 		}
 		blurFilter.drawOriginalToScreen()
-	}
-
-	private fun drawToFramebuffer(inner: () -> Unit) {
-		blurFilter.drawToFramebuffer(inner)
 	}
 
 	companion object {
@@ -87,7 +85,7 @@ open class GlowFilter(owner: Context) : RenderFilterBase(owner) {
 inline fun Context.dropShadowFilter(init: ComponentInit<GlowFilter> = {}): GlowFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = GlowFilter(this)
-	b.offset = Vector3(3f, 3f, 0f)
+	b.offset = vec3(25f, 5f, 0f)
 	b.init()
 	return b
 }

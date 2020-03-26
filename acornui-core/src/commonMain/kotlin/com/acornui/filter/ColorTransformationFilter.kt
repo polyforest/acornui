@@ -21,7 +21,6 @@ import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
 
 class ColorTransformationFilter(
 		owner: Context,
@@ -34,9 +33,8 @@ class ColorTransformationFilter(
 
 	private val colorTransformationGlobal = ColorTransformation()
 
-	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
+	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
 		colorTransformationGlobal.set(colorTransformation).mul(tint)
-		return regionCanvas
 	}
 
 	override fun render(inner: () -> Unit) {

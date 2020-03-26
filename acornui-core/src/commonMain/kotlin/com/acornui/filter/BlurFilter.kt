@@ -27,18 +27,16 @@ import com.acornui.di.own
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.Pad
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.math.Rectangle
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.math.abs
 
 open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 
-	var blurX by bindable(1f)
-	var blurY by bindable(1f)
+	var blurX by bindable(5f)
+	var blurY by bindable(5f)
 
 	var quality by bindable(BlurQuality.NORMAL)
 
@@ -48,8 +46,6 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 	private val sprite = Sprite(gl)
 
 	private val framebufferFilter = FramebufferFilter(this)
-	private val blurDirX = Vector3()
-	private val blurDirY = Vector3()
 
 	private val blurShader by BlurShaderKey
 
@@ -57,21 +53,16 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 		framebufferFilter.clearColor = Color(0.5f, 0.5f, 0.5f, 0f)
 	}
 
-	/**
-	 * When rendering to the frame buffer, the canvas region gets expanded out to the next pixel.
-	 * This translation matrix represents the canvas coordinate position of the [drawable].
-	 */
-	val transform: Matrix4Ro
-		get() = framebufferFilter.transform
+	override fun region(region: Rectangle) {
+		region.inflate(blurX, blurY, blurX, blurY)
+		framebufferFilter.region(region)
+	}
 
-	override fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo {
-		transform.rot(blurDirX.set(blurX, 0f, 0f))
-		transform.rot(blurDirY.set(0f, blurY, 0f))
-		val xPad = maxOf(abs(blurDirX.x), abs(blurDirY.x))
-		val yPad = maxOf(abs(blurDirX.y), abs(blurDirY.y))
-		val expandedRegion = regionCanvas + Pad(yPad, xPad, yPad, xPad)
+	private val framebufferTransform = Matrix4()
+
+	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
 		val framebufferFilter = framebufferFilter
-		val framebufferRegion = framebufferFilter.updateGlobalVertices(expandedRegion, transform, tint)
+		framebufferFilter.updateGlobalVertices(framebufferTransform.set(transform).translate(-blurX, -blurY), tint)
 		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
@@ -80,25 +71,19 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 		blurFramebufferB.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
 		blurFramebufferB.texture.filterMin = TextureMinFilter.LINEAR
 		blurFramebufferB.texture.filterMag = TextureMagFilter.LINEAR
-		
+
 		framebufferFilter.drawable(sprite)
 		sprite.texture = blurFramebufferB.texture
-		sprite.updateGlobalVertices(transform = framebufferFilter.transform, tint = tint)
-		return framebufferRegion
+		sprite.updateGlobalVertices(transform = transform, tint = tint)
 	}
 
-	override fun render(inner: () -> Unit) {
-		drawToFramebuffer(inner)
-		drawToScreen()
-	}
-
-	fun drawToFramebuffer(inner: () -> Unit) {
+	override fun renderLocal(inner: () -> Unit) {
 		val framebufferFilter = framebufferFilter
-		framebufferFilter.drawToFramebuffer(inner)
+		framebufferFilter.renderLocal(inner)
 		val textureToBlur = framebufferFilter.texture
 
 		gl.bindTexture(textureToBlur)
-		
+
 		gl.useProgram(blurShader.program) {
 			val uniforms = gl.uniforms
 			uniforms.put("u_resolutionInv", 1f / textureToBlur.widthPixels.toFloat(), 1f / textureToBlur.heightPixels.toFloat())
@@ -117,12 +102,12 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 			for (i in 1..passes) {
 				val iF = i.toFloat()
 				blurFramebufferA.begin()
-				uniforms.put("u_dir", blurDirX.x * iF * sclX, 0f)
+				uniforms.put("u_dir", blurX * iF * sclX, 0f)
 				gl.batch.putIdtQuad()
 				blurFramebufferA.end()
 				blurFramebufferB.begin()
 				gl.batch.begin(blurFramebufferA.texture)
-				uniforms.put("u_dir", blurDirY.x * iF * sclX, blurDirY.y * iF * sclY)
+				uniforms.put("u_dir", 0f, blurY * iF * sclY)
 				gl.batch.putIdtQuad()
 				blurFramebufferB.end()
 				gl.batch.begin(blurFramebufferB.texture)
@@ -130,17 +115,18 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 		}
 	}
 
-	fun drawToScreen() {
+	override fun render(inner: () -> Unit) = render()
+
+	fun render() {
 		sprite.render()
 	}
 
 	fun drawOriginalToScreen() {
-		framebufferFilter.drawToScreen()
+		framebufferFilter.render()
 	}
 
 	/**
 	 * Configures a drawable to match what was last rendered. The world coordinates will not be updated.
-	 * @see transform
 	 */
 	fun drawable(out: Sprite = Sprite(gl)): Sprite {
 		return out.set(sprite)
@@ -154,7 +140,7 @@ $DEFAULT_SHADER_HEADER
 attribute vec4 a_position;
 
 void main() {
-	gl_Position =  a_position;
+	gl_Position = a_position;
 }
 
 """, fragmentShaderSrc = """
@@ -191,7 +177,7 @@ void main() {
 	}
 }
 
-inline fun Context.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter  {
+inline fun Context.blurFilter(init: ComponentInit<BlurFilter> = {}): BlurFilter {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = BlurFilter(this)
 	b.init()

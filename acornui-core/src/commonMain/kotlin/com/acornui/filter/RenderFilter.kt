@@ -23,7 +23,7 @@ import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
 import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
+import com.acornui.math.Rectangle
 import com.acornui.observe.Observable
 import com.acornui.properties.afterChange
 import com.acornui.signal.Signal1
@@ -35,17 +35,35 @@ import kotlin.properties.ReadWriteProperty
 interface RenderFilter : Observable {
 
 	/**
-	 * Updates the world vertices for any decorated components used in this filter's rendering.
-	 * @param regionCanvas The inner region (before transformed padding) rendered. This will be in canvas coordinates.
-	 * @param transform The world transform of the filtered container. This should be used to transform padding,
-	 * offsets, or any other coordinates in local space.
-	 * @param tint The world color tint of the filtered container.
-	 * @return Returns the expanded draw region in canvas coordinates.
+	 *
+	 * @param region The local region being rendered. This may be mutated to represent the new local region rendered.
+	 * For example `BlurFilter` will expand region by its blurX and blurY values.
+	 * `region.inflate(blurY, blurX, blurY, blurX)`
 	 */
-	fun updateGlobalVertices(regionCanvas: RectangleRo, transform: Matrix4Ro, tint: ColorRo): RectangleRo = regionCanvas
+	fun region(region: Rectangle) {}
 
 	/**
-	 * Renders the [inner] block using this filter.
+	 * Updates the global vertices for any decorated components used in this filter's rendering.
+	 * @param transform The global transform of the filtered container.
+	 * @param tint The global color tint of the filtered container.
+	 */
+	fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {}
+
+	/**
+	 * Renders the [inner] block to any framebuffers using this filter and returns the expanded draw region this filter
+	 * covers.
+	 *
+	 * The camera will be set to an orthographic projection with the model transformation set the inverse of the
+	 * filtered container's global model transform.
+	 *
+	 * @param inner A method that draws the contents this filter decorates.
+	 */
+	fun renderLocal(inner: () -> Unit) {}
+
+	/**
+	 * Renders to the screen.
+	 *
+	 * @param inner A method that draws the contents this filter decorates.
 	 */
 	fun render(inner: () -> Unit)
 
