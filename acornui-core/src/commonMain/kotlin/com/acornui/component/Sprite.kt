@@ -19,11 +19,11 @@ package com.acornui.component
 import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphic.*
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.TextureRo
+import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 
@@ -86,7 +86,7 @@ class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 	var isUv: Boolean = true
 		private set
 
-	private val normal = Vector3()
+	private val normal = vec3()
 
 	fun setUv(u: Float, v: Float, u2: Float, v2: Float, isRotated: Boolean) {
 		region[0] = u
@@ -144,7 +144,7 @@ class Sprite(val gl: CachedGl20) : BasicRenderable, Clearable {
 		}
 	}
 
-	private val vertices = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val vertices = arrayOf(vec3(), vec3(), vec3(), vec3())
 	private val tint = Color()
 
 	override val naturalWidth: Float

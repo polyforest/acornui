@@ -22,8 +22,8 @@ import com.acornui.component.layout.spacer
 import com.acornui.graphic.exit
 import com.acornui.headless.headlessApplication
 import com.acornui.math.Rectangle
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.vec2
+import com.acornui.math.vec3
 import com.acornui.runMainTest
 import com.acornui.test.assertClose
 import kotlin.test.Test
@@ -49,7 +49,7 @@ class CanvasTransformableTest {
 			}
 			validate()
 			println("Canvas transformable test running")
-			assertClose(Vector2(50f, 75f), c.localToCanvas(Vector3(0f, 0f, 0f)).toVec2())
+			assertClose(vec2(50f, 75f), c.localToCanvas(vec3(0f, 0f, 0f)).toVec2())
 			assertClose(Rectangle(50f, 75f, width = 200f, height = 100f), c.localToCanvas(c.bounds.toRectangle()))
 			assertClose(Rectangle(120f + 50f, 170f + 75f, width = 400f, height = 200f), d.localToCanvas(d.bounds.toRectangle()))
 

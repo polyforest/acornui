@@ -18,18 +18,20 @@ package com.acornui.component.drawing
 
 import com.acornui.gl.core.ShaderBatch
 import com.acornui.gl.core.putVertex
-import com.acornui.math.*
+import com.acornui.math.Ray2
+import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 
 /**
  * @author nbilyk
  */
 object MiterCap : CapBuilder {
 
-	private val perpLine = Vector2()
-	private val perpControl = Vector2()
-	private val dirLine = Vector2()
-	private val dirControl = Vector2()
-	private val joinedPoint = Vector2()
+	private val perpLine = vec2()
+	private val perpControl = vec2()
+	private val dirLine = vec2()
+	private val dirControl = vec2()
+	private val joinedPoint = vec2()
 
 	override fun createCap(p1: Vector2Ro, p2: Vector2Ro, control: Vector2Ro?, meshRegion: ShaderBatch, lineStyle: LineStyleRo, controlLineThickness: Float, clockwise: Boolean) {
 		if (control == null) {

@@ -39,11 +39,8 @@ import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.keyDown
 import com.acornui.input.wheel
-import com.acornui.math.Bounds
-import com.acornui.math.Corners
+import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Pad
-import com.acornui.math.Vector2
 import com.acornui.observe.IndexBinding
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
@@ -501,7 +498,7 @@ class DataGrid<RowData>(
 		}
 	}
 
-	private val tmp = Vector2()
+	private val tmp = vec2()
 
 	/**
 	 * Given a canvas coordinate, this method returns the cell location of that position.

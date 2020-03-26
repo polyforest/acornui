@@ -26,7 +26,7 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.graphic.Color
 import com.acornui.input.*
-import com.acornui.math.Vector2
+import com.acornui.math.vec2
 import com.acornui.properties.afterChange
 
 class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
@@ -39,8 +39,8 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 		colorTint = Color.GREEN
 	}
 
-	private val startPosition = Vector2()
-	private val position = Vector2()
+	private val startPosition = vec2()
+	private val position = vec2()
 
 	private var enterFrameRef: Disposable? = null
 	private val fakeTouchEvent = TouchInteraction()

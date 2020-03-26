@@ -115,11 +115,11 @@ interface FrustumRo {
  */
 data class Frustum(
 
-		override val planes: MutableList<Plane> = ArrayList(6, { Plane(Vector3(), 0f) })
+		override val planes: MutableList<Plane> = ArrayList(6, { Plane(vec3(), 0f) })
 ) : FrustumRo {
 
 
-	override val planePoints = ArrayList(8, { Vector3() })
+	override val planePoints = ArrayList(8, { vec3() })
 
 	/**
 	 * Updates the clipping plane's based on the given inverse combined projection and view matrix, e.g. from an
@@ -180,7 +180,7 @@ data class Frustum(
 		return true
 	}
 
-	private val corners by lazy { ArrayList(8, { Vector3() }) }
+	private val corners by lazy { ArrayList(8, { vec3() }) }
 
 	override fun boundsInFrustum(bounds: BoxRo): Boolean {
 		val corners = bounds.getCorners(corners)
@@ -221,8 +221,8 @@ data class Frustum(
 
 	companion object {
 
-		val clipSpacePlanePoints: List<Vector3Ro> = listOf(Vector3(-1f, -1f, -1f), Vector3(1f, -1f, -1f), Vector3(1f, 1f, -1f), Vector3(-1f, 1f, -1f), // near clip
-				Vector3(-1f, -1f, 1f), Vector3(1f, -1f, 1f), Vector3(1f, 1f, 1f), Vector3(-1f, 1f, 1f)) // far clip
+		val clipSpacePlanePoints: List<Vector3Ro> = listOf(vec3(-1f, -1f, -1f), vec3(1f, -1f, -1f), vec3(1f, 1f, -1f), vec3(-1f, 1f, -1f), // near clip
+				vec3(-1f, -1f, 1f), vec3(1f, -1f, 1f), vec3(1f, 1f, 1f), vec3(-1f, 1f, 1f)) // far clip
 
 	}
 }

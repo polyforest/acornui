@@ -31,7 +31,7 @@
 
 package com.esotericsoftware.spine
 
-import com.acornui.math.Vector2
+import com.acornui.math.vec2
 import com.esotericsoftware.spine.data.TransformConstraintData
 
 class TransformConstraint : Updatable {
@@ -42,7 +42,7 @@ class TransformConstraint : Updatable {
 	var x: Float = 0f
 	var y: Float = 0f
 
-	private val temp = Vector2()
+	private val temp = vec2()
 
 	constructor(data: TransformConstraintData, skeleton: Skeleton) {
 		this.data = data

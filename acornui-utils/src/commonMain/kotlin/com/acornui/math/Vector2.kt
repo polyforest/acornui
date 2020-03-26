@@ -103,19 +103,27 @@ interface Vector2Ro {
 	fun hasOppositeDirection(vector: Vector2Ro): Boolean
 
 	operator fun plus(other: Vector2Ro): Vector2 {
-		return Vector2(x + other.x, y + other.y)
+		return vec2(x + other.x, y + other.y)
 	}
 
 	operator fun minus(other: Vector2Ro): Vector2 {
-		return Vector2(x - other.x, y - other.y)
+		return vec2(x - other.x, y - other.y)
 	}
 
 	operator fun times(other: Vector2Ro): Vector2 {
-		return Vector2(x * other.x, y * other.y)
+		return vec2(x * other.x, y * other.y)
+	}
+
+	operator fun div(other: Vector2Ro): Vector2 {
+		return vec2(x / other.x, y / other.y)
 	}
 
 	operator fun times(other: Float): Vector2 {
-		return Vector2(x * other, y * other)
+		return vec2(x * other, y * other)
+	}
+
+	operator fun div(other: Float): Vector2 {
+		return vec2(x / other, y / other)
 	}
 
 	/**
@@ -128,13 +136,13 @@ interface Vector2Ro {
 	}
 
 	fun copy(x: Float = this.x, y: Float = this.y): Vector2 {
-		return Vector2(x, y)
+		return vec2(x, y)
 	}
 
 	/**
 	 * Creates a Vector3 with the given z component.
 	 */
-	fun toVec3(z: Float = 0f): Vector3 = Vector3(x, y, z)
+	fun toVec3(z: Float = 0f): Vector3 = vec3(x, y, z)
 }
 
 /**
@@ -201,6 +209,13 @@ class Vector2(
 		return this
 	}
 
+	/**
+	 * @see sub
+	 */
+	operator fun minusAssign(other: Vector2Ro) {
+		sub(other)
+	}
+
 	fun nor(): Vector2 {
 		val len = len()
 		if (len > 0.00001f) {
@@ -226,6 +241,13 @@ class Vector2(
 		this.x += x
 		this.y += y
 		return this
+	}
+
+	/**
+	 * @see add
+	 */
+	operator fun plusAssign(other: Vector2Ro) {
+		add(other)
 	}
 
 	override fun dot(v: Vector2Ro): Float {
@@ -256,6 +278,22 @@ class Vector2(
 		this.x *= v.x
 		this.y *= v.y
 		return this
+	}
+
+	operator fun timesAssign(other: Vector2Ro) {
+		scl(other)
+	}
+
+	operator fun divAssign(other: Vector2Ro) {
+		scl(1f / other.x, 1f / other.y)
+	}
+
+	operator fun timesAssign(other: Float) {
+		scl(other)
+	}
+
+	operator fun divAssign(other: Float) {
+		scl(1f / other)
 	}
 
 	override fun dst(v: Vector2Ro): Float {
@@ -518,9 +556,9 @@ class Vector2(
 
 	companion object {
 
-		val X: Vector2Ro = Vector2(1f, 0f)
-		val Y: Vector2Ro = Vector2(0f, 1f)
-		val ZERO: Vector2Ro = Vector2(0f, 0f)
+		val X: Vector2Ro = vec2(1f, 0f)
+		val Y: Vector2Ro = vec2(0f, 1f)
+		val ZERO: Vector2Ro = vec2(0f, 0f)
 
 		fun len(x: Float, y: Float): Float {
 			return sqrt((x * x + y * y))
@@ -552,13 +590,17 @@ class Vector2(
 			return xD * xD + yD * yD
 		}
 
-		private val pool = ClearableObjectPool { Vector2() }
+		private val pool = ClearableObjectPool { vec2() }
 
 		fun obtain(): Vector2 = pool.obtain()
 		fun free(obj: Vector2) = pool.free(obj)
 	}
-
 }
+
+/**
+ * Shorthand for Vector2.
+ */
+typealias vec2 = Vector2
 
 @Serializer(forClass = Vector2::class)
 object Vector2Serializer : KSerializer<Vector2> {
@@ -573,8 +615,7 @@ object Vector2Serializer : KSerializer<Vector2> {
 
 	override fun deserialize(decoder: Decoder): Vector2 {
 		val values = decoder.decodeSerializableValue(Float.serializer().list)
-		return Vector2(
-				x = values[0],
+		return vec2(x = values[0],
 				y = values[1]
 		)
 	}

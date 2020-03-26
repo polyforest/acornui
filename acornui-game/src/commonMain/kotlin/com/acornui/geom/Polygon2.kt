@@ -277,14 +277,14 @@ class Polygon2(initialCapacity: Int = 16) : Polygon2Ro {
 
 	companion object {
 
-		private val tmp = Vector2()
-		private val mTd2 = Vector2()
+		private val tmp = vec2()
+		private val mTd2 = vec2()
 
 		private val supportA = FloatArray(4)
 		private val supportB = FloatArray(4)
 		private val sortedEdgeVertices = Array(4) { SortedPoint() }
 
-		private val vAxis = Vector2()
+		private val vAxis = vec2()
 
 		/**
 		 * Separate axis theorem.
@@ -447,14 +447,14 @@ interface CollisionInfoRo {
 }
 
 data class CollisionInfo(
-		override val contactA: Vector2 = Vector2(),
-		override val contactA2: Vector2 = Vector2(),
-		override val contactB: Vector2 = Vector2(),
-		override val contactB2: Vector2 = Vector2(),
+		override val contactA: Vector2 = vec2(),
+		override val contactA2: Vector2 = vec2(),
+		override val contactB: Vector2 = vec2(),
+		override val contactB2: Vector2 = vec2(),
 		override var numPoints: Int = 0
 ) : CollisionInfoRo {
-	override val midA: Vector2 = Vector2()
-	override val midB: Vector2 = Vector2()
+	override val midA: Vector2 = vec2()
+	override val midB: Vector2 = vec2()
 }
 
 private data class SortedPoint(var x: Float = 0f, var y: Float = 0f, var d: Float = 0f, var whichEdge: Int = -1) : Comparable<SortedPoint> {

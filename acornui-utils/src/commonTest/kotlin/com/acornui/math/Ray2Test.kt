@@ -16,7 +16,6 @@
 
 package com.acornui.math
 
-import com.acornui.serialization.binaryParse
 import com.acornui.serialization.jsonParse
 import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
@@ -35,44 +34,44 @@ class Ray2Test {
 
 	@Test fun intersectsRay() {
 		run {
-			val r1 = Ray2(Vector2(0f, 0f), Vector2(1f, 0f))
-			val r2 = Ray2(Vector2(1f, 1f), Vector2(0f, -1f))
+			val r1 = Ray2(vec2(0f, 0f), vec2(1f, 0f))
+			val r2 = Ray2(vec2(1f, 1f), vec2(0f, -1f))
 
-			val out = Vector2()
+			val out = vec2()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector2(1f, 0f), out)
+			assertClose(vec2(1f, 0f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(6f, 8f, 4f), Vector3(6f, 7f, 0f))
-			val r2 = Ray(Vector3(6f, 8f, 2f), Vector3(6f, 7f, 4f))
+			val r1 = Ray(vec3(6f, 8f, 4f), vec3(6f, 7f, 0f))
+			val r2 = Ray(vec3(6f, 8f, 2f), vec3(6f, 7f, 4f))
 
-			val out = Vector3()
+			val out = vec3()
 			r1.intersectsRay(r2, out)
-			assertClose(Vector3(9f, 11.5f, 4f), out)
+			assertClose(vec3(9f, 11.5f, 4f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, -1f, 0f))
-			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(0f, -1f, 0f))
+			val r2 = Ray(vec3(0f, 0f, 30f), vec3(1f, 0f, 0f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(10f, 0f, 30f), out)
+			assertClose(vec3(10f, 0f, 30f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(1f, -1f, 0f))
+			val r2 = Ray(vec3(0f, 0f, 30f), vec3(1f, 0f, 0f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(30f, 0f, 30f), out)
+			assertClose(vec3(30f, 0f, 30f), out)
 		}
 	}
 
 	@Test fun serialize() {
-		val ray = Ray2(Vector2(1.1f, 2.1f), Vector2(4.1f, 5.1f))
+		val ray = Ray2(vec2(1.1f, 2.1f), vec2(4.1f, 5.1f))
 		val str = jsonStringify(Ray2.serializer(), ray)
 		val ray2 = jsonParse(Ray2.serializer(), str)
 		assertClose(ray.origin, ray2.origin)

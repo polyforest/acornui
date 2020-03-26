@@ -16,8 +16,6 @@
 
 package com.acornui.input.interaction
 
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.component.UiComponentRo
 import com.acornui.component.canvasToLocal
 import com.acornui.input.InteractionEventBase
@@ -25,6 +23,9 @@ import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 import kotlin.math.sqrt
 
 interface TouchInteractionRo : InteractionEventRo {
@@ -192,7 +193,7 @@ class Touch private constructor(): TouchRo, Clearable {
 	override var identifier: Int = -1
 
 	private var _localPositionIsValid = false
-	private val _localPosition: Vector2 = Vector2()
+	private val _localPosition: Vector2 = vec2()
 
 	/**
 	 * The position of the mouse event relative to the [currentTarget].

@@ -25,11 +25,8 @@ import com.acornui.component.createOrReuseAttachment
 import com.acornui.di.ContextImpl
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
-import com.acornui.math.Easing
-import com.acornui.math.Interpolation
+import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Vector2
-import com.acornui.math.Vector2Ro
 import com.acornui.signal.StoppableSignal
 import com.acornui.signal.StoppableSignalImpl
 import com.acornui.time.nowMs
@@ -80,14 +77,14 @@ class TossScroller(
 	/**
 	 * The velocity when the drag ended.
 	 */
-	private val velocityStart = Vector2()
+	private val velocityStart = vec2()
 
 	/**
 	 * The 0-1 range of the toss slow tween.
 	 */
 	private var slowAlpha = 0f
 
-	private val velocityCurrent = Vector2()
+	private val velocityCurrent = vec2()
 
 	/**
 	 * The current velocity of the toss in points per second.
@@ -127,8 +124,8 @@ class TossScroller(
 		get() = _timer != null
 
 	private val event = DragInteraction()
-	private val startPosition: Vector2 = Vector2()
-	private val position: Vector2 = Vector2()
+	private val startPosition = vec2()
+	private val position = vec2()
 
 	private val historyPoints = ArrayList<Vector2>()
 	private val historyTimes = ArrayList<Long>()
@@ -136,7 +133,7 @@ class TossScroller(
 	private var _timer: Disposable? = null
 	private var clickPreventer = 0
 
-	private val diff = Vector2()
+	private val diff = vec2()
 
 	private fun pushHistory() {
 		historyPoints.add(position.copy())
@@ -286,8 +283,8 @@ open class TossScrollModelBinding(
 		private val vScrollModel: ScrollModel
 ) : Disposable {
 
-	private val lastPositionLocal = Vector2()
-	private val diff = Vector2()
+	private val lastPositionLocal = vec2()
+	private val diff = vec2()
 
 	init {
 		tossScroller.tossStart.add(::tossStartHandler)

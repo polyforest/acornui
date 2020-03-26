@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.gl.core.*
 import com.acornui.graphic.Window
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -76,7 +76,7 @@ fun UiComponentRo.scissorLocal(inner: () -> Unit) {
  * Note that this will not work properly for rotated components.
  */
 fun UiComponentRo.scissorLocal(x: Float, y: Float, width: Float, height: Float, inner: () -> Unit) {
-	val tmp = Vector3()
+	val tmp = vec3()
 	localToCanvas(tmp.set(x, y, 0f))
 	val sX1 = tmp.x
 	val sY1 = tmp.y

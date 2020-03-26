@@ -22,8 +22,8 @@ package com.acornui.particle
 import com.acornui.collection.ArrayList
 import com.acornui.graphic.Color
 import com.acornui.math.MathUtils.clamp
-import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
+import com.acornui.math.vec3
 import com.acornui.recycle.Clearable
 import kotlin.math.ceil
 import kotlin.math.cos
@@ -35,7 +35,7 @@ class ParticleEffectInstance(
 
 ) {
 
-	private val _position = Vector3()
+	private val _position = vec3()
 
 	val position: Vector3Ro
 		get() = _position
@@ -88,7 +88,7 @@ class ParticleEmitterInstance(
 		val maxParticlesScale: Float
 ) {
 
-	val position = Vector3()
+	val position = vec3()
 
 	val particles: List<Particle>
 
@@ -298,19 +298,19 @@ class Particle(
 			_lifeExpectancyInv = 1f / value
 		}
 
-	val position = Vector3()
-	val velocity = Vector3()
+	val position = vec3()
+	val velocity = vec3()
 
-	val scale = Vector3(1f, 1f, 1f)
+	val scale = vec3(1f, 1f, 1f)
 
-	val rotation = Vector3()
-	val rotationalVelocity = Vector3()
+	val rotation = vec3()
+	val rotationalVelocity = vec3()
 
 	/**
 	 * pitch, yaw, and roll values in radians.
 	 */
-	val forwardDirection = Vector3()
-	val forwardDirectionVelocity = Vector3()
+	val forwardDirection = vec3()
+	val forwardDirectionVelocity = vec3()
 	var forwardVelocity = 0f
 
 	val colorTint: Color = Color.WHITE.copy()
@@ -319,7 +319,7 @@ class Particle(
 	 * The origin of the particle, with percent-based values.
 	 * (Default 0.5f, 0.5f, 0.5f - the center of the particle)
 	 */
-	val origin = Vector3(0.5f, 0.5f, 0.5f)
+	val origin = vec3(0.5f, 0.5f, 0.5f)
 
 	var imageIndex = 0
 

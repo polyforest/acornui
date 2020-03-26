@@ -79,14 +79,14 @@ class CharElement private constructor() : TextElement, Clearable {
 	/**
 	 * A cache of the vertex positions in world space.
 	 */
-	private val charVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val charVerticesGlobal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val charVertices: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
+	private val charVerticesGlobal: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
 
-	private val backgroundVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val backgroundVerticesGlobal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val backgroundVertices: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
+	private val backgroundVerticesGlobal: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
 
-	private val lineVertices: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
-	private val lineVerticesGlobal: Array<Vector3> = arrayOf(Vector3(), Vector3(), Vector3(), Vector3())
+	private val lineVertices: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
+	private val lineVerticesGlobal: Array<Vector3> = arrayOf(vec3(), vec3(), vec3(), vec3())
 
 	private val fontColorGlobal = Color()
 	private val backgroundColorGlobal = Color()

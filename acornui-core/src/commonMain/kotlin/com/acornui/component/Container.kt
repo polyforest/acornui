@@ -24,7 +24,7 @@ import com.acornui.di.Context
 import com.acornui.focus.invalidateFocusOrderDeep
 import com.acornui.math.Ray
 import com.acornui.math.RayRo
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
@@ -156,7 +156,7 @@ open class ContainerImpl(
 	}
 
 	private val childrenUpdateIterator = _children.concurrentIterator()
-	private val vec3Tmp = Vector3()
+	private val vec3Tmp = vec3()
 
 	override fun update() {
 		super.update()

@@ -22,13 +22,14 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.PI2
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val v1 = Vector2()
-private val v2 = Vector2()
-private val v3 = Vector2()
-private val v4 = Vector2()
+private val v1 = vec2()
+private val v2 = vec2()
+private val v3 = vec2()
+private val v4 = vec2()
 
 
 fun ShaderBatch.triangle(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, colorTint: ColorRo = Color.WHITE) {

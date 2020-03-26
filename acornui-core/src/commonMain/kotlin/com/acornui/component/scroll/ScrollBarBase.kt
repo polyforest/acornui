@@ -29,7 +29,8 @@ import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.mouseDown
 import com.acornui.input.mouseOver
 import com.acornui.math.Easing
-import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import com.acornui.start
 import com.acornui.tween.killTween
 import com.acornui.tween.tweenAlpha
@@ -60,8 +61,8 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
-	private val thumbOffset = Vector2()
-	private val positionTmp = Vector2()
+	private val thumbOffset = vec2()
+	private val positionTmp = vec2()
 
 	// Children
 	protected var decrementButton: UiComponent? = null
@@ -168,7 +169,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner) {
 	}
 
 	protected abstract fun refreshThumbPosition()
-	protected abstract fun getModelValue(position: Vector2): Float
+	protected abstract fun getModelValue(position: Vector2Ro): Float
 	protected abstract val minTrack: Float
 	protected abstract val maxTrack: Float
 

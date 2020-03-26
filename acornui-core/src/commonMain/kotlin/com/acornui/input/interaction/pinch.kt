@@ -26,8 +26,8 @@ import com.acornui.di.ContextImpl
 import com.acornui.function.as1
 import com.acornui.input.*
 import com.acornui.math.Vector2
-import com.acornui.math.Vector2.Companion.manhattanDst
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -38,7 +38,7 @@ interface PinchPointsRo {
 	val second: Vector2Ro
 }
 
-data class PinchPoints(override val first: Vector2 = Vector2(), override val second: Vector2 = Vector2()) : PinchPointsRo, Clearable {
+data class PinchPoints(override val first: Vector2 = vec2(), override val second: Vector2 = vec2()) : PinchPointsRo, Clearable {
 
 	fun set(value: PinchPointsRo): PinchPoints {
 		first.set(value.first)
@@ -225,7 +225,7 @@ class PinchAttachment(
 	}
 
 	private fun allowTouchPinchStart(event: TouchInteractionRo): Boolean {
-		return manhattanDst(event.touches[0].canvasX, event.touches[0].canvasY, event.touches[1].canvasX, event.touches[1].canvasY) >= affordance
+		return Vector2.manhattanDst(event.touches[0].canvasX, event.touches[0].canvasY, event.touches[1].canvasX, event.touches[1].canvasY) >= affordance
 	}
 
 	private fun allowTouchEnd(event: TouchInteractionRo): Boolean {

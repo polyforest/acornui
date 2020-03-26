@@ -49,9 +49,9 @@ private class BasicButtonSkin(
 				backgroundColor = Color.WHITE
 				margin = Pad(top = borderThickness.top, right = borderThickness.right, bottom = 0f, left = borderThickness.left)
 				this.borderRadii = Corners(
-						topLeft = Vector2(borderRadius.topLeft.x - borderThickness.left, borderRadius.topLeft.y - borderThickness.top),
-						topRight = Vector2(borderRadius.topRight.x - borderThickness.right, borderRadius.topRight.y - borderThickness.top),
-						bottomLeft = Vector2(), bottomRight = Vector2()
+						topLeft = vec2(borderRadius.topLeft.x - borderThickness.left, borderRadius.topLeft.y - borderThickness.top),
+						topRight = vec2(borderRadius.topRight.x - borderThickness.right, borderRadius.topRight.y - borderThickness.top),
+						bottomLeft = vec2(), bottomRight = vec2()
 				)
 			}
 		} layout {
@@ -65,9 +65,9 @@ private class BasicButtonSkin(
 				backgroundColor = Color.WHITE
 				margin = Pad(top = 0f, right = borderThickness.right, bottom = borderThickness.bottom, left = borderThickness.left)
 				this.borderRadii = Corners(
-						topLeft = Vector2(), topRight = Vector2(),
-						bottomLeft = Vector2(borderRadius.bottomLeft.x - borderThickness.left, borderRadius.bottomLeft.y - borderThickness.bottom),
-						bottomRight = Vector2(borderRadius.bottomRight.x - borderThickness.right, borderRadius.bottomRight.y - borderThickness.bottom)
+						topLeft = vec2(), topRight = vec2(),
+						bottomLeft = vec2(borderRadius.bottomLeft.x - borderThickness.left, borderRadius.bottomLeft.y - borderThickness.bottom),
+						bottomRight = vec2(borderRadius.bottomRight.x - borderThickness.right, borderRadius.bottomRight.y - borderThickness.bottom)
 				)
 			}
 		} layout {

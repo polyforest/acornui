@@ -48,7 +48,7 @@ class ScrollRectImpl(
 
 	override val style = bind(ScrollRectStyle())
 
-	private var scroll = Vector2()
+	private var scroll = vec2()
 
 	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val maskClip = addChild(rect {

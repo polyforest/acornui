@@ -22,8 +22,8 @@ import com.acornui.di.Context
 import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.vec2
+import com.acornui.math.vec3
 
 /**
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
@@ -113,9 +113,9 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 		contents.setSize(explicitWidth, explicitHeight)
 	}
 
-	private val tmpVec = Vector3()
+	private val tmpVec = vec3()
 	private val tmpMat = Matrix4()
-	private val points = arrayOf(Vector2(0f, 0f), Vector2(1f, 0f), Vector2(1f, 1f), Vector2(0f, 1f))
+	private val points = arrayOf(vec2(0f, 0f), vec2(1f, 0f), vec2(1f, 1f), vec2(0f, 1f))
 
 	private fun updateContentsTransform() {
 		tmpMat.set(contents.viewProjectionTransformInv).mul(viewProjectionTransform).mul(transformGlobal)

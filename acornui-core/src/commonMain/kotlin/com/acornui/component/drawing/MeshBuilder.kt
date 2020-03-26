@@ -16,12 +16,14 @@
 
 package com.acornui.component.drawing
 
-import com.acornui.recycle.Clearable
 import com.acornui.collection.stringMapOf
-import com.acornui.gl.core.*
+import com.acornui.gl.core.ShaderBatch
+import com.acornui.gl.core.VertexAttributeLocation
+import com.acornui.gl.core.iterateVertexAttribute
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
+import com.acornui.recycle.Clearable
 
 /**
  * A MeshRegion provides utility for writing to a mesh and optionally transforming that section of the mesh.
@@ -133,7 +135,7 @@ class MeshRegion(val batch: ShaderBatch) : ShaderBatch by batch {
 
 	companion object {
 		private val tmpMat = Matrix4()
-		private val tmpVec = Vector3()
+		private val tmpVec = vec3()
 		private val tmpColor = Color()
 	}
 }

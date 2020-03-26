@@ -99,10 +99,10 @@ private class LayerTween(
 	override val durationInv: Float = 1f / duration
 
 	private val transform = Matrix4()
-	private val origin = Vector3()
-	private val position = Vector3()
-	private val scale = Vector3(1f, 1f, 1f)
-	private val rotation = Vector3()
+	private val origin = vec3()
+	private val position = vec3()
+	private val scale = vec3(1f, 1f, 1f)
+	private val rotation = vec3()
 	private val color = Color.WHITE.copy()
 
 	private var shearXZ = 0f

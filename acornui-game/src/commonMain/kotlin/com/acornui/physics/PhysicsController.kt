@@ -24,8 +24,8 @@ import com.acornui.geom.CollisionInfo
 import com.acornui.geom.CollisionInfoRo
 import com.acornui.geom.Polygon2
 import com.acornui.math.Matrix3
-import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import com.acornui.mvc.Command
 import com.acornui.mvc.CommandType
 import com.acornui.mvc.commander
@@ -138,11 +138,11 @@ class PhysicsController(
 		private val collisionInfo = CollisionInfo()
 		private val collision = Collision(collisionInfo)
 
-		private val mTd = Vector2()
-		private val posDelta = Vector2()
-		private val rA = Vector2()
-		private val rB = Vector2()
-		private val impulse = Vector2()
+		private val mTd = vec2()
+		private val posDelta = vec2()
+		private val rA = vec2()
+		private val rB = vec2()
+		private val impulse = vec2()
 
 		private val worldPerim1 = Polygon2()
 		private val worldPerim2 = Polygon2()
@@ -176,12 +176,12 @@ class Collision(
 	/**
 	 * The combined impact velocity of this collision.
 	 */
-	override val impactVelocity = Vector2()
+	override val impactVelocity = vec2()
 
 	/**
 	 * The angle of the collision impulse.
 	 */
-	override val impactDirection = Vector2()
+	override val impactDirection = vec2()
 
 	/**
 	 * The dot product of the impact velocity and impact direction.

@@ -31,11 +31,13 @@
 
 package com.esotericsoftware.spine
 
-import com.acornui.collection.*
-import com.acornui.graphic.TextureAtlasData
+import com.acornui.collection.arrayCopy
+import com.acornui.collection.firstOrNull2
+import com.acornui.collection.indexOfFirst2
+import com.acornui.collection.peek
 import com.acornui.graphic.Color
+import com.acornui.graphic.TextureAtlasData
 import com.acornui.math.Bounds
-import com.acornui.math.Vector2
 import com.acornui.recycle.Clearable
 import com.esotericsoftware.spine.animation.Animation
 import com.esotericsoftware.spine.attachments.MeshAttachment
@@ -45,6 +47,16 @@ import com.esotericsoftware.spine.attachments.WeightedMeshAttachment
 import com.esotericsoftware.spine.component.SpineVertexUtils.positionOffset
 import com.esotericsoftware.spine.component.SpineVertexUtils.vertexSize
 import com.esotericsoftware.spine.data.SkeletonData
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.firstOrNull
+import kotlin.collections.indexOfFirst
+import kotlin.collections.iterator
+import kotlin.collections.lastIndex
+import kotlin.collections.set
 
 
 class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable {

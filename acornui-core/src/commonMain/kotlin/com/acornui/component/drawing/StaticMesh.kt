@@ -288,9 +288,9 @@ class StaticMesh(
 	}
 
 	companion object {
-		private val v0 = Vector3()
-		private val v1 = Vector3()
-		private val v2 = Vector3()
+		private val v0 = vec3()
+		private val v1 = vec3()
+		private val v2 = vec3()
 	}
 }
 

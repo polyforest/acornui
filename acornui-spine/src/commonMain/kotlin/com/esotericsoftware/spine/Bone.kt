@@ -33,7 +33,6 @@ package com.esotericsoftware.spine
 
 import com.acornui.math.MathUtils
 import com.acornui.math.Matrix3
-import com.acornui.math.Vector2
 import com.esotericsoftware.spine.data.BoneData
 import kotlin.math.atan2
 import kotlin.math.cos

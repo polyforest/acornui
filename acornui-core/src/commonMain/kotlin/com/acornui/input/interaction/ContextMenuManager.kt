@@ -26,8 +26,8 @@ import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
-import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.signal.StoppableSignal
@@ -157,7 +157,7 @@ class ContextMenuView(owner: Context) : ContainerImpl(owner) {
 
 	private var _highlightedRow: ContextMenuItemView? = null
 
-	private val _mousePosition = Vector2()
+	private val _mousePosition = vec2()
 
 	private val stageMouseMoveHandler = { e: MouseInteractionRo ->
 		updateHighlight()

@@ -121,7 +121,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	override fun onActivated() {
 		window.sizeChanged.add(::windowChangedHandler.as2)
-		window.scaleChanged.add(::windowChangedHandler.as2)
 		window.refresh.add(::windowChangedHandler)
 		windowChangedHandler()
 		super.onActivated()
@@ -130,7 +129,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	override fun onDeactivated() {
 		super.onDeactivated()
 		window.sizeChanged.remove(::windowChangedHandler.as2)
-		window.scaleChanged.remove(::windowChangedHandler.as2)
 		window.refresh.remove(::windowChangedHandler)
 	}
 

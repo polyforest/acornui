@@ -88,9 +88,9 @@ class MinMaxTest {
 
 	@Test
 	fun clampPoint() {
-		assertEquals(Vector2(1f, -3f), m1.clampPoint(Vector2(0f, -4f)))
-		assertEquals(Vector2(2f, -3f), m1.clampPoint(Vector2(2f, -4f)))
-		assertEquals(Vector2(40f, 100f), m1.clampPoint(Vector2(42f, 104f)))
+		assertEquals(vec2(1f, -3f), m1.clampPoint(vec2(0f, -4f)))
+		assertEquals(vec2(2f, -3f), m1.clampPoint(vec2(2f, -4f)))
+		assertEquals(vec2(40f, 100f), m1.clampPoint(vec2(42f, 104f)))
 	}
 
 	@Test

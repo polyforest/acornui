@@ -17,8 +17,8 @@
 package com.acornui.math
 
 import com.acornui.test.assertClose
-import kotlin.test.Test
 import kotlin.math.sqrt
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -27,58 +27,58 @@ class Vector2Test {
 
 	@Test
 	fun len() {
-		assertClose(3f, Vector2(3f, 0f).len())
-		assertClose(3f, Vector2(0f, -3f).len())
-		assertClose(sqrt(18f), Vector2(3f, -3f).len())
+		assertClose(3f, vec2(3f, 0f).len())
+		assertClose(3f, vec2(0f, -3f).len())
+		assertClose(sqrt(18f), vec2(3f, -3f).len())
 	}
 
 	@Test
 	fun len2() {
-		assertClose(9f, Vector2(3f, 0f).len2())
-		assertClose(9f, Vector2(0f, -3f).len2())
-		assertClose(18f, Vector2(3f, -3f).len2())
+		assertClose(9f, vec2(3f, 0f).len2())
+		assertClose(9f, vec2(0f, -3f).len2())
+		assertClose(18f, vec2(3f, -3f).len2())
 	}
 
 	@Test
 	fun set() {
-		assertEquals(Vector2(2f, 3f), Vector2().set(2f, 3f))
+		assertEquals(vec2(2f, 3f), vec2().set(2f, 3f))
 	}
 
 	@Test
 	fun set1() {
-		assertEquals(Vector2(2f, 3f), Vector2().set(Vector2(2f, 3f)))
+		assertEquals(vec2(2f, 3f), vec2().set(vec2(2f, 3f)))
 	}
 
 	@Test
 	fun sub() {
-		assertEquals(Vector2(2f, 3f), Vector2(4f, 6f).sub(Vector2(2f, 3f)))
+		assertEquals(vec2(2f, 3f), vec2(4f, 6f).sub(vec2(2f, 3f)))
 	}
 
 	@Test
 	fun sub1() {
-		assertEquals(Vector2(2f, 3f), Vector2(4f, 6f).sub(2f, 3f))
+		assertEquals(vec2(2f, 3f), vec2(4f, 6f).sub(2f, 3f))
 	}
 
 	@Test
 	fun nor() {
-		assertEquals(Vector2(1f, 0f), Vector2(5f, 0f).nor())
+		assertEquals(vec2(1f, 0f), vec2(5f, 0f).nor())
 	}
 
 	@Test
 	fun add() {
-		assertEquals(Vector2(10f, 11f), Vector2(5f, 4f).add(5f, 7f))
+		assertEquals(vec2(10f, 11f), vec2(5f, 4f).add(5f, 7f))
 	}
 
 	@Test
 	fun add1() {
-		assertEquals(Vector2(10f, 11f), Vector2(5f, 4f).add(Vector2(5f, 7f)))
+		assertEquals(vec2(10f, 11f), vec2(5f, 4f).add(vec2(5f, 7f)))
 	}
 
 	@Test
 	fun dot() {
-		assertEquals(1f, Vector2(1f, 0f).dot(1f, 0f))
-		assertEquals(-1f, Vector2(1f, 0f).dot(-1f, 0f))
-		assertEquals(0f, Vector2(1f, 0f).dot(0f, 1f))
+		assertEquals(1f, vec2(1f, 0f).dot(1f, 0f))
+		assertEquals(-1f, vec2(1f, 0f).dot(-1f, 0f))
+		assertEquals(0f, vec2(1f, 0f).dot(0f, 1f))
 
 //		println(Vector2(50f, 0f).crs(100f, 100f) / Vector2(50f, 0f).len())
 //		println(Vector2(10f, 50f).crs(0f, 10f) / Vector2(50f, 10f).len())
@@ -87,53 +87,53 @@ class Vector2Test {
 
 	@Test
 	fun dot1() {
-		assertEquals(1f, Vector2(1f, 0f).dot(Vector2(1f, 0f)))
+		assertEquals(1f, vec2(1f, 0f).dot(vec2(1f, 0f)))
 	}
 
 	@Test
 	fun scl() {
-		assertEquals(Vector2(6f, 6f), Vector2(3f, 2f).scl(2f, 3f))
+		assertEquals(vec2(6f, 6f), vec2(3f, 2f).scl(2f, 3f))
 	}
 
 	@Test
 	fun scl1() {
-		assertEquals(Vector2(6f, 6f), Vector2(3f, 2f).scl(Vector2(2f, 3f)))
+		assertEquals(vec2(6f, 6f), vec2(3f, 2f).scl(vec2(2f, 3f)))
 	}
 
 	@Test
 	fun scl2() {
-		assertEquals(Vector2(6f, 4f), Vector2(3f, 2f).scl(2f))
+		assertEquals(vec2(6f, 4f), vec2(3f, 2f).scl(2f))
 	}
 
 	@Test
 	fun dst() {
-		assertEquals(4f, Vector2(0f, 0f).dst(Vector2(4f, 0f)))
+		assertEquals(4f, vec2(0f, 0f).dst(vec2(4f, 0f)))
 	}
 
 	@Test
 	fun dst1() {
-		assertEquals(4f, Vector2(0f, 0f).dst(4f, 0f))
+		assertEquals(4f, vec2(0f, 0f).dst(4f, 0f))
 	}
 
 	@Test
 	fun dst2() {
-		assertEquals(16f, Vector2(0f, 0f).dst2(4f, 0f))
+		assertEquals(16f, vec2(0f, 0f).dst2(4f, 0f))
 	}
 
 	@Test
 	fun manhattanDst() {
-		assertEquals(5f, Vector2(0f, 0f).manhattanDst(Vector2(4f, 1f)))
+		assertEquals(5f, vec2(0f, 0f).manhattanDst(vec2(4f, 1f)))
 	}
 
 	@Test
 	fun limit() {
-		assertEquals(Vector2(1f, 0f), Vector2(3f, 0f).limit(1f))
+		assertEquals(vec2(1f, 0f), vec2(3f, 0f).limit(1f))
 	}
 
 	@Test
 	fun clamp() {
-		assertEquals(Vector2(3f, 0f), Vector2(4f, 0f).clamp(1f, 3f))
-		assertEquals(Vector2(1f, 0f), Vector2(0.5f, 0f).clamp(1f, 3f))
+		assertEquals(vec2(3f, 0f), vec2(4f, 0f).clamp(1f, 3f))
+		assertEquals(vec2(1f, 0f), vec2(0.5f, 0f).clamp(1f, 3f))
 	}
 
 	@Test
@@ -198,8 +198,8 @@ class Vector2Test {
 
 	@Test
 	fun isOnLine() {
-		assertTrue(Vector2(100f, 0f).isOnLine(Vector2(50f, 0f)))
-		assertTrue(Vector2(100f, 110f).isOnLine(Vector2(50f, 55f)))
+		assertTrue(vec2(100f, 0f).isOnLine(vec2(50f, 0f)))
+		assertTrue(vec2(100f, 110f).isOnLine(vec2(50f, 55f)))
 	}
 
 	@Test

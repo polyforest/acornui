@@ -31,7 +31,6 @@ import com.acornui.frameTimeS
 import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
-import com.acornui.mainContext
 import com.acornui.math.*
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.invokeCommand
@@ -394,8 +393,8 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	private val bufferP = 0.2f
 	private val innerBufferMax = 80f
 	private val outerBufferMax = 200f
-	private var startMouse = Vector2()
-	private val currentMouse = Vector2()
+	private var startMouse = vec2()
+	private val currentMouse = vec2()
 	private var _frameWatch: Disposable? = null
 
 	private fun startScrollWatch(event: Any) {

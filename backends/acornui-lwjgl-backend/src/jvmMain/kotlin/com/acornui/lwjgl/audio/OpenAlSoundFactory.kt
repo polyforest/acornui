@@ -19,7 +19,7 @@ package com.acornui.lwjgl.audio
 import com.acornui.audio.Sound
 import com.acornui.audio.SoundFactory
 import com.acornui.math.MathUtils
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import org.lwjgl.openal.AL10
 import org.lwjgl.openal.AL11
 import java.nio.ByteBuffer
@@ -129,7 +129,7 @@ class OpenAlSound(
 		audioManager.registerSound(this)
 	}
 
-	private val _position = Vector3(0f, 0f, 1f)
+	private val _position = vec3(0f, 0f, 1f)
 
 	override fun setPosition(x: Float, y: Float, z: Float) {
 		if (_position.x == x && _position.y == y && _position.z == z) return

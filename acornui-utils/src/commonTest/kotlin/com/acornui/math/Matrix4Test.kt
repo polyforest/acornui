@@ -121,13 +121,13 @@ class Matrix4Test {
 
 	@Test
 	fun setToLookAt() {
-		m1.setToLookAt(Vector3(3f, 62f, 23f), Vector3(2f, 32f, -23f))
+		m1.setToLookAt(vec3(3f, 62f, 23f), vec3(2f, 32f, -23f))
 		assertListEquals(floatArrayOf(-0.99850476f, 0.030565504f, -0.045319494f, 0.0f, 0.053111956f, 0.3463439f, -0.9366029f, 0.0f, -0.012931608f, -0.93760955f, -0.34744945f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f), m1.values)
 	}
 
 	@Test
 	fun setToGlobal() {
-		m1.setToGlobal(Vector3(3f, 62f, 23f), Vector3(2f, 32f, -23f), Vector3(7f, 12f, 322f))
+		m1.setToGlobal(vec3(3f, 62f, 23f), vec3(2f, 32f, -23f), vec3(7f, 12f, 322f))
 		assertListEquals(floatArrayOf(0.99694073f, 0.059497714f, -0.050685726f, 0.0f, -0.07585418f, 0.5801475f, -0.8109716f, 0.0f, -0.01884576f, 0.8123355f, 0.58288586f, 0.0f, 3.0f, 62.0f, 23.0f, 1.0f), m1.values)
 
 	}
@@ -155,8 +155,8 @@ class Matrix4Test {
 
 	@Test
 	fun getTranslation() {
-		val out = Vector3()
-		assertEquals(Vector3(11f, 25f, 41f), m1.getTranslation(out))
+		val out = vec3()
+		assertEquals(vec3(11f, 25f, 41f), m1.getTranslation(out))
 	}
 
 	@Test
@@ -203,7 +203,7 @@ class Matrix4Test {
 
 	@Test
 	fun getScale() {
-		assertClose(Vector3(25.670996f, 103.706314f, 78.06408f), m1.getScale(Vector3()))
+		assertClose(vec3(25.670996f, 103.706314f, 78.06408f), m1.getScale(vec3()))
 	}
 
 	@Test
@@ -214,7 +214,7 @@ class Matrix4Test {
 
 	@Test
 	fun translate1() {
-		m1.translate(Vector3(3f, 23f, 44f))
+		m1.translate(vec3(3f, 23f, 44f))
 		assertListEquals(floatArrayOf(3.0f, 5.0f, 6.0f, 13.0f, 17.0f, 23.0f, 27.0f, 35.0f, 19.0f, 101.0f, 73.0f, 19.0f, 1247.0f, 5013.0f, 3892.0f, 1723.0f), m1.values)
 	}
 
@@ -228,7 +228,7 @@ class Matrix4Test {
 
 	@Test
 	fun rotate1() {
-		m1.rotate(Vector3(0.2f, 0.65f, 0.33f), Vector3(-0.4f, 2.5f, 33f))
+		m1.rotate(vec3(0.2f, 0.65f, 0.33f), vec3(-0.4f, 2.5f, 33f))
 		assertListEquals(floatArrayOf(3f, 5f, 6f, 13f, 17f, 23f, 27f, 35f, 19f, 101f, 73f, 19f, 11f, 25f, 41f, 43f), m1.values)
 	}
 
@@ -240,7 +240,7 @@ class Matrix4Test {
 
 	@Test
 	fun scale() {
-		m1.scale(Vector3(3f, 23f, 44f))
+		m1.scale(vec3(3f, 23f, 44f))
 		assertListEquals(floatArrayOf(9.0f, 15.0f, 18.0f, 39.0f, 391.0f, 529.0f, 621.0f, 805.0f, 836.0f, 4444.0f, 3212.0f, 836.0f, 11.0f, 25.0f, 41.0f, 43.0f), m1.values)
 	}
 
@@ -252,23 +252,23 @@ class Matrix4Test {
 
 	@Test
 	fun prj() {
-		assertClose(Vector3(0.90207374f, 4.524194f, 3.3231566f), m1.prj(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(x=0.0044117644f, y=0.010588235f, z=-0.20117646f), m3.prj(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(x=0.0015243902f, y=0.0030487804f, z=0.038617887f), m4.prj(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.prj(Vector3(3f, 6f, 76f)))
+		assertClose(vec3(0.90207374f, 4.524194f, 3.3231566f), m1.prj(vec3(3f, 6f, 76f)))
+		assertClose(vec3(x = 0.0044117644f, y = 0.010588235f, z = -0.20117646f), m3.prj(vec3(3f, 6f, 76f)))
+		assertClose(vec3(x = 0.0015243902f, y = 0.0030487804f, z = 0.038617887f), m4.prj(vec3(3f, 6f, 76f)))
+		assertClose(vec3(3f, 6f, 76f), Matrix4.IDENTITY.prj(vec3(3f, 6f, 76f)))
 	}
 
 	@Test
 	fun rot() {
-		assertClose(Vector3(3f, 6f, 76f), Matrix4.IDENTITY.rot(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(1555f, 7829f, 5728f), m1.rot(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(15f, 36f, -684f), m3.rot(Vector3(3f, 6f, 76f)))
-		assertClose(Vector3(3f, 6f, 76f), m4.rot(Vector3(3f, 6f, 76f)))
+		assertClose(vec3(3f, 6f, 76f), Matrix4.IDENTITY.rot(vec3(3f, 6f, 76f)))
+		assertClose(vec3(1555f, 7829f, 5728f), m1.rot(vec3(3f, 6f, 76f)))
+		assertClose(vec3(15f, 36f, -684f), m3.rot(vec3(3f, 6f, 76f)))
+		assertClose(vec3(3f, 6f, 76f), m4.rot(vec3(3f, 6f, 76f)))
 	}
 
 	@Test
 	fun rot1() {
-		assertClose(Vector2(111f, 153f), m1.rot(Vector2(3f, 6f)))
+		assertClose(vec2(111f, 153f), m1.rot(vec2(3f, 6f)))
 	}
 
 	@Test

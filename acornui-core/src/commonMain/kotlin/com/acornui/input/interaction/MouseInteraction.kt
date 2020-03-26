@@ -24,6 +24,7 @@ import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.input.WhichButton
 import com.acornui.math.Vector2
+import com.acornui.math.vec2
 import kotlin.math.sqrt
 
 interface MouseInteractionRo : InteractionEventRo {
@@ -116,7 +117,7 @@ open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
 	override var canvasY: Float = 0f
 
 	private var _localPositionIsValid = false
-	private val _localPosition: Vector2 = Vector2()
+	private val _localPosition: Vector2 = vec2()
 
 	/**
 	 * The position of the mouse event relative to the [currentTarget].

@@ -19,11 +19,11 @@ package com.acornui.component
 import com.acornui.gl.core.CachedGl20
 import com.acornui.gl.core.putIndices
 import com.acornui.gl.core.putVertex
-import com.acornui.graphic.*
-import com.acornui.math.IntRectangleRo
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.RectangleRo
-import com.acornui.math.Vector3
+import com.acornui.graphic.BlendMode
+import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
+import com.acornui.graphic.TextureRo
+import com.acornui.math.*
 import com.acornui.recycle.Clearable
 import kotlin.math.abs
 import kotlin.properties.Delegates
@@ -83,8 +83,8 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	private val indices = intArrayOf(0, 1, 5, 5, 4, 0, 1, 2, 6, 6, 5, 1, 2, 3, 7, 7, 6, 2, 4, 5, 9, 9, 8, 4, 5, 6, 10, 10, 9, 5, 6, 7, 11, 11, 10, 6, 8, 9, 13, 13, 12, 8, 9, 10, 14, 14, 13, 9, 10, 11, 15, 15, 14, 10)
 
-	private val vertices = Array(16) { Vector3() }
-	private val normal = Vector3()
+	private val vertices = Array(16) { vec3() }
+	private val normal = vec3()
 	private val tint = Color()
 
 	var texture by Delegates.observable<TextureRo?>(null) {

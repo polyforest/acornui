@@ -24,6 +24,7 @@ import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
 import com.acornui.math.RayRo
 import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import com.acornui.signal.StoppableSignal
 
 interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, AttachmentHolder, Context {
@@ -78,7 +79,7 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false)
 }
 
-private val tmpVec = Vector3()
+private val tmpVec = vec3()
 
 /**
  * Returns true if this primitive intersects with the provided ray (in world coordinates)

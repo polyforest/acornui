@@ -34,7 +34,7 @@ class BoxTest {
 		boxA.ext(boxB)
 
 		assertEquals(boxA, boxB)
-		assertEquals(boxA.center, Vector3(50f, 100f, 150f))
+		assertEquals(boxA.center, vec3(50f, 100f, 150f))
 	}
 
 	@Test fun extTransformed() {
@@ -47,7 +47,7 @@ class BoxTest {
 		boxA.ext(boxB, mat)
 
 		assertEquals(boxA, boxB)
-		assertEquals(boxA.center, Vector3(50f, 100f, 150f))
+		assertEquals(boxA.center, vec3(50f, 100f, 150f))
 	}
 
 	@Test fun extTransformed2() {
@@ -59,7 +59,7 @@ class BoxTest {
 
 		boxA.ext(boxB, mat)
 
-		assertClose(Vector3(300f, 200f, 100f), boxA.dimensions)
+		assertClose(vec3(300f, 200f, 100f), boxA.dimensions)
 	}
 
 	@Test fun intersectsRay() {
@@ -74,15 +74,15 @@ class BoxTest {
 
 			assertTrue(boxA.intersects(ray))
 
-			val out: Vector3 = Vector3()
+			val out: Vector3 = vec3()
 			boxA.intersects(ray, out)
-			assertEquals(Vector3(50f, 100f, 10f), out)
+			assertEquals(vec3(50f, 100f, 10f), out)
 
 			// Optimized case for a box with no depth. (Still axis aligned)
 			boxA.max.z = 0f // max z == min z
 			assertTrue(boxA.intersects(ray))
 			boxA.intersects(ray, out)
-			assertEquals(Vector3(50f, 100f, 0f), out)
+			assertEquals(vec3(50f, 100f, 0f), out)
 
 		}
 
@@ -95,10 +95,10 @@ class BoxTest {
 			val boxA = Box()
 			boxA.set(0f, 0f, 10f, 100f, 200f, 10f)
 
-			val out = Vector3()
+			val out = vec3()
 
 			assertTrue(boxA.intersects(ray, out))
-			assertEquals(Vector3(50f + 5f, 100f + 2.5f, 10f), out)
+			assertEquals(vec3(50f + 5f, 100f + 2.5f, 10f), out)
 
 		}
 	}
@@ -134,8 +134,8 @@ class BoxTest {
 
 	@Test fun clampMinMax() {
 		assertEquals(Box(), Box().clamp(MinMax(0f, 0f, 100f, 50f)))
-		assertEquals(Box(Vector3(10f, 0f, 0f), Vector3(80f, 50f, 20f)), Box(Vector3(), Vector3(100f, 50f, 20f)).clamp(MinMax(10f, -10f, 80f, 55f)))
-		assertEquals(Box(Vector3(0f, 10f, 0f), Vector3(100f, 40f, 20f)), Box(Vector3(), Vector3(100f, 50f, 20f)).clamp(MinMax(-10f, 10f, 110f, 40f)))
+		assertEquals(Box(vec3(10f, 0f, 0f), vec3(80f, 50f, 20f)), Box(vec3(), vec3(100f, 50f, 20f)).clamp(MinMax(10f, -10f, 80f, 55f)))
+		assertEquals(Box(vec3(0f, 10f, 0f), vec3(100f, 40f, 20f)), Box(vec3(), vec3(100f, 50f, 20f)).clamp(MinMax(-10f, 10f, 110f, 40f)))
 	}
 
 }

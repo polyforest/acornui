@@ -218,18 +218,18 @@ interface BoxRo : RectangleRo {
  */
 @Serializable(with = BoxSerializer::class)
 class Box(
-		override val min: Vector3 = Vector3(0f),
-		override val max: Vector3 = Vector3(0f)
+		override val min: Vector3 = vec3(0f),
+		override val max: Vector3 = vec3(0f)
 ) : BoxRo, Clearable {
 
-	private val _center: Vector3 = Vector3()
+	private val _center: Vector3 = vec3()
 	override val center: Vector3Ro
 		get() {
 			_center.set(min).add(max).scl(0.5f)
 			return _center
 		}
 
-	private val _dimensions: Vector3 = Vector3()
+	private val _dimensions: Vector3 = vec3()
 	override val dimensions: Vector3Ro
 		get() {
 			_dimensions.set(max).sub(min)
@@ -548,7 +548,7 @@ class Box(
 
 	companion object {
 
-		private val tmpVec3 = Vector3()
+		private val tmpVec3 = vec3()
 
 	}
 }

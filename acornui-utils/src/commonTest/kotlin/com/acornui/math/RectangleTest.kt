@@ -90,10 +90,10 @@ class RectangleTest {
 
 	@Test
 	fun intersectsRay() {
-		val intersectionPoint = Vector3()
-		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(Vector3(1f, 1f, 1f), direction = Vector3(0f, 0f, -1f)), intersectionPoint))
-		assertClose(Vector3(1f, 1f, 0f), intersectionPoint)
-		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(Vector3(1f, 1f, 1f), direction = Vector3(0f, 0f, 1f)))) // Behind the ray
+		val intersectionPoint = vec3()
+		assertTrue(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(vec3(1f, 1f, 1f), direction = vec3(0f, 0f, -1f)), intersectionPoint))
+		assertClose(vec3(1f, 1f, 0f), intersectionPoint)
+		assertFalse(Rectangle(0f, 0f, 4f, 2f).intersects(Ray(vec3(1f, 1f, 1f), direction = vec3(0f, 0f, 1f)))) // Behind the ray
 	}
 
 	@Test

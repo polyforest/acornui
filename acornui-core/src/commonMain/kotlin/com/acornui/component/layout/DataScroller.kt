@@ -148,7 +148,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 
 	private var background: UiComponent? = null
 
-	private val _mousePosition = Vector2()
+	private val _mousePosition = vec2()
 	private val keyState by KeyState
 
 	init {

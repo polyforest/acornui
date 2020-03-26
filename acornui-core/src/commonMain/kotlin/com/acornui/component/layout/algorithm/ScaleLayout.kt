@@ -26,10 +26,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
 import com.acornui.graphic.Scaling
-import com.acornui.math.Bounds
-import com.acornui.math.Pad
-import com.acornui.math.PadRo
-import com.acornui.math.Vector2
+import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
@@ -43,11 +40,12 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 	override val style = ScaleLayoutStyle()
 
 	override fun createLayoutData() = ScaleLayoutData()
+	private val size = vec2()
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		if (elements.isEmpty()) return
-		val size = Vector2.obtain()
 		val padding = style.padding
+		val size = size
 
 		val childAvailableWidth: Float? = padding.reduceWidth(explicitWidth)
 		val childAvailableHeight: Float? = padding.reduceHeight(explicitHeight)
@@ -109,7 +107,6 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 			if (explicitHeight == null) out.height = maxOf(out.height, size.y + padding.top + padding.bottom)
 			out.baseline = out.height
 		}
-		Vector2.free(size)
 	}
 }
 

@@ -188,13 +188,13 @@ interface RayRo {
 
 	companion object {
 		// Temporary values.
-		private val plane = Plane(Vector3(), 0f)
-		private val v3_0 = Vector3()
-		private val v3_1 = Vector3()
-		private val v3_2 = Vector3()
-		private val v3_3 = Vector3()
-		private val v3_4 = Vector3()
-		private val v3_5 = Vector3()
+		private val plane = Plane(vec3(), 0f)
+		private val v3_0 = vec3()
+		private val v3_1 = vec3()
+		private val v3_2 = vec3()
+		private val v3_3 = vec3()
+		private val v3_4 = vec3()
+		private val v3_5 = vec3()
 	}
 
 }
@@ -209,18 +209,18 @@ class Ray() : Clearable, RayRo {
 		set(origin, direction)
 	}
 
-	private val _origin = Vector3()
+	private val _origin = vec3()
 	override val origin: Vector3Ro
 		get() = _origin
 
-	private val _direction = Vector3(1f, 0f, 0f)
+	private val _direction = vec3(1f, 0f, 0f)
 	override val direction: Vector3Ro
 		get() {
 			validate()
 			return _direction
 		}
 
-	private val _directionInv = Vector3(1f, 0f, 0f)
+	private val _directionInv = vec3(1f, 0f, 0f)
 	override val directionInv: Vector3Ro
 		get() {
 			validate()
@@ -356,7 +356,7 @@ class Ray() : Clearable, RayRo {
 
 	companion object {
 
-		private val tmpVec = Vector3()
+		private val tmpVec = vec3()
 
 		private val pool = ClearableObjectPool { Ray() }
 

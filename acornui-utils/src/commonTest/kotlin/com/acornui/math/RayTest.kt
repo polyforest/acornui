@@ -36,65 +36,65 @@ class RayTest {
 
 	@Test fun intersectsRay() {
 		run {
-			val r1 = Ray(Vector3(5f, 5f, 4f), Vector3(5f, 5f, 2f))
-			val r2 = Ray(Vector3(5f, 5f, 5f), Vector3(5f, 5f, -2f))
+			val r1 = Ray(vec3(5f, 5f, 4f), vec3(5f, 5f, 2f))
+			val r2 = Ray(vec3(5f, 5f, 5f), vec3(5f, 5f, -2f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(6.25f, 6.25f, 4.5f), out)
+			assertClose(vec3(6.25f, 6.25f, 4.5f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(6f, 8f, 4f), Vector3(6f, 7f, 0f))
-			val r2 = Ray(Vector3(6f, 8f, 2f), Vector3(6f, 7f, 4f))
+			val r1 = Ray(vec3(6f, 8f, 4f), vec3(6f, 7f, 0f))
+			val r2 = Ray(vec3(6f, 8f, 2f), vec3(6f, 7f, 4f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(9f, 11.5f, 4f), out)
+			assertClose(vec3(9f, 11.5f, 4f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, -1f, 0f))
-			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(0f, -1f, 0f))
+			val r2 = Ray(vec3(0f, 0f, 30f), vec3(1f, 0f, 0f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(10f, 0f, 30f), out)
+			assertClose(vec3(10f, 0f, 30f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(0f, 0f, 30f), Vector3(1f, 0f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(1f, -1f, 0f))
+			val r2 = Ray(vec3(0f, 0f, 30f), vec3(1f, 0f, 0f))
 
-			val out = Vector3()
+			val out = vec3()
 			assertTrue(r1.intersectsRay(r2, out))
-			assertClose(Vector3(30f, 0f, 30f), out)
+			assertClose(vec3(30f, 0f, 30f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(10f, 30f, 30f), Vector3(1f, -1f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(1f, -1f, 0f))
+			val r2 = Ray(vec3(10f, 30f, 30f), vec3(1f, -1f, 0f))
 
 			assertFalse(r1.intersectsRay(r2))
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(1f, -1f, 0f))
-			val r2 = Ray(Vector3(10f, 30f, 31f), Vector3(2f, -3f, 0f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(1f, -1f, 0f))
+			val r2 = Ray(vec3(10f, 30f, 31f), vec3(2f, -3f, 0f))
 
 			assertFalse(r1.intersectsRay(r2))
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, 1f, 2f))
-			val r2 = Ray(Vector3(10f, 40f, 50f), Vector3(0f, 3f, 4f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(0f, 1f, 2f))
+			val r2 = Ray(vec3(10f, 40f, 50f), vec3(0f, 3f, 4f))
 
 			assertTrue(r1.intersectsRay(r2))
 		}
 
 		run {
-			val r1 = Ray(Vector3(10f, 20f, 30f), Vector3(0f, 1f, 2f))
-			val r2 = Ray(Vector3(11f, 40f, 50f), Vector3(0f, 3f, 4f))
+			val r1 = Ray(vec3(10f, 20f, 30f), vec3(0f, 1f, 2f))
+			val r2 = Ray(vec3(11f, 40f, 50f), vec3(0f, 3f, 4f))
 
 			assertFalse(r1.intersectsRay(r2))
 		}
@@ -102,31 +102,31 @@ class RayTest {
 
 	@Test fun intersectsTriangle() {
 		run {
-			val r1 = Ray(Vector3(1f, 2f, -20f), Vector3(0f, 0f, 1f))
+			val r1 = Ray(vec3(1f, 2f, -20f), vec3(0f, 0f, 1f))
 
-			val out = Vector3()
-			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(10f, 10f, 0f), Vector3(0f, 10f, 0f), out))
-			assertEquals(Vector3(1f, 2f, 0f), out)
+			val out = vec3()
+			assertTrue(r1.intersectsTriangle(vec3(0f, 0f, 0f), vec3(10f, 10f, 0f), vec3(0f, 10f, 0f), out))
+			assertEquals(vec3(1f, 2f, 0f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(1f, 0f, 0f))
+			val r1 = Ray(vec3(-20f, 2f, 1f), vec3(1f, 0f, 0f))
 
-			val out = Vector3()
-			assertTrue(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
-			assertEquals(Vector3(0f, 2f, 1f), out)
+			val out = vec3()
+			assertTrue(r1.intersectsTriangle(vec3(0f, 0f, 0f), vec3(0f, 10f, 10f), vec3(0f, 10f, 0f), out))
+			assertEquals(vec3(0f, 2f, 1f), out)
 		}
 
 		run {
-			val r1 = Ray(Vector3(-20f, 2f, 1f), Vector3(-1f, 0f, 0f))
+			val r1 = Ray(vec3(-20f, 2f, 1f), vec3(-1f, 0f, 0f))
 
-			val out = Vector3()
-			assertFalse(r1.intersectsTriangle(Vector3(0f, 0f, 0f), Vector3(0f, 10f, 10f), Vector3(0f, 10f, 0f), out))
+			val out = vec3()
+			assertFalse(r1.intersectsTriangle(vec3(0f, 0f, 0f), vec3(0f, 10f, 10f), vec3(0f, 10f, 0f), out))
 		}
 	}
 
 	@Test fun serialize() {
-		val ray = Ray(Vector3(1.1f, 2.1f, 3.1f), Vector3(4.1f, 5.1f, 6.1f))
+		val ray = Ray(vec3(1.1f, 2.1f, 3.1f), vec3(4.1f, 5.1f, 6.1f))
 		val str = jsonStringify(Ray.serializer(), ray)
 		val ray2 = jsonParse(Ray.serializer(), str)
 		assertClose(ray.origin, ray2.origin)

@@ -17,8 +17,6 @@
 package com.acornui.graphic
 
 import com.acornui.asset.loadTexture
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import com.acornui.component.InteractivityMode
 import com.acornui.component.UiComponentImpl
 import com.acornui.di.Context
@@ -26,8 +24,10 @@ import com.acornui.gl.core.*
 import com.acornui.io.floatBuffer
 import com.acornui.io.put
 import com.acornui.math.Matrix4
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import com.acornui.observe.ModTagWatch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class Skybox(owner: Context, private val camera: CameraRo) : UiComponentImpl(owner) {
 
@@ -161,7 +161,7 @@ class Skybox(owner: Context, private val camera: CameraRo) : UiComponentImpl(own
 
 		if (modTag.set(camera.modTag)) {
 			viewProjection.idt()
-			viewProjection.setToLookAt(camera.direction, Vector3(camera.up.x, -camera.up.y, camera.up.z))
+			viewProjection.setToLookAt(camera.direction, vec3(camera.up.x, -camera.up.y, camera.up.z))
 			val r = window.height / window.width
 			if (r > 1f) viewProjection.scale(r, 1f, 1f) // Tall
 			else viewProjection.scale(1f, 1f / r, 1f) // Wide

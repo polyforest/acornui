@@ -65,8 +65,8 @@ interface CameraRo : CameraTransformableRo {
 	val frustum: FrustumRo
 }
 
-private val originTmp = Vector3()
-private val directionTmp = Vector3()
+private val originTmp = vec3()
+private val directionTmp = vec3()
 
 interface Camera : CameraRo {
 
@@ -184,7 +184,7 @@ abstract class CameraBase : Camera {
 
 	override val modTag: ModTagRo = _modTag
 
-	protected val _position = Vector3()
+	protected val _position = vec3()
 
 	override val position: Vector3Ro
 		get() = _position
@@ -259,7 +259,7 @@ abstract class CameraBase : Camera {
 	// Temp storage
 	//------------------------------------
 
-	private val tmpVec = Vector3()
+	private val tmpVec = vec3()
 
 	override fun setDirection(x: Float, y: Float, z: Float, keepUpOrthonormal: Boolean) {
 		if (x == 0f && y == 0f && z == 0f) return

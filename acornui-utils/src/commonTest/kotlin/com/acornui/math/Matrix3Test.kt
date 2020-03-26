@@ -69,7 +69,7 @@ class Matrix3Test {
 
 	@Test
 	fun prj() {
-		assertClose(Vector2(34.5f, 18.02f), m1.prj(Vector2(3f, 2.5f)))
+		assertClose(vec2(34.5f, 18.02f), m1.prj(vec2(3f, 2.5f)))
 	}
 
 	@Test
@@ -134,13 +134,13 @@ class Matrix3Test {
 
 	@Test
 	fun trn1() {
-		m1.trn(Vector2(9f, -23f))
+		m1.trn(vec2(9f, -23f))
 		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
 	}
 
 	@Test
 	fun trn2() {
-		m1.trn(Vector3(9f, -23f, 100f))
+		m1.trn(vec3(9f, -23f, 100f))
 		assertListEquals(floatArrayOf(0.3f, 0.7f, 1.4f, 13f, 5.9f, 0.1f, 1.1f + 9f, 1.17f - 23f, 23f), m1.values)
 	}
 
@@ -156,12 +156,12 @@ class Matrix3Test {
 
 	@Test
 	fun getTranslation() {
-		assertClose(Vector2(1.1f, 1.17f), m1.getTranslation(Vector2()))
+		assertClose(vec2(1.1f, 1.17f), m1.getTranslation(vec2()))
 	}
 
 	@Test
 	fun getScale() {
-		assertClose(Vector2(13.003461f, 5.9413805f), m1.getScale(Vector2()))
+		assertClose(vec2(13.003461f, 5.9413805f), m1.getScale(vec2()))
 	}
 
 	@Test
@@ -185,7 +185,7 @@ class Matrix3Test {
 
 	@Test
 	fun scl3() {
-		m1.scl(Vector2(3f, 4f))
+		m1.scl(vec2(3f, 4f))
 		assertListEquals(floatArrayOf(0.90000004f, 0.7f, 1.4f, 13.0f, 23.6f, 0.1f, 1.1f, 1.17f, 23.0f), m1.values)
 	}
 

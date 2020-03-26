@@ -17,9 +17,9 @@ package com.acornui
 
 import com.acornui.component.*
 import com.acornui.component.parentWalk
-import com.acornui.math.Vector3
 import com.acornui.math.maxOf4
 import com.acornui.math.minOf4
+import com.acornui.math.vec3
 import com.acornui.time.callLater
 
 @ExperimentalAcorn
@@ -27,6 +27,7 @@ fun debugWhyCantSee(target: UiComponent) {
 	target.callLater { canSee(target) }
 }
 
+@ExperimentalAcorn
 private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {
 	target.stage.update()
 	var canSee = true
@@ -64,16 +65,17 @@ private fun canSee(target: UiComponentRo, print: Boolean = true): Boolean {
 /**
  * Returns true if the element isn't out of the bounds of any of its ancestors.
  */
+@ExperimentalAcorn
 private fun isInBounds(target: UiComponentRo, print: Boolean): Boolean {
 	var canSee = true
-	val topLeftGlobal = target.localToGlobal(Vector3(0f, 0f))
-	val topRightGlobal = target.localToGlobal(Vector3(target.width, 0f))
-	val bottomRightGlobal = target.localToGlobal(Vector3(target.width, target.height))
-	val bottomLeftGlobal = target.localToGlobal(Vector3(0f, target.height))
-	val topLeftLocal = Vector3()
-	val topRightLocal = Vector3()
-	val bottomRightLocal = Vector3()
-	val bottomLeftLocal = Vector3()
+	val topLeftGlobal = target.localToGlobal(vec3(0f, 0f))
+	val topRightGlobal = target.localToGlobal(vec3(target.width, 0f))
+	val bottomRightGlobal = target.localToGlobal(vec3(target.width, target.height))
+	val bottomLeftGlobal = target.localToGlobal(vec3(0f, target.height))
+	val topLeftLocal = vec3()
+	val topRightLocal = vec3()
+	val bottomRightLocal = vec3()
+	val bottomLeftLocal = vec3()
 
 	target.parentWalk {
 		if (it == target) {

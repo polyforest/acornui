@@ -90,8 +90,8 @@ fun CameraTransformableRo.canvasToGlobal(canvasCoords: Vector3): Vector3 {
 	return canvasCoords
 }
 
-private val originTmp = Vector3()
-private val directionTmp = Vector3()
+private val originTmp = vec3()
+private val directionTmp = vec3()
 
 /**
  * Given a canvas point, configures [out] as a [Ray] pointing into the screen.

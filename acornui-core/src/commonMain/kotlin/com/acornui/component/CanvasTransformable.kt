@@ -46,9 +46,9 @@ fun CanvasTransformableRo.localToCanvas(localCoord: Vector3): Vector3 {
 	return localCoord
 }
 
-private val tmp1 = Vector3()
-private val tmp2 = Vector3()
-private val tmp3 = Vector3()
+private val tmp1 = vec3()
+private val tmp2 = vec3()
+private val tmp3 = vec3()
 
 /**
  * Converts a bounding rectangle from local to canvas coordinates.
@@ -68,7 +68,7 @@ fun CanvasTransformableRo.localToCanvas(minMax: MinMax): MinMax {
 	return minMax
 }
 
-private val tmpVec3 = Vector3()
+private val tmpVec3 = vec3()
 private val tmpBox = Box()
 
 /**

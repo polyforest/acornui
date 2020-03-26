@@ -119,15 +119,15 @@ private object CornersSerializer2 : KSerializer<CornersRo> {
 @Serializable(with = CornersSerializer2::class)
 class Corners() : CornersRo, Clearable {
 
-	override val topLeft = Vector2()
-	override val topRight = Vector2()
-	override val bottomRight = Vector2()
-	override val bottomLeft = Vector2()
+	override val topLeft = vec2()
+	override val topRight = vec2()
+	override val bottomRight = vec2()
+	override val bottomLeft = vec2()
 
-	constructor(topLeft: Vector2Ro = Vector2(),
-				topRight: Vector2Ro = Vector2(),
-				bottomRight: Vector2Ro = Vector2(),
-				bottomLeft: Vector2Ro = Vector2()) : this() {
+	constructor(topLeft: Vector2Ro = vec2(),
+				topRight: Vector2Ro = vec2(),
+				bottomRight: Vector2Ro = vec2(),
+				bottomLeft: Vector2Ro = vec2()) : this() {
 		set(topLeft, topRight, bottomRight, bottomLeft)
 	}
 

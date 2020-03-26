@@ -697,7 +697,7 @@ open class BasicUiSkin(
 				shadowRect {
 					style.backgroundColor = theme.panelBgColor
 					style.borderColors = BorderColors(theme.stroke)
-					style.borderRadii = Corners(bottomLeft = Vector2(theme.borderRadius, theme.borderRadius), bottomRight = Vector2(theme.borderRadius, theme.borderRadius))
+					style.borderRadii = Corners(bottomLeft = vec2(theme.borderRadius, theme.borderRadius), bottomRight = vec2(theme.borderRadius, theme.borderRadius))
 					style.borderThicknesses = Pad(theme.strokeThickness)
 				}
 			}
@@ -822,7 +822,7 @@ open class BasicUiSkin(
 			quality = BlurQuality.NORMAL
 			blurX = 3f
 			blurY = 3f
-			offset = Vector3(4f, 4f)
+			offset = vec3(4f, 4f)
 			colorTransform = ColorTransformation().apply {
 				tint(Color(a = 0.3f))
 			}

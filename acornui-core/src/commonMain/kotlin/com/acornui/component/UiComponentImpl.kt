@@ -28,6 +28,7 @@ import com.acornui.di.ContextImpl
 import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.function.as1
+import com.acornui.function.as2
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.CameraRo
 import com.acornui.graphic.Color
@@ -120,10 +121,10 @@ open class UiComponentImpl(
 
 	// Transformable properties
 
-	protected val _position = Vector3(0f, 0f, 0f)
-	protected val _rotation = Vector3(0f, 0f, 0f)
-	protected val _scale = Vector3(1f, 1f, 1f)
-	protected val _origin = Vector3(0f, 0f, 0f)
+	protected val _position = vec3(0f, 0f, 0f)
+	protected val _rotation = vec3(0f, 0f, 0f)
+	protected val _scale = vec3(1f, 1f, 1f)
+	protected val _origin = vec3(0f, 0f, 0f)
 
 	// InteractiveElement properties
 	private var _inheritedInteractivityMode = InteractivityMode.ALL
@@ -276,6 +277,9 @@ open class UiComponentImpl(
 		_activated.add(::onActivated.as1)
 		_deactivated.add(::invalidateFocusOrder.as1)
 		_deactivated.add(::onDeactivated.as1)
+
+		// When the window's DPI scaling has changed, invalidate all components' layout.
+		window.scaleChanged.add(::invalidateLayout.as2)
 	}
 
 	//-----------------------------------------------
@@ -330,10 +334,10 @@ open class UiComponentImpl(
 		return b
 	}
 
-	private val topLeft = Vector3()
-	private val topRight = Vector3()
-	private val bottomRight = Vector3()
-	private val bottomLeft = Vector3()
+	private val topLeft = vec3()
+	private val topRight = vec3()
+	private val bottomRight = vec3()
+	private val bottomLeft = vec3()
 
 	override fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean {
 		val bounds = bounds
@@ -653,7 +657,7 @@ open class UiComponentImpl(
 				_transformLocal.mode != MatrixMode.IDENTITY &&
 				_transformLocal.mode != MatrixMode.TRANSLATION
 
-	private val _vertexTranslation = Vector3()
+	private val _vertexTranslation = vec3()
 
 	/**
 	 * Vertices rendered should be local position with this added translation.
@@ -964,6 +968,7 @@ open class UiComponentImpl(
 		}
 		bubbleSignals.clear()
 		attachments.clear()
+		window.scaleChanged.remove(::invalidateLayout.as2)
 	}
 
 	companion object {

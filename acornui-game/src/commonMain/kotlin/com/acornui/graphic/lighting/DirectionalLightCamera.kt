@@ -31,7 +31,7 @@ class DirectionalLightCamera {
 	 * The clip space dimensions, (in relation to the view camera) where shadows can be created.
 	 * This can be set more easily with [setClipSpace] or [setClipSpaceFromWorld].
 	 */
-	val clipSpace = arrayOf(Vector3(-1f, -1f, -1f), Vector3(1f, -1f, -1f), Vector3(1f, 1f, -1f), Vector3(-1f, 1f, -1f), Vector3(-1f, -1f, 1f), Vector3(1f, -1f, 1f), Vector3(1f, 1f, 1f), Vector3(-1f, 1f, 1f))
+	val clipSpace = arrayOf(vec3(-1f, -1f, -1f), vec3(1f, -1f, -1f), vec3(1f, 1f, -1f), vec3(-1f, 1f, -1f), vec3(-1f, -1f, 1f), vec3(1f, -1f, 1f), vec3(1f, 1f, 1f), vec3(-1f, 1f, 1f))
 
 	private val viewCamWatch = ModTagWatch()
 
@@ -41,12 +41,12 @@ class DirectionalLightCamera {
 	val combined: Matrix4Ro
 		get() = _combined
 
-	private val direction = Vector3(0f, 0f, 1f)
-	private val up = Vector3(0f, -1f, 0f)
-	private val lastClipSpace = Array(8) { Vector3() }
+	private val direction = vec3(0f, 0f, 1f)
+	private val up = vec3(0f, -1f, 0f)
+	private val lastClipSpace = Array(8) { vec3() }
 
 	private val bounds = Box()
-	private val tmp = Vector3()
+	private val tmp = vec3()
 
 	/**
 	 * Sets the clip space based on world coordinates.

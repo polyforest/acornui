@@ -18,16 +18,16 @@ package com.acornui.physics
 import com.acornui.ecs.ComponentBase
 import com.acornui.ecs.ComponentType
 import com.acornui.geom.Polygon2
-import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.vec2
+import com.acornui.math.vec3
 
 class Physics : ComponentBase() {
 
-	val position = Vector3()
-	val velocity = Vector2()
+	val position = vec3()
+	val velocity = vec2()
 	var maxVelocity = 20f
-	val acceleration = Vector2()
-	val scale = Vector3(1f, 1f, 1f)
+	val acceleration = vec2()
+	val scale = vec3(1f, 1f, 1f)
 
 	var rotation = 0f
 	var rotationalVelocity = 0f

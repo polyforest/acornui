@@ -16,14 +16,15 @@
 
 package com.acornui.gl.core
 
-import com.acornui.recycle.ClearableObjectPool
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.freeAll
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.Vector3Ro
+import com.acornui.math.vec3
+import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
+import com.acornui.recycle.freeAll
 
 /**
  * A read-only interface to a vertex.
@@ -41,8 +42,8 @@ interface VertexRo {
 }
 
 class Vertex(
-		override val position: Vector3 = Vector3(),
-		override val normal: Vector3 = Vector3(),
+		override val position: Vector3 = vec3(),
+		override val normal: Vector3 = vec3(),
 		override val colorTint: Color = Color.WHITE.copy(),
 		override var u: Float = 0f,
 		override var v: Float = 0f

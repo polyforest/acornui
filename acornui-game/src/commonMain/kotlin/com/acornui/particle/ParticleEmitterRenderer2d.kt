@@ -87,7 +87,7 @@ class ParticleEmitterRenderer2d(
 
 	companion object {
 		private val quat = Quaternion()
-		private val rotationFinal = Vector3()
+		private val rotationFinal = vec3()
 	}
 }
 

@@ -23,7 +23,7 @@ import com.acornui.component.layout.algorithm.BasicLayoutData
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
 import com.acornui.math.Bounds
-import com.acornui.math.Vector2
+import com.acornui.math.Vector2Ro
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.round
@@ -36,7 +36,7 @@ open class VScrollBar(
 		styleTags.add(VScrollBar)
 	}
 
-	override fun getModelValue(position: Vector2): Float {
+	override fun getModelValue(position: Vector2Ro): Float {
 		val thumb = thumb!!
 		val minY = minTrack
 		val maxY = maxTrack

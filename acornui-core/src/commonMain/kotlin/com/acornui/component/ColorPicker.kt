@@ -406,7 +406,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 	}
 
 	companion object : StyleTag {
-		private val tmpVec = Vector2()
+		private val tmpVec = vec2()
 		private val tmpHSV = Hsv()
 		private val tmpColor = Color()
 

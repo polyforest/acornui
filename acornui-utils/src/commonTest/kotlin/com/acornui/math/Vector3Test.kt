@@ -19,9 +19,8 @@ package com.acornui.math
 import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
 import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.json.Json
-import kotlin.test.Test
 import kotlin.math.sqrt
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -46,38 +45,38 @@ class Vector3Test {
 	}
 
 	@Test fun set() {
-		val v = Vector3()
+		val v = vec3()
 		v.set(1f, 2f, 3f)
-		assertEquals(Vector3(1f, 2f, 3f), v)
+		assertEquals(vec3(1f, 2f, 3f), v)
 	}
 
 	@Test fun copy() {
-		assertEquals(Vector3(1f, 2f, 3f), Vector3(1f, 2f, 3f).copy())
+		assertEquals(vec3(1f, 2f, 3f), vec3(1f, 2f, 3f).copy())
 	}
 
 	@Test fun add() {
-		assertEquals(Vector3(4f, 5f, 6f), Vector3(1f, -1f, 9f).add(Vector3(3f, 6f, -3f)))
-		assertEquals(Vector3(4f, 5f, 6f), Vector3(1f, -1f, 9f).add(3f, 6f, -3f))
+		assertEquals(vec3(4f, 5f, 6f), vec3(1f, -1f, 9f).add(vec3(3f, 6f, -3f)))
+		assertEquals(vec3(4f, 5f, 6f), vec3(1f, -1f, 9f).add(3f, 6f, -3f))
 	}
 
 	@Test fun sub() {
-		assertEquals(Vector3(-2f, -7f, 12f), Vector3(1f, -1f, 9f).sub(Vector3(3f, 6f, -3f)))
-		assertEquals(Vector3(-2f, -7f, 12f), Vector3(1f, -1f, 9f).sub(3f, 6f, -3f))
+		assertEquals(vec3(-2f, -7f, 12f), vec3(1f, -1f, 9f).sub(vec3(3f, 6f, -3f)))
+		assertEquals(vec3(-2f, -7f, 12f), vec3(1f, -1f, 9f).sub(3f, 6f, -3f))
 	}
 
 	@Test fun crs() {
-		assertEquals(Vector3(1f, 0f, -1f), Vector3(0f, 1f, 0f).crs(Vector3(1f, 0f, 1f)))
-		assertEquals(Vector3(1f, 0f, 0f), Vector3(0f, 1f, 0f).crs(Vector3(0f, 0f, 1f)))
+		assertEquals(vec3(1f, 0f, -1f), vec3(0f, 1f, 0f).crs(vec3(1f, 0f, 1f)))
+		assertEquals(vec3(1f, 0f, 0f), vec3(0f, 1f, 0f).crs(vec3(0f, 0f, 1f)))
 	}
 
 	@Test fun equalsTest() {
-		assertTrue(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 3f))
-		assertFalse(Vector3(1f, 2f, 3f) == Vector3(1f, 2f, 4f))
+		assertTrue(vec3(1f, 2f, 3f) == vec3(1f, 2f, 3f))
+		assertFalse(vec3(1f, 2f, 3f) == vec3(1f, 2f, 4f))
 	}
 
 	@OptIn(UnstableDefault::class)
 	@Test fun serialize() {
-		val v3Str = jsonStringify(Vector3.serializer(), Vector3(1f, 2f, 3f))
+		val v3Str = jsonStringify(Vector3.serializer(), vec3(1f, 2f, 3f))
 		println(v3Str)
 	}
 }

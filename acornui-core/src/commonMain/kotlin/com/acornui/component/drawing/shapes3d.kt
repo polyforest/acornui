@@ -24,6 +24,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.PI2
 import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -54,9 +55,9 @@ fun ShaderBatch.cylinder(radiusX: Float, radiusY: Float, depth: Float, segments:
 		// Bottom
 		putVertex(x, y, depth, Vector3.Z, fillColor) // index - 3
 		// Side top
-		putVertex(x, y, 0f, Vector3(cos, sin), fillColor) // index - 2
+		putVertex(x, y, 0f, vec3(cos, sin), fillColor) // index - 2
 		// Side bottom
-		putVertex(x, y, depth, Vector3(cos, sin), fillColor) // index - 1
+		putVertex(x, y, depth, vec3(cos, sin), fillColor) // index - 1
 		index += 4
 		if (i > 0) {
 			// CW

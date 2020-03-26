@@ -15,8 +15,8 @@ class GeomUtilsTest {
 	}
 
 	@Test fun testIntersectsPointTriangle() {
-		assertTrue(GeomUtils.intersectPointTriangle(Vector2(0f, 0f), Vector2(0f, 0f), Vector2(10f, 0f), Vector2(10f, 10f)))
-		assertTrue(GeomUtils.intersectPointTriangle(Vector2(5f, 5f), Vector2(0f, 0f), Vector2(10f, 0f), Vector2(10f, 10f)))
-		assertFalse(GeomUtils.intersectPointTriangle(Vector2(0f, 1f), Vector2(0f, 0f), Vector2(10f, 0f), Vector2(10f, 10f)))
+		assertTrue(GeomUtils.intersectPointTriangle(vec2(0f, 0f), vec2(0f, 0f), vec2(10f, 0f), vec2(10f, 10f)))
+		assertTrue(GeomUtils.intersectPointTriangle(vec2(5f, 5f), vec2(0f, 0f), vec2(10f, 0f), vec2(10f, 10f)))
+		assertFalse(GeomUtils.intersectPointTriangle(vec2(0f, 1f), vec2(0f, 0f), vec2(10f, 0f), vec2(10f, 10f)))
 	}
 }

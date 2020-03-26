@@ -70,18 +70,18 @@ class Ray2() : Clearable, Ray2Ro {
 		set(origin, direction)
 	}
 
-	private val _origin = Vector2()
+	private val _origin = vec2()
 	override val origin: Vector2Ro
 		get() = _origin
 
-	private val _direction = Vector2(1f, 0f)
+	private val _direction = vec2(1f, 0f)
 	override val direction: Vector2Ro
 		get() {
 			validate()
 			return _direction
 		}
 
-	private val _directionInv = Vector2(1f, 0f)
+	private val _directionInv = vec2(1f, 0f)
 	override val directionInv: Vector2Ro
 		get() {
 			validate()
@@ -216,7 +216,7 @@ class Ray2() : Clearable, Ray2Ro {
 
 	companion object {
 
-		private val tmpVec = Vector2()
+		private val tmpVec = vec2()
 
 		private val pool = ClearableObjectPool { Ray2() }
 

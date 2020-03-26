@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.AppConfig
 import com.acornui.Disposable
 import com.acornui.collection.ActiveList
 import com.acornui.component.layout.algorithm.CanvasLayoutData
@@ -35,7 +34,7 @@ import com.acornui.input.touchStart
 import com.acornui.mainContext
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
-import com.acornui.math.Vector2
+import com.acornui.math.vec2
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.signal.bind
@@ -200,7 +199,7 @@ class TooltipManagerImpl(private val popUpManager: PopUpManager, private val sta
 			}
 		}
 
-	private val mousePosition = Vector2()
+	private val mousePosition = vec2()
 	private val cursorWidth = 13f
 	private val cursorHeight = 12f
 	private val gap = 5f

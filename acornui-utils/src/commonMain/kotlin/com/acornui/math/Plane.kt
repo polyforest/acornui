@@ -22,8 +22,8 @@
 
 package com.acornui.math
 
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.recycle.Clearable
+import com.acornui.recycle.ClearableObjectPool
 
 /**
  * The read-only interface to [Plane]
@@ -135,7 +135,7 @@ interface PlaneRo {
  * @author badlogicgames@gmail.com
  */
 class Plane(
-		override val normal: Vector3 = Vector3(),
+		override val normal: Vector3 = vec3(),
 		override var d: Float = 0f
 ) : Clearable, PlaneRo {
 

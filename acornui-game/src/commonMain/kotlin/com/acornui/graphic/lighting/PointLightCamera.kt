@@ -19,7 +19,7 @@ package com.acornui.graphic.lighting
 import com.acornui.graphic.PerspectiveCamera
 import com.acornui.graphic.setViewport
 import com.acornui.math.MathUtils
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 
 /**
  * @author nbilyk
@@ -42,7 +42,7 @@ class PointLightCamera(resolution: Float) {
 
 	companion object {
 		// positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ
-		private val CUBEMAP_DIRECTIONS = arrayOf(Vector3(1f, 0f, 0f), Vector3(-1f, 0f, 0f), Vector3(0f, 1f, 0f), Vector3(0f, -1f, 0f), Vector3(0f, 0f, 1f), Vector3(0f, 0f, -1f))
-		private val CUBEMAP_UP = arrayOf(Vector3(0f, -1f, 0f), Vector3(0f, -1f, 0f), Vector3(0f, 0f, 1f), Vector3(0f, 0f, -1f), Vector3(0f, -1f, 0f), Vector3(0f, -1f, 0f))
+		private val CUBEMAP_DIRECTIONS = arrayOf(vec3(1f, 0f, 0f), vec3(-1f, 0f, 0f), vec3(0f, 1f, 0f), vec3(0f, -1f, 0f), vec3(0f, 0f, 1f), vec3(0f, 0f, -1f))
+		private val CUBEMAP_UP = arrayOf(vec3(0f, -1f, 0f), vec3(0f, -1f, 0f), vec3(0f, 0f, 1f), vec3(0f, 0f, -1f), vec3(0f, -1f, 0f), vec3(0f, -1f, 0f))
 	}
 }

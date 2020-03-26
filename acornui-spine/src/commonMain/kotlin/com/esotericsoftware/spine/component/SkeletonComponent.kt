@@ -20,7 +20,10 @@ import com.acornui.component.ComponentInit
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.math.*
+import com.acornui.math.GeomUtils
+import com.acornui.math.MinMax
+import com.acornui.math.Vector2
+import com.acornui.math.vec2
 import com.esotericsoftware.spine.Skeleton
 import com.esotericsoftware.spine.Slot
 import com.esotericsoftware.spine.animation.AnimationState
@@ -127,10 +130,10 @@ open class SkeletonComponent(
 	}
 
 	private val bounds = MinMax()
-	private val pt = Vector2()
-	private val v1 = Vector2()
-	private val v2 = Vector2()
-	private val v3 = Vector2()
+	private val pt = vec2()
+	private val v1 = vec2()
+	private val v2 = vec2()
+	private val v3 = vec2()
 
 	private fun intersects(x: Float, y: Float, vertices: List<Float>, triangles: ShortArray): Boolean {
 		bounds.clear()

@@ -116,19 +116,23 @@ interface Vector3Ro {
 	fun closeTo(x: Float, y: Float, z: Float, epsilon: Float = 0.0001f): Boolean
 
 	operator fun plus(other: Vector3Ro): Vector3 {
-		return Vector3(x + other.x, y + other.y, z + other.z)
+		return vec3(x + other.x, y + other.y, z + other.z)
 	}
 
 	operator fun minus(other: Vector3Ro): Vector3 {
-		return Vector3(x - other.x, y - other.y, z - other.z)
+		return vec3(x - other.x, y - other.y, z - other.z)
 	}
 
 	operator fun times(other: Vector3Ro): Vector3 {
-		return Vector3(x * other.x, y * other.y, z * other.z)
+		return vec3(x * other.x, y * other.y, z * other.z)
 	}
 
 	operator fun times(other: Float): Vector3 {
-		return Vector3(x * other, y * other, z * other)
+		return vec3(x * other, y * other, z * other)
+	}
+
+	operator fun div(other: Float): Vector3 {
+		return vec3(x / other, y / other, z / other)
 	}
 
 	/**
@@ -141,13 +145,13 @@ interface Vector3Ro {
 	}
 
 	fun copy(x: Float = this.x, y: Float = this.y, z: Float = this.z): Vector3 {
-		return Vector3(x, y, z)
+		return vec3(x, y, z)
 	}
 
 	/**
 	 * Drops the z component and converts to a Vector2.
 	 */
-	fun toVec2(): Vector2 = Vector2(x, y)
+	fun toVec2(): Vector2 = vec2(x, y)
 
 }
 
@@ -156,7 +160,7 @@ interface Vector3Ro {
  * @author badlogicgames@gmail.com
  */
 @Serializable(with = Vector3Serializer::class)
-class Vector3 (
+class Vector3(
 
 		/**
 		 * The x-component of this vector
@@ -231,8 +235,22 @@ class Vector3 (
 		return this.set(this.x + x, this.y + y, this.z + z)
 	}
 
+	/**
+	 * @see add
+	 */
+	operator fun plusAssign(other: Vector3Ro) {
+		add(other)
+	}
+
 	fun sub(value: Vector3Ro): Vector3 {
 		return this.sub(value.x, value.y, value.z)
+	}
+
+	/**
+	 * @see sub
+	 */
+	operator fun minusAssign(other: Vector3Ro) {
+		sub(other)
 	}
 
 	/**
@@ -253,6 +271,22 @@ class Vector3 (
 
 	fun scl(other: Vector3Ro): Vector3 {
 		return this.set(x * other.x, y * other.y, z * other.z)
+	}
+
+	operator fun timesAssign(other: Vector3Ro) {
+		scl(other)
+	}
+
+	operator fun divAssign(other: Vector3Ro) {
+		scl(1f / other.x, 1f / other.y, 1f / other.z)
+	}
+
+	operator fun timesAssign(other: Float) {
+		scl(other)
+	}
+
+	operator fun divAssign(other: Float) {
+		scl(1f / other)
 	}
 
 	/**
@@ -279,14 +313,6 @@ class Vector3 (
 
 	override fun len2(): Float {
 		return x * x + y * y + z * z
-	}
-
-	/**
-	 * @param vector The other vector
-	 * @return Wether this and the other vector are equal
-	 */
-	fun idt(vector: Vector3Ro): Boolean {
-		return x == vector.x && y == vector.y && z == vector.z
 	}
 
 	override fun dst(vector: Vector3Ro): Float {
@@ -655,14 +681,14 @@ class Vector3 (
 	}
 
 	companion object {
-		val X: Vector3Ro = Vector3(1f, 0f, 0f)
-		val Y: Vector3Ro = Vector3(0f, 1f, 0f)
-		val Z: Vector3Ro = Vector3(0f, 0f, 1f)
-		val NEG_X: Vector3Ro = Vector3(-1f, 0f, 0f)
-		val NEG_Y: Vector3Ro = Vector3(0f, -1f, 0f)
-		val NEG_Z: Vector3Ro = Vector3(0f, 0f, -1f)
-		val ZERO: Vector3Ro = Vector3(0f, 0f, 0f)
-		val ONE: Vector3Ro = Vector3(1f, 1f, 1f)
+		val X: Vector3Ro = vec3(1f, 0f, 0f)
+		val Y: Vector3Ro = vec3(0f, 1f, 0f)
+		val Z: Vector3Ro = vec3(0f, 0f, 1f)
+		val NEG_X: Vector3Ro = vec3(-1f, 0f, 0f)
+		val NEG_Y: Vector3Ro = vec3(0f, -1f, 0f)
+		val NEG_Z: Vector3Ro = vec3(0f, 0f, -1f)
+		val ZERO: Vector3Ro = vec3(0f, 0f, 0f)
+		val ONE: Vector3Ro = vec3(1f, 1f, 1f)
 
 		private val tmpMat = Matrix4()
 
@@ -707,13 +733,18 @@ class Vector3 (
 			return x1 * x2 + y1 * y2 + z1 * z2
 		}
 
-		private val pool = ClearableObjectPool { Vector3() }
+		private val pool = ClearableObjectPool { vec3() }
 
 		fun obtain(): Vector3 = pool.obtain()
 		fun free(obj: Vector3) = pool.free(obj)
 	}
 
 }
+
+/**
+ * Shorthand for Vector3.
+ */
+typealias vec3 = Vector3
 
 @Serializer(forClass = Vector3::class)
 object Vector3Serializer : KSerializer<Vector3> {
@@ -728,8 +759,7 @@ object Vector3Serializer : KSerializer<Vector3> {
 
 	override fun deserialize(decoder: Decoder): Vector3 {
 		val values = decoder.decodeSerializableValue(Float.serializer().list)
-		return Vector3(
-				x = values[0],
+		return vec3(x = values[0],
 				y = values[1],
 				z = values[2]
 		)

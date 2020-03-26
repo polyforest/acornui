@@ -18,7 +18,7 @@ package com.acornui.graphic
 
 import com.acornui.component.canvasToGlobal
 import com.acornui.component.globalToCanvas
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import com.acornui.test.assertClose
 import kotlin.test.Test
 
@@ -34,7 +34,7 @@ class PerspectiveCameraTest {
 		cam.setViewport(viewportW, viewportH)
 		cam.moveToLookAtRect(0f, 0f, viewportW, viewportH)
 
-		val coords = Vector3(0f, 0f, 0f)
+		val coords = vec3(0f, 0f, 0f)
 		cam.globalToCanvas(coords)
 		assertClose(0f, coords.x, 0.1f)
 		assertClose(0f, coords.y, 0.1f)

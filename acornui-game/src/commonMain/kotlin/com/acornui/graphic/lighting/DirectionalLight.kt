@@ -17,7 +17,7 @@
 package com.acornui.graphic.lighting
 
 import com.acornui.graphic.Color
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 
 
 /**
@@ -28,7 +28,7 @@ import com.acornui.math.Vector3
 class DirectionalLight {
 
 	val color = Color()
-	val direction = Vector3(0f, 0f, -1f)
+	val direction = vec3(0f, 0f, -1f)
 }
 
 fun directionalLight(init: DirectionalLight.() -> Unit = {}): DirectionalLight {

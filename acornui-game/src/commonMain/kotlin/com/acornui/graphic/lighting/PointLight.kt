@@ -16,9 +16,9 @@
 
 package com.acornui.graphic.lighting
 
-import com.acornui.recycle.Clearable
 import com.acornui.graphic.Color
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
+import com.acornui.recycle.Clearable
 
 
 /**
@@ -29,7 +29,7 @@ import com.acornui.math.Vector3
 class PointLight : Clearable {
 
 	val color = Color.WHITE.copy()
-	val position = Vector3()
+	val position = vec3()
 	var radius = 0f
 
 	/**

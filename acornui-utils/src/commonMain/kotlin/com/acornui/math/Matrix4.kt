@@ -130,6 +130,54 @@ interface Matrix4Ro {
 	fun rot(vec: Vector2): Vector2
 
 	/**
+	 * Returns a new [Matrix4] that is the matrix-matrix product.
+	 * @see Matrix4.mul
+	 */
+	operator fun times(other: Matrix4Ro): Matrix4 {
+		return copy().mul(other)
+	}
+
+	/**
+	 * Returns a new [Vector3] that is the matrix-vector product.
+	 * @see Matrix4.prj
+	 */
+	operator fun times(other: Vector3Ro): Vector3 {
+		return prj(other.copy())
+	}
+
+	/**
+	 * Returns a new Matrix4 that is this translated by [other].
+	 * @see Matrix4.translate
+	 */
+	operator fun plus(other: Vector3Ro): Matrix4 {
+		return copy().translate(other)
+	}
+
+	/**
+	 * Returns a new Matrix4 that is this translated by [other].
+	 * @see Matrix4.translate
+	 */
+	operator fun minus(other: Vector3Ro): Matrix4 {
+		return copy().translate(-other.x, -other.y, -other.z)
+	}
+
+	/**
+	 * Returns a new Matrix4 that is this translated by [other].
+	 * @see Matrix4.translate
+	 */
+	operator fun plus(other: Vector2Ro): Matrix4 {
+		return copy().translate(other.x, other.y, 0f)
+	}
+
+	/**
+	 * Returns a new Matrix4 that is this translated by [other].
+	 * @see Matrix4.translate
+	 */
+	operator fun minus(other: Vector2Ro): Matrix4 {
+		return copy().translate(-other.x, -other.y, 0f)
+	}
+
+	/**
 	 * Copies this matrix. Note that the [values] list will be copied as well and the new Matrix will not back the
 	 * same list.
 	 */
@@ -753,6 +801,41 @@ class Matrix4() : Matrix4Ro {
 			}
 		}
 		return this
+	}
+
+	/**
+	 * An alias for [mul].
+	 */
+	operator fun timesAssign(other: Matrix4Ro) {
+		mul(other)
+	}
+
+	/**
+	 * An alias for [translate].
+	 */
+	operator fun plusAssign(other: Vector3Ro) {
+		translate(other)
+	}
+
+	/**
+	 * An alias for [translate].
+	 */
+	operator fun plusAssign(other: Vector2Ro) {
+		translate(other.x, other.y)
+	}
+
+	/**
+	 * An alias for [scale].
+	 */
+	operator fun timesAssign(other: Vector3Ro) {
+		scale(other)
+	}
+
+	/**
+	 * An alias for [scale].
+	 */
+	operator fun timesAssign(other: Vector2Ro) {
+		scale(other.x, other.y, 1f)
 	}
 
 	/**
@@ -1553,16 +1636,16 @@ class Matrix4() : Matrix4Ro {
 
 		private val quat = Quaternion()
 
-		private val l_vez = Vector3()
-		private val l_vex = Vector3()
-		private val l_vey = Vector3()
+		private val l_vez = vec3()
+		private val l_vex = vec3()
+		private val l_vey = vec3()
 
-		private val tmpVec = Vector3()
+		private val tmpVec = vec3()
 		private val tmpMat = Matrix4()
 
-		private val right = Vector3()
-		private val tmpForward = Vector3()
-		private val tmpUp = Vector3()
+		private val right = vec3()
+		private val tmpForward = vec3()
+		private val tmpUp = vec3()
 
 		private val pool = ObjectPool { Matrix4() }
 

@@ -26,6 +26,7 @@ import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
+import com.acornui.math.vec2
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.time.callLater
@@ -94,10 +95,10 @@ class DragAttachment(
 	 */
 	val dragEnd = _dragEnd.asRo()
 
-	private val previousPosition = Vector2()
-	private val position = Vector2()
-	private val startPosition = Vector2()
-	private val startPositionLocal = Vector2()
+	private val previousPosition = vec2()
+	private val position = vec2()
+	private val startPosition = vec2()
+	private val startPositionLocal = vec2()
 	private var isTouch: Boolean = false
 	private var enterFrameHandle: Disposable? = null
 
@@ -403,22 +404,22 @@ interface DragInteractionRo : InteractionEventRo {
 
 class DragInteraction : InteractionEventBase(), DragInteractionRo {
 
-	override val startPosition: Vector2 = Vector2()
+	override val startPosition: Vector2 = vec2()
 
-	override val startPositionLocal: Vector2 = Vector2()
+	override val startPositionLocal: Vector2 = vec2()
 
-	override val previousPosition: Vector2 = Vector2()
-	override val position: Vector2 = Vector2()
+	override val previousPosition: Vector2 = vec2()
+	override val position: Vector2 = vec2()
 
-	private val _previousPositionLocal = Vector2()
-	private val _positionLocal = Vector2()
+	private val _previousPositionLocal = vec2()
+	private val _positionLocal = vec2()
 	override val positionLocal: Vector2
 		get() {
 			validate()
 			return _positionLocal
 		}
 
-	private val _positionLocalDelta = Vector2()
+	private val _positionLocalDelta = vec2()
 	override val positionLocalDelta: Vector2Ro
 		get() {
 			validate()

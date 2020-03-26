@@ -27,7 +27,7 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.offsetRound
-import com.acornui.math.Vector3
+import com.acornui.math.vec3
 import com.acornui.selection.SelectionRange
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -357,8 +357,8 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		}
 	}
 
-	private val tL = Vector3()
-	private val tR = Vector3()
+	private val tL = vec3()
+	private val tR = vec3()
 
 	override fun draw() {
 		val lineStart: Int

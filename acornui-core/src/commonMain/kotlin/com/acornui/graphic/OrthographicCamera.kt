@@ -20,6 +20,8 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
+import com.acornui.math.vec2
+import com.acornui.math.vec3
 
 
 /**
@@ -34,8 +36,8 @@ class OrthographicCamera : CameraBase() {
 	 */
 	var zoom: Float by bindable(1f)
 
-	private val tmp: Vector3 = Vector3()
-	private val tmp2: Vector2 = Vector2()
+	private val tmp: Vector3 = vec3()
+	private val tmp2: Vector2 = vec2()
 
 	init {
 		near = -1f

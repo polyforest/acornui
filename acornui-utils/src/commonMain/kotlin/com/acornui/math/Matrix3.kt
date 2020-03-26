@@ -42,6 +42,30 @@ interface Matrix3Ro {
 	fun getRotation(): Float
 
 	/**
+	 * Multiplies the vector with this matrix.
+	 *
+	 * @param vec the vector.
+	 * @return Returns the vec for chaining.
+	 */
+	fun prj(vec: Vector2): Vector2
+
+	/**
+	 * Returns a new [Matrix3] that is the matrix-matrix product.
+	 * @see Matrix3.mul
+	 */
+	operator fun times(other: Matrix3Ro): Matrix3 {
+		return copy().mul(other)
+	}
+
+	/**
+	 * Returns a new [Vector2] that is the matrix-vector product.
+	 * @see Matrix3.prj
+	 */
+	operator fun times(other: Vector2Ro): Vector2 {
+		return prj(other.copy())
+	}
+
+	/**
 	 * Copies this matrix. Note that the [values] list will be copied as well and the new Matrix will not back the
 	 * same list.
 	 */
@@ -104,16 +128,40 @@ class Matrix3() : Matrix3Ro {
 	 * <pre>
 	 * A.mul(B) results in A := AB
 	 * </pre>
-	 * @param matrix Matrix to multiply by.
+	 * @param other Matrix to multiply by.
 	 * @return This matrix for the purpose of chaining operations together.
 	 */
-	fun mul(matrix: Matrix3Ro): Matrix3 {
-		mul(values, matrix.values)
+	fun mul(other: Matrix3Ro): Matrix3 {
+		mul(values, other.values)
 		return this
 	}
 
-	operator fun times(matrix: Matrix3Ro): Matrix3 {
-		return copy().mul(matrix)
+	/**
+	 * An alias for [mul].
+	 */
+	operator fun timesAssign(other: Matrix3Ro) {
+		mul(other)
+	}
+
+	/**
+	 * An alias for [translate].
+	 */
+	operator fun plusAssign(other: Vector2Ro) {
+		translate(other)
+	}
+
+	/**
+	 * An alias for [scale].
+	 */
+	operator fun timesAssign(other: Vector2Ro) {
+		scale(other)
+	}
+
+	/**
+	 * Scales by the inverse of [other].
+	 */
+	operator fun divAssign(other: Vector2Ro) {
+		scale(1f / other.x, 1f / other.y)
 	}
 
 	/**
@@ -151,7 +199,7 @@ class Matrix3() : Matrix3Ro {
 		return this
 	}
 
-	fun prj(vec: Vector2): Vector2 {
+	override fun prj(vec: Vector2): Vector2 {
 		val mat = values
 		val x = (vec.x * mat[M00] + vec.y * mat[M01] + mat[M02])
 		val y = (vec.x * mat[M10] + vec.y * mat[M11] + mat[M12])
@@ -374,6 +422,46 @@ class Matrix3() : Matrix3Ro {
 	}
 
 	/**
+	 * Postmultiplies this matrix by a translation matrix.
+	 * @param translation
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun translate(translation: Vector2Ro): Matrix3 = translate(translation.x, translation.y)
+
+	/**
+	 * Postmultiplies this matrix by a translation matrix.
+	 * @param x Translation in the x-axis.
+	 * @param y Translation in the y-axis.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun translate(x: Float = 0f, y: Float = 0f): Matrix3 {
+		val mat = values
+		val v03 = mat[M00] * x + mat[M01] * y + mat[M02]
+		val v13 = mat[M10] * x + mat[M11] * y + mat[M12]
+		mat[M02] = v03
+		mat[M12] = v13
+
+		return this
+	}
+
+	/**
+	 * Postmultiplies this matrix with a scale matrix.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun scale(scale: Vector2Ro): Matrix3 = scale(scale.x, scale.y)
+
+	/**
+	 * Postmultiplies this matrix with a scale matrix.
+	 * @return This matrix for the purpose of chaining methods together.
+	 */
+	fun scale(scaleX: Float, scaleY: Float): Matrix3 {
+		if (scaleX == 1f && scaleY == 1f) return this
+		tmpMat.idt()
+		tmpMat.scl(scaleX, scaleY)
+		return mul(tmpMat)
+	}
+
+	/**
 	 * Scale this matrix in both the x and y components by the scalar value.
 	 * @param scale The single value that will be used to scale both the x and y components.
 	 * @return This matrix for the purpose of chaining methods together.
@@ -453,6 +541,7 @@ class Matrix3() : Matrix3Ro {
 	companion object {
 
 		private val tmp = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+		private val tmpMat = Matrix3()
 
 		val IDENTITY: Matrix3Ro = Matrix3()
 

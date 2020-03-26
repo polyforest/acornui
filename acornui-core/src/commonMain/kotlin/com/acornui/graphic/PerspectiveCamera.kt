@@ -20,7 +20,8 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.MathUtils
 import com.acornui.math.Vector2
-import com.acornui.math.Vector3
+import com.acornui.math.vec2
+import com.acornui.math.vec3
 import kotlin.math.abs
 import kotlin.math.tan
 
@@ -36,8 +37,8 @@ open class PerspectiveCamera : CameraBase() {
 	 **/
 	var fieldOfView: Float by bindable(67f * MathUtils.degRad)
 
-	private val tmp = Vector3()
-	private val tmp2: Vector2 = Vector2()
+	private val tmp = vec3()
+	private val tmp2: Vector2 = vec2()
 
 	protected open fun updateProjection() {
 		_projection.setToProjection(abs(near), abs(far), fieldOfView, viewport.width / viewport.height)

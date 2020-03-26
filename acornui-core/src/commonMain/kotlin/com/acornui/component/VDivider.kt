@@ -28,8 +28,8 @@ import com.acornui.input.interaction.DragInteractionRo
 import com.acornui.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
-import com.acornui.math.Vector2
 import com.acornui.math.maxOf4
+import com.acornui.math.vec2
 import kotlin.math.floor
 
 open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
@@ -44,7 +44,7 @@ open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 
 	private var _split: Float = 0.5f
 
-	private val _mouse = Vector2()
+	private val _mouse = vec2()
 
 	init {
 		styleTags.add(VDivider)

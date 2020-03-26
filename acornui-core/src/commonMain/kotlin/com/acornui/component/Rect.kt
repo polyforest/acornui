@@ -25,11 +25,8 @@ import com.acornui.gl.core.putQuadIndices
 import com.acornui.gl.core.putTriangleIndices
 import com.acornui.gl.core.putVertex
 import com.acornui.graphic.Color
-import com.acornui.math.Bounds
-import com.acornui.math.Matrix4
+import com.acornui.math.*
 import com.acornui.math.PI
-import com.acornui.math.Pad
-import com.acornui.math.Vector3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.*
@@ -48,8 +45,8 @@ open class Rect(
 	private val complexModeObj by lazy { ComplexMode() }
 
 	private inner class SimpleMode {
-		val outerRect = Array(4) { Vector3() }
-		val innerRect = Array(4) { Vector3() }
+		val outerRect = Array(4) { vec3() }
+		val innerRect = Array(4) { vec3() }
 		val fillColor = Color()
 		val borderColors = BorderColors()
 	}
@@ -446,7 +443,7 @@ open class Rect(
 						putIndex(n)
 					}
 
-					transform(position = Vector3(margin.left + w * 0.5f, margin.top + h * 0.5f), rotation = Vector3(z = angle), origin = Vector3(len * 0.5f, thickness * 0.5f))
+					transform(position = vec3(margin.left + w * 0.5f, margin.top + h * 0.5f), rotation = vec3(z = angle), origin = vec3(len * 0.5f, thickness * 0.5f))
 				}
 			}
 		}

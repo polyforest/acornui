@@ -57,7 +57,7 @@ class Matrix2Test {
 	@Test
 	fun prj() {
 		val m1 = Matrix2().scl(3f, 4f)
-		assertClose(Vector2(3f * 3f, 2.5f * 4f), m1.prj(Vector2(3f, 2.5f)))
+		assertClose(vec2(3f * 3f, 2.5f * 4f), m1.prj(vec2(3f, 2.5f)))
 	}
 
 	@Test
@@ -100,9 +100,9 @@ class Matrix2Test {
 
 		val m3 = Matrix2()
 		m3.rotate(PI / 2f)
-		assertClose(Vector2(0f, 3f), m3.prj(Vector2(3f, 0f)))
+		assertClose(vec2(0f, 3f), m3.prj(vec2(3f, 0f)))
 		m3.rotate(PI / 2f)
-		assertClose(Vector2(-3f, 0f), m3.prj(Vector2(3f, 0f)))
+		assertClose(vec2(-3f, 0f), m3.prj(vec2(3f, 0f)))
 	}
 
 	@Test
@@ -111,7 +111,7 @@ class Matrix2Test {
 		println(Matrix2().apply {
 			scl(2f, 3f)
 		})
-		assertClose(Vector2(13.003461f, 5.9413805f), m1.getScale(Vector2()))
+		assertClose(vec2(13.003461f, 5.9413805f), m1.getScale(vec2()))
 	}
 
 	@Test
