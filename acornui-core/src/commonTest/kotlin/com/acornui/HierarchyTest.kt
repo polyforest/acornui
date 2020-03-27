@@ -145,7 +145,7 @@ class HierarchyTest {
 
 	@Test fun childWalkPreOrder() {
 		val list = ArrayList<String>()
-		tree2.childWalkPreOrder {
+		tree2.childWalkPreorder {
 			list.add(it.id)
 			TreeWalk.CONTINUE
 		}

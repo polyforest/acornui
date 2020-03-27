@@ -236,14 +236,14 @@ interface StyleTag
  */
 fun styleTag(): StyleTag = object : StyleTag {}
 
-fun StylableRo.walkStylableAncestry(callback: (StylableRo) -> Unit) {
+inline fun StylableRo.walkStylableAncestry(callback: (StylableRo) -> Unit) {
 	findStylableAncestor {
 		callback(it)
 		false
 	}
 }
 
-fun StylableRo.findStylableAncestor(filter: StyleFilter): StylableRo? {
+inline fun StylableRo.findStylableAncestor(filter: StyleFilter): StylableRo? {
 	var p: StylableRo? = this
 	while (p != null) {
 		val found = filter(p)
