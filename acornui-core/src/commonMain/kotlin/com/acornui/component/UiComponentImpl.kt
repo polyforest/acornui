@@ -654,6 +654,7 @@ open class UiComponentImpl(
 	 */
 	protected open val useTransforms: Boolean
 		get() = cameraOverride != null ||
+				transformGlobalOverride != null ||
 				_transformLocal.mode != MatrixMode.IDENTITY &&
 				_transformLocal.mode != MatrixMode.TRANSLATION
 
