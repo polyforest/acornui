@@ -91,14 +91,12 @@ abstract class CursorManagerBase : CursorManager {
 		val cursorReference = CursorReference(this, cursor, priority)
 		val index = cursorStack.sortedInsertionIndex(cursorReference)
 		cursorStack.add(index, cursorReference)
-		currentCursor(cursorStack.lastOrNull())
+		currentCursor(cursorStack.last())
 		return cursorReference
 	}
 
 	override fun removeCursor(cursorReference: CursorReference) {
-		val index = cursorStack.indexOf(cursorReference)
-		if (index == -1) return
-		cursorStack.removeAt(index)
+		cursorStack.remove(cursorReference)
 		currentCursor(cursorStack.lastOrNull())
 	}
 
@@ -113,9 +111,6 @@ abstract class CursorManagerBase : CursorManager {
 		}
 	}
 }
-
-@Deprecated("Use StandardCursor", ReplaceWith("StandardCursor"))
-typealias StandardCursors = StandardCursor
 
 /**
  * A suite of cursors that standard components should be able to rely on existing.

@@ -21,7 +21,7 @@ import com.acornui.di.Context
 import com.acornui.di.own
 
 /**
- * Invokes [callback] on every time driver tick until disposed.
+ * Invokes [callback] on every frame until disposed.
  */
 class Tick(
 
@@ -72,11 +72,15 @@ class Tick(
 	}
 }
 
+/**
+ * The same as [tick] with one repetition.
+ */
 fun Context.callLater(startFrame: Int = 1, callback: Disposable.(dT: Float) -> Unit): Disposable {
 	return tick(1, startFrame, callback)
 }
 
 /**
+ * Invokes [callback] on every frame until disposed.
  * Constructs a new [Tick] instance and immediately invokes [Updatable.start].
  * When this context is disposed, the tick will be stopped.
  */

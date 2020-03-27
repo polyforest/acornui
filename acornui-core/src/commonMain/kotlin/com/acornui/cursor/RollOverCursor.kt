@@ -18,14 +18,12 @@ package com.acornui.cursor
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.mouseIsOver
 import com.acornui.di.ContextImpl
 import com.acornui.function.as1
 import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
 import com.acornui.properties.afterChange
 import com.acornui.properties.afterChangeWithInit
-import com.acornui.time.callLater
 
 /**
  * An attachment that changes the cursor on roll over.
@@ -34,11 +32,14 @@ class RollOverCursor(
 		private val target: UiComponentRo
 ) : ContextImpl(target) {
 
-	var cursor: Cursor? by afterChange<Cursor?>(null) {
-		showIfOver()
+	@Suppress("RemoveExplicitTypeArguments")
+	var priority by afterChange<Float>(CursorPriority.ACTIVE) {
+		refresh()
 	}
 
-	var priority: Float = CursorPriority.ACTIVE
+	var cursor by afterChange<Cursor?>(null) {
+		refresh()
+	}
 
 	private val cursorManager = injectOptional(CursorManager)
 
@@ -46,28 +47,12 @@ class RollOverCursor(
 
 	var enabled: Boolean by afterChangeWithInit(true) { value ->
 		if (value) {
-			target.rollOver().add(::rollOverHandler.as1)
-			target.rollOut().add(::rollOutHandler.as1)
-			showIfOver()
+			target.rollOver().add(::show.as1)
+			target.rollOut().add(::hide.as1)
 		} else {
 			hide()
-			target.rollOver().remove(::rollOverHandler.as1)
-			target.rollOut().remove(::rollOutHandler.as1)
-		}
-	}
-
-	private fun rollOverHandler() {
-		show()
-	}
-
-	private fun rollOutHandler() {
-		hide()
-	}
-
-	private fun showIfOver() {
-		target.callLater {
-			if (enabled && target.mouseIsOver())
-				show()
+			target.rollOver().remove(::show.as1)
+			target.rollOut().remove(::hide.as1)
 		}
 	}
 
@@ -80,6 +65,13 @@ class RollOverCursor(
 	private fun hide() {
 		cursorRef?.dispose()
 		cursorRef = null
+	}
+
+	private fun refresh() {
+		if (cursorRef != null) {
+			hide()
+			show()
+		}
 	}
 
 	override fun dispose() {

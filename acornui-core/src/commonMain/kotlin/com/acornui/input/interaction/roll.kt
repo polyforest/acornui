@@ -29,7 +29,6 @@ import com.acornui.signal.StoppableSignalImpl
  * A class that dispatches an event when the roll over status on a target object has changed.
  * A roll over is different from a mouse over in that a mouse over is dispatched on each child of a container,
  * where a roll over will only dispatch for the specific target.
- * @author nbilyk
  */
 private class RollOverAttachment(
 		private val target: UiComponentRo,
