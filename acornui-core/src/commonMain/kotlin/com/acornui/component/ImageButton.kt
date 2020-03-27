@@ -30,6 +30,8 @@ import com.acornui.math.Bounds
 import com.acornui.math.colorTransformation
 import com.acornui.math.grayscale
 import com.acornui.properties.afterChange
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * A button that tints a single element (typically a white image).
@@ -139,4 +141,9 @@ class ImageButtonStyle : StyleBase() {
 	var disabledState by prop(colorTransformation { tint(0.2f, 0.2f, 0.2f, 0.5f); grayscale(); offset = Color(-0.1f, -0.1f, -0.1f, 0.0f) })
 
 	companion object : StyleType<ImageButtonStyle>
+}
+
+inline fun imageButtonStyle(init: ComponentInit<ImageButtonStyle> = {}): ImageButtonStyle {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ImageButtonStyle().apply(init)
 }

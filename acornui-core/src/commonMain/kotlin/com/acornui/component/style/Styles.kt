@@ -21,10 +21,7 @@ package com.acornui.component.style
 import com.acornui.Disposable
 import com.acornui.DisposedException
 import com.acornui.assertionsEnabled
-import com.acornui.collection.ActiveList
-import com.acornui.collection.addSorted
-import com.acornui.collection.firstOrNull2
-import com.acornui.collection.removeFirst
+import com.acornui.collection.*
 import com.acornui.function.as1
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -72,6 +69,8 @@ interface Stylable : StylableRo {
 	override val styleRules: MutableList<StyleRule<*>>
 
 }
+
+fun Stylable.addStyleRule(style: StyleRo, tag: StyleTag, priority: Float = 0f) = addStyleRule(style, tag.filter, priority)
 
 fun Stylable.addStyleRule(style: StyleRo, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
 	styleRules.add(StyleRule(style, filter, priority))
@@ -202,7 +201,7 @@ data class StyleRule<out T : StyleRo>(
 		/**
 		 * A filter responsible for determining whether or not this rule should be applied.
 		 */
-		val filter: StyleFilter,
+		val filter: StyleFilter = AlwaysFilter,
 
 		/**
 		 * A higher priority value will be applied before entries with a lower priority.
@@ -218,39 +217,40 @@ interface StyleType<out T : StyleRo> {
 		get() = null
 }
 
-fun StyleType<*>.walkInheritance(callback: (StyleType<*>) -> Unit) {
-	var e: StyleType<*>? = this
-	while (e != null) {
-		callback(e)
-		e = e.extends
+inline fun StyleType<*>.walkInheritance(callback: (StyleType<*>) -> Unit) {
+	var p: StyleType<*>? = this
+	while (p != null) {
+		callback(p)
+		p = p.extends
 	}
 }
 
 /**
  * Style tags are markers placed on the display hierarchy that are used for filtering which styles from [StyleRule]
  * objects are applied.
- *
- * A StyleTag may be used as a [StyleFilter], with the default implementation passing the filter if the current target
- * contains this tag.
  */
-interface StyleTag : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (target.styleTags.contains(this)) return target
-		return null
-	}
-}
+interface StyleTag
 
 /**
  * Constructs a new StyleTag object.
  */
 fun styleTag(): StyleTag = object : StyleTag {}
 
-inline fun StylableRo.walkStylableAncestry(callback: (StylableRo) -> Unit) {
+fun StylableRo.walkStylableAncestry(callback: (StylableRo) -> Unit) {
+	findStylableAncestor {
+		callback(it)
+		false
+	}
+}
+
+fun StylableRo.findStylableAncestor(filter: StyleFilter): StylableRo? {
 	var p: StylableRo? = this
 	while (p != null) {
-		callback(p)
+		val found = filter(p)
+		if (found) return p
 		p = p.styleParent
 	}
+	return null
 }
 
 class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<Stylable, Boolean> {

@@ -95,6 +95,11 @@ open class PanelStyle : StyleBase() {
 	companion object : StyleType<PanelStyle>
 }
 
+inline fun panelStyle(init: ComponentInit<PanelStyle> = {}): PanelStyle {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return PanelStyle().apply(init)
+}
+
 inline fun Context.panel(init: ComponentInit<Panel> = {}): Panel {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val p = Panel(this)

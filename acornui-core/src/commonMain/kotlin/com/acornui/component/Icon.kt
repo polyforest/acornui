@@ -76,6 +76,11 @@ class IconStyle : StyleBase() {
 	companion object : StyleType<IconStyle>
 }
 
+inline fun iconStyle(init: ComponentInit<IconStyle> = {}): IconStyle {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return IconStyle().apply(init)
+}
+
 class IconAtlasComponent(owner: Context) : AtlasComponent(owner) {
 	init {
 		val style = bind(IconStyle())

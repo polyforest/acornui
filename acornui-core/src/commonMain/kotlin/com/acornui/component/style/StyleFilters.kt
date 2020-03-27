@@ -16,150 +16,43 @@
 
 package com.acornui.component.style
 
+import com.acornui.collection.Filter
 
-interface StyleFilter {
-	operator fun invoke(target: StylableRo): StylableRo?
-}
-
-object AlwaysFilter : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? = target
-}
-
-object NeverFilter : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? = null
-}
-
-/**
- * Returns the target if both [operandA] or [operandB] passes.
- */
-class AndStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (operandA(target) != null && operandB(target) != null) return target
-		return null
-	}
-}
-
-infix fun StyleFilter.and(other: StyleFilter): StyleFilter = AndStyleFilter(this, other)
-
-/**
- * The same as a not and operation.
- *
- * ```not(operandA and operandB)```
- */
-class NandStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (operandA(target) == null || operandB(target) == null) return target
-		return null
-	}
-}
-
-infix fun StyleFilter.nand(other: StyleFilter) = NorStyleFilter(this, other)
-
-/**
- * Returns the target if [operand] does not pass.
- */
-class NotStyleFilter(private val operand: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (operand(target) == null) return target
-		return null
-	}
-}
-
-fun not(target: StyleFilter): StyleFilter = NotStyleFilter(target)
-
-/**
- * If [operandA] passes, [operandB] will be executed with the result from [operandA].
- */
-class AndThenStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		val resultA = operandA(target) ?: return null
-		return operandB(resultA)
-	}
-}
-
-infix fun StyleFilter.andThen(other: StyleFilter) = AndThenStyleFilter(this, other)
-
-/**
- * Returns the target if either [operandA] or [operandB] passes.
- */
-class OrStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (operandA(target) != null || operandB(target) != null) return target
-		return null
-	}
-}
-
-infix fun StyleFilter.or(other: StyleFilter) = OrStyleFilter(this, other)
-
-/**
- * Returns the target if both [operandA] and [operandB] fails.
- */
-class NorStyleFilter(private val operandA: StyleFilter, private val operandB: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (operandA(target) == null && operandB(target) == null) return target
-		return null
-	}
-}
-
-infix fun StyleFilter.nor(other: StyleFilter) = NorStyleFilter(this, other)
-
-/**
- * Returns the target if any of the operands pass.
- */
-class OrAnyStyleFilter(private val operands: List<StyleFilter>) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		for (i in 0..operands.lastIndex) {
-			if (operands[i](target) != null) return target
-		}
-		return null
-	}
-}
-
-fun orAny(vararg filters: StyleFilter) = OrAnyStyleFilter(filters.toList())
+typealias StyleFilter = Filter<StylableRo>
 
 /**
  * Any ancestor passes the given child filter.
  */
-class AncestorStyleFilter(private val operand: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		target.walkStylableAncestry {
-			val r = operand(it)
-			if (r != null) return r
-		}
-		return null
-	}
+fun withAncestor(filter: StyleFilter): StyleFilter = { target ->
+	target.findStylableAncestor {
+		filter(it)
+	} != null
 }
 
-fun withAncestor(operand: StyleFilter) = AncestorStyleFilter(operand)
-fun withAnyAncestor(vararg operand: StyleFilter): StyleFilter {
-	var ret: StyleFilter = NeverFilter
-	for (filter in operand) {
-		ret = ret or AncestorStyleFilter(filter)
-	}
-	return ret
+fun withAncestor(tag: StyleTag) = withAncestor(tag.filter)
+
+/**
+ * Any ancestor passes any of the given child filters.
+ */
+fun withAnyAncestor(vararg filters: StyleFilter): StyleFilter = { target ->
+	target.findStylableAncestor { ancestor ->
+		filters.any { it(ancestor) }
+	} != null
 }
+
+fun withAnyAncestor(tag: StyleTag) = withAnyAncestor(tag.filter)
 
 /**
  * The direct parent passes the given child filter.
  */
-class ParentStyleFilter(private val operand: StyleFilter) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		val p = target.styleParent ?: return null
-		return operand(p)
-	}
+fun withParent(operand: StyleFilter): StyleFilter = {
+	val p = it.styleParent
+	p != null && operand(p)
 }
 
-fun withParent(operand: StyleFilter) = ParentStyleFilter(operand)
+fun withParent(tag: StyleTag) = withParent(tag.filter)
 
-/**
- * The target contains the given tag.
- */
-@Deprecated("Use the Style tag as a filter", ReplaceWith("tag"))
-class TargetStyleFilter(private val tag: StyleTag) : StyleFilter {
-	override fun invoke(target: StylableRo): StylableRo? {
-		if (target.styleTags.contains(tag)) {
-			return target
-		}
-		return null
+val StyleTag.filter: StyleFilter
+	get() = {
+		it.styleTags.contains(this)
 	}
-}

@@ -2,7 +2,6 @@ package com.acornui.skins
 
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.style.AlwaysFilter
 import com.acornui.component.style.StyleRule
 import com.acornui.component.text.charStyle
 import com.acornui.di.ContextImpl
@@ -15,7 +14,7 @@ import com.acornui.graphic.Window
 class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 
 	private val textScaling = charStyle()
-	private val textScalingRule = StyleRule(textScaling, AlwaysFilter)
+	private val textScalingRule = StyleRule(textScaling)
 	private val window = inject(Window)
 
 	init {

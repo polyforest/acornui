@@ -337,7 +337,7 @@ fun <E> arrayList2(array: Array<E>): ArrayList<E> {
  * Appends all elements matching the given [predicate] to the given [destination].
  * Does not cause allocation.
  */
-inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, predicate: (E) -> Boolean): C {
+inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, predicate: Filter<E>): C {
 	for (i in 0..lastIndex) {
 		val element = this[i]
 		if (predicate(element)) destination.add(element)
@@ -352,7 +352,7 @@ inline fun <E, C : MutableCollection<in E>> List<E>.filterTo2(destination: C, pr
  * @param lastIndex The ending index to search to (inclusive).
  * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
-inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): E? {
+inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: Filter<E>): E? {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
 	return if (index == -1) null else this[index]
 }
@@ -364,7 +364,7 @@ inline fun <E> List<E>.firstOrNull2(startIndex: Int = 0, lastIndex: Int = this.l
  * @param lastIndex The ending index to search to (inclusive).
  * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
-inline fun <E> List<E>.first2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): E {
+inline fun <E> List<E>.first2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: Filter<E>): E {
 	val index = indexOfFirst2(startIndex, lastIndex, predicate)
 	return if (index == -1) throw Exception("Element not found matching predicate") else this[index]
 }
@@ -375,7 +375,7 @@ inline fun <E> List<E>.first2(startIndex: Int = 0, lastIndex: Int = this.lastInd
  * @param startIndex The starting index to search from (inclusive).
  * @param lastIndex The ending index to search to (inclusive). lastIndex >= startIndex
  */
-inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): Int {
+inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: Filter<E>): Int {
 	if (isEmpty()) return -1
 	if (startIndex == lastIndex) return if (predicate(this[startIndex])) startIndex else -1
 	for (i in startIndex..lastIndex) {
@@ -394,7 +394,7 @@ inline fun <E> List<E>.indexOfFirst2(startIndex: Int = 0, lastIndex: Int = this.
  * @param startIndex The ending index to search to (inclusive).
  * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
-inline fun <E> List<E>.lastOrNull2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (E) -> Boolean): E? {
+inline fun <E> List<E>.lastOrNull2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: Filter<E>): E? {
 	val index = indexOfLast2(lastIndex, startIndex, predicate)
 	return if (index == -1) null else this[index]
 }
@@ -407,7 +407,7 @@ inline fun <E> List<E>.lastOrNull2(lastIndex: Int = this.lastIndex, startIndex: 
  * @param startIndex The ending index to search to (inclusive).
  * @param predicate The filter to use. If this returns true, iteration will stop and that element will be returned.
  */
-inline fun <E> List<E>.last2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (E) -> Boolean): E {
+inline fun <E> List<E>.last2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: Filter<E>): E {
 	val index = indexOfLast2(lastIndex, startIndex, predicate)
 	return if (index == -1) throw Exception("Element not found matching predicate") else this[index]
 }
@@ -420,7 +420,7 @@ inline fun <E> List<E>.last2(lastIndex: Int = this.lastIndex, startIndex: Int = 
  * @param predicate The filter to use. If this returns true, iteration will stop and the index of that element will be
  * returned.
  */
-inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: (E) -> Boolean): Int {
+inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, predicate: Filter<E>): Int {
 	if (isEmpty()) return -1
 	if (lastIndex == startIndex) return if (predicate(this[lastIndex])) lastIndex else -1
 	for (i in lastIndex downTo startIndex) {
@@ -433,7 +433,7 @@ inline fun <E> List<E>.indexOfLast2(lastIndex: Int = this.lastIndex, startIndex:
 /**
  * Returns `true` if at least one element matches the given [predicate].
  */
-inline fun <T> List<T>.any2(predicate: (T) -> Boolean): Boolean {
+inline fun <T> List<T>.any2(predicate: Filter<T>): Boolean {
 	if (isEmpty()) return false
 	for (i in 0..lastIndex) if (predicate(this[i])) return true
 	return false
@@ -475,7 +475,6 @@ fun List<Float>.sum2(startIndex: Int = 0, lastIndex: Int = this.lastIndex): Floa
 }
 
 typealias SortComparator<E> = (o1: E, o2: E) -> Int
-typealias Filter<E> = (E) -> Boolean
 
 fun <E> MutableList<E>.addAll(vararg elements: E) {
 	addAll(elements.toList())
@@ -502,7 +501,7 @@ class ListTransform<E, R>(private val target: List<E>, private val transform: (E
  * @return Returns a count representing the number of times [predicate] returned true. This will always be within the
  * range 0 and (lastIndex - startIndex + 1)
  */
-inline fun <E> List<E>.count2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: (E) -> Boolean): Int {
+inline fun <E> List<E>.count2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, predicate: Filter<E>): Int {
 	var count = 0
 	for (i in startIndex..lastIndex) if (predicate(this[i])) count++
 	return count
@@ -514,7 +513,7 @@ inline fun <E> List<E>.count2(startIndex: Int = 0, lastIndex: Int = this.lastInd
  * @param predicate Returns true when the item should be removed. Iteration will continue until the end is reached
  * or `true` is returned.
  */
-inline fun <E> MutableList<E>.removeFirst(predicate: (E) -> Boolean): E? {
+inline fun <E> MutableList<E>.removeFirst(predicate: Filter<E>): E? {
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	if (index == -1) return null
 	return removeAt(index)
@@ -598,7 +597,7 @@ fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
 	return newList
 }
 
-fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: (E) -> Boolean): List<E> {
+fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: Filter<E>): List<E> {
 	// TODO: replace with kotlinx persistent collections
 	val index = indexOfFirst2(0, lastIndex, predicate)
 	return if (index == -1) throw Exception("Could not find a value matching the predicate")

@@ -16,6 +16,7 @@
 
 package com.acornui.component.scroll
 
+import com.acornui.collection.AlwaysFilter
 import com.acornui.component.*
 import com.acornui.component.style.*
 import com.acornui.cursor.StandardCursor

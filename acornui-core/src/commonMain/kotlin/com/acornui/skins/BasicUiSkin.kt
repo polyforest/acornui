@@ -16,6 +16,10 @@
 
 package com.acornui.skins
 
+import com.acornui.collection.AlwaysFilter
+import com.acornui.collection.and
+import com.acornui.collection.not
+import com.acornui.collection.or
 import com.acornui.component.*
 import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
@@ -139,7 +143,7 @@ open class BasicUiSkin(
 			}
 			padding = Pad(theme.strokeThickness + 2f)
 		}
-		target.addStyleRule(textInputStyle, TextInput or TextArea)
+		target.addStyleRule(textInputStyle, TextInput.filter or TextArea.filter)
 
 		val textInputFlowStyle = TextFlowStyle()
 		textInputFlowStyle.multiline = false
@@ -378,7 +382,7 @@ open class BasicUiSkin(
 			}
 		}
 
-		target.scrollBarStyle(VScrollBar) {
+		target.scrollBarStyle(VScrollBar.filter) {
 			decrementButton = { spacer(size, 0f) }
 			incrementButton = { spacer(size, 0f) }
 			this.thumb = thumb
@@ -386,7 +390,7 @@ open class BasicUiSkin(
 			inactiveAlpha = 0.2f
 		}
 
-		target.scrollBarStyle(HScrollBar) {
+		target.scrollBarStyle(HScrollBar.filter) {
 			decrementButton = { spacer(0f, size) }
 			incrementButton = { spacer(0f, size) }
 			this.thumb = thumb
@@ -567,7 +571,7 @@ open class BasicUiSkin(
 		val textInputStyle = TextInputStyle().apply {
 			background = noSkinOptional
 		}
-		target.addStyleRule(textInputStyle, withAncestor(OptionList) and TextInput)
+		target.addStyleRule(textInputStyle, withAncestor(OptionList) and TextInput.filter)
 	}
 
 	protected open fun dataGridStyle() {
@@ -600,14 +604,14 @@ open class BasicUiSkin(
 
 		target.addStyleRule(dataGridStyle, DataGrid)
 
-		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) andThen withAncestor(DataGrid.BODY_CELL))
+		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) and withAncestor(DataGrid.BODY_CELL))
 
 		val headerFlowStyle = FlowLayoutStyle()
 		headerFlowStyle.horizontalAlign = FlowHAlign.CENTER
 		headerFlowStyle.multiline = false
-		target.addStyleRule(headerFlowStyle, withAncestor(TextField) andThen withAncestor(DataGrid.HEADER_CELL))
+		target.addStyleRule(headerFlowStyle, withAncestor(TextField) and withAncestor(DataGrid.HEADER_CELL))
 
-		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) andThen (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
+		target.addStyleRule(charStyle { selectable = false }, withAncestor(TextField) and (withAncestor(DataGridGroupHeader) or withAncestor(DataGrid.HEADER_CELL)))
 
 		val dataGridGroupHeaderStyle = DataGridGroupHeaderStyle()
 		dataGridGroupHeaderStyle.collapseButton = { collapseButton { toggleOnClick = false } }
@@ -702,7 +706,7 @@ open class BasicUiSkin(
 				}
 			}
 		}
-		target.addStyleRule(calendarPanelStyle, Panel and withAncestor(Calendar))
+		target.addStyleRule(calendarPanelStyle, Panel.filter and withAncestor(Calendar))
 
 		val calendarStyle = CalendarStyle().apply {
 			monthDecButton = {
@@ -738,7 +742,7 @@ open class BasicUiSkin(
 		textInputStyle.apply {
 			background = noSkinOptional
 		}
-		target.addStyleRule(textInputStyle, withAncestor(DatePicker) and TextInput)
+		target.addStyleRule(textInputStyle, withAncestor(DatePicker) and TextInput.filter)
 	}
 
 	protected open fun htmlComponentStyle() {

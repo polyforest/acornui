@@ -43,7 +43,7 @@ object CascadingStyleCalculator : StyleCalculator {
 			out.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
 				tmp.forEachReversed2 { entry ->
-					if (entry.filter(target) != null) {
+					if (entry.filter(target)) {
 						entries.addSorted(entry, comparator = entrySortComparator)
 					}
 				}
@@ -95,7 +95,7 @@ object CascadingStyleCalculator : StyleCalculator {
 			style.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
 				tmp.forEachReversed2 { entry ->
-					if (entry.filter(target) != null) {
+					if (entry.filter(target)) {
 						val index = entries.sortedInsertionIndex(entry, comparator = entrySortComparator)
 						entries.add(index, entry)
 						appliedRules.add(index, StyleRuleDebugInfo(ancestor, entry))
