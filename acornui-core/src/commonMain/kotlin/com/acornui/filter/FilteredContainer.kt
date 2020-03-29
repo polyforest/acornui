@@ -20,14 +20,12 @@ package com.acornui.filter
 
 import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.collection.forEach2
-import com.acornui.collection.forEachReversed2
 import com.acornui.component.*
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.gl.core.useCamera
 import com.acornui.graphic.orthographicCamera
 import com.acornui.graphic.setViewport
-import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
@@ -43,7 +41,7 @@ import kotlin.contracts.contract
 class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner) {
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
-		bind { invalidate(ValidationFlags.VERTICES_GLOBAL) }
+		bind { invalidate(REGION) }
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters
@@ -53,8 +51,8 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 	override val useTransforms: Boolean = true
 
 	init {
-//		cameraOverride = camera
 		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
+		validation.addNode(REGION, ValidationFlags.LAYOUT, ValidationFlags.VERTICES_GLOBAL, ::updateRegion)
 	}
 
 	operator fun <T : RenderFilter> T.unaryPlus(): T {
@@ -69,20 +67,18 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 
 	private val localDrawRegion = Rectangle()
 
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		super.updateLayout(explicitWidth, explicitHeight, out)
+	private fun updateRegion() {
 		localDrawRegion.set(_bounds)
-		_renderFilters.forEachReversed2 {
+		_renderFilters.forEach2 {
 			it.region(localDrawRegion)
 		}
 	}
 
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
-		val model = transformGlobal
 		val tint = colorTintGlobal
 		_renderFilters.forEach2 {
-			it.updateGlobalVertices(model, tint)
+			it.updateGlobalVertices(Matrix4.IDENTITY, tint)
 		}
 	}
 
@@ -97,8 +93,6 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 		val h = window.height
 		camera.setViewport(w, h)
 		camera.moveToLookAtRect(0f, 0f, w, h)
-//		println(transformGlobalInv)
-//		modelInv.set(transformGlobalInv)
 
 		cameraOverride = camera
 		transformGlobalOverride = Matrix4.IDENTITY
@@ -111,32 +105,35 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 		update()
 
 		val p = parent ?: return
-		gl.uniforms.useCamera(p.viewProjectionTransform, p.viewTransform, Matrix4.IDENTITY) {
+		gl.uniforms.useCamera(p.viewProjectionTransform, p.viewTransform, transformGlobal) {
 			draw(_renderFilters.lastIndex)
 		}
 
 	}
 
 	private fun drawLocal(filterIndex: Int) {
-		return if (filterIndex == -1) {
-			super.draw()
-		} else {
+		if (filterIndex != -1) {
 			val filter = _renderFilters[filterIndex]
 			filter.renderLocal {
 				drawLocal(filterIndex - 1)
+				draw(filterIndex - 1)
 			}
 		}
 	}
 
 	private fun draw(filterIndex: Int) {
-		if (filterIndex == -1)
+		if (filterIndex == -1) {
 			super.draw()
-		else {
+		} else {
 			val filter = _renderFilters[filterIndex]
 			filter.render {
 				draw(filterIndex - 1)
 			}
 		}
+	}
+
+	companion object {
+		private const val REGION = 1 shl 16
 	}
 }
 

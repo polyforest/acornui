@@ -30,6 +30,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Rectangle
+import com.acornui.math.Vector2
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -62,7 +63,7 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 
 	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
 		val framebufferFilter = framebufferFilter
-		framebufferFilter.updateGlobalVertices(framebufferTransform.set(transform).translate(-blurX, -blurY), tint)
+		framebufferFilter.updateGlobalVertices(transform, tint)
 		val textureToBlur = framebufferFilter.texture
 
 		blurFramebufferA.setSize(textureToBlur.widthPixels, textureToBlur.heightPixels)
@@ -74,7 +75,7 @@ open class BlurFilter(owner: Context) : RenderFilterBase(owner) {
 
 		framebufferFilter.drawable(sprite)
 		sprite.texture = blurFramebufferB.texture
-		sprite.updateGlobalVertices(transform = transform, tint = tint)
+		sprite.updateGlobalVertices(transform = transform - Vector2(blurX, blurY), tint = tint)
 	}
 
 	override fun renderLocal(inner: () -> Unit) {

@@ -170,7 +170,7 @@ class Framebuffer constructor(
 	 * When this frame buffer is bound, this will be the viewport.
 	 */
 	fun setViewport(x: Int, y: Int, width: Int, height: Int) {
-		_viewport.set(x, y, width, height)
+		_viewport.set(x, y, maxOf(0, width), maxOf(0, height))
 	}
 
 	private val previousViewport = IntArray(4)

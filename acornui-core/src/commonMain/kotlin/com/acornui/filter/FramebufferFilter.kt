@@ -26,10 +26,7 @@ import com.acornui.gl.core.resizeableFramebuffer
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Texture
-import com.acornui.math.Matrix4
-import com.acornui.math.Matrix4Ro
-import com.acornui.math.MinMax
-import com.acornui.math.Rectangle
+import com.acornui.math.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.ceil
@@ -65,8 +62,8 @@ class FramebufferFilter(
 	}
 
 	override fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {
-		//_transform.set(transform).translate(-regionUnscaled.x, -regionUnscaled.y)
-		sprite.updateGlobalVertices(transform = transform, tint = tint)
+		_transform.set(transform).translate(regionUnscaled.x, regionUnscaled.y)
+		sprite.updateGlobalVertices(transform = _transform, tint = tint)
 	}
 
 	override fun renderLocal(inner: () -> Unit) {

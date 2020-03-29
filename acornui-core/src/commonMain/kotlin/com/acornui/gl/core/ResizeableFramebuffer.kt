@@ -65,7 +65,7 @@ class ResizeableFramebuffer(
 		get() = heightPixels / scaleY
 
 	private fun nextSize(size: Int): Int {
-		return nextPowerOfTwo(size)
+		return nextPowerOfTwo(maxOf(1, size))
 	}
 
 	fun setSize(widthPixels: Int, heightPixels: Int, scaleX: Float = 1f, scaleY: Float = 1f) = setSize(widthPixels.toFloat(), heightPixels.toFloat(), scaleX, scaleY)
