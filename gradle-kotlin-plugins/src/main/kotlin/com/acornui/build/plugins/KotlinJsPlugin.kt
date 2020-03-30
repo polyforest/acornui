@@ -40,6 +40,10 @@ open class KotlinJsPlugin : Plugin<Project> {
 				val kotlinCoroutinesVersion: String by project
 				js {
 					browser {
+						webpackTask {
+							// Assume project is a library, not an application, by default.
+							enabled = false
+						}
 						testTask {
 							useMocha {
 								// To be consistent, asynchronous tests should use `runTest`, which has its own timeout.
