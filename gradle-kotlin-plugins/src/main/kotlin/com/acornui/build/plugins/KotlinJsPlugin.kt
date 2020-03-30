@@ -69,6 +69,7 @@ open class KotlinJsPlugin : Plugin<Project> {
 
 					val jsMain by getting {
 						dependencies {
+							implementation(npm("terser", "4.6.7"))
 							implementation(npm("promise-polyfill", version = "8.1.3")) // For IE11
 							implementation(kotlin("stdlib-js", version = kotlinVersion))
 							implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlinSerializationVersion")
