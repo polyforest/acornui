@@ -76,6 +76,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	}
 
 	init {
+		styleTags.add(Stage)
 		cameraOverride = cam
 		own(timer(5.seconds, 10, callback = ::skinCheck))
 		focusEnabled = true
