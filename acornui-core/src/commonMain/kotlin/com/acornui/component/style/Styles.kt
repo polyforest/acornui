@@ -47,7 +47,7 @@ interface StylableRo {
 	}
 
 	/**
-	 * The next ancestor of this stylable component.
+	 * The stylable component parent from which style rules are inherited.
 	 */
 	val styleParent: StylableRo?
 

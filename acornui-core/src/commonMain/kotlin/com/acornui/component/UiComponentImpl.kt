@@ -25,6 +25,7 @@ import com.acornui.component.layout.Positionable
 import com.acornui.component.style.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
+import com.acornui.di.findOwner
 import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.function.as1
@@ -567,17 +568,20 @@ open class UiComponentImpl(
 	// Stylable
 	//-----------------------------------------------
 
-	override val styleParent: StylableRo? by lazy {
-		var p: Context? = owner
-		var s: Stylable? = null
-		while (p != null) {
-			if (p is Stylable) {
-				s = p
-				break
-			}
-			p = p.owner
-		}
-		s ?: stage
+	override var styleParentOverride: StylableRo? by validationProp(null, ValidationFlags.STYLES)
+
+	/**
+	 * The stylable component parent from which style rules are inherited.
+	 * By default this is the next owner ancestor that implements StylableRo, or the Stage if none exists.
+	 * This may be overridden via [styleParentOverride].
+	 *
+	 * Note that this doesn't use the display graph to avoid expensive styles invalidation on add/remove.
+	 */
+	override val styleParent: StylableRo?
+		get() = styleParentOverride ?: styleParentDefault
+
+	private val styleParentDefault: StylableRo? by lazy {
+		owner.findOwner { it is StylableRo } as StylableRo? ?: stage
 	}
 
 	private var _styles: Styles? = null
@@ -878,7 +882,8 @@ open class UiComponentImpl(
 		if (useTransforms)
 			_vertexTranslation.clear()
 		else
-			_vertexTranslation.set(parent?.vertexTranslation ?: Vector3.ZERO).add(mat.translationX, mat.translationY, mat.translationZ)
+			_vertexTranslation.set(parent?.vertexTranslation
+					?: Vector3.ZERO).add(mat.translationX, mat.translationY, mat.translationZ)
 	}
 
 	protected open fun updateColorTint() {

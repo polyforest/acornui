@@ -181,6 +181,11 @@ interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, Interactiv
 	 */
 	override var parent: ContainerRo?
 
+	/**
+	 * If not null, this value will be used as the style parent.
+	 */
+	var styleParentOverride: StylableRo?
+
 	override val invalidated: Signal<(self: UiComponent, flags: Int) -> Unit>
 
 	override var visible: Boolean
