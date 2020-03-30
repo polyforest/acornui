@@ -50,11 +50,7 @@ interface RenderFilter : Observable {
 	fun updateGlobalVertices(transform: Matrix4Ro, tint: ColorRo) {}
 
 	/**
-	 * Renders the [inner] block to any framebuffers using this filter and returns the expanded draw region this filter
-	 * covers.
-	 *
-	 * The camera will be set to an orthographic projection with the model transformation set the inverse of the
-	 * filtered container's global model transform.
+	 * Renders the [inner] block to any framebuffers using this filter.
 	 *
 	 * @param inner A method that draws the contents this filter decorates.
 	 */

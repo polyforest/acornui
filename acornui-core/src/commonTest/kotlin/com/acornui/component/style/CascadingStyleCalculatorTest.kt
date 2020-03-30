@@ -16,6 +16,7 @@
 
 package com.acornui.component.style
 
+import com.acornui.collection.AlwaysFilter
 import com.acornui.component.ComponentInit
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
