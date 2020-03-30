@@ -20,5 +20,5 @@ plugins {
 }
 
 repositories {
-	maven("http://artifacts.acornui.com/mvn")
+	maven("https://oss.sonatype.org/content/repositories/snapshots")
 }

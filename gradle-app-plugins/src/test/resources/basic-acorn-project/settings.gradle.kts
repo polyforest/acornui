@@ -15,3 +15,21 @@
  */
 
 rootProject.name = "basic-acorn-project"
+
+pluginManagement {
+	val acornVersion: String by settings
+	buildscript {
+		repositories {
+			if (acornVersion.endsWith("-SNAPSHOT")) {
+				mavenLocal()
+				maven("https://oss.sonatype.org/content/repositories/snapshots")
+			}
+			mavenCentral()
+			jcenter()
+		}
+		dependencies {
+			classpath("com.acornui:gradle-app-plugins:$acornVersion")
+		}
+	}
+}
+apply(plugin = "com.acornui.settings")
