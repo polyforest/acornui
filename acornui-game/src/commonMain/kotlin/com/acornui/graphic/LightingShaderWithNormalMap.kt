@@ -17,6 +17,8 @@
 package com.acornui.graphic
 
 import com.acornui.gl.core.*
+import com.acornui.math.Matrix3
+import com.acornui.math.Matrix4
 
 class LightingShaderWithNormalMap(gl: CachedGl20, numPointLights: Int, numShadowPointLights: Int) : ShaderProgramBase(
 		gl, vertexShaderSrc = """
@@ -222,5 +224,9 @@ VertexAttributeLocation.TEXTURE_COORD to CommonShaderAttributes.A_TEXTURE_COORD 
 		uniforms.put("poissonDisk[1]", 0.94558609f, -0.76890725f)
 		uniforms.put("poissonDisk[2]", -0.09418410f, -0.92938870f)
 		uniforms.put("poissonDisk[3]", 0.34495938f, 0.29387760f)
+		uniforms.put("u_projTrans", Matrix4.IDENTITY)
+		uniforms.put("u_directionalLightMvp", Matrix4.IDENTITY)
+		uniforms.put("u_modelTrans", Matrix4.IDENTITY)
+		uniforms.put("u_normalTrans", Matrix3.IDENTITY)
 	}
 }
