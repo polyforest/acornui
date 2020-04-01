@@ -71,6 +71,10 @@ open class BlendMode(
 		}
 	}
 
+	/**
+	 * Sets the [Gl20.blendFunc].
+	 * If [premultipliedAlpha] is true, [sourcePma] will be the `sfactor`, otherwise [source]. `dfactor` will be [dest]. 
+	 */
 	open fun applyBlending(gl: Gl20, premultipliedAlpha: Boolean = false) {
 		gl.blendFunc(if (premultipliedAlpha) sourcePma else source, dest)
 	}

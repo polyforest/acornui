@@ -19,6 +19,13 @@ package com.acornui.gl.core
 import com.acornui.Disposable
 import com.acornui.assertionsEnabled
 import com.acornui.di.Context
+import com.acornui.gl.core.Gl20.Companion.LINES
+import com.acornui.gl.core.Gl20.Companion.LINE_LOOP
+import com.acornui.gl.core.Gl20.Companion.LINE_STRIP
+import com.acornui.gl.core.Gl20.Companion.POINTS
+import com.acornui.gl.core.Gl20.Companion.TRIANGLES
+import com.acornui.gl.core.Gl20.Companion.TRIANGLE_FAN
+import com.acornui.gl.core.Gl20.Companion.TRIANGLE_STRIP
 import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.TextureRo
@@ -130,7 +137,7 @@ open class ShaderBatchImpl(
 		if (assertionsEnabled) {
 			if (drawCall.drawMode == Gl20.LINES) {
 				check(count % 2 == 0) { "indices flushed <$count> not evenly divisible by 2 (Gl20.LINES)" }
-			} else if (drawCall.drawMode == Gl20.TRIANGLES) {
+			} else if (drawCall.drawMode == TRIANGLES) {
 				check(count % 3 == 0) { "indices flushed <$count> not evenly divisible by 3 (Gl20.TRIANGLES)" }
 			}
 		}
@@ -225,6 +232,7 @@ open class ShaderBatchImpl(
 			val texture = drawCall.texture!!
 			gl.bindTexture(texture.target.value, texture.textureHandle!!)
 			drawCall.blendMode.applyBlending(gl, drawCall.premultipiedAlpha)
+			
 			gl.drawElements(drawCall.drawMode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
 		}
 		unbind()
@@ -267,11 +275,41 @@ fun Context.shaderBatch(): ShaderBatchImpl {
 }
 
 interface DrawElementsCallRo {
+
+	/**
+	 * The texture to set on unit 0.
+	 * @see Gl20.activeTexture
+	 */
 	val texture: TextureRo?
+
+	/**
+	 * The blend mode to use for [Gl20.blendFunc]
+	 * [BlendMode.applyBlending] will be invoked before the draw.
+	 */
 	val blendMode: BlendMode
+
+	/**
+	 * The premultiplied value to be passed to [BlendMode.applyBlending].
+	 */
 	val premultipiedAlpha: Boolean
+
+	/**
+	 * The draw mode for [Gl20.drawElements] or [Gl20.drawArrays]
+	 * Must be one of [POINTS], [LINE_STRIP], [LINE_LOOP], [LINES], [TRIANGLE_STRIP], [TRIANGLE_FAN], or [TRIANGLES].
+	 */
 	val drawMode: Int
+
+	/**
+	 * The number of index values to draw.
+	 */
 	val count: Int
+
+	/**
+	 * The position offset in the index buffer. 
+	 * 
+	 * NB: This is not a byte offset, to convert to the byte offset [Gl20.drawElements] is expecting, this should be 
+	 * `shl 1` to represent the byte offset for `Short` indices. 
+	 */
 	val offset: Int
 }
 
@@ -280,7 +318,7 @@ class DrawElementsCall private constructor() : DrawElementsCallRo, Clearable {
 	override var texture: TextureRo? = null
 	override var blendMode = BlendMode.NORMAL
 	override var premultipiedAlpha = false
-	override var drawMode = Gl20.TRIANGLES
+	override var drawMode = TRIANGLES
 
 	override var count = 0
 	override var offset = 0
@@ -289,7 +327,7 @@ class DrawElementsCall private constructor() : DrawElementsCallRo, Clearable {
 		texture = null
 		blendMode = BlendMode.NORMAL
 		premultipiedAlpha = false
-		drawMode = Gl20.TRIANGLES
+		drawMode = TRIANGLES
 		count = 0
 		offset = 0
 	}
