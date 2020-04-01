@@ -435,7 +435,7 @@ fun validationGraph(toFlagString: Int.() -> String = ValidationFlags::flagToStri
 }
 
 /**
- * Returns a property delegate where when set invalidates the given flag.
+ * Returns a property delegate where when set invalidates the given flags.
  */
 fun <T> validationProp(initialValue: T, flags: Int): ReadWriteProperty<Validatable, T> = validationProp(initialValue, flags, { it })
 

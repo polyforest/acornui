@@ -57,7 +57,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	override val useTransforms: Boolean = true
+	override val useMvpTransforms: Boolean = true
 
 	init {
 		cameraOverride = camera

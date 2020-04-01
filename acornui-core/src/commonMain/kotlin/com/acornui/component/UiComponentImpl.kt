@@ -202,8 +202,15 @@ open class UiComponentImpl(
 	/**
 	 * If set, [viewTransform], [projectionTransform], [viewProjectionTransform], and [viewProjectionTransformInv]
 	 * matrices will be calculated based on this camera.
+	 *
+	 * Setting this value will invalidate [ValidationFlags.VIEW_PROJECTION] and [ValidationFlags.TRANSFORM].
+	 * [ValidationFlags.TRANSFORM] is invalidated because [useMvpTransforms] is dependent on whether or not this value
+	 * is set.
+	 *
+	 * Note that cameras are not watched for changes; if the set camera is changed, [ValidationFlags.VIEW_PROJECTION]
+	 * should be invalidated on this component.
 	 */
-	var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION)
+	var cameraOverride: CameraRo? by validationProp(null, ValidationFlags.VIEW_PROJECTION or ValidationFlags.TRANSFORM)
 
 	private val _viewProjectionTransformInv = Matrix4()
 	override val viewProjectionTransformInv: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
@@ -651,12 +658,16 @@ open class UiComponentImpl(
 		}
 
 	/**
-	 * If true, this component's model view and transform matrices should be pushed to the gpu.
-	 * If false, the local transform is assumed to be translation only and [vertexTranslation] will be set.
+	 * If true, this component's model, view, and projection matrices should be pushed to the gpu on render.
+	 * If false, the local transform is assumed to be translation only and [vertexTranslation] will be set during
+	 * [updateTransform].
 	 *
-	 * Override this to be true if [viewProjectionTransform], [viewTransform], or [transformGlobal] is overridden.
+	 * Override this to always be true if [viewProjectionTransform], [viewTransform], or [transformGlobal] is
+	 * overridden.
+	 *
+	 * Any independent property of this value should invalidate [ValidationFlags.TRANSFORM] when changed.
 	 */
-	protected open val useTransforms: Boolean
+	protected open val useMvpTransforms: Boolean
 		get() = cameraOverride != null ||
 				transformGlobalOverride != null ||
 				_transformLocal.mode != MatrixMode.IDENTITY &&
@@ -667,11 +678,16 @@ open class UiComponentImpl(
 	/**
 	 * Vertices rendered should be local position with this added translation.
 	 */
-	override val vertexTranslation: Vector3Ro
-		get() {
-			validate(ValidationFlags.TRANSFORM)
-			return _vertexTranslation
+	override val vertexTranslation: Vector3Ro by validationProp(ValidationFlags.TRANSFORM) {
+		if (useMvpTransforms)
+			_vertexTranslation.clear()
+		else {
+			val mat = transform
+			_vertexTranslation.set(parent?.vertexTranslation
+					?: Vector3.ZERO).add(mat.translationX, mat.translationY, mat.translationZ)
 		}
+		_vertexTranslation
+	}
 
 	@Suppress("RemoveExplicitTypeArguments")
 	override var transformOverride: Matrix4Ro? by validationProp<Matrix4Ro?>(null, ValidationFlags.TRANSFORM) { it?.copy() }
@@ -831,7 +847,7 @@ open class UiComponentImpl(
 	/**
 	 * The global transform of this component, of all ancestor transforms multiplied together.
 	 *
-	 * NB: If this is overridden, [useTransforms] must be overridden as well.
+	 * NB: If this is overridden, [useMvpTransforms] must be overridden as well.
 	 */
 	override val transformGlobal: Matrix4Ro by validationProp(ValidationFlags.TRANSFORM) {
 		if (transformGlobalOverride != null) _transformGlobal.set(transformGlobalOverride!!)
@@ -879,11 +895,6 @@ open class UiComponentImpl(
 			if (!_origin.isZero())
 				mat.translate(-_origin.x, -_origin.y, -_origin.z)
 		}
-		if (useTransforms)
-			_vertexTranslation.clear()
-		else
-			_vertexTranslation.set(parent?.vertexTranslation
-					?: Vector3.ZERO).add(mat.translationX, mat.translationY, mat.translationZ)
 	}
 
 	protected open fun updateColorTint() {
@@ -936,7 +947,7 @@ open class UiComponentImpl(
 		if (validation.invalidFlags != 0)
 			Log.error("render $this with invalid flags ${ValidationFlags.flagsToString(validation.invalidFlags)}")
 		if (visible && colorTint.a > 0f) {
-			if (useTransforms) {
+			if (useMvpTransforms) {
 				gl.uniforms.useCamera(this, true) {
 					draw()
 				}

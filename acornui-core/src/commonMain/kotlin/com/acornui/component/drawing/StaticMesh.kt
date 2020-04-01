@@ -104,7 +104,7 @@ open class StaticMeshComponent(
 	/**
 	 * Static mesh components should always upload their model matrix.
 	 */
-	override val useTransforms: Boolean = true
+	override val useMvpTransforms: Boolean = true
 
 	override fun draw() {
 		val mesh = mesh ?: return

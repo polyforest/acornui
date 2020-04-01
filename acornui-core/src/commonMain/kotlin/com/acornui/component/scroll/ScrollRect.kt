@@ -50,7 +50,7 @@ class ScrollRectImpl(
 
 	private var scroll = vec2()
 
-	override val useTransforms: Boolean = true
+	override val useMvpTransforms: Boolean = true
 
 	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val maskClip = addChild(rect {
@@ -99,8 +99,8 @@ class ScrollRectImpl(
 			scroll.set(MathUtils.offsetRound(x), MathUtils.offsetRound(y))
 		else
 			scroll.set(x, y)
-		_bounds.x = x
-		_bounds.y = y
+		_bounds.x = scroll.x
+		_bounds.y = scroll.y
 		clipRegionLocal = clipRegion.set(_bounds)
 		invalidate(ValidationFlags.VIEW_PROJECTION)
 	}

@@ -58,9 +58,9 @@ open class SimpleHighlight(
 		get() = highlighted?.transformGlobal ?: Matrix4.IDENTITY
 
 	/**
-	 * SimpleHighlight overrides [transformGlobal] and therefore must override [useTransforms].
+	 * SimpleHighlight overrides [transformGlobal] and therefore must override [useMvpTransforms].
 	 */
-	override val useTransforms: Boolean = true
+	override val useMvpTransforms: Boolean = true
 
 	/**
 	 * The target being highlighted.

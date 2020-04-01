@@ -48,7 +48,7 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 
 	private val camera = orthographicCamera(false)
 
-	override val useTransforms: Boolean = true
+	override val useMvpTransforms: Boolean = true
 
 	init {
 		canvasClipRegionOverride = MinMaxRo.POSITIVE_INFINITY
