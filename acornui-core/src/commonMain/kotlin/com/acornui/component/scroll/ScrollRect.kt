@@ -50,6 +50,8 @@ class ScrollRectImpl(
 
 	private var scroll = vec2()
 
+	override val useTransforms: Boolean = true
+
 	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
 	private val maskClip = addChild(rect {
 		style.backgroundColor = Color.WHITE
@@ -114,11 +116,19 @@ class ScrollRectImpl(
 		super.updateViewProjection()
 	}
 
+	override fun render() {
+		if (parent != null && visible && colorTint.a > 0f) {
+			draw()
+		}
+	}
+
 	override fun draw() {
 		StencilUtil.mask(gl.batch, gl, {
-			maskClip.render()
+			gl.uniforms.useCamera(parent!!, useModel = true) {
+				maskClip.render()
+			}
 		}) {
-			gl.uniforms.useCamera(this) {
+			gl.uniforms.useCamera(this, useModel = true) {
 				contents.render()
 			}
 		}
