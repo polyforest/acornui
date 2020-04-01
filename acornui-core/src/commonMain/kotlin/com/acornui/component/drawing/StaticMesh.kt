@@ -254,10 +254,10 @@ class StaticMesh(
 		val vertexComponentsP = vertexComponents.position
 		for (i in batch.drawCalls.lastIndex downTo 0) {
 			val drawCall = batch.drawCalls[i]
-			if (drawCall.count != 0) {
-				indices.position = drawCall.offset
+			if (drawCall.indexCount != 0) {
+				indices.position = drawCall.indexOffset
 				if (drawCall.drawMode == Gl20.TRIANGLES) {
-					for (j in 0 until drawCall.count step 3) {
+					for (j in 0 until drawCall.indexCount step 3) {
 						vertexComponents.position = indices.get() * vertexSize + positionOffset
 						v0.set(vertexComponents.get(), vertexComponents.get(), if (c >= 3) vertexComponents.get() else 0f)
 						vertexComponents.position = indices.get() * vertexSize + positionOffset

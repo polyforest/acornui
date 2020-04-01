@@ -30,7 +30,6 @@ import com.acornui.graphic.BlendMode
 import com.acornui.graphic.Color
 import com.acornui.graphic.TextureRo
 import com.acornui.graphic.rgbData
-import com.acornui.io.floatBuffer
 import com.acornui.io.resizableFloatBuffer
 import com.acornui.io.resizableShortBuffer
 import com.acornui.recycle.Clearable
@@ -69,6 +68,7 @@ open class ShaderBatchImpl(
 
 	override val vertexComponentsCount: Int
 		get() = vertexComponents.position
+
 	override val indicesCount: Int
 		get() = indices.position
 
@@ -129,23 +129,24 @@ open class ShaderBatchImpl(
 	override fun flush() {
 		if (assertionsEnabled)
 			checkVertexComponents()
-		val lastDrawCall = drawCalls.lastOrNull()
-		val offset = if (lastDrawCall == null) 0 else lastDrawCall.offset + lastDrawCall.count
-		val count = indices.position - offset
-		if (count <= 0) return // Nothing to draw.
+		drawCall.indexCount = indicesCount - drawCall.indexOffset
+		drawCall.vertexComponentsCount = vertexComponentsCount - drawCall.vertexComponentOffset
+		if (drawCall.isEmpty) return // Nothing to draw
+
+		val count = if (drawCall.hasElements) drawCall.indexCount else drawCall.vertexComponentsCount
 
 		if (assertionsEnabled) {
-			if (drawCall.drawMode == Gl20.LINES) {
-				check(count % 2 == 0) { "indices flushed <$count> not evenly divisible by 2 (Gl20.LINES)" }
-			} else if (drawCall.drawMode == TRIANGLES) {
-				check(count % 3 == 0) { "indices flushed <$count> not evenly divisible by 3 (Gl20.TRIANGLES)" }
+			when (drawCall.drawMode) {
+				LINES -> check(count % 2 == 0) { "count <$count> not evenly divisible by 2 (Gl20.LINES)" }
+				TRIANGLES -> check(count % 3 == 0) { "count <$count> not evenly divisible by 3 (Gl20.TRIANGLES)" }
+				TRIANGLE_STRIP, TRIANGLE_FAN -> check(count > 2) { "count must be at least 3" }
 			}
 		}
-		require(highestIndex < count + offset)
-		drawCall.offset = offset
-		drawCall.count = count
+		require(highestIndex < drawCall.indexCount + drawCall.indexOffset)
 		drawCalls.add(drawCall)
 		drawCall = DrawElementsCall.obtain()
+		drawCall.indexOffset = indicesCount
+		drawCall.vertexComponentOffset = vertexComponentsCount
 
 		if (isDynamic) {
 			upload()
@@ -232,8 +233,11 @@ open class ShaderBatchImpl(
 			val texture = drawCall.texture!!
 			gl.bindTexture(texture.target.value, texture.textureHandle!!)
 			drawCall.blendMode.applyBlending(gl, drawCall.premultipiedAlpha)
-			
-			gl.drawElements(drawCall.drawMode, drawCall.count, Gl20.UNSIGNED_SHORT, drawCall.offset shl 1)
+
+			if (drawCall.hasElements)
+				gl.drawElements(drawCall.drawMode, drawCall.indexCount, Gl20.UNSIGNED_SHORT, drawCall.indexOffset shl 1)
+			else
+				gl.drawArrays(drawCall.drawMode, drawCall.vertexComponentOffset / vertexAttributes.vertexSize, drawCall.vertexComponentsCount / vertexAttributes.vertexSize)
 		}
 		unbind()
 	}
@@ -300,17 +304,37 @@ interface DrawElementsCallRo {
 	val drawMode: Int
 
 	/**
-	 * The number of index values to draw.
+	 * The number of index elements pushed since the last draw call.
 	 */
-	val count: Int
+	val indexCount: Int
 
 	/**
-	 * The position offset in the index buffer. 
+	 * The number of vertex components pushed since the last draw call.
+	 */
+	val vertexComponentsCount: Int
+
+	/**
+	 * The position offset in the index buffer.
 	 * 
 	 * NB: This is not a byte offset, to convert to the byte offset [Gl20.drawElements] is expecting, this should be 
 	 * `shl 1` to represent the byte offset for `Short` indices. 
 	 */
-	val offset: Int
+	val indexOffset: Int
+
+	/**
+	 * The first vertex component index.
+	 * NB: For [Gl20.drawArrays] this can be divided by the number of components per vertex to get the `first` argument.
+	 */
+	val vertexComponentOffset: Int
+
+	/**
+	 * True if indices were pushed.
+	 */
+	val hasElements: Boolean
+		get() = indexCount > 0
+
+	val isEmpty: Boolean
+		get() = indexCount == 0 && vertexComponentsCount == 0
 }
 
 class DrawElementsCall private constructor() : DrawElementsCallRo, Clearable {
@@ -320,16 +344,20 @@ class DrawElementsCall private constructor() : DrawElementsCallRo, Clearable {
 	override var premultipiedAlpha = false
 	override var drawMode = TRIANGLES
 
-	override var count = 0
-	override var offset = 0
+	override var indexCount = 0
+	override var vertexComponentsCount = 0
+	override var indexOffset = 0
+	override var vertexComponentOffset = 0
 
 	override fun clear() {
 		texture = null
 		blendMode = BlendMode.NORMAL
 		premultipiedAlpha = false
 		drawMode = TRIANGLES
-		count = 0
-		offset = 0
+		indexCount = 0
+		vertexComponentsCount = 0
+		indexOffset = 0
+		vertexComponentOffset = 0
 	}
 
 	companion object {
