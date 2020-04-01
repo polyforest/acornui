@@ -153,7 +153,7 @@ class Corners() : CornersRo, Clearable {
 	}
 
 	fun set(other: CornersRo): Corners {
-		return set(other.topLeft.x, other.topLeft.y, other.topRight.x, other.topRight.y, other.bottomRight.x, other.bottomRight.y, other.bottomLeft.x, other.bottomRight.y)
+		return set(other.topLeft.x, other.topLeft.y, other.topRight.x, other.topRight.y, other.bottomRight.x, other.bottomRight.y, other.bottomLeft.x, other.bottomLeft.y)
 	}
 
 	fun set(topLeft: Float = 0f, topRight: Float = 0f, bottomRight: Float = 0f, bottomLeft: Float = 0f): Corners {
@@ -161,7 +161,7 @@ class Corners() : CornersRo, Clearable {
 	}
 
 	fun set(topLeft: Vector2Ro, topRight: Vector2Ro, bottomRight: Vector2Ro, bottomLeft: Vector2Ro): Corners {
-		return set(topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRight.x, bottomRight.y, bottomLeft.x, bottomRight.y)
+		return set(topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRight.x, bottomRight.y, bottomLeft.x, bottomLeft.y)
 	}
 
 	fun set(topLeftX: Float, topLeftY: Float, topRightX: Float, topRightY: Float, bottomRightX: Float, bottomRightY: Float, bottomLeftX: Float, bottomLeftY: Float): Corners {
