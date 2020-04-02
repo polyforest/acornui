@@ -104,6 +104,15 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		invalidate(bubblingFlags)
 	}
 
+	private var selectionRangeStart = 0
+	private var selection: List<SelectionRange> = emptyList()
+
+	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
+		selectionRangeStart = rangeStart
+		this.selection = selection
+		invalidate(TextValidationFlags.SELECTION)
+	}
+
 	override fun updateStyles() {
 		super.updateStyles()
 		_elements.forEach2 {
@@ -276,7 +285,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 					var justifyOffset = 0f
 					for (i in line.startIndex..line.endIndex - 1) {
 						val part = textElements[i]
-						part.x = floor((part.x + justifyOffset))
+						part.x = floor(part.x + justifyOffset)
 						if (i < lastIndex && part.char == ' ') {
 							part.explicitWidth = part.advanceX + ceil(hGap).toInt()
 							justifyOffset += hGap
@@ -325,7 +334,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 	private fun updateSelection() {
 		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].selected = selection.indexOfFirst2 { it.contains(i + selectionRangeStart) } != -1
+			textElements[i].selected = selection.any2 { it.contains(i + selectionRangeStart) }
 		}
 	}
 
@@ -337,15 +346,6 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		for (i in 0..textElements.lastIndex) {
 			textElements[i].updateVerticesGlobal(translation, tint)
 		}
-	}
-
-	private var selectionRangeStart = 0
-	private var selection: List<SelectionRange> = emptyList()
-
-	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
-		selectionRangeStart = rangeStart
-		this.selection = selection
-		invalidate(TextValidationFlags.SELECTION)
 	}
 
 	override fun toString(builder: StringBuilder) {
