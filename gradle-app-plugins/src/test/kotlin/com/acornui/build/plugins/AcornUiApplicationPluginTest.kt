@@ -21,6 +21,7 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -52,6 +53,7 @@ class AcornUiApplicationPluginTest {
 		assertNotNull(project.plugins.findPlugin("org.jetbrains.kotlin.multiplatform"))
 	}
 
+	@Ignore("withPluginClasspath does not apply to settings plugins")
 	@Test fun basicAcornProject() {
 		val result = GradleRunner.create()
 				.withProjectDir(testProjectDir.root)

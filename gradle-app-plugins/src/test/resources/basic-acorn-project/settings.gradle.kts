@@ -27,9 +27,9 @@ pluginManagement {
 			mavenCentral()
 			jcenter()
 		}
-		dependencies {
-			classpath("com.acornui:gradle-app-plugins:+")
-		}
+//		dependencies {
+//			classpath("com.acornui:gradle-app-plugins:$acornVersion")
+//		}
 	}
 }
 apply(plugin = "com.acornui.settings")
