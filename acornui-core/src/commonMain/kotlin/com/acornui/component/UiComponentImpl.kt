@@ -748,7 +748,7 @@ open class UiComponentImpl(
 		set(value) {
 			if (value == _position.y) return
 			_position.y = value
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var z: Float
@@ -756,7 +756,7 @@ open class UiComponentImpl(
 		set(value) {
 			if (value == _position.z) return
 			_position.z = value
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var position: Vector3Ro
@@ -771,7 +771,7 @@ open class UiComponentImpl(
 	override fun setPosition(x: Float, y: Float, z: Float) {
 		if (x == _position.x && y == _position.y && z == _position.z) return
 		_position.set(x, y, z)
-		invalidate(ValidationFlags.TRANSFORM)
+		invalidateTransform()
 		return
 	}
 
@@ -781,7 +781,7 @@ open class UiComponentImpl(
 			val v = value.nonZero()
 			if (_scale.x == v) return
 			_scale.x = v
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var scaleY: Float
@@ -790,7 +790,7 @@ open class UiComponentImpl(
 			val v = value.nonZero()
 			if (_scale.y == v) return
 			_scale.y = v
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var scaleZ: Float
@@ -799,7 +799,7 @@ open class UiComponentImpl(
 			val v = value.nonZero()
 			if (_scale.z == v) return
 			_scale.z = v
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override fun setScaling(x: Float, y: Float, z: Float) {
@@ -808,7 +808,7 @@ open class UiComponentImpl(
 		val z2 = z.nonZero()
 		if (_scale.x == x2 && _scale.y == y2 && _scale.z == z2) return
 		_scale.set(x2, y2, z2)
-		invalidate(ValidationFlags.TRANSFORM)
+		invalidateTransform()
 	}
 
 	override var originX: Float
@@ -816,7 +816,7 @@ open class UiComponentImpl(
 		set(value) {
 			if (_origin.x == value) return
 			_origin.x = value
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var originY: Float
@@ -824,7 +824,7 @@ open class UiComponentImpl(
 		set(value) {
 			if (_origin.y == value) return
 			_origin.y = value
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override var originZ: Float
@@ -832,13 +832,13 @@ open class UiComponentImpl(
 		set(value) {
 			if (_origin.z == value) return
 			_origin.z = value
-			invalidate(ValidationFlags.TRANSFORM)
+			invalidateTransform()
 		}
 
 	override fun setOrigin(x: Float, y: Float, z: Float) {
 		if (_origin.x == x && _origin.y == y && _origin.z == z) return
 		_origin.set(x, y, z)
-		invalidate(ValidationFlags.TRANSFORM)
+		invalidateTransform()
 		return
 	}
 

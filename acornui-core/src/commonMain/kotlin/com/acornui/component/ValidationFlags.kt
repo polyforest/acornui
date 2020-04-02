@@ -143,6 +143,10 @@ fun Validatable.invalidateLayout() {
 	invalidate(ValidationFlags.LAYOUT)
 }
 
+fun Validatable.invalidateTransform() {
+	invalidate(ValidationFlags.TRANSFORM)
+}
+
 fun Validatable.invalidateProperties() {
 	invalidate(ValidationFlags.PROPERTIES)
 }
