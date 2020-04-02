@@ -42,6 +42,12 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 
 	override val capacity: Int = Int.MAX_VALUE
 
+	/**
+	 * The current capacity of the underlying buffer.
+	 */
+	val wrappedCapacity: Int
+		get() = _wrapped.capacity
+
 	override val limit: Int
 		get() = _limit
 
@@ -73,9 +79,7 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 	override fun get(): T = _wrapped.get()
 
 	override fun put(value: T) {
-		if (position >= _wrapped.capacity) {
-			resize(ceil((_wrapped.capacity * 1.75f)).toInt(), _limit)
-		}
+		ensureCapacity(position + 1)
 		_wrapped.put(value)
 	}
 
@@ -88,12 +92,22 @@ open class ResizableBuffer<T, S : NativeReadWriteBuffer<T>>(initialCapacity: Int
 	}
 
 	override fun limit(newLimit: Int): Buffer {
-		if (newLimit > _wrapped.capacity) {
-			resize(ceil((newLimit * 1.75f)).toInt(), newLimit)
-		}
+		ensureCapacity(newLimit)
 		_limit = newLimit
 		_wrapped.limit(newLimit)
 		return this
+	}
+
+	/**
+	 * If the current capacity is less than [newCapacity], the capacity will be expanded to accommodate.
+	 * @param newCapacity The minimum capacity to ensure. The actual new capacity may be larger than this value,
+	 * but is guaranteed to be at least this.
+	 */
+	fun ensureCapacity(newCapacity: Int) {
+		if (newCapacity > _wrapped.capacity) {
+			// Resize to the the new capacity or 1.75x the current capacity, whichever is larger.
+			resize(maxOf(newCapacity, ceil((_wrapped.capacity * 1.75f)).toInt()), limit)
+		}
 	}
 
 	private fun resize(newCapacity: Int, newLimit: Int) {
