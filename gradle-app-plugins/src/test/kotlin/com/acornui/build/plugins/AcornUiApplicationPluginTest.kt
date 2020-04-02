@@ -53,7 +53,7 @@ class AcornUiApplicationPluginTest {
 		assertNotNull(project.plugins.findPlugin("org.jetbrains.kotlin.multiplatform"))
 	}
 
-	@Ignore("withPluginClasspath does not apply to settings plugins")
+	@Ignore("withPluginClasspath does not apply to settings plugins") // https://discuss.gradle.org/t/testing-a-settings-plugin/12716/6
 	@Test fun basicAcornProject() {
 		val result = GradleRunner.create()
 				.withProjectDir(testProjectDir.root)
