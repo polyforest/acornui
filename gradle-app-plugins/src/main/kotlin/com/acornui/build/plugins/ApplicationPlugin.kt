@@ -18,7 +18,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 		println("Applying application plugin acornVersion=$acornVersion")
 		project.extensions.create<AcornUiApplicationExtension>("acornuiApp").apply {
 			www = project.buildDir.resolve("www")
-			wwwProd = project.buildDir.resolve("wwwProd")
 		}
 		project.pluginManager.apply(KotlinMppPlugin::class.java)
 		project.extensions.configure(multiPlatformConfig(project))
@@ -43,8 +42,6 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 				browser {
 					webpackTask {
 						enabled = true
-						val baseConventions = project.convention.plugins["base"] as BasePluginConvention?
-						outputFileName = baseConventions?.archivesBaseName + "-${mode.code}.js"
 						sourceMaps = true
 					}
 				}
@@ -99,13 +96,9 @@ open class AcornUiApplicationPlugin : Plugin<Project> {
 open class AcornUiApplicationExtension {
 
 	lateinit var www: File
-	lateinit var wwwProd: File
 
-	/**
-	 * The directory to place the .js files.
-	 * Relative to the [www] and [wwwProd] directories.
-	 */
-	var jsLibPath = "lib"
+	@Deprecated("wwwProd and www no longer separated.", ReplaceWith("www"), DeprecationLevel.ERROR)
+	lateinit var wwwProd: File
 
 }
 

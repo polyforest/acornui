@@ -19,6 +19,7 @@ package com.acornui.build.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -41,8 +42,11 @@ open class KotlinJsPlugin : Plugin<Project> {
 				js {
 					browser {
 						webpackTask {
-							// Assume project is a library, not an application, by default.
-							enabled = false
+//							// Assume project is a library, not an application, by default.
+//							enabled = false
+
+							val baseConventions = project.convention.plugins["base"] as BasePluginConvention?
+							outputFileName = baseConventions?.archivesBaseName + ".js"
 						}
 						testTask {
 							useMocha {

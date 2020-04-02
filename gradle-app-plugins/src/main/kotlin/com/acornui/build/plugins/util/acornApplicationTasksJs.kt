@@ -22,17 +22,8 @@ fun Project.configureWebTasks() {
 		tasks.register<Sync>("jsAcornBrowser${variantName}Distribution") {
 			dependsOn("jsProcessResources", "jsBrowser${variantName}Webpack")
 
-			@Suppress("LiftReturnOrAssignment")
-			when (variant) {
-				BuildVariantKind.DEVELOPMENT -> {
-					into(acornuiApp.www)
-					description = "Combines all dependent resources into the acornuiApp.www directory <${acornuiApp.www}>."
-				}
-				BuildVariantKind.PRODUCTION -> {
-					into(acornuiApp.wwwProd)
-					description = "Combines all dependent resources into the acornuiApp.wwwProd directory <${acornuiApp.wwwProd}>."
-				}
-			}
+			into(acornuiApp.www)
+			description = "Combines all dependent resources into the acornuiApp.www directory <${acornuiApp.www}>."
 
 			val compilation = project.getRunnableCompilation("js", "main")
 			from({

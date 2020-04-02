@@ -28,7 +28,7 @@ pluginManagement {
 			jcenter()
 		}
 		dependencies {
-			classpath("com.acornui:gradle-app-plugins:$acornVersion")
+			classpath("com.acornui:gradle-app-plugins:+")
 		}
 	}
 }

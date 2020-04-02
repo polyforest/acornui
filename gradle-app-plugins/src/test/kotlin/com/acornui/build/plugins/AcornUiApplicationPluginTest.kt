@@ -40,6 +40,7 @@ class AcornUiApplicationPluginTest {
 			val projectDir = File(javaClass.getResource("/basic-acorn-project").file)
 			projectDir.copyRecursively(root, overwrite = true)
 		}
+
 	}
 
 	@Test fun addsRunJvmTask() {
@@ -62,12 +63,12 @@ class AcornUiApplicationPluginTest {
 
 		assertEquals(SUCCESS, result.task(":build")?.outcome)
 
-		assertTrue(File(testProjectDir.root, "build/wwwProd/index.html").exists())
-		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas.json").exists())
-		assertTrue(File(testProjectDir.root, "build/wwwProd/assets/testAtlas0.png").exists())
-		assertTrue(File(testProjectDir.root, "build/wwwProd/basic-acorn-project-production.js").exists())
+		assertTrue(File(testProjectDir.root, "build/www/index.html").exists())
+		assertTrue(File(testProjectDir.root, "build/www/assets/testAtlas.json").exists())
+		assertTrue(File(testProjectDir.root, "build/www/assets/testAtlas0.png").exists())
+		assertTrue(File(testProjectDir.root, "build/www/basic-acorn-project.js").exists())
 
 		// Expect token replacement
-		assertEquals("Replaced Token", File(testProjectDir.root, "build/wwwProd/assets/assetWithTokens.txt").readText())
+		assertEquals("Replaced Token", File(testProjectDir.root, "build/www/assets/assetWithTokens.txt").readText())
 	}
 }
