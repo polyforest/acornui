@@ -59,7 +59,7 @@ open class ContainerImpl(
 	 */
 	protected var cascadingFlags = defaultCascadingFlags
 
-	protected val _children: MutableConcurrentList<UiComponent> = ChildrenList()
+	protected val _children: MutableSnapshotList<UiComponent> = ChildrenList()
 	override val children: List<UiComponentRo> = _children
 
 	/**
@@ -127,18 +127,16 @@ open class ContainerImpl(
 
 	override fun onActivated() {
 		super.onActivated()
-		_children.iterate { child ->
+		_children.forEach2 { child ->
 			if (!child.isActive)
 				child.activate()
-			true
 		}
 	}
 
 	override fun onDeactivated() {
-		_children.iterate { child ->
+		_children.forEach2 { child ->
 			if (child.isActive)
 				child.deactivate()
-			true
 		}
 	}
 
@@ -148,26 +146,22 @@ open class ContainerImpl(
 		val flagsToCascade = flagsInvalidated and cascadingFlags
 		if (flagsToCascade > 0) {
 			// This component has flags that have been invalidated that must cascade down to the children.
-			_children.iterate { child ->
+			_children.forEach2 { child ->
 				child.invalidate(flagsToCascade)
-				true
 			}
 		}
 	}
 
-	private val childrenUpdateIterator = _children.concurrentIterator()
 	private val vec3Tmp = vec3()
 
 	override fun update() {
 		super.update()
-		childrenUpdateIterator.iterate {
+		_children.forEach2 {
 			it.update()
-			true
 		}
 	}
 
 	override fun draw() {
-		// The children list shouldn't be modified during a draw, so no reason to do a safe iteration here.
 		_children.forEach2 { child ->
 			if (child.includeInRender)
 				child.render()
@@ -262,9 +256,9 @@ open class ContainerImpl(
 		focusEnabledChildren = true
 	}
 
-	private inner class ChildrenList : MutableListBase<UiComponent>(), MutableConcurrentList<UiComponent> {
+	private inner class ChildrenList : MutableListBase<UiComponent>(), MutableSnapshotList<UiComponent> {
 
-		private val list = ConcurrentListImpl<UiComponent>()
+		private val list = SnapshotListImpl<UiComponent>()
 
 		override fun add(index: Int, element: UiComponent) {
 			check(!isDisposed) { "This Container is disposed." }
@@ -338,10 +332,9 @@ open class ContainerImpl(
 			oldChild.invalidateFocusOrderDeep()
 		}
 
-		override fun iterate(body: (UiComponent) -> Boolean) = list.iterate(body)
-		override fun iterateReversed(body: (UiComponent) -> Boolean) = list.iterateReversed(body)
+		override fun begin(): List<UiComponent> = list.begin()
 
-		override fun concurrentIterator(): MutableConcurrentListIterator<UiComponent> = list.concurrentIterator()
+		override fun end() = list.end()
 	}
 
 	companion object {
