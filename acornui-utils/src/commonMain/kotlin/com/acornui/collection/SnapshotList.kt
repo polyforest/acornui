@@ -19,7 +19,7 @@ package com.acornui.collection
 /**
  * A SnapshotList provides a [begin] method that returns a snapshot list that guarantees no modifications until [end].   
  */
-interface SnapshotList<E> : List<E> {
+interface SnapshotList<out E> : List<E> {
 
 	/**
 	 * Returns a list which will be guaranteed to not be modified until [end] is called.
