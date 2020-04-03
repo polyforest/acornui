@@ -50,15 +50,17 @@ interface MutableSnapshotList<E> : SnapshotList<E>, MutableList<E>
  * snapshotList.end()
  * ```
  */
-class SnapshotListImpl<E> : MutableSnapshotList<E>, MutableListBase<E>() {
+class SnapshotListImpl<E>(initialCapacity: Int) : MutableSnapshotList<E>, MutableListBase<E>() {
 
+	constructor() : this(8)
+	
 	/**
 	 * For testing purposes; the number of times an array copy has occurred.
 	 */
 	internal var copyCount = 0
 
-	private val itemsA = ArrayList<E>()
-	private val itemsB = ArrayList<E>()
+	private val itemsA = ArrayList<E>(initialCapacity)
+	private val itemsB = ArrayList<E>(initialCapacity)
 
 	private var mutableItems = itemsA
 	private var immutableItems = itemsA

@@ -17,7 +17,6 @@
 package com.acornui.collection
 
 import com.acornui.Disposable
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -50,8 +49,6 @@ class ObservableConcatList<out E>(private val listA: ObservableList<E>, private 
 	override fun get(index: Int): E {
 		return if (index >= listA.size) listB[index - listA.size] else listA[index]
 	}
-
-	private val iteratorPool by lazy { ClearableObjectPool { WatchedConcurrentListIteratorImpl(this) } }
 
 	init {
 		listA.added.add {
@@ -104,29 +101,8 @@ class ObservableConcatList<out E>(private val listA: ObservableList<E>, private 
 		return newList
 	}
 
-	override fun concurrentIterator(): ConcurrentListIterator<E> = WatchedConcurrentListIteratorImpl(this)
-
 	override fun notifyElementModified(index: Int) {
 		_modified.dispatch(index, get(index))
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		while (iterator.hasNext()) {
-			val shouldContinue = body(iterator.next())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		iterator.cursor = size
-		while (iterator.hasPrevious()) {
-			val shouldContinue = body(iterator.previous())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
 	}
 
 	override fun dispose() {

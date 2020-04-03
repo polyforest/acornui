@@ -18,8 +18,7 @@ package com.acornui.collection
 
 import com.acornui.Disposable
 import com.acornui.observe.Observable
-import com.acornui.recycle.Clearable
-import com.acornui.recycle.ClearableObjectPool
+import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
@@ -28,9 +27,9 @@ import com.acornui.signal.Signal3
  * A list that allows for modification during iteration when using special iteration methods.
  * @author nbilyk
  */
-open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableList<E>, Disposable {
+class ActiveList<E>(initialCapacity: Int) : MutableListBase<E>(), MutableObservableList<E>, MutableSnapshotList<E>, Disposable {
 
-	protected val wrapped = ArrayList<E>(initialCapacity)
+	private val wrapped = SnapshotListImpl<E>(initialCapacity)
 
 	private val _added = Signal2<Int, E>()
 	override val added = _added.asRo()
@@ -49,62 +48,24 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 
 	private var updatesEnabled: Boolean = true
 
-	private val iteratorPool = ClearableObjectPool { WatchedConcurrentListIteratorImpl(this) }
-
 	constructor() : this(8)
 
-	constructor(source: List<E>) : this() {
+	constructor(source: List<E>) : this(maxOf(8, source.size)) {
 		batchUpdate {
 			addAll(source)
 		}
 	}
 
-	constructor(source: Array<E>) : this() {
+	constructor(source: Array<E>) : this(maxOf(8, source.size)) {
 		batchUpdate {
 			addAll(source)
 		}
 	}
 
-	override fun remove(element: E): Boolean {
-		val index = indexOf(element)
-		if (index == -1) return false
-		removeAt(index)
-		return true
-	}
+	override val size: Int
+		get() = wrapped.size
 
-	override fun addAll(index: Int, elements: Collection<E>): Boolean {
-		if (elements.isEmpty()) return false
-		var i = index
-		for (e in elements) {
-			add(i++, e)
-		}
-		return true
-	}
-
-	override fun removeAll(elements: Collection<E>): Boolean {
-		var changed = false
-		for (i in elements) {
-			changed = changed || remove(i)
-		}
-		return changed
-	}
-
-	override fun retainAll(elements: Collection<E>): Boolean {
-		var changed = false
-		iterate {
-			if (!elements.contains(it)) {
-				changed = true
-				remove(it)
-			}
-			true
-		}
-		return changed
-	}
-
-	override fun clear() {
-		wrapped.clear()
-		dirty()
-	}
+	override fun get(index: Int): E = wrapped[index]
 
 	override fun add(index: Int, element: E) {
 		wrapped.add(index, element)
@@ -117,26 +78,6 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		return element
 	}
 
-	override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
-		return wrapped.subList(fromIndex, toIndex)
-	}
-
-	override val size: Int
-		get() = wrapped.size
-
-	override fun add(element: E): Boolean {
-		add(size, element)
-		return true
-	}
-
-	override fun addAll(elements: Collection<E>): Boolean {
-		if (elements.isEmpty()) return false
-		for (i in elements) {
-			add(i)
-		}
-		return true
-	}
-
 	override fun set(index: Int, element: E): E {
 		val oldElement = wrapped.set(index, element)
 		if (oldElement === element) return oldElement
@@ -144,62 +85,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 		return oldElement
 	}
 
-	override fun isEmpty(): Boolean {
-		return wrapped.isEmpty()
-	}
-
-	override fun contains(element: E): Boolean {
-		return wrapped.contains(element)
-	}
-
-	override fun containsAll(elements: Collection<E>): Boolean {
-		return wrapped.containsAll(elements)
-	}
-
-	override fun get(index: Int): E {
-		return wrapped[index]
-	}
-
-	override fun indexOf(element: E): Int {
-		return wrapped.indexOf(element)
-	}
-
-	override fun lastIndexOf(element: E): Int {
-		return wrapped.lastIndexOf(element)
-	}
-
-	override fun concurrentIterator(): MutableConcurrentListIterator<E> = WatchedMutableConcurrentListIteratorImpl(this)
-
-	override fun iterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
-
-	override fun listIterator(): MutableListIterator<E> = MutableListIteratorImpl(this)
-
-	override fun listIterator(index: Int): MutableListIterator<E> {
-		val iterator = MutableListIteratorImpl(this)
-		iterator.cursor = index
-		return iterator
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		while (iterator.hasNext()) {
-			val shouldContinue = body(iterator.next())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		iterator.cursor = size
-		while (iterator.hasPrevious()) {
-			val shouldContinue = body(iterator.previous())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
-	}
-
-	final override fun batchUpdate(inner: () -> Unit) {
+	override fun batchUpdate(inner: () -> Unit) {
 		updatesEnabled = false
 		inner()
 		updatesEnabled = true
@@ -219,9 +105,9 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 			_reset.dispatch()
 	}
 
-	override fun toString(): String {
-		return wrapped.toString()
-	}
+	override fun begin(): List<E> = wrapped.begin()
+
+	override fun end() = wrapped.end()
 
 	override fun dispose() {
 		clear()
@@ -236,9 +122,7 @@ open class ActiveList<E>(initialCapacity: Int) : Clearable, MutableObservableLis
 /**
  * An observable list of observable elements that will notify [modified] when an element has changed.
  */
-open class WatchedElementsActiveList<E : Observable>(initialCapacity: Int) : ActiveList<E>(initialCapacity) {
-
-	constructor() : this(8)
+class WatchedElementsActiveList<E : Observable>(initialCapacity: Int = 8) : MutableListBase<E>(), MutableSnapshotList<E>, MutableObservableList<E>, Disposable {
 
 	constructor(source: List<E>) : this() {
 		batchUpdate {
@@ -252,36 +136,63 @@ open class WatchedElementsActiveList<E : Observable>(initialCapacity: Int) : Act
 		}
 	}
 
+	private val wrapped = ActiveList<E>(initialCapacity)
+
+	override val added: Signal<(index: Int, element: E) -> Unit> = wrapped.added
+	override val removed: Signal<(index: Int, element: E) -> Unit> = wrapped.removed
+	override val changed: Signal<(index: Int, oldElement: E, newElement: E) -> Unit> = wrapped.changed
+	override val modified: Signal<(index: Int, element: E) -> Unit> = wrapped.modified
+	override val reset: Signal<() -> Unit> = wrapped.reset
+
 	override fun removeAt(index: Int): E {
-		val e = super.removeAt(index)
+		val e = wrapped.removeAt(index)
 		e.changed.remove(::elementModifiedHandler)
 		return e
 	}
 
 	override fun add(index: Int, element: E) {
 		element.changed.add(::elementModifiedHandler)
-		super.add(index, element)
+		wrapped.add(index, element)
 	}
 
 	private fun elementModifiedHandler(o: Observable) {
-		val i = indexOfFirst { it === o } // Use identity equals
+		val i = indexOfFirst2 { it === o } // Use identity equals
 		notifyElementModified(i)
 	}
 
-	override fun clear() {
-		for (i in 0..wrapped.lastIndex) {
-			wrapped[i].changed.remove(::elementModifiedHandler)
-		}
-		super.clear()
+	override val size: Int
+		get() = wrapped.size
+
+	override fun get(index: Int): E {
+		return wrapped[index]
 	}
+
+	override fun set(index: Int, element: E): E {
+		val oldElement = wrapped.set(index, element)
+		oldElement.changed.remove(::elementModifiedHandler)
+		element.changed.add(::elementModifiedHandler)
+		return oldElement
+	}
+
+	override fun notifyElementModified(index: Int) {
+		wrapped.notifyElementModified(index)
+	}
+
+	override fun batchUpdate(inner: () -> Unit) {
+		wrapped.batchUpdate(inner)
+	}
+
+	override fun begin(): List<E> = wrapped.begin()
+
+	override fun end() = wrapped.end()
+
+	override fun dispose() = wrapped.dispose()
 }
 
 fun <E> activeListOf(vararg elements: E): ActiveList<E> {
 	val list = ActiveList<E>()
 	list.batchUpdate {
-		for (i in 0..elements.lastIndex) {
-			list.add(elements[i])
-		}
+		list.addAll(elements)
 	}
 	return list
 }

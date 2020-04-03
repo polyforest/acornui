@@ -817,7 +817,7 @@ class DataGrid<RowData>(
 
 	private fun updateColumnWidths() {
 		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
-		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
+		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth
 		if (availableW != null) availableW -= vScrollBarW
 
 		_columnWidths.clear()
@@ -895,7 +895,7 @@ class DataGrid<RowData>(
 	 */
 	private fun updateColumnVisibility() {
 		var availableW = style.borderThicknesses.reduceWidth(explicitWidth)
-		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth ?: 0f
+		val vScrollBarW = if (vScrollPolicy == ScrollPolicy.OFF) 0f else vScrollBar.minWidth
 		if (availableW != null) availableW -= vScrollBarW
 
 		val scrollX = hScrollModel.value
@@ -981,13 +981,13 @@ class DataGrid<RowData>(
 		}
 		val border = style.borderThicknesses
 		val contentsW = columnsWidth - hScrollBar.scrollModel.max
-		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth ?: 0f else 0f
+		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth else 0f
 
 		out.width = border.expandWidth(bodyW)
 
 		updateHeader(contentsW)
 
-		val hScrollBarH = if (hScrollBar.visible) hScrollBar.minHeight ?: 0f else 0f
+		val hScrollBarH = if (hScrollBar.visible) hScrollBar.minHeight else 0f
 
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight(explicitHeight) - headerCells.height - hScrollBarH
@@ -1006,7 +1006,7 @@ class DataGrid<RowData>(
 		vScrollBar.modelToPoints = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
-		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth ?: 0f else 0f
+		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth else 0f
 
 		contentsH = bottomBounds.height
 		sizeCells(

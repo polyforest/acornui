@@ -17,7 +17,6 @@
 package com.acornui.collection
 
 import com.acornui.Disposable
-import com.acornui.recycle.ClearableObjectPool
 import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
@@ -58,7 +57,7 @@ interface ListViewRo<E> : ObservableList<E> {
  * ListView is a read-only wrapper to an ObservableList that will allow filtering and sorting
  * without modifying the original list.
  */
-class ListView<E>() : ListViewRo<E>, Disposable {
+class ListView<E>() : ListBase<E>(), ListViewRo<E>, Disposable {
 
 	private var wrapped: List<E> = emptyList()
 	private var observableWrapped: ObservableList<E>? = null
@@ -92,8 +91,6 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 	override val reset: Signal<() -> Unit> = _reset
 
 	private var isDirty: Boolean = true
-
-	private val iteratorPool by lazy { ClearableObjectPool { WatchedConcurrentListIteratorImpl(this) } }
 
 	/**
 	 * If set, this list will be reduced to elements passing the given filter function.
@@ -257,33 +254,12 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 		return true
 	}
 
-	override fun subList(fromIndex: Int, toIndex: Int): List<E> {
-		validate()
-		return local.subList(fromIndex, toIndex).map { wrapped[it] }
-	}
-
 	override val size: Int
 		get() {
 			validate()
 			return local.size
 		}
-
-	override fun contains(element: E): Boolean {
-		validate()
-		for (i in 0..lastIndex) {
-			if (this[i] == element) return true
-		}
-		return false
-	}
-
-	override fun containsAll(elements: Collection<E>): Boolean {
-		validate()
-		for (element in elements) {
-			if (!contains(element)) return false
-		}
-		return true
-	}
-
+	
 	override fun get(index: Int): E {
 		validate()
 		return wrapped[local[toReversed(index)]]
@@ -311,48 +287,6 @@ class ListView<E>() : ListViewRo<E>, Disposable {
 			if (element == local[toReversed(i)]) return i
 		}
 		return -1
-	}
-
-	override fun isEmpty(): Boolean {
-		validate()
-		return local.isEmpty()
-	}
-
-	override fun iterator(): Iterator<E> {
-		return WatchedConcurrentListIteratorImpl(this)
-	}
-
-	override fun listIterator(): ListIterator<E> {
-		return WatchedConcurrentListIteratorImpl(this)
-	}
-
-	override fun listIterator(index: Int): ListIterator<E> {
-		val iterator = WatchedConcurrentListIteratorImpl(this)
-		iterator.cursor = index
-		return iterator
-	}
-
-	override fun concurrentIterator(): ConcurrentListIterator<E> {
-		return WatchedConcurrentListIteratorImpl(this)
-	}
-
-	override fun iterate(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		while (iterator.hasNext()) {
-			val shouldContinue = body(iterator.next())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
-	}
-
-	override fun iterateReversed(body: (E) -> Boolean) {
-		val iterator = iteratorPool.obtain()
-		iterator.cursor = size
-		while (iterator.hasPrevious()) {
-			val shouldContinue = body(iterator.previous())
-			if (!shouldContinue) break
-		}
-		iteratorPool.free(iterator)
 	}
 
 	//--------------------------------------------------------

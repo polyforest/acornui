@@ -17,10 +17,7 @@
 package com.acornui.audio
 
 import com.acornui.*
-import com.acornui.collection.ActiveList
-import com.acornui.collection.poll
-import com.acornui.collection.pop
-import com.acornui.collection.sortedInsertionIndex
+import com.acornui.collection.*
 import com.acornui.di.Context
 import com.acornui.time.FrameDriverRo
 
@@ -83,9 +80,9 @@ open class AudioManagerImpl(
 		final override val simultaneousSounds: Int = 8
 ) : AudioManager, Disposable {
 
-	override val activeSounds = ActiveList<Sound>(simultaneousSounds)
-	override val activeMusics = ActiveList<Music>()
-	private val soundSources = ArrayList<SoundFactory>()
+	override val activeSounds = SnapshotListImpl<Sound>(simultaneousSounds)
+	override val activeMusics = SnapshotListImpl<Music>()
+	private val soundSources = SnapshotListImpl<SoundFactory>()
 
 	private val soundPriorityComparator = {
 		o1: Sound?, o2: Sound? ->
@@ -152,15 +149,12 @@ open class AudioManagerImpl(
 		}
 
 	override fun update(dT: Float) {
-		activeMusics.iterate {
+		activeMusics.forEach2 {
 			it.update()
-			true
 		}
-		activeSounds.iterate {
+		activeSounds.forEach2 {
 			it.update()
-			true
 		}
-
 	}
 
 	override fun dispose() {

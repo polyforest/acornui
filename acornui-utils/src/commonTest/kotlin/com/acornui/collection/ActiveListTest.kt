@@ -28,22 +28,20 @@ class ActiveListTest {
 	@Test fun concurrentRemove() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.remove('c')
-			true
 		}
-		assertListEquals(arrayOf('a', 'b', 'd'), actual)
+		assertListEquals(arrayOf('a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf('a', 'b', 'd'), list.toTypedArray())
 	}
 
 	@Test fun concurrentRemove2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.remove('b')
-			true
 		}
 		assertListEquals(arrayOf('a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf('a', 'c', 'd'), list.toTypedArray())
@@ -52,10 +50,9 @@ class ActiveListTest {
 	@Test fun concurrentAdd() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.add(1, 'e')
-			true
 		}
 		assertListEquals(arrayOf('a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf('a', 'e', 'b', 'c', 'd'), list.toTypedArray())
@@ -64,68 +61,62 @@ class ActiveListTest {
 	@Test fun concurrentAdd2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.add(2, 'e')
-			true
 		}
-		assertListEquals(arrayOf('a', 'b', 'e', 'c', 'd'), actual)
+		assertListEquals(arrayOf('a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf('a', 'b', 'e', 'c', 'd'), list.toTypedArray())
 	}
 
 	@Test fun concurrentClear() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.clear()
-			true
 		}
-		assertListEquals(arrayOf('a', 'b'), actual)
+		assertListEquals(arrayOf('a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf(), list.toTypedArray())
 	}
 
 	@Test fun nested() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			actual.add(it)
-			list.iterate {
-				actual.add(it)
+			list.forEach2 { it2 ->
+				actual.add(it2)
 			}
-			true
 		}
 		assertListEquals(arrayOf('a', 'a', 'b', 'c', 'd', 'b', 'a', 'b', 'c', 'd', 'c', 'a', 'b', 'c', 'd', 'd', 'a', 'b', 'c', 'd'), actual)
-		assertListEquals(arrayOf('a', 'b', 'c', 'd'), list.toTypedArray())
+		assertListEquals(listOf('a', 'b', 'c', 'd'), list)
 	}
 
 	@Test fun nested2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			if (it != 'e') {
 				actual.add(it)
-				list.iterate {
-					actual.add(it)
-					if (it == 'b') list.add(2, 'e')
-					true
+				list.forEach2 { it2 ->
+					actual.add(it2)
+					if (it2 == 'b') list.add(2, 'e')
 				}
 			}
-			true
 		}
-		assertListEquals(arrayOf('a', 'a', 'b', 'e', 'c', 'd', 'b', 'a', 'b', 'e', 'e', 'c', 'd', 'c', 'a', 'b', 'e', 'e', 'e', 'c', 'd', 'd', 'a', 'b', 'e', 'e', 'e', 'e', 'c', 'd'), actual)
+		assertListEquals(arrayOf('a', 'a', 'b', 'c', 'd', 'b', 'a', 'b', 'c', 'd', 'c', 'a', 'b', 'c', 'd', 'd', 'a', 'b', 'c', 'd'), actual)
 		assertListEquals(arrayOf('a', 'b', 'e', 'e', 'e', 'e', 'c', 'd'), list.toTypedArray())
 	}
 
 	@Test fun nested3() {
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.iterate {
+		list.forEach2 {
 			val iterator = list.iterator()
 			while (iterator.hasNext()) {
 				iterator.next()
 				iterator.remove()
 			}
-			true
 		}
 		assertListEquals(arrayOf(), list.toTypedArray())
 	}

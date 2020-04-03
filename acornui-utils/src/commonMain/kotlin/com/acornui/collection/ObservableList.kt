@@ -24,7 +24,7 @@ import com.acornui.signal.Bindable
 import com.acornui.signal.Signal
 import com.acornui.signal.emptySignal
 
-interface ObservableList<out E> : ConcurrentList<E>, Bindable {
+interface ObservableList<out E> : List<E>, Bindable {
 
 	/**
 	 * Dispatched when an element has been added.
@@ -75,7 +75,7 @@ interface ObservableList<out E> : ConcurrentList<E>, Bindable {
 	}
 }
 
-interface MutableObservableList<E> : ObservableList<E>, MutableConcurrentList<E> {
+interface MutableObservableList<E> : ObservableList<E>, MutableList<E> {
 
 	/**
 	 * Updates this list without invoking signals on each change. When the [inner] method has completed, a [reset]
@@ -120,33 +120,6 @@ internal object EmptyObservableList : ListBase<Nothing>(), ObservableList<Nothin
 	override val reset: Signal<() -> Unit> = emptySignal()
 
 	override fun notifyElementModified(index: Int) {}
-
-	override fun iterate(body: (Nothing) -> Boolean) {
-	}
-
-	override fun iterateReversed(body: (Nothing) -> Boolean) {
-	}
-
-	override fun concurrentIterator(): ConcurrentListIterator<Nothing> = object : ConcurrentListIterator<Nothing> {
-		override val size: Int = 0
-		override var cursor: Int = 0
-		override fun clear() {}
-
-		override fun iterator(): Iterator<Nothing> = emptyList<Nothing>().iterator()
-
-		override fun hasNext(): Boolean = false
-		override fun hasPrevious(): Boolean = false
-
-		override fun next(): Nothing { throw NoSuchElementException() }
-
-		override fun nextIndex(): Int = 0
-
-		override fun previous(): Nothing { throw NoSuchElementException() }
-
-		override fun previousIndex(): Int = -1
-
-		override fun dispose() {}
-	}
 }
 
 fun <T> emptyObservableList(): ObservableList<T> = EmptyObservableList

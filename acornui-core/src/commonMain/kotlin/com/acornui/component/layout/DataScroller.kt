@@ -303,7 +303,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		if (isVertical) {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
-				val vScrollBarW = minOf(w ?: 0f, scrollBar.minWidth ?: 0f)
+				val vScrollBarW = minOf(w ?: 0f, scrollBar.minWidth)
 				val scrollAreaW = if (w == null) null else w - vScrollBarW
 
 				if (h == null) {

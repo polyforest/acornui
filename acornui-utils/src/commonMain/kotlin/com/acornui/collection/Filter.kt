@@ -19,6 +19,7 @@ package com.acornui.collection
 /**
  * A typealias for a method that takes one input argument and returns a Boolean.
  * A filter or predicate function.
+ * Filter functions should never cause side effects - The element or collections they filter should not be modified.
  */
 typealias Filter<E> = (E) -> Boolean
 
