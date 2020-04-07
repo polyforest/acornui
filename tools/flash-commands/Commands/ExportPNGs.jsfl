@@ -1,20 +1,4 @@
-﻿/*
- * Copyright 2015 Poly Forest, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 
-fl.outputPanel.clear();
+﻿fl.outputPanel.clear();
 var doc = fl.getDocumentDOM();
 var library = document.library;
 var log = [];
@@ -41,15 +25,15 @@ if (!doc) {
 			exportDoc.addItem({ x: 0, y: 0 }, item);
 			
 			exportDoc.timelines[0].layers[0].frames[0].elements[0].symbolType = "graphic";
-			resizeDocument(exportDoc, item);
+			resizeDocument(exportDoc);
 			var lastLabel = null;
 			var sameLabelCount = 0;
 			for (var i = 0; i < totalFrames; i++) {
 				exportDoc.timelines[0].setSelectedFrames(i, i);
 				var pngName;
 				var frame = item.timeline.layers[0].frames[i];
-				if (frame.labelType == "name") {
-					if (lastLabel != frame.name) {
+				if (frame.labelType === "name") {
+					if (lastLabel !== frame.name) {
 						lastLabel = frame.name;
 					} else {
 						sameLabelCount++;
@@ -70,11 +54,19 @@ if (!doc) {
 
 }
 
+/**
+ * Creates the number tag for the given frame index.
+ * @param i
+ * @returns {string}
+ */
 function numberTag(i) {
-	if (i == 0) return "";
+	if (i === 0) return "";
 	else return "_" + padNumber(i, 4);
 }
 
+/**
+ * Appends to the log array and invokes `fl.trace`
+ */
 function trace(message) {
 	log.push(message);
 	if (log.length > 1000) log.unshift();
@@ -92,6 +84,16 @@ function makeDirs(path) {
 	}
 }
 
+/**
+ * Returns a String representing a number prefixed with zeros up to a certain number of digits. 
+ * E.g.
+ * padNumber(1, 3) // "001"
+ * padNumber(523, 2) // "523"
+ * padNumber(45, 3) // "045"
+ * @param num {Number} An integer to prefix.
+ * @param digits {Number} The minimum number of display digits.
+ * @returns {string}
+ */
 function padNumber(num, digits) {
 	var str = num + "";
 	var intDiff = digits - str.length;
@@ -102,7 +104,12 @@ function padNumber(num, digits) {
 	return str;
 }
 
-function resizeDocument(doc, item) {
+/**
+ * Resizes the given document to fit its single element.
+ * @param doc {Document}
+ * @returns {boolean} Returns false if no element was found.
+ */
+function resizeDocument(doc) {
 	doc.selectAll();
 	var element = doc.timelines[0].layers[0].frames[0].elements[0];
 	if (element == null) return false;
