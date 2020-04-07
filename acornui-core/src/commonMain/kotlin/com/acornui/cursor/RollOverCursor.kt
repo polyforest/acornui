@@ -24,6 +24,7 @@ import com.acornui.input.interaction.rollOut
 import com.acornui.input.interaction.rollOver
 import com.acornui.properties.afterChange
 import com.acornui.properties.afterChangeWithInit
+import kotlin.jvm.JvmName
 
 /**
  * An attachment that changes the cursor on roll over.
@@ -95,11 +96,22 @@ fun UiComponentRo.clearCursor() {
  * @return Returns a disposable reference to the [RollOverCursor] attachment.
  * @see clearCursor
  */
+@JvmName("cursorNullable")
 fun UiComponentRo.cursor(cursor: Cursor?, priority: Float = CursorPriority.ACTIVE): RollOverCursor? {
 	return if (cursor == null) {
 		clearCursor()
 		null
-	} else createOrReuseAttachment(RollOverCursor) { RollOverCursor(this) }.also {
+	} else cursor(cursor, priority)
+}
+
+/**
+ * Sets the roll over cursor to be used on this component.
+ * Setting this will replace any previous roll over cursor.
+ * @return Returns a disposable reference to the [RollOverCursor] attachment.
+ * @see clearCursor
+ */
+fun UiComponentRo.cursor(cursor: Cursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
+	return createOrReuseAttachment(RollOverCursor) { RollOverCursor(this) }.also {
 		it.cursor = cursor
 		it.priority = priority
 	}
@@ -111,6 +123,6 @@ fun UiComponentRo.cursor(cursor: Cursor?, priority: Float = CursorPriority.ACTIV
  * @return Returns a disposable reference to the [RollOverCursor] attachment.
  * @see clearCursor
  */
-fun UiComponentRo.cursor(cursor: StandardCursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor? {
+fun UiComponentRo.cursor(cursor: StandardCursor, priority: Float = CursorPriority.ACTIVE): RollOverCursor {
 	return cursor(inject(CursorManager).getStandardCursor(cursor), priority)
 }

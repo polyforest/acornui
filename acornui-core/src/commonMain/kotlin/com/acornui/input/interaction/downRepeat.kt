@@ -17,10 +17,7 @@
 package com.acornui.input.interaction
 
 import com.acornui.Disposable
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
-import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.stage
+import com.acornui.component.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.ContextImpl
@@ -46,10 +43,8 @@ class DownRepeat(
 
 	private val mouseDownRepeat = MouseInteraction()
 
-	init {
-	}
-
 	private fun mouseRepeatHandler() {
+		if (!target.mouseIsOver()) return
 		val e = mouseDownRepeat
 		e.clear()
 		e.type = MouseInteractionRo.MOUSE_DOWN
@@ -58,8 +53,8 @@ class DownRepeat(
 		e.canvasY = mouseState.mouseY
 		e.button = WhichButton.LEFT
 		e.timestamp = nowMs()
-		e.localize(target)
-		interactivity.dispatch(target, e, useCapture = false, useBubble = false)
+		e.currentTarget = target
+		interactivity.dispatch(e.canvasX, e.canvasY, e)
 	}
 
 	private fun mouseDownHandler(event: MouseInteractionRo) {

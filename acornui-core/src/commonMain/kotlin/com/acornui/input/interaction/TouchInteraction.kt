@@ -84,15 +84,17 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 
 	override var isFabricated = false
 
-	override fun localize(currentTarget: UiComponentRo) {
-		super.localize(currentTarget)
-		for (i in 0..changedTouches.lastIndex) {
-			changedTouches[i].localize(currentTarget)
+	override var currentTarget: UiComponentRo
+		get() = super.currentTarget
+		set(value) {
+			super.currentTarget = value
+			for (i in 0..changedTouches.lastIndex) {
+				changedTouches[i].currentTarget = value
+			}
+			for (i in 0..touches.lastIndex) {
+				touches[i].currentTarget = value
+			}
 		}
-		for (i in 0..touches.lastIndex) {
-			touches[i].localize(currentTarget)
-		}
-	}
 
 	fun set(event: TouchInteractionRo) {
 		type = event.type
@@ -189,6 +191,11 @@ class Touch private constructor(): TouchRo, Clearable {
 	override var canvasY: Float = 0f
 
 	override var currentTarget: UiComponentRo? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			_localPositionIsValid = false
+		}
 
 	override var identifier: Int = -1
 
@@ -201,8 +208,7 @@ class Touch private constructor(): TouchRo, Clearable {
 	private fun localPosition(): Vector2Ro {
 		if (!_localPositionIsValid) {
 			_localPositionIsValid = true
-			_localPosition.set(canvasX, canvasY)
-			currentTarget!!.canvasToLocal(_localPosition)
+			currentTarget!!.canvasToLocal(_localPosition.set(canvasX, canvasY))
 		}
 		return _localPosition
 	}
@@ -218,11 +224,6 @@ class Touch private constructor(): TouchRo, Clearable {
 	 */
 	override val localY: Float
 		get() = localPosition().y
-
-	fun localize(currentTarget: UiComponentRo) {
-		this.currentTarget = currentTarget
-		_localPositionIsValid = false
-	}
 
 	override fun clear() {
 		canvasX = 0f

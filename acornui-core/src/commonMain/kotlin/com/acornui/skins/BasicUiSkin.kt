@@ -35,6 +35,7 @@ import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
+import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.filter.BlurQuality
 import com.acornui.focus.FocusHighlighter
@@ -42,10 +43,10 @@ import com.acornui.focus.FocusableStyle
 import com.acornui.focus.SimpleFocusHighlighter
 import com.acornui.focus.SimpleHighlight
 import com.acornui.graphic.Color
+import com.acornui.graphic.ColorRo
 import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
-import com.acornui.input.interaction.enableDownRepeat
 import com.acornui.math.*
 
 open class BasicUiSkin(
@@ -121,7 +122,8 @@ open class BasicUiSkin(
 
 	protected open fun textFontStyle() {
 		inject(BitmapFontRegistry).setFontResolver { request ->
-			val fontFile = FontPathResolver.getPath(target, theme, request) ?: throw Exception("Font not found: $request")
+			val fontFile = FontPathResolver.getPath(target, theme, request)
+					?: throw Exception("Font not found: $request")
 			loadFontFromDir(fontFile)
 		}
 		theme.bodyFont.addStyles()
@@ -345,58 +347,32 @@ open class BasicUiSkin(
 
 	protected open fun scrollAreaStyle() {
 		// Scroll area (used in GL versions)
-		val scrollAreaStyle = ScrollAreaStyle()
-		scrollAreaStyle.corner = {
-			rect {
-				style.backgroundColor = theme.strokeDisabled
+		val scrollAreaStyle = scrollAreaStyle {
+			corner = {
+				rect {
+					style.backgroundColor = theme.strokeDisabled
+				}
 			}
 		}
 		target.addStyleRule(scrollAreaStyle, ScrollArea)
 	}
 
 	protected open fun scrollBarStyle() {
-		// Note that this does not style native scroll bars.
-		val size = 10f
-
-		val thumb: SkinPart = {
-			button {
-				focusEnabled = false
-				style.set {
-					{
-						rect {
-							style.backgroundColor = Color(0f, 0f, 0f, 0.6f)
-							defaultWidth = size
-							defaultHeight = size
-						}
-					}
-				}
+		val scrollBarStyle = scrollBarStyle {
+			thumb = {
+				button {
+					focusEnabled = false
+					style.skin = rectButtonSkin { Color(0f, 0f, 0f, 0.6f) }
+				} layout { fill() }
 			}
-		}
-
-		val track: SkinPart = {
-			rect {
-				style.backgroundColor = Color(1f, 1f, 1f, 0.4f)
-				defaultWidth = size
-				defaultHeight = size
-				enableDownRepeat()
+			track = {
+				rect {
+					style.backgroundColor = Color(1f, 1f, 1f, 0.5f)
+				} layout { fill() }
 			}
-		}
-
-		target.scrollBarStyle(VScrollBar.filter) {
-			decrementButton = { spacer(size, 0f) }
-			incrementButton = { spacer(size, 0f) }
-			this.thumb = thumb
-			this.track = track
 			inactiveAlpha = 0.2f
 		}
-
-		target.scrollBarStyle(HScrollBar.filter) {
-			decrementButton = { spacer(0f, size) }
-			incrementButton = { spacer(0f, size) }
-			this.thumb = thumb
-			this.track = track
-			inactiveAlpha = 0.2f
-		}
+		target.addStyleRule(scrollBarStyle, ScrollBar.filter)
 	}
 
 	private fun progressBarStyle() {
@@ -411,58 +387,51 @@ open class BasicUiSkin(
 	}
 
 	protected open fun sliderStyle() {
-		val vSliderStyle = ScrollBarStyle()
-		vSliderStyle.defaultSize = 200f
-		vSliderStyle.inactiveAlpha = 1f
-		vSliderStyle.decrementButton = { spacer() }
-		vSliderStyle.incrementButton = { spacer() }
-		vSliderStyle.thumb = {
-			atlas(theme.atlasPath, "SliderArrowRightLarge") {
-				layoutData = basicLayoutData {}
+		val sliderStyle = scrollBarStyle {
+			inactiveAlpha = 1f
+			decrementButton = { spacer() }
+			incrementButton = { spacer() }
+			pageMode = false
+			thumb = {
+				atlas(theme.atlasPath, "SliderPuck") {
+					colorTint = theme.stroke
+				}
 			}
 		}
-		vSliderStyle.track = {
-			rect {
-				style.apply {
-					backgroundColor = theme.fillShine
-					borderThicknesses = Pad(top = 0f, right = 0f, bottom = 0f, left = 4f)
-					borderColors = BorderColors(Color(0f, 0f, 0f, 0.4f))
-				}
-				enableDownRepeat()
-				layoutData = basicLayoutData {
-					width = 13f
+		target.addStyleRule(sliderStyle, VSlider.filter or HSlider.filter)
+
+		val vSliderStyle = scrollBarStyle {
+			naturalHeight = 200f
+			naturalWidth = 18f
+			track = {
+				rect {
+					style.apply {
+						backgroundColor = theme.stroke
+						margin = Pad(left = 0f, top = 6f, right = 0f, bottom = 6f)
+					}
+				} layout {
+					width = 2f
 					heightPercent = 1f
 				}
 			}
 		}
-		vSliderStyle.pageMode = false
 		target.addStyleRule(vSliderStyle, VSlider)
 
-		val hSliderStyle = ScrollBarStyle()
-		hSliderStyle.defaultSize = 200f
-		hSliderStyle.inactiveAlpha = 1f
-		hSliderStyle.decrementButton = { spacer() }
-		hSliderStyle.incrementButton = { spacer() }
-		hSliderStyle.thumb = {
-			atlas(theme.atlasPath, "SliderArrowDownLarge") {
-				layoutData = basicLayoutData {}
-			}
-		}
-		hSliderStyle.track = {
-			rect {
-				style.apply {
-					backgroundColor = theme.fillShine
-					borderThicknesses = Pad(top = 0f, right = 0f, bottom = 4f, left = 0f)
-					borderColors = BorderColors(Color(0f, 0f, 0f, 0.4f))
-				}
-				enableDownRepeat()
-				layoutData = basicLayoutData {
-					height = 13f
+		val hSliderStyle = scrollBarStyle {
+			naturalWidth = 200f
+			naturalHeight = 18f
+			track = {
+				rect {
+					style.apply {
+						backgroundColor = theme.stroke
+						margin = Pad(left = 6f, top = 0f, right = 6f, bottom = 0f)
+					}
+				} layout {
 					widthPercent = 1f
+					height = 2f
 				}
 			}
 		}
-		hSliderStyle.pageMode = false
 		target.addStyleRule(hSliderStyle, HSlider)
 	}
 
@@ -834,4 +803,24 @@ open class BasicUiSkin(
 		target.addStyleRule(dropShadowStyle, shadowRectStyleTag)
 	}
 
+}
+
+private class RectButtonSkin(owner: Context, private val stateToColor: (ButtonState) -> ColorRo) : Rect(owner), ButtonSkin {
+
+	override var label: String = ""
+
+	override var buttonState: ButtonState = ButtonState.UP
+		set(value) {
+			field = value
+			colorTint = stateToColor(value)
+		}
+
+	init {
+		style.backgroundColor = Color.WHITE
+		colorTint = stateToColor(ButtonState.UP)
+	}
+}
+
+private fun Context.rectButtonSkin(stateToColor: (ButtonState) -> ColorRo): Context.() -> ButtonSkin = {
+	RectButtonSkin(this, stateToColor)
 }

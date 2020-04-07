@@ -415,3 +415,8 @@ class ScrollAreaStyle : StyleBase() {
 
 	companion object : StyleType<ScrollAreaStyle>
 }
+
+inline fun scrollAreaStyle(init: ComponentInit<ScrollAreaStyle> = {}): ScrollAreaStyle {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ScrollAreaStyle().apply(init)
+}

@@ -17,12 +17,12 @@
 package com.acornui.component.scroll
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.InteractivityMode
-import com.acornui.component.ValidationFlags
-import com.acornui.component.layout.algorithm.BasicLayoutData
+import com.acornui.component.UiComponent
+import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
-import com.acornui.math.Bounds
+import com.acornui.math.MathUtils.clamp
+import com.acornui.math.MathUtils.lerp
 import com.acornui.math.Vector2Ro
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -37,72 +37,63 @@ open class HScrollBar(
 	}
 
 	override fun getModelValue(position: Vector2Ro): Float {
-		val thumb = thumb!!
+		val thumbW = thumb!!.width
 		val minX = minTrack
 		val maxX = maxTrack
-		val denom = maxOf(0.001f, maxX - minX - thumb.width)
-		var pX = (position.x - minX) / denom
-		if (pX > 0.99f) pX = 1f
-		if (pX < 0.01f) pX = 0f
-		return pX * (scrollModel.max - scrollModel.min) + scrollModel.min
+		val denom = maxOf(0.001f, maxX - minX - thumbW)
+		val pX = clamp((position.x - minX) / denom, 0f, 1f)
+		return scrollModel.rawToDecorated(lerp(scrollModel.min, scrollModel.max, pX))
 	}
 
-	val naturalHeight: Float
-		get() {
-			validate(ValidationFlags.STYLES)
-			return maxOf(decrementButton!!.height, incrementButton!!.height)
-		}
+	override fun updatePartsLayout(width: Float, height: Float, decrementButton: UiComponent?, incrementButton: UiComponent?, track: UiComponent) {
+		// Size skin parts
 
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		val stepUpButton = decrementButton!!
-		val stepDownButton = incrementButton!!
-		val track = track!!
-		val thumb = thumb!!
-		val minW = minWidth
-		val w = explicitWidth ?: maxOf(minW, style.defaultSize)
-		val sUBW: Float = stepUpButton.width
-		val sDBW: Float = stepDownButton.width
-		val h: Float = maxOf(stepUpButton.height, stepDownButton.height)
-		val trackLd = track.layoutData as BasicLayoutData?
-		if (trackLd == null) track.setSize(w - sUBW - sDBW, h)
-		else track.setSize(trackLd.getPreferredWidth(w - sUBW - sDBW), trackLd.getPreferredHeight(h))
-		track.moveTo(sUBW, 0f)
-		stepDownButton.moveTo(w - stepDownButton.width, 0f)
+		val sUBW: Float = decrementButton?.width ?: 0f
+		val sDBW: Float = incrementButton?.width ?: 0f
+		val trackLd = track.layoutDataCast
+		track.setSize(trackLd?.getPreferredWidth(width - sUBW - sDBW), trackLd?.getPreferredHeight(height))
 
+		// Position skin parts
+
+		track.moveTo(sUBW, trackLd.getY(height, track.height))
+		decrementButton?.moveTo(0f, decrementButton.layoutDataCast.getY(height, decrementButton.height))
+		incrementButton?.moveTo(width - incrementButton.width, incrementButton.layoutDataCast.getY(height, incrementButton.height))
+	}
+
+	override fun updateThumbLayout(width: Float, height: Float, thumb: UiComponent) {
 		val scrollDiff = scrollModel.max - scrollModel.min
+
 		val thumbAvailable = maxTrack - minTrack
 		thumb.visible = thumbAvailable > maxOf(1f, thumb.minWidth)
-		track.visible = thumb.visible
-		thumb.interactivityMode = if (style.pageMode && scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
-		track.interactivityMode = if (scrollDiff > 0f) InteractivityMode.ALL else InteractivityMode.NONE
-		if (thumb.visible) {
-			val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
-			val thumbLd = thumb.layoutData as BasicLayoutData?
-			if (thumbLd == null) thumb.setSize(thumbWidth, h)
-			else thumb.setSize(thumbLd.getPreferredWidth(thumbWidth), thumbLd.getPreferredHeight(h))
-			refreshThumbPosition()
-		}
-		out.set(w, maxOf(h, track.height, if (thumb.visible) thumb.height else 0f))
-	}
 
-	override fun refreshThumbPosition() {
-		val thumb = thumb!!
-		val scrollDiff = scrollModel.max - scrollModel.min
+		val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
+		val thumbLd = thumb.layoutDataCast
+		thumb.setSize(thumbLd?.getPreferredWidth(thumbWidth), thumbLd?.getPreferredHeight(height))
+
 		val p = if (scrollDiff <= 0.000001f) 0f else (scrollModel.value - scrollModel.min) / scrollDiff
 
 		val minX = minTrack
 		val maxX = maxTrack
-		val w = round(maxX - minX + 0.000001f) - thumb.width
-		thumb.moveTo(p * w + minX, 0f)
+		val thumbW = thumb.width
+		val w = round(maxX - minX + 0.000001f) - thumbW
+		thumb.moveTo(p * w + minX, thumb.layoutDataCast.getY(height, thumb.height))
 	}
 
 	override val minTrack: Float
-		get() = decrementButton!!.right
+		get() = decrementButton?.right ?: 0f
 
 	override val maxTrack: Float
-		get() = incrementButton!!.x
+		get() = incrementButton?.left ?: width
 
 	companion object : StyleTag
+}
+
+private fun ScrollBarLayoutData?.getY(availableHeight: Float, partHeight: Float): Float {
+	return when (this?.verticalAlign ?: VAlign.MIDDLE) {
+		VAlign.TOP -> 0f
+		VAlign.MIDDLE -> (availableHeight - partHeight) * 0.5f
+		VAlign.BASELINE, VAlign.BOTTOM -> availableHeight - partHeight
+	}
 }
 
 inline fun Context.hScrollBar(init: ComponentInit<HScrollBar> = {}): HScrollBar  {

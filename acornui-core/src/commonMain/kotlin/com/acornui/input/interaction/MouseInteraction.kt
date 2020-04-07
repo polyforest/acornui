@@ -162,17 +162,19 @@ open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
 	 */
 	override var isFabricated: Boolean = false
 
+	override var currentTarget: UiComponentRo
+		get() = super.currentTarget
+		set(value) {
+			super.currentTarget = value
+			_localPositionIsValid = false
+		}
+
 	open fun set(event: MouseInteractionRo) {
 		type = event.type
 		canvasX = event.canvasX
 		canvasY = event.canvasY
 		button = event.button
 		timestamp = event.timestamp
-	}
-
-	override fun localize(currentTarget: UiComponentRo) {
-		super.localize(currentTarget)
-		_localPositionIsValid = false
 	}
 
 	override fun clear() {

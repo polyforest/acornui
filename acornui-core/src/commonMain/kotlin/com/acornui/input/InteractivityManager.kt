@@ -16,11 +16,11 @@
 
 package com.acornui.input
 
-import com.acornui.recycle.Clearable
+import com.acornui.Disposable
 import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
-import com.acornui.Disposable
 import com.acornui.di.Context
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Stoppable
 import com.acornui.signal.StoppableSignal
 
@@ -122,11 +122,6 @@ interface InteractionEvent : InteractionEventRo, Clearable {
 		return propagation.immediatePropagationStopped()
 	}
 
-	/**
-	 * Changes the local properties of this interaction to be relative to the given target. (Such as touch x, y)
-	 */
-	fun localize(currentTarget: UiComponentRo)
-
 }
 
 /**
@@ -151,10 +146,6 @@ abstract class InteractionEventBase : InteractionEvent {
 		set(value) {
 			_currentTarget = value
 		}
-
-	override fun localize(currentTarget: UiComponentRo) {
-		this.currentTarget = currentTarget
-	}
 
 	override val propagation: Propagation = Propagation()
 

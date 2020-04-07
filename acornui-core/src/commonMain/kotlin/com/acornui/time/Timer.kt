@@ -64,6 +64,7 @@ class Timer(
 		val callback: (timer: Timer) -> Unit
 
 ) : Updatable, Disposable, DisposableHandle {
+
 	// For convenience, Timer implements both com.acornui.Disposable and kotlinx.coroutines.DisposableHandle
 	// This is so that timers used in scheduled dispatchers don't need to wrap the Disposable reference.
 
@@ -83,10 +84,10 @@ class Timer(
 	}
 
 	/**
-	 * Sets the [currentTime] to 0f and the current repetition to 0
+	 * Sets the [currentTime] to `-delay` and the current repetition to `0`
 	 */
 	fun rewind() {
-		currentTime = 0f
+		currentTime = -delay
 		currentRepetition = 0
 	}
 
@@ -101,6 +102,7 @@ class Timer(
  * @param duration The duration between repetitions.
  * @param repetitions The number of repetitions the timer will be invoked. If this is -1, the callback will be invoked
  * until disposal.
+ * @param delay The first invocation of [callback] will be `delay + duration`. May be negative.
  * @param callback The function to call after every repetition.
  */
 fun Context.timer(duration: Duration, repetitions: Int = 1, delay: Duration = Duration.ZERO, callback: (timer: Timer) -> Unit): Disposable {

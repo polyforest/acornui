@@ -17,11 +17,11 @@
 package com.acornui.component.scroll
 
 import com.acornui.Disposable
-import com.acornui.math.MathUtils
+import com.acornui.math.MathUtils.clamp
+import com.acornui.math.MathUtils.roundToNearest
 import com.acornui.observe.Observable
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import kotlin.math.round
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
@@ -41,22 +41,32 @@ interface ScrollModelRo : Observable {
 	val rawValue: Float
 
 	/**
-	 * The decorated value. Implementations may have clamping or snapping applied. Use [rawValue] to set and retrieve an
-	 * unbounded value.
+	 * The decorated value. Implementations may for example have clamping and/or snapping applied.
+	 * Use [rawValue] to set and retrieve an unbounded value.
 	 */
 	val value: Float
-		get() = rawValue
+		get() = rawToDecorated(rawValue)
+
+	/**
+	 * Applies decoration to the given value. Implementations may for example apply clamping and/or snapping.
+	 */
+	fun rawToDecorated(rawValue: Float): Float = rawValue
 }
 
 interface ScrollModel : ScrollModelRo {
 
 	override var rawValue: Float
 
+	/**
+	 * Getting is equivalent to `rawToDecorated(rawValue)`.
+	 * Setting is the same as `rawValue = rawToDecorated(value)`
+	 */
 	override var value: Float
-		get() = rawValue
+		get() = rawToDecorated(rawValue)
 		set(value) {
-			if (value == rawValue) return
-			rawValue = value
+			val newRawValue = rawToDecorated(value)
+			if (newRawValue == rawValue) return
+			rawValue = newRawValue
 		}
 }
 
@@ -87,30 +97,19 @@ interface ClampedScrollModelRo : ScrollModelRo {
 	 * Returns the given value, clamped within the min and max values.
 	 * The min bound takes precedence over max.
 	 */
-	fun clamp(value: Float): Float {
-		return MathUtils.clamp(value, min, max)
-	}
+	fun clamp(value: Float): Float = clamp(value, min, max)
 
 	/**
 	 * Returns the given value, snapped to the nearest [snap] interval, starting from [min].
 	 */
-	fun snap(value: Float): Float {
-		if (snap <= 0) return value
-		var v = value - min
-		v /= snap
-		v = round(v)
-		v *= snap
-		return v + min
-	}
+	fun snap(value: Float): Float = roundToNearest(value, snap, min)
 
 	/**
-	 * The decorated value. This may have clamping or snapping applied. Use [rawValue] to set and retrieve an
-	 * unbounded value.
+	 * Snaps and then clamps the given value.
 	 */
-	override val value: Float
-		get() {
-			return clamp(snap(rawValue))
-		}
+	override fun rawToDecorated(rawValue: Float): Float {
+		return clamp(snap(rawValue))
+	}
 }
 
 /**
@@ -121,14 +120,6 @@ interface ClampedScrollModel : ClampedScrollModelRo, ScrollModel {
 	override var min: Float
 	override var max: Float
 	override var snap: Float
-
-	override var value: Float
-		get() = clamp(snap(rawValue))
-		set(value) {
-			val newValue = clamp(value)
-			if (newValue == this.rawValue) return
-			rawValue = newValue
-		}
 }
 
 /**
@@ -147,7 +138,8 @@ class ScrollModelImpl(
 	private fun bindable(initial: Float): ReadWriteProperty<Any?, Float> {
 		return Delegates.observable(initial) { _, old, new ->
 			check(!new.isNaN()) { "Cannot set scroll model to NaN" }
-			if (old != new) _changed.dispatch(this)
+			if (old != new)
+				_changed.dispatch(this)
 		}
 	}
 

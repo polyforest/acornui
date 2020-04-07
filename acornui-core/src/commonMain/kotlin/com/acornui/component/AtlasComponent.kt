@@ -20,11 +20,12 @@ package com.acornui.component
 
 import com.acornui.asset.CacheSet
 import com.acornui.asset.cacheSet
-import com.acornui.async.launchSupervised
 import com.acornui.di.Context
 import com.acornui.graphic.*
+import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -92,8 +93,13 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	fun region(atlasPath: String, regionName: String): Job {
 		clear()
 		cacheSet = cacheSet()
-		return launchSupervised {
-			setRegionInternal(loadAndCacheAtlasRegion(atlasPath, regionName, cacheSet!!))
+		return launch {
+			try {
+				val region = loadAndCacheAtlasRegion(atlasPath, regionName, cacheSet!!)
+				setRegionInternal(region)
+			} catch (e: RegionNotFoundException) {
+				Log.warn(e.message)
+			}
 		}.also {
 			loaderJob = it
 		}

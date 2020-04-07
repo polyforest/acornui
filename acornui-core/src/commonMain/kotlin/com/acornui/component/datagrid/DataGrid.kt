@@ -981,13 +981,13 @@ class DataGrid<RowData>(
 		}
 		val border = style.borderThicknesses
 		val contentsW = columnsWidth - hScrollBar.scrollModel.max
-		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.minWidth else 0f
+		val bodyW = contentsW + if (vScrollPolicy != ScrollPolicy.OFF) vScrollBar.naturalWidth else 0f
 
 		out.width = border.expandWidth(bodyW)
 
 		updateHeader(contentsW)
 
-		val hScrollBarH = if (hScrollBar.visible) hScrollBar.minHeight else 0f
+		val hScrollBarH = if (hScrollBar.visible) hScrollBar.naturalHeight else 0f
 
 		_totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight(explicitHeight) - headerCells.height - hScrollBarH
@@ -1006,7 +1006,7 @@ class DataGrid<RowData>(
 		vScrollBar.modelToPoints = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
 		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
-		val vScrollBarW = if (vScrollBar.visible) vScrollBar.minWidth else 0f
+		val vScrollBarW = if (vScrollBar.visible) vScrollBar.naturalWidth else 0f
 
 		contentsH = bottomBounds.height
 		sizeCells(
@@ -1045,7 +1045,7 @@ class DataGrid<RowData>(
 		val topRight = topRight
 		if (topRight != null) {
 			topRight.visible = vScrollBar.visible
-			topRight.setSize(vScrollBar.minWidth, headerCells.height)
+			topRight.setSize(vScrollBar.naturalWidth, headerCells.height)
 			topRight.setPosition(bodyW - topRight.width, 0f)
 		}
 		val headerDivider = this.headerDivider

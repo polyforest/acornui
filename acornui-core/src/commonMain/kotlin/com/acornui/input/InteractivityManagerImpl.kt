@@ -262,7 +262,7 @@ open class InteractivityManagerImpl(
 	private fun dispatchForCurrentTarget(currentTarget: UiComponentRo, event: InteractionEvent, isCapture: Boolean) {
 		val signal = currentTarget.getInteractionSignal(event.type, isCapture) as StoppableSignalImpl?
 		if (signal != null && signal.isNotEmpty()) {
-			event.localize(currentTarget)
+			event.currentTarget = currentTarget
 			signal.dispatch(event)
 		}
 	}
