@@ -97,7 +97,7 @@ data class Theme(
 		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
 		val toggledIconColor: ColorRo = Color(0.5f, 0.5f, 0.25f, 0.8f),
 
-		val atlasPath: String = "assets/uiskin/uiskin.json",
+		val atlasPaths: Map<Float, String> = mapOf(1f to "assets/uiskin/uiskin.json", 2f to "assets/uiskin/uiskin_2x.json"),
 
 		/**
 		 * @see com.acornui.component.text.FontLoader.fontSizes
@@ -114,7 +114,12 @@ data class Theme(
 		val menuFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333366ff)),
 		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
 		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x27273aff))
-)
+) {
+
+	@Deprecated("Use atlasPaths", ReplaceWith("atlasPaths"))
+	val atlasPath: String
+		get() = atlasPaths[1f]!!
+}
 
 fun Theme.getButtonFillColor(buttonState: ButtonState): ColorRo {
 	return when (buttonState) {

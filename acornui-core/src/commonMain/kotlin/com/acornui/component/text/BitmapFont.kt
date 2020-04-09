@@ -31,7 +31,6 @@ import com.acornui.isWhitespace2
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
-import com.acornui.math.MathUtils
 import com.acornui.skins.FontLoaderImpl
 import kotlinx.coroutines.*
 
@@ -312,7 +311,7 @@ interface FontLoader {
 	 * Given a desired font size in px, returns the closest supported size (in px).
 	 */
 	fun getBestPxSize(sizePx: Int, family: FontFamily): Int {
-		val nearestSupportedIndex = MathUtils.clamp(family.sizes.sortedInsertionIndex(sizePx, matchForwards = false), 0, family.sizes.lastIndex)
+		val nearestSupportedIndex = minOf(family.sizes.sortedInsertionIndex(sizePx, matchForwards = false), family.sizes.lastIndex)
 		return family.sizes[nearestSupportedIndex]
 	}
 

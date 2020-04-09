@@ -31,17 +31,19 @@ import com.acornui.io.toUrlRequestData
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-inline fun Context.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.iconAtlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val atlasComponent = IconAtlasComponent(this)
 	atlasComponent.init()
 	return atlasComponent
 }
 
-inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent = iconAtlas(mapOf(1f to atlasPath), region, init)
+
+inline fun Context.iconAtlas(atlasPaths: Map<Float, String>, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val iconAtlas = iconAtlas {
-		region(atlasPath, region)
+		region(atlasPaths, region)
 	}
 	iconAtlas.init()
 	return iconAtlas
@@ -50,7 +52,7 @@ inline fun Context.iconAtlas(atlasPath: String, region: String, init: ComponentI
 fun Context.iconImage(imagePath: String, init: ComponentInit<Image> = {}): Image =
 		iconImage(imagePath.toUrlRequestData(), init)
 
-fun Context.iconImage(imagePath: UrlRequestData, init: ComponentInit<Image> = {}): Image  {
+fun Context.iconImage(imagePath: UrlRequestData, init: ComponentInit<Image> = {}): Image {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val image = IconImageComponent(this)
 	image.element = textureC {

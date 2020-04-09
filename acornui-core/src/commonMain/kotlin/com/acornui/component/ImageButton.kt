@@ -121,9 +121,12 @@ fun Context.iconImageButton(init: ImageButton.() -> Unit = {}): ImageButton =
 		}
 
 fun Context.iconImageButton(atlasPath: String, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
+		iconImageButton(mapOf(1f to atlasPath), atlasRegion, init)
+
+fun Context.iconImageButton(atlasPaths: Map<Float, String>, atlasRegion: String, init: ImageButton.() -> Unit = {}): ImageButton =
 		imageButton {
 			styleTags.add(ImageButton.ICON_IMAGE)
-			element = atlas(atlasPath, atlasRegion)
+			element = atlas(atlasPaths, atlasRegion)
 			init()
 		}
 

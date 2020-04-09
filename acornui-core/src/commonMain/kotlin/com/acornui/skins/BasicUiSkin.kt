@@ -38,10 +38,7 @@ import com.acornui.component.text.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.filter.BlurQuality
-import com.acornui.focus.FocusHighlighter
-import com.acornui.focus.FocusableStyle
-import com.acornui.focus.SimpleFocusHighlighter
-import com.acornui.focus.SimpleHighlight
+import com.acornui.focus.*
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.input.SoftKeyboardView
@@ -112,7 +109,9 @@ open class BasicUiSkin(
 
 	protected open fun focusStyle() {
 		target.getAttachment<FocusHighlighter>(FocusHighlighter)?.dispose()
-		val focusHighlighter = SimpleFocusHighlighter(target, theme)
+		val focusHighlighter = SimpleFocusHighlighter(target, simpleHighlight(theme.atlasPaths, "FocusRect") {
+			colorTint = theme.focusHighlightColor
+		})
 		target.setAttachment(FocusHighlighter, focusHighlighter)
 		val focusableStyle = FocusableStyle().apply {
 			highlighter = focusHighlighter
@@ -219,7 +218,7 @@ open class BasicUiSkin(
 				}
 			}
 			closeButton = {
-				iconImageButton(theme.atlasPath, "ic_clear_white_18dp") {
+				iconImageButton(theme.atlasPaths, "ic_clear_white_18dp") {
 					style.overState = colorTransformation { tint(Color.RED) }
 				}
 			}
@@ -290,13 +289,13 @@ open class BasicUiSkin(
 
 	protected open fun dividerStyle() {
 		val hDividerStyle = DividerStyle()
-		hDividerStyle.handle = { atlas(theme.atlasPath, "HDividerHandle") }
-		hDividerStyle.divideBar = { atlas(theme.atlasPath, "HDividerBar") }
+		hDividerStyle.handle = { atlas(theme.atlasPaths, "HDividerHandle") }
+		hDividerStyle.divideBar = { atlas(theme.atlasPaths, "HDividerBar") }
 		target.addStyleRule(hDividerStyle, HDivider)
 
 		val vDividerStyle = DividerStyle()
-		vDividerStyle.handle = { atlas(theme.atlasPath, "VDividerHandle") }
-		vDividerStyle.divideBar = { atlas(theme.atlasPath, "VDividerBar") }
+		vDividerStyle.handle = { atlas(theme.atlasPaths, "VDividerHandle") }
+		vDividerStyle.divideBar = { atlas(theme.atlasPaths, "VDividerBar") }
 		target.addStyleRule(vDividerStyle, VDivider)
 
 		val ruleStyle = RuleStyle()
@@ -324,7 +323,7 @@ open class BasicUiSkin(
 				layoutStyle.padding = stepperPad
 			}
 			val theme = theme
-			skinPart.element = atlas(theme.atlasPath, "ArrowUpSm") {
+			skinPart.element = atlas(theme.atlasPaths, "ArrowUpSm") {
 				colorTint = theme.iconColor
 			}
 			skinPart
@@ -336,7 +335,7 @@ open class BasicUiSkin(
 				layoutStyle.padding = stepperPad
 			}
 			val theme = theme
-			skinPart.element = atlas(theme.atlasPath, "ArrowDownSm") {
+			skinPart.element = atlas(theme.atlasPaths, "ArrowDownSm") {
 				colorTint = theme.iconColor
 			}
 			skinPart
@@ -391,7 +390,7 @@ open class BasicUiSkin(
 			incrementButton = { spacer() }
 			pageMode = false
 			thumb = {
-				atlas(theme.atlasPath, "SliderPuck") {
+				atlas(theme.atlasPaths, "SliderPuck") {
 					colorTint = theme.stroke
 				}
 			}
@@ -442,10 +441,10 @@ open class BasicUiSkin(
 				}
 			}
 			hueSaturationIndicator = {
-				atlas(theme.atlasPath, "Picker")
+				atlas(theme.atlasPaths, "Picker")
 			}
 			sliderArrow = {
-				atlas(theme.atlasPath, "SliderArrowRight")
+				atlas(theme.atlasPaths, "SliderArrowRight")
 			}
 		}
 		target.addStyleRule(colorPaletteStyle, ColorPalette)
@@ -499,7 +498,7 @@ open class BasicUiSkin(
 	protected open fun optionListStyle() {
 		val optionListStyle = OptionListStyle().apply {
 			downArrow = {
-				iconAtlas(theme.atlasPath, "ic_expand_more_white_24dp")
+				iconAtlas(theme.atlasPaths, "ic_expand_more_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
@@ -555,12 +554,12 @@ open class BasicUiSkin(
 			}
 			cellPadding = Pad(theme.strokeThickness + 2f)
 			resizeHandleWidth = 8f
-			sortDownArrow = { atlas(theme.atlasPath, "ArrowDownMed") { colorTint = theme.iconColor } }
-			sortUpArrow = { atlas(theme.atlasPath, "ArrowUpMed") { colorTint = theme.iconColor } }
+			sortDownArrow = { atlas(theme.atlasPaths, "ArrowDownMed") { colorTint = theme.iconColor } }
+			sortUpArrow = { atlas(theme.atlasPaths, "ArrowUpMed") { colorTint = theme.iconColor } }
 			borderRadii = Corners(theme.borderRadius)
 			borderThicknesses = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
-				SimpleHighlight(target, theme.atlasPath, "FocusRect").apply { colorTint = theme.focusHighlightColor }
+				SimpleHighlight(target, theme.atlasPaths, "FocusRect").apply { colorTint = theme.focusHighlightColor }
 			}
 			headerCellBackground = {
 				button {
@@ -621,13 +620,13 @@ open class BasicUiSkin(
 	protected open fun treeStyle() {
 		val itemRendererStyle = DefaultTreeItemRendererStyle()
 		itemRendererStyle.openedFolderIcon = {
-			atlas(theme.atlasPath, "folder-horizontal-open.png")
+			atlas(theme.atlasPaths, "folder-horizontal-open.png")
 		}
 		itemRendererStyle.closedFolderIcon = {
-			atlas(theme.atlasPath, "folder-horizontal.png")
+			atlas(theme.atlasPaths, "folder-horizontal.png")
 		}
 		itemRendererStyle.leafIcon = {
-			atlas(theme.atlasPath, "document.png")
+			atlas(theme.atlasPaths, "document.png")
 		}
 		target.addStyleRule(itemRendererStyle, DefaultTreeItemRenderer)
 		val horizontalLayoutStyle = HorizontalLayoutStyle()
@@ -640,7 +639,7 @@ open class BasicUiSkin(
 	protected open fun contextMenuStyle() {
 		val contextMenuStyle = ContextMenuStyle()
 		contextMenuStyle.rightArrow = {
-			atlas(theme.atlasPath, "ArrowRightMed")
+			atlas(theme.atlasPaths, "ArrowRightMed")
 		}
 		target.addStyleRule(contextMenuStyle, ContextMenuView)
 	}
@@ -648,7 +647,7 @@ open class BasicUiSkin(
 	protected open fun calendarStyle() {
 		val datePickerStyle = DatePickerStyle().apply {
 			downArrow = {
-				iconAtlas(theme.atlasPath, "ic_date_range_white_24dp")
+				iconAtlas(theme.atlasPaths, "ic_date_range_white_24dp")
 			}
 			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
 			background = {
@@ -678,12 +677,12 @@ open class BasicUiSkin(
 		val calendarStyle = CalendarStyle().apply {
 			monthDecButton = {
 				iconImageButton {
-					element = atlas(theme.atlasPath, "ic_chevron_left_white_24dp")
+					element = atlas(theme.atlasPaths, "ic_chevron_left_white_24dp")
 				}
 			}
 			monthIncButton = {
 				iconImageButton {
-					element = atlas(theme.atlasPath, "ic_chevron_right_white_24dp")
+					element = atlas(theme.atlasPaths, "ic_chevron_right_white_24dp")
 				}
 			}
 		}

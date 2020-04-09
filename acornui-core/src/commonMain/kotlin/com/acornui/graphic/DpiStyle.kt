@@ -46,7 +46,7 @@ open class DpiStyle : StyleBase() {
 	 * If the nearest texture size found is within this percent margin to the dpi scaling, don't scale the texture,
 	 * otherwise, pick the closest texture and scale to the desired dp.
 	 */
-	var scalingSnapAffordance: Float by prop(0.3f)
+	var scalingSnapAffordance: Float by prop(0.25f)
 	
 	companion object : StyleType<DpiStyle>
 }

@@ -198,9 +198,9 @@ private class BasicCheckboxBox(
 		indeterminateRegion: String
 ) : ButtonSkin, StackLayoutContainer<UiComponent>(owner) {
 
-	private val indeterminateState = +iconAtlas(theme.atlasPath, indeterminateRegion)
-	private val toggledState = +iconAtlas(theme.atlasPath, toggledRegion)
-	private val upState = +iconAtlas(theme.atlasPath, upRegion)
+	private val indeterminateState = +iconAtlas(theme.atlasPaths, indeterminateRegion)
+	private val toggledState = +iconAtlas(theme.atlasPaths, toggledRegion)
+	private val upState = +iconAtlas(theme.atlasPaths, upRegion)
 
 	init {
 		style.padding = Pad(-3f) // The icon is only 18px and has 3px of padding around it.

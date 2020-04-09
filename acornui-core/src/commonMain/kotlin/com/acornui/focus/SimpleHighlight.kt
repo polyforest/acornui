@@ -25,8 +25,9 @@ import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
-import com.acornui.skins.Theme
 import com.acornui.time.callLater
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface HighlightView : UiComponent {
 	var highlighted: UiComponentRo?
@@ -34,11 +35,11 @@ interface HighlightView : UiComponent {
 
 open class SimpleHighlight(
 		owner: Context,
-		atlasPath: String,
+		atlasPaths: Map<Float, String>,
 		regionName: String
 ) : ContainerImpl(owner), HighlightView {
 
-	private val highlight = addChild(atlas(atlasPath, regionName))
+	private val highlight = addChild(atlas(atlasPaths, regionName))
 
 	/**
 	 * Overridden so that the parent render context doesn't get set to the parent.
@@ -117,10 +118,6 @@ class SimpleFocusHighlighter(
 
 	private val popUpManager by PopUpManager
 
-	constructor(context: Context, theme: Theme) : this(context, SimpleHighlight(context, theme.atlasPath, "FocusRect").apply {
-		colorTint = theme.focusHighlightColor
-	})
-
 	private val popUpInfo = PopUpInfo(
 			highlight,
 			isModal = false,
@@ -150,4 +147,9 @@ class SimpleFocusHighlighter(
 		if (!highlight.isDisposed)
 			highlight.dispose()
 	}
+}
+
+inline fun Context.simpleHighlight(atlasPaths: Map<Float, String>, regionName: String, init: ComponentInit<SimpleHighlight> = {}): SimpleHighlight {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return SimpleHighlight(this, atlasPaths, regionName).apply(init)
 }
