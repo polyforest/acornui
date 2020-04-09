@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "MoveVariableDeclarationIntoWhen")
 
 package com.acornui.tween.animation
 
@@ -256,12 +256,12 @@ inline fun Context.animationComponent(bundle: AnimationBundle, libraryItemName: 
 
 inline fun Context.createComponentFromLibrary(bundle: AnimationBundle, libraryItemName: String, init: ComponentInit<UiComponent> = {}): SymbolInstance  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val libraryItem = bundle.library[libraryItemName] ?: throw Exception("library item not found with name: $libraryItemName")
+	val libraryItem = bundle.library[libraryItemName] ?: error("library item not found with name: $libraryItemName")
 	val component = when (libraryItem) {
 		is LibraryItem.AtlasLibraryItem -> AtlasInstance(atlas(libraryItem.atlasPath, libraryItem.regionName), libraryItem)
 		is LibraryItem.AnimationLibraryItem -> AnimationInstance(this, bundle, libraryItem)
-		is LibraryItem.ImageLibraryItem -> ImageInstance(textureC((libraryItem).path), libraryItem)
-		is LibraryItem.CustomLibraryItem -> throw Exception("Cannot create a component with a custom library type.")
+		is LibraryItem.ImageLibraryItem -> ImageInstance(textureC(libraryItem.path), libraryItem)
+		is LibraryItem.CustomLibraryItem -> error("Cannot create a component with a custom library type.")
 	}
 	component.init()
 	return component

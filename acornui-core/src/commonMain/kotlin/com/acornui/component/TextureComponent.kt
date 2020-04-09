@@ -19,19 +19,17 @@
 package com.acornui.component
 
 import com.acornui.asset.CacheSet
+import com.acornui.asset.cacheSet
 import com.acornui.asset.loadAndCacheTexture
-import com.acornui.async.cancellingJobProp
-import com.acornui.async.launchSupervised
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.di.Context
-import com.acornui.graphic.BlendMode
-import com.acornui.graphic.Texture
-import com.acornui.graphic.TextureRo
+import com.acornui.graphic.*
 import com.acornui.io.UrlRequestData
 import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
 import com.acornui.recycle.Clearable
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -56,12 +54,26 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 			window.requestRender()
 		}
 
+	@Deprecated("", ReplaceWith("TextureComponent(owner).apply { texture(path) }"))
 	constructor (owner: Context, path: String) : this(owner) {
 		texture(path)
 	}
 
+	@Deprecated("", ReplaceWith("TextureComponent(owner).apply { texture(texture) }"))
 	constructor (owner: Context, texture: Texture) : this(owner) {
 		texture(texture)
+	}
+
+	val dpiStyle = bind(DpiStyle())
+
+	private var texturePaths: TexturePaths? = null
+	private var currentLoadId = 0
+	private var currentDensity: Float = -1f
+
+	init {
+		watch(dpiStyle) {
+			load()
+		}
 	}
 
 	/**
@@ -69,13 +81,6 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * @see texture
 	 */
 	var explicitTexture: TextureRo? = null
-		private set
-
-	/**
-	 * The [Job] set from loading a texture from a path.
-	 * This may be cancelled to stop loading.
-	 */
-	var loaderJob: Job? by cancellingJobProp()
 		private set
 
 	/**
@@ -103,33 +108,65 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 
 	/**
 	 * Sets the explicit texture.
+	 * @param value The texture value to set.
+	 * @param scaleX The x dpi scaling of the texture.
+	 * @param scaleY The y dpi scaling of the texture.
 	 */
-	fun texture(value: Texture?) {
+	fun texture(value: Texture?, scaleX: Float = 1f, scaleY: Float = 1f) {
 		if (explicitTexture == value) return
 		clear()
 		explicitTexture = value
 		setTextureInternal(value)
+		renderable.setScaling(scaleX, scaleY)
 	}
 
 	/**
 	 * Loads the texture at the given path and sets the texture on completion.
-	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
+	 * This will clear the current texture immediately.
 	 */
-	fun texture(path: String): Job = texture(path.toUrlRequestData())
+	fun texture(path: String) = texture(TexturePaths(mapOf(1f to path.toUrlRequestData())))
+
+	fun texture(paths: Map<Float, UrlRequestData>) = texture(TexturePaths(paths))
+
+	/**
+	 * Sets the texture as a map of pixel densities to texture paths.
+	 * @see toUrlRequestData
+	 */
+	fun texture(paths: Map<Float, String>) = texture(TexturePaths(paths.mapValues { it.value.toUrlRequestData() }))
 
 	/**
 	 * Loads the texture from the given url request and sets the texture on completion.
 	 * This will immediately cancel and clear any current texture.
-	 * @return Returns the cancellable, supervised [Job] for loading and setting the texture.
 	 */
-	fun texture(request: UrlRequestData): Job {
+	fun texture(paths: TexturePaths) {
 		clear()
-		cacheSet = CacheSet(this)
-		return launchSupervised {
-			setTextureInternal(loadAndCacheTexture(request, cacheSet = cacheSet!!))
-		}.also {
-			loaderJob = it
+		cacheSet = cacheSet()
+		texturePaths = paths
+	}
+
+	private fun load() {
+		val texturePaths = texturePaths ?: return
+		val cacheSet = cacheSet!!
+
+		val requestedDensity = maxOf(dpiStyle.scaleX, dpiStyle.scaleY)
+		val actualDensity = pickBestDensity(texturePaths, requestedDensity)
+
+		val scale = scaleIfPastAffordance(actualDensity, requestedDensity, dpiStyle.scalingSnapAffordance)
+		renderable.setScaling(dpiStyle.scaleX * scale, dpiStyle.scaleY * scale)
+
+		if (currentDensity == actualDensity) return
+		currentDensity = actualDensity
+
+		launch {
+			val request = texturePaths.paths[actualDensity] as UrlRequestData
+			setTextureInternal(loadAndCacheTexture(request, cacheSet = cacheSet))
 		}
+	}
+
+	protected open fun pickBestDensity(texturePaths: TexturePaths, requestedDensity: Float): Float {
+		val densities = texturePaths.densities
+		val nearestSupportedIndex = minOf(densities.sortedInsertionIndex(requestedDensity, matchForwards = false), densities.lastIndex)
+		return densities[nearestSupportedIndex]
 	}
 
 	/**
@@ -179,10 +216,10 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * Clears the current texture. If a texture is currently being loaded via `texture(path)`, the loading will cancel.
 	 */
 	override fun clear() {
-		setTextureInternal(null)
-		loaderJob = null
+		texturePaths = null
 		explicitTexture = null
 		cacheSet = null
+		setTextureInternal(null)
 		invalidateLayout()
 	}
 
@@ -192,6 +229,13 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	}
 }
 
+data class TexturePaths(
+		val paths: Map<Float, UrlRequestData>
+) {
+
+	val densities: List<Float> = paths.keys.toList()
+}
+
 inline fun Context.textureC(init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return TextureComponent(this).apply(init)
@@ -199,10 +243,24 @@ inline fun Context.textureC(init: ComponentInit<TextureComponent> = {}): Texture
 
 inline fun Context.textureC(path: String, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return TextureComponent(this, path).apply(init)
+	return TextureComponent(this).apply {
+		texture(path)
+		init()
+	}
+}
+
+inline fun Context.textureC(paths: Map<Float, String>, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return TextureComponent(this).apply {
+		texture(paths)
+		init()
+	}
 }
 
 inline fun Context.textureC(texture: Texture, init: ComponentInit<TextureComponent> = {}): TextureComponent  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return TextureComponent(this, texture).apply(init)
+	return TextureComponent(this).apply {
+		texture(texture)
+		init()
+	}
 }

@@ -39,6 +39,9 @@ interface BasicRenderable {
 	 */
 	var scaleY: Float
 
+	/**
+	 * Sets the x and y dpi scaling.
+	 */
 	fun setScaling(scaleX: Float, scaleY: Float) {
 		this.scaleX = scaleX
 		this.scaleY = scaleY

@@ -86,7 +86,7 @@ suspend fun <T> load(
 		val file = File(urlStr)
 //		_bytesTotal = file.length().toInt()
 		if (!file.exists())
-			throw FileNotFoundException(urlStr)
+			throw ResponseException(404, "File '$urlStr' not found", "")
 		FileInputStream(file)
 	}
 	process(inputStream)

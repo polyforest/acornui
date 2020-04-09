@@ -22,12 +22,13 @@ import com.acornui.asset.CacheSet
 import com.acornui.asset.cacheSet
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.di.Context
-import com.acornui.di.ContextImpl
 import com.acornui.di.own
 import com.acornui.graphic.*
+import com.acornui.io.ResponseException
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal1
+import com.acornui.signal.Signal2
 import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -61,7 +62,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 
 	val dpiStyle = bind(DpiStyle())
 
-	private var loader: AtlasRegionLoader? = null
+	private var atlasPaths: AtlasPaths? = null
 
 	private var currentLoadId = 0
 	private var currentDensity: Float = -1f
@@ -117,7 +118,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	 * @param regionName The name of the region within the atlas.
 	 */
 	fun region(atlasPath: String, regionName: String) {
-		region(AtlasRegionLoaderImpl(this, mapOf(1f to atlasPath), regionName))
+		region(AtlasPaths(mapOf(1f to atlasPath), regionName))
 	}
 
 	/**
@@ -127,29 +128,28 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	 * @param atlasPaths A map of pixel density to atlas json paths.
 	 * @param regionName The name of the region within the atlas.
 	 */
-	fun region(atlasPaths: Map<Float, String>, regionName: String) {
-		region(AtlasRegionLoaderImpl(this, atlasPaths, regionName))
-	}
+	fun region(atlasPaths: Map<Float, String>, regionName: String) = region(AtlasPaths(atlasPaths, regionName))
 
 	/**
 	 * Sets the region of the atlas component.
 	 * The current region will be cleared immediately.
 	 *
-	 * @param loader The atlas region loader. This will be invoked whenever a new pixel density is required.
+	 * @param paths An object representing the region name and pixel densities to their corresponding atlas json paths.
 	 */
-	fun region(loader: AtlasRegionLoader) {
+	fun region(paths: AtlasPaths) {
 		clear()
 		cacheSet = cacheSet()
-		this.loader = loader
+		atlasPaths = paths
 		load()
 	}
 
 	private fun load() {
-		val loader = loader ?: return
+		val atlasPaths = atlasPaths ?: return
 		val cacheSet = cacheSet!!
 
 		val requestedDensity = maxOf(dpiStyle.scaleX, dpiStyle.scaleY)
-		val actualDensity = loader.getBestDensity(requestedDensity)
+		val actualDensity = pickBestDensity(atlasPaths, requestedDensity)
+
 		val scale = scaleIfPastAffordance(actualDensity, requestedDensity, dpiStyle.scalingSnapAffordance)
 		renderable.setScaling(dpiStyle.scaleX * scale, dpiStyle.scaleY * scale)
 
@@ -158,15 +158,21 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 		val loadId = ++currentLoadId
 		launch {
 			try {
-				val region = loader.load(actualDensity, cacheSet)
+				val region = loadAndCacheAtlasRegion(atlasPaths.paths[actualDensity] as String, atlasPaths.regionName, cacheSet)
 				if (loadId == currentLoadId) {
 					setRegionInternal(region)
 				}
-			} catch (e: RegionNotFoundException) {
+			} catch (e: ResponseException) {
 				Log.warn(e.message)
 				clear()
 			}
 		}
+	}
+
+	protected open fun pickBestDensity(atlasPaths: AtlasPaths, requestedDensity: Float): Float {
+		val densities = atlasPaths.densities
+		val nearestSupportedIndex = minOf(densities.sortedInsertionIndex(requestedDensity, matchForwards = false), densities.lastIndex)
+		return densities[nearestSupportedIndex]
 	}
 
 	var blendMode: BlendMode
@@ -188,6 +194,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	override fun clear() {
 		cacheSet = null
 		currentDensity = -1f
+		atlasPaths = null
 		setRegionInternal(null)
 		renderable.clear()
 		invalidateLayout()
@@ -199,7 +206,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	}
 }
 
-inline fun Context.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.init()
@@ -209,7 +216,7 @@ inline fun Context.atlas(init: ComponentInit<AtlasComponent> = {}): AtlasCompone
 inline fun Context.atlas(atlasPath: String, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent =
 		atlas(mapOf(1f to atlasPath), region, init)
 
-inline fun Context.atlas(atlasPaths: Map<Float, String>, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent  {
+inline fun Context.atlas(atlasPaths: Map<Float, String>, region: String, init: ComponentInit<AtlasComponent> = {}): AtlasComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val a = AtlasComponent(this)
 	a.region(atlasPaths, region)
@@ -233,39 +240,13 @@ fun SingleElementContainer<UiComponent>.contentsAtlas(atlasPaths: Map<Float, Str
 	return createOrReuseElement { atlas() }.region(atlasPaths, region)
 }
 
-interface AtlasRegionLoader {
-
-	/**
-	 * The supported pixel densities available to load.
-	 * E.g. If MDPI, XHDPI, and XXHDPI densities are available, listOf(1f, 2f, 3f) should be returned.
-	 */
-	val densities: List<Float>
-
-	fun getBestDensity(requestedDensity: Float): Float {
-		val nearestSupportedIndex = minOf(densities.sortedInsertionIndex(requestedDensity, matchForwards = false), densities.lastIndex)
-		return densities[nearestSupportedIndex]
-	}
-
-	/**
-	 * Loads the atlas region for the given density.
-	 *
-	 * @throws RegionNotFoundException
-	 */
-	suspend fun load(density: Float, cacheSet: CacheSet): AtlasRegion
-}
-
 /**
- * @param atlasPathMap A map of pixel density to atlas json paths.
- * @param regionName The name of the atlas region.
+ * Data for which atlas json to load for a requested density.
  */
-class AtlasRegionLoaderImpl(
-		owner: Context,
-		private val atlasPathMap: Map<Float, String>,
-		private val regionName: String
-) : AtlasRegionLoader, ContextImpl(owner) {
+data class AtlasPaths(
+		val paths: Map<Float, String>,
+		val regionName: String
+) {
 
-	override val densities: List<Float> = atlasPathMap.keys.toList()
-
-	override suspend fun load(density: Float, cacheSet: CacheSet): AtlasRegion =
-			loadAndCacheAtlasRegion(atlasPathMap[density] ?: error("Density $density not found"), regionName, cacheSet)
+	val densities: List<Float> = paths.keys.toList()
 }

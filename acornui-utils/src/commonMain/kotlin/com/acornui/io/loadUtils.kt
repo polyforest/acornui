@@ -25,8 +25,7 @@ import kotlin.time.Duration
 import kotlin.time.seconds
 
 /**
- * A model with the necessary information to make an http request.
- * This is also used for file requests.
+ * A model with the necessary information to make a request.
  */
 @Serializable
 data class UrlRequestData(
@@ -48,7 +47,7 @@ data class UrlRequestData(
 		var body: String? = null
 )
 
-private val absolutePathRegex = Regex("""^([a-z0-9]*:|.{0})\/\/.*${'$'}""", RegexOption.IGNORE_CASE)
+private val absolutePathRegex = Regex("""^([a-z0-9]*:|.{0})//.*${'$'}""", RegexOption.IGNORE_CASE)
 
 /**
  * Returns true if the requested path starts with a scheme. (e.g. https://, http://, ftp://)
@@ -69,6 +68,9 @@ fun UrlRequestData.toUrlStr(rootPath: String): String {
 		prependedUrl + "?" + variables.queryString else prependedUrl
 }
 
+/**
+ * Parses a string into [UrlRequestData]
+ */
 fun String.toUrlRequestData(): UrlRequestData {
 	val qIndex = indexOf("?")
 	if (qIndex == -1) return UrlRequestData(this)
@@ -87,7 +89,10 @@ object UrlRequestMethod {
 	const val DELETE: String = "DELETE"
 }
 
-open class ResponseConnectTimeoutException(val requestData: UrlRequestData, val connectTimeout: Duration) : Throwable("The request ${requestData.url} timed out after $connectTimeout")
+open class ResponseConnectTimeoutException(
+		val requestData: UrlRequestData,
+		val connectTimeout: Duration
+) : Throwable("The request ${requestData.url} timed out after $connectTimeout")
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
 
