@@ -24,12 +24,14 @@ import com.acornui.headless.MockLoader
 import com.acornui.headless.MockTexture
 import com.acornui.headless.headlessApplication
 import com.acornui.io.UrlRequestData
+import com.acornui.io.await
+import com.acornui.io.progressReporter
 import com.acornui.runMainTest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.seconds
 
 class TextureComponentTest {
 
@@ -65,31 +67,40 @@ class TextureComponentTest {
 		headlessApplication {
 			context {
 				var constructedTextures = 0
-				childDependencies += Loaders.textureLoader to MockLoader {
+				childDependencies += Loaders.textureLoader to MockLoader(0.2.seconds) {
 					constructedTextures++
-					delay(200L)
+					delay(0.2.seconds)
 					MockTextureWithRequest(it, MockTexture())
 				}
-
 				launch {
 					val texC = +textureC()
-					texC.texture("path0").join()
+					texC.texture("path0")
+					texC.join()
 					assertEquals(1, constructedTextures)
 					assertEquals(1, texC.texture?.refCount)
-					texC.texture("path0").join()
+					texC.texture("path0")
+					texC.join()
 					assertEquals(1, texC.texture?.refCount)
 					assertEquals(1, constructedTextures)
+
+					texC.clear()
+					texC.texture("path0")
+					texC.join()
+					assertEquals(1, texC.texture?.refCount)
+					assertEquals(1, constructedTextures)
+
 					val previousTexture = texC.texture
-					texC.texture("path1").join()
+					texC.texture("path1")
+					texC.join()
 					assertEquals(1, texC.texture?.refCount)
 					assertEquals(0, previousTexture?.refCount)
 					assertEquals(2, constructedTextures)
 					val previousTexture2 = texC.texture
-					val job = texC.texture("path2")
+					texC.texture("path2")
 					assertEquals(0, previousTexture?.refCount)
 					assertEquals(0, previousTexture2?.refCount)
 
-					job.join()
+					texC.join()
 					assertEquals(3, constructedTextures)
 					assertEquals(1, texC.texture?.refCount)
 
@@ -110,9 +121,11 @@ class TextureComponentTest {
 
 				val texC = textureC()
 				launch {
-					texC.texture("path0").join()
+					texC.texture("path0")
+					progressReporter.await()
 					assertEquals(1, totalTextures)
-					texC.texture("path0").join()
+					texC.texture("path0")
+					progressReporter.await()
 					assertEquals(1, totalTextures)
 					exit()
 				}

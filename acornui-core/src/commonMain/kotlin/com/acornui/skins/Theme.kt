@@ -20,6 +20,7 @@ import com.acornui.component.ButtonState
 import com.acornui.component.text.FontSize
 import com.acornui.component.text.FontStyle
 import com.acornui.component.text.FontWeight
+import com.acornui.component.toDpis
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.Pad
@@ -97,7 +98,7 @@ data class Theme(
 		val iconColor: ColorRo = Color(0.25f, 0.25f, 0.25f, 0.8f),
 		val toggledIconColor: ColorRo = Color(0.5f, 0.5f, 0.25f, 0.8f),
 
-		val atlasPaths: Map<Float, String> = mapOf(1f to "assets/uiskin/uiskin.json", 2f to "assets/uiskin/uiskin_2x.json"),
+		val atlasPaths: Map<Float, String> = "assets/uiskin/uiskin_{0}x.json".toDpis(1f, 2f),
 
 		/**
 		 * @see com.acornui.component.text.FontLoader.fontSizes

@@ -2,12 +2,24 @@
 var doc = fl.getDocumentDOM();
 var library = document.library;
 var log = [];
-var sizes = [1, 2, 3, 4];
+
+var firstScript = doc.timelines[0].layers[0].frames[0].actionScript;
+fl.trace(firstScript);
+var dpiKey = "//dpi=";
+var sizes = [1];
+var nameWith1x = false; // If true, 1x sizes will have _1x added to their names.
+if (firstScript.indexOf(dpiKey) === 0) {
+	var sizeStrs = firstScript.substring(dpiKey.length, firstScript.length).split(",");
+	sizes.length = sizeStrs.length;
+	for (var sizeStrI = 0; sizeStrI < sizeStrs.length; sizeStrI++) {
+		sizes[sizeStrI] = parseInt(sizeStrs[sizeStrI]);
+	}
+	nameWith1x = true;
+}
 
 if (!doc) {
 	alert("Select a document.");
 } else {
-	var docName = doc.name.substring(0, doc.name.length - 4);
 	var folder = doc.pathURI.substring(0, doc.pathURI.lastIndexOf(doc.name));
 	var selectedItems = doc.library.getSelectedItems();
 	if (selectedItems.length === 0) selectedItems = doc.library.items;
@@ -25,7 +37,7 @@ if (!doc) {
 				/** @type string */
 				var itemName;
 				var unpackedIndex = item.name.indexOf("_unpacked/");
-				if (size === 1) {
+				if (!nameWith1x && size === 1) {
 					itemName = item.name;
 				} else {
 					if (unpackedIndex === -1) {

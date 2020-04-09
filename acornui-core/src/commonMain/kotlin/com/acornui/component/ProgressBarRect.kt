@@ -24,7 +24,6 @@ import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.io.Progress
-import com.acornui.io.isLoading
 import com.acornui.io.progressReporterKey
 import com.acornui.io.remaining
 import com.acornui.math.*

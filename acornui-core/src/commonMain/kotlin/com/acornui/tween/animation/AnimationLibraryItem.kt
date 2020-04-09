@@ -17,10 +17,8 @@
 package com.acornui.tween.animation
 
 import com.acornui.collection.sortedInsertionIndex
-import com.acornui.math.Vector2Ro
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
  * A data class representing an animation.

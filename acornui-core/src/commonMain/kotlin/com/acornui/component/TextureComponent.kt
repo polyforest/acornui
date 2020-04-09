@@ -29,9 +29,12 @@ import com.acornui.io.toUrlRequestData
 import com.acornui.math.IntRectangleRo
 import com.acornui.math.RectangleRo
 import com.acornui.recycle.Clearable
+import com.acornui.text.numberFormatter
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 
 /**
  * A UiComponent representing a single Texture.
@@ -89,6 +92,8 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	val texture: TextureRo?
 		get() = renderable.texture
 
+	private var loadJob: Job? = null
+
 	private var cacheSet: CacheSet? = null
 		set(value) {
 			field?.dispose()
@@ -126,12 +131,14 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 */
 	fun texture(path: String) = texture(TexturePaths(mapOf(1f to path.toUrlRequestData())))
 
+	@JvmName("textureDensityRequests")
 	fun texture(paths: Map<Float, UrlRequestData>) = texture(TexturePaths(paths))
 
 	/**
 	 * Sets the texture as a map of pixel densities to texture paths.
 	 * @see toUrlRequestData
 	 */
+	@JvmName("textureDensityPaths")
 	fun texture(paths: Map<Float, String>) = texture(TexturePaths(paths.mapValues { it.value.toUrlRequestData() }))
 
 	/**
@@ -139,9 +146,11 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * This will immediately cancel and clear any current texture.
 	 */
 	fun texture(paths: TexturePaths) {
+		if (texturePaths == paths) return
 		clear()
 		cacheSet = cacheSet()
 		texturePaths = paths
+		load()
 	}
 
 	private fun load() {
@@ -157,10 +166,14 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 		if (currentDensity == actualDensity) return
 		currentDensity = actualDensity
 
-		launch {
+		loadJob = launch {
 			val request = texturePaths.paths[actualDensity] as UrlRequestData
 			setTextureInternal(loadAndCacheTexture(request, cacheSet = cacheSet))
 		}
+	}
+
+	suspend fun join() {
+		loadJob?.join()
 	}
 
 	protected open fun pickBestDensity(texturePaths: TexturePaths, requestedDensity: Float): Float {
@@ -216,6 +229,8 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	 * Clears the current texture. If a texture is currently being loaded via `texture(path)`, the loading will cancel.
 	 */
 	override fun clear() {
+		currentDensity = -1f
+		loadJob = null
 		texturePaths = null
 		explicitTexture = null
 		cacheSet = null
@@ -263,4 +278,17 @@ inline fun Context.textureC(texture: Texture, init: ComponentInit<TextureCompone
 		texture(texture)
 		init()
 	}
+}
+
+/**
+ * Returns a map where dpi provided is a key and the value is the token replaced path.
+ * @this A String with the token {0} to be replaced by the dpi.
+ */
+fun String.toDpis(vararg dpis: Float): Map<Float, String> {
+	val numberFormatter = numberFormatter { minFractionDigits = 0 }
+	val map = mutableMapOf<Float, String>()
+	for (dpi in dpis) {
+		map[dpi] = this.replace("{0}", numberFormatter.format(dpi))
+	}
+	return map
 }

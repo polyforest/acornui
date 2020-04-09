@@ -38,6 +38,13 @@ interface Progress {
 	 * The total number of seconds estimated to load.
 	 */
 	val total: Duration
+
+	val isComplete: Boolean
+		get() = loaded >= total
+
+	val isLoading: Boolean
+		get() = if (total <= Duration.ZERO) false else loaded < total
+
 }
 
 data class ProgressImpl(override var loaded: Duration = Duration.ZERO, override var total: Duration = Duration.ZERO) : Progress
@@ -47,9 +54,6 @@ val Progress.percentLoaded: Double
 
 val Progress.remaining: Duration
 	get() = total - loaded
-
-val Progress.isLoading: Boolean
-	get() = if (total <= Duration.ZERO) false else loaded < total
 
 /**
  * Suspends the coroutine until this [Progress] instance has finished loading, for at least [interval].
@@ -72,6 +76,14 @@ suspend fun Progress.await(interval: Duration = 0.1.seconds) {
  * Provides a way to add child [Progress] trackers.
  */
 interface ProgressReporter : Parent<Progress>, Progress
+
+inline fun <R> ProgressReporter.addWork(expectedDuration: Duration, inner: () -> R): R {
+	val p = ProgressImpl(total = expectedDuration)
+	addChild(p)
+	val result = inner()
+	removeChild(p)
+	return result
+}
 
 open class ProgressReporterImpl : ProgressReporter {
 

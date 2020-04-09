@@ -16,18 +16,19 @@
 
 package com.acornui.headless
 
-import com.acornui.io.Loader
-import com.acornui.io.ProgressReporterImpl
-import com.acornui.io.RequestSettings
-import com.acornui.io.UrlRequestData
+import com.acornui.io.*
+import kotlin.time.Duration
+import kotlin.time.seconds
 
-class MockLoader<T>(private val factory: suspend (requestData: UrlRequestData) -> T) : Loader<T> {
+class MockLoader<T>(initialTimeEstimate: Duration = 1.seconds, private val factory: suspend (requestData: UrlRequestData) -> T) : Loader<T> {
 
-	constructor(default: T) : this({ default })
+	constructor(default: T) : this(factory = { default })
 
-	override val requestSettings: RequestSettings = RequestSettings("", ProgressReporterImpl())
+	override val requestSettings: RequestSettings = RequestSettings("", ProgressReporterImpl(), initialTimeEstimate)
 
 	override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): T {
-		return factory(requestData)
+		return settings.progressReporter.addWork(settings.initialTimeEstimate) {
+			factory(requestData)
+		}
 	}
 }
