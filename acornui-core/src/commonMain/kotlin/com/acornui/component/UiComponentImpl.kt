@@ -41,12 +41,14 @@ import com.acornui.input.InteractivityManager
 import com.acornui.input.MouseState
 import com.acornui.logging.Log
 import com.acornui.math.*
+import com.acornui.math.MathUtils.offsetRound
 import com.acornui.nonZero
 import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.StoppableSignal
+import kotlin.jvm.JvmName
 import kotlin.properties.Delegates
 
 /**
@@ -412,16 +414,22 @@ open class UiComponentImpl(
 	final override var baselineOverride: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
 	/**
-	 * Does the same thing as setting width and height individually.
+	 * Sets the explicit dimensions of this component.
+	 * If [snapToPixel]
+	 *
+	 * @param width The explicit width for the component. Use null to use the natural measured width.
+	 * @param height The explicit height for the component. Use null to use the natural measured height.
 	 */
-	final override fun setSize(width: Float?, height: Float?) {
+	final override fun size(width: Float?, height: Float?) {
 		if (width?.isNaN() == true || height?.isNaN() == true) throw Exception("May not set the size to be NaN")
+		val newW = pixelX(width)
+		val newH = pixelY(height)
 		val oldW = explicitWidth
 		val oldH = explicitHeight
-		if (oldW == width && oldH == height) return
-		explicitWidth = width
-		explicitHeight = height
-		onSizeSet(oldW, oldH, width, height)
+		if (oldW == newW && oldH == newH) return
+		explicitWidth = newW
+		explicitHeight = newH
+		onSizeSet(oldW, oldH, newW, newH)
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
@@ -739,7 +747,7 @@ open class UiComponentImpl(
 		get() = _position.x
 		set(value) {
 			if (value == _position.x) return
-			_position.x = value
+			_position.x = pixelX(value)
 			invalidate(ValidationFlags.TRANSFORM)
 		}
 
@@ -747,7 +755,7 @@ open class UiComponentImpl(
 		get() = _position.y
 		set(value) {
 			if (value == _position.y) return
-			_position.y = value
+			_position.y = pixelY(value)
 			invalidateTransform()
 		}
 
@@ -762,17 +770,47 @@ open class UiComponentImpl(
 	override var position: Vector3Ro
 		get() = _position
 		set(value) {
-			setPosition(value.x, value.y, value.z)
+			position(value.x, value.y, value.z)
 		}
 
 	/**
 	 * Does the same thing as setting width and height individually.
 	 */
-	override fun setPosition(x: Float, y: Float, z: Float) {
-		if (x == _position.x && y == _position.y && z == _position.z) return
-		_position.set(x, y, z)
+	override fun position(x: Float, y: Float, z: Float) {
+		val newX = pixelX(x)
+		val newY = pixelX(y)
+		if (newX == _position.x && newY == _position.y && z == _position.z) return
+		_position.set(newX, newY, z)
 		invalidateTransform()
 		return
+	}
+
+	protected open fun pixelX(x: Float?): Float? {
+		return if (x == null) x else pixelX(x)
+	}
+	
+	protected open fun pixelY(y: Float?): Float? {
+		return if (y == null) y else pixelY(y)
+	}
+
+	/**
+	 * If [snapToPixel] is true, returns the x position snapped to the nearest whole pixel.
+	 * If [snapToPixel] is false, returns x.
+	 */
+	protected open fun pixelX(x: Float): Float {
+		return if (snapToPixel)
+			offsetRound(x * window.scaleX) / window.scaleX
+		else x
+	}
+
+	/**
+	 * If [snapToPixel] is true, returns the y position snapped to the nearest whole pixel.
+	 * If [snapToPixel] is false, returns y.
+	 */
+	protected open fun pixelY(y: Float): Float {
+		return if (snapToPixel)
+			offsetRound(y * window.scaleY) / window.scaleY
+		else y
 	}
 
 	override var scaleX: Float

@@ -156,17 +156,17 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner) {
 		val colorSwatch = colorSwatch ?: return
 		val s = style
 		val padding = s.padding
-		colorSwatch.setSize(
+		colorSwatch.size(
 				padding.reduceWidth(explicitWidth) ?: s.defaultSwatchWidth,
 				padding.reduceHeight(explicitHeight) ?: s.defaultSwatchHeight
 		)
 		val measuredW = padding.expandWidth(colorSwatch.width)
 		val measuredH = padding.expandHeight(colorSwatch.height)
-		background.setSize(measuredW, measuredH)
-		colorSwatch.moveTo(0.5f * (background.width - colorSwatch.width), 0.5f * (background.height - colorSwatch.height))
+		background.size(measuredW, measuredH)
+		colorSwatch.position(0.5f * (background.width - colorSwatch.width), 0.5f * (background.height - colorSwatch.height))
 		out.set(background.width, background.height, colorSwatch.bottom)
 
-		colorPaletteLift.moveTo(0f, measuredH)
+		colorPaletteLift.position(0f, measuredH)
 	}
 
 	override fun dispose() {
@@ -382,26 +382,26 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 		val w = explicitWidth ?: s.defaultPaletteWidth + numSliders * (s.sliderWidth + s.gap) + padding.left + padding.right
 		val h = explicitHeight ?: s.defaultPaletteHeight + padding.top + padding.bottom
 
-		hueRect.setSize(w - padding.right - padding.left - numSliders * (s.sliderWidth + s.gap), h - padding.top - padding.bottom)
-		hueRect.moveTo(padding.left, padding.top)
-		saturationRect.setSize(hueRect.width, hueRect.height)
-		saturationRect.moveTo(hueRect.x, hueRect.y)
+		hueRect.size(w - padding.right - padding.left - numSliders * (s.sliderWidth + s.gap), h - padding.top - padding.bottom)
+		hueRect.position(padding.left, padding.top)
+		saturationRect.size(hueRect.width, hueRect.height)
+		saturationRect.position(hueRect.x, hueRect.y)
 
 		val sliderHeight = h - padding.top - padding.bottom
-		valueRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
-		valueRect.moveTo(hueRect.right + s.gap - handleWidth, padding.top)
+		valueRect.size(s.sliderWidth + handleWidth, sliderHeight)
+		valueRect.position(hueRect.right + s.gap - handleWidth, padding.top)
 
-		alphaGrid.setSize(s.sliderWidth, sliderHeight)
-		alphaGrid.moveTo(valueRect.right + s.gap, padding.top)
-		alphaRect.setSize(s.sliderWidth + handleWidth, sliderHeight)
-		alphaRect.moveTo(valueRect.right + s.gap - handleWidth, padding.top)
+		alphaGrid.size(s.sliderWidth, sliderHeight)
+		alphaGrid.position(valueRect.right + s.gap, padding.top)
+		alphaRect.size(s.sliderWidth + handleWidth, sliderHeight)
+		alphaRect.position(valueRect.right + s.gap - handleWidth, padding.top)
 
-		hueSaturationIndicator!!.moveTo(saturationRect.x + value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-		valueIndicator!!.moveTo(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
-		alphaIndicator!!.moveTo(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
+		hueSaturationIndicator!!.position(saturationRect.x + value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
+		valueIndicator!!.position(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.position(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
-		bg.setSize(w, h)
+		bg.size(w, h)
 		out.set(bg.width, bg.height)
 	}
 
@@ -559,7 +559,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		hGroup.setSize(explicitWidth, explicitHeight)
+		hGroup.size(explicitWidth, explicitHeight)
 		out.set(hGroup.bounds)
 	}
 

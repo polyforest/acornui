@@ -96,18 +96,13 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
 	 * scaling should be set on this sprite.
 	 */
-	var scaleX: Float = 1f
+	override var scaleX: Float = 1f
 
 	/**
 	 * [naturalHeight] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
 	 * scaling should be set on this sprite.
 	 */
-	var scaleY: Float = 1f
-
-	fun setScaling(scaleX: Float, scaleY: Float) {
-		this.scaleX = scaleX
-		this.scaleY = scaleY
-	}
+	override var scaleY: Float = 1f
 
 	override val naturalWidth: Float
 		get() {

@@ -88,7 +88,7 @@ class NumberCell(owner: Context, private val formatter: NumberFormatter) : Conta
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		textField.setSize(explicitWidth, explicitHeight)
+		textField.size(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
 	}
 }
@@ -114,7 +114,7 @@ abstract class NumberEditorCell(owner: Context) : ContainerImpl(owner) {
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		input.setSize(explicitWidth, explicitHeight)
+		input.size(explicitWidth, explicitHeight)
 		out.set(input.bounds)
 	}
 }
@@ -206,7 +206,7 @@ class StringEditorCell(owner: Context) : ContainerImpl(owner), DataGridEditorCel
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		input.setSize(explicitWidth, explicitHeight)
+		input.size(explicitWidth, explicitHeight)
 		out.set(input.bounds)
 	}
 }
@@ -248,7 +248,7 @@ class DateCell(owner: Context, private val formatter: StringFormatter<DateRo>) :
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		textField.setSize(explicitWidth, explicitHeight)
+		textField.size(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
 	}
 

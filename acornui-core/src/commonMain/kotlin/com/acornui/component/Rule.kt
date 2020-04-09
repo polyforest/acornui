@@ -43,9 +43,9 @@ class Rule(owned: Context, private val isVertical: Boolean) : ElementContainerIm
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (isVertical) {
-			rect.setSize(style.thickness, explicitHeight)
+			rect.size(style.thickness, explicitHeight)
 		} else {
-			rect.setSize(explicitWidth, style.thickness)
+			rect.size(explicitWidth, style.thickness)
 		}
 		out.set(rect.bounds)
 	}

@@ -40,7 +40,7 @@ class CanvasLayout : LayoutAlgorithm<CanvasLayoutStyle, CanvasLayoutData> {
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
-			element.setSize(layoutData?.getPreferredWidth(explicitWidth), layoutData?.getPreferredHeight(explicitHeight))
+			element.size(layoutData?.getPreferredWidth(explicitWidth), layoutData?.getPreferredHeight(explicitHeight))
 		}
 
 		for (i in 0..elements.lastIndex) {
@@ -48,7 +48,7 @@ class CanvasLayout : LayoutAlgorithm<CanvasLayoutStyle, CanvasLayoutData> {
 			val layoutData = element.layoutDataCast
 
 			if (layoutData == null) {
-				element.moveTo(0f, 0f)
+				element.position(0f, 0f)
 				out.ext(element.width, element.height)
 			} else {
 				val left = layoutData.left
@@ -98,7 +98,7 @@ class CanvasLayout : LayoutAlgorithm<CanvasLayoutStyle, CanvasLayoutData> {
 					VAlign.BASELINE -> bottomAnchor - element.baseline
 				} ?: 0f
 
-				element.moveTo(x, y)
+				element.position(x, y)
 				out.ext(element.right + (layoutData.right ?: 0f), element.bottom + (layoutData.bottom ?: 0f))
 			}
 		}

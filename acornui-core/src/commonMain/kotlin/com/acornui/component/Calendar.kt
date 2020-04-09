@@ -336,7 +336,7 @@ open class Calendar(
 			}
 		}
 
-		panel.setSize(explicitWidth, explicitHeight)
+		panel.size(explicitWidth, explicitHeight)
 		out.set(panel.bounds)
 	}
 
@@ -545,9 +545,9 @@ open class CalendarItemRendererImpl(owner: Context) : ContainerImpl(owner), Cale
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = style.padding
-		textField.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(explicitHeight))
-		textField.moveTo(pad.left, pad.top)
-		background.setSize(pad.expandWidth(textField.width), pad.expandHeight(textField.height))
+		textField.size(pad.reduceWidth(explicitWidth), pad.reduceHeight(explicitHeight))
+		textField.position(pad.left, pad.top)
+		background.size(pad.expandWidth(textField.width), pad.expandHeight(textField.height))
 		out.set(background.width, background.height, textField.baselineY)
 	}
 

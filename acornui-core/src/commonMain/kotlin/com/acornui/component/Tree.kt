@@ -101,7 +101,7 @@ class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> Tree
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		_root.setSize(explicitWidth, explicitHeight)
+		_root.size(explicitWidth, explicitHeight)
 		out.set(_root.bounds)
 	}
 
@@ -223,12 +223,12 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected va
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		hGroup.setSize(explicitWidth, null)
-		childrenContainer.setSize(
+		hGroup.size(explicitWidth, null)
+		childrenContainer.size(
 				if (explicitWidth == null) null else explicitWidth - style.indent,
 				if (explicitHeight == null) null else explicitHeight - hGroup.height - style.verticalGap)
 
-		childrenContainer.setPosition(style.indent, hGroup.height + style.verticalGap)
+		childrenContainer.position(style.indent, hGroup.height + style.verticalGap)
 		if (toggled && childrenContainer.elements.isNotEmpty())
 			out.set(maxOf(childrenContainer.right, hGroup.right), childrenContainer.bottom)
 		else

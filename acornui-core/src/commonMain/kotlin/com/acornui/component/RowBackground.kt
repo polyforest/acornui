@@ -81,7 +81,7 @@ open class RowBackgroundImpl(owner: Context) : ContainerImpl(owner), RowBackgrou
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		bg.setSize(explicitWidth, explicitHeight)
+		bg.size(explicitWidth, explicitHeight)
 		out.set(bg.bounds)
 	}
 

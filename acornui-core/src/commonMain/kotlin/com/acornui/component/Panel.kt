@@ -70,9 +70,9 @@ open class Panel(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		contents.setSize(explicitWidth, explicitHeight)
+		contents.size(explicitWidth, explicitHeight)
 		out.set(contents.bounds)
-		background?.setSize(out.width, out.height)
+		background?.size(out.width, out.height)
 	}
 
 	open fun close() {

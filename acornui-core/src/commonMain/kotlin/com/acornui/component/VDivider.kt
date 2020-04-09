@@ -96,7 +96,7 @@ open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		_dividerBar?.setSize(explicitWidth, null)
+		_dividerBar?.size(explicitWidth, null)
 
 		val dividerBarHeight = _dividerBar?.height ?: 0f
 		val topHeight: Float
@@ -107,26 +107,26 @@ open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 			val bH = _bottom?.clampHeight(h * (1f - _split)) ?: 0f
 			topHeight = floor((_top?.clampHeight(h - bH) ?: 0f))
 			bottomHeight = minOf(bH, h - topHeight)
-			_top?.setSize(explicitWidth, topHeight)
-			_bottom?.setSize(explicitWidth, bottomHeight)
+			_top?.size(explicitWidth, topHeight)
+			_bottom?.size(explicitWidth, bottomHeight)
 		} else {
-			_top?.setSize(explicitWidth, null)
-			_bottom?.setSize(explicitWidth, null)
+			_top?.size(explicitWidth, null)
+			_bottom?.size(explicitWidth, null)
 			topHeight = _top?.height ?: 0f
 			bottomHeight = _bottom?.height ?: 0f
 		}
 		out.width = maxOf4(explicitWidth ?: 0f, _top?.width ?: 0f, _bottom?.width ?: 0f, _handle?.minWidth ?: 0f)
 		out.height = maxOf(explicitHeight ?: 0f, topHeight + dividerBarHeight + bottomHeight)
-		_top?.moveTo(0f, 0f)
+		_top?.position(0f, 0f)
 		if (_dividerBar != null)
-			_dividerBar!!.moveTo(0f, (topHeight + dividerBarHeight * 0.5f) - _dividerBar!!.height * 0.5f)
+			_dividerBar!!.position(0f, (topHeight + dividerBarHeight * 0.5f) - _dividerBar!!.height * 0.5f)
 		if (_handle != null) {
 			val handle = _handle!!
-			handle.setSize(null, null)
-			if (handle.width > out.width) handle.setSize(out.width, null) // Don't let the handle be too large.
-			handle.moveTo((out.width - handle.width) * 0.5f, (topHeight + dividerBarHeight * 0.5f) - handle.height * 0.5f)
+			handle.size(null, null)
+			if (handle.width > out.width) handle.size(out.width, null) // Don't let the handle be too large.
+			handle.position((out.width - handle.width) * 0.5f, (topHeight + dividerBarHeight * 0.5f) - handle.height * 0.5f)
 		}
-		_bottom?.moveTo(0f, topHeight + dividerBarHeight)
+		_bottom?.position(0f, topHeight + dividerBarHeight)
 	}
 
 	companion object : StyleTag

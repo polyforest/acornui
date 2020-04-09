@@ -66,7 +66,7 @@ class StatesButtonSkin(owner: Context,
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val currentSkinPart = currentSkinPart ?: return
-		currentSkinPart.setSize(explicitWidth, explicitHeight)
+		currentSkinPart.size(explicitWidth, explicitHeight)
 		out.set(currentSkinPart.bounds)
 	}
 }

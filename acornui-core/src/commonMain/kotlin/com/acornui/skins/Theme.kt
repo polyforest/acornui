@@ -17,7 +17,6 @@
 package com.acornui.skins
 
 import com.acornui.component.ButtonState
-import com.acornui.component.text.BitmapFontRequest
 import com.acornui.component.text.FontSize
 import com.acornui.component.text.FontStyle
 import com.acornui.component.text.FontWeight
@@ -101,15 +100,9 @@ data class Theme(
 		val atlasPath: String = "assets/uiskin/uiskin.json",
 
 		/**
-		 * A map of font size key [FontSize] to points.
-		 * The actual size chosen will be as follows:
-		 * - A size key matching the [FontSize] enumeration is set on [com.acornui.component.text.CharStyle].
-		 * - The point size value is retrieved from this map.
-		 * - The requested point size is multiplied by the [com.acornui.graphic.Window] dpi scaling to get the desired px.
-		 * - The next lower size from the available font is chosen. The sizes available are built in the font processor
-		 * from the settings.json within fonts_unprocessedFonts.
+		 * @see com.acornui.component.text.FontLoader.fontSizes
 		 */
-		val fontSizes: Map<String, Int> = mutableMapOf(
+		val fontSizes: Map<String, Int> = mapOf(
 				FontSize.EXTRA_SMALL to 10,
 				FontSize.SMALL to 14,
 				FontSize.REGULAR to 18,

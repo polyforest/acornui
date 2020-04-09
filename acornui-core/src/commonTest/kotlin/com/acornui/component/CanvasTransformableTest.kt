@@ -38,12 +38,12 @@ class CanvasTransformableTest {
 			val d: UiComponentRo
 			+container {
 				c = +container {
-					setSize(200f, 100f)
-					moveTo(50f, 75f)
+					size(200f, 100f)
+					position(50f, 75f )
 
 					d = +spacer(200f, 100f) {
 						setScaling(2f, 2f)
-						moveTo(120f, 170f)
+						position(120f, 170f )
 					}
 				}
 			}

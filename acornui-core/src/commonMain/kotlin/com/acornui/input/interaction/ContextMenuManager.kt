@@ -283,28 +283,28 @@ class ContextMenuView(owner: Context) : ContainerImpl(owner) {
 			val rightArrow = itemView.rightArrow
 			val cellHeight = itemView.height
 
-			icon?.moveTo(left, rowY + cellPadding.top + (cellHeight - icon.height) / 2f)
-			label.moveTo(left + gap + iconsW, rowY + cellPadding.top + (cellHeight - label.height) / 2f)
+			icon?.position(left, rowY + cellPadding.top + (cellHeight - icon.height) / 2f)
+			label.position(left + gap + iconsW, rowY + cellPadding.top + (cellHeight - label.height) / 2f)
 			val rightColX = left + gap + iconsW + gap + labelsW
-			hotkeyLabel?.moveTo(rightColX, rowY + cellPadding.top + (cellHeight - hotkeyLabel.height) / 2f)
-			rightArrow?.moveTo(rightColX, rowY + cellPadding.top + (cellHeight - rightArrow.height) / 2f)
+			hotkeyLabel?.position(rightColX, rowY + cellPadding.top + (cellHeight - hotkeyLabel.height) / 2f)
+			rightArrow?.position(rightColX, rowY + cellPadding.top + (cellHeight - rightArrow.height) / 2f)
 
 			val rowH = cellPadding.expandHeight(cellHeight)
-			itemView.background.setSize(measuredW, rowH)
-			itemView.background.moveTo(0f, rowY)
+			itemView.background.size(measuredW, rowH)
+			itemView.background.position(0f, rowY)
 
 			val rowBackground = itemView.background
 			rowBackground.rowIndex = i
 			rowBackground.highlighted = _highlightedRow == itemView && itemView.item.enabled
-			rowBackground.setSize(measuredW, rowH)
-			rowBackground.moveTo(0f, rowY)
+			rowBackground.size(measuredW, rowH)
+			rowBackground.position(0f, rowY)
 
 			rowY += rowH
 		}
 
 		out.set(measuredW, rowY + style.padding.bottom)
 
-		background?.setSize(out.width, out.height)
+		background?.size(out.width, out.height)
 	}
 
 	companion object : StyleTag

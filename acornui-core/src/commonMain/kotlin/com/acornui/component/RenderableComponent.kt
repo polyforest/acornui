@@ -28,7 +28,7 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 ) : UiComponentImpl(owner) {
 
 	protected abstract val renderable: T?
-
+	
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = renderable ?: return
 		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)

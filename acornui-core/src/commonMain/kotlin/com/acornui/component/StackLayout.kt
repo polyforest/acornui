@@ -59,8 +59,8 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 		for (i in 0..orderedElements.lastIndex) {
 			val child = orderedElements[i]
 			val layoutData = child.layoutDataCast
-			if (allowRelativeSizing) child.setSize(layoutData?.getPreferredWidth(measuredW), layoutData?.getPreferredHeight(measuredH))
-			else child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
+			if (allowRelativeSizing) child.size(layoutData?.getPreferredWidth(measuredW), layoutData?.getPreferredHeight(measuredH))
+			else child.size(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
 
 			if (measuredW == null || child.width > measuredW)
 				measuredW = child.width
@@ -97,7 +97,7 @@ class StackLayout : LayoutAlgorithm<StackLayoutStyle, StackLayoutData> {
 					VAlign.BOTTOM -> remainingSpace
 				}
 			}
-			element.moveTo(childX, childY)
+			element.position(childX, childY)
 		}
 		out.set(padding.expandWidth(measuredW ?: 0f), padding.expandHeight(measuredH
 				?: 0f), padding.top + if (measuredB == null) measuredH ?: 0f else measuredB)

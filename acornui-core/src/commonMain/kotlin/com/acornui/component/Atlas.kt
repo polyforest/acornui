@@ -106,9 +106,9 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	/**
 	 * [naturalWidth] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
-	 * scaling should be set on this sprite.
+	 * scaling should be set on this atlas.
 	 */
-	var scaleX: Float = 1f
+	override var scaleX: Float = 1f
 		set(value) {
 			field = value
 			sprite?.scaleX = value
@@ -117,32 +117,27 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	/**
 	 * [naturalHeight] uses uv coordinates multiplied by the texture size. If the texture uses dpi scaling, this
-	 * scaling should be set on this sprite.
+	 * scaling should be set on this atlas.
 	 */
-	var scaleY: Float = 1f
+	override var scaleY: Float = 1f
 		set(value) {
 			field = value
 			sprite?.scaleY = value
 			ninePatch?.scaleY = value
 		}
 
-	fun setScaling(scaleX: Float, scaleY: Float) {
-		this.scaleX = scaleX
-		this.scaleY = scaleY
-	}
-
 	override val naturalWidth: Float
 		get() {
 			val region = regionData ?: return 0f
 			val regionWidth = if (region.isRotated) region.bounds.height else region.bounds.width
-			return (region.padding[0] + regionWidth + region.padding[2]).toFloat()
+			return (region.padding[0] + regionWidth + region.padding[2]).toFloat() / scaleX
 		}
 
 	override val naturalHeight: Float
 		get() {
 			val region = regionData ?: return 0f
 			val regionHeight = if (region.isRotated) region.bounds.width else region.bounds.height
-			return (region.padding[1] + regionHeight + region.padding[3]).toFloat()
+			return (region.padding[1] + regionHeight + region.padding[3]).toFloat() / scaleY
 		}
 
 	private var totalPadLeft = 0f

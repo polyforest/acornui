@@ -17,21 +17,22 @@
 package com.acornui.component.text
 
 import com.acornui.asset.*
-import com.acornui.async.MainDispatcher
+import com.acornui.collection.sortedInsertionIndex
 import com.acornui.di.Context
-import com.acornui.di.ContextImpl
 import com.acornui.di.dependencyFactory
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.graphic.Texture
 import com.acornui.graphic.TextureAtlasData
 import com.acornui.graphic.configure
+import com.acornui.graphic.scaleIfPastAffordance
 import com.acornui.io.file.Path
 import com.acornui.isWhitespace2
 import com.acornui.logging.Log
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
-import com.acornui.recycle.Clearable
+import com.acornui.math.MathUtils
+import com.acornui.skins.FontLoaderImpl
 import kotlinx.coroutines.*
 
 /**
@@ -136,10 +137,25 @@ class Glyph(
 }
 
 /**
- * An overload of [loadFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
+ * An overload of [loadAndCacheFontFromDir] where the images directory is assumed to be the parent directory of the font data file.
  */
-suspend fun Context.loadFontFromDir(fontPath: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
-	return loadFontFromDir(fontPath, Path(fontPath).parent.value, cacheSet)
+suspend fun Context.loadAndCacheFontFromDir(fontPath: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
+	return loadAndCacheFontFromDir(fontPath, Path(fontPath).parent.value, cacheSet)
+}
+
+/**
+ * Loads and caches a font where the images are standalone files in the specified directory.
+ * @param fontPath The path of the font data file. (By default the font data loader expects a .fnt file
+ * in the AngelCode format, but this can be changed by associating a different type of loader for the
+ * BitmapFontData asset type.)
+ * @param imagesDir The directory of images.
+ * @param cacheSet The caching group, to allow the loaded assets to be disposed as one.
+ * @return Returns the loaded [BitmapFont].
+ */
+suspend fun Context.loadAndCacheFontFromDir(fontPath: String, imagesDir: String, cacheSet: CacheSet = cacheSet()): BitmapFont = withContext(Dispatchers.Default) {
+	cacheSet.getOrPutAsync(fontPath) {
+		loadFontFromDir(fontPath, imagesDir)
+	}.await()
 }
 
 /**
@@ -148,20 +164,18 @@ suspend fun Context.loadFontFromDir(fontPath: String, cacheSet: CacheSet = cache
  * in the AngelCode format, but this can be changed by associating a different type of loader for the
  * BitmapFontData asset type.)
  * @param imagesDir The directory of images.
- * @param cacheSet The caching group, to allow the loaded assets to be disposed as one.
+ * @return Returns the loaded [BitmapFont].
  */
-suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, cacheSet: CacheSet = cacheSet()): BitmapFont = withContext(Dispatchers.Default) {
+suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String): BitmapFont = withContext(Dispatchers.Default) {
 	val dir = Path(imagesDir)
-	val bitmapFontData = cacheSet.getOrPutAsync(fontPath) {
-		AngelCodeParser.parse(loadText(fontPath))
-	}.await()
+	val bitmapFontData = AngelCodeParser.parse(loadText(fontPath))
 
 	val n = bitmapFontData.pages.size
 	val pageTextureLoaders = ArrayList<Deferred<Texture>>()
 	for (i in 0 until n) {
 		val page = bitmapFontData.pages[i]
 		val imageFile = dir.resolve(page.imagePath)
-		pageTextureLoaders.add(cacheSet.getOrPutAsync(imageFile.value) {
+		pageTextureLoaders.add(async {
 			configureFontTexture(loadTexture(imageFile.value))
 		})
 	}
@@ -184,16 +198,9 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, cacheSe
 		)
 	}
 
-	val pageTextures = pageTextureLoaders.awaitAll()
-	withContext(MainDispatcher) {
-		pageTextures.forEach {
-			it.refInc()
-		}
-	}
-
 	val font = BitmapFont(
 			bitmapFontData,
-			pages = pageTextures,
+			pages = pageTextureLoaders.awaitAll(),
 			premultipliedAlpha = false,
 			glyphs = glyphs
 	)
@@ -201,6 +208,8 @@ suspend fun Context.loadFontFromDir(fontPath: String, imagesDir: String, cacheSe
 	font
 }
 
+
+@Deprecated("Not used")
 suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
 	val atlasFile = Path(atlasPath)
 
@@ -297,135 +306,68 @@ suspend fun Context.loadFontFromAtlas(fontKey: String, atlasPath: String, cacheS
 	)
 }
 
-@Suppress("EqualsOrHashCode")
-data class BitmapFontRequest(
+interface FontLoader {
 
-		/**
-		 * The font type face.
-		 */
-		val family: String,
-
-		/**
-		 * The name of the font size to be passed to the [BitmapFontRegistry.fontResolver].
-		 * @see FontSize
-		 */
-		val size: String,
-
-		/**
-		 * The name of the font weight to be passed to the [BitmapFontRegistry.fontResolver].
-		 * @see FontWeight
-		 */
-		val weight: String,
-
-		/**
-		 * The name of the font style to be passed to the [BitmapFontRegistry.fontResolver].
-		 * @see FontStyle
-		 */
-		val style: String,
-
-		/**
-		 * The dpi scaling for the font.
-		 */
-		val fontPixelDensity: Float
-) {
-
-	// Cache the hashcode; this data class is immutable.
-	private val hashCode by lazy {
-		var result = family.hashCode()
-		result = 31 * result + size.hashCode()
-		result = 31 * result + weight.hashCode()
-		result = 31 * result + style.hashCode()
-		result = 31 * result + fontPixelDensity.hashCode()
-		result
+	/**
+	 * Given a desired font size in px, returns the closest supported size (in px).
+	 */
+	fun getBestPxSize(sizePx: Int, family: FontFamily): Int {
+		val nearestSupportedIndex = MathUtils.clamp(family.sizes.sortedInsertionIndex(sizePx, matchForwards = false), 0, family.sizes.lastIndex)
+		return family.sizes[nearestSupportedIndex]
 	}
 
-	override fun hashCode(): Int {
-		return hashCode
-	}
-}
-
-typealias FontResolver = suspend (request: BitmapFontRequest) -> BitmapFont
-
-interface BitmapFontRegistry {
-
+	suspend fun loadAndCacheFamily(family: String): FontFamily
 
 	/**
-	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
-	 * the given key.
+	 * @param family
 	 */
-	fun setFontResolver(value: FontResolver)
+	suspend fun loadAndCacheFont(family: FontFamily, sizePx: Int, weight: String, style: String): BitmapFont
 
-	/**
-	 * Returns the font registered to the given style.
-	 */
-	suspend fun getFont(request: BitmapFontRequest): BitmapFont
-
-	/**
-	 * Removes a font from the registry, decrementing the references to its textures.
-	 * @return Returns true if the font was found.
-	 */
-	fun clearFont(request: BitmapFontRequest): Boolean
-
-	companion object : Context.Key<BitmapFontRegistry> {
+	companion object : Context.Key<FontLoader> {
 
 		override val factory = dependencyFactory {
-			BitmapFontRegistryImpl(it)
+			FontLoaderImpl(it)
 		}
 	}
 }
 
-class BitmapFontRegistryImpl(owner: Context) : ContextImpl(owner), BitmapFontRegistry, Clearable {
+/**
+ * A utility method around font loading that calculates the font face based off of a resolved [CharStyle] object.
+ * @return A
+ */
+suspend fun FontLoader.loadAndCacheFont(charStyle: CharStyle): FontAndDpiScaling {
+	val screenDensity = maxOf(charStyle.scaleX, charStyle.scaleY)
 
-	/**
-	 * family, size, weight, style -> Deferred<BitmapFont>
-	 */
-	private val registry = HashMap<BitmapFontRequest, Deferred<BitmapFont>>()
+	// Calculate the desired font size in pixels based off the pixel density and font size key.
+	val desiredDp = (charStyle.fontSizes[charStyle.fontSize] ?: error("Unknown size: $charStyle.fontSize")).toFloat()
+	val desiredPx = (desiredDp * screenDensity + 0.5f).toInt()
 
-	/**
-	 * If set, when a font is requested that isn't registered, this font resolver will be used to load the font with
-	 * the given key.
-	 */
-	private var fontResolver: FontResolver? = null
+	val fontFamily = loadAndCacheFamily(charStyle.fontFamily
+			?: error("fontFamily is expected to be provided by the skin."))
+	val actualPx = getBestPxSize(desiredPx, fontFamily)
+	val actualDp = actualPx.toFloat() / screenDensity
+	val font = loadAndCacheFont(fontFamily, actualPx, charStyle.fontWeight, charStyle.fontStyle)
 
-	override fun setFontResolver(value: FontResolver) {
-		fontResolver = value
-	}
-
-	/**
-	 * Returns the font registered to the given style.
-	 */
-	override suspend fun getFont(request: BitmapFontRequest): BitmapFont {
-		return registry.getOrPut(request) {
-			async {
-				fontResolver!!.invoke(request).apply {
-					pages.forEach(Texture::refInc)
-				}
-			}
-		}.await()
-	}
-
-	@UseExperimental(ExperimentalCoroutinesApi::class)
-	override fun clearFont(request: BitmapFontRequest): Boolean {
-		return registry[request]?.apply {
-			invokeOnCompletion {
-				if (it != null)
-					getCompleted().pages.forEach(Texture::refDec)
-			}
-			cancel()
-		} != null
-	}
-
-	override fun clear() {
-		registry.keys.forEach { clearFont(it) }
-		registry.clear()
-	}
-
-	override fun dispose() {
-		clear()
-		super.dispose()
-	}
-
+	val scale = scaleIfPastAffordance(actualDp, desiredDp, charStyle.scalingSnapAffordance)
+	return FontAndDpiScaling(font, charStyle.scaleX * scale, charStyle.scaleY * scale)
 }
+
+data class FontAndDpiScaling(
+
+		/**
+		 * The loaded bitmap font.
+		 */
+		val font: BitmapFont,
+
+		/**
+		 * The x scaling of dp to pixels.
+		 */
+		val scaleX: Float,
+
+		/**
+		 * The y scaling of dp to pixels.
+		 */
+		val scaleY: Float)
 
 private fun configureFontTexture(target: Texture): Texture {
 	target.filterMin = TextureMinFilter.LINEAR_MIPMAP_LINEAR

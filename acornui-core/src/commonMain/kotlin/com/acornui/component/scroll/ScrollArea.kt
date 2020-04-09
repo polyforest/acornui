@@ -260,7 +260,7 @@ open class ScrollArea<E : UiComponent>(
 
 		if (!(requireHScrolling || requireVScrolling)) {
 			// Size target without scrolling.
-			contents.setSize(explicitWidth, explicitHeight)
+			contents.size(explicitWidth, explicitHeight)
 		}
 		var needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > explicitWidth!! + 0.1f)
 		var needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > explicitHeight!! + 0.1f)
@@ -269,30 +269,30 @@ open class ScrollArea<E : UiComponent>(
 
 		if (needsHScrollBar && needsVScrollBar) {
 			// Needs both scroll bars.
-			contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+			contents.size(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
 		} else if (needsHScrollBar) {
 			// Needs horizontal scroll bar.
-			contents.setSize(explicitWidth, if (explicitHeight == null) null else explicitHeight - hScrollBarH)
+			contents.size(explicitWidth, if (explicitHeight == null) null else explicitHeight - hScrollBarH)
 			needsVScrollBar = allowVScrolling && (requireVScrolling || contents.height > contents.explicitHeight!! + 0.1f)
 			if (needsVScrollBar) {
 				// Adding the horizontal scroll bar causes the vertical scroll bar to be needed.
-				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+				contents.size(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
 			}
 		} else if (needsVScrollBar) {
 			// Needs vertical scroll bar.
-			contents.setSize(if (explicitWidth == null) null else explicitWidth - vScrollBarW, explicitHeight)
+			contents.size(if (explicitWidth == null) null else explicitWidth - vScrollBarW, explicitHeight)
 			needsHScrollBar = allowHScrolling && (requireHScrolling || contents.width > contents.explicitWidth!! + 0.1f)
 			if (needsHScrollBar) {
 				// Adding the vertical scroll bar causes the horizontal scroll bar to be needed.
-				contents.setSize(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+				contents.size(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
 			}
 		}
-		scrollRect.setSize(contents.explicitWidth, contents.explicitHeight)
+		scrollRect.size(contents.explicitWidth, contents.explicitHeight)
 
 		// Set the content mask to the explicit size of the contents stack, or the measured size if there was no bound.
 		val contentsSetW = scrollRect.explicitWidth ?: contents.width
 		val contentsSetH = scrollRect.explicitHeight ?: contents.height
-		scrollRect.setSize(contentsSetW, contentsSetH)
+		scrollRect.size(contentsSetW, contentsSetH)
 		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
 		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
 
@@ -302,24 +302,24 @@ open class ScrollArea<E : UiComponent>(
 		// Update the scroll models and scroll bar sizes.
 		if (needsHScrollBar) {
 			hScrollBar.visible = true
-			hScrollBar.setSize(explicitWidth!! - vScrollBarW2, hScrollBarH)
-			hScrollBar.moveTo(0f, out.height - hScrollBarH)
+			hScrollBar.size(explicitWidth!! - vScrollBarW2, hScrollBarH)
+			hScrollBar.position(0f, out.height - hScrollBarH)
 			hScrollBar.setScaling(minOf(1f, hScrollBar.explicitWidth!! / hScrollBar.width), 1f)
 		} else {
 			hScrollBar.visible = false
 		}
 		if (needsVScrollBar) {
 			vScrollBar.visible = true
-			vScrollBar.setSize(vScrollBarW, explicitHeight!! - hScrollBarH2)
-			vScrollBar.moveTo(out.width - vScrollBarW, 0f)
+			vScrollBar.size(vScrollBarW, explicitHeight!! - hScrollBarH2)
+			vScrollBar.position(out.width - vScrollBarW, 0f)
 			vScrollBar.setScaling(1f, minOf(1f, vScrollBar.explicitHeight!! / vScrollBar.height))
 		} else {
 			vScrollBar.visible = false
 		}
 		val corner = corner!!
 		if (needsHScrollBar && needsVScrollBar) {
-			corner.setSize(vScrollBarW, hScrollBarH)
-			corner.moveTo(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
+			corner.size(vScrollBarW, hScrollBarH)
+			corner.position(explicitWidth!! - vScrollBarW, explicitHeight!! - hScrollBarH)
 			corner.visible = true
 		} else {
 			corner.visible = false

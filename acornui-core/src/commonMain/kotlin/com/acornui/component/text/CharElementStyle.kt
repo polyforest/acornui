@@ -20,8 +20,20 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 
 interface CharElementStyleRo {
+	
+	/**
+	 * If true, a line will be drawn at the baseline.
+	 */
 	val underlined: Boolean
+
+	/**
+	 * If true, a line will be drawn at half baseline.
+	 */
 	val strikeThrough: Boolean
+
+	/**
+	 * The thickness of the underline or strikethrough, in dp.
+	 */
 	val lineThickness: Float
 	val selectedTextColorTint: ColorRo
 	val selectedBackgroundColor: ColorRo
@@ -29,6 +41,7 @@ interface CharElementStyleRo {
 	val backgroundColor: ColorRo
 	val scaleX: Float
 	val scaleY: Float
+	val scalingSnapAffordance: Float
 }
 
 /**
@@ -45,6 +58,7 @@ class CharElementStyle : CharElementStyleRo {
 	override val backgroundColor = Color()
 	override var scaleX: Float = 1f
 	override var scaleY: Float = 1f
+	override var scalingSnapAffordance: Float = 0f
 
 	fun set(charStyle: CharStyle) {
 		underlined = charStyle.underlined
@@ -56,5 +70,6 @@ class CharElementStyle : CharElementStyleRo {
 		backgroundColor.set(charStyle.backgroundColor)
 		scaleX = charStyle.scaleX
 		scaleY = charStyle.scaleY
+		scalingSnapAffordance = charStyle.scalingSnapAffordance
 	}
 }

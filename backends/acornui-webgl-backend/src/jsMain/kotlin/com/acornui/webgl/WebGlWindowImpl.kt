@@ -141,7 +141,7 @@ class WebGlWindowImpl(
 		val newWidth = canvas.offsetWidth.toFloat()
 		val newHeight = canvas.offsetHeight.toFloat()
 		if (newWidth == this.width && newHeight == this.height) return
-		Log.verbose("Window size changed to: $newWidth, $newHeight")
+		Log.debug("Window size changed to: $newWidth, $newHeight")
 		this.width = newWidth
 		this.height = newHeight
 		sizeIsDirty = true
@@ -190,10 +190,10 @@ class WebGlWindowImpl(
 		}
 
 	override val framebufferWidth: Int
-		get() = floor(width * scaleX).toInt()
+		get() = (width * scaleX + 0.5).toInt()
 
 	override val framebufferHeight: Int
-		get() = floor(height * scaleY).toInt()
+		get() = (height * scaleY + 0.5).toInt()
 
 	override var scaleX: Float = window.devicePixelRatio.toFloat()
 		private set
@@ -203,7 +203,7 @@ class WebGlWindowImpl(
 
 	override fun setSize(width: Float, height: Float) {
 		if (this.width == width && this.height == height) return
-		Log.verbose("Setting size: $width, $height")
+		Log.debug("Setting size: $width, $height")
 		this.width = width
 		this.height = height
 		canvas.style.width = "${width}px"
@@ -232,6 +232,7 @@ class WebGlWindowImpl(
 			sizeIsDirty = false
 			canvas.width = framebufferWidth
 			canvas.height = framebufferHeight
+			Log.debug("Canvas size: ${canvas.width} ${canvas.height}")
 		}
 	}
 

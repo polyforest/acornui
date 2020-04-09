@@ -57,7 +57,7 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 		val layoutData = element.layoutDataCast
 		val w = layoutData?.getPreferredWidth(childAvailableWidth)
 		val h = layoutData?.getPreferredHeight(childAvailableHeight)
-		element.setSize(w, h)
+		element.size(w, h)
 
 		// Position the element
 		val elementW = round(element.width)
@@ -78,15 +78,15 @@ class VirtualHorizontalLayout : VirtualLayoutAlgorithm<VirtualHorizontalLayoutSt
 		}
 
 		if (childAvailableHeight == null) {
-			element.moveTo(x, padding.top)
+			element.position(x, padding.top)
 		} else {
 			when (layoutData?.verticalAlign ?: verticalAlign) {
 				VAlign.TOP ->
-					element.moveTo(x, padding.top)
+					element.position(x, padding.top)
 				VAlign.MIDDLE ->
-					element.moveTo(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
+					element.position(x, padding.top + (childAvailableHeight - element.height) * 0.5f)
 				VAlign.BASELINE, VAlign.BOTTOM ->
-					element.moveTo(x, padding.top + (childAvailableHeight - element.height))
+					element.position(x, padding.top + (childAvailableHeight - element.height))
 			}
 		}
 	}

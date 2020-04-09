@@ -53,13 +53,13 @@ class ResizeableFramebuffer(
 		private set
 
 	/**
-	 * The width of this frame buffer, in points.
+	 * The width of this frame buffer, in dp.
 	 */
 	val width: Float
 		get() = widthPixels / scaleX
 
 	/**
-	 * The height of this frame buffer, in points.
+	 * The height of this frame buffer, in dp.
 	 */
 	val height: Float
 		get() = heightPixels / scaleY

@@ -25,7 +25,7 @@ import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.algorithm.CanvasLayout
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.layout.algorithm.CanvasLayoutStyle
-import com.acornui.component.layout.setSize
+import com.acornui.component.layout.size
 import com.acornui.component.style.OptionalSkinPart
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
@@ -436,7 +436,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		modalFillContainer.setSize(out)
+		modalFillContainer.size(out)
 	}
 }
 

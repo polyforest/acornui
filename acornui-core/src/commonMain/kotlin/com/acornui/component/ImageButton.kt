@@ -87,7 +87,7 @@ class ImageButton(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val element = element ?: return
-		element.setSize(explicitWidth, explicitHeight)
+		element.size(explicitWidth, explicitHeight)
 		out.set(element.bounds)
 	}
 

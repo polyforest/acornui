@@ -315,18 +315,18 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 		updateTabBarLayout(explicitWidth, explicitHeight)
 		val contentsHeight = if (explicitHeight == null) null else explicitHeight - tabBarHeight
 		val pad = style.contentsPadding
-		contents.setSize(pad.reduceWidth(explicitWidth), pad.reduceHeight(contentsHeight))
-		contents.moveTo(pad.left, tabBarHeight + pad.top)
-		background.setSize(pad.expandWidth(contents.width), pad.expandHeight(contents.height))
-		background.moveTo(0f, tabBarHeight)
+		contents.size(pad.reduceWidth(explicitWidth), pad.reduceHeight(contentsHeight))
+		contents.position(pad.left, tabBarHeight + pad.top)
+		background.size(pad.expandWidth(contents.width), pad.expandHeight(contents.height))
+		background.position(0f, tabBarHeight)
 		out.width = maxOf(background.width, tabBarWidth)
 		out.height = background.height + tabBarHeight
 	}
 
 	protected open fun updateTabBarLayout(explicitWidth: Float?, explicitHeight: Float?) {
 		val tabPadding = style.tabBarPadding
-		_tabBarContainer.setSize(tabPadding.reduceWidth(explicitWidth), null)
-		_tabBarContainer.setPosition(tabPadding.left, tabPadding.top)
+		_tabBarContainer.size(tabPadding.reduceWidth(explicitWidth), null)
+		_tabBarContainer.position(tabPadding.left, tabPadding.top)
 		this.tabBarHeight = tabPadding.expandHeight(_tabBarContainer.height)
 		this.tabBarWidth = tabPadding.expandWidth(_tabBarContainer.width)
 	}

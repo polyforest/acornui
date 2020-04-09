@@ -64,7 +64,7 @@ interface Window : Disposable {
 	/**
 	 * Dispatched when this window scale has changed.
 	 * (newWidth, newHeight)
-	 * newWidth and newHeight are in points, not pixels.
+	 * newWidth and newHeight are in dp, not pixels.
 	 */
 	val scaleChanged: Signal<(Float, Float) -> Unit>
 
@@ -75,12 +75,12 @@ interface Window : Disposable {
 	val refresh: Signal<() -> Unit>
 
 	/**
-	 * The width of the window, in points.
+	 * The width of the window, in dp.
 	 */
 	val width: Float
 
 	/**
-	 * The height of the window, in points.
+	 * The height of the window, in dp.
 	 */
 	val height: Float
 

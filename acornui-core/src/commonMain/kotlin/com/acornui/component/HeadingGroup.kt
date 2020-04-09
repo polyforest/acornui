@@ -73,15 +73,15 @@ open class HeadingGroup(owner: Context) : ElementContainerImpl<UiComponent>(owne
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val hP = style.headingPadding
-		heading?.setSize(hP.reduceWidth(explicitWidth), null)
-		heading?.setPosition(hP.left, hP.top)
+		heading?.size(hP.reduceWidth(explicitWidth), null)
+		heading?.position(hP.left, hP.top)
 		val headingW = hP.expandWidth(heading?.width ?: 0f)
 		val headingH = hP.expandHeight(heading?.height ?: 0f)
 
-		contents.setSize(explicitWidth, if (explicitHeight == null) null else explicitHeight - headingH)
-		contents.setPosition(0f, headingH)
+		contents.size(explicitWidth, if (explicitHeight == null) null else explicitHeight - headingH)
+		contents.position(0f, headingH)
 		out.set(maxOf(headingW, contents.width), headingH + contents.height)
-		background?.setSize(out.width, out.height)
+		background?.size(out.width, out.height)
 	}
 
 	companion object : StyleTag

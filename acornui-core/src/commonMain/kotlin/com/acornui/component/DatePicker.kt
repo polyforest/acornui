@@ -275,13 +275,13 @@ open class DatePicker(
 		val w = pad.reduceWidth(explicitWidth)
 		val h = pad.reduceHeight(explicitHeight)
 		val downArrow = this.downArrow!!
-		textInput.setSize(if (w == null) null else w - style.gap - downArrow.width, h)
-		textInput.setPosition(pad.left, pad.top)
-		downArrow.moveTo(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
+		textInput.size(if (w == null) null else w - style.gap - downArrow.width, h)
+		textInput.position(pad.left, pad.top)
+		downArrow.position(pad.left + textInput.width + style.gap, pad.top + (textInput.height - downArrow.height) * 0.5f)
 		out.set(pad.expandWidth(textInput.width + style.gap + downArrow.width), pad.expandHeight(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
-		background?.setSize(out.width, out.height)
+		background?.size(out.width, out.height)
 
-		calendarLift.moveTo(0f, out.height)
+		calendarLift.position(0f, out.height)
 	}
 
 	override fun clear() {

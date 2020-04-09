@@ -26,6 +26,7 @@ import com.acornui.component.style.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.gl.core.CachedGl20
+import com.acornui.graphic.Texture
 import kotlinx.coroutines.Job
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -69,8 +70,16 @@ interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
 	 */
 	val font: BitmapFont?
 
-	val windowScaleX: Float
-	val windowScaleY: Float
+	/**
+	 * The x scaling of dp to pixels.
+	 */
+	val scaleX: Float
+
+	/**
+	 * The y scaling of dp to pixels.
+	 */
+	val scaleY: Float
+
 
 }
 
@@ -109,7 +118,7 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement, Stylable {
 
 	private val gl = inject(CachedGl20)
-	private val fontRegistry = inject(BitmapFontRegistry)
+	private val fontLoader = inject(FontLoader)
 
 	override var textParent: TextNodeRo? = null
 
@@ -128,12 +137,20 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 
 	override var verticalAlign: FlowVAlign? = null
 
-	override var windowScaleX: Float = 1f
-	override var windowScaleY: Float = 1f
-
 	private var fontJob by cancellingJobProp<Job>()
 
 	override var font: BitmapFont? = null
+		set(value) {
+			if (field == value) return
+			field?.pages?.forEach(Texture::refDec)
+			field = value
+			field?.pages?.forEach(Texture::refInc)
+		}
+
+	override var scaleX: Float = 1f
+		private set
+
+	override var scaleY: Float = 1f
 		private set
 
 	//-------------------------------------------------------
@@ -157,7 +174,10 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 		_charElementStyle.set(charStyle)
 
 		fontJob = launchSupervised {
-			font = fontRegistry.getFont(charStyle.createFontRequest())
+			val loadedFont = fontLoader.loadAndCacheFont(charStyle)
+			scaleX = loadedFont.scaleX
+			scaleY = loadedFont.scaleY
+			font = loadedFont.font
 			textParent?.invalidate(ValidationFlags.LAYOUT)
 		}
 	}
@@ -173,11 +193,6 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 			val font = font ?: return 6f
 			return (font.data.glyphs[' ']?.advanceX?.toFloat() ?: 6f) / scaleX
 		}
-
-	private val scaleX: Float
-		get() = charStyle.scaleX
-	private val scaleY: Float
-		get() = charStyle.scaleY
 
 	operator fun Char?.unaryPlus() {
 		if (this == null) return
@@ -244,6 +259,7 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 		}
 
 	override fun dispose() {
+		font = null
 		clearElements(true)
 		super.dispose()
 	}

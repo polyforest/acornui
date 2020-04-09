@@ -106,7 +106,7 @@ class ScrollRectImpl(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		maskClip.setSize(explicitWidth, explicitHeight)
+		maskClip.size(explicitWidth, explicitHeight)
 		out.set(scroll.x, scroll.y, maskClip.width, maskClip.height, maskClip.baseline)
 		clipRegionLocal = clipRegion.set(out)
 	}

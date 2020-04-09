@@ -59,8 +59,8 @@ open class SimpleItemRenderer<E : Any>(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val pad = style.padding
-		textField.setSize(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
-		textField.moveTo(pad.left, pad.top)
+		textField.size(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
+		textField.position(pad.left, pad.top)
 		out.set(pad.expandWidth(textField.width), pad.expandHeight(textField.height))
 	}
 

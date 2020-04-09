@@ -148,7 +148,7 @@ open class ButtonImpl(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (skin != null) {
-			skin!!.setSize(explicitWidth, explicitHeight)
+			skin!!.size(explicitWidth, explicitHeight)
 			out.set(skin!!.bounds)
 		}
 	}

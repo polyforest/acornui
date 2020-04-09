@@ -51,13 +51,13 @@ open class HScrollBar(
 		val sUBW: Float = decrementButton?.width ?: 0f
 		val sDBW: Float = incrementButton?.width ?: 0f
 		val trackLd = track.layoutDataCast
-		track.setSize(trackLd?.getPreferredWidth(width - sUBW - sDBW), trackLd?.getPreferredHeight(height))
+		track.size(trackLd?.getPreferredWidth(width - sUBW - sDBW), trackLd?.getPreferredHeight(height))
 
 		// Position skin parts
 
-		track.moveTo(sUBW, trackLd.getY(height, track.height))
-		decrementButton?.moveTo(0f, decrementButton.layoutDataCast.getY(height, decrementButton.height))
-		incrementButton?.moveTo(width - incrementButton.width, incrementButton.layoutDataCast.getY(height, incrementButton.height))
+		track.position(sUBW, trackLd.getY(height, track.height))
+		decrementButton?.position(0f, decrementButton.layoutDataCast.getY(height, decrementButton.height))
+		incrementButton?.position(width - incrementButton.width, incrementButton.layoutDataCast.getY(height, incrementButton.height))
 	}
 
 	override fun updateThumbLayout(width: Float, height: Float, thumb: UiComponent) {
@@ -68,7 +68,7 @@ open class HScrollBar(
 
 		val thumbWidth = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
 		val thumbLd = thumb.layoutDataCast
-		thumb.setSize(thumbLd?.getPreferredWidth(thumbWidth), thumbLd?.getPreferredHeight(height))
+		thumb.size(thumbLd?.getPreferredWidth(thumbWidth), thumbLd?.getPreferredHeight(height))
 
 		val p = if (scrollDiff <= 0.000001f) 0f else (scrollModel.value - scrollModel.min) / scrollDiff
 
@@ -76,7 +76,7 @@ open class HScrollBar(
 		val maxX = maxTrack
 		val thumbW = thumb.width
 		val w = round(maxX - minX + 0.000001f) - thumbW
-		thumb.moveTo(p * w + minX, thumb.layoutDataCast.getY(height, thumb.height))
+		thumb.position(p * w + minX, thumb.layoutDataCast.getY(height, thumb.height))
 	}
 
 	override val minTrack: Float

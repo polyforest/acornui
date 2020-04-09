@@ -65,7 +65,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 			if (childAvailableHeight == null || layoutData?.heightPercent == null) {
 				val w = layoutData?.getPreferredWidth(if (allowRelativeSizing) measuredW else childAvailableWidth)
 				val h = layoutData?.getPreferredHeight(childAvailableHeight)
-				element.setSize(w, h)
+				element.size(w, h)
 				inflexibleHeight += element.height
 				if (measuredW == null || element.width > measuredW)
 					measuredW = element.width
@@ -85,7 +85,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 				if (layoutData?.heightPercent != null) {
 					val w = layoutData.getPreferredWidth(if (allowRelativeSizing) measuredW else childAvailableWidth)
 					val h = scale * layoutData.heightPercent!! * childAvailableHeight
-					element.setSize(w, h)
+					element.size(w, h)
 					if (measuredW == null || element.width > measuredW)
 						measuredW = element.width
 				}
@@ -117,7 +117,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 				HAlign.CENTER -> (measuredW - element.width) * 0.5f + padding.left
 				HAlign.RIGHT -> measuredW - element.width + padding.left
 			}
-			element.moveTo(x, y)
+			element.position(x, y)
 			y += element.height + gap
 			if (element.right > rightX) {
 				rightX = element.right

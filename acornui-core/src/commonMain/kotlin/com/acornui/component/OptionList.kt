@@ -476,13 +476,13 @@ open class OptionList<E : Any>(
 		val h = pad.reduceHeight(explicitHeight)
 		val downArrow = downArrow!!
 		downArrow.cursor(StandardCursor.HAND)
-		textInput.setSize(if (w == null) null else w - style.hGap - downArrow.width, h)
-		textInput.setPosition(pad.left, pad.top)
-		downArrow.moveTo(pad.left + textInput.width + style.hGap, pad.top + (textInput.height - downArrow.height) * 0.5f)
+		textInput.size(if (w == null) null else w - style.hGap - downArrow.width, h)
+		textInput.position(pad.left, pad.top)
+		downArrow.position(pad.left + textInput.width + style.hGap, pad.top + (textInput.height - downArrow.height) * 0.5f)
 		out.set(pad.expandWidth(textInput.width + style.hGap + downArrow.width), pad.expandHeight(maxOf(textInput.height, downArrow.height)), textInput.baselineY)
-		background?.setSize(out.width, out.height)
-		listLift.setSize(listWidth ?: out.width, listHeight)
-		listLift.moveTo(0f, out.height + style.vGap)
+		background?.size(out.width, out.height)
+		listLift.size(listWidth ?: out.width, listHeight)
+		listLift.position(0f, out.height + style.vGap)
 	}
 
 	override fun clear() {

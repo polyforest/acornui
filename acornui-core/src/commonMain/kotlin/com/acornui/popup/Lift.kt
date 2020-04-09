@@ -110,7 +110,7 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		contents.setSize(explicitWidth, explicitHeight)
+		contents.size(explicitWidth, explicitHeight)
 	}
 
 	private val tmpVec = vec3()

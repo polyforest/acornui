@@ -193,7 +193,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 				val explicitSpanHeight: Float? = if (style.rowHeight == null) null else style.rowHeight!! * rowSpan + style.verticalGap * (rowSpan - 1)
 				layoutData.getPreferredHeight(explicitSpanHeight)
 			}
-			element.setSize(cellW, cellH)
+			element.size(cellW, cellH)
 
 			if (layoutData.verticalAlign ?: style.verticalAlign == VAlign.BASELINE) {
 				val line = lines[rowIndex]
@@ -258,7 +258,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			}
 			val x = padding.left + measuredColWidths.sumByFloat2(0, colIndex - 1) { it } + style.horizontalGap * colIndex
 			val y = padding.top + lines.sumByFloat2(0, rowIndex - 1) { it.height } + style.verticalGap * rowIndex
-			element.moveTo(x + xOffset, y + yOffset)
+			element.position(x + xOffset, y + yOffset)
 		}
 		val width = padding.expandWidth(measuredColWidths.sumByFloat2 { it } + style.horizontalGap * columns.lastIndex)
 		val height = padding.expandHeight(lines.sumByFloat2 { it.height } + style.verticalGap * lines.lastIndex)

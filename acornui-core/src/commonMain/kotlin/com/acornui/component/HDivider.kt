@@ -93,7 +93,7 @@ open class HDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		_dividerBar?.setSize(null, explicitHeight)
+		_dividerBar?.size(null, explicitHeight)
 
 		val dividerBarWidth = _dividerBar?.width ?: 0f
 		val leftWidth: Float
@@ -104,25 +104,25 @@ open class HDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 			val rW = _right?.clampWidth(w * (1f - _split)) ?: 0f
 			leftWidth = floor((_left?.clampWidth(w - rW) ?: 0f))
 			rightWidth = minOf(rW, w - leftWidth)
-			_left?.setSize(leftWidth, explicitHeight)
-			_right?.setSize(rightWidth, explicitHeight)
+			_left?.size(leftWidth, explicitHeight)
+			_right?.size(rightWidth, explicitHeight)
 		} else {
-			_left?.setSize(null, explicitHeight)
-			_right?.setSize(null, explicitHeight)
+			_left?.size(null, explicitHeight)
+			_right?.size(null, explicitHeight)
 			leftWidth = _left?.width ?: 0f
 			rightWidth = _right?.width ?: 0f
 		}
 		out.width = maxOf(explicitWidth ?: 0f, leftWidth + dividerBarWidth + rightWidth)
 		out.height = maxOf4(explicitHeight ?: 0f, _left?.height ?: 0f, _right?.height ?: 0f, _handle?.minHeight ?: 0f)
-		_left?.moveTo(0f, 0f)
+		_left?.position(0f, 0f)
 		if (_dividerBar != null)
-			_dividerBar!!.moveTo(leftWidth, 0f)
-		_right?.moveTo(leftWidth + dividerBarWidth, 0f)
+			_dividerBar!!.position(leftWidth, 0f)
+		_right?.position(leftWidth + dividerBarWidth, 0f)
 		if (_handle != null) {
 			val handle = _handle!!
-			handle.setSize(null, null)
-			if (handle.height > out.height) handle.setSize(null, out.height) // Don't let the handle be too large.
-			handle.moveTo((leftWidth + dividerBarWidth * 0.5f) - handle.width * 0.5f, (out.height - handle.height) * 0.5f)
+			handle.size(null, null)
+			if (handle.height > out.height) handle.size(null, out.height) // Don't let the handle be too large.
+			handle.position((leftWidth + dividerBarWidth * 0.5f) - handle.width * 0.5f, (out.height - handle.height) * 0.5f)
 		}
 	}
 

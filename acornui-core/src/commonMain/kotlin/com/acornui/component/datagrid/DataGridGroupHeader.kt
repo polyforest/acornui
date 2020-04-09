@@ -23,7 +23,7 @@ import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.HorizontalLayoutStyle
-import com.acornui.component.layout.setSize
+import com.acornui.component.layout.size
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -92,7 +92,7 @@ open class DataGridGroupHeaderImpl<E>(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		background?.setSize(out)
+		background?.size(out)
 	}
 }
 

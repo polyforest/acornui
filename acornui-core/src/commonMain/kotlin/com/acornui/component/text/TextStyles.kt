@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component.text
 
 import com.acornui.collection.addAll
@@ -24,6 +26,7 @@ import com.acornui.component.style.*
 import com.acornui.di.Context
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.DpiStyle
 import com.acornui.math.Corners
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
@@ -62,7 +65,7 @@ object TextStyleTags {
 /**
  * A shortcut to creating a text field with the [TextStyleTags.heading] tag.
  */
-inline fun Context.headingText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.headingText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.heading)
@@ -74,7 +77,7 @@ inline fun Context.headingText(text: String = "", init: ComponentInit<TextField>
 /**
  * A shortcut to creating a text field with the [TextStyleTags.large] tag.
  */
-inline fun Context.largeText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.largeText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.large)
@@ -86,7 +89,7 @@ inline fun Context.largeText(text: String = "", init: ComponentInit<TextField> =
 /**
  * A shortcut to creating a text field with the [TextStyleTags.small] tag.
  */
-inline fun Context.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.smallText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.small)
@@ -99,7 +102,7 @@ inline fun Context.smallText(text: String = "", init: ComponentInit<TextField> =
 /**
  * A shortcut to creating a text field with the [TextStyleTags.strong] tag.
  */
-inline fun Context.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.strongText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.strong)
@@ -111,7 +114,7 @@ inline fun Context.strongText(text: String = "", init: ComponentInit<TextField> 
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] tag.
  */
-inline fun Context.emphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.emphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.emphasis)
@@ -123,7 +126,7 @@ inline fun Context.emphasizedText(text: String = "", init: ComponentInit<TextFie
 /**
  * A shortcut to creating a text field with the [TextStyleTags.emphasis] and [TextStyleTags.strong] tags.
  */
-inline fun Context.strongEmphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.strongEmphasizedText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.addAll(TextStyleTags.emphasis, TextStyleTags.strong)
@@ -135,7 +138,7 @@ inline fun Context.strongEmphasizedText(text: String = "", init: ComponentInit<T
 /**
  * A shortcut to creating a text field with the [TextStyleTags.error] tag.
  */
-inline fun Context.errorText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.errorText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.error)
@@ -147,7 +150,7 @@ inline fun Context.errorText(text: String = "", init: ComponentInit<TextField> =
 /**
  * A shortcut to creating a text field with the [TextStyleTags.warning] tag.
  */
-inline fun Context.warningText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.warningText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.warning)
@@ -159,7 +162,7 @@ inline fun Context.warningText(text: String = "", init: ComponentInit<TextField>
 /**
  * A shortcut to creating a text field with the [TextStyleTags.info] tag.
  */
-inline fun Context.infoText(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
+inline fun Context.infoText(text: String = "", init: ComponentInit<TextField> = {}): TextField {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextFieldImpl(this)
 	t.styleTags.add(TextStyleTags.info)
@@ -171,7 +174,7 @@ inline fun Context.infoText(text: String = "", init: ComponentInit<TextField> = 
 /**
  * The glyph characteristics.
  */
-class CharStyle : StyleBase() {
+class CharStyle : DpiStyle() {
 
 	override val type: StyleType<CharStyle> = CharStyle
 
@@ -182,8 +185,7 @@ class CharStyle : StyleBase() {
 	var fontFamily by prop<String?>(null)
 
 	/**
-	 * The size of the font. This should be a string that matches the what the [FontResolver] expects in the
-	 * [BitmapFontRegistry]
+	 * The size of the font. This should be a string that matches a key in the [fontSizes] map.
 	 *
 	 * This is not typically set directly, but provided by the skin. Use the corresponding tags in [TextStyleTags].
 	 *
@@ -250,34 +252,26 @@ class CharStyle : StyleBase() {
 	var selectable by prop(true)
 
 	/**
-	 * The scaling of points to pixels.
-	 * This should correspond to the [com.acornui.graphic.Window.scaleX].
+	 * A map of font size key [FontSize] to dp (density independent pixels).
+	 *
+	 * The actual px size chosen will be as follows:
+	 * - A size key matching the [FontSize] key value is set on [com.acornui.component.text.CharStyle.fontSize].
+	 * - The dp value is retrieved from this map.
+	 * - The requested point size is multiplied by the requested pixel density scaling to get the desired px.
+	 * - The next lower size from the available font is chosen. The sizes available are built in the font processor
+	 * from the settings.json within fonts_unprocessedFonts.
 	 */
-	var scaleX: Float by prop(1f)
+	var fontSizes: Map<String, Int> by prop(emptyMap())
 
-	/**
-	 * The scaling of points to pixels.
-	 * This should correspond to the [com.acornui.graphic.Window.scaleY].
-	 */
-	var scaleY: Float by prop(1f)
+	companion object : StyleType<CharStyle> {
 
-	companion object : StyleType<CharStyle>
+		override val extends: StyleType<*>? = DpiStyle
+	}
 }
 
-fun CharStyle.createFontRequest(): BitmapFontRequest {
-	return BitmapFontRequest(
-			fontFamily ?: error("fontFamily is expected to be provided by the skin."),
-			fontSize,
-			fontWeight,
-			fontStyle,
-			fontPixelDensity = scaleY
-	)
-}
-
-fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
-	val c = CharStyle()
-	c.init()
-	return c
+inline fun charStyle(init: ComponentInit<CharStyle> = {}): CharStyle {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return CharStyle().apply(init)
 }
 
 object FontWeight {

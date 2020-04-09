@@ -51,13 +51,13 @@ open class VScrollBar(
 		val sUBH: Float = decrementButton?.height ?: 0f
 		val sDBH: Float = incrementButton?.height ?: 0f
 		val trackLd = track.layoutDataCast
-		track.setSize(trackLd?.getPreferredWidth(width), trackLd?.getPreferredHeight(height - sUBH - sDBH))
+		track.size(trackLd?.getPreferredWidth(width), trackLd?.getPreferredHeight(height - sUBH - sDBH))
 
 		// Position skin parts
 
-		track.moveTo(trackLd.getX(width, track.width), sUBH)
-		decrementButton?.moveTo(decrementButton.layoutDataCast.getX(width, decrementButton.width), 0f)
-		incrementButton?.moveTo(incrementButton.layoutDataCast.getX(width, incrementButton.width), height - incrementButton.height)
+		track.position(trackLd.getX(width, track.width), sUBH)
+		decrementButton?.position(decrementButton.layoutDataCast.getX(width, decrementButton.width), 0f)
+		incrementButton?.position(incrementButton.layoutDataCast.getX(width, incrementButton.width), height - incrementButton.height)
 	}
 
 	override fun updateThumbLayout(width: Float, height: Float, thumb: UiComponent) {
@@ -68,7 +68,7 @@ open class VScrollBar(
 
 		val thumbHeight = (thumbAvailable * thumbAvailable) / maxOf(1f, thumbAvailable + scrollDiff * modelToPoints)
 		val thumbLd = thumb.layoutDataCast
-		thumb.setSize(thumbLd?.getPreferredWidth(width), thumbLd?.getPreferredHeight(thumbHeight))
+		thumb.size(thumbLd?.getPreferredWidth(width), thumbLd?.getPreferredHeight(thumbHeight))
 
 		val p = if (scrollDiff <= 0.000001f) 0f else (scrollModel.value - scrollModel.min) / scrollDiff
 
@@ -76,7 +76,7 @@ open class VScrollBar(
 		val maxY = maxTrack
 		val thumbH = thumb.height
 		val h = round(maxY - minY + 0.000001f) - thumbH
-		thumb.moveTo(thumb.layoutDataCast.getX(width, thumb.width), p * h + minY)
+		thumb.position(thumb.layoutDataCast.getX(width, thumb.width), p * h + minY)
 	}
 
 	override val minTrack: Float

@@ -311,15 +311,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				} else {
 					bottomContents.bottomIndexPosition = data.lastIndex.toFloat()
 				}
-				bottomContents.setSize(scrollAreaW, h)
+				bottomContents.size(scrollAreaW, h)
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					contents.setSize(bottomContents.width, h ?: bottomContents.height)
+					contents.size(bottomContents.width, h ?: bottomContents.height)
 					scrollBar.visible = true
-					scrollBar.setSize(vScrollBarW, bottomContents.height)
+					scrollBar.size(vScrollBarW, bottomContents.height)
 					val sBX = if (explicitWidth == null) pad.left + bottomContents.width else explicitWidth - pad.right - vScrollBarW
-					scrollBar.setPosition(sBX, pad.top)
+					scrollBar.position(sBX, pad.top)
 				} else {
 					// Auto scroll policy and we don't need a scroll bar.
 					scrollBar.visible = false
@@ -328,8 +328,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				contents.setSize(w, h)
-				bottomContents.setSize(w, h)
+				contents.size(w, h)
+				bottomContents.size(w, h)
 			}
 			scrollBar.modelToPoints = bottomContents.height / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		} else {
@@ -342,15 +342,15 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				} else {
 					bottomContents.bottomIndexPosition = data.lastIndex.toFloat()
 				}
-				bottomContents.setSize(w, scrollAreaH)
+				bottomContents.size(w, scrollAreaH)
 
 				if (scrollPolicy == ScrollPolicy.ON || bottomContents.visiblePosition > 0f) {
 					// Keep the scroll bar.
-					contents.setSize(w ?: bottomContents.width, bottomContents.height)
+					contents.size(w ?: bottomContents.width, bottomContents.height)
 					scrollBar.visible = true
-					scrollBar.setSize(bottomContents.width, hScrollBarH)
+					scrollBar.size(bottomContents.width, hScrollBarH)
 					val sBY = if (explicitHeight == null) pad.top + bottomContents.height else explicitHeight - pad.bottom - hScrollBarH
-					scrollBar.setPosition(pad.left, sBY)
+					scrollBar.position(pad.left, sBY)
 				} else {
 					// Auto scroll policy and we don't need a scroll bar.
 					scrollBar.visible = false
@@ -359,8 +359,8 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 				scrollBar.visible = false
 			}
 			if (!scrollBar.visible) {
-				contents.setSize(w, h)
-				bottomContents.setSize(w, h)
+				contents.size(w, h)
+				bottomContents.size(w, h)
 			}
 			scrollBar.modelToPoints = bottomContents.width / maxOf(0.0001f, bottomContents.visibleBottomPosition - bottomContents.visiblePosition)
 		}
@@ -369,7 +369,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		val scrollBarW = if (isVertical && scrollBar.visible) scrollBar.width else 0f
 		out.set(explicitWidth ?: pad.expandWidth(bottomContents.width + scrollBarW), explicitHeight
 				?: pad.expandHeight(bottomContents.height + scrollBarH))
-		clipper.setSize(pad.reduceWidth(out.width - scrollBarW), pad.reduceHeight(out.height - scrollBarH))
+		clipper.size(pad.reduceWidth(out.width - scrollBarW), pad.reduceHeight(out.height - scrollBarH))
 
 		scrollBar.scrollModel.max = bottomContents.visiblePosition
 
@@ -391,21 +391,21 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 			rowBackground.highlighted = false
 		}
 		rowBackgroundsCache.flip()
-		clipper.setPosition(pad.left, pad.top)
+		clipper.position(pad.left, pad.top)
 
-		scrollBarClipper.setSize(out)
-		background?.setSize(out)
+		scrollBarClipper.size(out)
+		background?.size(out)
 	}
 
 	private fun updateRowBackgroundForRenderer(renderer: ListRendererRo): RowBackground {
 		val rowBackground = rowBackgroundsCache.obtain(renderer.index)
 		rowBackground.rowIndex = renderer.index
 		if (isVertical) {
-			rowBackground.setSize(bottomContents.width, renderer.height)
-			rowBackground.moveTo(0f, renderer.y)
+			rowBackground.size(bottomContents.width, renderer.height)
+			rowBackground.position(0f, renderer.y)
 		} else {
-			rowBackground.setSize(renderer.width, bottomContents.height)
-			rowBackground.moveTo(renderer.x, 0f)
+			rowBackground.size(renderer.width, bottomContents.height)
+			rowBackground.position(renderer.x, 0f)
 		}
 		return rowBackground
 	}

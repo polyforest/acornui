@@ -179,24 +179,33 @@ interface SizableRo {
 interface Sizable : SizableRo {
 
 	/**
-	 * Does the same thing as setting [width] and [height] individually, but may be more efficient depending on
-	 * implementation.
+	 * Sets the explicit dimensions of this component.
+	 *
 	 * @param width The explicit width for the component. Use null to use the natural measured width.
 	 * @param height The explicit height for the component. Use null to use the natural measured height.
 	 */
-	fun setSize(width: Float?, height: Float?)
+	fun size(width: Float?, height: Float?)
+
+	@Deprecated("use size", ReplaceWith("size(width, height)"))
+	fun setSize(width: Float?, height: Float?) = size(width, height)
 
 	/**
 	 * Sets the explicit width for this layout element. (A null value represents using the measured width)
 	 */
-	fun width(value: Float?) = setSize(width = value, height = explicitHeight)
+	fun width(value: Float?) = size(width = value, height = explicitHeight)
 
 
 	/**
 	 * Sets the explicit height for this layout element. (A null value represents using the measured height)
 	 */
-	fun height(value: Float?) = setSize(width = explicitWidth, height = value)
+	fun height(value: Float?) = size(width = explicitWidth, height = value)
 
 }
 
-fun LayoutElement.setSize(bounds: BoundsRo) = setSize(bounds.width, bounds.height)
+/**
+ * @see LayoutElement.size
+ */
+fun LayoutElement.size(bounds: BoundsRo) = size(bounds.width, bounds.height)
+
+@Deprecated("use size", ReplaceWith("this.size(width, height)"))
+fun LayoutElement.setSize(bounds: BoundsRo) = size(bounds)

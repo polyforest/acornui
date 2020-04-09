@@ -161,16 +161,16 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 			if (softKeyboardView == null)
 				softKeyboardView = addChild(softKeyboardManager.createView(this))
 			val keyboardView = softKeyboardView!!
-			keyboardView.setSize(w, null)
-			keyboardView.setPosition(0f, h - keyboardView.height)
+			keyboardView.size(w, null)
+			keyboardView.position(0f, h - keyboardView.height)
 			keyboardView.height
 		} else 0f
 
 		elementsToLayout.forEach2 {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			it.setSize(w, h - softKeyboardH)
+			it.size(w, h - softKeyboardH)
 		}
-		popUpManagerView.setSize(w, h - softKeyboardH)
+		popUpManagerView.size(w, h - softKeyboardH)
 		out.set(w, h)
 	}
 

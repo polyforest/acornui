@@ -23,7 +23,6 @@ import com.acornui.collection.forEach2
 import com.acornui.component.ValidationFlags.LAYOUT
 import com.acornui.component.ValidationFlags.VIEW_PROJECTION
 import com.acornui.di.Context
-import com.acornui.gl.core.useCamera
 import com.acornui.gl.core.useViewport
 import com.acornui.graphic.Camera
 import com.acornui.graphic.OrthographicCamera
@@ -77,7 +76,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		camera.moveToLookAtRect(0f, 0f, out.width, out.height)
 		elementsToLayout.forEach2 {
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			it.setSize(explicitWidth, explicitHeight)
+			it.size(explicitWidth, explicitHeight)
 		}
 	}
 

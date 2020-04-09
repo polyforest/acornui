@@ -121,17 +121,15 @@ open class BasicUiSkin(
 	}
 
 	protected open fun textFontStyle() {
-		inject(BitmapFontRegistry).setFontResolver { request ->
-			val fontFile = FontPathResolver.getPath(target, theme, request)
-					?: throw Exception("Font not found: $request")
-			loadFontFromDir(fontFile)
-		}
 		theme.bodyFont.addStyles()
 		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading))
 		theme.formLabelFont.addStyles(withAncestor(formLabelStyle))
 	}
 
 	protected open fun textStyle() {
+		target.addStyleRule(charStyle {
+			fontSizes = theme.fontSizes
+		})
 		target.addStyleRule(charStyle { selectable = theme.selectableText }, not(withAncestor(TextInput) or withAncestor(TextArea)))
 		val textInputStyle = TextInputStyle().apply {
 			background = {

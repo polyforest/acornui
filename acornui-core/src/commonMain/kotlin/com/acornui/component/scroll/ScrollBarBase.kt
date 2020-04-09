@@ -282,10 +282,10 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 		val h = explicitHeight ?: maxOf(minHeight, style.naturalHeight)
 
 		val decrementButtonLd = decrementButton?.layoutDataCast
-		decrementButton?.setSize(decrementButtonLd?.getPreferredWidth(null), decrementButtonLd?.getPreferredHeight(null))
+		decrementButton?.size(decrementButtonLd?.getPreferredWidth(null), decrementButtonLd?.getPreferredHeight(null))
 
 		val incrementButtonLd = incrementButton?.layoutDataCast
-		incrementButton?.setSize(incrementButtonLd?.getPreferredWidth(null), incrementButtonLd?.getPreferredHeight(null))
+		incrementButton?.size(incrementButtonLd?.getPreferredWidth(null), incrementButtonLd?.getPreferredHeight(null))
 
 		updatePartsLayout(w, h, decrementButton, incrementButton, track)
 

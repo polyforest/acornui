@@ -71,7 +71,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			val layoutData = element.layoutDataCast
-			element.setSize(layoutData?.getPreferredWidth(availableWidth), layoutData?.getPreferredHeight(availableHeight))
+			element.size(layoutData?.getPreferredWidth(availableWidth), layoutData?.getPreferredHeight(availableHeight))
 			val w = element.width
 			val h = element.height
 			val doesOverhang = layoutData?.overhangs ?: false
@@ -172,7 +172,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 				FlowVAlign.BOTTOM -> (line.height - element.height)
 				FlowVAlign.BASELINE -> line.baseline - element.baseline
 			}
-			element.moveTo(line.x + x, line.y + yOffset)
+			element.position(line.x + x, line.y + yOffset)
 			x += element.width + hGap
 		}
 	}

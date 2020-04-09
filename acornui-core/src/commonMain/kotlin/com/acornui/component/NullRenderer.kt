@@ -54,8 +54,8 @@ class NullRenderer(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val contents = contents ?: return
 		val pad = style.padding
-		contents.setSize(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
-		contents.moveTo(pad.left, pad.top)
+		contents.size(pad.expandWidth(explicitWidth), pad.expandHeight(explicitHeight))
+		contents.position(pad.left, pad.top)
 		out.set(pad.expandWidth(contents.width), pad.expandHeight(contents.height))
 	}
 

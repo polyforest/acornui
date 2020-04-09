@@ -206,21 +206,21 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 
 		val w = if (explicitWidth == null && defaultWidthFromText != null) {
 			editableText.validate(ValidationFlags.STYLES)
-			val font = editableText.textField.loadedFont
+			val font = editableText.textField.font
 			font?.data?.measureLineWidth(defaultWidthFromText!!)?.toFloat() ?: 0f
 		} else {
 			margin.reduceWidth(pad.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth))
 		}
 
-		editableText.setSize(w, h)
-		editableText.setPosition(margin.left + pad.left, margin.top + pad.top)
+		editableText.size(w, h)
+		editableText.position(margin.left + pad.left, margin.top + pad.top)
 		out.set(
 				explicitWidth ?: margin.expandHeight(pad.expandHeight(w)),
 				explicitHeight ?: margin.expandHeight(pad.expandHeight(editableText.height)),
 				baseline = editableText.baseline + editableText.y
 		)
-		background?.setSize(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
-		background?.setPosition(margin.left, margin.top)
+		background?.size(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
+		background?.position(margin.left, margin.top)
 	}
 
 	override fun clear() {
@@ -447,23 +447,23 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		val w = margin.reduceWidth(explicitWidth ?: textInputStyle.defaultWidth)
 		val rows = rows
 		val h = if (explicitHeight == null && rows != null) {
-			val font = editableText.textField.loadedFont
+			val font = editableText.textField.font
 			val fontData = font?.data
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
 			textInputStyle.padding.expandHeight(lineHeight * rows)
 		} else {
 			margin.reduceHeight(explicitHeight)
 		}
-		scroller.setSize(w, h)
-		scroller.setPosition(margin.left, margin.top)
+		scroller.size(w, h)
+		scroller.position(margin.left, margin.top)
 		editableText.pageHeight = h ?: 400f
 		out.set(
 				explicitWidth ?: textInputStyle.defaultWidth,
 				explicitHeight ?: margin.expandHeight(scroller.height),
 				baseline = editableText.baseline + editableText.y
 		)
-		background?.setSize(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
-		background?.setPosition(margin.left, margin.top)
+		background?.size(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
+		background?.position(margin.left, margin.top)
 	}
 
 	override fun clear() {

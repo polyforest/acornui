@@ -139,7 +139,7 @@ private class SoftKeyboardContainer(owner: Context, private val manager: SoftKey
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
-		softKeyboard.setSize(explicitWidth, explicitHeight)
+		softKeyboard.size(explicitWidth, explicitHeight)
 		out.set(softKeyboard.width, softKeyboard.height * showPercent)
 	}
 

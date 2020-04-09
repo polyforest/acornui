@@ -76,7 +76,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		style.backgroundColor = Color.WHITE
 		layoutInvalidatingFlags = ValidationFlags.LAYOUT // Allows us to toggle visibility on this cursor and not affect layout.
 		setOrigin(1f, 0f)
-		setSize(2f, 2f)
+		size(2f, 2f)
 		colorTint = Color.CLEAR
 	})
 
@@ -603,7 +603,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		textField.setSize(explicitWidth, explicitHeight)
+		textField.size(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
 	}
 

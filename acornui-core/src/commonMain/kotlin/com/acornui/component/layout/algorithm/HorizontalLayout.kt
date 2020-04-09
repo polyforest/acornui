@@ -67,7 +67,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 			if (childAvailableWidth == null || layoutData?.widthPercent == null) {
 				val w = layoutData?.getPreferredWidth(childAvailableWidth)
 				val h = layoutData?.getPreferredHeight(if (allowRelativeSizing) measuredH else childAvailableHeight)
-				element.setSize(w, h)
+				element.size(w, h)
 				inflexibleWidth += element.width
 
 				if (layoutData?.verticalAlign ?: style.verticalAlign == VAlign.BASELINE && element.baseline > baseline)
@@ -90,7 +90,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				if (layoutData?.widthPercent != null) {
 					val h = layoutData.getPreferredHeight(if (allowRelativeSizing) measuredH else childAvailableHeight)
 					val w = scale * layoutData.widthPercent!! * childAvailableWidth
-					element.setSize(w, h)
+					element.size(w, h)
 					if (layoutData.verticalAlign ?: style.verticalAlign == VAlign.BASELINE && element.baseline > baseline)
 						baseline = element.baseline
 					if (measuredH == null || element.height > measuredH)
@@ -124,7 +124,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 				VAlign.BOTTOM -> measuredH - element.height
 				VAlign.BASELINE -> baseline - element.baseline
 			}
-			element.moveTo(x, y)
+			element.position(x, y)
 			x += element.width + gap
 			if (element.bottom > bottomY) {
 				bottomY = element.bottom

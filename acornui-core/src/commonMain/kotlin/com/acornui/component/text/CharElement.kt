@@ -51,10 +51,10 @@ class CharElement private constructor() : TextElement, Clearable {
 	override var y = 0f
 
 	private val scaleX: Float
-		get() = style?.scaleX ?: 1f
+		get() = parentSpan?.scaleX ?: 1f
 
 	private val scaleY: Float
-		get() = style?.scaleY ?: 1f
+		get() = parentSpan?.scaleY ?: 1f
 
 	override val advanceX: Float
 		get() = (glyph?.advanceX?.toFloat() ?: 0f) / scaleX
@@ -107,6 +107,8 @@ class CharElement private constructor() : TextElement, Clearable {
 		val x = x
 		val y = y
 		val glyph = glyph ?: return
+		val scaleX = scaleX
+		val scaleY = scaleY
 
 		val lineHeight = parentSpan?.lineHeight ?: 0f
 		val bgL = maxOf(leftClip, x)
@@ -129,7 +131,7 @@ class CharElement private constructor() : TextElement, Clearable {
 		var regionB = region.bottom.toFloat()
 
 
-		// Points
+		// DP
 		var charL = x + glyph.offsetX / scaleX
 		var charT = y + glyph.offsetY / scaleY
 		var charR = charL + glyph.width / scaleX
@@ -179,7 +181,7 @@ class CharElement private constructor() : TextElement, Clearable {
 			var lineR = x + glyph.advanceX
 			if (lineL > rightClip) lineR = rightClip
 			var lineT = y + if (style.strikeThrough) {
-				floor((baseline / 2f))
+				floor(baseline / 2f)
 			} else {
 				baseline + 1f
 			}

@@ -87,7 +87,7 @@ class TossScroller(
 	private val velocityCurrent = vec2()
 
 	/**
-	 * The current velocity of the toss in points per second.
+	 * The current velocity of the toss in dp per second.
 	 */
 	val velocity: Vector2Ro = velocityCurrent
 
@@ -273,7 +273,7 @@ class TossScroller(
 }
 
 /**
- * Converts the current toss difference in points to whatever unit the scroll models are using.
+ * Converts the current toss difference in dp to whatever unit the scroll models are using.
  */
 typealias PointsToModel = (modelStart: Vector2Ro, diffPoints: Vector2Ro, out: Vector2) -> Unit
 

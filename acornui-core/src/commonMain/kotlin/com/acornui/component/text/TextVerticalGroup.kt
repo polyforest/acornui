@@ -46,7 +46,7 @@ class TextVerticalGroup(owner: Context) : TextElementContainerImpl<TextNode>(own
 		for (i in 0..elements.lastIndex) {
 			val element = elements[i]
 			element.y = y
-			element.setSize(explicitWidth, null)
+			element.size(explicitWidth, null)
 			measuredWidth = maxOf(measuredWidth, element.width)
 			y += element.height
 		}

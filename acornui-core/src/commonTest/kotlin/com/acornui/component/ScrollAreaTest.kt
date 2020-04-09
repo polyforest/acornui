@@ -16,9 +16,9 @@ class ScrollAreaTest {
 			val a = +scrollArea {
 				b = +UiComponentImpl(this)
 			}
-			a.moveTo(0f, 0f)
+			a.position(0f, 0f)
 			assertEquals(0f, b.transformGlobal.translationY)
-			a.moveTo(0f, 50f)
+			a.position(0f, 50f)
 			assertEquals(50f, b.transformGlobal.translationY)
 			exit()
 		}

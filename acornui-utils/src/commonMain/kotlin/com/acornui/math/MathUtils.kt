@@ -31,7 +31,6 @@ const val TO_RAD = PI / 180f
 
 /**
  * Utility and fast math functions.
- * @author Nathan Sweet
  */
 @Suppress("NOTHING_TO_INLINE")
 object MathUtils {
@@ -140,38 +139,6 @@ object MathUtils {
 		if (value >= max) return max
 		return value
 	}
-
-	@Deprecated("Use minOf", ReplaceWith("minOf(x, y)"))
-	inline fun <T : Comparable<T>> min(x: T, y: T): T {
-		return minOf(x, y)
-	}
-
-	@Deprecated("Use minOf", ReplaceWith("minOf(x, y, z)"))
-	inline fun <T : Comparable<T>> min(x: T, y: T, z: T): T {
-		return minOf(x, y, z)
-	}
-
-	@Deprecated("Use minOf", ReplaceWith("minOf(w, x, minOf(y, z))"))
-	inline fun <T : Comparable<T>> min(w: T, x: T, y: T, z: T): T {
-		return minOf(w, x, minOf(y, z))
-	}
-
-	@Deprecated("Use maxOf", ReplaceWith("maxOf(x, y)"))
-	inline fun <T : Comparable<T>> max(x: T, y: T): T {
-		return maxOf(x, y)
-	}
-
-	@Deprecated("Use maxOf", ReplaceWith("maxOf(x, y, z)"))
-	inline fun <T : Comparable<T>> max(x: T, y: T, z: T): T {
-		return maxOf(x, y, z)
-	}
-
-	@Deprecated("Use maxOf", ReplaceWith("maxOf(w, x, maxOf(y, z))"))
-	inline fun <T : Comparable<T>> max(w: T, x: T, y: T, z: T): T {
-		return maxOf(w, x, maxOf(y, z))
-	}
-
-	// TODO: deprecate what's now in kotlin native math
 
 	/**
 	 * Returns the signum function of the argument; zero if the argument

@@ -20,7 +20,7 @@ import com.acornui.Disposable
 import com.acornui.collection.ActiveList
 import com.acornui.component.layout.algorithm.CanvasLayoutData
 import com.acornui.component.layout.algorithm.canvasLayoutData
-import com.acornui.component.layout.setSize
+import com.acornui.component.layout.size
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
 import com.acornui.di.Context
@@ -250,10 +250,10 @@ class TooltipView(owner: Context) : ContainerImpl(owner), ItemRenderer<String> {
 		val padding = style.padding
 		val childWidth = padding.reduceWidth(explicitWidth)
 		val childHeight = padding.reduceHeight(explicitHeight)
-		textField.setSize(childWidth, childHeight)
-		textField.moveTo(padding.left, padding.top)
+		textField.size(childWidth, childHeight)
+		textField.position(padding.left, padding.top)
 		out.set(padding.expandWidth(textField.width), padding.expandHeight(textField.height))
-		background?.setSize(out)
+		background?.size(out)
 	}
 
 	companion object : StyleTag

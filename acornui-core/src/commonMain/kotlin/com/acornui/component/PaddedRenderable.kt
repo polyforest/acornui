@@ -33,8 +33,20 @@ class PaddedRenderable<T : BasicRenderable>(
 
 ) : BasicRenderable {
 
+	override var scaleX: Float
+		get() = inner.scaleX
+		set(value) {
+			inner.scaleX = value
+		}
+	
+	override var scaleY: Float
+		get() = inner.scaleY
+		set(value) {
+			inner.scaleY = value
+		}
+
 	/**
-	 * The padding to add to the [inner] drawable's natural size.  (In points)
+	 * The padding to add to the [inner] drawable's natural size.  (In dp)
 	 */
 	val padding = Pad()
 

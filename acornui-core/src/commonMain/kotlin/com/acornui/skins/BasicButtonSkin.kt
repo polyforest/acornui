@@ -140,12 +140,12 @@ private class BasicLabelButtonSkin(
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		textField.setSize(padding.reduceWidth(explicitWidth), null)
+		textField.size(padding.reduceWidth(explicitWidth), null)
 		var h = maxOf(minHeight, padding.expandHeight(textField.height))
 		val w = maxOf(h, explicitWidth ?: maxOf(minWidth, padding.expandWidth(textField.width)))
 		if (explicitHeight != null && explicitHeight > h) h = explicitHeight
-		texture.setSize(w, h)
-		textField.moveTo((padding.reduceWidth(w) - textField.width) * 0.5f + padding.left, (padding.reduceHeight(h) - textField.height) * 0.5f + padding.top)
+		texture.size(w, h)
+		textField.position((padding.reduceWidth(w) - textField.width) * 0.5f + padding.left, (padding.reduceHeight(h) - textField.height) * 0.5f + padding.top)
 		out.set(texture.width, texture.height, textField.baselineY)
 	}
 }
@@ -298,7 +298,7 @@ private class BasicTabSkin(owner: Context, theme: Theme) : SingleElementContaine
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		activeSkin.setSize(explicitWidth, explicitHeight)
+		activeSkin.size(explicitWidth, explicitHeight)
 		out.set(activeSkin.bounds)
 	}
 }

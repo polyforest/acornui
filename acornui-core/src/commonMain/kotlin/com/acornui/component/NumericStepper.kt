@@ -226,7 +226,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 		val stepperWidths = maxOf(stepUpButton.width, stepDownButton.width)
 
 		val textWidth = if (explicitWidth == null) null else explicitWidth - hGap - stepperWidths
-		textInput.setSize(textWidth, explicitHeight)
+		textInput.size(textWidth, explicitHeight)
 		val stepperHeight = (textInput.height - vGap) * 0.5f
 		stepDownButton.height(stepperHeight)
 		stepUpButton.height(stepperHeight)
@@ -237,8 +237,8 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 		out.baseline = textInput.baselineY
 
 		val tIW = textInput.width
-		stepUpButton.setPosition(tIW + hGap, 0f)
-		stepDownButton.setPosition(tIW + hGap, stepUpButton.height + vGap)
+		stepUpButton.position(tIW + hGap, 0f)
+		stepDownButton.position(tIW + hGap, stepUpButton.height + vGap)
 	}
 
 	override fun dispose() {

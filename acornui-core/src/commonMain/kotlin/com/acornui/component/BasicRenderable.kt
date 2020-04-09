@@ -30,12 +30,27 @@ import com.acornui.math.Matrix4Ro
 interface BasicRenderable {
 
 	/**
-	 * This renderable's natural width, in points.
+	 * The x dpi scaling from dp to pixels.
+	 */
+	var scaleX: Float
+
+	/**
+	 * The y dpi scaling from dp to pixels.
+	 */
+	var scaleY: Float
+
+	fun setScaling(scaleX: Float, scaleY: Float) {
+		this.scaleX = scaleX
+		this.scaleY = scaleY
+	}
+	
+	/**
+	 * This renderable's natural width, in dp.
 	 */
 	val naturalWidth: Float
 
 	/**
-	 * This renderable's natural height, in points.
+	 * This renderable's natural height, in dp.
 	 */
 	val naturalHeight: Float
 

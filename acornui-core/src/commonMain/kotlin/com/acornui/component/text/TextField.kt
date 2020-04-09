@@ -53,7 +53,8 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 
 	/**
 	 * The style object for glyph decoration.
-	 * Note that child [TextSpanElement] objects may override this style.
+	 *
+	 * Note that child [TextSpanElement] objects inherit, but may override this style.
 	 */
 	val charStyle: CharStyle
 
@@ -78,8 +79,19 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	 * The font for the root character style.
 	 * Note that it's up to the span element character styles to decide what font to use for glyphs. This root
 	 * font is only used for sizing the text field when there are no text elements.
+	 * @see TextField.charStyle
 	 */
-	val loadedFont: BitmapFont?
+	val font: BitmapFont?
+
+	/**
+	 * The x dpi scaling from dp to pixels.
+	 */
+	val fontScaleX: Float
+
+	/**
+	 * The y dpi scaling from dp to pixels.
+	 */
+	val fontScaleY: Float
 
 	/**
 	 * Replaces the given range with the provided text. This method doesn't destroy text node structure (therefore
@@ -106,9 +118,9 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
  * If the font hasn't loaded yet, null will be returned.
  */
 fun TextField.getLoadedFontAtIndex(index: Int): BitmapFont? {
-	if (index < 0) return loadedFont
-	val elements = element?.textElements ?: return loadedFont
-	if (index >= elements.size) return loadedFont
+	if (index < 0) return font
+	val elements = element?.textElements ?: return font
+	if (index >= elements.size) return font
 	return elements[index].parentSpan?.font
 }
 
@@ -123,7 +135,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	override val charStyle = bind(CharStyle())
 
 	private val selectionManager = inject(SelectionManager)
-	private val fontRegistry = inject(BitmapFontRegistry)
+	private val fontLoader = inject(FontLoader)
 
 	/**
 	 * The Selectable target to use for the selection range.
@@ -140,7 +152,13 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	private val _textSpan = span()
 	private val _textContents = p { +_textSpan }
 
-	final override var loadedFont: BitmapFont? by validationProp(null, ValidationFlags.LAYOUT)
+	final override var font: BitmapFont? by validationProp(null, ValidationFlags.LAYOUT)
+		private set
+
+	final override var fontScaleX: Float by validationProp(1f, ValidationFlags.LAYOUT)
+		private set
+
+	final override var fontScaleY: Float by validationProp(1f, ValidationFlags.LAYOUT)
 		private set
 
 	private var fontJob by cancellingJobProp<Job>()
@@ -154,7 +172,10 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 		watch(charStyle) { cS ->
 			fontJob = launchSupervised {
-				loadedFont = fontRegistry.getFont(cS.createFontRequest())
+				val loadedFont = fontLoader.loadAndCacheFont(cS)
+				fontScaleX = loadedFont.scaleX
+				fontScaleY = loadedFont.scaleY
+				font = loadedFont.font
 			}
 
 			if (cS.selectable) {
@@ -234,17 +255,17 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val contents = element ?: return
-		contents.setSize(explicitWidth, explicitHeight)
-		contents.setPosition(0f, 0f)
+		contents.size(explicitWidth, explicitHeight)
+		contents.position(0f, 0f)
 		out.set(contents.bounds)
 
 		// Handle sizing if the content is blank:
 		if (contents.textElements.isEmpty()) {
-			val fontData = loadedFont?.data
+			val fontData = font?.data
 			val padding = flowStyle.padding
-			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / charStyle.scaleY
+			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / fontScaleY
 			out.height = padding.expandHeight(lineHeight)
-			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f) / charStyle.scaleY
+			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f) / fontScaleY
 		}
 
 		if (contents.allowClipping) {

@@ -3,18 +3,18 @@ package com.acornui.skins
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.component.style.StyleRule
-import com.acornui.component.text.charStyle
 import com.acornui.di.ContextImpl
 import com.acornui.function.as2
 import com.acornui.graphic.Window
+import com.acornui.graphic.dpiStyle
 
 /**
- * Watches the window for scale changes, updating the character style.
+ * Watches the window for scale changes, updating the dpi scaling style.
  */
 class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 
-	private val textScaling = charStyle()
-	private val textScalingRule = StyleRule(textScaling)
+	private val dpiScaling = dpiStyle()
+	private val dpiScalingRule = StyleRule(dpiScaling)
 	private val window = inject(Window)
 
 	init {
@@ -23,22 +23,21 @@ class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 	}
 
 	private fun updateWindowScaling() {
-		textScaling.apply {
-			val window = inject(Window)
+		dpiScaling.apply {
 			scaleX = window.scaleX
 			scaleY = window.scaleY
 		}
 	}
 
 	fun apply() {
-		if (!target.styleRules.contains(textScalingRule))
-			target.styleRules.add(textScalingRule)
+		if (!target.styleRules.contains(dpiScalingRule))
+			target.styleRules.add(dpiScalingRule)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		window.scaleChanged.remove(::updateWindowScaling.as2)
-		target.styleRules.remove(textScalingRule)
+		target.styleRules.remove(dpiScalingRule)
 	}
 
 	companion object {

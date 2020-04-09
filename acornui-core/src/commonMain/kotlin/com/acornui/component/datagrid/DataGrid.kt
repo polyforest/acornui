@@ -1023,41 +1023,41 @@ class DataGrid<RowData>(
 		updateRowBackgrounds()
 		updateEditorCell()
 
-		rowBackgrounds.setSize(contentsW, contentsH)
-		rowBackgrounds.setPosition(0f, headerCells.height)
-		contents.setSize(contentsW, contentsH)
-		contents.setPosition(0f, headerCells.height)
-		editorCellContainer.setSize(contentsW, contentsH)
-		editorCellContainer.setPosition(0f, headerCells.height)
+		rowBackgrounds.size(contentsW, contentsH)
+		rowBackgrounds.position(0f, headerCells.height)
+		contents.size(contentsW, contentsH)
+		contents.position(0f, headerCells.height)
+		editorCellContainer.size(contentsW, contentsH)
+		editorCellContainer.position(0f, headerCells.height)
 
-		groupHeadersAndFooters.setSize(contentsW, contentsH)
-		groupHeadersAndFooters.setPosition(0f, headerCells.height)
+		groupHeadersAndFooters.size(contentsW, contentsH)
+		groupHeadersAndFooters.position(0f, headerCells.height)
 
 		out.height = border.expandHeight(headerCells.height + contents.height + hScrollBarH)
 
-		hScrollBar.setSize(out.width - vScrollBarW, hScrollBarH)
-		hScrollBar.setPosition(-border.left, out.height - hScrollBarH - border.top)
-		vScrollBar.setSize(vScrollBarW, out.height - hScrollBarH - headerCells.height)
-		vScrollBar.setPosition(out.width - vScrollBarW - border.right, headerCells.height - border.top)
+		hScrollBar.size(out.width - vScrollBarW, hScrollBarH)
+		hScrollBar.position(-border.left, out.height - hScrollBarH - border.top)
+		vScrollBar.size(vScrollBarW, out.height - hScrollBarH - headerCells.height)
+		vScrollBar.position(out.width - vScrollBarW - border.right, headerCells.height - border.top)
 
 		updateVerticalDividers(contentsW, out.height)
 
 		val topRight = topRight
 		if (topRight != null) {
 			topRight.visible = vScrollBar.visible
-			topRight.setSize(vScrollBar.naturalWidth, headerCells.height)
-			topRight.setPosition(bodyW - topRight.width, 0f)
+			topRight.size(vScrollBar.naturalWidth, headerCells.height)
+			topRight.position(bodyW - topRight.width, 0f)
 		}
 		val headerDivider = this.headerDivider
 		if (headerDivider != null) {
-			headerDivider.setSize(bodyW, null)
-			headerDivider.moveTo(0f, headerCells.height - headerDivider.height)
+			headerDivider.size(bodyW, null)
+			headerDivider.position(0f, headerCells.height - headerDivider.height)
 		}
 
-		clipper.setSize(bodyW, contents.height + headerCells.height + hScrollBarH)
-		clipper.setPosition(border.left, border.top)
+		clipper.size(bodyW, contents.height + headerCells.height + hScrollBarH)
+		clipper.position(border.left, border.top)
 
-		background?.setSize(out)
+		background?.size(out)
 		cache.usedColumns.flip()
 	}
 
@@ -1095,9 +1095,9 @@ class DataGrid<RowData>(
 			if (sortArrow != null) {
 				sortArrow.visible = true
 				sortArrow.x = x + columnWidth - cellPad.right - sortArrow.width
-				headerCell.setSize(cellPad.reduceWidth(columnWidth - style.headerCellGap - sortArrow.width), null)
+				headerCell.size(cellPad.reduceWidth(columnWidth - style.headerCellGap - sortArrow.width), null)
 			} else {
-				headerCell.setSize(cellPad.reduceWidth(columnWidth), null)
+				headerCell.size(cellPad.reduceWidth(columnWidth), null)
 			}
 			headerCellHeight = maxOf(headerCellHeight, headerCell.height)
 			true
@@ -1131,7 +1131,7 @@ class DataGrid<RowData>(
 				HAlign.CENTER -> (headerCellWidth - headerCell.width) * 0.5f
 				HAlign.RIGHT -> (headerCellWidth - headerCell.width)
 			})
-			headerCell.moveTo(colX + x, y)
+			headerCell.position(colX + x, y)
 
 			// Header cell background
 			val headerCellBackground = headerCellBackgrounds.elements.getOrNull(cellBackgroundIndex)
@@ -1142,15 +1142,15 @@ class DataGrid<RowData>(
 			) InteractivityMode.ALL else InteractivityMode.NONE
 			headerCellBackground.setAttachment(COL_INDEX_KEY, i)
 			headerCellBackground.visible = true
-			headerCellBackground.setSize(colWidth, headerHeight)
-			headerCellBackground.setPosition(colX, 0f)
+			headerCellBackground.size(colWidth, headerHeight)
+			headerCellBackground.position(colX, 0f)
 
 			// Column resize handle
 			val resizeHandle = columnResizeHandles.elements.getOrNull(cellBackgroundIndex) ?: createColumnResizeHandle()
 			resizeHandle.setAttachment(COL_INDEX_KEY, i)
 			resizeHandle.visible = col.resizable
-			resizeHandle.setSize(null, headerHeight)
-			resizeHandle.setPosition(colWidth + colX - resizeHandle.width * 0.5f, 0f)
+			resizeHandle.size(null, headerHeight)
+			resizeHandle.position(colWidth + colX - resizeHandle.width * 0.5f, 0f)
 
 			cellBackgroundIndex++
 			true
@@ -1162,8 +1162,8 @@ class DataGrid<RowData>(
 			columnResizeHandles.elements.getOrNull(i)!!.visible = false
 		}
 
-		headerCells.setSize(width, headerHeight)
-		columnResizeHandles.setSize(width + 5f, headerHeight)
+		headerCells.size(width, headerHeight)
+		columnResizeHandles.size(width + 5f, headerHeight)
 
 		cache.usedColumns.forEachUnused {
 			cache.columnCaches[it].headerCell?.visible = false
@@ -1256,7 +1256,7 @@ class DataGrid<RowData>(
 					header.collapsed = group.collapsed
 					cellCache.usedGroupHeadersAndFooters.markUsed(header)
 
-					header.setSize(width, null)
+					header.size(width, null)
 					iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
 				} else if (rowIterator.isFooter) {
 					// TODO:
@@ -1270,7 +1270,7 @@ class DataGrid<RowData>(
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
 
-						cell.setSize(pad.reduceWidth(columnWidth), rowHeight2)
+						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = maxOf(iRowHeight, pad.expandHeight(cell.height))
 						true
 					}
@@ -1375,7 +1375,7 @@ class DataGrid<RowData>(
 					header.collapsed = group.collapsed
 					cellCache.usedGroupHeadersAndFooters.markUsed(header)
 
-					header.setSize(width, null)
+					header.size(width, null)
 					iRowHeight = rowHeight ?: maxOf(iRowHeight, header.height)
 				} else if (rowIterator.isFooter) {
 					// TODO:
@@ -1388,7 +1388,7 @@ class DataGrid<RowData>(
 						val cellData = column.getCellData(element)
 						cell.setData(cellData)
 
-						cell.setSize(pad.reduceWidth(columnWidth), rowHeight2)
+						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight(cell.height))
 						true
 					}
@@ -1432,7 +1432,7 @@ class DataGrid<RowData>(
 			val rowPosition = metrics.rowPositions[i]
 
 			if (rowIterator.isHeader) {
-				rowIterator.groupCache.header!!.setPosition(0f, rowPosition)
+				rowIterator.groupCache.header!!.position(0f, rowPosition)
 			} else if (rowIterator.isFooter) {
 //				rowIterator.groupCache.footer!!.setPosition(0f, rowPosition)
 			} else {
@@ -1452,7 +1452,7 @@ class DataGrid<RowData>(
 						HAlign.CENTER -> (cellWidth - cell.width) * 0.5f
 						HAlign.RIGHT -> (cellWidth - cell.width)
 					})
-					cell.moveTo(columnX + x, rowPosition + y)
+					cell.position(columnX + x, rowPosition + y)
 					true
 				}
 				cellRow++
@@ -1469,8 +1469,8 @@ class DataGrid<RowData>(
 			if (!rowBackground.isActive) rowBackgrounds.addElement(rowBackground)
 			rowBackground.visible = true
 			rowBackground.rowIndex = rowIndex
-			rowBackground.setSize(width, _cellMetrics.rowHeights[i])
-			rowBackground.setPosition(0f, _cellMetrics.rowPositions[i])
+			rowBackground.size(width, _cellMetrics.rowHeights[i])
+			rowBackground.position(0f, _cellMetrics.rowPositions[i])
 		}
 		cache.rowBackgroundsCache.forEachUnused { index, element -> element.visible = false }.flip()
 	}
@@ -1495,8 +1495,8 @@ class DataGrid<RowData>(
 			}
 			// Partial row visibility
 			y -= rowHeights[0] * (vScrollModel.value - floor(vScrollModel.value))
-			editorCell.setSize(_columnWidths[columnIndex], rowHeights[rowIndex])
-			editorCell.setPosition(x, y)
+			editorCell.size(_columnWidths[columnIndex], rowHeights[rowIndex])
+			editorCell.position(x, y)
 		} else {
 			if (editorCell.isFocused) focus()
 			editorCell.visible = false
@@ -1564,16 +1564,16 @@ class DataGrid<RowData>(
 			val columnIndex = e.currentTarget.getAttachment<Int>(COL_INDEX_KEY)!!
 			if (columnReorderingEnabled && _columns[columnIndex].reorderable) {
 				columnMoveIndicator.visible = true
-				columnMoveIndicator.setSize(e.currentTarget.bounds)
+				columnMoveIndicator.size(e.currentTarget.bounds)
 				columnInsertionIndicator.visible = true
-				columnInsertionIndicator.setSize(null, height)
+				columnInsertionIndicator.size(null, height)
 			} else {
 				e.preventDefault()
 			}
 		}
 
 		drag.drag.add { e ->
-			columnMoveIndicator.setPosition(e.currentTarget.x + (e.position.x - e.startPosition.x), 0f)
+			columnMoveIndicator.position(e.currentTarget.x + (e.position.x - e.startPosition.x), 0f)
 			val localP = headerCells.canvasToLocal(Vector2.obtain().set(e.position))
 
 			val currX = localP.x + hScrollModel.value
@@ -1582,7 +1582,7 @@ class DataGrid<RowData>(
 			index = maxOf(index, _columns.indexOfFirst2 { it.visible && it.reorderable })
 			index = minOf(index, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
 			val insertX = (if (index <= 0) 0f else if (index >= _columnPositions.size) _columnPositions.last() + _columnWidths.last() else _columnPositions[index]) - hScrollModel.value
-			columnInsertionIndicator.setPosition(insertX - columnInsertionIndicator.width * 0.5f, 0f)
+			columnInsertionIndicator.position(insertX - columnInsertionIndicator.width * 0.5f, 0f)
 			Vector2.free(localP)
 		}
 
@@ -1709,12 +1709,12 @@ class DataGrid<RowData>(
 			}
 			val headerDivider = columnDividersHeader.elements.getOrNull(shownColumns)!!
 			headerDivider.visible = true
-			headerDivider.setSize(null, headerCells.height)
-			headerDivider.moveTo(columnX + columnWidth, 0f)
+			headerDivider.size(null, headerCells.height)
+			headerDivider.position(columnX + columnWidth, 0f)
 			val contentsDivider = columnDividersContents.elements.getOrNull(shownColumns)!!
 			contentsDivider.visible = (columnIndex != lastVisibleColumn)
-			contentsDivider.setSize(null, height - headerCells.height)
-			contentsDivider.moveTo(columnX + columnWidth, headerCells.height)
+			contentsDivider.size(null, height - headerCells.height)
+			contentsDivider.position(columnX + columnWidth, headerCells.height)
 			shownColumns++
 			true
 		}

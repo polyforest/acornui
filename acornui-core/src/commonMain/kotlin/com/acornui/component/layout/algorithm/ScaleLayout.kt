@@ -53,7 +53,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 		for (i in 0..elements.lastIndex) {
 			val child = elements[i]
 			val layoutData = child.layoutDataCast
-			child.setSize(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
+			child.size(layoutData?.getPreferredWidth(childAvailableWidth), layoutData?.getPreferredHeight(childAvailableHeight))
 			val w = maxOf(1f, child.width) // Don't allow the width/height to be 0 for divide by zero reasons.
 			val h = maxOf(1f, child.height)
 
@@ -69,7 +69,7 @@ class ScaleLayout : LayoutAlgorithm<ScaleLayoutStyle, ScaleLayoutData> {
 				if (layoutData.maxScaleY != null) scaleY = minOf(scaleY, layoutData.maxScaleY!!)
 			}
 			child.setScaling(scaleX, scaleY, maxOf(scaleX, scaleY))
-			child.moveTo(padding.left, padding.top)
+			child.position(padding.left, padding.top)
 
 			if (explicitWidth != null) {
 				val remainingSpace = childAvailableWidth!! - w * scaleX

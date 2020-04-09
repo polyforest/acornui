@@ -2,52 +2,80 @@
 var doc = fl.getDocumentDOM();
 var library = document.library;
 var log = [];
+var sizes = [1, 2, 3, 4];
 
 if (!doc) {
 	alert("Select a document.");
-} else {	
+} else {
 	var docName = doc.name.substring(0, doc.name.length - 4);
 	var folder = doc.pathURI.substring(0, doc.pathURI.lastIndexOf(doc.name));
-	
+	var selectedItems = doc.library.getSelectedItems();
+	if (selectedItems.length === 0) selectedItems = doc.library.items;
+
 	// Create a temporary doc.
 	fl.createDocument();
 	var exportDoc = fl.getDocumentDOM();
-	
-	trace("Publishing pngs to: " + folder);
-	for each (var item in library.items) {
-		if (item.linkageExportForAS) {
-			makeDirs(item.name);
-			trace("Item: " + item.name);
-			var totalFrames = item.timeline.layers[0].frames.length;
-			var timeline = exportDoc.timelines[0];
-			timeline.removeFrames(0, timeline.frameCount);
-			timeline.insertFrames(totalFrames);
-			exportDoc.addItem({ x: 0, y: 0 }, item);
-			
-			exportDoc.timelines[0].layers[0].frames[0].elements[0].symbolType = "graphic";
-			resizeDocument(exportDoc);
-			var lastLabel = null;
-			var sameLabelCount = 0;
-			for (var i = 0; i < totalFrames; i++) {
-				exportDoc.timelines[0].setSelectedFrames(i, i);
-				var pngName;
-				var frame = item.timeline.layers[0].frames[i];
-				if (frame.labelType === "name") {
-					if (lastLabel !== frame.name) {
-						lastLabel = frame.name;
-					} else {
-						sameLabelCount++;
-					}
-					pngName = folder + item.name + "_" + frame.name + numberTag(sameLabelCount) + ".png";
+
+	trace(selectedItems.length + " selected items");
+	for (var sizeIndex = 0; sizeIndex < sizes.length; sizeIndex++) {
+		var size = sizes[sizeIndex];
+		trace("Publishing pngs to: " + folder + " size: " + size + "x");
+		for each (var item in library.items) {
+			if (item.linkageExportForAS && selectedItems.indexOf(item) !== -1) {
+				/** @type string */
+				var itemName;
+				var unpackedIndex = item.name.indexOf("_unpacked/");
+				if (size === 1) {
+					itemName = item.name;
 				} else {
-					pngName = folder + item.name + numberTag(i) + ".png";
+					if (unpackedIndex === -1) {
+						// Not part of an atlas, rename the png to match the hdpi size:
+						itemName = item.name + "_" + size + "x";
+					} else {
+						// Part of an atlas, rename the atlas to match the hdpi size:
+						itemName = item.name.substring(0, unpackedIndex) + "_" + size + "x" + item.name.substring(unpackedIndex, item.name.length);
+					}
 				}
-				exportDoc.exportPNG(pngName, true, true);
+				trace("Item: " + itemName);
+				makeDirs(itemName);
+				var totalFrames = item.timeline.layers[0].frames.length;
+				var timeline = exportDoc.timelines[0];
+				timeline.removeFrames(0, timeline.frameCount);
+				timeline.insertFrames(totalFrames);
+				exportDoc.addItem({x: 0, y: 0}, item);
+
+				// noinspection JSValidateTypes
+				/** @type SymbolInstance */
+				var inserted = exportDoc.timelines[0].layers[0].frames[0].elements[0];
+				inserted.symbolType = "graphic";
+
+				inserted.scaleX = size;
+				inserted.scaleY = size;
+
+				resizeDocument(exportDoc);
+				var lastLabel = null;
+				var sameLabelCount = 0;
+				for (var i = 0; i < totalFrames; i++) {
+					exportDoc.timelines[0].setSelectedFrames(i, i);
+					var pngName;
+					var frame = item.timeline.layers[0].frames[i];
+					if (frame.labelType === "name") {
+						if (lastLabel !== frame.name) {
+							lastLabel = frame.name;
+						} else {
+							sameLabelCount++;
+						}
+						pngName = folder + itemName + "_" + frame.name + numberTag(sameLabelCount) + ".png";
+					} else {
+						pngName = folder + itemName + numberTag(i) + ".png";
+					}
+					exportDoc.exportPNG(pngName, true, true);
+				}
+				exportDoc.timelines[0].setSelectedFrames(0, 0);
 			}
-			exportDoc.timelines[0].setSelectedFrames(0, 0);
 		}
 	}
-	
+
 	exportDoc.close(false);
 	fl.outputPanel.clear();
 	fl.trace(log.join("\n"));
@@ -85,7 +113,7 @@ function makeDirs(path) {
 }
 
 /**
- * Returns a String representing a number prefixed with zeros up to a certain number of digits. 
+ * Returns a String representing a number prefixed with zeros up to a certain number of digits.
  * E.g.
  * padNumber(1, 3) // "001"
  * padNumber(523, 2) // "523"
@@ -116,6 +144,6 @@ function resizeDocument(doc) {
 	element.x += -element.left;
 	element.y += -element.top;
 	doc.width = Math.ceil(element.width);
-	doc.height = Math.ceil(element.height);	
+	doc.height = Math.ceil(element.height);
 	return true;
 }

@@ -17,7 +17,6 @@
 package com.acornui.component.layout
 
 import com.acornui.component.ModelTransformableRo
-import com.acornui.math.MathUtils
 import com.acornui.math.Matrix4Ro
 import com.acornui.math.Vector2Ro
 import com.acornui.math.Vector3Ro
@@ -119,26 +118,25 @@ interface Positionable : PositionableRo {
 	override var z: Float
 
 	/**
-	 * If true, then [moveTo] will snap the position to the nearest pixel.
+	 * If true, then [size] and [position] will be snapped to the nearest pixel.
 	 */
 	val snapToPixel: Boolean
 
-	/**
-	 * Sets the position of this component, and if [snapToPixel] is true,
-	 * The x and y coordinates will be rounded to the nearest pixel.
-	 * The rounding by default will use [MathUtils.offsetRound].
-	 */
-	fun moveTo(x: Float, y: Float, z: Float = 0f) {
-		if (snapToPixel)
-			setPosition(MathUtils.offsetRound(x), MathUtils.offsetRound(y), z)
-		else
-			setPosition(x, y, z)
-	}
+	@Deprecated("use setPosition", ReplaceWith("setPosition(x, y, z)"), DeprecationLevel.ERROR)
+	fun moveTo(x: Float, y: Float, z: Float = 0f) = position(x, y, z)
 
 	/**
-	 * Sets the position of this component. (Without rounding)
+	 * Sets the position of this component, and if [snapToPixel] is true, the x and y coordinates will be rounded to
+	 * the nearest pixel (accounting for pixel densities).
+	 * This helps prevent texture blurring from placement on a fraction of a pixel.
+	 *
+	 * Pixel snapping is only guaranteed if all ancestors are both pixel snapped and have translation-only
+	 * transformations.
 	 */
-	fun setPosition(x: Float, y: Float, z: Float = 0f)
+	fun position(x: Float, y: Float, z: Float = 0f)
+
+	@Deprecated("Use position", ReplaceWith("position(value)"))
+	fun setPosition(x: Float, y: Float, z: Float = 0f) = position(x, y, z)
 
 	companion object {
 
@@ -150,6 +148,13 @@ interface Positionable : PositionableRo {
 
 }
 
-fun Positionable.moveTo(value: Vector3Ro) = moveTo(value.x, value.y, value.z)
-fun Positionable.moveTo(value: Vector2Ro) = moveTo(value.x, value.y)
-fun Positionable.setPosition(value: Vector3Ro) = setPosition(value.x, value.y, value.z)
+@Deprecated("use setPosition", ReplaceWith("setPosition(value)"))
+fun Positionable.moveTo(value: Vector3Ro) = position(value.x, value.y, value.z)
+
+@Deprecated("use setPosition", ReplaceWith("setPosition(value)"))
+fun Positionable.moveTo(value: Vector2Ro) = position(value.x, value.y )
+
+fun Positionable.position(value: Vector3Ro) = position(value.x, value.y, value.z)
+
+@Deprecated("Use position", ReplaceWith("this.position(value)"))
+fun Positionable.setPosition(value: Vector3Ro) = position(value.x, value.y, value.z)

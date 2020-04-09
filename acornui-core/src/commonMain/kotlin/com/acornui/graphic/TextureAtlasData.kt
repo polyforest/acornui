@@ -21,10 +21,12 @@ package com.acornui.graphic
 import com.acornui.asset.CacheSet
 import com.acornui.asset.cacheSet
 import com.acornui.asset.loadAndCacheJson
+import com.acornui.asset.loadTexture
 import com.acornui.di.Context
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TexturePixelFormat
+import com.acornui.io.file.Path
 import com.acornui.math.IntRectangleRo
 import kotlinx.serialization.Serializable
 
@@ -204,6 +206,14 @@ suspend fun Context.loadAndCacheAtlasRegion(atlasPath: String, regionName: Strin
 			?: throw RegionNotFoundException(atlasPath, regionName)
 	val texture = loadAndCacheAtlasPage(atlasPath, page, cacheSet)
 	return AtlasRegion(texture, region)
+}
+
+suspend fun Context.loadAndCacheAtlasPage(atlasPath: String, page: AtlasPageData, cacheSet: CacheSet): Texture {
+	val atlasFile = Path(atlasPath)
+	val textureFile = atlasFile.sibling(page.texturePath)
+	return cacheSet.getOrPutAsync(textureFile.value) {
+		page.configure(loadTexture(textureFile.value))
+	}.await()
 }
 
 class RegionNotFoundException(val atlasPath: String, val regionName: String) : Exception("Region '$regionName' not found in atlas $atlasPath.")

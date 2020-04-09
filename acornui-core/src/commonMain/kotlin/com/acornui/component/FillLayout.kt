@@ -37,8 +37,8 @@ class FillLayout : LayoutAlgorithm<NoopStyle, NoopLayoutData> {
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		elements.forEach2 { element ->
-			element.setSize(explicitWidth, explicitHeight)
-			element.moveTo(0f, 0f)
+			element.size(explicitWidth, explicitHeight)
+			element.position(0f, 0f)
 			if (element.width > out.width)
 				out.width = element.width
 			if (element.height > out.height)

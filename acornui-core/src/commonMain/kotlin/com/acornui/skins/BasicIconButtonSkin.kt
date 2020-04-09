@@ -7,7 +7,7 @@ import com.acornui.component.layout.VAlign
 import com.acornui.component.layout.algorithm.HorizontalLayout
 import com.acornui.component.layout.algorithm.HorizontalLayoutData
 import com.acornui.component.layout.algorithm.LayoutDataProvider
-import com.acornui.component.layout.setSize
+import com.acornui.component.layout.size
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
@@ -81,7 +81,7 @@ class BasicIconButtonSkin(
 		layoutAlgorithm.layout(explicitWidth, explicitHeight, elementsToLayout, out)
 		if (explicitWidth != null && explicitWidth > out.width) out.width = explicitWidth
 		if (explicitHeight != null && explicitHeight > out.height) out.height = explicitHeight
-		texture.setSize(out)
+		texture.size(out)
 	}
 
 	companion object : StyleTag
