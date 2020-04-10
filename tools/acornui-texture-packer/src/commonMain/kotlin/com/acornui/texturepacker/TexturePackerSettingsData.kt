@@ -34,22 +34,22 @@ data class TexturePackerSettingsData(
 		val alphaThreshold: Float = 0f,
 
 		/**
-		 * @see Texture.filterMag
+		 * @see com.acornui.graphic.Texture.filterMag
 		 */
 		val filterMag: TextureMagFilter = TextureMagFilter.NEAREST,
 
 		/**
-		 * @see Texture.filterMin
+		 * @see com.acornui.graphic.Texture.filterMin
 		 */
 		val filterMin: TextureMinFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR,
 
 		/**
-		 * @see Texture.pixelType
+		 * @see com.acornui.graphic.Texture.pixelType
 		 */
 		val pixelType: TexturePixelType = TexturePixelType.UNSIGNED_BYTE,
 
 		/**
-		 * @see Texture.pixelFormat
+		 * @see com.acornui.graphic.Texture.pixelFormat
 		 */
 		val pixelFormat: TexturePixelFormat = TexturePixelFormat.RGBA,
 
