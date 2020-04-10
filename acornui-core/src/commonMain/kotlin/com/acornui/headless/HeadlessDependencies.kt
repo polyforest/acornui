@@ -19,6 +19,7 @@ package com.acornui.headless
 import com.acornui.AppConfig
 import com.acornui.asset.Loaders
 import com.acornui.browser.Location
+import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.DependencyMap
@@ -53,6 +54,7 @@ object HeadlessDependencies {
 				Loaders.textureLoader to MockLoader { MockTexture() },
 				InteractivityManager to MockInteractivityManager,
 				FocusManager to MockFocusManager,
+				CursorManager to MockCursorManager,
 				CachedGl20 to MockCachedGl20
 		)
 	}
