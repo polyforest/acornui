@@ -122,7 +122,7 @@ interface Positionable : PositionableRo {
 	 */
 	val snapToPixel: Boolean
 
-	@Deprecated("use setPosition", ReplaceWith("setPosition(x, y, z)"), DeprecationLevel.ERROR)
+	@Deprecated("use setPosition", ReplaceWith("position(x, y, z)"), DeprecationLevel.ERROR)
 	fun moveTo(x: Float, y: Float, z: Float = 0f) = position(x, y, z)
 
 	/**
@@ -135,7 +135,7 @@ interface Positionable : PositionableRo {
 	 */
 	fun position(x: Float, y: Float, z: Float = 0f)
 
-	@Deprecated("Use position", ReplaceWith("position(value)"))
+	@Deprecated("Use position", ReplaceWith("position(x, y, z)"))
 	fun setPosition(x: Float, y: Float, z: Float = 0f) = position(x, y, z)
 
 	companion object {
@@ -148,13 +148,15 @@ interface Positionable : PositionableRo {
 
 }
 
-@Deprecated("use setPosition", ReplaceWith("setPosition(value)"))
+@Deprecated("use setPosition", ReplaceWith("position(value)"))
 fun Positionable.moveTo(value: Vector3Ro) = position(value.x, value.y, value.z)
 
-@Deprecated("use setPosition", ReplaceWith("setPosition(value)"))
+@Deprecated("use setPosition", ReplaceWith("position(value)"))
 fun Positionable.moveTo(value: Vector2Ro) = position(value.x, value.y )
+
+@Deprecated("Use position", ReplaceWith("position(value)"))
+fun Positionable.setPosition(value: Vector3Ro) = position(value.x, value.y, value.z)
 
 fun Positionable.position(value: Vector3Ro) = position(value.x, value.y, value.z)
 
-@Deprecated("Use position", ReplaceWith("this.position(value)"))
-fun Positionable.setPosition(value: Vector3Ro) = position(value.x, value.y, value.z)
+fun Positionable.position(value: Vector2Ro) = position(value.x, value.y, 0f)

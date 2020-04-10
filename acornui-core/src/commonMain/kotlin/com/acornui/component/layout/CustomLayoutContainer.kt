@@ -36,8 +36,8 @@ import kotlin.jvm.JvmName
  *      val myLabel = +text("Hello")
  *
  *      updateLayoutCallback = { explicitWidth, explicitHeight, out ->
- *          myLabel.setSize(300f, 40f)
- *          myLabel.moveTo(40f, 30f)
+ *          myLabel.size(300f, 40f)
+ *          myLabel.position(40f, 30f)
  *          out.set(myLabel.right, myLabel.bottom)
  *      }
  *   }

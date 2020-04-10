@@ -17,11 +17,8 @@
 package com.acornui.input.interaction
 
 import com.acornui.Disposable
-import com.acornui.component.InteractivityMode
-import com.acornui.component.Stage
-import com.acornui.component.atlas
+import com.acornui.component.*
 import com.acornui.component.layout.moveTo
-import com.acornui.component.mousePosition
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.graphic.Color
@@ -32,7 +29,7 @@ import com.acornui.properties.afterChange
 class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 
 	private val stage = inject(Stage)
-	private val handle = stage.atlas("assets/uiskin/uiskin.json", "Picker") {
+	private val handle = stage.atlas("assets/uiskin/uiskin_{0}x.json".toDpis(1f, 2f), "Picker") {
 		setOrigin(5f, 5f)
 		includeInLayout = false
 		interactivityMode = InteractivityMode.NONE

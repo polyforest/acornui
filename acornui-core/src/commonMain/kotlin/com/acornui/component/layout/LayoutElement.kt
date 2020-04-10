@@ -207,5 +207,5 @@ interface Sizable : SizableRo {
  */
 fun LayoutElement.size(bounds: BoundsRo) = size(bounds.width, bounds.height)
 
-@Deprecated("use size", ReplaceWith("this.size(width, height)"))
+@Deprecated("use size", ReplaceWith("size(bounds)"))
 fun LayoutElement.setSize(bounds: BoundsRo) = size(bounds)

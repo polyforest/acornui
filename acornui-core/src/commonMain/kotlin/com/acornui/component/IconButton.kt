@@ -64,6 +64,7 @@ open class IconButton(
 
 	private fun refreshContents() {
 		val contents = getContents()
+
 		@Suppress("UNCHECKED_CAST")
 		val currentContentsContainer = skin as? SingleElementContainer<UiComponent>
 		if (currentContentsContainer != null && currentContentsContainer.element != contents) {
@@ -76,14 +77,14 @@ open class IconButton(
 	companion object : StyleTag
 }
 
-inline fun Context.iconButton(init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(init: ComponentInit<IconButton> = {}): IconButton {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.init()
 	return b
 }
 
-inline fun Context.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(imagePath: String, init: ComponentInit<IconButton> = {}): IconButton {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val button = IconButton(this).apply {
 		element = iconImage(imagePath)
@@ -92,20 +93,26 @@ inline fun Context.iconButton(imagePath: String, init: ComponentInit<IconButton>
 	return button
 }
 
-inline fun Context.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(atlasPath: String, region: String, init: ComponentInit<IconButton> = {}): IconButton =
+		iconButton(mapOf(1f to atlasPath), region, init)
+
+inline fun Context.iconButton(atlasPaths: Map<Float, String>, region: String, init: ComponentInit<IconButton> = {}): IconButton {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val button = IconButton(this).apply {
-		element = iconAtlas(atlasPath, region)
+		element = iconAtlas(atlasPaths, region)
 	}
 	button.init()
 	return button
 }
 
-inline fun Context.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton  {
+inline fun Context.iconButton(atlasPath: String, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton =
+		iconButton(mapOf(1f to atlasPath), regions, init)
+
+inline fun Context.iconButton(atlasPaths: Map<Float, String>, regions: Map<ButtonState, String>, init: ComponentInit<IconButton> = {}): IconButton {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val b = IconButton(this)
 	b.iconMap(regions.mapTo { key, value ->
-		key to iconAtlas(atlasPath, value)
+		key to iconAtlas(atlasPaths, value)
 	})
 	b.init()
 	return b
