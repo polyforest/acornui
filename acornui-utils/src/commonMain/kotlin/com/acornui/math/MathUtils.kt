@@ -32,10 +32,7 @@ const val TO_RAD = PI / 180f
 /**
  * Utility and fast math functions.
  */
-@Suppress("NOTHING_TO_INLINE")
 object MathUtils {
-
-	const val nanoToSec: Float = 1f / 1000000000f
 
 	// ---
 	const val FLOAT_ROUNDING_ERROR: Float = 0.000001f // 32 bits
@@ -117,14 +114,6 @@ object MathUtils {
 		return abs(a - b) <= tolerance
 	}
 
-	/**
-	 * @return the logarithm of x with base a
-	 */
-	@Deprecated("Use kotlin.math.log", ReplaceWith("log(x, base)", imports = arrayOf("kotlin.math.log")))
-	fun log(x: Float, base: Float): Float {
-		return kotlin.math.log(x, base)
-	}
-
 	@JsName("clampN")
 	@JvmName("clampN")
 	inline fun <T : Comparable<T>> clamp(value: T?, min: T, max: T): T? {
@@ -145,17 +134,13 @@ object MathUtils {
 	 * is zero, 1.0f if the argument is greater than zero, -1.0f if the
 	 * argument is less than zero.
 	 *
-	 * <p>Special Cases:
-	 * <ul>
-	 * <li> If the argument is NaN, then the result is NaN.
-	 * <li> If the argument is positive zero or negative zero, then the
-	 *      result is the same as the argument.
-	 * </ul>
+	 * Special Cases:
 	 *
-	 * @param f the floating-point value whose signum is to be returned
+	 * If the argument is NaN, then the result is NaN.
+	 *
+	 * @param v the floating-point value whose signum is to be returned
 	 * @return the signum function of the argument
 	 * @author Joseph D. Darcy
-	 * @since 1.5
 	 */
 	fun signum(v: Float): Float {
 		if (v > 0) return 1f
@@ -312,7 +297,7 @@ object MathUtils {
 	/**
 	 * Round after a small, but obscure offset, to avoid flip-flopping around the common case of 0.5f
  	 */
-	inline fun offsetRound(x: Float, offset: Float = -0.0136f): Float {
+	fun offsetRound(x: Float, offset: Float = -0.0136f): Float {
 		return round(x + offset)
 	}
 }
@@ -320,7 +305,7 @@ object MathUtils {
 /**
  * Returns the fraction of this float.
  */
-inline fun Float.fpart(): Float {
+fun Float.fpart(): Float {
 	return this - floor(this)
 }
 
@@ -342,11 +327,11 @@ val Float.fractionDigits: Int
 	}
 
 
-inline fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {
+fun <T : Comparable<T>> maxOf4(a: T, b: T, c: T, d: T): T {
 	return maxOf(maxOf(a, b), maxOf(c, d))
 }
 
-inline fun <T : Comparable<T>> minOf4(a: T, b: T, c: T, d: T): T {
+fun <T : Comparable<T>> minOf4(a: T, b: T, c: T, d: T): T {
 	return minOf(minOf(a, b), minOf(c, d))
 }
 
