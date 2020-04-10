@@ -101,7 +101,7 @@ data class Theme(
 		val atlasPaths: Map<Float, String> = "assets/uiskin/uiskin_{0}x.json".toDpis(1f, 2f),
 
 		/**
-		 * @see com.acornui.component.text.FontLoader.fontSizes
+		 * A map of font key to sizes in dp.
 		 */
 		val fontSizes: Map<String, Int> = mapOf(
 				FontSize.EXTRA_SMALL to 10,
