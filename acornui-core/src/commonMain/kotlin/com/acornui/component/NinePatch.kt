@@ -59,16 +59,16 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 
 	var premultipliedAlpha = false
 
-	var splitLeft: Float = 0f
+	var splitLeftPixels: Float = 0f
 		private set
 
-	var splitTop: Float = 0f
+	var splitTopPixels: Float = 0f
 		private set
 
-	var splitRight: Float = 0f
+	var splitRightPixels: Float = 0f
 		private set
 
-	var splitBottom: Float = 0f
+	var splitBottomPixels: Float = 0f
 		private set
 
 	private var u: Float = 0f
@@ -166,10 +166,10 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 	}
 
 	fun split(splitLeft: Float, splitTop: Float, splitRight: Float, splitBottom: Float) {
-		this.splitLeft = splitLeft
-		this.splitTop = splitTop
-		this.splitRight = splitRight
-		this.splitBottom = splitBottom
+		this.splitLeftPixels = splitLeft
+		this.splitTopPixels = splitTop
+		this.splitRightPixels = splitRight
+		this.splitBottomPixels = splitBottom
 	}
 
 	private fun updateUv() {
@@ -198,10 +198,10 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		isUv = other.isUv
 		blendMode = other.blendMode
 		premultipliedAlpha = other.premultipliedAlpha
-		splitLeft = other.splitLeft
-		splitTop = other.splitTop
-		splitRight = other.splitRight
-		splitBottom = other.splitBottom
+		splitLeftPixels = other.splitLeftPixels
+		splitTopPixels = other.splitTopPixels
+		splitRightPixels = other.splitRightPixels
+		splitBottomPixels = other.splitBottomPixels
 	}
 
 	fun set(other: Sprite) {
@@ -214,10 +214,10 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		isUv = other.isUv
 		blendMode = other.blendMode
 		premultipliedAlpha = other.premultipliedAlpha
-		splitLeft = 0f
-		splitTop = 0f
-		splitRight = 0f
-		splitBottom = 0f
+		splitLeftPixels = 0f
+		splitTopPixels = 0f
+		splitRightPixels = 0f
+		splitBottomPixels = 0f
 	}
 
 	override fun updateGlobalVertices(width: Float, height: Float, transform: Matrix4Ro, tint: ColorRo) {
@@ -225,19 +225,24 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		transform.rot(normal.set(Vector3.NEG_Z)).nor()
 		this.tint.set(tint)
 
+		val splitLeft = splitLeftPixels / scaleX
+		val splitTop = splitTopPixels / scaleY
+		val splitRight = splitRightPixels / scaleX
+		val splitBottom = splitBottomPixels / scaleY
+		
 		val minW = splitLeft + splitRight
 		val minH = splitTop + splitBottom
-		val scaleX = if (minW <= 0f || width > minW) 1f else width / minW
-		val scaleY = if (minH <= 0f || height > minH) 1f else height / minH
+		val splitScaleX = if (minW <= 0f || width > minW) 1f else width / minW
+		val splitScaleY = if (minH <= 0f || height > minH) 1f else height / minH
 
 		val x0 = 0f
-		val x1 = scaleX * splitLeft
-		val x2 = width - scaleX * splitRight
+		val x1 = splitScaleX * splitLeft
+		val x2 = width - splitScaleX * splitRight
 		val x3 = width
 
 		val y0 = 0f
-		val y1 = scaleY * splitTop
-		val y2 = height - scaleY * splitBottom
+		val y1 = splitScaleY * splitTop
+		val y2 = height - splitScaleY * splitBottom
 		val y3 = height
 
 		// Row 0
@@ -275,10 +280,10 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		batch.begin(texture = texture, blendMode = blendMode, premultipliedAlpha = premultipliedAlpha)
 
 		if (isRotated) {
-			val splitLeftV = splitLeft / texture.heightPixels
-			val splitRightV = splitRight / texture.heightPixels
-			val splitTopU = splitTop / texture.widthPixels
-			val splitBottomU = splitBottom / texture.widthPixels
+			val splitLeftV = splitLeftPixels / texture.heightPixels
+			val splitRightV = splitRightPixels / texture.heightPixels
+			val splitTopU = splitTopPixels / texture.widthPixels
+			val splitBottomU = splitBottomPixels / texture.widthPixels
 
 			val colV0 = v
 			val colV1 = v + splitLeftV
@@ -312,10 +317,10 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 			batch.putVertex(vertices[14], normal, tint, rowU3, colV2)
 			batch.putVertex(vertices[15], normal, tint, rowU3, colV3)
 		} else {
-			val splitLeftU = splitLeft / texture.widthPixels
-			val splitRightU = splitRight / texture.widthPixels
-			val splitTopV = splitTop / texture.heightPixels
-			val splitBottomV = splitBottom / texture.heightPixels
+			val splitLeftU = splitLeftPixels / texture.widthPixels
+			val splitRightU = splitRightPixels / texture.widthPixels
+			val splitTopV = splitTopPixels / texture.heightPixels
+			val splitBottomV = splitBottomPixels / texture.heightPixels
 
 			val colU0 = u
 			val colU1 = u + splitLeftU
@@ -353,9 +358,9 @@ class NinePatch(val gl: CachedGl20) : BasicRenderable, Clearable {
 		setScaling(1f, 1f)
 		blendMode = BlendMode.NORMAL
 		premultipliedAlpha = false
-		splitLeft = 0f
-		splitTop = 0f
-		splitRight = 0f
-		splitBottom = 0f
+		splitLeftPixels = 0f
+		splitTopPixels = 0f
+		splitRightPixels = 0f
+		splitBottomPixels = 0f
 	}
 }

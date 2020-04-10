@@ -28,7 +28,6 @@ import com.acornui.io.ResponseException
 import com.acornui.logging.Log
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal1
-import com.acornui.signal.Signal2
 import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -144,6 +143,7 @@ open class AtlasComponent(owner: Context) : RenderableComponent<Atlas>(owner), C
 	}
 
 	private fun load() {
+		validate(ValidationFlags.STYLES) // So the dpiStyle.scale is accurate.
 		val atlasPaths = atlasPaths ?: return
 		val cacheSet = cacheSet!!
 

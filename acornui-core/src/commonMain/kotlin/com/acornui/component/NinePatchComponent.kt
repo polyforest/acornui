@@ -104,13 +104,13 @@ class NinePatchComponent(owner: Context) : RenderableComponent<BasicRenderable>(
 		}
 
 	val splitLeft: Float
-		get() = renderable.splitLeft
+		get() = renderable.splitLeftPixels
 	val splitTop: Float
-		get() = renderable.splitTop
+		get() = renderable.splitTopPixels
 	val splitRight: Float
-		get() = renderable.splitRight
+		get() = renderable.splitRightPixels
 	val splitBottom: Float
-		get() = renderable.splitBottom
+		get() = renderable.splitBottomPixels
 
 	private fun setTextureInternal(value: TextureRo?) {
 		if (renderable.texture == value) return

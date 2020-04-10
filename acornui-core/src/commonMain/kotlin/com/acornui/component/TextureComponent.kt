@@ -154,6 +154,7 @@ open class TextureComponent(owner: Context) : RenderableComponent<Sprite>(owner)
 	}
 
 	private fun load() {
+		validate(ValidationFlags.STYLES) // So the dpiStyle.scale is accurate.
 		val texturePaths = texturePaths ?: return
 		val cacheSet = cacheSet!!
 

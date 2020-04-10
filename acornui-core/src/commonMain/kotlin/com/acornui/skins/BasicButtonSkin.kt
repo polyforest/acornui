@@ -164,6 +164,7 @@ private class BasicCheckboxSkin(
 	private val textField: TextField
 
 	init {
+		style.gap = 0f // ic icons have a bit of padding around them already
 		style.verticalAlign = VAlign.MIDDLE
 		+box
 		textField = +text("") layout {
@@ -201,10 +202,6 @@ private class BasicCheckboxBox(
 	private val indeterminateState = +iconAtlas(theme.atlasPaths, indeterminateRegion)
 	private val toggledState = +iconAtlas(theme.atlasPaths, toggledRegion)
 	private val upState = +iconAtlas(theme.atlasPaths, upRegion)
-
-	init {
-		style.padding = Pad(-3f) // The icon is only 18px and has 3px of padding around it.
-	}
 
 	override var label: String = ""
 

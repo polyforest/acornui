@@ -41,6 +41,7 @@ import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.substringInRange
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -171,7 +172,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		styleTags.add(TextField)
 
 		watch(charStyle) { cS ->
-			fontJob = launchSupervised {
+			fontJob = launch {
 				val loadedFont = fontLoader.loadAndCacheFont(cS)
 				fontScaleX = loadedFont.scaleX
 				fontScaleY = loadedFont.scaleY

@@ -179,10 +179,10 @@ class Atlas(val gl: CachedGl20) : BasicRenderable, Clearable {
 		val sX: Float = (width - uH) / (naturalWidth - uH)
 		val sY: Float = (height - uV) / (naturalHeight - uV)
 
-		totalPadLeft = unscaledPadLeft + scaledPadLeft * sX
-		totalPadTop = unscaledPadTop + scaledPadTop * sY
-		totalPadRight = unscaledPadRight + scaledPadRight * sX
-		totalPadBottom = unscaledPadBottom + scaledPadBottom * sY
+		totalPadLeft = (unscaledPadLeft + scaledPadLeft * sX) / scaleX
+		totalPadTop = (unscaledPadTop + scaledPadTop * sY) / scaleY
+		totalPadRight = (unscaledPadRight + scaledPadRight * sX) / scaleX
+		totalPadBottom = (unscaledPadBottom + scaledPadBottom * sY) / scaleY
 	}
 
 	override fun render() {

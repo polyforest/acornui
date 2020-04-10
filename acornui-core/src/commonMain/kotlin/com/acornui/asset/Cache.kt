@@ -61,13 +61,7 @@ interface Cache {
 	 * @param key The key to use for the cache index.
 	 * @return Returns the cached value.
 	 */
-	fun <T : Any> getOrPut(key: Any, factory: () -> T): T {
-		@Suppress("UNCHECKED_CAST")
-		if (containsKey(key)) return get(key)!!
-		val value = factory()
-		set(key, value)
-		return value
-	}
+	fun <T : Any> getOrPut(key: Any, factory: () -> T): T
 
 	/**
 	 * Decrements the use count for the cache value with the given key.
@@ -162,6 +156,21 @@ class CacheImpl(
 		deathPool.add(key)
 	}
 
+	/**
+	 * Retrieves the cache value for the given key if it exists. Otherwise, constructs a new value via the [factory]
+	 * and adds the new value to the cache.
+	 * @param key The key to use for the cache index.
+	 * @return Returns the cached value.
+	 */
+	@Synchronized
+	override fun <T : Any> getOrPut(key: Any, factory: () -> T): T {
+		@Suppress("UNCHECKED_CAST")
+		if (containsKey(key)) return get(key)!!
+		val value = factory()
+		set(key, value)
+		return value
+	}
+
 	@Synchronized
 	override fun refDec(key: Any) {
 		if (isDisposed) return
@@ -206,6 +215,8 @@ object MockCache : Cache {
 	override fun containsKey(key: Any): Boolean = false
 
 	override fun <T : Any> get(key: Any): T? = null
+
+	override fun <T : Any> getOrPut(key: Any, factory: () -> T): T = factory()
 
 	override fun set(key: Any, value: Any) {
 	}
