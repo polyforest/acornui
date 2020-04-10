@@ -22,7 +22,7 @@ import com.acornui.gl.core.TextureMagFilter
 import com.acornui.gl.core.TextureMinFilter
 import com.acornui.gl.core.TextureWrapMode
 import com.acornui.graphic.Texture
-import com.acornui.math.Bounds
+import com.acornui.io.toUrlRequestData
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -48,21 +48,23 @@ class RepeatingTexture(
 		super.setTextureInternal(value)
 	}
 
-	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+	override fun updateVerticesGlobal() {
 		val t = renderable.texture ?: return
-		val tW = t.widthPixels.toFloat()
-		val tH = t.heightPixels.toFloat()
-		val w = explicitWidth ?: tW
-		val h = explicitHeight ?: tH
-		setUv(0f, 0f, w / tW, h / tH)
-		super.updateLayout(explicitWidth, explicitHeight, out)
+		renderable.setUv(0f, 0f, width * renderable.scaleX / t.widthPixels.toFloat(), height * renderable.scaleY / t.heightPixels.toFloat(), false)
+		super.updateVerticesGlobal()
 	}
 }
 
-inline fun Context.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
+inline fun Context.repeatingTexture(path: String, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  =
+		repeatingTexture(TexturePaths(path), init)
+
+inline fun Context.repeatingTexture(paths: Map<Float, String>, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  =
+		repeatingTexture(TexturePaths(paths.mapValues { it.value.toUrlRequestData() }), init)
+
+inline fun Context.repeatingTexture(paths: TexturePaths, init: ComponentInit<RepeatingTexture> = {}): RepeatingTexture  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val g = RepeatingTexture(this)
-	g.texture(path)
+	g.texture(paths)
 	g.init()
 	return g
 }

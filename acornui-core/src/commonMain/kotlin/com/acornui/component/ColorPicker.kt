@@ -28,6 +28,7 @@ import com.acornui.focus.blurred
 import com.acornui.focus.focus
 import com.acornui.focus.focused
 import com.acornui.focus.isFocusedSelf
+import com.acornui.gl.core.TextureMagFilter
 import com.acornui.graphic.*
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
@@ -297,7 +298,10 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 		}
 	})
 
-	private val alphaGrid = addChild(repeatingTexture("assets/uiskin/AlphaCheckerboard.png"))
+	private val alphaGrid = addChild(repeatingTexture("assets/uiskin/AlphaCheckerboard_1x.png") {
+		// We don't need the hdpi texture here for the checkerboard if the mag filter is NEAREST
+		filterMag = TextureMagFilter.NEAREST
+	})
 
 	private val alphaRect = addChild(rect {
 		style.margin = Pad(0f, 0f, 0f, handleWidth)

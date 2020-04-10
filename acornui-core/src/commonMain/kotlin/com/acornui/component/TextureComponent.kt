@@ -248,6 +248,12 @@ data class TexturePaths(
 		val paths: Map<Float, UrlRequestData>
 ) {
 
+	constructor(path: String) : this(mapOf(1f to path.toUrlRequestData()))
+
+	init {
+		require(paths.isNotEmpty()) { "paths must not be empty." }
+	}
+
 	val densities: List<Float> = paths.keys.toList()
 }
 
@@ -285,6 +291,7 @@ inline fun Context.textureC(texture: Texture, init: ComponentInit<TextureCompone
  * @this A String with the token {0} to be replaced by the dpi.
  */
 fun String.toDpis(vararg dpis: Float): Map<Float, String> {
+	require(dpis.isNotEmpty()) { "must have at least one dpi" }
 	val numberFormatter = numberFormatter { minFractionDigits = 0 }
 	val map = mutableMapOf<Float, String>()
 	for (dpi in dpis) {
