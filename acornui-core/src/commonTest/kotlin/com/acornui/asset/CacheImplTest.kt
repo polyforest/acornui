@@ -1,5 +1,7 @@
 package com.acornui.asset
 
+import com.acornui.di.ContextImpl
+import com.acornui.time.FrameDriver
 import com.acornui.time.FrameDriverImpl
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -9,6 +11,7 @@ import kotlin.test.assertEquals
 class CacheImplTest {
 
 	private val frameDriver = FrameDriverImpl()
+	private val context = ContextImpl(listOf(FrameDriver to frameDriver))
 
 	@BeforeTest
 	fun setup() {
@@ -16,14 +19,14 @@ class CacheImplTest {
 	}
 
 	@Test fun testSet() {
-		val cache = CacheImpl(frameDriver)
+		val cache = CacheImpl(context)
 		val key = "key"
 		cache[key] = "Test"
 		assertEquals<String?>("Test", cache[key])
 	}
 
 	@Test fun testGc() {
-		val cache = CacheImpl(frameDriver, gcFrames = 10)
+		val cache = CacheImpl(context, gcFrames = 10)
 		val key = "key"
 		cache[key] = "Test"
 
@@ -42,7 +45,7 @@ class CacheImplTest {
 	}
 
 	@Test fun testGc2() {
-		val cache = CacheImpl(frameDriver = frameDriver, gcFrames = 10)
+		val cache = CacheImpl(context, gcFrames = 10)
 		val key = "key"
 		cache[key] = "Test"
 
