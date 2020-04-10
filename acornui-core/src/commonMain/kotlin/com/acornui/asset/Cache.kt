@@ -29,10 +29,7 @@ import com.acornui.start
 import com.acornui.time.FrameDriver
 import com.acornui.time.FrameDriverRo
 import com.acornui.time.Tick
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlin.jvm.Synchronized
 
 /**
@@ -84,7 +81,7 @@ interface Cache {
 	companion object : Context.Key<Cache> {
 
 		override val factory = dependencyFactory {
-			it.own(CacheImpl(it.inject(FrameDriver)))
+			CacheImpl(it)
 		}
 	}
 }
@@ -94,17 +91,17 @@ val Context.cache: Cache
 
 class CacheImpl(
 
-		frameDriver: FrameDriverRo,
+		owner: Context,
 
 		/**
 		 * The number of frames before an unreferenced cache item is removed and destroyed.
 		 */
 		private val gcFrames: Int = 500
-) : Cache, Disposable {
+) : ContextImpl(owner), Cache, Disposable {
 
+	private val frameDriver: FrameDriverRo = inject(FrameDriver)
 	private val map = mutableMapOf<Any, CacheValue<Any>>()
 
-	private var isDisposed = false
 	private var tickHandle: Disposable
 
 	private val deathPool = ArrayList<Any>()
@@ -162,7 +159,6 @@ class CacheImpl(
 	 * @param key The key to use for the cache index.
 	 * @return Returns the cached value.
 	 */
-	@Synchronized
 	override fun <T : Any> getOrPut(key: Any, factory: () -> T): T {
 		@Suppress("UNCHECKED_CAST")
 		if (containsKey(key)) return get(key)!!
@@ -198,17 +194,13 @@ class CacheImpl(
 
 	@Synchronized
 	override fun dispose() {
-		checkDisposed()
-		isDisposed = true
+		super.dispose()
 		tickHandle.dispose()
 		deathPool.clear()
 		map.values.forEach(CacheValue<Any>::dispose)
 		map.clear()
 	}
 
-	private fun checkDisposed() {
-		if (isDisposed) throw DisposedException()
-	}
 }
 
 object MockCache : Cache {

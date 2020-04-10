@@ -145,11 +145,13 @@ data class AtlasRegionData(
 
 		/**
 		 * The bounding rectangle of the region within the page.
+		 * In pixels.
 		 */
 		val bounds: IntRectangleRo,
 
 		/**
 		 * Used for 9 patches. An float array of left, top, right, bottom
+		 * In pixels.
 		 */
 		val splits: List<Float>? = null,
 
@@ -157,12 +159,14 @@ data class AtlasRegionData(
 		 * The whitespace padding stripped from the original image, that should be added by the component.
 		 * An int array of left, top, right, bottom
 		 * The padding values will not be rotated.
+		 * In pixels.
 		 */
 		var padding: List<Int> = listOf(0, 0, 0, 0)
 ) {
 
 	/**
 	 * The original width of the image, before whitespace was stripped.
+	 * In pixels.
 	 */
 	val originalWidth: Int
 		get() {
@@ -174,6 +178,7 @@ data class AtlasRegionData(
 
 	/**
 	 * The original width of the image, before whitespace was stripped.
+	 * In pixels.
 	 */
 	val originalHeight: Int
 		get() {
@@ -185,12 +190,14 @@ data class AtlasRegionData(
 
 	/**
 	 * The packed width of the image, after whitespace was stripped.
+	 * In pixels.
 	 */
 	val packedWidth: Int
 		get() = if (isRotated) bounds.height else bounds.width
 
 	/**
 	 * The packed height of the image, after whitespace was stripped.
+	 * In pixels.
 	 */
 	val packedHeight: Int
 		get() = if (isRotated) bounds.width else bounds.height

@@ -92,12 +92,15 @@ open class SimpleHighlight(
 		val w = explicitWidth ?: highlighted.width
 		val h = explicitHeight ?: highlighted.height
 		val splits = highlight.regionData?.splits
+		val dpiScaleX = highlight.dpiScaleX
+		val dpiScaleY = highlight.dpiScaleY
+
 		if (splits != null) {
 			// left, top, right, bottom
 			// If the highlight is a nine patch, offset the highlight by the padding. This allows for the ability to
 			// curve around the highlighted target without cutting into it.
-			highlight.size(w + splits[0] + splits[2], h + splits[1] + splits[3])
-			highlight.position(-splits[0], -splits[1])
+			highlight.size(w + (splits[0] + splits[2]) / dpiScaleX, h + (splits[1] + splits[3]) / dpiScaleY)
+			highlight.position(-splits[0] / dpiScaleX, -splits[1] / dpiScaleY)
 		} else {
 			highlight.size(w, h)
 			highlight.position(0f, 0f)

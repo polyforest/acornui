@@ -151,8 +151,8 @@ suspend fun Context.loadAndCacheFontFromDir(fontPath: String, cacheSet: CacheSet
  * @param cacheSet The caching group, to allow the loaded assets to be disposed as one.
  * @return Returns the loaded [BitmapFont].
  */
-suspend fun Context.loadAndCacheFontFromDir(fontPath: String, imagesDir: String, cacheSet: CacheSet = cacheSet()): BitmapFont = withContext(Dispatchers.Default) {
-	cacheSet.getOrPutAsync(fontPath) {
+suspend fun Context.loadAndCacheFontFromDir(fontPath: String, imagesDir: String, cacheSet: CacheSet = cacheSet()): BitmapFont {
+	return cacheSet.getOrPutAsync(fontPath) {
 		loadFontFromDir(fontPath, imagesDir)
 	}.await()
 }

@@ -29,6 +29,12 @@ abstract class RenderableComponent<T : BasicRenderable?>(
 
 	protected abstract val renderable: T?
 	
+	open val dpiScaleX: Float
+		get() = renderable?.scaleX ?: 1f
+
+	open val dpiScaleY: Float
+		get() = renderable?.scaleY ?: 1f
+	
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val drawable = renderable ?: return
 		out.set(explicitWidth ?: drawable.naturalWidth, explicitHeight ?: drawable.naturalHeight)
