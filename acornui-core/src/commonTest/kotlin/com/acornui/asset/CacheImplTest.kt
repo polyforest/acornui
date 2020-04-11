@@ -1,3 +1,5 @@
+@file:Suppress("RemoveExplicitTypeArguments")
+
 package com.acornui.asset
 
 import com.acornui.di.ContextImpl
