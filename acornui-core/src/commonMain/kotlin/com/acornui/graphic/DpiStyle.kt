@@ -32,13 +32,15 @@ open class DpiStyle : StyleBase() {
 
 	/**
 	 * The x scaling of dp to pixels.
-	 * This is typically updated by the [com.acornui.skins.WindowScalingAttachment] initialized by the skin.
+	 * This is typically updated by the [com.acornui.skins.WindowScalingAttachment] initialized by the skin to match
+	 * the window's dpi scaling.
 	 */
 	var scaleX: Float by prop(1f)
 
 	/**
 	 * The y scaling of dp to pixels.
-	 * This is typically updated by the [com.acornui.skins.WindowScalingAttachment] initialized by the skin.
+	 * This is typically updated by the [com.acornui.skins.WindowScalingAttachment] initialized by the skin to match
+	 * the window's dpi scaling.
 	 */
 	var scaleY: Float by prop(1f)
 

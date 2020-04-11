@@ -19,19 +19,17 @@
 package com.acornui.component
 
 import com.acornui.collection.ArrayList
-import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
+import com.acornui.graphic.DpiStyle
 import com.acornui.math.*
 import com.acornui.radToDeg
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlin.math.atan2
 
-open class BoxStyle : StyleBase() {
-
-	@Transient
+open class BoxStyle : DpiStyle() {
+	
 	override val type: StyleType<BoxStyle> = Companion
 
 	var linearGradient: LinearGradient? by prop(null)
@@ -46,7 +44,9 @@ open class BoxStyle : StyleBase() {
 	var margin: PadRo by prop(Pad())
 	var padding: PadRo by prop(Pad())
 
-	companion object : StyleType<BoxStyle>
+	companion object : StyleType<BoxStyle> {
+		override val extends: StyleType<*>? = DpiStyle
+	}
 }
 
 fun boxStyle(init: BoxStyle.() -> Unit): BoxStyle {

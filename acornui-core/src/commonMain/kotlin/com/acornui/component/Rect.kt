@@ -127,16 +127,18 @@ open class Rect(
 			if (rightBorder < 1f) fillPad.right = 0f
 			if (bottomBorder < 1f) fillPad.bottom = 0f
 			if (leftBorder < 1f) fillPad.left = 0f
+			val dpiScaleX = style.scaleX
+			val dpiScaleY = style.scaleY
 
-			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, flipX = true, flipY = true, spriteOut = topLeftCorner)
-			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, flipX = false, flipY = true, spriteOut = topRightCorner)
-			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, flipX = false, flipY = false, spriteOut = bottomRightCorner)
-			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, flipX = true, flipY = false, spriteOut = bottomLeftCorner)
+			createSmoothCorner(topLeftX - fillPad.left, topLeftY - fillPad.top, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = true, flipY = true, spriteOut = topLeftCorner)
+			createSmoothCorner(topRightX - fillPad.right, topRightY - fillPad.top, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = false, flipY = true, spriteOut = topRightCorner)
+			createSmoothCorner(bottomRightX - fillPad.right, bottomRightY - fillPad.bottom, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = false, flipY = false, spriteOut = bottomRightCorner)
+			createSmoothCorner(bottomLeftX - fillPad.left, bottomLeftY - fillPad.bottom, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = true, flipY = false, spriteOut = bottomLeftCorner)
 
-			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, flipX = true, flipY = true, spriteOut = topLeftStrokeCorner)
-			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, flipX = false, flipY = true, spriteOut = topRightStrokeCorner)
-			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, flipX = false, flipY = false, spriteOut = bottomRightStrokeCorner)
-			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, flipX = true, flipY = false, spriteOut = bottomLeftStrokeCorner)
+			createSmoothCorner(topLeftX, topLeftY, strokeThicknessX = leftBorder, strokeThicknessY = topBorder, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = true, flipY = true, spriteOut = topLeftStrokeCorner)
+			createSmoothCorner(topRightX, topRightY, strokeThicknessX = rightBorder, strokeThicknessY = topBorder, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = false, flipY = true, spriteOut = topRightStrokeCorner)
+			createSmoothCorner(bottomRightX, bottomRightY, strokeThicknessX = rightBorder, strokeThicknessY = bottomBorder, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = false, flipY = false, spriteOut = bottomRightStrokeCorner)
+			createSmoothCorner(bottomLeftX, bottomLeftY, strokeThicknessX = leftBorder, strokeThicknessY = bottomBorder, dpiScaleX = dpiScaleX, dpiScaleY = dpiScaleY, flipX = true, flipY = false, spriteOut = bottomLeftStrokeCorner)
 
 			fill.buildMesh {
 				// If we have a linear gradient, fill with white; we will be using the fill as a mask inside draw.
@@ -266,7 +268,7 @@ open class Rect(
 							u = this.u
 							u2 = (topLeftX - innerTopLeftX) / texture.widthPixels
 							v = this.v
-							v2 = (topLeftY - innerTopLeftY) / texture.heightPixels
+							v2 = (topLeftY - innerTopLeftY) / naturalHeight
 						} else {
 							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
@@ -294,10 +296,10 @@ open class Rect(
 						val v2: Float
 						if (texture != null) {
 							batch.begin(texture)
-							u = (topRightX - innerTopRightX) / texture.widthPixels
+							u = (topRightX - innerTopRightX) / naturalWidth
 							u2 = this.u2
 							v = this.v
-							v2 = (topRightY - innerTopRightY) / texture.heightPixels
+							v2 = (topRightY - innerTopRightY) / naturalHeight
 						} else {
 							batch.begin()
 							u = 0f; v = 0f; u2 = 0f; v2 = 0f
@@ -324,9 +326,9 @@ open class Rect(
 						val v2: Float
 						if (texture != null) {
 							batch.begin(texture)
-							u = (bottomRightX - innerBottomRightX) / texture.widthPixels
+							u = (bottomRightX - innerBottomRightX) / naturalWidth
 							u2 = this.u2
-							v = (bottomRightY - innerBottomRightY) / texture.heightPixels
+							v = (bottomRightY - innerBottomRightY) / naturalHeight
 							v2 = this.v2
 						} else {
 							batch.begin()
@@ -356,8 +358,8 @@ open class Rect(
 						if (texture != null) {
 							batch.begin(texture)
 							u = this.u
-							u2 = (bottomLeftX - innerBottomLeftX) / texture.widthPixels
-							v = (bottomLeftY - innerBottomLeftY) / texture.heightPixels
+							u2 = (bottomLeftX - innerBottomLeftX) / naturalWidth
+							v = (bottomLeftY - innerBottomLeftY) / naturalHeight
 							v2 = this.v2
 						} else {
 							batch.begin()

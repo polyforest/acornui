@@ -41,6 +41,8 @@ private data class SmoothCornerKey(
  * @param strokeThicknessY The vertical thickness of the stroke.
  * @param flipX If true, the u and u2 values will be flipped.
  * @param flipY If true, the v and v2 values will be flipped.
+ * @param dpiScaleX The dpi x scaling.
+ * @param dpiScaleY The dpi y scaling.
  * @param spriteOut The Sprite to populate with the uv coordinates and texture.
  * @param useCache If true, the frame buffer used will be saved for matching corner properties.
  * @return Returns [spriteOut].
@@ -50,20 +52,19 @@ fun Context.createSmoothCorner(
 		cornerRadiusY: Float,
 		strokeThicknessX: Float? = null,
 		strokeThicknessY: Float? = null,
+		dpiScaleX: Float = inject(Window).scaleX,
+		dpiScaleY: Float = inject(Window).scaleY,
 		flipX: Boolean = false,
 		flipY: Boolean = false,
 		spriteOut: Sprite = Sprite(inject(CachedGl20)),
 		useCache: Boolean = true
 ): Sprite {
-	val window = inject(Window)
 	val cache = if (useCache) inject(Cache) else MockCache
 	val curvedShader = inject(CurvedRectShaderKey)
-	val scaleX = window.scaleX
-	val scaleY = window.scaleY
-	val sX = (strokeThicknessX ?: cornerRadiusX + 1f) * scaleX
-	val sY = (strokeThicknessY ?: cornerRadiusY + 1f) * scaleY
-	val cRX = cornerRadiusX * scaleX
-	val cRY = cornerRadiusY * scaleY
+	val sX = (strokeThicknessX ?: cornerRadiusX + 1f) * dpiScaleX
+	val sY = (strokeThicknessY ?: cornerRadiusY + 1f) * dpiScaleY
+	val cRX = cornerRadiusX * dpiScaleX
+	val cRY = cornerRadiusY * dpiScaleY
 	if (cRX < 0.0001f || cRY < 0.0001f || (sX < 0.0001f && sY < 0.0001f)) {
 		spriteOut.clear()
 		return spriteOut
@@ -110,7 +111,7 @@ fun Context.createSmoothCorner(
 	}
 	spriteOut.setUv(u, v, u2, v2, isRotated = false)
 	spriteOut.texture = framebuffer.texture
-	spriteOut.setScaling(scaleX, scaleY)
+	spriteOut.setScaling(dpiScaleX, dpiScaleY)
 
 	return spriteOut
 }
