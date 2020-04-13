@@ -204,6 +204,9 @@ open class ApplicationLooperImpl(
 		frameDriver.dispatch(dT)
 		if (window.isCloseRequested() || !applicationJob.isActive) {
 			Log.debug("Window closed: $window")
+			if (applicationJob.isCancelled) {
+				coroutineContext[CoroutineExceptionHandler.Key]?.handleException(coroutineContext, applicationJob.getCancellationException())
+			}
 			dispose()
 		} else {
 			window.updateAndRender(stage)
