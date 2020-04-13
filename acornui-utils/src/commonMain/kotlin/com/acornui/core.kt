@@ -50,5 +50,5 @@ fun (()->Any?).toDisposable(): Disposable {
 /**
  * Used to mark parts of the Acorn API as not being ready for public.
  */
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class ExperimentalAcorn

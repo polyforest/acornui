@@ -8,7 +8,7 @@ import kotlinx.serialization.*
  * An object representing a locale key.
  * In the future, this may be parsed into lang, region, variant, etc.
  *
- * @param value The locale key. E.g. en-US
+ * @param value The Unicode locale identifier. E.g. en-US
  */
 @Serializable(with = LocaleSerializer::class)
 data class Locale(val value: String)
