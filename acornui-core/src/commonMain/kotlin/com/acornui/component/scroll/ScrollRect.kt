@@ -48,8 +48,6 @@ class ScrollRectImpl(
 
 	override val style = bind(ScrollRectStyle())
 
-	private var scroll = vec2()
-
 	override val useMvpTransforms: Boolean = true
 
 	private val contents = addChild(container { interactivityMode = InteractivityMode.CHILDREN })
@@ -89,48 +87,22 @@ class ScrollRectImpl(
 		contents.removeElement(element)
 	}
 
-	private val _viewTransform = Matrix4()
-	override val viewTransform: Matrix4Ro by validationProp(ValidationFlags.VIEW_PROJECTION) {
-		_viewTransform.set(parent?.viewTransform ?: Matrix4.IDENTITY).translate(-_bounds.x, -_bounds.y)
-	}
-
 	override fun scrollTo(x: Float, y: Float) {
-		if (contentsSnapToPixel)
-			scroll.set(MathUtils.offsetRound(x), MathUtils.offsetRound(y))
-		else
-			scroll.set(x, y)
-		_bounds.x = scroll.x
-		_bounds.y = scroll.y
-		clipRegionLocal = clipRegion.set(_bounds)
+		contents.position(-x, -y)
 		invalidate(ValidationFlags.VIEW_PROJECTION)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		maskClip.size(explicitWidth, explicitHeight)
-		out.set(scroll.x, scroll.y, maskClip.width, maskClip.height, maskClip.baseline)
+		out.set(maskClip.width, maskClip.height, maskClip.baseline)
 		clipRegionLocal = clipRegion.set(out)
-	}
-
-	override fun updateViewProjection() {
-		check(cameraOverride == null) { "Cannot override the camera on ScrollRect." }
-		super.updateViewProjection()
-	}
-
-	override fun render() {
-		if (parent != null && visible && colorTint.a > 0f) {
-			draw()
-		}
 	}
 
 	override fun draw() {
 		StencilUtil.mask(gl.batch, gl, {
-			gl.uniforms.useCamera(parent!!, useModel = true) {
-				maskClip.render()
-			}
+			maskClip.render()
 		}) {
-			gl.uniforms.useCamera(this, useModel = true) {
-				contents.render()
-			}
+			contents.render()
 		}
 	}
 }
