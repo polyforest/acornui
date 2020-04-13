@@ -55,9 +55,12 @@ interface Context : CoroutineScope {
 	val marker: ContextMarker?
 
 	/**
-	 * The dependencies to use when constructing new objects.
+	 * The map of dependencies to use for injection.
+	 * Don't retrieve dependencies from this map, use [inject] which will make use of factories and key inheritance.
+	 *
+	 * @see inject
 	 */
-	var childDependencies: DependencyMap
+	val dependencies: DependencyMap
 
 	/**
 	 * Returns true if this object has been disposed.
@@ -77,11 +80,6 @@ interface Context : CoroutineScope {
 	fun <T : Any> injectOptional(key: Key<T>): T?
 
 	fun <T : Any> inject(key: Key<T>): T
-
-	/**
-	 * Returns an iterator for all dependencies.
-	 */
-	fun dependenciesIterator(): Iterator<DependencyPair<*>>
 
 	/**
 	 * A context key is used for getting and setting dependencies on a [Context].
@@ -151,14 +149,14 @@ fun <T : Any> dependencyFactory(scope: ContextMarker = ContextMarker.APPLICATION
 /**
  * Constructs a new context with the receiver as the owner and [Context.childDependencies] as the new dependencies.
  */
-fun Context.childContext(): Context = ContextImpl(this, childDependencies)
+fun Context.childContext(): Context = ContextImpl(this, dependencies)
 
 /**
  * A basic [Context] implementation.
  */
 open class ContextImpl(
 		final override val owner: Context? = null,
-		private var dependencies: DependencyMap = DependencyMap(),
+		override var dependencies: DependencyMap = DependencyMap(),
 		final override val coroutineContext: CoroutineContext = (owner?.coroutineContext
 				?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job)),
 		override val marker: ContextMarker? = null
@@ -166,7 +164,7 @@ open class ContextImpl(
 
 	constructor(owner: Context?, dependencies: List<DependencyPair<*>>) : this(owner, DependencyMap(dependencies))
 	constructor(dependencies: DependencyMap) : this(null, dependencies)
-	constructor(owner: Context) : this(owner, owner.childDependencies)
+	constructor(owner: Context) : this(owner, owner.dependencies)
 	constructor(dependencies: List<DependencyPair<*>>) : this(null, dependencies)
 
 	private val constructing = ArrayList<Context.Key<*>>()
@@ -174,7 +172,8 @@ open class ContextImpl(
 	private val _disposed = Signal1<Context>()
 	override val disposed = _disposed.asRo()
 
-	final override var childDependencies: DependencyMap = dependencies
+	@Deprecated("Child dependencies no longer separated.", ReplaceWith("dependencies"), DeprecationLevel.ERROR)
+	var childDependencies: DependencyMap = dependencies
 
 	final override fun containsKey(key: Context.Key<*>): Boolean {
 		return dependencies.containsKey(key)
@@ -206,7 +205,6 @@ open class ContextImpl(
 	private fun <T : Any> install(key: Context.Key<T>, instance: T): T {
 		val newDependency = key to instance
 		dependencies += newDependency
-		childDependencies += newDependency
 		return instance
 	}
 
@@ -221,8 +219,6 @@ open class ContextImpl(
 	init {
 		owner?.disposed?.add(::dispose.as1)
 	}
-
-	final override fun dependenciesIterator(): Iterator<DependencyPair<Any>> = dependencies.iterator()
 
 	override fun dispose() {
 		checkDisposed()
@@ -306,7 +302,7 @@ fun Context?.owns(other: Context?): Boolean {
  * @see [CoroutineContext.plus]
  */
 operator fun Context.plus(context: CoroutineContext) : Context {
-	return ContextImpl(owner = this, dependencies = childDependencies, coroutineContext = coroutineContext + context)
+	return ContextImpl(owner = this, dependencies = dependencies, coroutineContext = coroutineContext + context)
 }
 
 

@@ -67,7 +67,7 @@ class TextureComponentTest {
 		headlessApplication {
 			context {
 				var constructedTextures = 0
-				childDependencies += Loaders.textureLoader to MockLoader(0.2.seconds) {
+				dependencies += Loaders.textureLoader to MockLoader(0.2.seconds) {
 					constructedTextures++
 					delay(0.2.seconds)
 					MockTextureWithRequest(it, MockTexture())
@@ -114,7 +114,7 @@ class TextureComponentTest {
 		headlessApplication {
 			context {
 				var totalTextures = 0
-				childDependencies += Loaders.textureLoader to MockLoader {
+				dependencies += Loaders.textureLoader to MockLoader {
 					delay(100L)
 					++totalTextures; MockTexture()
 				}

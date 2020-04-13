@@ -54,7 +54,7 @@ class ContextTest {
 		val key3 = contextKey<String>()
 		val key4 = contextKey<String>()
 		val c = ContextImpl(dependencyMapOf(key1 to "should be overridden", key2 to "two"))
-		c.childDependencies += dependencyMapOf(key1 to "overridden", key3 to "three")
+		c.dependencies += dependencyMapOf(key1 to "overridden", key3 to "three")
 		val d = ContextImpl(c)
 		assertEquals(null, d.injectOptional(key4))
 		assertEquals("overridden", d.injectOptional(key1))
