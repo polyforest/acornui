@@ -314,7 +314,7 @@ open class UiComponentImpl(
 	override var showFocusHighlight by afterChange(false, ::refreshFocusHighlight.as1)
 
 	private var focusTarget: UiComponentRo? = null
-	private var focusHighlighter: FocusHighlighter? = null
+	private var focusHighlighter: Highlighter? = null
 
 	private fun refreshFocusHighlight() {
 		validate(ValidationFlags.STYLES)

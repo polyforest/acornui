@@ -22,6 +22,7 @@ import com.acornui.childWalkLevelOrder
 import com.acornui.collection.firstOrNull2
 import com.acornui.collection.lastOrNull2
 import com.acornui.component.ElementContainer
+import com.acornui.component.Highlighter
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.style.StyleBase
@@ -320,18 +321,7 @@ class FocusableStyle : StyleBase() {
 
 	override val type = Companion
 
-	var highlighter by prop<FocusHighlighter?>(null)
+	var highlighter by prop<Highlighter?>(null)
 
 	companion object : StyleType<FocusableStyle>
-}
-
-interface FocusHighlighter : Disposable {
-
-	fun unhighlight(target: UiComponentRo)
-
-	fun highlight(target: UiComponentRo)
-
-	companion object {
-		const val HIGHLIGHT_PRIORITY = 99999f
-	}
 }

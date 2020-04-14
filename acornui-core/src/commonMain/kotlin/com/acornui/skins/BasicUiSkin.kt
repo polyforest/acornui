@@ -38,7 +38,7 @@ import com.acornui.component.text.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.filter.BlurQuality
-import com.acornui.focus.*
+import com.acornui.focus.FocusableStyle
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.input.SoftKeyboardView
@@ -108,11 +108,11 @@ open class BasicUiSkin(
 	}
 
 	protected open fun focusStyle() {
-		target.getAttachment<FocusHighlighter>(FocusHighlighter)?.dispose()
-		val focusHighlighter = SimpleFocusHighlighter(target, simpleHighlight(theme.atlasPaths, "FocusRect") {
+		target.getAttachment<Highlighter>(Highlighter)?.dispose()
+		val focusHighlighter = HighlighterImpl(target, simpleHighlight(theme.atlasPaths, "FocusRect") {
 			colorTint = theme.focusHighlightColor
 		})
-		target.setAttachment(FocusHighlighter, focusHighlighter)
+		target.setAttachment(Highlighter, focusHighlighter)
 		val focusableStyle = FocusableStyle().apply {
 			highlighter = focusHighlighter
 		}
@@ -164,7 +164,6 @@ open class BasicUiSkin(
 			colorTint = theme.infoColor
 		}, withAncestor(TextStyleTags.info))
 
-		target.addStyleRule(charStyle { selectable = false }, withAncestor(ButtonImpl))
 		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
 		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
 		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
@@ -774,7 +773,7 @@ open class BasicUiSkin(
 	}
 
 	protected open fun softKeyboardStyle() {
-		val panelStyle = PanelStyle().apply {
+		val panelStyle = panelStyle {
 			background = {
 				rect {
 					style.backgroundColor = theme.panelBgColor

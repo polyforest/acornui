@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.acornui.focus
+package com.acornui.component
 
-import com.acornui.component.*
+import com.acornui.Disposable
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.focus.FocusHighlighter.Companion.HIGHLIGHT_PRIORITY
+import com.acornui.component.Highlighter.Companion.HIGHLIGHT_PRIORITY
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
@@ -114,10 +114,26 @@ open class SimpleHighlight(
 	}
 }
 
-class SimpleFocusHighlighter(
+inline fun Context.simpleHighlight(atlasPaths: Map<Float, String>, regionName: String, init: ComponentInit<SimpleHighlight> = {}): SimpleHighlight {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return SimpleHighlight(this, atlasPaths, regionName).apply(init)
+}
+
+interface Highlighter : Disposable {
+
+	fun unhighlight(target: UiComponentRo)
+
+	fun highlight(target: UiComponentRo)
+
+	companion object {
+		const val HIGHLIGHT_PRIORITY = 99999f
+	}
+}
+
+class HighlighterImpl(
 		owner: Context,
 		private val highlight: HighlightView
-) : ContextImpl(owner), FocusHighlighter {
+) : ContextImpl(owner), Highlighter {
 
 	private val popUpManager by PopUpManager
 
@@ -150,9 +166,4 @@ class SimpleFocusHighlighter(
 		if (!highlight.isDisposed)
 			highlight.dispose()
 	}
-}
-
-inline fun Context.simpleHighlight(atlasPaths: Map<Float, String>, regionName: String, init: ComponentInit<SimpleHighlight> = {}): SimpleHighlight {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return SimpleHighlight(this, atlasPaths, regionName).apply(init)
 }
