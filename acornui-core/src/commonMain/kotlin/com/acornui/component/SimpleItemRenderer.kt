@@ -54,7 +54,6 @@ open class SimpleItemRenderer<E : Any>(
 
 	init {
 		styleTags.add(Companion)
-		interactivityMode = InteractivityMode.NONE
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
