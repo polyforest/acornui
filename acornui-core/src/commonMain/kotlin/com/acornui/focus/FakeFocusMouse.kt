@@ -17,10 +17,7 @@
 package com.acornui.focus
 
 import com.acornui.Disposable
-import com.acornui.component.UiComponentRo
-import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.parentWalk
-import com.acornui.component.stage
+import com.acornui.component.*
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.input.*
@@ -44,11 +41,10 @@ class FakeFocusMouse(
 
 	private val keyDownHandler = { event: KeyInteractionRo ->
 		if (!event.handled) {
-			val target = getTarget(event)
+			val target = focus.focused
 			if (target != null) {
-				val isRepeat = event.isRepeat && downKey == event.keyCode && target.downRepeatEnabled()
+				val isRepeat = event.isRepeat && target.downRepeatEnabled()
 				if ((downKey == null || isRepeat) && !event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)) {
-					event.handled = true
 					downKey = event.keyCode
 					downElement = target
 					dispatchFakeMouseEvent(target, MouseInteractionRo.MOUSE_DOWN)
@@ -64,10 +60,8 @@ class FakeFocusMouse(
 			val downElement = downElement!!
 			this.downElement = null
 			dispatchFakeMouseEvent(downElement, MouseInteractionRo.MOUSE_UP)
-			if (!event.handled && getTarget(event) == focus.focused) {
-				downElement.dispatchClick()
-			}
-			event.handled = true
+			if (!downElement.dispatchClick().handled)
+				getEnterTarget(event)?.dispatchClick()
 		}
 	}
 
@@ -80,30 +74,11 @@ class FakeFocusMouse(
 		interactivity.dispatch(target, fakeMouseEvent)
 	}
 
-	private fun getTarget(event: KeyInteractionRo): UiComponentRo? {
-		val focused = focus.focused ?: return null
-		var target: UiComponentRo = focused
-		focused.parentWalk {
-			if (it.click().isNotEmpty()) {
-				// If a parent has a click handler, use the focused element, don't continue to check for an
-				// EnterTarget attachment.
-				false
-			} else {
-				val attachment = it.getAttachment<EnterTarget>(EnterTarget)
-				if (attachment != null) {
-					if (attachment.filter(event)) {
-						target = attachment.target
-						false
-					} else {
-						true
-					}
-				} else {
-					true
-				}
-			}
-
+	private fun getEnterTarget(event: KeyInteractionRo): UiComponentRo? {
+		val target = focus.focused?.findParent {
+			it.getAttachment<EnterTarget>(EnterTarget)?.filter?.invoke(event) == true
 		}
-		return target
+		return target?.enterTarget ?: target
 	}
 
 	init {
@@ -118,10 +93,6 @@ class FakeFocusMouse(
 	}
 }
 
-fun Context.fakeFocusMouse(): FakeFocusMouse {
-	return FakeFocusMouse(this)
-}
-
 /**
  * The target for when ENTER or RETURN is pressed.
  */
@@ -129,6 +100,9 @@ class EnterTarget(val target: UiComponentRo, val filter: (KeyInteractionRo) -> B
 
 	companion object
 }
+
+private val UiComponentRo.enterTarget: UiComponentRo?
+	get() = getAttachment<EnterTarget>(EnterTarget)?.target
 
 /**
  * The FakeFocusMouse by default will respond to ENTER or RETURN key presses and fabricate MOUSE_DOWN and MOUSE_UP
