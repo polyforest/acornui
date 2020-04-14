@@ -83,7 +83,7 @@ fun UiComponentRo.forwardClick(isCapture: Boolean = false): StoppableSignal<Clic
 
 private val fakeClickEvent = ClickInteraction()
 
-fun UiComponentRo.dispatchClick() {
+fun UiComponentRo.dispatchClick(): ClickInteractionRo {
 	fakeClickEvent.clear()
 	fakeClickEvent.isFabricated = true
 	fakeClickEvent.type = ClickInteractionRo.LEFT_CLICK
@@ -92,6 +92,7 @@ fun UiComponentRo.dispatchClick() {
 	fakeClickEvent.timestamp = nowMs()
 	fakeClickEvent.count = 1
 	inject(InteractivityManager).dispatch(this, fakeClickEvent)
+	return fakeClickEvent
 }
 
 private val clickHandler = { event: ClickInteractionRo ->
