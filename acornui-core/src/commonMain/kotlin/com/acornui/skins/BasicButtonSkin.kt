@@ -32,7 +32,6 @@ private class BasicButtonSkin(
 	private val downShine: Rect
 
 	init {
-		interactivityMode = InteractivityMode.NONE
 		defaultWidth = 100f
 		defaultHeight = 50f
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.STYLES, ::updateProperties)
@@ -114,6 +113,7 @@ private class BasicLabelButtonSkin(
 
 	private val textField: TextField = text {
 		charStyle.colorTint = Color.WHITE
+		selectable = false
 	}
 
 	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
@@ -125,7 +125,6 @@ private class BasicLabelButtonSkin(
 		addChild(texture)
 		addChild(textField)
 		watch(charStyle) { refreshTextColor(buttonState) }
-		textField.selectable = false
 		textField.flowStyle.horizontalAlign = FlowHAlign.CENTER
 	}
 
@@ -165,11 +164,12 @@ private class BasicCheckboxSkin(
 	private val textField: TextField
 
 	init {
-		interactivityMode = InteractivityMode.NONE
 		style.gap = 0f // ic icons have a bit of padding around them already
 		style.verticalAlign = VAlign.MIDDLE
 		+box
-		textField = +text("") layout {
+		textField = +text("") {
+			selectable = false
+		} layout {
 			widthPercent = 1f
 		}
 	}

@@ -12,6 +12,7 @@ import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
 import com.acornui.component.text.TextField
+import com.acornui.component.text.selectable
 import com.acornui.component.text.text
 import com.acornui.di.Context
 import com.acornui.math.Bounds
@@ -35,10 +36,10 @@ class BasicIconButtonSkin(
 	private val textField: TextField
 
 	init {
-		interactivityMode = InteractivityMode.NONE
 		styleTags.add(BasicIconButtonSkin)
 		addChild(texture)
 		textField = addChild(text {
+			selectable = false
 			visible = false
 		}) layout { widthPercent = 1f }
 	}
