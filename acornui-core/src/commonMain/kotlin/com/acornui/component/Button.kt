@@ -81,6 +81,7 @@ open class ButtonImpl(
 
 		click().add {
 			if (toggleOnClick) {
+				it.handled = true
 				setUserToggled(!toggled)
 			}
 		}
