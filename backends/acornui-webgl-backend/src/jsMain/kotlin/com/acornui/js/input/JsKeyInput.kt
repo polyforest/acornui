@@ -41,7 +41,7 @@ class JsKeyInput(
 	private val _keyDown = Signal1<KeyInteractionRo>()
 	override val keyDown = _keyDown.asRo()
 	private val _keyUp = Signal1<KeyInteractionRo>()
-	override val keyUp = _keyDown.asRo()
+	override val keyUp = _keyUp.asRo()
 	private val _char = Signal1<CharInteractionRo>()
 	override val char = _char.asRo()
 
@@ -53,6 +53,7 @@ class JsKeyInput(
 	private val keyDownHandler = { jsEvent: Event ->
 		(jsEvent as KeyboardEvent)
 		keyEvent.set(jsEvent)
+		keyEvent.type = KeyInteractionRo.KEY_DOWN
 		if (!jsEvent.repeat) {
 			downMap[keyEvent.keyCode][keyEvent.location] = true
 		}
@@ -64,6 +65,7 @@ class JsKeyInput(
 	private val keyUpHandler = { jsEvent: Event ->
 		(jsEvent as KeyboardEvent)
 		keyEvent.set(jsEvent)
+		keyEvent.type = KeyInteractionRo.KEY_UP
 		if (downMap.containsKey(keyEvent.keyCode))
 			downMap[keyEvent.keyCode].clear() // Browsers give incorrect key location properties on key up.
 		_keyUp.dispatch(keyEvent)

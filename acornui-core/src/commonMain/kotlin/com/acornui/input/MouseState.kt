@@ -113,16 +113,25 @@ interface MouseInput : MouseState {
 
 	/**
 	 * Dispatched when the user has touched down on a touch device.
+	 *
+	 * Both a touch start and a mouse down event will be dispatched, if only the touch start event is desired, invoke
+	 * [TouchInteractionRo.preventDefault] on the touch start event.
 	 */
 	val touchStart: Signal<(TouchInteractionRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has released a touch on a touch device.
+	 *
+	 * Both a touch end and a mouse up event will be dispatched, if only the touch end event is desired, invoke
+	 * [TouchInteractionRo.preventDefault] on the touch end event.
 	 */
 	val touchEnd: Signal<(TouchInteractionRo) -> Unit>
 
 	/**
 	 * Dispatched when one of the touch points has moved.
+	 *
+	 * Both a touch move and a mouse move event will be dispatched, if only the touch move event is desired, invoke
+	 * [TouchInteractionRo.preventDefault] on the touch move event.
 	 */
 	val touchMove: Signal<(TouchInteractionRo) -> Unit>
 
