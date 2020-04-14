@@ -35,10 +35,10 @@ class BasicIconButtonSkin(
 	private val textField: TextField
 
 	init {
+		interactivityMode = InteractivityMode.NONE
 		styleTags.add(BasicIconButtonSkin)
 		addChild(texture)
 		textField = addChild(text {
-			interactivityMode = InteractivityMode.NONE
 			visible = false
 		}) layout { widthPercent = 1f }
 	}

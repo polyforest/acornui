@@ -32,6 +32,7 @@ private class BasicButtonSkin(
 	private val downShine: Rect
 
 	init {
+		interactivityMode = InteractivityMode.NONE
 		defaultWidth = 100f
 		defaultHeight = 50f
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.STYLES, ::updateProperties)
@@ -164,6 +165,7 @@ private class BasicCheckboxSkin(
 	private val textField: TextField
 
 	init {
+		interactivityMode = InteractivityMode.NONE
 		style.gap = 0f // ic icons have a bit of padding around them already
 		style.verticalAlign = VAlign.MIDDLE
 		+box

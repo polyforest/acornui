@@ -26,6 +26,7 @@ class StatesButtonSkin(owner: Context,
 	private var currentSkinPart: UiComponent? = null
 
 	init {
+		interactivityMode = InteractivityMode.NONE
 		_stateSkinMap[ButtonState.UP] = upState(this)
 		_stateSkinMap[ButtonState.OVER] = overState(this)
 		_stateSkinMap[ButtonState.DOWN] = downState(this)
