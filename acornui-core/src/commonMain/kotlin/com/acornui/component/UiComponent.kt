@@ -113,17 +113,28 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 }
 
 /**
- * Traverses this ChildRo's ancestry, invoking a callback on each parent up the chain.
- * (including this object)
+ * Traverses this component's ancestry, invoking a callback on each parent up the chain until the callback returns
+ * false. (including this object)
  * @param callback The callback to invoke on each ancestor. If this callback returns true, iteration will continue,
  * if it returns false, iteration will be halted.
  * @return If [callback] returned false, this method returns the element on which the iteration halted.
+ *
+ * @see findParent
  */
-inline fun UiComponentRo.parentWalk(callback: (UiComponentRo) -> Boolean): UiComponentRo? {
+inline fun UiComponentRo.parentWalk(callback: (UiComponentRo) -> Boolean): UiComponentRo? = findParent { !callback(it) }
+
+/**
+ * Traverses this component's ancestry, invoking a callback on each parent up the chain until the callback returns
+ * true. (including this object)
+ * @param callback The callback to invoke on each ancestor. If this callback returns true, iteration will halt and that
+ * ancestor will be returned.
+ * @return The first element, if any, where [callback] returns true.
+ */
+inline fun UiComponentRo.findParent(callback: (UiComponentRo) -> Boolean): UiComponentRo? {
 	var p: UiComponentRo? = this
 	while (p != null) {
-		val shouldContinue = callback(p)
-		if (!shouldContinue) return p
+		val found = callback(p)
+		if (found) return p
 		p = p.parent
 	}
 	return null
