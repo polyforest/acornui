@@ -75,7 +75,7 @@ data class Theme(
 
 		val textDisabledColor: ColorRo = Color(0x666666ff),
 
-		val selectableText: Boolean = false,
+		val selectableText: Boolean = true,
 
 		val errorColor: ColorRo = Color(0xcc3333ff),
 		val warningColor: ColorRo = Color(0xff9933ff),
