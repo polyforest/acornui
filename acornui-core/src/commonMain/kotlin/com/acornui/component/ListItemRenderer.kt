@@ -53,13 +53,13 @@ interface ListItemRenderer<E> : ListItemRendererRo<E>, ItemRenderer<E>, Toggleab
  * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
  * @param factory Used to create new item renderers as needed.
  */
-fun <E, T : ListItemRenderer<E>> ElementContainer<T>.recycleListItemRenderers(
+fun <E, T : ListItemRenderer<E>, C : ElementContainer<T>> C.recycleListItemRenderers(
 		data: Iterable<E>?,
 		existingElements: MutableList<T> = elements,
 		configure: (element: T, item: E, index: Int) -> Unit = { _, _, _ -> },
 		unconfigure: (element: T) -> Unit = {},
 		equality: EqualityCheck<E?> = { a, b -> a == b },
-		factory: ElementContainer<T>.() -> T
+		factory: C.() -> T
 ) {
 	@Suppress("UNCHECKED_CAST")
 	val pool = createOrReuseAttachment(RendererPoolKey(factory)) {
