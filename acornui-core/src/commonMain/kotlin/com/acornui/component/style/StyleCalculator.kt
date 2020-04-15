@@ -22,7 +22,13 @@ import com.acornui.collection.*
  * A style calculator is responsible for setting the calculated values
  */
 interface StyleCalculator {
-	fun calculate(target: StylableRo, out: Style)
+
+	/**
+	 * Sets the calculated values for the given style.
+	 * 
+	 * @return Returns true if the calculated values have changed.
+	 */
+	fun calculate(target: StylableRo, out: Style): Boolean
 }
 
 object CascadingStyleCalculator : StyleCalculator {
@@ -36,7 +42,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
-	override fun calculate(target: StylableRo, out: Style) {
+	override fun calculate(target: StylableRo, out: Style): Boolean {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
 		target.walkStylableAncestry { ancestor ->
@@ -65,7 +71,7 @@ object CascadingStyleCalculator : StyleCalculator {
 					if (!tmpCalculated[foundIndex]) {
 						tmpCalculated[foundIndex] = true
 						val v = prop.explicitValue
-						if (found.calculatedValue != v) {
+						if (!found.calculatedIsSet || found.calculatedValue != v) {
 							found.calculatedValue = v
 							hasChanged = true
 						}
@@ -80,11 +86,11 @@ object CascadingStyleCalculator : StyleCalculator {
 			}
 		}
 		tmpCalculated.clear()
-		if (hasChanged) {
-			out.modTag.increment()
-		}
 		calculated.clear()
 		entries.clear()
+		if (hasChanged) 
+			out.modTag.increment()
+		return hasChanged
 	}
 
 	fun getDebugInfo(style: Style, target: StylableRo): List<StyleRuleDebugInfo> {
