@@ -147,15 +147,10 @@ abstract class StyleBase : Style, Disposable {
 
 class StyleWatcher<out T : StyleRo>(
 		val style: T,
-		val priority: Float,
 		private val onChanged: (T) -> Unit
-) : Comparable<StyleWatcher<*>> {
+) {
 
 	private val styleWatch = ModTagWatch()
-
-	override fun compareTo(other: StyleWatcher<*>): Int {
-		return -priority.compareTo(other.priority)
-	}
 
 	fun check() {
 		if (styleWatch.set(style.modTag)) {

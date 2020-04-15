@@ -84,7 +84,10 @@ class Styles(private val host: Stylable) : Disposable {
 
 	private val entriesByType = HashMap<StyleType<*>, MutableList<StyleRo>>()
 
-	private val styleValidators = ArrayList<Style>()
+	/**
+	 * A list of styles to validate.
+	 */
+	private val styles = ArrayList<Style>()
 	private val styleWatchers = ArrayList<StyleWatcher<*>>()
 
 	private var isDisposed = false
@@ -139,48 +142,62 @@ class Styles(private val host: Stylable) : Disposable {
 			out.addAll(entries)
 	}
 
+	/**
+	 * Binds a style to have its calculated values set on [validateStyles].
+	 */
 	fun <T : Style> bind(style: T): T {
 		if (isDisposed) throw DisposedException()
 		style.changed.add(::invalidateStyles.as1)
-		styleValidators.add(style)
+		styles.add(style)
 		invalidateStyles()
 		return style
 	}
 
+	/**
+	 * Removes a style object from calculation.
+	 */
 	fun unbind(style: StyleRo) {
 		style.changed.remove(::invalidateStyles.as1)
-		styleValidators.remove(style)
+		styles.remove(style)
 	}
 
-	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
+	/**
+	 * When [validateStyles] is called, any watched style objects whose calculated values have changed will have
+	 * the given callback invoked.
+	 */
+	fun <T : Style> watch(style: T, callback: (T) -> Unit) {
 		if (isDisposed) return
 		if (assertionsEnabled)
-			check(styleValidators.contains(style)) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
-		val watcher = StyleWatcher(style, priority, callback)
-		styleWatchers.addSorted(watcher)
+			check(styles.contains(style)) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
+		styleWatchers.add(StyleWatcher(style, callback))
 	}
 
+	/**
+	 * Removes the given style from change watching.
+	 */
 	fun unwatch(style: Style) {
 		styleWatchers.removeFirst { it.style === style }
 	}
 
+	/**
+	 * Sets calculated values on all bound style objects.
+	 * Notifies each style watcher if the style's calculated values has changed.
+	 */
 	fun validateStyles() {
-		for (i in 0..styleValidators.lastIndex) {
-			CascadingStyleCalculator.calculate(host, styleValidators[i])
+		for (i in 0..styles.lastIndex) {
+			CascadingStyleCalculator.calculate(host, styles[i])
 		}
-		for (i in 0..styleWatchers.lastIndex) {
-			styleWatchers[i].check()
-		}
+		styleWatchers.forEach2(action = StyleWatcher<*>::check)
 	}
 
 	override fun dispose() {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
-		for (i in 0..styleValidators.lastIndex) {
-			styleValidators[i].changed.remove(::invalidateStyles.as1)
+		for (i in 0..styles.lastIndex) {
+			styles[i].changed.remove(::invalidateStyles.as1)
 		}
 		styleWatchers.clear()
-		styleValidators.clear()
+		styles.clear()
 		styleTags.dispose()
 		styleRules.dispose()
 	}
