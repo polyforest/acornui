@@ -17,7 +17,6 @@
 package com.acornui.component.text
 
 import com.acornui.async.cancellingJobProp
-import com.acornui.async.launchSupervised
 import com.acornui.component.*
 import com.acornui.component.style.Stylable
 import com.acornui.component.style.StyleTag

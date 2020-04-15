@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "ConvertTwoComparisonsToRangeCheck")
+@file:Suppress("unused", "ConvertTwoComparisonsToRangeCheck", "ReplaceRangeToWithUntil")
 
 package com.acornui.collection
 
