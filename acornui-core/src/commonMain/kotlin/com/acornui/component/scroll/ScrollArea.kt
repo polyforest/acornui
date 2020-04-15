@@ -136,8 +136,7 @@ open class ScrollArea<E : UiComponent>(
 			scrollRect.style.borderRadii = it.borderRadii
 
 			corner?.dispose()
-			corner = it.corner(this)
-			_children.addAfter(corner!!, vScrollBar)
+			corner = addChild(it.corner(this))
 		}
 	}
 
@@ -296,8 +295,10 @@ open class ScrollArea<E : UiComponent>(
 		val vScrollBarW2 = if (needsVScrollBar) vScrollBarW else 0f
 		val hScrollBarH2 = if (needsHScrollBar) hScrollBarH else 0f
 
-		out.set(explicitWidth ?: scrollRect.contentsWidth + vScrollBarW2, explicitHeight ?: scrollRect.contentsHeight
-		+ hScrollBarH2)
+		out.set(
+				explicitWidth ?: scrollRect.contentsWidth + vScrollBarW2,
+				explicitHeight ?: scrollRect.contentsHeight + hScrollBarH2
+		)
 
 		// Update the scroll models and scroll bar sizes.
 		if (needsHScrollBar) {
