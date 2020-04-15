@@ -525,13 +525,15 @@ open class BasicUiSkin(
 				}
 			}
 			borderRadii = Corners(0f, 0f, theme.borderRadius, theme.borderRadius)
+			filter = withAncestor(OptionList)
 		}
-		target.styleRules.add(StyleRule(dataScrollerStyle, withAncestor(OptionList)))
+		target.styleRules.add(dataScrollerStyle)
 
 		val scrollRectStyle = ScrollRectStyle().apply {
 			borderRadii = Corners(0f, 0f, 0f, theme.borderRadius - theme.strokeThickness)
+			filter = withAncestor(OptionList)
 		}
-		target.styleRules.add(StyleRule(scrollRectStyle, withAncestor(OptionList)))
+		target.styleRules.add(scrollRectStyle)
 
 		val textInputStyle = TextInputStyle().apply {
 			background = noSkinOptional
@@ -799,6 +801,10 @@ open class BasicUiSkin(
 		target.addStyleRule(dropShadowStyle, shadowRectStyleTag)
 	}
 
+	protected fun rectButtonSkin(stateToColor: (ButtonState) -> ColorRo): Context.() -> ButtonSkin = {
+		RectButtonSkin(this, stateToColor)
+	}
+
 }
 
 private class RectButtonSkin(owner: Context, private val stateToColor: (ButtonState) -> ColorRo) : Rect(owner), ButtonSkin {
@@ -815,8 +821,4 @@ private class RectButtonSkin(owner: Context, private val stateToColor: (ButtonSt
 		style.backgroundColor = Color.WHITE
 		colorTint = stateToColor(ButtonState.UP)
 	}
-}
-
-private fun Context.rectButtonSkin(stateToColor: (ButtonState) -> ColorRo): Context.() -> ButtonSkin = {
-	RectButtonSkin(this, stateToColor)
 }
