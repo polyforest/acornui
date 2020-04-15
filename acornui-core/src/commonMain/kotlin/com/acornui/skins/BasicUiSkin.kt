@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.acornui.skins
 
 import com.acornui.collection.AlwaysFilter

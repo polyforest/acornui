@@ -2,7 +2,6 @@ package com.acornui.skins
 
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.style.StyleRule
 import com.acornui.di.ContextImpl
 import com.acornui.function.as2
 import com.acornui.graphic.Window
@@ -14,7 +13,6 @@ import com.acornui.graphic.dpiStyle
 class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 
 	private val dpiScaling = dpiStyle()
-	private val dpiScalingRule = StyleRule(dpiScaling)
 	private val window = inject(Window)
 
 	init {
@@ -30,14 +28,14 @@ class WindowScalingAttachment(val target: UiComponent) : ContextImpl(target) {
 	}
 
 	fun apply() {
-		if (!target.styleRules.contains(dpiScalingRule))
-			target.styleRules.add(dpiScalingRule)
+		if (!target.styleRules.contains(dpiScaling))
+			target.styleRules.add(dpiScaling)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		window.scaleChanged.remove(::updateWindowScaling.as2)
-		target.styleRules.remove(dpiScalingRule)
+		target.styleRules.remove(dpiScaling)
 	}
 
 	companion object {

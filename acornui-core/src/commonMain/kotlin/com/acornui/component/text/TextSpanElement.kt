@@ -160,10 +160,11 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 	override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
 
-	override val styleRules: MutableList<StyleRule<*>>
+	override val styleRules: MutableList<StyleRo>
 		get() = styles.styleRules
 
-	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = styles.getRulesByType(type, out)
+	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) =
+			styles.getRulesByType(type, out)
 
 	override fun invalidateStyles() {
 		textParent?.invalidate(ValidationFlags.STYLES)

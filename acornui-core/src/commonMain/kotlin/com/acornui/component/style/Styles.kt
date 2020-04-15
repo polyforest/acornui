@@ -38,12 +38,11 @@ interface StylableRo {
 	/**
 	 * A list of style rules that will be queried in determining calculated values for bound style objects.
 	 */
-	val styleRules: List<StyleRule<*>>
+	val styleRules: List<StyleRo>
 
-	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
+	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) {
 		out.clear()
-		@Suppress("UNCHECKED_CAST")
-		(styleRules as Iterable<StyleRule<T>>).filterTo(out, { it.style.type == type })
+		styleRules.filterTo(out, { it.type == type })
 	}
 
 	/**
@@ -66,24 +65,26 @@ interface Stylable : StylableRo {
 	/**
 	 * A list of style rules that will be queried in determining calculated values for bound style objects.
 	 */
-	override val styleRules: MutableList<StyleRule<*>>
+	override val styleRules: MutableList<StyleRo>
 
 }
 
-fun Stylable.addStyleRule(style: StyleRo, tag: StyleTag, priority: Float = 0f) = addStyleRule(style, tag.filter, priority)
+fun Stylable.addStyleRule(style: Style, tag: StyleTag, priority: Float = 0f) = addStyleRule(style, tag.filter, priority)
 
-fun Stylable.addStyleRule(style: StyleRo, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
-	styleRules.add(StyleRule(style, filter, priority))
+fun Stylable.addStyleRule(style: Style, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
+	style.filter = filter
+	style.priority = priority
+	styleRules.add(style)
 }
 
 class Styles(private val host: Stylable) : Disposable {
 
 	val styleTags = ActiveList<StyleTag>()
-	val styleRules = ActiveList<StyleRule<*>>()
+	val styleRules = ActiveList<StyleRo>()
 
-	private val entriesByType = HashMap<StyleType<*>, MutableList<StyleRule<*>>>()
+	private val entriesByType = HashMap<StyleType<*>, MutableList<StyleRo>>()
 
-	private val styleValidators = ArrayList<StyleValidator>()
+	private val styleValidators = ArrayList<Style>()
 	private val styleWatchers = ArrayList<StyleWatcher<*>>()
 
 	private var isDisposed = false
@@ -106,7 +107,7 @@ class Styles(private val host: Stylable) : Disposable {
 		styleRules.reset.add {
 			for (list in entriesByType.values) {
 				for (entry in list) {
-					entry.style.changed.remove(::invalidateStyles.as1)
+					entry.changed.remove(::invalidateStyles.as1)
 				}
 			}
 			entriesByType.clear()
@@ -114,47 +115,47 @@ class Styles(private val host: Stylable) : Disposable {
 		}
 	}
 
-	private fun add(entry: StyleRule<*>) {
-		entriesByType.getOrPut(entry.style.type) { ArrayList() }.add(entry)
+	private fun add(entry: StyleRo) {
+		entriesByType.getOrPut(entry.type) { ArrayList() }.add(entry)
 		invalidateStyles()
-		entry.style.changed.add(::invalidateStyles.as1)
+		entry.changed.add(::invalidateStyles.as1)
 	}
 
-	private fun remove(entry: StyleRule<*>) {
-		entriesByType[entry.style.type]?.remove(entry)
+	private fun remove(entry: StyleRo) {
+		entriesByType[entry.type]?.remove(entry)
 		invalidateStyles()
-		entry.style.changed.remove(::invalidateStyles.as1)
+		entry.changed.remove(::invalidateStyles.as1)
 	}
 
 	private fun invalidateStyles() {
 		host.invalidateStyles()
 	}
 
-	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
+	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<T>) {
 		@Suppress("UNCHECKED_CAST")
-		val entries = entriesByType[type] as List<StyleRule<T>>?
+		val entries = entriesByType[type] as List<T>?
 		out.clear()
 		if (entries != null)
 			out.addAll(entries)
 	}
 
-	fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
+	fun <T : Style> bind(style: T): T {
 		if (isDisposed) throw DisposedException()
 		style.changed.add(::invalidateStyles.as1)
-		styleValidators.add(StyleValidator(style, calculator))
+		styleValidators.add(style)
 		invalidateStyles()
 		return style
 	}
 
 	fun unbind(style: StyleRo) {
 		style.changed.remove(::invalidateStyles.as1)
-		styleValidators.removeFirst { it.style === style }
+		styleValidators.remove(style)
 	}
 
 	fun <T : Style> watch(style: T, priority: Float, callback: (T) -> Unit) {
 		if (isDisposed) return
 		if (assertionsEnabled)
-			check(styleValidators.firstOrNull2 { it.style === style } != null) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
+			check(styleValidators.contains(style)) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
 		val watcher = StyleWatcher(style, priority, callback)
 		styleWatchers.addSorted(watcher)
 	}
@@ -165,7 +166,7 @@ class Styles(private val host: Stylable) : Disposable {
 
 	fun validateStyles() {
 		for (i in 0..styleValidators.lastIndex) {
-			styleValidators[i].validate(host)
+			CascadingStyleCalculator.calculate(host, styleValidators[i])
 		}
 		for (i in 0..styleWatchers.lastIndex) {
 			styleWatchers[i].check()
@@ -176,7 +177,7 @@ class Styles(private val host: Stylable) : Disposable {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
 		for (i in 0..styleValidators.lastIndex) {
-			styleValidators[i].style.changed.remove(::invalidateStyles.as1)
+			styleValidators[i].changed.remove(::invalidateStyles.as1)
 		}
 		styleWatchers.clear()
 		styleValidators.clear()
@@ -184,32 +185,6 @@ class Styles(private val host: Stylable) : Disposable {
 		styleRules.dispose()
 	}
 }
-
-/**
- * Holds a style object with explicit values that will be applied to the calculated values of the target style object
- * when the filter passes.
- * Entries will be applied in the order from deepest child to highest ancestor (the stage).
- */
-data class StyleRule<out T : StyleRo>(
-
-		/**
-		 * The explicit values on this style object will be applied to the target if the filter passes.
-		 * If this style object changes, the styles object will dispatch a changed signal.
-		 */
-		val style: T,
-
-		/**
-		 * A filter responsible for determining whether or not this rule should be applied.
-		 */
-		val filter: StyleFilter = AlwaysFilter,
-
-		/**
-		 * A higher priority value will be applied before entries with a lower priority.
-		 * Equivalent priorities will go to the entry deeper in the display hierarchy, and then to the order this entry
-		 * was added.
-		 */
-		val priority: Float = 0f
-)
 
 interface StyleType<out T : StyleRo> {
 

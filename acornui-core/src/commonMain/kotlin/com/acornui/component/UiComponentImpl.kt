@@ -608,13 +608,13 @@ open class UiComponentImpl(
 	final override val styleTags: MutableList<StyleTag>
 		get() = styles.styleTags
 
-	final override val styleRules: MutableList<StyleRule<*>>
+	final override val styleRules: MutableList<StyleRo>
 		get() = styles.styleRules
 
-	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRule<T>>) = styles.getRulesByType(type, out)
+	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) = styles.getRulesByType(type, out)
 
 	protected fun <T : Style> bind(style: T, calculator: StyleCalculator = CascadingStyleCalculator): T {
-		styles.bind(style, calculator)
+		styles.bind(style)
 		return style
 	}
 

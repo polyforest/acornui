@@ -38,7 +38,7 @@ class CascadingStyleCalculatorTest {
 
 		val a = object : Stylable {
 			override val styleTags = arrayListOf(tagA)
-			override val styleRules = arrayListOf<StyleRule<*>>()
+			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent: Stylable? = null
 
@@ -67,7 +67,7 @@ class CascadingStyleCalculatorTest {
 
 		val stylableB = object : Stylable {
 			override val styleTags = arrayListOf(tagB)
-			override val styleRules = arrayListOf<StyleRule<*>>()
+			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent: Stylable? = a
 
@@ -83,7 +83,7 @@ class CascadingStyleCalculatorTest {
 
 		val c = object : Stylable {
 			override val styleTags = arrayListOf(tagC)
-			override val styleRules = arrayListOf<StyleRule<*>>()
+			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent = a
 
@@ -117,10 +117,10 @@ class CascadingStyleCalculatorTest {
 
 }
 
-private fun <T : StyleRo> Stylable.filterRules(type: StyleType<T>, out: MutableList<StyleRule<T>>) {
+private fun <T : StyleRo> Stylable.filterRules(type: StyleType<T>, out: MutableList<T>) {
 	out.clear()
 	@Suppress("UNCHECKED_CAST")
-	(styleRules as Iterable<StyleRule<T>>).filterTo(out, { it.style.type == type })
+	(styleRules as Iterable<T>).filterTo(out, { it.type == type })
 }
 
 private class SimpleStyle : StyleBase() {
@@ -136,5 +136,7 @@ private class SimpleStyle : StyleBase() {
 private fun Stylable.simpleStyle(filter: StyleFilter = AlwaysFilter, priority: Float = 0f, init: ComponentInit<SimpleStyle>) {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val style = SimpleStyle().apply(init)
-	styleRules.add(StyleRule(style, filter, priority))
+	style.filter = filter
+	style.priority = priority
+	styleRules.add(style)
 }

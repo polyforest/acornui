@@ -27,12 +27,12 @@ interface StyleCalculator {
 
 object CascadingStyleCalculator : StyleCalculator {
 
-	private val entries = ArrayList<StyleRule<*>>()
+	private val entries = ArrayList<StyleRo>()
 	private val calculated = stringMapOf<Any?>()
-	private val tmp = ArrayList<StyleRule<*>>()
+	private val tmp = ArrayList<StyleRo>()
 	private val tmpCalculated = ArrayList<Boolean>()
 
-	private val entrySortComparator = { o1: StyleRule<*>, o2: StyleRule<*> ->
+	private val entrySortComparator = { o1: StyleRo, o2: StyleRo ->
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
@@ -57,8 +57,8 @@ object CascadingStyleCalculator : StyleCalculator {
 		// Apply style entries to the calculated values of the bound style.
 		var hasChanged = false
 		entries.forEach2 { entry ->
-			for (i in 0..entry.style.allProps.lastIndex) {
-				val prop = entry.style.allProps[i]
+			for (i in 0..entry.allProps.lastIndex) {
+				val prop = entry.allProps[i]
 				if (prop.explicitIsSet) {
 					val foundIndex = out.allProps.indexOfFirst2 { it.name == prop.name }
 					val found = out.allProps[foundIndex]
@@ -108,8 +108,8 @@ object CascadingStyleCalculator : StyleCalculator {
 		for (i in 0..entries.lastIndex) {
 			val entry = entries[i]
 			val ruleInfo = appliedRules[i]
-			for (j in 0..entry.style.allProps.lastIndex) {
-				val prop = entry.style.allProps[j]
+			for (j in 0..entry.allProps.lastIndex) {
+				val prop = entry.allProps[j]
 				if (prop.explicitIsSet) {
 					val found = style.allProps.first2 { it.name == prop.name }
 					if (found.calculatedIsSet) {
@@ -137,7 +137,7 @@ fun List<StyleRuleDebugInfo>.prettyPrint(): String {
 
 class StyleRuleDebugInfo(
 		val ancestor: StylableRo,
-		val entry: StyleRule<*>) {
+		val entry: StyleRo) {
 
 	val calculated: MutableMap<String, Any?> = HashMap()
 

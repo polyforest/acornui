@@ -17,11 +17,14 @@
 package com.acornui.component.style
 
 import com.acornui.Disposable
+import com.acornui.collection.AlwaysFilter
 import com.acornui.collection.first2
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
 import com.acornui.di.Context
+import com.acornui.function.as1
 import com.acornui.observe.*
+import com.acornui.properties.afterChange
 import com.acornui.recycle.Clearable
 import com.acornui.serialization.Writer
 import com.acornui.signal.Signal
@@ -47,6 +50,18 @@ interface StyleRo : Observable {
 	 * When either the explicit or calculated values change, the mod tag is incremented.
 	 */
 	val modTag: ModTagRo
+
+	/**
+	 * A filter responsible for determining whether or not this rule should be applied.
+	 */
+	val filter: StyleFilter
+
+	/**
+	 * A higher priority value will be applied before entries with a lower priority.
+	 * Equivalent priorities will go to the entry deeper in the display hierarchy, and then to the order this entry
+	 * was added.
+	 */
+	val priority: Float
 }
 
 /**
@@ -72,6 +87,10 @@ interface Style : StyleRo, Clearable {
 	fun notifyChanged()
 
 	override val modTag: ModTag
+
+	override var priority: Float
+
+	override var filter: StyleFilter
 }
 
 /**
@@ -90,6 +109,9 @@ abstract class StyleBase : Style, Disposable {
 	override val changed = _changed.asRo()
 
 	override val modTag: ModTag = modTag()
+
+	override var priority: Float by afterChange(0f, ::notifyChanged.as1)
+	override var filter: StyleFilter by afterChange(AlwaysFilter, ::notifyChanged.as1)
 
 	override fun clear() {
 		var hasChanged = false
@@ -120,16 +142,6 @@ abstract class StyleBase : Style, Disposable {
 	override fun toString(): String {
 		val props = allProps.joinToString(", ")
 		return "Style($props)"
-	}
-}
-
-class StyleValidator(
-		val style: Style,
-		private val calculator: StyleCalculator
-) {
-
-	fun validate(host: Stylable) {
-		calculator.calculate(host, style)
 	}
 }
 
