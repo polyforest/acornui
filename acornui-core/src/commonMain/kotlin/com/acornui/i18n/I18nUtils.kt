@@ -34,7 +34,7 @@ import com.acornui.component.tooltip
  * component is disposed.
  */
 fun <T : Labelable> T.labelI18n(key: String = "", default: String = ""): Disposable = i18n {
-	label = i18n(key, default)
+	label = string(key, default)
 }
 
 /**
@@ -46,5 +46,5 @@ fun <T : Labelable> T.labelI18n(key: String = "", default: String = ""): Disposa
  * @see UiComponentRo.tooltip
  */
 fun UiComponentRo.tooltipI18n(key: String, default: String = ""): Disposable = i18n {
-	tooltip(i18n(key, default))
+	tooltip(string(key, default))
 }

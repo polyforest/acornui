@@ -19,6 +19,7 @@
 package com.acornui.component
 
 import com.acornui.Disposable
+import com.acornui.UidUtil
 import com.acornui.assertionsEnabled
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
@@ -296,6 +297,10 @@ open class UiComponentImpl(
 	//-----------------------------------------------
 
 	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
+
+	override val componentId: String by lazy {
+		this::class.simpleName + "_" + UidUtil.createUid()
+	}
 
 	//-----------------------------------------------
 	// Focusable

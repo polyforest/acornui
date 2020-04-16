@@ -27,7 +27,6 @@ import com.acornui.observe.Observable
 import com.acornui.observe.bind
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
-import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.PropertiesParser
 import kotlinx.coroutines.launch
@@ -62,7 +61,7 @@ interface I18nBundleRo : Observable {
 	/**
 	 * Retrieves the i18n string with the given key for this bundle and current locale.
 	 * This should typically only be called within an i18n binding callback.
-	 * @see i18n
+	 * @see string
 	 */
 	operator fun get(key: String): String?
 
@@ -136,6 +135,8 @@ class I18nImpl(owner: Context) : ContextImpl(owner), I18n {
 
 	fun getString(bundleName: String, key: String): String? =
 			getString(userInfo.currentLocale.value, bundleName, key)
+
+
 
 
 	private fun loadBundle(locales: List<Locale>, bundleName: String) {

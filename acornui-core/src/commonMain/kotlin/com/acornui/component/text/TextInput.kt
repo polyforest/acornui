@@ -74,9 +74,6 @@ interface TextInput : Focusable, SelectableComponent, Stylable, Clearable {
 	 * A regular expression pattern to define what is NOT allowed in this text input.
 	 * E.g. Regex("[a-z]") will prevent lowercase letters from being entered.
 	 * Setting this will mutate the current [text] property.
-	 *
-	 * Note: In the future, this will be changed to restrict: Regex, currently KT-17851 prevents this.
-	 * Note: The global flag will be used.
 	 */
 	var restrictPattern: Regex?
 

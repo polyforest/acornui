@@ -20,12 +20,12 @@ import com.acornui.Disposable
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.own
-import com.acornui.signal.bind
+import com.acornui.signal.addWithHandle
 
 
 /**
  * Sets the default locale bundle to the given value.
- * This should be set before any [i18n] bindings are made, the bundle name is not expected to change.
+ * This should be set before any [string] bindings are made, the bundle name is not expected to change.
  */
 fun ContextImpl.i18nBundle(bundleName: String) {
 	dependencies += I18N_BUNDLE to bundleName
@@ -46,22 +46,22 @@ val Context.i18nBundle: I18nBundleRo
 /**
  * Creates a binding to a resource bundle.
  */
-fun Context.i18n(bundleName: String, callback: () -> Unit) : Disposable {
+fun Context.i18n(bundleName: String, callback: (bundle: I18nBundleRo) -> Unit) : Disposable {
 	val bundle = inject(I18n).getBundle(bundleName)
-	return own(bundle.changed.bind(callback))
+	return own(bundle.changed.addWithHandle(callback)).also { callback(bundle) }
 }
 
 /**
  * Creates a binding to the default resource bundle.
  * @see i18nBundle
  */
-fun Context.i18n(callback: () -> Unit) : Disposable =
+fun Context.i18n(callback: (bundle: I18nBundleRo) -> Unit) : Disposable =
 		i18n(i18nBundleName, callback)
 
 /**
  * Returns the String associated with the given bundle and locale key.
  */
-fun Context.i18n(bundleName: String, key: String, default: String = ""): String {
+fun Context.string(bundleName: String, key: String, default: String = ""): String {
 	return inject(I18n).getBundle(bundleName).getOrElse(key, default)
 }
 
@@ -69,4 +69,4 @@ fun Context.i18n(bundleName: String, key: String, default: String = ""): String 
  * Returns the String associated with the default bundle and locale key.
  * @see i18nBundle
  */
-fun Context.i18n(key: String, default: String = ""): String = i18n(i18nBundleName, key, default)
+fun Context.string(key: String, default: String = ""): String = string(i18nBundleName, key, default)

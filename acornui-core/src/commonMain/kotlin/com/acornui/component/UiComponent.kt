@@ -106,6 +106,11 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 */
 	val vertexTranslation: Vector3Ro
 
+	/**
+	 * A unique string id for this component.
+	 */
+	val componentId: String
+
 	companion object {
 		var defaultLayoutInvalidatingFlags = ValidationFlags.LAYOUT or
 				ValidationFlags.LAYOUT_ENABLED
