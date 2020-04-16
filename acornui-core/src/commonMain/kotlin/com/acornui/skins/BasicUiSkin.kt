@@ -93,6 +93,7 @@ open class BasicUiSkin(
 		formStyle()
 		softKeyboardStyle()
 		dropShadowStyle()
+		itemRendererStyle()
 	}
 
 	protected open fun stageStyle() {
@@ -805,6 +806,13 @@ open class BasicUiSkin(
 
 	protected fun rectButtonSkin(stateToColor: (ButtonState) -> ColorRo): Context.() -> ButtonSkin = {
 		RectButtonSkin(this, stateToColor)
+	}
+
+	protected open fun itemRendererStyle() {
+		val charStyle = charStyle {
+			selectable = false
+		}
+		target.addStyleRule(charStyle, withAncestor(ItemRenderer))
 	}
 
 }

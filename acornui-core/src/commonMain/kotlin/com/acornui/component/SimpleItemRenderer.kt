@@ -53,7 +53,7 @@ open class SimpleItemRenderer<E : Any>(
 	val style = bind(SimpleItemRendererStyle())
 
 	init {
-		styleTags.add(Companion)
+		styleTags.addAll(listOf(Companion, ItemRenderer))
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

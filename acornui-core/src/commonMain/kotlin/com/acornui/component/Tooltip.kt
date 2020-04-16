@@ -232,7 +232,7 @@ class TooltipView(owner: Context) : ContainerImpl(owner), ItemRenderer<String> {
 
 	init {
 		interactivityMode = InteractivityMode.NONE
-		styleTags.add(Companion)
+		styleTags.addAll(listOf(Companion, ItemRenderer))
 
 		watch(style) {
 			background?.dispose()

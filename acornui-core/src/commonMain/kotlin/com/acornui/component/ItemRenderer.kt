@@ -17,6 +17,7 @@
 package com.acornui.component
 
 import com.acornui.EqualityCheck
+import com.acornui.component.style.StyleTag
 import com.acornui.recycle.ObjectPool
 import com.acornui.recycle.Pool
 import com.acornui.recycle.recycle
@@ -35,6 +36,8 @@ interface ItemRenderer<E> : ItemRendererRo<E>, UiComponent {
 	 * The data this item renderer represents.
 	 */
 	override var data: E?
+
+	companion object : StyleTag
 }
 
 /**
