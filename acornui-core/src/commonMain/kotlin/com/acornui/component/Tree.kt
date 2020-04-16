@@ -33,6 +33,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.function.as1
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
 import com.acornui.observe.Observable
@@ -40,6 +41,8 @@ import com.acornui.signal.Cancel
 import com.acornui.signal.Signal1
 import com.acornui.signal.Signal2
 import com.acornui.signal.Signal3
+import com.acornui.text.StringFormatter
+import com.acornui.text.ToStringFormatter
 
 /**
  * A Tree component represents a hierarchy of parent/children relationships.
@@ -48,6 +51,7 @@ import com.acornui.signal.Signal3
 class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
 
 	private val toggledChangeRequestedCancel = Cancel()
+
 	private val _nodeToggledChanging = own(Signal3<E, Boolean, Cancel>())
 
 	/**
@@ -73,9 +77,10 @@ class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> Tree
 			_root.data = value
 		}
 
-	var nodeToString: (node: E) -> String = { it.toString() }
+	var formatter: StringFormatter<E> by validationProp(ToStringFormatter, ValidationFlags.PROPERTIES)
 
 	init {
+		// Consider PROPERTIES to be a cascading flag
 		cascadingFlags = cascadingFlags or ValidationFlags.PROPERTIES
 		styleTags.add(Companion)
 	}
@@ -117,19 +122,22 @@ class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> Tree
 	companion object : StyleTag
 }
 
+@ExperimentalAcorn
 interface TreeItemRendererRo<out E : ParentRo<E>> : ItemRendererRo<E>, ToggleableRo {
 
 	val elements: List<TreeItemRendererRo<E>>
 
 }
 
+@ExperimentalAcorn
 interface TreeItemRenderer<E : ParentRo<E>> : TreeItemRendererRo<E>, ItemRenderer<E>, Toggleable {
 
 	override val elements: List<TreeItemRenderer<E>>
 
 }
 
-open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
+@ExperimentalAcorn
+open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, private val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
 
 	val style = bind(DefaultTreeItemRendererStyle())
 
@@ -176,18 +184,14 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected va
 			if (oldData == value) return
 			toggled = false
 			if (oldData is Observable) {
-				oldData.changed.remove(::dataChangedHandler)
+				oldData.changed.remove(::invalidateProperties.as1)
 			}
 			_data = value
 			if (value is Observable) {
-				value.changed.add(::dataChangedHandler)
+				value.changed.add(::invalidateProperties.as1)
 			}
-			invalidateStyles()
+			invalidateProperties()
 		}
-
-	private fun dataChangedHandler(o: Observable) {
-		invalidateStyles()
-	}
 
 	override var toggled: Boolean by validationProp(false, ValidationFlags.PROPERTIES)
 
@@ -212,7 +216,7 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, protected va
 	}
 
 	protected open fun updateText() {
-		textField.text = if (_data == null) "" else tree.nodeToString(_data!!)
+		textField.text = if (_data == null) "" else tree.formatter.format(_data!!)
 	}
 
 	protected open fun updateChildren() {
@@ -266,6 +270,7 @@ open class DefaultTreeItemRendererStyle : StyleBase() {
 	companion object : StyleType<DefaultTreeItemRendererStyle>
 }
 
+@ExperimentalAcorn
 fun <E : ParentRo<E>> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }, init: ComponentInit<Tree<E>> = {}): Tree<E> {
 	val tree = Tree(this, rootFactory)
 	tree.init()
@@ -275,6 +280,7 @@ fun <E : ParentRo<E>> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRende
 /**
  * A simple data model representing the most rudimentary tree node.
  */
+@ExperimentalAcorn
 open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 
 	private val _changed = Signal1<TreeNode>()
@@ -318,13 +324,14 @@ open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 		}
 
 	/**
-	 * @see Tree.nodeToString
+	 * @see Tree.formatter
 	 */
 	override fun toString(): String = label
 
 
 }
 
+@ExperimentalAcorn
 fun treeNode(label: String, init: TreeNode.() -> Unit = {}): TreeNode {
 	val treeNode = TreeNode(label)
 	treeNode.init()
