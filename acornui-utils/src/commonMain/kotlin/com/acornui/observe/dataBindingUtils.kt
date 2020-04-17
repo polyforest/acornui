@@ -60,7 +60,6 @@ fun <T> DataBindingRo<T>.bind(callback: (T) -> Unit): Disposable {
  * Immediately, and when the data has changed, the callback will be invoked.
  * The first time the callback is invoked, the `old` parameter will be null.
  */
-@Suppress("NOTHING_TO_INLINE")
 fun <T> DataBindingRo<T>.bind2(callback: (old: T?, new: T) -> Unit): Disposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	changed.add(callback)
