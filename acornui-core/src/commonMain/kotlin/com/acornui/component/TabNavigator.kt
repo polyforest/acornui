@@ -33,6 +33,7 @@ import com.acornui.di.own
 import com.acornui.factory.LazyInstance
 import com.acornui.factory.lazyInstance
 import com.acornui.graphic.Scaling
+import com.acornui.i18n.i18nBundleName
 import com.acornui.i18n.labelI18n
 import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.input.interaction.click
@@ -398,10 +399,10 @@ class TabNavigatorStyle : StyleBase() {
 fun <S : ButtonImpl, T : UiComponent> Context.tab(buttonFactory: (@ComponentDslMarker TabNavigatorTab).() -> S, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = TabNavigatorTabImpl(this, buttonFactory, contentFactory)
 
 fun <T : UiComponent> Context.tab(label: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab({ button(label.orSpace()) }, contentFactory)
-fun <T : UiComponent> Context.tabI18n(key: String, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab(
+fun <T : UiComponent> Context.tabI18n(key: String, bundleName: String = i18nBundleName, contentFactory: (@ComponentDslMarker TabNavigatorTab).() -> T) = tab(
 		{
 			button {
-				labelI18n(key)
+				labelI18n(key, bundleName)
 			}
 		}, contentFactory)
 

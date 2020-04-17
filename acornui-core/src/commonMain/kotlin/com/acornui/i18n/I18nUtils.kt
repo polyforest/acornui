@@ -29,22 +29,20 @@ import com.acornui.component.tooltip
  * Binds a text key for the default i18n bundle to this object's label.
  *
  * @param key The resource key to query on the default i18n bundle.
- * @param default If the key cannot be found, this value will be set.
  * @return Returns a [Disposable] handle to dispose of the binding. This will be disposed automatically when this
  * component is disposed.
  */
-fun <T : Labelable> T.labelI18n(key: String = "", default: String = ""): Disposable = i18n {
-	label = string(key, default)
+fun <T : Labelable> T.labelI18n(key: String, bundleName: String = i18nBundleName): Disposable = i18n {
+	label = string(key, bundleName)
 }
 
 /**
  * Binds a text key for the default i18n bundle to this object's tool tip.
  * @param key The resource key to query on the default i18n bundle.
- * @param default If the key cannot be found, this value will be set.
  * @return Returns a [Disposable] handle to dispose of the binding. This will be disposed automatically when this
  * component is disposed.
  * @see UiComponentRo.tooltip
  */
-fun UiComponentRo.tooltipI18n(key: String, default: String = ""): Disposable = i18n {
-	tooltip(string(key, default))
+fun UiComponentRo.tooltipI18n(key: String, bundleName: String = i18nBundleName): Disposable = i18n {
+	tooltip(string(key, bundleName))
 }

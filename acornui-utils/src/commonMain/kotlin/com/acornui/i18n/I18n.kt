@@ -5,8 +5,8 @@ import com.acornui.text.getMonths
 import kotlinx.serialization.*
 
 /**
- * An object representing a locale key.
- * In the future, this may be parsed into lang, region, variant, etc.
+ * An object representing a locale tag.
+ * In the future, this may be parsed into language, region, variant, etc.
  *
  * @param value The Unicode locale identifier. E.g. en-US
  */
