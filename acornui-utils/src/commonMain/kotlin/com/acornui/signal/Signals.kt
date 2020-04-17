@@ -89,8 +89,8 @@ fun <T : Any> Signal<T>.addWithHandle(handler: T): Disposable = addWithHandle(fa
  *
  * The expected concurrent behavior for a handler adding or removing is as follows:
  *
- * If a handler is added within a handler, the new handler will be invoked in the current iteration.
- * If a handler is removed within a handler, the removed handler will not be invoked in the current iteration.
+ * If a handler is added within a handler, the new handler will NOT be invoked in the current dispatch.
+ * If a handler is removed within a handler, the removed handler will not be invoked in the current dispatch.
  *
  * @author nbilyk
  */
