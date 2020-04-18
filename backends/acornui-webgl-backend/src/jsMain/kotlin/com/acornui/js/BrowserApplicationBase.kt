@@ -18,22 +18,31 @@ package com.acornui.js
 
 import com.acornui.JsApplicationBase
 import com.acornui.MainContext
+import com.acornui.asset.Loaders
+import com.acornui.audio.AudioManager
+import com.acornui.audio.Music
+import com.acornui.audio.SoundFactory
 import com.acornui.browser.Location
 import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.di.contextKey
 import com.acornui.focus.FocusManager
+import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.input.*
+import com.acornui.io.*
+import com.acornui.js.audio.*
 import com.acornui.js.cursor.JsCursorManager
 import com.acornui.js.input.JsClipboard
 import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.window.JsLocation
 import com.acornui.uncaughtExceptionHandler
+import com.acornui.webgl.loadTexture
 import org.w3c.dom.HTMLElement
 import kotlin.browser.window
+import kotlin.time.seconds
 
 /**
  * The base class for browser-based Acorn UI applications.
@@ -85,6 +94,37 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 
 	protected open val cursorManagerTask by task(CursorManager) {
 		JsCursorManager(get(CANVAS))
+	}
+
+	protected open val soundLoaderTask by task(Loaders.soundLoader) {
+		val defaultSettings = get(defaultRequestSettingsKey)
+		val audioContextSupported = audioContextSupported
+		val audioManager = get(AudioManager)
+		object : Loader<SoundFactory> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): SoundFactory {
+				return if (audioContextSupported) {
+					loadAudioSound(audioManager, requestData, settings)
+				} else {
+					loadAudioElement(audioManager, requestData, settings)
+				}
+			}
+		}
+	}
+
+	protected open val musicLoaderTask by task(Loaders.musicLoader) {
+		val defaultSettings = get(defaultRequestSettingsKey)
+		val audioManager = get(AudioManager)
+		object : Loader<Music> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = 0.seconds) // Audio element is immediately returned.
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): Music {
+				return JsAudioElementMusic(audioManager, Audio(requestData.toUrlStr(settings.rootPath)))
+			}
+		}
 	}
 
 	protected open val clipboardTask by task(Clipboard) {

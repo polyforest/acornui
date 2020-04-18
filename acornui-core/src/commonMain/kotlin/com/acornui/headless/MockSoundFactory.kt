@@ -18,11 +18,12 @@ package com.acornui.headless
 
 import com.acornui.audio.Sound
 import com.acornui.audio.SoundFactory
+import kotlin.time.Duration
 
 object MockSoundFactory : SoundFactory {
 
 	override var defaultPriority: Float = 0f
-	override val duration: Float = 0f
+	override val duration: Duration = Duration.ZERO
 
 	override fun createInstance(priority: Float): Sound? {
 		return null

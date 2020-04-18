@@ -36,7 +36,7 @@ class OpenAlSoundFactory(
 
 	override var defaultPriority: Float = 0f
 
-	override val duration: Float
+	override val duration: Duration
 
 	private val bufferId: Int
 
@@ -44,7 +44,7 @@ class OpenAlSoundFactory(
 		// Initialize the buffer for sounds created from this source.
 		val bytes = pcm.size - pcm.size % if (channels > 1) 4 else 2
 		val samples = bytes / (2 * channels)
-		duration = samples / sampleRate.toFloat()
+		duration = (samples / sampleRate.toDouble()).seconds
 
 		val buffer = ByteBuffer.allocateDirect(bytes)
 		buffer.order(ByteOrder.nativeOrder())

@@ -18,10 +18,9 @@ package com.acornui.js.audio
 
 import com.acornui.audio.AudioManager
 import com.acornui.audio.SoundFactory
-import com.acornui.io.ProgressReporter
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
 import com.acornui.io.loadArrayBuffer
-import kotlin.time.Duration
 
 /**
  * An asset loader for js AudioContext sounds.
@@ -29,12 +28,11 @@ import kotlin.time.Duration
  *
  * @author nbilyk
  */
-//suspend fun loadAudioSound(audioManager: AudioManager, urlRequestData: UrlRequestData, progressReporter: ProgressReporter, initialTimeEstimate: Duration, connectTimeout: Duration): SoundFactory {
-//	if (!audioContextSupported) {
-//		throw Exception("Audio not supported in this browser.")
-//	}
-//	val audioData = loadArrayBuffer(urlRequestData, progressReporter, initialTimeEstimate, connectTimeout)
-//	val context = JsAudioContext.instance
-//	val decodedData = context.decodeAudioData(audioData)
-//	return JsWebAudioSoundFactory(audioManager, context, decodedData.await())
-//}
+suspend fun loadAudioSound(audioManager: AudioManager, requestData: UrlRequestData, settings: RequestSettings): SoundFactory {
+	require(audioContextSupported) { "AudioContext not supported in this browser." }
+	
+	val audioData = loadArrayBuffer(requestData, settings)
+	val context = JsAudioContext.instance
+	val decodedData = context.decodeAudioData(audioData)
+	return JsWebAudioSoundFactory(audioManager, context, decodedData.await())
+}

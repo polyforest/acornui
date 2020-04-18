@@ -17,11 +17,14 @@
 package com.acornui.js.audio
 
 import com.acornui.audio.AudioManager
+import com.acornui.io.RequestSettings
 import com.acornui.io.UrlRequestData
+import com.acornui.io.toUrlStr
 import kotlinx.coroutines.CompletableDeferred
 import org.w3c.dom.Audio
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
+import kotlin.time.seconds
 
 fun Audio.unload() {
 	pause()
@@ -33,22 +36,23 @@ fun Audio.unload() {
  * An asset loader for js Audio element sounds.
  * Works in IE.
  */
-//fun loadAudioElement(audioManager: AudioManager, urlRequestData: UrlRequestData) {
-//	val path = urlRequestData.urlStr
-//	val c = CompletableDeferred<JsAudioElementSoundFactory>()
-//	val element = Audio(path)
-//
-//	element.addEventListener("loadeddata", {
-//		event: Event ->
-//		val e = event.currentTarget as HTMLAudioElement
-//		// Load just enough of the asset to get its duration.
-//		if (e.readyState >= 1) {
-//			// METADATA
-//			// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
-//			val duration = e.duration
-//			val asset = JsAudioElementSoundFactory(audioManager, path, duration.toFloat())
-//			c.complete(asset)
-//			element.unload() // Unload the element now that we have the duration.
-//		}
-//	})
-//}
+suspend fun loadAudioElement(audioManager: AudioManager, requestData: UrlRequestData, settings: RequestSettings): JsAudioElementSoundFactory {
+	val path = requestData.toUrlStr(settings.rootPath)
+	val c = CompletableDeferred<JsAudioElementSoundFactory>()
+	val element = Audio(path)
+
+	element.addEventListener("loadeddata", {
+		event: Event ->
+		val e = event.currentTarget as HTMLAudioElement
+		// Load just enough of the asset to get its duration.
+		if (e.readyState >= 1) {
+			// METADATA
+			// Untested: http://stackoverflow.com/questions/3258587/how-to-properly-unload-destroy-a-video-element
+			val duration = e.duration
+			val asset = JsAudioElementSoundFactory(audioManager, path, duration.seconds)
+			c.complete(asset)
+			element.unload() // Unload the element now that we have the duration.
+		}
+	})
+	return c.await()
+}

@@ -32,9 +32,9 @@ interface SoundFactory : Disposable {
 	var defaultPriority: Float
 
 	/**
-	 * The duration of the sound, in seconds.
+	 * The duration of the sound.
 	 */
-	val duration: Float
+	val duration: Duration
 
 	/**
 	 * Creates an in-memory audio clip instance.

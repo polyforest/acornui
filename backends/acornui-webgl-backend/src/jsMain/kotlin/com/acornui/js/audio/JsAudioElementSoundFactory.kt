@@ -19,11 +19,12 @@ package com.acornui.js.audio
 import com.acornui.audio.AudioManager
 import com.acornui.audio.Sound
 import com.acornui.audio.SoundFactory
+import kotlin.time.Duration
 
 class JsAudioElementSoundFactory(
 		private val audioManager: AudioManager,
 		private val path: String,
-		override val duration: Float
+		override val duration: Duration
 ) : SoundFactory {
 
 	override var defaultPriority: Float = 0f

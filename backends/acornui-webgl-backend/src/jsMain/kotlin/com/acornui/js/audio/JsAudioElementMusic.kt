@@ -23,6 +23,7 @@ import com.acornui.math.MathUtils
 import com.acornui.signal.Signal0
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
+import kotlin.browser.document
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -111,4 +112,10 @@ open class JsAudioElementMusic(
 		element.src = ""
 		element.load()
 	}
+}
+
+fun Audio(source: String): HTMLAudioElement {
+	val audio = document.createElement("AUDIO") as HTMLAudioElement
+	audio.src = source
+	return audio
 }

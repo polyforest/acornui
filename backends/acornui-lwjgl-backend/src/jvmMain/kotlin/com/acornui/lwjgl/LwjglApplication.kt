@@ -21,6 +21,8 @@ package com.acornui.lwjgl
 import com.acornui.*
 import com.acornui.asset.Loaders
 import com.acornui.audio.AudioManager
+import com.acornui.audio.Music
+import com.acornui.audio.SoundFactory
 import com.acornui.browser.Location
 import com.acornui.component.BoxStyle
 import com.acornui.component.HtmlComponent
@@ -46,10 +48,7 @@ import com.acornui.input.interaction.JvmClickDispatcher
 import com.acornui.input.interaction.UndoDispatcher
 import com.acornui.io.*
 import com.acornui.logging.Log
-import com.acornui.lwjgl.audio.NoAudioException
-import com.acornui.lwjgl.audio.OpenAlAudioManager
-import com.acornui.lwjgl.audio.registerDefaultMusicDecoders
-import com.acornui.lwjgl.audio.registerDefaultSoundDecoders
+import com.acornui.lwjgl.audio.*
 import com.acornui.lwjgl.browser.JvmLocation
 import com.acornui.lwjgl.cursor.JvmCursorManager
 import com.acornui.lwjgl.files.JvmFileIoManager
@@ -179,6 +178,32 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 			Log.warn("No Audio device found.")
 		}
 		audioManager
+	}
+
+	protected open val soundLoaderTask by task(Loaders.soundLoader) {
+		val defaultSettings = get(defaultRequestSettingsKey)
+		val audioManager = get(AudioManager) as OpenAlAudioManager
+		object : Loader<SoundFactory> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = Bandwidth.downBpsInv.seconds * 100_000)
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): SoundFactory {
+				return loadOpenAlSoundFactory(audioManager, requestData, settings)
+			}
+		}
+	}
+
+	protected open val musicLoaderTask by task(Loaders.musicLoader) {
+		val defaultSettings = get(defaultRequestSettingsKey)
+		val audioManager = get(AudioManager) as OpenAlAudioManager
+		object : Loader<Music> {
+			override val requestSettings: RequestSettings =
+					defaultSettings.copy(initialTimeEstimate = 0.seconds) // Audio element is immediately returned.
+
+			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): Music {
+				return loadOpenAlMusic(audioManager, requestData, settings)
+			}
+		}
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {

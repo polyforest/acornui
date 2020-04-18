@@ -20,6 +20,8 @@ import com.acornui.audio.AudioManager
 import com.acornui.audio.Sound
 import com.acornui.audio.SoundFactory
 import org.khronos.webgl.ArrayBuffer
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 /**
  * A sound source for audio buffer source nodes using an AudioContext.
@@ -33,8 +35,8 @@ class JsWebAudioSoundFactory(
 
 	override var defaultPriority: Float = 0f
 
-	override val duration: Float
-		get() = decodedData.duration.toFloat()
+	override val duration: Duration
+		get() = decodedData.duration.seconds
 
 	init {
 		audioManager.registerSoundSource(this)

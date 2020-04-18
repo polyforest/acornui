@@ -32,15 +32,13 @@ fun loadOpenAlMusic(audioManager: OpenAlAudioManager, requestData: UrlRequestDat
 	if (!MusicDecoders.hasDecoder(extension)) throw Exception("No decoder found for music extension: $extension")
 
 	val url = requestData.toJavaUrl(settings.rootPath)
-	val inputStreamFactory: () -> InputStream
-	@Suppress("LiftReturnOrAssignment")
-	if (url != null) {
-		inputStreamFactory = { url.openStream() }
+	val inputStreamFactory = if (url != null) {
+		{ url.openStream() }
 	} else {
 		val path = requestData.toUrlStr(settings.rootPath)
 		val file = File(path)
 		if (!file.exists()) throw FileNotFoundException(path)
-		inputStreamFactory = { FileInputStream(file) }
+		({ FileInputStream(file) })
 	}
 	val streamReader = MusicDecoders.createReader(extension, inputStreamFactory)
 	return OpenAlMusic(audioManager, streamReader)

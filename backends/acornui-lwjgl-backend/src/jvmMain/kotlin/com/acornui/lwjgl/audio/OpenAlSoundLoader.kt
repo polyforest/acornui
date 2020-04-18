@@ -22,8 +22,8 @@ import com.acornui.io.UrlRequestData
 import com.acornui.io.load
 import java.io.InputStream
 
-suspend fun loadSound(audioManager: OpenAlAudioManager, requestData: UrlRequestData, settings: RequestSettings) {
-	load(requestData, settings) { inputStream ->
+suspend fun loadOpenAlSoundFactory(audioManager: OpenAlAudioManager, requestData: UrlRequestData, settings: RequestSettings): OpenAlSoundFactory {
+	return load(requestData, settings) { inputStream ->
 		val data = SoundDecoders.decode(requestData.url.extension(), inputStream)
 		OpenAlSoundFactory(audioManager, data.pcm, data.channels, data.sampleRate)
 	}
