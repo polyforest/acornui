@@ -21,6 +21,8 @@ import com.acornui.audio.Sound
 import com.acornui.math.MathUtils
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class JsAudioElementSound(
 		private val audioManager: AudioManager,
@@ -87,8 +89,8 @@ class JsAudioElementSound(
 		element.currentTime = 0.0
 	}
 
-	override val currentTime: Float
-		get() = element.currentTime.toFloat()
+	override val currentTime: Duration
+		get() = element.currentTime.seconds
 
 	override fun update() {
 	}

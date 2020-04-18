@@ -21,6 +21,8 @@ import com.acornui.audio.Sound
 import com.acornui.math.MathUtils
 import com.acornui.time.nowS
 import org.khronos.webgl.ArrayBuffer
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class JsWebAudioSound(
 		private val audioManager: AudioManager,
@@ -105,12 +107,12 @@ class JsWebAudioSound(
 		audioBufferSourceNode.stop(0f)
 	}
 
-	override val currentTime: Float
+	override val currentTime: Duration
 		get() {
-			if (!_isPlaying)
-				return (_stopTime - _startTime).toFloat()
+			return if (!_isPlaying)
+				(_stopTime - _startTime).seconds
 			else
-				return (nowS() - _startTime).toFloat()
+				(nowS() - _startTime).seconds
 		}
 
 	override fun update() {

@@ -20,10 +20,11 @@ import com.acornui.audio.Music
 import com.acornui.audio.MusicReadyState
 import com.acornui.signal.Signal
 import com.acornui.signal.emptySignal
+import kotlin.time.Duration
 
 object MockMusic : Music {
 	override var onCompleted: (() -> Unit)? = null
-	override val duration: Float = 0f
+	override val duration: Duration = Duration.ZERO
 	override val readyStateChanged: Signal<() -> Unit> = emptySignal()
 	override val readyState: MusicReadyState = MusicReadyState.NOTHING
 	override val isPlaying: Boolean = false
@@ -39,7 +40,7 @@ object MockMusic : Music {
 	override fun stop() {
 	}
 
-	override var currentTime: Float = 0f
+	override var currentTime: Duration = Duration.ZERO
 
 	override fun update() {
 	}

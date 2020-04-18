@@ -24,6 +24,8 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.openal.AL10
 import org.lwjgl.openal.AL11
 import java.nio.IntBuffer
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class OpenAlMusic(
 		val audioManager: OpenAlAudioManager,
@@ -36,8 +38,8 @@ class OpenAlMusic(
 
 	override var onCompleted: (() -> Unit)? = null
 
-	override val duration: Float
-		get() = streamReader.duration
+	override val duration: Duration
+		get() = streamReader.duration.toDouble().seconds
 
 	override val readyStateChanged: Signal<() -> Unit> = Signal0()
 
@@ -71,7 +73,7 @@ class OpenAlMusic(
 			throw Exception("Unable to allocate audio buffers.")
 
 		var filled = false // Check if there's anything to actually play.
-		for (i in 0..bufferCount - 1) {
+		for (i in 0 until bufferCount) {
 			val bufferId = buffers.get(i)
 			if (!fill(bufferId)) break
 			filled = true
@@ -100,26 +102,27 @@ class OpenAlMusic(
 			AL10.alSourcef(sourceId, AL10.AL_GAIN, _volume * audioManager.musicVolume)
 		}
 
-	override var currentTime: Float
+	override var currentTime: Duration
 		get() {
-			return renderedSeconds + AL10.alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)
+			return (renderedSeconds + AL10.alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)).toDouble().seconds
 		}
 		set(value) {
+			val s = value.inSeconds.toFloat()
 			val wasPlaying = isPlaying
 			isPlaying = false
 			AL10.alSourceStop(sourceId)
 			AL10.alSourceUnqueueBuffers(sourceId, buffers)
 			renderedSeconds += secondsPerBuffer * bufferCount
-			if (value <= renderedSeconds) {
+			if (s <= renderedSeconds) {
 				streamReader.reset()
 				renderedSeconds = 0f
 			}
-			while (renderedSeconds < value - secondsPerBuffer) {
+			while (renderedSeconds < s - secondsPerBuffer) {
 				if (streamReader.read(tempBytes) <= 0) break
 				renderedSeconds += secondsPerBuffer
 			}
 			var filled = false
-			for (i in 0..bufferCount - 1) {
+			for (i in 0 until bufferCount) {
 				val bufferId = buffers.get(i)
 				if (!fill(bufferId)) break
 				filled = true
@@ -129,7 +132,7 @@ class OpenAlMusic(
 				stop()
 				onCompleted?.invoke()
 			}
-			AL10.alSourcef(sourceId, AL11.AL_SEC_OFFSET, value - renderedSeconds)
+			AL10.alSourcef(sourceId, AL11.AL_SEC_OFFSET, s - renderedSeconds)
 			if (wasPlaying) {
 				AL10.alSourcePlay(sourceId)
 				isPlaying = true

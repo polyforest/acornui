@@ -23,6 +23,8 @@ import com.acornui.math.MathUtils
 import com.acornui.signal.Signal0
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 open class JsAudioElementMusic(
 		private val audioManager: AudioManager,
@@ -34,8 +36,8 @@ open class JsAudioElementMusic(
 
 	override var onCompleted: (() -> Unit)? = null
 
-	override val duration: Float
-		get() = element.duration.toFloat()
+	override val duration: Duration
+		get() = element.duration.seconds
 
 	private val elementEndedHandler = {
 		event: Event ->
@@ -89,10 +91,10 @@ open class JsAudioElementMusic(
 		element.pause()
 	}
 
-	override var currentTime: Float
-		get() = element.currentTime.toFloat()
+	override var currentTime: Duration
+		get() = element.currentTime.seconds
 		set(value) {
-			element.currentTime = value.toDouble()
+			element.currentTime = value.inSeconds
 		}
 
 	override fun update() {

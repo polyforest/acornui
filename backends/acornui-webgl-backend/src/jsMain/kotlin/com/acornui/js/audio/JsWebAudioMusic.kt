@@ -23,6 +23,8 @@ import com.acornui.math.MathUtils
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 import org.w3c.dom.HTMLMediaElement
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class JsWebAudioMusic(
 		private val audioManager: AudioManager,
@@ -30,8 +32,8 @@ class JsWebAudioMusic(
 		private val element: HTMLMediaElement
 ) : Music {
 
-	override val duration: Float
-		get() = 0f
+	override val duration: Duration
+		get() = Duration.ZERO
 
 	override val readyStateChanged: Signal<() -> Unit> = Signal0()
 
@@ -102,10 +104,10 @@ class JsWebAudioMusic(
 	}
 
 
-	override var currentTime: Float
-		get() = element.currentTime.toFloat()
+	override var currentTime: Duration
+		get() = element.currentTime.seconds
 		set(value) {
-			element.currentTime = value.toDouble()
+			element.currentTime = value.inSeconds
 		}
 
 	override fun update() {

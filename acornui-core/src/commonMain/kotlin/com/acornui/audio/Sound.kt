@@ -21,6 +21,7 @@ import com.acornui.math.PI
 import com.acornui.signal.Signal
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.time.Duration
 
 interface SoundFactory : Disposable {
 
@@ -39,8 +40,7 @@ interface SoundFactory : Disposable {
 	 * Creates an in-memory audio clip instance.
 	 * Returns null if the audio manager is already at-capacity with sounds that all have higher priority.
 	 */
-	fun createInstance(): Sound? = createInstance(defaultPriority)
-	fun createInstance(priority: Float): Sound?
+	fun createInstance(priority: Float = defaultPriority): Sound?
 }
 
 /**
@@ -55,6 +55,9 @@ interface Sound : Disposable {
 	 */
 	val priority: Float
 
+	/**
+	 * A callback for when this sound instance has finished playing.
+	 */
 	var onCompleted: (()->Unit)?
 
 	var loop: Boolean
@@ -72,6 +75,8 @@ interface Sound : Disposable {
 	 * Immediately starts this sound. Sounds are fire and forget, which means that when a sound has finished
 	 * (its [onCompleted] handler will be called, there should no longer be any references to this sound. It may
 	 * be recycled at that point.
+	 *
+	 * TODO: start time
 	 */
 	fun start()
 
@@ -83,12 +88,12 @@ interface Sound : Disposable {
 	fun stop()
 
 	/**
-	 * The current playback time (in seconds). This can only be read. To change the seek position of a sound,
+	 * The current playback time. This can only be read. To change the seek position of a sound,
 	 * stop the sound, create a new sound from the [SoundFactory], then start the new sound using the new start time.
 	 *
 	 * Note: this will not be accurate enough to do seamless stitching.
 	 */
-	val currentTime: Float
+	val currentTime: Duration
 
 	/**
 	 * Returns true if the sound is currently playing.
@@ -113,7 +118,10 @@ interface Music : Disposable {
 	 */
 	var onCompleted: (()->Unit)?
 
-	val duration: Float
+	/**
+	 * The total duration of this music.
+	 */
+	val duration: Duration
 
 	val readyStateChanged: Signal<()->Unit>
 	val readyState: MusicReadyState
@@ -127,7 +135,7 @@ interface Music : Disposable {
 	 * Returns true if the music is not playing and is not at current time 0f
 	 */
 	val isPaused: Boolean
-		get() = (!isPlaying && currentTime > 0f)
+		get() = (!isPlaying && currentTime > Duration.ZERO)
 
 	/**
 	 * If true, the music will loop.
@@ -159,9 +167,9 @@ interface Music : Disposable {
 	fun stop()
 
 	/**
-	 * Indicates the current playback time (in seconds). Setting this will seek to the new time.
+	 * Indicates the current playback time. Setting this will seek to the new time.
 	 */
-	var currentTime: Float
+	var currentTime: Duration
 
 	/**
 	 * Updates this object.

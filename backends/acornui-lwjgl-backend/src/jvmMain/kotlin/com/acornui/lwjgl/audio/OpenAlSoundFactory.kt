@@ -24,6 +24,8 @@ import org.lwjgl.openal.AL10
 import org.lwjgl.openal.AL11
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 class OpenAlSoundFactory(
 		private val audioManager: OpenAlAudioManager,
@@ -76,10 +78,10 @@ class OpenAlSound(
 
 	private var sourceId: Int = -1
 
-	override val currentTime: Float
+	override val currentTime: Duration
 		get() {
-			if (sourceId == -1) return 0f
-			return AL10.alGetSourcef(sourceId, AL11.AL_SEC_OFFSET)
+			if (sourceId == -1) return Duration.ZERO
+			return AL10.alGetSourcef(sourceId, AL11.AL_SEC_OFFSET).toDouble().seconds
 		}
 
 	override val isPlaying: Boolean

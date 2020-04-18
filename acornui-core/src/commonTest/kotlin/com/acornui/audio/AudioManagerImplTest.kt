@@ -3,6 +3,7 @@ package com.acornui.audio
 import com.acornui.test.assertListEquals
 import com.acornui.time.FrameDriverImpl
 import kotlin.test.Test
+import kotlin.time.Duration
 
 class AudioManagerImplTest {
 
@@ -40,7 +41,7 @@ class MockSound(
 	override fun stop() {
 	}
 
-	override val currentTime: Float = 0f
+	override val currentTime: Duration = Duration.ZERO
 	override val isPlaying: Boolean = false
 
 	override fun update() {
