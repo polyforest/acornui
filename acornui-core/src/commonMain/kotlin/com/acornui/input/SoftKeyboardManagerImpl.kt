@@ -13,9 +13,9 @@ import com.acornui.logging.Log
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.observe.Observable
+import com.acornui.observe.bind
 import com.acornui.observe.dataBinding
 import com.acornui.signal.Signal1
-import com.acornui.signal.bind
 import com.acornui.start
 import com.acornui.stop
 import com.acornui.tween.Tween
@@ -77,7 +77,7 @@ private class SoftKeyboardContainer(owner: Context, private val manager: SoftKey
 		}
 		focusManager.focusedChanged.add(::focusChangedHandler.as2)
 
-		own(manager.bind {
+		bind(manager) {
 			val type = manager.keyboardType
 			if (type != null) {
 				softKeyboard.data.value = type
@@ -85,7 +85,7 @@ private class SoftKeyboardContainer(owner: Context, private val manager: SoftKey
 			} else {
 				show = false
 			}
-		})
+		}
 	}
 
 	private var closeOnNextClick: Boolean = false

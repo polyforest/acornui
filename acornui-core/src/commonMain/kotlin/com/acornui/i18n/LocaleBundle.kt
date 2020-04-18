@@ -47,11 +47,11 @@ val Context.i18nBundleName: String
  * Creates a binding to the user's current Locale
  */
 fun Context.i18n(callback: suspend () -> Unit): Disposable {
-	return own(userInfo.currentLocale.bind {
+	return bind(userInfo.currentLocale.changed) {
 		launch {
 			callback()
 		}
-	})
+	}
 }
 
 /**

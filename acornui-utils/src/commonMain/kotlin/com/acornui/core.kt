@@ -25,6 +25,11 @@ interface Disposable {
 	fun dispose()
 }
 
+/**
+ * An object that may be disposed, and will automatically be disposed by its creator.
+ */
+interface ManagedDisposable : Disposable
+
 class DisposedException : IllegalStateException("This component has been disposed")
 
 fun <A : Comparable<A>> A?.compareTo(other: A?): Int {

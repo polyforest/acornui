@@ -26,9 +26,9 @@ import com.acornui.component.text.*
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.math.Bounds
+import com.acornui.observe.bind
 import com.acornui.selection.selectAll
 import com.acornui.signal.Signal0
-import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.*
 import com.acornui.time.DateRo
@@ -75,9 +75,9 @@ class NumberCell(owner: Context, private val formatter: NumberFormatter) : Conta
 	private var _data: Number? = null
 
 	init {
-		own(userInfo.currentLocale.changed.bind {
+		bind(userInfo.currentLocale.changed) {
 			textField.label = formatter.format(_data)
-		})
+		}
 	}
 
 	override fun setData(value: Number?) {

@@ -16,7 +16,6 @@
 
 package com.acornui.observe
 
-import com.acornui.signal.Bindable
 import com.acornui.signal.Signal
 
 interface Observable : Bindable {

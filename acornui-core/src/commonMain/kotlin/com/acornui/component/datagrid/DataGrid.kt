@@ -42,11 +42,11 @@ import com.acornui.input.wheel
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
+import com.acornui.observe.bind
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
-import com.acornui.signal.bind
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -139,7 +139,7 @@ class DataGrid<RowData>(
 	val dataView: ListViewRo<RowData> = _dataView
 
 	private val _columns = own(WatchedElementsActiveList<DataGridColumn<RowData, *>>()).apply {
-		bind(this@DataGrid::invalidateColumnWidths)
+		addBinding(this@DataGrid::invalidateColumnWidths)
 	}
 
 	/**
@@ -152,7 +152,7 @@ class DataGrid<RowData>(
 	 * Add data grid groups to group data under collapsible headers.
 	 */
 	private val _groups = own(WatchedElementsActiveList<DataGridGroup<RowData>>()).apply {
-		bind(this@DataGrid::invalidateLayout)
+		addBinding(this@DataGrid::invalidateLayout)
 	}
 
 	/**
@@ -389,7 +389,7 @@ class DataGrid<RowData>(
 			}
 		}
 
-		_dataView.bind(::invalidateLayout)
+		_dataView.addBinding(::invalidateLayout)
 
 		// User interaction:
 

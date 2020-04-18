@@ -18,13 +18,15 @@
 
 package com.acornui.graphic
 
+import com.acornui.Disposable
 import com.acornui.component.CameraTransformableRo
+import com.acornui.di.Context
 import com.acornui.math.*
 import com.acornui.observe.ModTagRo
+import com.acornui.observe.bind
 import com.acornui.observe.modTag
+import com.acornui.observe.or
 import com.acornui.properties.afterChange
-import com.acornui.signal.bind
-import com.acornui.signal.or
 import kotlin.properties.ReadWriteProperty
 
 interface CameraRo : CameraTransformableRo {
@@ -464,8 +466,11 @@ abstract class CameraBase : Camera {
 
 }
 
-fun Window.autoCenterCamera(camera: Camera) = (sizeChanged or scaleChanged).bind {
-	centerCamera(camera)
+fun Context.autoCenterCamera(camera: Camera): Disposable {
+	val window = inject(Window)
+	return bind(window.sizeChanged or window.scaleChanged) {
+		window.centerCamera(camera)
+	}
 }
 
 /**

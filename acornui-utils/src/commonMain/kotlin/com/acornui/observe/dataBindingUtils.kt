@@ -4,9 +4,6 @@ package com.acornui.observe
 
 import com.acornui.Disposable
 import com.acornui.toDisposable
-import com.acornui.signal.Bindable
-import com.acornui.signal.bind
-import com.acornui.signal.or
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -17,15 +14,19 @@ import kotlin.contracts.contract
  */
 fun <T> DataBinding<T>.mirror(other: DataBinding<T>): Disposable {
 	require(this !== other) { "Cannot mirror to self" }
-	val a = bind {
+	val thisChanged = { _: T?, it: T ->
 		other.value = it
 	}
-	val b = other.bind {
+	val otherChanged = { _: T?, it: T ->
 		value = it
 	}
+	changed.add(thisChanged)
+	other.changed.add(otherChanged)
+	other.value = value
+
 	return {
-		a.dispose()
-		b.dispose()
+		changed.remove(thisChanged)
+		other.changed.remove(otherChanged)
 	}.toDisposable()
 }
 
@@ -45,6 +46,7 @@ infix fun <T> Bindable.or(other: DataBindingRo<T>): Bindable {
 /**
  * Immediately, and when the data has changed, the callback will be invoked.
  */
+@Deprecated("Use Context.bind(dataBinding, callback)", ReplaceWith("bind(this, callback)"))
 fun <T> DataBindingRo<T>.bind(callback: (T) -> Unit): Disposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	val handler = { _: T, new: T -> callback(new) }
@@ -60,6 +62,7 @@ fun <T> DataBindingRo<T>.bind(callback: (T) -> Unit): Disposable {
  * Immediately, and when the data has changed, the callback will be invoked.
  * The first time the callback is invoked, the `old` parameter will be null.
  */
+@Deprecated("Use Context.bind2(dataBinding, callback)", ReplaceWith("bind(this, callback)"))
 fun <T> DataBindingRo<T>.bind2(callback: (old: T?, new: T) -> Unit): Disposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	changed.add(callback)

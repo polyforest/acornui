@@ -97,10 +97,10 @@ class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner),
 		messagesC.styleTags.add(MESSAGES_STYLE)
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.LAYOUT, ::updateProperties)
 
-		validationController.data.bind {
+		bind(validationController.data) {
 			invalidateProperties()
 		}
-		validationController.isBusy.bind {
+		bind(validationController.isBusy) {
 			interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		}
 	}

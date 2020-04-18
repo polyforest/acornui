@@ -35,10 +35,12 @@ import com.acornui.mainContext
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.math.vec2
+import com.acornui.observe.bind
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
-import com.acornui.signal.bind
 import com.acornui.time.tick
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class TooltipAttachment(val target: UiComponentRo) : ContextImpl(target) {
 
@@ -159,7 +161,7 @@ class TooltipManagerImpl(private val popUpManager: PopUpManager, private val sta
 	private val defaultTooltipView: ItemRenderer<String> by lazy { TooltipView(stage) }
 
 	init {
-		_tooltips.bind {
+		_tooltips.addBinding {
 			@Suppress("UNCHECKED_CAST")
 			activeTooltip = _tooltips.lastOrNull() as Tooltip<Any?>?
 		}
@@ -259,6 +261,10 @@ class TooltipView(owner: Context) : ContainerImpl(owner), ItemRenderer<String> {
 	companion object : StyleTag
 }
 
+inline fun Context.tooltipView(init: ComponentInit<TooltipView> = {}): TooltipView {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return TooltipView(this).apply(init)
+}
 
 fun UiComponentRo.tooltipAttachment(): TooltipAttachment {
 	return createOrReuseAttachment(TooltipAttachment) { TooltipAttachment(this) }

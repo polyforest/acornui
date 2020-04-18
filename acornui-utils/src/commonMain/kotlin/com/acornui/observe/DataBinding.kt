@@ -58,6 +58,12 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 
 	private var _value: T = initialValue
 
+	/**
+	 * When the data is set, the validator will be given the new value. If the data is invalid, this method should
+	 * throw an exception.
+	 */
+	var validator: (T) -> Unit = {}
+
 	override var value: T
 		get() = _value
 		set(value) {
@@ -69,6 +75,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		if (_changed.isDispatching) return false
 		val old = _value
 		val newValue = callback(value)
+		validator(newValue)
 		if (old == newValue) return false
 		_value = newValue
 		_changed.dispatch(old, newValue)
@@ -78,6 +85,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 	@Synchronized
 	private fun setValueInternal(value: T) {
 		if (_changed.isDispatching) return
+		validator(value)
 		val old = _value
 		if (old == value) return
 		if (_changed.isDispatching) return

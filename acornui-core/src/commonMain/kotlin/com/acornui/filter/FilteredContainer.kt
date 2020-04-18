@@ -29,7 +29,7 @@ import com.acornui.graphic.setViewport
 import com.acornui.math.Matrix4
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
-import com.acornui.signal.bind
+import com.acornui.observe.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -41,7 +41,7 @@ import kotlin.contracts.contract
 class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner) {
 
 	private val _renderFilters = own(WatchedElementsActiveList<RenderFilter>().apply {
-		bind { invalidate(REGION) }
+		addBinding { invalidate(REGION) }
 	})
 
 	val renderFilters: MutableList<RenderFilter> = _renderFilters

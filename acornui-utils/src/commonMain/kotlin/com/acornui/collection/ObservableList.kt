@@ -20,7 +20,7 @@ package com.acornui.collection
 
 import com.acornui.function.as2
 import com.acornui.function.as3
-import com.acornui.signal.Bindable
+import com.acornui.observe.Bindable
 import com.acornui.signal.Signal
 import com.acornui.signal.emptySignal
 

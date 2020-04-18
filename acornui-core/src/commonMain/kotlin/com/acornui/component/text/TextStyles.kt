@@ -28,6 +28,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.DpiStyle
 import com.acornui.math.Corners
+import com.acornui.math.CornersRo
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.contracts.InvocationKind
@@ -179,8 +180,7 @@ class CharStyle : DpiStyle() {
 	override val type: StyleType<CharStyle> = CharStyle
 
 	/**
-	 * The font family. This is not typically set directly, but provided by the skin.
-	 * It should match the font family in [BitmapFontRegistry].
+	 * The font family.
 	 */
 	var fontFamily by prop<String?>(null)
 
@@ -239,11 +239,11 @@ class CharStyle : DpiStyle() {
 	 */
 	var lineThickness by prop(1f)
 
-	var colorTint: ColorRo by prop(Color(1f, 1f, 1f, 1f))
-	var backgroundColor: ColorRo by prop(Color())
+	var colorTint by prop<ColorRo>(Color(1f, 1f, 1f, 1f))
+	var backgroundColor by prop<ColorRo>(Color())
 
-	var selectedColorTint: ColorRo by prop(Color(1f, 1f, 1f, 1f))
-	var selectedBackgroundColor: ColorRo by prop(Color(0.12f, 0.25f, 0.5f, 1f))
+	var selectedColorTint by prop<ColorRo>(Color(1f, 1f, 1f, 1f))
+	var selectedBackgroundColor by prop<ColorRo>(Color(0.12f, 0.25f, 0.5f, 1f))
 
 	/**
 	 * The text is selectable by the user. This does not affect whether or not the text can be selected
@@ -269,7 +269,7 @@ class CharStyle : DpiStyle() {
 	}
 }
 
-inline fun charStyle(init: ComponentInit<CharStyle> = {}): CharStyle {
+inline fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return CharStyle().apply(init)
 }
@@ -314,12 +314,12 @@ class TextFlowStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	/**
 	 * The number of space char widths a tab should occupy.
 	 */
-	var tabSize: Int by prop(4)
+	var tabSize by prop(4)
 
 	var horizontalAlign by prop(FlowHAlign.LEFT)
 	var verticalAlign by prop(FlowVAlign.BASELINE)
@@ -336,37 +336,37 @@ class TextInputStyle : StyleBase() {
 	/**
 	 * The cursor blinks, this is color one.
 	 */
-	var cursorColorOne: ColorRo by prop(Color(0.1f, 0.1f, 0.1f, 1f))
+	var cursorColorOne by prop<ColorRo>(Color(0.1f, 0.1f, 0.1f, 1f))
 
 	/**
 	 * The cursor blinks, this is color two.
 	 */
-	var cursorColorTwo: ColorRo by prop(Color(0.9f, 0.9f, 0.9f, 1f))
+	var cursorColorTwo by prop<ColorRo>(Color(0.9f, 0.9f, 0.9f, 1f))
 
 	/**
 	 * The number of seconds between cursor blinks.
 	 */
-	var cursorBlinkSpeed: Float by prop(0.5f)
+	var cursorBlinkSpeed by prop(0.5f)
 
 	/**
 	 * The background of this text input.
 	 */
-	var background: OptionalSkinPart by prop(noSkinOptional)
+	var background by prop(noSkinOptional)
 
 	/**
 	 * Whitespace between the bounds of this text input and the contents.
 	 */
-	var margin: PadRo by prop(Pad())
+	var margin by prop<PadRo>(Pad())
 
 	/**
 	 * Whitespace between the background and text.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	/**
 	 * Used for clipping, this should match that of the background border radius.
 	 */
-	var borderRadii by prop(Corners())
+	var borderRadii by prop<CornersRo>(Corners())
 
 	companion object : StyleType<TextInputStyle>
 }

@@ -41,8 +41,8 @@ import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.observe.bind
 import com.acornui.properties.afterChange
-import com.acornui.signal.bind
 import com.acornui.system.userInfo
 import com.acornui.text.DateTimeFormatStyle
 import com.acornui.text.DateTimeFormatType
@@ -274,10 +274,10 @@ open class Calendar(
 		styleTags.add(Companion)
 		validation.addNode(ValidationFlags.PROPERTIES, ValidationFlags.STYLES, ValidationFlags.LAYOUT, ::updateProperties)
 
-		own(userInfo.currentLocale.changed.bind {
+		bind(userInfo.currentLocale) {
 			// If the locale changes, the weekday headers and month names change.
 			invalidateProperties()
-		})
+		}
 
 		watch(style) {
 			monthFormatter.dateStyle = it.monthFormatStyle

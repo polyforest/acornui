@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.component
 
 import com.acornui.Disposable
@@ -44,12 +46,12 @@ import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
+import com.acornui.observe.bind
 import com.acornui.popup.PopUpManager
 import com.acornui.popup.lift
-import com.acornui.recycle.Clearable
 import com.acornui.properties.afterChange
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal0
-import com.acornui.signal.bind
 import com.acornui.text.StringFormatter
 import com.acornui.text.ToStringFormatter
 import kotlin.contracts.InvocationKind
@@ -229,25 +231,24 @@ open class OptionList<E : Any>(
 	}
 
 	private var dataBinding: Disposable? = null
-
-	private fun unbindData() {
-		dataBinding?.dispose()
-		dataBinding = null
-	}
+		set(value) {
+			if (field == value) return
+			field?.dispose()
+			field = value
+		}
 
 	val data: List<E?>
 		get() = dataScroller.data
 
 	fun data(value: List<E?>?) {
-		unbindData()
+		dataBinding = null
 		dataScroller.data(value)
 		setSelectedItemFromText()
 	}
 
 	fun data(value: ObservableList<E?>?) {
-		unbindData()
 		dataScroller.data(value)
-		dataBinding = value?.bind {
+		dataBinding = bind(value) {
 			setSelectedItemFromText()
 		}
 	}
@@ -490,7 +491,7 @@ open class OptionList<E : Any>(
 	}
 
 	override fun dispose() {
-		unbindData()
+		dataBinding = null
 		close()
 		super.dispose()
 	}

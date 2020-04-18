@@ -19,6 +19,7 @@ package com.acornui.di
 import com.acornui.Disposable
 import com.acornui.DisposedException
 import com.acornui.Lifecycle
+import com.acornui.ManagedDisposable
 import com.acornui.collection.copy
 import com.acornui.component.ComponentInit
 import com.acornui.function.as1
@@ -156,11 +157,11 @@ fun Context.childContext(): Context = ContextImpl(this, dependencies)
  */
 open class ContextImpl(
 		final override val owner: Context? = null,
-		override var dependencies: DependencyMap = DependencyMap(),
+		final override var dependencies: DependencyMap = DependencyMap(),
 		final override val coroutineContext: CoroutineContext = (owner?.coroutineContext
 				?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job)),
 		override val marker: ContextMarker? = null
-) : Context, Disposable {
+) : Context, ManagedDisposable {
 
 	constructor(owner: Context?, dependencies: List<DependencyPair<*>>) : this(owner, DependencyMap(dependencies))
 	constructor(dependencies: DependencyMap) : this(null, dependencies)
@@ -183,7 +184,7 @@ open class ContextImpl(
 		return dependencies[key] ?: run {
 			val factory = key.factory ?: return null
 			val factoryScope = factory.installTo
-			val contextWithScope = findOwner { it.marker === factoryScope  }
+			val contextWithScope = findOwner { it.marker === factoryScope }
 					?: throw Context.ContextMarkerNotFoundException(key)
 			if (contextWithScope != this)
 				return install(key, contextWithScope.injectOptional(key))
@@ -276,8 +277,29 @@ fun <T : Disposable> Context.own(target: T): T {
 @Deprecated("Context objects are owned implicitly", ReplaceWith("target"), level = DeprecationLevel.ERROR)
 @JvmName("improperOwn")
 @Suppress("unused")
-fun Context.own(target: Context): Context {
+fun Context.own(target: ManagedDisposable): Context {
 	error("Context objects are owned implicitly")
+}
+
+/**
+ * Invokes the given callback when this context is disposed.
+ *
+ * @param callback The callback to invoke on [Context.disposed].
+ *
+ * @return Returns a [ManagedDisposable] reference where, if disposed, will invoke [callback] and remove the disposed
+ * handling.
+ */
+fun Context.onDisposed(callback: () -> Unit): ManagedDisposable {
+	return object : ManagedDisposable {
+		init {
+			disposed.add(::dispose.as1)
+		}
+
+		override fun dispose() {
+			callback()
+			disposed.remove(::dispose.as1)
+		}
+	}
 }
 
 inline fun Context.context(init: ComponentInit<ContextImpl>): ContextImpl {
@@ -301,10 +323,9 @@ fun Context?.owns(other: Context?): Boolean {
  *
  * @see [CoroutineContext.plus]
  */
-operator fun Context.plus(context: CoroutineContext) : Context {
+operator fun Context.plus(context: CoroutineContext): Context {
 	return ContextImpl(owner = this, dependencies = dependencies, coroutineContext = coroutineContext + context)
 }
-
 
 /**
  * Traverses this Owned object's ownership lineage (starting with `this`), invoking a callback on each owner up the

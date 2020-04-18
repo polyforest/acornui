@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.acornui.signal
+package com.acornui.observe
 
 import com.acornui.Disposable
 import com.acornui.toDisposable
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Bindable is a generic interface that represents the ability to add callbacks to the asynchronous event(s)
@@ -43,7 +45,9 @@ interface Bindable {
  * Adds a callback and invokes it immediately.
  * @return Returns a [Disposable] object that will remove the callback on [Disposable.dispose]
  */
+@Deprecated("Use Context.bind(bindable, callback)", ReplaceWith("bind(this, callback)"))
 fun Bindable.bind(callback: () -> Unit): Disposable {
+	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	addBinding(callback)
 	callback()
 	return { removeBinding(callback) }.toDisposable()

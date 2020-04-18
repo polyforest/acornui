@@ -63,9 +63,13 @@ open class PerspectiveCamera : CameraBase() {
 	}
 }
 
+/**
+ * Creates a new perspective camera, optionally centering that camera when the window's size or scale changes.
+ *
+ */
 fun Context.perspectiveCamera(autoCenter: Boolean = false, init: PerspectiveCamera.() -> Unit = {}): PerspectiveCamera {
 	val p = PerspectiveCamera()
 	p.init()
-	if (autoCenter) own(inject(Window).autoCenterCamera(p))
+	if (autoCenter) autoCenterCamera(p)
 	return p
 }

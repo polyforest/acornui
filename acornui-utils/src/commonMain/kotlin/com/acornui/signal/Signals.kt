@@ -19,6 +19,7 @@ package com.acornui.signal
 import com.acornui.Disposable
 import com.acornui.function.*
 import com.acornui.logging.Log
+import com.acornui.observe.Bindable
 import com.acornui.recycle.Clearable
 import com.acornui.toDisposable
 import kotlin.jvm.Synchronized

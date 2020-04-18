@@ -64,7 +64,7 @@ class OrthographicCamera : CameraBase() {
 
 fun Context.orthographicCamera(autoCenter: Boolean = false, init: OrthographicCamera.() -> Unit = {}): OrthographicCamera {
 	val p = OrthographicCamera()
-	if (autoCenter) own(inject(Window).autoCenterCamera(p))
+	if (autoCenter) autoCenterCamera(p)
 	p.init()
 	return p
 }

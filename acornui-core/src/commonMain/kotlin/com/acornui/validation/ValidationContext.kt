@@ -22,13 +22,11 @@ import com.acornui.component.button
 import com.acornui.component.text.TextInput
 import com.acornui.di.Context
 import com.acornui.focus.enterTarget
-import com.acornui.i18n.getOrElse
-import com.acornui.i18n.i18n
-import com.acornui.i18n.labelI18n
 import com.acornui.i18n.string
 import com.acornui.input.interaction.click
 import com.acornui.observe.bind
 import com.acornui.replaceTokens
+import com.acornui.system.userInfo
 import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -43,23 +41,23 @@ class ValidationContext(context: Context) : Context by context {
 val validEmailRegex = Regex("""[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?""")
 
 
-fun <T : TextInput> ValidationContext.requiredEmail(input: T, name: String): T {
+suspend fun <T : TextInput> ValidationContext.requiredEmail(input: T, name: String): T {
 	return emailOrBlank(required(input, name), name)
 }
 
-fun <T : TextInput> ValidationContext.emailOrBlank(input: T, name: String): T {
+suspend fun <T : TextInput> ValidationContext.emailOrBlank(input: T, name: String): T {
 	val text = input.text
 	+ValidationInfo(
-			message = string("ui", "validation.email", "{0} is not a valid email.").replaceTokens(name),
+			message = string("validation.email", "ui").replaceTokens(name),
 			level = (text.isBlank() || validEmailRegex.matches(text)).toValidationLevel(),
 			componentId = input.componentId
 	)
 	return input
 }
 
-fun <T : TextInput> ValidationContext.required(input: T, name: String): T {
+suspend fun <T : TextInput> ValidationContext.required(input: T, name: String): T {
 	+ValidationInfo(
-			message = string("ui", "validation.required", "{0} is required.").replaceTokens(name),
+			message = string("validation.required", "ui").replaceTokens(name),
 			level = input.text.isNotBlank().toValidationLevel(),
 			componentId = input.componentId
 	)
@@ -73,7 +71,7 @@ private fun Boolean.toValidationLevel(): ValidationLevel = if (this) ValidationL
  * - Must be inside
  */
 fun <T : Any> Context.submitButton(
-		validate: suspend ValidationContext.() -> T,
+		validate: suspend ValidationContext.() -> T?,
 		submitForm: suspend (data: T) -> Unit,
 		i18nBundleName: String = "ui",
 		i18nBundleKey: String = "form.submit",
@@ -82,11 +80,13 @@ fun <T : Any> Context.submitButton(
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val validationContainer = injectOptional(ValidationContainer) ?: error("submitButton must have a ValidationContainer dependency. See validatedGroup.")
 	return button {
-		i18n(i18nBundleName) {
-			label = it.getOrElse(i18nBundleKey)
+		bind(userInfo.currentLocale) {
+			launch {
+				label = string(i18nBundleKey, i18nBundleName, it)
+			}
 		}
 		validationContainer.enterTarget(this)
-		validationController.isBusy.bind {
+		bind(validationController.isBusy) {
 			disabled = it
 		}
 		click().add {
@@ -103,7 +103,7 @@ fun <T : Any> Context.submitButton(
 /**
  * Constructs a validation context
  */
-suspend fun <T : Any> Context.validateForm(inner: suspend ValidationContext.() -> T): T? {
+suspend fun <T : Any> Context.validateForm(inner: suspend ValidationContext.() -> T?): T? {
 	val validationController = injectOptional(ValidationController)
 			?: error("No ValidationController found; validateForm should be owned by a ValidatedGroup.")
 	val validationContext = ValidationContext(this)
