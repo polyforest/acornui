@@ -5,7 +5,6 @@ package com.acornui.component.layout
 import com.acornui.collection.addAfter
 import com.acornui.collection.addBefore
 import com.acornui.collection.addOrReorder
-import com.acornui.collection.filterTo2
 import com.acornui.component.ContainerImpl
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.algorithm.LayoutAlgorithm
@@ -31,7 +30,7 @@ abstract class LayoutContainer<S : Style, out U : LayoutData>(
 	protected open val elementsToLayout: List<LayoutElement>
 		get() {
 			_elementsToLayout.clear()
-			elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+			elements.filterTo(_elementsToLayout, LayoutElement::shouldLayout)
 			return _elementsToLayout
 		}
 

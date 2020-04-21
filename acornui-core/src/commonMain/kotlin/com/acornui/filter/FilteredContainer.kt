@@ -19,7 +19,6 @@
 package com.acornui.filter
 
 import com.acornui.collection.WatchedElementsActiveList
-import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -29,7 +28,6 @@ import com.acornui.graphic.setViewport
 import com.acornui.math.Matrix4
 import com.acornui.math.MinMaxRo
 import com.acornui.math.Rectangle
-import com.acornui.observe.bind
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -69,7 +67,7 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 
 	private fun updateRegion() {
 		localDrawRegion.set(_bounds)
-		_renderFilters.forEach2 {
+		_renderFilters.forEach {
 			it.region(localDrawRegion)
 		}
 	}
@@ -77,7 +75,7 @@ class FilteredContainer(owner: Context) : FillLayoutContainer<UiComponent>(owner
 	override fun updateVerticesGlobal() {
 		super.updateVerticesGlobal()
 		val tint = colorTintGlobal
-		_renderFilters.forEach2 {
+		_renderFilters.forEach {
 			it.updateGlobalVertices(Matrix4.IDENTITY, tint)
 		}
 	}

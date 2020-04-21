@@ -16,8 +16,7 @@
 
 package com.acornui.component.datagrid
 
-import com.acornui.collection.indexOfFirst2
-import com.acornui.collection.indexOfLast2
+import com.acornui.collection.indexOfLast
 
 interface RowLocationRo<RowData> {
 
@@ -247,7 +246,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 */
 	fun moveToFirstRow(): RowLocation<RowData> {
 		_position = -1
-		_groupIndex = maxOf(0, displayGroupCaches.indexOfFirst2 { it.shouldRender })
+		_groupIndex = maxOf(0, displayGroupCaches.indexOfFirst { it.shouldRender })
 		_groupPosition = -1
 		return this
 	}
@@ -257,7 +256,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 */
 	fun moveToLastRow(): RowLocation<RowData> {
 		_position = dataGrid._totalRows
-		_groupIndex = maxOf(0, displayGroupCaches.indexOfLast2 { it.shouldRender })
+		_groupIndex = maxOf(0, displayGroupCaches.indexOfLast { it.shouldRender })
 		_groupPosition = groupCache.size
 		return this
 	}

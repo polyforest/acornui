@@ -18,7 +18,7 @@ package com.acornui.popup
 
 import com.acornui.Disposable
 import com.acornui.collection.addBefore
-import com.acornui.collection.firstOrNull2
+import com.acornui.collection.firstOrNull
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
@@ -246,7 +246,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	 * Removes the pop-up with the given component.
 	 */
 	private fun removePopUp(child: UiComponent, allowDisposal: Boolean) {
-		val info = currentPopUps.firstOrNull2 { it.child == child }
+		val info = currentPopUps.firstOrNull { it.child == child }
 		if (info != null)
 			removePopUp(info, allowDisposal)
 	}

@@ -88,11 +88,11 @@ interface MutableObservableList<E> : ObservableList<E>, MutableList<E> {
 fun <E> ObservableList<E>.bindUniqueAssertion() {
 	added.add {
 		_, element ->
-		if (count2 { it == element } > 1) throw Exception("The element added: $element was not unique within this list.")
+		if (count { it == element } > 1) throw Exception("The element added: $element was not unique within this list.")
 	}
 	changed.add {
 		_, _, newElement ->
-		if (count2 { it == newElement } > 1) throw Exception("The element added: $newElement was not unique within this list.")
+		if (count { it == newElement } > 1) throw Exception("The element added: $newElement was not unique within this list.")
 	}
 	reset.add {
 		assertUnique()
@@ -102,7 +102,7 @@ fun <E> ObservableList<E>.bindUniqueAssertion() {
 
 fun <E> ObservableList<E>.assertUnique() {
 	for (i in 0..lastIndex) {
-		if (indexOfFirst2(i + 1, lastIndex) { it == this[i] } != -1) {
+		if (indexOfFirst(i + 1, lastIndex) { it == this[i] } != -1) {
 			throw Exception("The element ${this[i]} is not unique within this list.")
 		}
 	}

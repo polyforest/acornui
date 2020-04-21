@@ -16,7 +16,7 @@
 
 package com.acornui.text
 
-import com.acornui.collection.indexOfFirst2
+import com.acornui.collection.indexOfFirst
 import com.acornui.i18n.Locale
 import com.acornui.time.*
 
@@ -394,9 +394,9 @@ fun dateTimeParser(init: DateTimeParser.() -> Unit = {}): DateTimeParser = DateT
  */
 fun parseWeekday(str: String, locales: List<Locale>? = null): Int? {
 	val s = str.trim().toLowerCase()
-	val shortIndex = getDaysOfWeek(false, locales).indexOfFirst2 { it.toLowerCase() == s }
+	val shortIndex = getDaysOfWeek(false, locales).indexOfFirst { it.toLowerCase() == s }
 	if (shortIndex != -1) return shortIndex
-	val longIndex = getDaysOfWeek(true, locales).indexOfFirst2 { it.toLowerCase() == s }
+	val longIndex = getDaysOfWeek(true, locales).indexOfFirst { it.toLowerCase() == s }
 	return if (longIndex != -1) longIndex else null
 }
 
@@ -409,9 +409,9 @@ fun parseWeekday(str: String, locales: List<Locale>? = null): Int? {
  */
 fun parseMonthIndex(str: String, locales: List<Locale>? = null): Int? {
 	val s = str.trim().toLowerCase()
-	val shortIndex = getMonths(false, locales).indexOfFirst2 { it.toLowerCase() == s }
+	val shortIndex = getMonths(false, locales).indexOfFirst { it.toLowerCase() == s }
 	if (shortIndex != -1) return shortIndex
-	val longIndex = getMonths(true, locales).indexOfFirst2 { it.toLowerCase() == s }
+	val longIndex = getMonths(true, locales).indexOfFirst { it.toLowerCase() == s }
 	return if (longIndex != -1) longIndex else null
 }
 

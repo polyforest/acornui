@@ -19,9 +19,9 @@
 package com.acornui.component
 
 import com.acornui.ExperimentalAcorn
-import com.acornui.collection.forEach2
 import com.acornui.component.ValidationFlags.LAYOUT
 import com.acornui.component.ValidationFlags.VIEW_PROJECTION
+import com.acornui.component.layout.LayoutElement
 import com.acornui.di.Context
 import com.acornui.gl.core.useViewport
 import com.acornui.graphic.Camera
@@ -74,7 +74,7 @@ open class Scene(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		out.set(explicitWidth ?: window.width, explicitHeight ?: window.height)
 		camera.setViewport(out.width, out.height)
 		camera.moveToLookAtRect(0f, 0f, out.width, out.height)
-		elementsToLayout.forEach2 {
+		elementsToLayout.forEach { it: LayoutElement ->
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
 			it.size(explicitWidth, explicitHeight)
 		}

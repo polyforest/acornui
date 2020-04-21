@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.collection.forEach2
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.NoopLayoutData
@@ -36,7 +35,7 @@ class FillLayout : LayoutAlgorithm<NoopStyle, NoopLayoutData> {
 	override val style = NoopStyle()
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
-		elements.forEach2 { element ->
+		elements.forEach { element ->
 			element.size(explicitWidth, explicitHeight)
 			element.position(0f, 0f)
 			if (element.width > out.width)

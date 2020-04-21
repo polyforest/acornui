@@ -27,7 +27,6 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
-import com.acornui.component.text.TextField
 import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -118,7 +117,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 		val padding = style.padding
 
 		measuredColWidths.clear()
-		lines.forEach2(action = LineInfo.Companion::free)
+		lines.forEach(action = LineInfo.Companion::free)
 		lines.clear()
 
 		// The sum of the explicit width of all columns.
@@ -165,7 +164,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val lastColIndex = colIndex + colSpan - 1
 			val lastRowIndex = rowIndex + rowSpan - 1
 
-			val measuredSpanWidth = measuredColWidths.sum2(colIndex, lastColIndex) + style.horizontalGap * (colSpan - 1)
+			val measuredSpanWidth = measuredColWidths.sum(colIndex, lastColIndex) + style.horizontalGap * (colSpan - 1)
 
 			val cellW = if (layoutData.widthPercent != null) {
 				layoutData.getPreferredWidth(measuredSpanWidth)
@@ -184,7 +183,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 				layoutData.getPreferredWidth(explicitSpanWidth)
 			}
 
-			val measuredSpanHeight = lines.sumByFloat2(rowIndex, lastRowIndex) { it.height } + style.verticalGap * (rowSpan - 1)
+			val measuredSpanHeight = lines.sumByFloat(rowIndex, lastRowIndex) { it.height } + style.verticalGap * (rowSpan - 1)
 			val cellH = if (layoutData.heightPercent != null) {
 				layoutData.getPreferredHeight(measuredSpanHeight)
 			} else {
@@ -213,7 +212,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val elementW = element.width
 			if (elementW > measuredSpanWidth) {
 				// Increase the spanned column widths evenly across the flexible columns.
-				val numFlexibleColumns = columns.sumByInt2(colIndex, lastColIndex) { if (it.getIsFlexible()) 1 else 0 }
+				val numFlexibleColumns = columns.sumBy(colIndex, lastColIndex) { if (it.getIsFlexible()) 1 else 0 }
 				if (numFlexibleColumns > 0) {
 					val incW = (elementW - measuredSpanWidth) / numFlexibleColumns
 					for (j in colIndex..lastColIndex) {
@@ -236,7 +235,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 			val lastColIndex = colIndex + colSpan - 1
 			val lastRowIndex = rowIndex + rowSpan - 1
 
-			val measuredSpanWidth = measuredColWidths.sum2(colIndex, lastColIndex) + (colSpan - 1) * style.horizontalGap
+			val measuredSpanWidth = measuredColWidths.sum(colIndex, lastColIndex) + (colSpan - 1) * style.horizontalGap
 			val xOffset = when (layoutData.horizontalAlign ?: columns[colIndex].hAlign) {
 				HAlign.LEFT -> 0f
 				HAlign.CENTER -> (measuredSpanWidth - element.width) * 0.5f
@@ -254,12 +253,12 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 				VAlign.BOTTOM -> measuredSpanHeight - element.height
 				VAlign.BASELINE -> lines[rowIndex].baseline - element.baseline
 			}
-			val x = padding.left + measuredColWidths.sumByFloat2(0, colIndex - 1) { it } + style.horizontalGap * colIndex
-			val y = padding.top + lines.sumByFloat2(0, rowIndex - 1) { it.height } + style.verticalGap * rowIndex
+			val x = padding.left + measuredColWidths.sumByFloat(0, colIndex - 1) { it } + style.horizontalGap * colIndex
+			val y = padding.top + lines.sumByFloat(0, rowIndex - 1) { it.height } + style.verticalGap * rowIndex
 			element.position(x + xOffset, y + yOffset)
 		}
-		val width = padding.expandWidth(measuredColWidths.sumByFloat2 { it } + style.horizontalGap * columns.lastIndex)
-		val height = padding.expandHeight(lines.sumByFloat2 { it.height } + style.verticalGap * lines.lastIndex)
+		val width = padding.expandWidth(measuredColWidths.sumByFloat { it } + style.horizontalGap * columns.lastIndex)
+		val height = padding.expandHeight(lines.sumByFloat { it.height } + style.verticalGap * lines.lastIndex)
 		out.set(width, height, baseline = lines.firstOrNull()?.baseline ?: 0f)
 
 		orderedElements.clear()

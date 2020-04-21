@@ -18,7 +18,7 @@ package com.acornui.component.style
 
 import com.acornui.Disposable
 import com.acornui.collection.AlwaysFilter
-import com.acornui.collection.first2
+import com.acornui.collection.first
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
 import com.acornui.di.Context
@@ -74,7 +74,7 @@ interface Style : StyleRo, Clearable {
 	override val allProps: MutableList<StyleProp<Any?>>
 
 	fun getProp(kProperty: KProperty<*>): StyleProp<Any?>? {
-		return allProps.first2 { it.name == kProperty.name }
+		return allProps.first { it.name == kProperty.name }
 	}
 
 	/**
@@ -174,7 +174,7 @@ fun <T : Style> T.set(other: T) {
 	var hasChanged = false
 	for (i in 0..allProps.lastIndex) {
 		val p = allProps[i]
-		val otherP = other.allProps.first2 { it.name == p.name }
+		val otherP = other.allProps.first { it.name == p.name }
 		if (p.explicitValue != otherP.value) {
 			hasChanged = true
 			p.explicitValue = otherP.value

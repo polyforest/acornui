@@ -16,7 +16,6 @@
 
 package com.acornui.component.layout.algorithm
 
-import com.acornui.collection.forEach2
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
@@ -58,7 +57,7 @@ class FlowLayout : LayoutAlgorithm<FlowLayoutStyle, FlowLayoutData>, SequencedLa
 
 		var measuredW = 0f
 		val lines = _lines
-		lines.forEach2(action = LineInfo.Companion::free)
+		lines.forEach(action = LineInfo.Companion::free)
 		lines.clear()
 		if (elements.isEmpty()) return
 

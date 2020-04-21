@@ -23,7 +23,6 @@ import com.acornui.async.awaitOrNull
 import com.acornui.async.cancellingJobProp
 import com.acornui.childWalkLevelOrder
 import com.acornui.collection.Filter
-import com.acornui.collection.filterTo2
 import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.HAlign
@@ -201,7 +200,7 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		_elementsToLayout.clear()
-		layoutElements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+		layoutElements.filterTo(_elementsToLayout, LayoutElement::shouldLayout)
 		layout.layout(explicitWidth, explicitHeight, _elementsToLayout, out)
 	}
 

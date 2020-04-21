@@ -42,7 +42,6 @@ import com.acornui.input.wheel
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
-import com.acornui.observe.bind
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
@@ -1579,8 +1578,8 @@ class DataGrid<RowData>(
 			val currX = localP.x + hScrollModel.value
 			var index = _columnPositions.sortedInsertionIndex(currX)
 			if (index > 0 && currX < _columnPositions[index - 1] + _columnWidths[index - 1] * 0.5f) index--
-			index = maxOf(index, _columns.indexOfFirst2 { it.visible && it.reorderable })
-			index = minOf(index, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
+			index = maxOf(index, _columns.indexOfFirst { it.visible && it.reorderable })
+			index = minOf(index, _columns.indexOfLast { it.visible && it.reorderable } + 1)
 			val insertX = (if (index <= 0) 0f else if (index >= _columnPositions.size) _columnPositions.last() + _columnWidths.last() else _columnPositions[index]) - hScrollModel.value
 			columnInsertionIndicator.position(insertX - columnInsertionIndicator.width * 0.5f, 0f)
 			Vector2.free(localP)
@@ -1596,8 +1595,8 @@ class DataGrid<RowData>(
 			val currX = localP.x + hScrollModel.value
 			var toIndex = _columnPositions.sortedInsertionIndex(currX)
 			if (toIndex > 0 && currX < _columnPositions[toIndex - 1] + _columnWidths[toIndex - 1] * 0.5f) toIndex--
-			toIndex = maxOf(toIndex, _columns.indexOfFirst2 { it.visible && it.reorderable })
-			toIndex = minOf(toIndex, _columns.indexOfLast2 { it.visible && it.reorderable } + 1)
+			toIndex = maxOf(toIndex, _columns.indexOfFirst { it.visible && it.reorderable })
+			toIndex = minOf(toIndex, _columns.indexOfLast { it.visible && it.reorderable } + 1)
 			Vector2.free(localP)
 			moveColumn(fromIndex, toIndex)
 		}

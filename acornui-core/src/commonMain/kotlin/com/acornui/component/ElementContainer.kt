@@ -133,7 +133,7 @@ open class ElementContainerImpl<E : UiComponent>(
 	protected val elementsToLayout: List<LayoutElement>
 		get() {
 			_elementsToLayout.clear()
-			elements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+			elements.filterTo(_elementsToLayout, LayoutElement::shouldLayout)
 			return _elementsToLayout
 		}
 
@@ -198,7 +198,7 @@ open class ElementContainerImpl<E : UiComponent>(
 	 */
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		if (explicitWidth != null && explicitHeight != null) return // Use explicit dimensions.
-		elementsToLayout.forEach2 { element ->
+		elementsToLayout.forEach { element: LayoutElement ->
 			if (explicitWidth == null) {
 				if (element.right > out.width)
 					out.width = element.right

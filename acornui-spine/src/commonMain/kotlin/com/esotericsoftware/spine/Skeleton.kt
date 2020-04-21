@@ -32,8 +32,7 @@
 package com.esotericsoftware.spine
 
 import com.acornui.collection.arrayCopy
-import com.acornui.collection.firstOrNull2
-import com.acornui.collection.indexOfFirst2
+import com.acornui.collection.firstOrNull
 import com.acornui.collection.peek
 import com.acornui.graphic.Color
 import com.acornui.graphic.TextureAtlasData
@@ -200,14 +199,14 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findBone(boneName: String): Bone? {
-		return bones.firstOrNull2 { it: Bone -> it.data.name == boneName }
+		return bones.firstOrNull { it: Bone -> it.data.name == boneName }
 	}
 
 	/**
 	 * @return -1 if the bone was not found.
 	 */
 	fun findBoneIndex(boneName: String): Int {
-		return bones.indexOfFirst2 { it.data.name == boneName }
+		return bones.indexOfFirst { it.data.name == boneName }
 	}
 
 	fun findSkin(skinName: String): Skin? {
@@ -215,7 +214,7 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findSlot(slotName: String): Slot? {
-		return slots.firstOrNull2 { it: Slot -> it.data.name == slotName }
+		return slots.firstOrNull { it: Slot -> it.data.name == slotName }
 	}
 
 	/**
@@ -286,18 +285,18 @@ class Skeleton(val data: SkeletonData, val atlas: TextureAtlasData) : Clearable 
 	}
 
 	fun findIkConstraint(constraintName: String): IkConstraint? {
-		return ikConstraints.firstOrNull2 { it: IkConstraint -> it.data.name == constraintName }
+		return ikConstraints.firstOrNull { it: IkConstraint -> it.data.name == constraintName }
 	}
 
 	/**
 	 * Returns -1 if not found.
 	 */
 	fun findIkConstraintIndex(constraintName: String): Int {
-		return ikConstraints.indexOfFirst2 { it.data.name == constraintName }
+		return ikConstraints.indexOfFirst { it.data.name == constraintName }
 	}
 
 	fun findTransformConstraint(constraintName: String): TransformConstraint? {
-		return transformConstraints.firstOrNull2 { it: TransformConstraint -> it.data.name == constraintName }
+		return transformConstraints.firstOrNull { it: TransformConstraint -> it.data.name == constraintName }
 	}
 
 	/**

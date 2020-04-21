@@ -18,7 +18,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.collection.forEach2
 import com.acornui.component.ContainerRo
 import com.acornui.component.ElementContainerImpl
 import com.acornui.component.ValidationFlags
@@ -48,7 +47,7 @@ abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementC
 		set(value) {
 			if (field == value) return
 			field = value
-			elements.forEach2 {
+			elements.forEach { it: E ->
 				it.allowClipping = value
 			}
 		}
@@ -62,7 +61,7 @@ abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementC
 		set(value) {
 			if (field == value) return
 			field = value
-			elements.forEach2 {
+			elements.forEach { it: E ->
 				it.textField = value
 			}
 		}
@@ -72,7 +71,7 @@ abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementC
 
 	override fun setSelection(rangeStart: Int, selection: List<SelectionRange>) {
 		var r = rangeStart
-		elements.forEach2 {
+		elements.forEach { it: E ->
 			it.setSelection(r, selection)
 			r += it.textElements.size
 		}
@@ -86,17 +85,17 @@ abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementC
 
 	private fun updateTextElements() {
 		_textElements.clear()
-		elements.forEach2 {
+		elements.forEach { it: E ->
 			_textElements.addAll(it.textElements)
 		}
 	}
 
 	protected open fun updateLines() {
 		// Create line info objects with attributes relative to this container.
-		_lines.forEach2(action = LineInfo.Companion::free)
+		_lines.forEach(action = LineInfo.Companion::free)
 		_lines.clear()
 		var relativeIndex = 0
-		elements.forEach2 { element ->
+		elements.forEach { element: E ->
 			val elementLines = element.lines
 			for (j in 0..elementLines.lastIndex) {
 				val line = LineInfo.obtain()

@@ -477,7 +477,7 @@ fun ChildRo.lowestCommonAncestor(other: ChildRo): ChildRo? {
 	ancestry(ancestry1)
 	other.ancestry(ancestry2)
 
-	val element = ancestry1.firstOrNull2 { ancestry2.contains(it) }
+	val element = ancestry1.firstOrNull { ancestry2.contains(it) }
 	ancestry1.clear()
 	ancestry2.clear()
 	return element

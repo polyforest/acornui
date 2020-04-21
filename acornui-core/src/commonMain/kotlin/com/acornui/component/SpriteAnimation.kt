@@ -23,7 +23,6 @@ import com.acornui.asset.cacheSet
 import com.acornui.asset.loadAndCacheJsonAsync
 import com.acornui.async.launchSupervised
 import com.acornui.collection.fill
-import com.acornui.collection.forEach2
 import com.acornui.di.Context
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.*
@@ -187,7 +186,7 @@ class SpriteAnimation(owner: Context) : UiComponentImpl(owner), Clearable {
 		super.updateVerticesGlobal()
 		val animation = animation ?: return
 		if (width <= 0f || height <= 0f) return
-		animation.frames.forEach2 {
+		animation.frames.forEach { it: BasicRenderable ->
 			it.updateGlobalVertices(width, height, translationTransform.setTranslation(vertexTranslation), colorTintGlobal)
 		}
 	}

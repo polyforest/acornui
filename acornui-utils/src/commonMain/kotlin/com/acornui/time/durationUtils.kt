@@ -16,7 +16,6 @@
 
 package com.acornui.time
 
-import com.acornui.collection.forEach2
 import kotlin.time.Duration
 
 /**
@@ -24,7 +23,7 @@ import kotlin.time.Duration
  */
 inline fun <T> List<T>.sumByDuration(selector: (T) -> Duration): Duration {
 	var sum: Duration = Duration.ZERO
-	forEach2 {
+	forEach { it: T ->
 		sum += selector(it)
 	}
 	return sum
@@ -35,7 +34,7 @@ inline fun <T> List<T>.sumByDuration(selector: (T) -> Duration): Duration {
  */
 fun List<Duration>.sum(): Duration {
 	var sum: Duration = Duration.ZERO
-	forEach2 {
+	forEach { it: Duration ->
 		sum += it
 	}
 	return sum

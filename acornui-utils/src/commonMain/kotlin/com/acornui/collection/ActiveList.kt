@@ -156,7 +156,7 @@ class WatchedElementsActiveList<E : Observable>(initialCapacity: Int = 8) : Muta
 	}
 
 	private fun elementModifiedHandler(o: Observable) {
-		val i = indexOfFirst2 { it === o } // Use identity equals
+		val i = indexOfFirst { it === o } // Use identity equals
 		notifyElementModified(i)
 	}
 

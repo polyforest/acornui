@@ -149,10 +149,10 @@ open class AudioManagerImpl(
 		}
 
 	override fun update(dT: Float) {
-		activeMusics.forEach2 {
+		activeMusics.forEach {
 			it.update()
 		}
-		activeSounds.forEach2 {
+		activeSounds.forEach {
 			it.update()
 		}
 	}

@@ -31,7 +31,6 @@ class ListUtilsKtTest {
 			assertListEquals(listOf(2f, 3f, 4f, 5f, 5f), f)
 		}
 
-
 		run {
 			val f = mutableListOf(1f, 2f, 3f, 4f, 5f)
 			f.copyInto(f, destinationOffset = 1, startIndex = 0, endIndex = 4)
@@ -121,66 +120,30 @@ class ListUtilsKtTest {
 	}
 
 	@Test
-	fun indexOfFirst2() {
+	fun indexOfFirst() {
 		val list = arrayListOf(0, 1, 2, 3, 4, 5, 0)
-		assertEquals(0, list.indexOfFirst2 { it == 0 })
-		assertEquals(-1, list.indexOfFirst2(1, 2) { it == 0 })
-		assertEquals(6, list.indexOfFirst2(1, 6) { it == 0 })
-		assertEquals(1, list.indexOfFirst2 { it == 1 })
-		assertEquals(-1, list.indexOfFirst2 { it == 6 })
-		assertEquals(5, list.indexOfFirst2 { it == 5 })
-		val list2 = arrayListOf(0)
-		assertEquals(0, list2.indexOfFirst2 { it == 0 })
-		assertEquals(-1, list2.indexOfFirst2 { it == 6 })
+		assertEquals(0, list.indexOfFirst { it == 0 })
+		assertEquals(-1, list.indexOfFirst(1, 2) { it == 0 })
+		assertEquals(6, list.indexOfFirst(1, 6) { it == 0 })
 	}
 
 	@Test
 	fun indexOfLast2() {
 		val list = arrayListOf(0, 1, 2, 3, 4, 5, 0)
-		assertEquals(6, list.indexOfLast2 { it == 0 })
-		assertEquals(-1, list.indexOfLast2(2, 1) { it == 0 })
-		assertEquals(6, list.indexOfLast2(6, 1) { it == 0 })
-		assertEquals(1, list.indexOfLast2 { it == 1 })
-		assertEquals(-1, list.indexOfLast2 { it == 6 })
-		assertEquals(5, list.indexOfLast2 { it == 5 })
-		val list2 = arrayListOf(0)
-		assertEquals(0, list2.indexOfLast2 { it == 0 })
-		assertEquals(-1, list2.indexOfLast2 { it == 6 })
+		assertEquals(6, list.indexOfLast { it == 0 })
+		assertEquals(-1, list.indexOfLast(2, 1) { it == 0 })
+		assertEquals(6, list.indexOfLast(6, 1) { it == 0 })
 	}
 
 	@Test
 	fun emptyList() {
 		val list = emptyList<Int>()
-		assertEquals(-1, list.indexOfLast2 { it == 0 })
-		assertEquals(-1, list.indexOfFirst2 { it == 0 })
-		assertEquals(-1, list.indexOfLast2(0, 1) { it == 0 })
-		assertEquals(-1, list.indexOfFirst2(0, 1) { it == 0 })
-		assertEquals(-1, list.indexOfLast2(1, 1) { it == 0 })
-		assertEquals(-1, list.indexOfFirst2(1, 1) { it == 0 })
-	}
-
-	@Test
-	fun forEach2() {
-	}
-
-	@Test
-	fun forEachReversed2() {
-	}
-
-	@Test
-	fun sum2() {
-	}
-
-	@Test
-	fun addAll() {
-	}
-
-	@Test
-	fun count2() {
-	}
-
-	@Test
-	fun removeFirst() {
+		assertEquals(-1, list.indexOfLast { it == 0 })
+		assertEquals(-1, list.indexOfFirst { it == 0 })
+		assertEquals(-1, list.indexOfLast(0, 1) { it == 0 })
+		assertEquals(-1, list.indexOfFirst(0, 1) { it == 0 })
+		assertEquals(-1, list.indexOfLast(1, 1) { it == 0 })
+		assertEquals(-1, list.indexOfFirst(1, 1) { it == 0 })
 	}
 
 	@Test

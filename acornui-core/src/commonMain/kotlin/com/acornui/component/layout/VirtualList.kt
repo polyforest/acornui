@@ -22,7 +22,6 @@ import com.acornui.behavior.Selection
 import com.acornui.behavior.SelectionBase
 import com.acornui.behavior.retainAll
 import com.acornui.collection.ObservableList
-import com.acornui.collection.forEach2
 import com.acornui.collection.unshift
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.virtual.ItemRendererContext
@@ -473,7 +472,7 @@ class VirtualListSelection<E : Any>(private val activeRenderers: List<ListItemRe
 	}
 
 	override fun onSelectionChanged(oldSelection: Set<E>, newSelection: Set<E>) {
-		activeRenderers.forEach2 {
+		activeRenderers.forEach {
 			it.toggled = getItemIsSelected(it.data!!)
 		}
 	}

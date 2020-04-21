@@ -21,8 +21,8 @@ package com.acornui.component
 import com.acornui.Disposable
 import com.acornui.collection.ListView
 import com.acornui.collection.ObservableList
-import com.acornui.collection.indexOfFirst2
-import com.acornui.collection.indexOfLast2
+import com.acornui.collection.indexOfFirst
+import com.acornui.collection.indexOfLast
 import com.acornui.component.layout.DataScrollerStyle
 import com.acornui.component.layout.algorithm.VerticalLayoutData
 import com.acornui.component.layout.algorithm.virtual.ItemRendererContext
@@ -377,7 +377,7 @@ open class OptionList<E : Any>(
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) -1 else data.indexOf(highlighted)
 		val nextIndex = minOf(data.lastIndex, selectedIndex + delta)
-		val nextIndexNotNull = data.indexOfFirst2(nextIndex) { it != null }
+		val nextIndexNotNull = data.indexOfFirst(nextIndex) { it != null }
 		if (nextIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[nextIndexNotNull]
 			scrollTo(nextIndexNotNull.toFloat())
@@ -391,7 +391,7 @@ open class OptionList<E : Any>(
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) data.size else data.indexOf(highlighted)
 		val previousIndex = maxOf(0, selectedIndex - delta)
-		val previousIndexNotNull = data.indexOfLast2(previousIndex) { it != null }
+		val previousIndexNotNull = data.indexOfLast(previousIndex) { it != null }
 		if (previousIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[previousIndexNotNull]
 			scrollTo(previousIndexNotNull.toFloat())
@@ -401,7 +401,7 @@ open class OptionList<E : Any>(
 
 	private fun highlightLast() {
 		if (!isOpen) return
-		val lastIndexNotNull = data.indexOfLast2 { it != null }
+		val lastIndexNotNull = data.indexOfLast { it != null }
 		if (lastIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[lastIndexNotNull]
 			scrollTo(lastIndexNotNull.toFloat())
@@ -411,7 +411,7 @@ open class OptionList<E : Any>(
 
 	private fun highlightFirst() {
 		if (!isOpen) return
-		val firstIndexNotNull = data.indexOfFirst2 { it != null }
+		val firstIndexNotNull = data.indexOfFirst { it != null }
 		if (firstIndexNotNull != -1) {
 			dataScroller.highlighted.selectedItem = data[firstIndexNotNull]
 			scrollTo(firstIndexNotNull.toFloat())

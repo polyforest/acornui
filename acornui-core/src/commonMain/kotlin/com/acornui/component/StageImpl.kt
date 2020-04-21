@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.collection.forEach2
+import com.acornui.component.layout.LayoutElement
 import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
 import com.acornui.di.own
@@ -166,7 +166,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 			keyboardView.height
 		} else 0f
 
-		elementsToLayout.forEach2 {
+		elementsToLayout.forEach { it: LayoutElement ->
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
 			it.size(w, h - softKeyboardH)
 		}

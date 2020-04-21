@@ -16,8 +16,6 @@
 
 package com.acornui.recycle
 
-import com.acornui.collection.filterTo2
-
 /**
  * Similar to [IndexedPool], to use this class, make a series of [markUsed] calls to indicate that an element was ued,
  * then call [forEachUnused] to iterate over the elements that were marked used on the last set, but weren't marked on
@@ -66,7 +64,7 @@ class UsedTracker<E> {
 	 */
 	fun flip() {
 		val swap = elements
-		elements.filterTo2(tmp) { used[it] == true }
+		elements.filterTo(tmp) { used[it] == true }
 		elements.clear()
 		elements = tmp
 		tmp = swap

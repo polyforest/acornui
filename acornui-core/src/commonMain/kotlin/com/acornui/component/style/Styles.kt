@@ -187,7 +187,7 @@ class Styles(private val host: Stylable) : Disposable {
 		for (i in 0..styles.lastIndex) {
 			CascadingStyleCalculator.calculate(host, styles[i])
 		}
-		styleWatchers.forEach2(action = StyleWatcher<*>::check)
+		styleWatchers.forEach(action = StyleWatcher<*>::check)
 	}
 
 	override fun dispose() {

@@ -19,8 +19,7 @@ package com.acornui.focus
 import com.acornui.Disposable
 import com.acornui.TreeWalk
 import com.acornui.childWalkLevelOrder
-import com.acornui.collection.firstOrNull2
-import com.acornui.collection.lastOrNull2
+import com.acornui.collection.lastOrNull
 import com.acornui.component.ElementContainer
 import com.acornui.component.Highlighter
 import com.acornui.component.UiComponent
@@ -201,7 +200,7 @@ val UiComponentRo.firstFocusable: UiComponentRo?
 		if (!focusEnabledAncestry || !isRendered) return null
 		if (focusEnabled) return this
 		val focusManager = inject(FocusManager)
-		return focusManager.focusables.firstOrNull2 {
+		return focusManager.focusables.firstOrNull {
 			it != this && isAncestorOf(it) && it.canFocusSelf
 		}
 	}
@@ -214,7 +213,7 @@ val UiComponentRo.lastFocusable: UiComponentRo?
 	get() {
 		if (!focusEnabledAncestry || !isRendered) return null
 		val focusManager = inject(FocusManager)
-		return focusManager.focusables.lastOrNull2 {
+		return focusManager.focusables.lastOrNull {
 			isAncestorOf(it) && it.canFocusSelf
 		}
 	}

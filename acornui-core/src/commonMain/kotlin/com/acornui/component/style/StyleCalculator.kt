@@ -48,7 +48,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		target.walkStylableAncestry { ancestor ->
 			out.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed2 { entry ->
+				tmp.forEachReversed { entry ->
 					if (entry.filter(target)) {
 						entries.addSorted(entry, comparator = entrySortComparator)
 					}
@@ -62,11 +62,11 @@ object CascadingStyleCalculator : StyleCalculator {
 
 		// Apply style entries to the calculated values of the bound style.
 		var hasChanged = false
-		entries.forEach2 { entry ->
+		entries.forEach { entry: StyleRo ->
 			for (i in 0..entry.allProps.lastIndex) {
 				val prop = entry.allProps[i]
 				if (prop.explicitIsSet) {
-					val foundIndex = out.allProps.indexOfFirst2 { it.name == prop.name }
+					val foundIndex = out.allProps.indexOfFirst { it.name == prop.name }
 					val found = out.allProps[foundIndex]
 					if (!tmpCalculated[foundIndex]) {
 						tmpCalculated[foundIndex] = true
@@ -100,7 +100,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		target.walkStylableAncestry { ancestor ->
 			style.type.walkInheritance { styleType ->
 				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed2 { entry ->
+				tmp.forEachReversed { entry ->
 					if (entry.filter(target)) {
 						val index = entries.sortedInsertionIndex(entry, comparator = entrySortComparator)
 						entries.add(index, entry)
@@ -117,7 +117,7 @@ object CascadingStyleCalculator : StyleCalculator {
 			for (j in 0..entry.allProps.lastIndex) {
 				val prop = entry.allProps[j]
 				if (prop.explicitIsSet) {
-					val found = style.allProps.first2 { it.name == prop.name }
+					val found = style.allProps.first { it.name == prop.name }
 					if (found.calculatedIsSet) {
 						found.calculatedValue = prop.explicitValue
 						ruleInfo.calculated[prop.name!!] = prop.explicitValue

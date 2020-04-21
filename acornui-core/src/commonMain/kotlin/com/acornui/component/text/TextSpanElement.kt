@@ -19,7 +19,6 @@ package com.acornui.component.text
 import com.acornui.Disposable
 import com.acornui.async.cancellingJobProp
 import com.acornui.async.launchSupervised
-import com.acornui.collection.forEach2
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.FlowVAlign
 import com.acornui.component.style.*
@@ -224,7 +223,7 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 	 * @param dispose If dispose is true, the elements will be disposed.
 	 */
 	override fun clearElements(dispose: Boolean) {
-		if (dispose) _elements.forEach2 { it.dispose() }
+		if (dispose) _elements.forEach { it: TextElement -> it.dispose() }
 		_elements.clear()
 		textParent?.invalidate(bubblingFlags)
 	}

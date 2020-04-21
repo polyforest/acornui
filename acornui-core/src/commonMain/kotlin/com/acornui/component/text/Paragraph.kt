@@ -115,7 +115,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 
 	override fun updateStyles() {
 		super.updateStyles()
-		_elements.forEach2 {
+		_elements.forEach { it: TextSpanElement ->
 			it.validateStyles()
 		}
 	}
@@ -128,7 +128,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		val placeholder = _placeholder
 		val availableWidth: Float? = padding.reduceWidth(explicitWidth)
 
-		lines.forEach2(action = LineInfo.Companion::free)
+		lines.forEach(action = LineInfo.Companion::free)
 		lines.clear()
 
 		// To keep tab sizes consistent across the whole text field, we only use the first span's space size.
@@ -167,12 +167,12 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 			if (isLast || mustBreak || (extendsEdge && canBreak)) {
 				if (extendsEdge && canBreak) {
 					// Find the last good breaking point.
-					var breakIndex = textElements.indexOfLast2(spanPartIndex, currentLine.startIndex) { it.isBreaking }
+					var breakIndex = textElements.indexOfLast(spanPartIndex, currentLine.startIndex) { it.isBreaking }
 					if (breakIndex == -1) {
 						allowWordBreak = false
 						breakIndex = spanPartIndex - 1
 					}
-					val endIndex = textElements.indexOfFirst2(breakIndex + 1, spanPartIndex) { !it.overhangs }
+					val endIndex = textElements.indexOfFirst(breakIndex + 1, spanPartIndex) { !it.overhangs }
 					currentLine.endIndex = if (endIndex == -1) spanPartIndex + 1
 					else endIndex
 					spanPartIndex = currentLine.endIndex
@@ -278,8 +278,8 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 					!(textElements[line.endIndex - 1].clearsLine && flowStyle.multiline)
 			) {
 				// Apply JUSTIFY spacing if this is not the last line, and there are more than one elements.
-				val lastIndex = textElements.indexOfLast2(line.endIndex - 1, line.startIndex) { !it.overhangs }
-				val numSpaces = textElements.count2(line.startIndex, lastIndex) { it.char == ' ' }
+				val lastIndex = textElements.indexOfLast(line.endIndex - 1, line.startIndex) { !it.overhangs }
+				val numSpaces = textElements.count(line.startIndex, lastIndex) { it.char == ' ' }
 				if (numSpaces > 0) {
 					val hGap = remainingSpace / numSpaces
 					var justifyOffset = 0f
@@ -312,7 +312,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 
 	private fun updateTextElements() {
 		_textElements.clear()
-		_elements.forEach2 {
+		_elements.forEach { it: TextSpanElement ->
 			_textElements.addAll(it.elements)
 		}
 	}
@@ -334,7 +334,7 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 	private fun updateSelection() {
 		val textElements = _textElements
 		for (i in 0..textElements.lastIndex) {
-			textElements[i].selected = selection.any2 { it.contains(i + selectionRangeStart) }
+			textElements[i].selected = selection.any { it.contains(i + selectionRangeStart) }
 		}
 	}
 
