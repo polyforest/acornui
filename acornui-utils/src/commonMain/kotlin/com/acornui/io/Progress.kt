@@ -16,9 +16,6 @@
 
 package com.acornui.io
 
-import com.acornui.ChildRo
-import com.acornui.Parent
-import com.acornui.ParentRo
 import com.acornui.async.delay
 import com.acornui.time.sumByDuration
 import kotlin.time.Duration
@@ -75,35 +72,36 @@ suspend fun Progress.await(interval: Duration = 0.1.seconds) {
 /**
  * Provides a way to add child [Progress] trackers.
  */
-interface ProgressReporter : Parent<Progress>, Progress
+interface ProgressReporter : Progress {
+
+	val children: MutableList<Progress>
+
+	/**
+	 * Adds the given child to the last child index.
+	 * This is the equivalent of:
+	 * `addChild(children.size, child)`
+	 */
+	fun <S : Progress> addChild(child: S): S {
+		children.add(child)
+		return child
+	}
+}
 
 inline fun <R> ProgressReporter.addWork(expectedDuration: Duration, inner: () -> R): R {
 	val p = ProgressImpl(total = expectedDuration)
-	addChild(p)
+	children.add(p)
 	val result = inner()
-	removeChild(p)
+	children.remove(p)
 	return result
 }
 
 open class ProgressReporterImpl : ProgressReporter {
 
-	override val parent: ParentRo<ChildRo>? = null
-
-	private val _children = mutableListOf<Progress>()
-	override val children: List<Progress> = _children
-
-	override fun <S : Progress> addChild(index: Int, child: S): S {
-		_children.add(index, child)
-		return child
-	}
-
-	override fun removeChild(index: Int): Progress {
-		return _children.removeAt(index)
-	}
+	override val children = mutableListOf<Progress>()
 
 	override val loaded: Duration
-		get() = _children.sumByDuration { it.loaded }
+		get() = children.sumByDuration { it.loaded }
 
 	override val total: Duration
-		get() = _children.sumByDuration { it.total }
+		get() = children.sumByDuration { it.total }
 }

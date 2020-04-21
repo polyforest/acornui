@@ -18,9 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.Disposable
-import com.acornui.UidUtil
-import com.acornui.assertionsEnabled
+import com.acornui.*
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.Positionable
 import com.acornui.component.style.*
@@ -43,7 +41,6 @@ import com.acornui.input.MouseState
 import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.math.MathUtils.offsetRound
-import com.acornui.nonZero
 import com.acornui.properties.afterChange
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
@@ -168,9 +165,10 @@ open class UiComponentImpl(
 	private val bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
 	private val attachments = HashMap<Any, Any>()
 
-	// ChildRo properties
+	// NodeRo properties
 
 	override var parent: ContainerRo? = null
+	override val children: List<NodeRo> = emptyList()
 
 	// Sizable properties
 

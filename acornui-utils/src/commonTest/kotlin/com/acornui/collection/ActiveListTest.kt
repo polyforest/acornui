@@ -28,7 +28,7 @@ class ActiveListTest {
 	@Test fun concurrentRemove() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach(0) {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.remove('c')
 		}
@@ -39,7 +39,7 @@ class ActiveListTest {
 	@Test fun concurrentRemove2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.remove('b')
 		}
@@ -50,7 +50,7 @@ class ActiveListTest {
 	@Test fun concurrentAdd() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.add(1, 'e')
 		}
@@ -61,7 +61,7 @@ class ActiveListTest {
 	@Test fun concurrentAdd2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach() {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.add(2, 'e')
 		}
@@ -72,7 +72,7 @@ class ActiveListTest {
 	@Test fun concurrentClear() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			actual.add(it)
 			if (it == 'b') list.clear()
 		}
@@ -83,9 +83,9 @@ class ActiveListTest {
 	@Test fun nested() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			actual.add(it)
-			list.forEach { it2 ->
+			list.forEach2 { it2 ->
 				actual.add(it2)
 			}
 		}
@@ -96,10 +96,10 @@ class ActiveListTest {
 	@Test fun nested2() {
 		val actual = ArrayList<Char>()
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			if (it != 'e') {
 				actual.add(it)
-				list.forEach { it2 ->
+				list.forEach2 { it2 ->
 					actual.add(it2)
 					if (it2 == 'b') list.add(2, 'e')
 				}
@@ -111,7 +111,7 @@ class ActiveListTest {
 
 	@Test fun nested3() {
 		val list = ActiveList(arrayListOf('a', 'b', 'c', 'd'))
-		list.forEach {
+		list.forEach2 {
 			val iterator = list.iterator()
 			while (iterator.hasNext()) {
 				iterator.next()

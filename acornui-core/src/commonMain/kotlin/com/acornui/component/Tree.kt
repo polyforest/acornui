@@ -18,10 +18,8 @@
 
 package com.acornui.component
 
-import com.acornui.ChildRo
+import com.acornui.NodeRo
 import com.acornui.ExperimentalAcorn
-import com.acornui.Parent
-import com.acornui.ParentRo
 import com.acornui.component.layout.algorithm.hGroup
 import com.acornui.component.layout.algorithm.vGroup
 import com.acornui.component.style.StyleBase
@@ -48,7 +46,7 @@ import com.acornui.text.ToStringFormatter
  * A Tree component represents a hierarchy of parent/children relationships.
  */
 @ExperimentalAcorn
-class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
+class Tree<E : NodeRo>(owner: Context, rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }) : ContainerImpl(owner) {
 
 	private val toggledChangeRequestedCancel = Cancel()
 
@@ -123,21 +121,21 @@ class Tree<E : ParentRo<E>>(owner: Context, rootFactory: (tree: Tree<E>) -> Tree
 }
 
 @ExperimentalAcorn
-interface TreeItemRendererRo<out E : ParentRo<E>> : ItemRendererRo<E>, ToggleableRo {
+interface TreeItemRendererRo<out E : NodeRo> : ItemRendererRo<E>, ToggleableRo {
 
 	val elements: List<TreeItemRendererRo<E>>
 
 }
 
 @ExperimentalAcorn
-interface TreeItemRenderer<E : ParentRo<E>> : TreeItemRendererRo<E>, ItemRenderer<E>, Toggleable {
+interface TreeItemRenderer<E : NodeRo> : TreeItemRendererRo<E>, ItemRenderer<E>, Toggleable {
 
 	override val elements: List<TreeItemRenderer<E>>
 
 }
 
 @ExperimentalAcorn
-open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, private val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
+open class DefaultTreeItemRenderer<E : NodeRo>(owner: Context, private val tree: Tree<E>) : ContainerImpl(owner), TreeItemRenderer<E> {
 
 	val style = bind(DefaultTreeItemRendererStyle())
 
@@ -220,7 +218,8 @@ open class DefaultTreeItemRenderer<E : ParentRo<E>>(owner: Context, private val 
 	}
 
 	protected open fun updateChildren() {
-		childrenContainer.recycleItemRenderers(_data?.children) {
+		@Suppress("UNCHECKED_CAST")
+		childrenContainer.recycleItemRenderers(_data?.children as List<E>) {
 			DefaultTreeItemRenderer(this, tree)
 		}
 		childrenContainer.visible = toggled
@@ -271,7 +270,7 @@ open class DefaultTreeItemRendererStyle : StyleBase() {
 }
 
 @ExperimentalAcorn
-fun <E : ParentRo<E>> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }, init: ComponentInit<Tree<E>> = {}): Tree<E> {
+fun <E : NodeRo> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRenderer<E> = { DefaultTreeItemRenderer(it, it) }, init: ComponentInit<Tree<E>> = {}): Tree<E> {
 	val tree = Tree(this, rootFactory)
 	tree.init()
 	return tree
@@ -281,7 +280,7 @@ fun <E : ParentRo<E>> Context.tree(rootFactory: (tree: Tree<E>) -> TreeItemRende
  * A simple data model representing the most rudimentary tree node.
  */
 @ExperimentalAcorn
-open class TreeNode(label: String) : Parent<TreeNode>, Observable {
+open class TreeNode(label: String) : NodeRo, Observable {
 
 	private val _changed = Signal1<TreeNode>()
 	override val changed = _changed.asRo()
@@ -294,24 +293,33 @@ open class TreeNode(label: String) : Parent<TreeNode>, Observable {
 		return this
 	}
 
-	override var parent: ParentRo<ChildRo>? = null
+	override var parent: TreeNode? = null
 
 	private val _children = ArrayList<TreeNode>()
 	override val children: List<TreeNode>
 		get() = _children
 
-	override fun <S : TreeNode> addChild(index: Int, child: S): S {
+	fun <S : TreeNode> addChild(index: Int, child: S): S {
 		child.parent = this
 		_children.add(index, child)
 		_changed.dispatch(this)
 		return child
 	}
 
-	override fun removeChild(index: Int): TreeNode {
+	fun <S : TreeNode> addChild(child: S): S = addChild(children.size, child)
+
+	fun removeChild(index: Int): TreeNode {
 		val c = _children.removeAt(index)
 		c.parent = null
 		_changed.dispatch(this)
 		return c
+	}
+
+	fun removeChild(child: TreeNode): Boolean {
+		val index = children.indexOf(child)
+		if (index == -1) return false
+		removeChild(index)
+		return true
 	}
 
 	private var _label: String = label

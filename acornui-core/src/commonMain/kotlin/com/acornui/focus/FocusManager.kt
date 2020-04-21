@@ -19,7 +19,6 @@ package com.acornui.focus
 import com.acornui.Disposable
 import com.acornui.TreeWalk
 import com.acornui.childWalkLevelOrder
-import com.acornui.collection.lastOrNull
 import com.acornui.component.ElementContainer
 import com.acornui.component.Highlighter
 import com.acornui.component.UiComponent
@@ -232,6 +231,7 @@ fun UiComponentRo.invalidateFocusOrderDeep() {
 	if (!isActive) return
 	val focusManager = inject(FocusManager)
 	childWalkLevelOrder {
+		it as UiComponentRo
 		focusManager.invalidateFocusableOrder(it)
 		TreeWalk.CONTINUE
 	}

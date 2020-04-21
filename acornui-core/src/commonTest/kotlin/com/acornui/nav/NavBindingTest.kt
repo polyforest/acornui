@@ -1,7 +1,6 @@
 package com.acornui.nav
 
-import com.acornui.ChildRo
-import com.acornui.ParentRo
+import com.acornui.NodeRo
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import kotlin.test.Test
@@ -60,9 +59,9 @@ class NavBindingTest {
 
 }
 
-private class MockNavBindable(owner: Context, private val depth: Int) : ContextImpl(owner), ParentRo<NavBindable>, NavBindable {
+private class MockNavBindable(owner: Context, private val depth: Int) : ContextImpl(owner), NodeRo, NavBindable {
 
-	override val parent: ParentRo<ChildRo>?
+	override val parent: MockNavBindable?
 		get() {
 			return if (depth == 0) null else MockNavBindable(this, depth - 1)
 		}

@@ -32,10 +32,8 @@ class SpineScene(owner: Context) : UiComponentImpl(owner) {
 
 	var flipY = true
 
-	private val _children = ArrayList<SkeletonComponent>()
-
-	val children: List<SkeletonComponent>
-		get() = _children
+	private val _skeletonComponents = ArrayList<SkeletonComponent>()
+	val skeletonComponents: List<SkeletonComponent> = _skeletonComponents
 
 	/**
 	 * If true, all animations will be paused.
@@ -47,7 +45,7 @@ class SpineScene(owner: Context) : UiComponentImpl(owner) {
 	}
 
 	operator fun <P : SkeletonComponent> P.unaryPlus(): P {
-		addChild(_children.size, this)
+		addChild(_skeletonComponents.size, this)
 		return this
 	}
 
@@ -56,46 +54,46 @@ class SpineScene(owner: Context) : UiComponentImpl(owner) {
 		return this
 	}
 
-	fun addChild(child: SkeletonComponent) = addChild(_children.size, child)
+	fun addChild(child: SkeletonComponent) = addChild(_skeletonComponents.size, child)
 
 	fun addChild(index: Int, child: SkeletonComponent) {
 		child.skeleton.flipY = flipY
-		_children.add(index, child)
+		_skeletonComponents.add(index, child)
 		if (isActive) child.activate()
 	}
 
 	fun removeChild(child: SkeletonComponent): Boolean {
-		val index = _children.indexOf(child)
+		val index = _skeletonComponents.indexOf(child)
 		if (index == -1) return false
 		removeChild(index)
 		return true
 	}
 
 	fun removeChild(index: Int): SkeletonComponent {
-		val child = _children[index]
-		_children.removeAt(index)
+		val child = _skeletonComponents[index]
+		_skeletonComponents.removeAt(index)
 		if (isActive) child.deactivate()
 		return child
 	}
 
 	override fun onActivated() {
 		super.onActivated()
-		for (i in 0.._children.lastIndex) {
-			_children[i].activate()
+		for (i in 0.._skeletonComponents.lastIndex) {
+			_skeletonComponents[i].activate()
 		}
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		for (i in 0.._children.lastIndex) {
-			_children[i].deactivate()
+		for (i in 0.._skeletonComponents.lastIndex) {
+			_skeletonComponents[i].deactivate()
 		}
 	}
 
 	private fun tick(tickTime: Float) {
 		if (isPaused) return
-		for (i in 0.._children.lastIndex) {
-			_children[i].tick(tickTime)
+		for (i in 0.._skeletonComponents.lastIndex) {
+			_skeletonComponents[i].tick(tickTime)
 		}
 		window.requestRender()
 	}
@@ -105,8 +103,8 @@ class SpineScene(owner: Context) : UiComponentImpl(owner) {
 		gl.uniforms.useCamera(this, useModel = true) {
 			val colorTint = colorTintGlobal
 
-			for (i in 0.._children.lastIndex) {
-				_children[i].draw(batch, colorTint)
+			for (i in 0.._skeletonComponents.lastIndex) {
+				_skeletonComponents[i].draw(batch, colorTint)
 			}
 		}
 	}

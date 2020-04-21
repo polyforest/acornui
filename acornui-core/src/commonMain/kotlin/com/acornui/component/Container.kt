@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.ParentRo
+import com.acornui.NodeRo
 import com.acornui.collection.*
 import com.acornui.di.Context
 import com.acornui.focus.invalidateFocusOrderDeep
@@ -31,7 +31,10 @@ import kotlin.jvm.JvmName
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 
-interface ContainerRo : UiComponentRo, ParentRo<UiComponentRo>
+interface ContainerRo : UiComponentRo, NodeRo {
+
+	override val children: List<UiComponentRo>
+}
 
 /**
  * An interface for a ui component that has child components.

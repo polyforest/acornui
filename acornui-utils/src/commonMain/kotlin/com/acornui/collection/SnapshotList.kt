@@ -39,19 +39,17 @@ interface SnapshotList<out E> : List<E> {
  * Iteration is wrapped in a [SnapshotList.begin], [SnapshotList.end] pair, which will guarantee that the iteration
  * is on a snapshot of the list's state on the first [SnapshotList.begin]
  *
- * @param startIndex The index (inclusive) to begin iteration.
- * @param lastIndex The index (inclusive) to end iteration.
  * @param action Each element within the range will be provided, in order.
  */
-fun <E> SnapshotList<E>.forEach2(startIndex: Int = 0, lastIndex: Int = this.lastIndex, action: (E) -> Unit) {
+fun <E> SnapshotList<E>.forEach2(action: (E) -> Unit) {
 	val list = begin()
-	for (i in startIndex..lastIndex) action(list[i])
+	list.forEach(action)
 	end()
 }
 
-fun <E> SnapshotList<E>.forEachReversed2(lastIndex: Int = this.lastIndex, startIndex: Int = 0, action: (E) -> Unit) {
+fun <E> SnapshotList<E>.forEachReversed2(action: (E) -> Unit) {
 	val list = begin()
-	for (i in lastIndex downTo startIndex) action(list[i])
+	for (i in list.lastIndex downTo 0) action(list[i])
 	end()
 }
 

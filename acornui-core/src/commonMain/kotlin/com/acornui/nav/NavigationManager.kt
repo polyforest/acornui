@@ -16,7 +16,7 @@
 
 package com.acornui.nav
 
-import com.acornui.ChildRo
+import com.acornui.NodeRo
 import com.acornui.Disposable
 import com.acornui.LifecycleRo
 import com.acornui.collection.copy
@@ -156,7 +156,7 @@ class NavEventImpl : NavEvent {
 	override val newPath = ArrayList<NavNode>()
 }
 
-interface NavBindable : ChildRo, Context
+interface NavBindable : NodeRo, Context
 
 interface NavBinding {
 

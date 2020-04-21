@@ -19,7 +19,6 @@ package com.acornui.io
 import clearTimeout
 import com.acornui.async.Promise
 import com.acornui.logging.Log
-import com.acornui.system.userInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.await
 import kotlinx.coroutines.coroutineScope
@@ -126,7 +125,7 @@ suspend fun <T> load(
 	}
 	try {
 		promise.await().also {
-			settings.progressReporter.removeChild(progress)
+			settings.progressReporter.children.remove(progress)
 		}
 	} catch (e: CancellationException) {
 		// If the parent coroutine is cancelled.

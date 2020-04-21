@@ -18,10 +18,8 @@
 
 package com.acornui.validation
 
-import com.acornui.TreeWalk
 import com.acornui.async.awaitOrNull
 import com.acornui.async.cancellingJobProp
-import com.acornui.childWalkLevelOrder
 import com.acornui.collection.Filter
 import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
@@ -32,6 +30,7 @@ import com.acornui.component.layout.algorithm.*
 import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.di.Context
+import com.acornui.findChildLevelOrder
 import com.acornui.focus.focusSelf
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -100,11 +99,11 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 		validationMessageView {
 			click().add {
 				data?.componentId?.let {
-					val c = this@ValidationContainerImpl.childWalkLevelOrder {
-						if (it.componentId == componentId) TreeWalk.HALT
-						else TreeWalk.CONTINUE
+					val c = this@ValidationContainerImpl.findChildLevelOrder {
+						it as UiComponentRo
+						it.componentId == componentId
 					}
-
+					println(c)
 				}
 
 			}

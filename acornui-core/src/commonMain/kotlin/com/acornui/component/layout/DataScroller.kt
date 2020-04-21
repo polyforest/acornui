@@ -335,7 +335,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		} else {
 			if (scrollPolicy != ScrollPolicy.OFF) {
 				// First size as if the scroll bars are needed.
-				val hScrollBarH = minOf(h ?: 0f, scrollBar.minHeight ?: 0f)
+				val hScrollBarH = minOf(h ?: 0f, scrollBar.minHeight)
 				val scrollAreaH = if (h == null) null else h - hScrollBarH
 				if (w == null) {
 					bottomContents.indexPosition = maxOf(0f, (data.size - maxItems).toFloat())

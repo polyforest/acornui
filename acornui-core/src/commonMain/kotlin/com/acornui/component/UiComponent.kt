@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.ChildRo
+import com.acornui.NodeRo
 import com.acornui.Lifecycle
 import com.acornui.LifecycleRo
 import com.acornui.collection.arrayListObtain
@@ -40,7 +40,7 @@ annotation class ComponentDslMarker
 
 typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 
-interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StylableRo, ChildRo, Focusable {
+interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementRo, Validatable, StylableRo, NodeRo, Focusable {
 
 	override val disposed: Signal<(self: UiComponentRo) -> Unit>
 	override val activated: Signal<(self: UiComponentRo) -> Unit>
@@ -170,7 +170,7 @@ fun UiComponentRo.ancestry(out: MutableList<UiComponentRo>): MutableList<UiCompo
 }
 
 /**
- * Returns true if this [ChildRo] is the ancestor of the given [child].
+ * Returns true if this [NodeRo] is the ancestor of the given [child].
  * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
  * This will return true if X === Y
  */

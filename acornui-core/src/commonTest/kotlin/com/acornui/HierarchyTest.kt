@@ -16,6 +16,7 @@
 
 package com.acornui
 
+import com.acornui.component.TreeNode
 import com.acornui.test.assertListEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -65,6 +66,7 @@ class HierarchyTest {
 	@Test fun childWalkLevelOrder() {
 		val list = ArrayList<String>()
 		tree1.childWalkLevelOrder {
+			it as TestNode
 			list.add(it.id)
 			TreeWalk.CONTINUE
 		}
@@ -73,6 +75,7 @@ class HierarchyTest {
 		list.clear()
 		tree1.childWalkLevelOrder {
 			child ->
+			child as TestNode
 			list.add(child.id)
 			if (child.id == "a.c") {
 				TreeWalk.SKIP
@@ -85,6 +88,7 @@ class HierarchyTest {
 		list.clear()
 		tree1.childWalkLevelOrder {
 			child ->
+			child as TestNode
 			list.add(child.id)
 			if (child.id == "a.b") {
 				TreeWalk.ISOLATE
@@ -96,6 +100,7 @@ class HierarchyTest {
 
 		list.clear()
 		tree2.childWalkLevelOrder {
+			it as TestNode
 			list.add(it.id)
 			TreeWalk.CONTINUE
 		}
@@ -106,6 +111,7 @@ class HierarchyTest {
 		val list = ArrayList<String>()
 		tree1.childWalkLevelOrderReversed {
 			child ->
+			child as TestNode
 			list.add(child.id)
 			TreeWalk.CONTINUE
 		}
@@ -114,6 +120,7 @@ class HierarchyTest {
 		list.clear()
 		tree1.childWalkLevelOrderReversed {
 			child ->
+			child as TestNode
 			list.add(child.id)
 			if (child.id == "a.c") {
 				TreeWalk.SKIP
@@ -126,6 +133,7 @@ class HierarchyTest {
 		list.clear()
 		tree1.childWalkLevelOrderReversed {
 			child ->
+			child as TestNode
 			list.add(child.id)
 			if (child.id == "a.b") {
 				TreeWalk.ISOLATE
@@ -137,6 +145,7 @@ class HierarchyTest {
 
 		list.clear()
 		tree2.childWalkLevelOrderReversed {
+			it as TestNode
 			list.add(it.id)
 			TreeWalk.CONTINUE
 		}
@@ -146,6 +155,7 @@ class HierarchyTest {
 	@Test fun childWalkPreOrder() {
 		val list = ArrayList<String>()
 		tree2.childWalkPreorder {
+			it as TestNode
 			list.add(it.id)
 			TreeWalk.CONTINUE
 		}
@@ -155,7 +165,7 @@ class HierarchyTest {
 
 }
 
-private class TestNode(val id: String) : Parent<TestNode> {
+private class TestNode(val id: String) : NodeRo {
 
 	/**
 	 * Syntax sugar for addChild.
@@ -165,23 +175,17 @@ private class TestNode(val id: String) : Parent<TestNode> {
 		return this
 	}
 
-	override val parent: ParentRo<ChildRo>? = null
+	override var parent: TestNode? = null
 
 	private val _children = ArrayList<TestNode>()
 	override val children: List<TestNode>
 		get() = _children
 
-
-
-	override fun <S : TestNode> addChild(index: Int, child: S): S {
+	fun addChild(index: Int, child: TestNode): TestNode {
 		_children.add(index, child)
+		child.parent = this
 		return child
 	}
-
-	override fun removeChild(index: Int): TestNode {
-		return _children.removeAt(index)
-	}
-
 	override fun hashCode(): Int {
 		return 31 + id.hashCode()
 	}

@@ -16,6 +16,7 @@
 
 package com.esotericsoftware.spine.component
 
+import com.acornui.NodeRo
 import com.acornui.component.ComponentInit
 import com.acornui.gl.core.*
 import com.acornui.graphic.Color

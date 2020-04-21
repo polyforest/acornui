@@ -21,168 +21,38 @@ package com.acornui
 import com.acornui.collection.*
 
 /**
- * An abstract child to a single parent.
+ * An abstract tree node.
+ *
+ * It is expected that any implementations of [NodeRo] define parent and children as their self type.
  */
-interface ChildRo {
+interface NodeRo {
 
-	val parent: ParentRo<ChildRo>?
+	/**
+	 * The parent of this node.
+	 */
+	val parent: NodeRo?
+
+	/**
+	 * Returns a read-only list of the children.
+	 */
+	val children: List<NodeRo>
 
 }
 
-fun <T : ChildRo> T.previousSibling(): T? {
-	@Suppress("UNCHECKED_CAST")
-	val p = parent as? ParentRo<T> ?: return null
+fun NodeRo.previousSibling(): NodeRo? {
+	val p = parent ?: return null
 	val c = p.children
 	val index = c.indexOf(this)
 	if (index == 0) return null
 	return c[index - 1]
 }
 
-fun <T : ChildRo> T.nextSibling(): T? {
-	@Suppress("UNCHECKED_CAST")
-	val p = parent as? ParentRo<T> ?: return null
+fun NodeRo.nextSibling(): NodeRo? {
+	val p = parent ?: return null
 	val c = p.children
 	val index = c.indexOf(this)
 	if (index == c.lastIndex) return null
 	return c[index + 1]
-}
-
-/**
- * An abstract parent to children relationship of a parameterized type.
- * Acorn hierarchies are conventionally
- * A : B -> B
- * Where B is a child of A, and A is a sub-type of B.
- * This means that when using recursion throughout the tree, all nodes can be considered to be a [ChildRo] of type B,
- * but it must be type checked against a [ParentRo] of type A before continuing the traversal.
- */
-interface ParentRo<out T> : ChildRo {
-
-	/**
-	 * Returns a read-only list of the children.
-	 */
-	val children: List<T>
-
-}
-
-inline fun <T> ParentRo<T>.iterateChildren(reversed: Boolean = false, body: (child: T) -> Boolean) {
-	if (reversed) {
-		for (i in children.lastIndex downTo 0) {
-			val shouldContinue = body(children[i])
-			if (!shouldContinue) break
-		}
-	} else {
-		for (i in 0..children.lastIndex) {
-			val shouldContinue = body(children[i])
-			if (!shouldContinue) break
-		}
-	}
-}
-
-/**
- * An interface to Parent that allows write access.
- */
-interface Parent<T> : ParentRo<T> {
-
-	/**
-	 * Adds the given child to the last child index.
-	 * This is the equivalent of:
-	 * `addChild(children.size, child)`
-	 */
-	fun <S : T> addChild(child: S): S = addChild(children.size, child)
-
-	/**
-	 * Adds the specified child to this container.
-	 * @param index The index of where to insert the child. By default this is the end of the list.
-	 * @return Returns the newly added child.
-	 */
-	fun <S : T> addChild(index: Int, child: S): S
-
-	fun addAllChildren(children: Iterable<T>) = addAllChildren(this.children.size, children)
-
-	fun addAllChildren(index: Int, children: Iterable<T>) {
-		var i = index
-		for (child in children) {
-			addChild(i++, child)
-		}
-	}
-
-	fun addAllChildren(children: Array<T>) = addAllChildren(this.children.size, children)
-
-	fun addAllChildren(index: Int, children: Array<T>) {
-		var i = index
-		for (child in children) {
-			addChild(i++, child)
-		}
-	}
-
-	/**
-	 * Adds a child after the provided element.
-	 */
-	fun addChildAfter(child: T, after: T): Int {
-		val index = children.indexOf(after)
-		if (index == -1) return -1
-		addChild(index + 1, child)
-		return index + 1
-	}
-
-	/**
-	 * Adds a child after the provided element.
-	 */
-	fun addChildBefore(child: T, before: T): Int {
-		val index = children.indexOf(before)
-		if (index == -1) return -1
-		addChild(index, child)
-		return index
-	}
-
-	/**
-	 * Removes a child from this container.
-	 * @return true if the child was found and removed.
-	 */
-	fun removeChild(child: T?): Boolean {
-		if (child == null) return false
-		val index = children.indexOf(child)
-		if (index == -1) return false
-		removeChild(index)
-		return true
-	}
-
-	/**
-	 * Removes a child at the given index from this container.
-	 * @return Returns the child if it was removed, or null if the index was out of range.
-	 */
-	fun removeChild(index: Int): T
-
-	/**
-	 * Removes all the children and optionally disposes them (default).
-	 */
-	fun clearChildren() {
-		val c = children
-		while (c.isNotEmpty()) {
-			removeChild(children.size - 1)
-		}
-	}
-}
-
-abstract class ParentBase<T : ParentBase<T>> : Parent<T> {
-
-	override var parent: ParentRo<ChildRo>? = null
-
-	protected val _children: MutableList<T> = ArrayList()
-	override val children: List<T>
-		get() = _children
-
-	override fun <S : T> addChild(index: Int, child: S): S {
-		_children.add(index, child)
-		child.parent = this
-		return child
-	}
-
-	override fun removeChild(index: Int): T {
-		val c = _children.removeAt(index)
-		c.parent = null
-		return c
-	}
 }
 
 //------------------------------------------------
@@ -223,41 +93,46 @@ enum class TreeWalk {
 
 /**
  * A level-order child walk.
- * Traverses this parent's hierarchy from top to bottom, breadth first, invoking a callback on each ChildRo element
+ * Traverses this parent's hierarchy from top to bottom, breadth first, invoking a callback on each node.
  * (including this receiver object).
  *
- * @param reversed If true, the last child will be added to the queue first.
- * @param callback The callback to invoke on each child.
+ * @param reversed If true, the last node will be added to the queue first.
+ * @param callback The callback to invoke on each node.
+ * @return Returns the element, if any, where [callback] returned [TreeWalk.HALT].
  */
-inline fun <reified T : ChildRo> T.childWalkLevelOrder(callback: (T) -> TreeWalk, reversed: Boolean) {
-	val openList = arrayListObtain<Any?>()
+fun NodeRo.childWalkLevelOrder(callback: (NodeRo) -> TreeWalk, reversed: Boolean): NodeRo? {
+	val openList = arrayListObtain<NodeRo>()
 	openList.add(this)
+	var found: NodeRo? = null
 	loop@ while (openList.isNotEmpty()) {
 		val next = openList.shift()
-		if (next is T) {
-			when (callback(next)) {
-				TreeWalk.HALT -> break@loop
-				TreeWalk.SKIP -> continue@loop
-				TreeWalk.ISOLATE -> {
-					openList.clear()
-				}
-				else -> {
-				}
+		when (callback(next)) {
+			TreeWalk.HALT -> {
+				found = next
+				break@loop
 			}
-			(next as? ParentRo<*>)?.iterateChildren(reversed) {
-				openList.add(it)
-				true
+			TreeWalk.SKIP -> continue@loop
+			TreeWalk.ISOLATE -> {
+				openList.clear()
+			}
+			else -> {
 			}
 		}
+		if (reversed) {
+			for (i in next.children.lastIndex downTo 0)
+				openList.add(next.children[i])
+		} else
+			openList.addAll(next.children)
 	}
 	arrayListPool.free(openList)
+	return found
 }
 
-inline fun <reified T : ChildRo> T.childWalkLevelOrder(callback: (T) -> TreeWalk) {
+fun NodeRo.childWalkLevelOrder(callback: (NodeRo) -> TreeWalk) {
 	childWalkLevelOrder(callback, false)
 }
 
-inline fun <reified T : ChildRo> T.childWalkLevelOrderReversed(callback: (T) -> TreeWalk) {
+fun NodeRo.childWalkLevelOrderReversed(callback: (NodeRo) -> TreeWalk) {
 	childWalkLevelOrder(callback, true)
 }
 
@@ -266,24 +141,17 @@ inline fun <reified T : ChildRo> T.childWalkLevelOrderReversed(callback: (T) -> 
  * the matching condition.
  * The tree traversal will be level-order.
  */
-inline fun <reified T : ChildRo> T.findChildLevelOrder(callback: Filter<T>, reversed: Boolean): T? {
-	var foundItem: T? = null
-	childWalkLevelOrder({
-		if (callback(it)) {
-			foundItem = it
-			TreeWalk.HALT
-		} else {
-			TreeWalk.CONTINUE
-		}
+fun NodeRo.findChildLevelOrder(callback: Filter<NodeRo>, reversed: Boolean): NodeRo? {
+	return childWalkLevelOrder({
+		if (callback(it)) TreeWalk.HALT else TreeWalk.CONTINUE
 	}, reversed)
-	return foundItem
 }
 
-inline fun <reified T : ChildRo> T.findChildLevelOrder(callback: Filter<T>): T? {
+fun NodeRo.findChildLevelOrder(callback: Filter<NodeRo>): NodeRo? {
 	return findChildLevelOrder(callback, reversed = false)
 }
 
-inline fun <reified T : ChildRo> T.findLastChildLevelOrder(callback: Filter<T>): T? {
+fun NodeRo.findLastChildLevelOrder(callback: Filter<NodeRo>): NodeRo? {
 	return findChildLevelOrder(callback, reversed = true)
 }
 
@@ -295,37 +163,41 @@ inline fun <reified T : ChildRo> T.findLastChildLevelOrder(callback: Filter<T>):
  * A pre-order child walk.
  *
  * @param callback The callback to invoke on each child.
+ * @return Returns the node, if any, where [callback] returned [TreeWalk.HALT]
  */
-inline fun <reified T : ChildRo> T.childWalkPreorder(callback: (T) -> TreeWalk, reversed: Boolean) {
-	val openList = arrayListObtain<Any?>()
+fun NodeRo.childWalkPreorder(callback: (NodeRo) -> TreeWalk, reversed: Boolean): NodeRo? {
+	val openList = arrayListObtain<NodeRo>()
 	openList.add(this)
+	var found: NodeRo? = null
 	loop@ while (openList.isNotEmpty()) {
 		val next = openList.pop()
-		if (next is T) {
-			val treeWalk = callback(next)
-			when (treeWalk) {
-				TreeWalk.HALT -> break@loop
-				TreeWalk.SKIP -> continue@loop
-				TreeWalk.ISOLATE -> {
-					openList.clear()
-				}
-				else -> {
-				}
+		when (callback(next)) {
+			TreeWalk.HALT -> {
+				found = next
+				break@loop
 			}
-			(next as? ParentRo<*>)?.iterateChildren(!reversed) {
-				openList.add(it)
-				true
+			TreeWalk.SKIP -> continue@loop
+			TreeWalk.ISOLATE -> {
+				openList.clear()
+			}
+			else -> {
 			}
 		}
+		if (reversed) {
+			openList.addAll(next.children)
+		} else
+			for (i in next.children.lastIndex downTo 0)
+				openList.add(next.children[i])
 	}
 	arrayListPool.free(openList)
+	return found
 }
 
-inline fun <reified T : ChildRo> T.childWalkPreorder(callback: (T) -> TreeWalk) {
+fun NodeRo.childWalkPreorder(callback: (NodeRo) -> TreeWalk) {
 	childWalkPreorder(callback, false)
 }
 
-inline fun <reified T : ChildRo> T.childWalkPreorderReversed(callback: (T) -> TreeWalk) {
+fun NodeRo.childWalkPreorderReversed(callback: (NodeRo) -> TreeWalk) {
 	childWalkPreorder(callback, true)
 }
 
@@ -334,24 +206,17 @@ inline fun <reified T : ChildRo> T.childWalkPreorderReversed(callback: (T) -> Tr
  * the matching condition.
  * The tree traversal will be pre-order.
  */
-inline fun <reified T : ChildRo> T.findChildPreOrder(callback: Filter<T>, reversed: Boolean): T? {
-	var foundItem: T? = null
-	childWalkPreorder({
-		if (callback(it)) {
-			foundItem = it
-			TreeWalk.HALT
-		} else {
-			TreeWalk.CONTINUE
-		}
+fun NodeRo.findChildPreOrder(callback: Filter<NodeRo>, reversed: Boolean): NodeRo? {
+	return childWalkPreorder({
+		if (callback(it)) TreeWalk.HALT else TreeWalk.CONTINUE
 	}, reversed)
-	return foundItem
 }
 
-inline fun <reified T : ChildRo> T.findChildPreOrder(callback: Filter<T>): T? {
+fun NodeRo.findChildPreOrder(callback: Filter<NodeRo>): NodeRo? {
 	return findChildPreOrder(callback, reversed = false)
 }
 
-inline fun <reified T : ChildRo> T.findLastChildPreOrder(callback: Filter<T>): T? {
+fun NodeRo.findLastChildPreOrder(callback: Filter<NodeRo>): NodeRo? {
 	return findChildPreOrder(callback, reversed = true)
 }
 
@@ -359,7 +224,7 @@ inline fun <reified T : ChildRo> T.findLastChildPreOrder(callback: Filter<T>): T
  * Returns the lineage count. 0 if this child is the root, 1 if the root is the parent,
  * 2 if the root is the grandparent, 3 if the root is the great grandparent, and so on.
  */
-fun ChildRo.ancestryCount(): Int {
+fun NodeRo.ancestryCount(): Int {
 	var count = 0
 	var p = parent
 	while (p != null) {
@@ -372,9 +237,9 @@ fun ChildRo.ancestryCount(): Int {
 /**
  * Returns the maximum [ancestryCount] for any descendant node.
  */
-fun ChildRo.maxDepth(): Int {
+fun NodeRo.maxDepth(): Int {
 	@Suppress("UNCHECKED_CAST")
-	val calculatedMap = mapPool.obtain() as MutableMap<ChildRo, Int>
+	val calculatedMap = mapPool.obtain() as MutableMap<NodeRo, Int>
 	var max = 0
 	childWalkPreorder {
 		val p = it.parent
@@ -396,31 +261,21 @@ fun ChildRo.maxDepth(): Int {
 /**
  * Starting from this Node as the root, walks down the left side until the end, returning that child.
  */
-fun <T : ChildRo> T.leftDescendant(): T {
-	if (this is ParentRo<*>) {
-		if (children.isEmpty()) return this
-		@Suppress("UNCHECKED_CAST")
-		return (children.first() as T).leftDescendant()
-	} else {
-		return this
-	}
+fun NodeRo.leftDescendant(): NodeRo {
+	if (children.isEmpty()) return this
+	return children.first().leftDescendant()
 }
 
 /**
  * Starting from this Node as the root, walks down the right side until the end, returning that child.
  */
-fun <T : ChildRo> T.rightDescendant(): T {
-	if (this is ParentRo<*>) {
-		if (children.isEmpty()) return this
-		@Suppress("UNCHECKED_CAST")
-		return (children.last() as T).rightDescendant()
-	} else {
-		return this
-	}
+fun NodeRo.rightDescendant(): NodeRo {
+	if (children.isEmpty()) return this
+	return children.last().rightDescendant()
 }
 
-inline fun ChildRo.ancestorWalk(callback: (ChildRo) -> Unit): ChildRo? {
-	var p: ChildRo? = this
+inline fun NodeRo.ancestorWalk(callback: (NodeRo) -> Unit): NodeRo? {
+	var p: NodeRo? = this
 	while (p != null) {
 		callback(p)
 		p = p.parent
@@ -435,8 +290,8 @@ inline fun ChildRo.ancestorWalk(callback: (ChildRo) -> Unit): ChildRo? {
  * walk will stop and that ancestor will be returned.
  * @return Returns the first ancestor where [predicate] returns true.
  */
-inline fun ChildRo.findAncestor(predicate: Filter<ChildRo>): ChildRo? {
-	var p: ChildRo? = this
+inline fun NodeRo.findAncestor(predicate: Filter<NodeRo>): NodeRo? {
+	var p: NodeRo? = this
 	while (p != null) {
 		val found = predicate(p)
 		if (found) return p
@@ -449,7 +304,7 @@ inline fun ChildRo.findAncestor(predicate: Filter<ChildRo>): ChildRo? {
  * Populates an ArrayList with a ChildRo's ancestry.
  * @return Returns the [out] ArrayList
  */
-fun ChildRo.ancestry(out: MutableList<ChildRo>): MutableList<ChildRo> {
+fun NodeRo.ancestry(out: MutableList<NodeRo>): MutableList<NodeRo> {
 	out.clear()
 	ancestorWalk {
 		out.add(it)
@@ -457,9 +312,9 @@ fun ChildRo.ancestry(out: MutableList<ChildRo>): MutableList<ChildRo> {
 	return out
 }
 
-fun ChildRo.root(): ChildRo {
-	var root: ChildRo = this
-	var p: ChildRo? = this
+fun NodeRo.root(): NodeRo {
+	var root: NodeRo = this
+	var p: NodeRo? = this
 	while (p != null) {
 		root = p
 		p = p.parent
@@ -467,13 +322,13 @@ fun ChildRo.root(): ChildRo {
 	return root
 }
 
-private val ancestry1 = ArrayList<ChildRo>()
-private val ancestry2 = ArrayList<ChildRo>()
+private val ancestry1 = ArrayList<NodeRo>()
+private val ancestry2 = ArrayList<NodeRo>()
 
 /**
  * Returns the lowest common ancestor if there is one between the two children.
  */
-fun ChildRo.lowestCommonAncestor(other: ChildRo): ChildRo? {
+fun NodeRo.lowestCommonAncestor(other: NodeRo): NodeRo? {
 	ancestry(ancestry1)
 	other.ancestry(ancestry2)
 
@@ -487,14 +342,14 @@ fun ChildRo.lowestCommonAncestor(other: ChildRo): ChildRo? {
  * Returns true if this ChildRo is before the [other] ChildRo. This considers the parent to come before the child.
  * Returns null if there is no common ancestor.
  */
-fun ChildRo.isBefore(other: ChildRo): Boolean? {
+fun NodeRo.isBefore(other: NodeRo): Boolean? {
 	if (this === other) throw Exception("this === other")
 	var a = this
 	ancestorWalk { parentA ->
 		var b = this
 		other.ancestorWalk { parentB ->
 			if (parentA === parentB) {
-				val children = (parentA as ParentRo<*>).children
+				val children = parentA.children
 				val indexA = children.indexOf(a)
 				val indexB = children.indexOf(b)
 				return indexA < indexB
@@ -510,14 +365,14 @@ fun ChildRo.isBefore(other: ChildRo): Boolean? {
  * Returns true if this ChildRo is after the [other] ChildRo. This considers the parent to come before the child.
  * @throws Exception If [other] does not have a common ancestor.
  */
-fun ChildRo.isAfter(other: ChildRo): Boolean {
+fun NodeRo.isAfter(other: NodeRo): Boolean {
 	if (this === other) throw Exception("this === other")
 	var a = this
 	ancestorWalk { parentA ->
 		var b = this
 		other.ancestorWalk { parentB ->
 			if (parentA === parentB) {
-				val children = (parentA as ParentRo<*>).children
+				val children = parentA.children
 				val indexA = children.indexOf(a)
 				val indexB = children.indexOf(b)
 				return indexA > indexB
@@ -530,14 +385,14 @@ fun ChildRo.isAfter(other: ChildRo): Boolean {
 }
 
 /**
- * Returns true if this [ChildRo] is the ancestor of the given [child].
+ * Returns true if this [NodeRo] is the ancestor of the given [child].
  * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
  * This will return true if X === Y
  */
-fun ChildRo.isAncestorOf(child: ChildRo): Boolean {
+fun NodeRo.isAncestorOf(child: NodeRo): Boolean {
 	return child.findAncestor {
 		it === this
 	} != null
 }
 
-fun ChildRo.isDescendantOf(ancestor: ChildRo): Boolean = ancestor.isAncestorOf(this)
+fun NodeRo.isDescendantOf(ancestor: NodeRo): Boolean = ancestor.isAncestorOf(this)
