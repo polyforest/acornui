@@ -26,6 +26,7 @@ import com.acornui.collection.arrayListPool
 import com.acornui.component.style.Stylable
 import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
+import com.acornui.findChildLevelOrder
 import com.acornui.focus.Focusable
 import com.acornui.input.MouseState
 import com.acornui.math.MinMaxRo
@@ -181,6 +182,13 @@ fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
 		!isAncestor
 	}
 	return isAncestor
+}
+
+fun UiComponentRo.findComponentById(componentId: String): UiComponentRo? {
+	return findChildLevelOrder {
+		it as UiComponentRo
+		it.componentId == componentId
+	} as UiComponentRo?
 }
 
 fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
