@@ -16,11 +16,10 @@
 
 package com.acornui.validation
 
-import com.acornui.component.ButtonImpl
-import com.acornui.component.ComponentInit
-import com.acornui.component.button
+import com.acornui.component.*
 import com.acornui.component.text.TextInput
 import com.acornui.di.Context
+import com.acornui.findChildLevelOrder
 import com.acornui.focus.enterTarget
 import com.acornui.i18n.string
 import com.acornui.input.interaction.click
@@ -41,30 +40,56 @@ class ValidationBuilder(context: Context) : Context by context {
 
 }
 
+/**
+ * RFC2822 email validation regex.
+ */
 val validEmailRegex = Regex("""[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?""")
 
-suspend fun <T : TextInput> ValidationBuilder.requiredEmail(input: T, name: String): T {
-	return emailOrBlank(required(input, name), name)
+/**
+ * Validators for [required] and [emailOrBlank].
+ */
+suspend fun ValidationBuilder.requiredEmail(validatedData: ValidatedData<String>): ValidatedData<String> {
+	return emailOrBlank(required(validatedData))
 }
 
-suspend fun <T : TextInput> ValidationBuilder.emailOrBlank(input: T, name: String): T {
-	val text = input.text
+/**
+ * Validates that the data part is either blank or matches an email regex.
+ * @see [validEmailRegex]
+ */
+suspend fun ValidationBuilder.emailOrBlank(validatedData: ValidatedData<String>): ValidatedData<String> {
 	+ValidationInfo(
-			message = string("validation.email", "ui").replaceTokens(name),
-			level = (text.isBlank() || validEmailRegex.matches(text)).toValidationLevel(),
-			componentId = input.componentId
+			message = string("validation.email", "ui").replaceTokens(validatedData.name),
+			level = (validatedData.data.isBlank() || validEmailRegex.matches(validatedData.data)).toValidationLevel(),
+			validatedData = validatedData
 	)
-	return input
+	return validatedData
 }
 
-suspend fun <T : TextInput> ValidationBuilder.required(input: T, name: String): T {
+suspend fun ValidationBuilder.required(validatedData: ValidatedData<String>): ValidatedData<String> {
 	+ValidationInfo(
-			message = string("validation.required", "ui").replaceTokens(name),
-			level = input.text.isNotBlank().toValidationLevel(),
-			componentId = input.componentId
+			message = string("validation.required", "ui").replaceTokens(validatedData.name),
+			level = validatedData.data.isNotBlank().toValidationLevel(),
+			validatedData = validatedData
 	)
-	return input
+	return validatedData
 }
+
+fun TextInput.validatedData(name: String = formLabel ?: ""): ValidatedData<String> {
+	return ValidatedData(name, componentId, text)
+}
+
+/**
+ * Gets the form label associated with this input.
+ */
+val UiComponentRo.formLabel: String?
+	get() {
+		@Suppress("UNCHECKED_CAST")
+		val p = owner as? ElementContainer<UiComponent> ?: return null
+		val c = p.elements
+		val index = c.indexOf(this)
+		if (index == 0) return null
+		return (c[index - 1].findChildLevelOrder { it is Labelable } as Labelable?)?.label
+	}
 
 private fun Boolean.toValidationLevel(): ValidationLevel = if (this) ValidationLevel.SUCCESS else ValidationLevel.ERROR
 

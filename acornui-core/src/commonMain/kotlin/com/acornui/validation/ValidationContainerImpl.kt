@@ -30,7 +30,7 @@ import com.acornui.component.layout.algorithm.*
 import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.di.Context
-import com.acornui.findChildLevelOrder
+import com.acornui.focus.focus
 import com.acornui.focus.focusSelf
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -98,14 +98,10 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 	var messageFactory: VerticalLayoutContainer<ListItemRenderer<ValidationInfo>>.() -> ListItemRenderer<ValidationInfo> = {
 		validationMessageView {
 			click().add {
-				data?.componentId?.let {
-					val c = this@ValidationContainerImpl.findChildLevelOrder {
-						it as UiComponentRo
-						it.componentId == componentId
-					}
-					println(c)
+				data?.validatedData?.componentId?.let {
+					val c = this@ValidationContainerImpl.findComponentById(it)
+					c?.focus()
 				}
-
 			}
 		} layout { width = 300f }
 	}

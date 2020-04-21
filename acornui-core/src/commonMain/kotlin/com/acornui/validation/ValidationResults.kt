@@ -57,10 +57,12 @@ data class ValidationInfo(
 		val level: ValidationLevel = ValidationLevel.ERROR,
 
 		/**
-		 * The id of the component responsible for providing the data part.
+		 * Information about the data part that was validated.
 		 */
-		val componentId: String? = null
+		val validatedData: ValidatedData<*>? = null
 )
+
+data class ValidatedData<T>(val name: String, val componentId: String, val data: T)
 
 /**
  * True if this validation info list contains no errors.
