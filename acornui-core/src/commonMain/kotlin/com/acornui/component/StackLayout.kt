@@ -150,7 +150,7 @@ open class StackLayoutStyle : StyleBase() {
 
 	override val type: StyleType<StackLayoutStyle> = Companion
 
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 	var verticalAlign by prop(VAlign.TOP)
 	var horizontalAlign by prop(HAlign.LEFT)
 

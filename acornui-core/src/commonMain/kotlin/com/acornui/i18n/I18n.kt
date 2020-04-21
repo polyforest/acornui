@@ -79,9 +79,4 @@ class I18nImpl(
 		return loadBundle(locales, bundleName)?.get(key)
 	}
 
-	override fun dispose() {
-		super.dispose()
-		cacheSet.dispose()
-	}
-
 }

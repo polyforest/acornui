@@ -27,13 +27,10 @@ import com.acornui.component.datagrid.DataGrid
 import com.acornui.component.datagrid.DataGridGroupHeader
 import com.acornui.component.datagrid.DataGridGroupHeaderStyle
 import com.acornui.component.datagrid.DataGridStyle
-import com.acornui.component.layout.DataScroller
-import com.acornui.component.layout.DataScrollerStyle
-import com.acornui.component.layout.VAlign
+import com.acornui.component.layout.*
 import com.acornui.component.layout.algorithm.*
 import com.acornui.component.layout.algorithm.virtual.VirtualHorizontalLayoutStyle
 import com.acornui.component.layout.algorithm.virtual.VirtualVerticalLayoutStyle
-import com.acornui.component.layout.spacer
 import com.acornui.component.scroll.*
 import com.acornui.component.style.*
 import com.acornui.component.text.*
@@ -125,7 +122,7 @@ open class BasicUiSkin(
 	protected open fun textFontStyle() {
 		theme.bodyFont.addStyles()
 		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading))
-		theme.formLabelFont.addStyles(withAncestor(formLabelStyle))
+		theme.formLabelFont.addStyles(withAncestor(formLabelStyleTag))
 	}
 
 	protected open fun textStyle() {
@@ -773,8 +770,17 @@ open class BasicUiSkin(
 	protected open fun formStyle() {
 		val formStyle = GridLayoutStyle().apply {
 			horizontalGap = 10f
+			columns = listOf(
+					GridColumn(
+							hAlign = HAlign.RIGHT,
+							widthPercent = 0.4f
+					),
+					GridColumn(
+							widthPercent = 0.6f
+					)
+			)
 		}
-		target.addStyleRule(formStyle, FormContainer)
+		target.addStyleRule(formStyle, withAncestor(formStyleTag))
 	}
 
 	protected open fun softKeyboardStyle() {

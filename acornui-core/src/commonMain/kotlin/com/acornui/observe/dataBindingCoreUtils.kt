@@ -1,9 +1,9 @@
 package com.acornui.observe
 
-import com.acornui.Disposable
+import com.acornui.ManagedDisposable
 import com.acornui.di.Context
+import com.acornui.di.onDisposed
 import com.acornui.di.own
-import com.acornui.signal.addWithHandle
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -14,13 +14,16 @@ fun <T> Context.dataBinding(initialValue: T): DataBindingImpl<T> {
 
 /**
  * Immediately, and when the data has changed, the callback will be invoked.
+ * @return Returns a handle to dispose of the binding. This will be disposed automatically if this context is disposed.
  */
-fun <T> Context.bind(dataBinding: DataBindingRo<T>, callback: (T) -> Unit): Disposable {
+fun <T> Context.bind(dataBinding: DataBindingRo<T>, callback: (T) -> Unit): ManagedDisposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	val handler = { _: T, new: T -> callback(new) }
-	val handle = own(dataBinding.changed.addWithHandle(handler))
+	dataBinding.changed.add(handler)
 	callback(dataBinding.value)
-	return handle
+	return onDisposed {
+		dataBinding.changed.remove(handler)
+	}
 }
 
 /**
@@ -28,9 +31,11 @@ fun <T> Context.bind(dataBinding: DataBindingRo<T>, callback: (T) -> Unit): Disp
  * Immediately, and when the data has changed, the callback will be invoked.
  * The first time the callback is invoked, the `old` parameter will be null.
  */
-fun <T> Context.bind2(dataBinding: DataBindingRo<T>, callback: (old: T?, new: T) -> Unit): Disposable {
+fun <T> Context.bind2(dataBinding: DataBindingRo<T>, callback: (old: T?, new: T) -> Unit): ManagedDisposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
-	val handle = own(dataBinding.changed.addWithHandle(callback))
+	dataBinding.changed.add(callback)
 	callback(null, dataBinding.value)
-	return handle
+	return onDisposed {
+		dataBinding.changed.remove(callback)
+	}
 }

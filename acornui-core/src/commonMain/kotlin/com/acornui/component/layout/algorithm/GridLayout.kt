@@ -26,11 +26,8 @@ import com.acornui.component.layout.HAlign
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.VAlign
 import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
 import com.acornui.component.style.StyleType
-import com.acornui.component.style.styleTag
 import com.acornui.component.text.TextField
-import com.acornui.component.text.text
 import com.acornui.di.Context
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -112,6 +109,7 @@ class GridLayout : LayoutAlgorithm<GridLayoutStyle, GridLayoutData> {
 
 	override fun layout(explicitWidth: Float?, explicitHeight: Float?, elements: List<LayoutElement>, out: Bounds) {
 		val childAvailableWidth: Float? = style.padding.reduceWidth(explicitWidth)
+		require(style.columns.isNotEmpty()) { "At least one column must be set. "}
 
 		val measuredColWidths = _measuredColWidths
 		val lines = _lines
@@ -333,7 +331,7 @@ open class GridLayoutStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	/**
 	 * The default vertical alignment of the cells relative to their rows.
@@ -344,7 +342,7 @@ open class GridLayoutStyle : StyleBase() {
 	/**
 	 * If set, the height of each row will be fixed to this value.
 	 */
-	var rowHeight: Float? by prop(null)
+	var rowHeight by prop<Float?>(null)
 
 	/**
 	 * If true, flexible columns may be proportionally given more space in order to fit the available width.
@@ -406,37 +404,4 @@ inline fun <E : UiComponent> Context.grid(init: ComponentInit<GridLayoutContaine
 inline fun Context.grid(init: ComponentInit<GridLayoutContainer<UiComponent>> = {}): GridLayoutContainer<UiComponent> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return grid<UiComponent>(init)
-}
-
-open class FormContainer<E : UiComponent>(owner: Context) : GridLayoutContainer<UiComponent>(owner) {
-	init {
-		styleTags.add(FormContainer)
-		style.apply {
-			columns = listOf(
-					GridColumn(
-							hAlign = HAlign.RIGHT,
-							widthPercent = 0.4f
-					),
-					GridColumn(
-							widthPercent = 0.6f
-					)
-			)
-		}
-	}
-
-	companion object : StyleTag
-}
-
-inline fun Context.form(init: ComponentInit<FormContainer<UiComponent>> = {}): FormContainer<UiComponent> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return FormContainer<UiComponent>(this).apply(init)
-}
-
-val formLabelStyle = styleTag()
-
-inline fun Context.formLabel(text: String = "", init: ComponentInit<TextField> = {}): TextField {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return text(text) {
-		styleTags.add(formLabelStyle)
-	}.apply(init)
 }

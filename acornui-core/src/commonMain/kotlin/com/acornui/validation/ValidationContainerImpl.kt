@@ -18,25 +18,38 @@
 
 package com.acornui.validation
 
+import com.acornui.TreeWalk
+import com.acornui.async.awaitOrNull
+import com.acornui.async.cancellingJobProp
+import com.acornui.childWalkLevelOrder
 import com.acornui.collection.Filter
+import com.acornui.collection.filterTo2
 import com.acornui.component.*
+import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.HAlign
+import com.acornui.component.layout.LayoutData
+import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.algorithm.*
-import com.acornui.component.style.StyleBase
-import com.acornui.component.style.StyleTag
-import com.acornui.component.style.StyleType
-import com.acornui.component.style.styleTag
+import com.acornui.component.style.*
 import com.acornui.component.text.text
 import com.acornui.di.Context
 import com.acornui.focus.focusSelf
+import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
+import com.acornui.observe.DataBindingRo
 import com.acornui.observe.bind
+import com.acornui.observe.dataBinding
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @Suppress("MemberVisibilityCanBePrivate")
-class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<StackLayoutData>, Clearable, ValidationContainer {
+class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>(
+		owner: Context,
+		layoutAlgorithm: LayoutAlgorithm<S, U>
+) : ElementContainerImpl<E>(owner), LayoutDataProvider<StackLayoutData>, ValidationContainer<T> {
 
 	/**
 	 * The messages container is the first element in a vertical group. This layout data can set its size and alignment.
@@ -63,63 +76,97 @@ class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner),
 		priority = 1f
 	}
 
-	private val contents = addChild(stack {
+	private val contents = addChild(ElementLayoutContainer<S, U, E>(this, layoutAlgorithm).apply {
 		layoutData = contentsLayoutData
 	})
 
 	/**
-	 * The elements are placed in a stack layout. This style object represents those layout properties.
+	 * The layout properties for this container's elements.
 	 */
-	val contentsStyle: StackLayoutStyle
-		get() = contents.style
+	val contentsStyle: S = bind(layoutAlgorithm.style)
+
+	private val layout = VerticalLayout()
+
+	private val layoutElements = listOf(messagesC, contents)
 
 	/**
 	 * Layout properties for how the messages and contents are positioned.
 	 */
-	val style = bind(VerticalLayoutStyle())
-
-	private val layout = VerticalLayout()
-	private val layoutElements = listOf(messagesC, contents)
+	val style = bind(layout.style)
 
 	/**
 	 * The factory for validation message item renderers.
 	 */
 	var messageFactory: VerticalLayoutContainer<ListItemRenderer<ValidationInfo>>.() -> ListItemRenderer<ValidationInfo> = {
-		validationMessageView() layout { width = 300f }
+		validationMessageView {
+			click().add {
+				data?.componentId?.let {
+					val c = this@ValidationContainerImpl.childWalkLevelOrder {
+						if (it.componentId == componentId) TreeWalk.HALT
+						else TreeWalk.CONTINUE
+					}
+
+				}
+
+			}
+		} layout { width = 300f }
 	}
 
-	private val validationController = ValidationController(this)
+	private val _data = dataBinding<ValidationResults<*>?>(null)
+	override val data: DataBindingRo<ValidationResults<*>?> = _data.asRo()
+
+	private val _isBusy = dataBinding(false)
+	override val isBusy: DataBindingRo<Boolean> = _isBusy.asRo()
 
 	init {
-		dependencies += listOf(ValidationController to validationController, ValidationContainer to this)
-
 		styleTags.add(Companion)
 		messagesC.styleTags.add(MESSAGES_STYLE)
 		validation.addNode(ValidationFlags.PROPERTIES, 0, ValidationFlags.LAYOUT, ::updateProperties)
 
-		bind(validationController.data) {
+		bind(_data) {
 			invalidateProperties()
 		}
-		bind(validationController.isBusy) {
-			interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
-		}
+	}
+
+	private var _validator: (suspend ValidationBuilder.() -> T)? = null
+
+	fun validator(value: suspend ValidationBuilder.() -> T) {
+		_validator = value
 	}
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: E) {
 		contents.addElement(newIndex, element)
 	}
 
-	override fun onElementRemoved(index: Int, element: UiComponent) {
+	override fun onElementRemoved(index: Int, element: E) {
 		contents.removeElement(element)
 	}
 
+	private var validationJob by cancellingJobProp<Deferred<ValidationResults<T>>>()
+
+	override suspend fun validateData(): ValidationResults<T>? {
+		clear()
+		validationJob = async {
+			val validator = _validator ?: error("validator not set.")
+			val validationBuilder = ValidationBuilder(this@ValidationContainerImpl)
+			val data = validationBuilder.validator()
+			val results = ValidationResults(data, validationBuilder.results)
+			_data.value = results
+			_isBusy.value = false
+			results
+		}
+		return validationJob!!.awaitOrNull()
+	}
+
 	/**
-	 * Clears all set validators.
+	 * Clears any pending validation.
 	 */
 	override fun clear() {
-		validationController.clear()
+		validationJob = null
+		_data.value = null
+		_isBusy.value = false
 	}
 
 	/**
@@ -138,7 +185,7 @@ class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner),
 	}, ValidationFlags.PROPERTIES)
 
 	private fun updateProperties() {
-		val resultsList = validationController.data.value?.results ?: emptyList()
+		val resultsList = _data.value?.results ?: emptyList()
 		val m = resultsList.filter(validationResultsFilter)
 		messagesC.recycleListItemRenderers(m, configure = { element, item, index ->
 			element.styleTags.clear()
@@ -146,10 +193,16 @@ class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner),
 		}, factory = messageFactory)
 		if (m.isNotEmpty())
 			messagesC.focusSelf()
+
+		messagesC.visible = m.isNotEmpty()
 	}
 
+	private val _elementsToLayout = ArrayList<LayoutElement>()
+
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
-		layout.layout(explicitWidth, explicitHeight, layoutElements, out)
+		_elementsToLayout.clear()
+		layoutElements.filterTo2(_elementsToLayout, LayoutElement::shouldLayout)
+		layout.layout(explicitWidth, explicitHeight, _elementsToLayout, out)
 	}
 
 	override fun dispose() {
@@ -163,14 +216,38 @@ class ValidatedGroup(owner: Context) : ElementContainerImpl<UiComponent>(owner),
 	}
 }
 
-interface ValidationContainer : UiComponentRo {
+interface ValidationContainer<out T> : UiComponentRo, Clearable {
 
-	companion object : Context.Key<ValidationContainer>
+	/**
+	 * The last completed validation results from [validateData].
+	 */
+	val data: DataBindingRo<ValidationResults<*>?>
+
+	/**
+	 * When [validateData] is called, isBusy will have a value of true until the asynchronous validation is complete.
+	 */
+	val isBusy: DataBindingRo<Boolean>
+
+	/**
+	 * Executes the validator and returns the validation results or null if the
+	 * validation was cancelled.
+	 *
+	 * Calling this method consecutively before the previous validation finished will cancel the previous validation.
+	 *
+	 * @see data
+	 * @return
+	 */
+	suspend fun validateData(): ValidationResults<T>?
+
+	/**
+	 * Clears any pending validation.
+	 */
+	override fun clear()
 }
 
-inline fun Context.validatedGroup(init: ComponentInit<ValidatedGroup> = {}): ValidatedGroup {
+inline fun <T, S : Style, U : LayoutData, E : UiComponent> Context.validatedContainer(layoutAlgorithm: LayoutAlgorithm<S, U>, init: ComponentInit<ValidationContainerImpl<T, S, U, E>> = {}): ValidationContainerImpl<T, S, U, E> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return ValidatedGroup(this).apply(init)
+	return ValidationContainerImpl<T, S, U, E>(this, layoutAlgorithm).apply(init)
 }
 
 class ValidationMessageView(owner: Context) : HorizontalLayoutContainer<UiComponent>(owner), ListItemRenderer<ValidationInfo> {
@@ -239,11 +316,11 @@ inline fun Context.validationMessageView(init: ComponentInit<ValidationMessageVi
 //	}
 //}
 
-class ValidatorStyle : StyleBase() {
+class ValidationContainerStyle : StyleBase() {
 
 	override val type = Companion
 
 	var highlighter by prop<Highlighter?>(null)
 
-	companion object : StyleType<ValidatorStyle>
+	companion object : StyleType<ValidationContainerStyle>
 }
