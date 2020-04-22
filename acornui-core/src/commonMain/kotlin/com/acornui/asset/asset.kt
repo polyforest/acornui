@@ -53,6 +53,19 @@ suspend fun Context.loadText(
 ): String = loadText(path.toUrlRequestData(), settings)
 
 /**
+ * Loads and caches a [String] resource.
+ */
+suspend fun Context.loadAndCacheText(
+		requestData: UrlRequestData,
+		settings: RequestSettings = inject(Loaders.textLoader).requestSettings,
+		cacheSet: CacheSet = cacheSet()
+): String {
+	return cacheSet.getOrPutAsync(requestData) {
+		loadText(requestData, settings)
+	}.await()
+}
+
+/**
  * Requests a [ReadByteBuffer] resource.
  */
 suspend fun Context.loadBinary(
@@ -69,6 +82,19 @@ suspend fun Context.loadBinary(
 		path: String,
 		settings: RequestSettings = inject(Loaders.binaryLoader).requestSettings
 ): ReadByteBuffer = loadBinary(path.toUrlRequestData(), settings)
+
+/**
+ * Loads and caches a [ReadByteBuffer] resource.
+ */
+suspend fun Context.loadAndCacheBinary(
+		requestData: UrlRequestData,
+		settings: RequestSettings = inject(Loaders.binaryLoader).requestSettings,
+		cacheSet: CacheSet = cacheSet()
+): ReadByteBuffer {
+	return cacheSet.getOrPutAsync(requestData) {
+		loadBinary(requestData, settings)
+	}.await()
+}
 
 /**
  * Requests a [Texture] resource.
