@@ -114,12 +114,12 @@ class ScrollRectStyle : StyleBase() {
 	/**
 	 * The border radii for clipping.
 	 */
-	var borderRadii: CornersRo by prop(Corners())
+	var borderRadii by prop<CornersRo>(Corners())
 
 	/**
 	 * Pads the mask.  This will not affect the layout of the Scroll Rect's elements.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	companion object : StyleType<ScrollRectStyle>
 }

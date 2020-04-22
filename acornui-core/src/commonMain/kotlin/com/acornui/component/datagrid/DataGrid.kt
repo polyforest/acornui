@@ -31,6 +31,7 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.*
+import com.acornui.function.as1
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.interaction.ClickInteractionRo
@@ -44,7 +45,6 @@ import com.acornui.math.MathUtils.clamp
 import com.acornui.observe.IndexBinding
 import com.acornui.recycle.disposeAndClear
 import com.acornui.signal.Cancel
-import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -246,7 +246,7 @@ class DataGrid<RowData>(
 		override fun localToModel(diffPoints: Vector2) {
 			if (_totalRows <= 0) return
 			val firstRowHeight = _cellMetrics.rowHeights.first()
-			diffPoints.scl(1f / firstRowHeight)
+			diffPoints.scl(1f, 1f / firstRowHeight)
 		}
 	}
 
@@ -406,8 +406,8 @@ class DataGrid<RowData>(
 
 	private fun blurredHandler() {
 		editorCellCheck()
-		commitCellEditorValue()
-		disposeCellEditor()
+		commitEditorCellValue()
+		disposeEditorCell()
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
@@ -423,9 +423,9 @@ class DataGrid<RowData>(
 					val everMatched = loc.findNextRow {
 						focusEnabledFilter(it) && it.isElementRow
 					}
-					commitCellEditorValue()
+					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
-					else disposeCellEditor()
+					else disposeEditorCell()
 				}
 				Ascii.END -> {
 					event.handled = true
@@ -433,9 +433,9 @@ class DataGrid<RowData>(
 					val everMatched = loc.findPreviousRow {
 						focusEnabledFilter(it) && it.isElementRow
 					}
-					commitCellEditorValue()
+					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
-					else disposeCellEditor()
+					else disposeEditorCell()
 				}
 				Ascii.PAGE_DOWN -> {
 					event.handled = true
@@ -447,9 +447,9 @@ class DataGrid<RowData>(
 					val everMatched = loc.findNextRow {
 						focusEnabledFilter(it) && it.isElementRow
 					}
-					commitCellEditorValue()
+					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
-					else disposeCellEditor()
+					else disposeEditorCell()
 				}
 				Ascii.PAGE_UP -> {
 					event.handled = true
@@ -458,9 +458,9 @@ class DataGrid<RowData>(
 					val everMatched = loc.findPreviousRow {
 						focusEnabledFilter(it) && it.isElementRow
 					}
-					commitCellEditorValue()
+					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
-					else disposeCellEditor()
+					else disposeEditorCell()
 				}
 				Ascii.TAB -> {
 					// Edit the next column
@@ -521,8 +521,8 @@ class DataGrid<RowData>(
 		_cellClicked.dispatch(cell, cellClickedCancel.reset())
 		if (!cellClickedCancel.canceled) {
 			if (isEditing) {
-				commitCellEditorValue()
-				disposeCellEditor()
+				commitEditorCellValue()
+				disposeEditorCell()
 			}
 			if (editable && focusEnabledFilter(cell)) {
 				focusCell(cell)
@@ -587,7 +587,7 @@ class DataGrid<RowData>(
 		val columnIndex = cellLocation.columnIndex
 		val sourceIndex = cellLocation.sourceIndex
 		if (sourceIndex == cellFocusRow.index && columnIndex == cellFocusCol.index) return // no-op
-		disposeCellEditor()
+		disposeEditorCell()
 		if (!cellLocation.editable) return
 		cellFocusCol.index = columnIndex
 		cellFocusRow.index = sourceIndex
@@ -596,8 +596,8 @@ class DataGrid<RowData>(
 		val row = data[sourceIndex]
 		@Suppress("unchecked_cast")
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
-		editorCell.changed.add(::commitCellEditorValue)
-		editorCell.setData(col.getCellData(row))
+		editorCell.changed.add(::commitEditorCellValue.as1)
+		editorCell.inputValue = col.getCellData(row)
 		editorCellContainer.addElement(editorCell)
 		editorCell.focus()
 		this.editorCell = editorCell
@@ -613,7 +613,7 @@ class DataGrid<RowData>(
 	fun focusPreviousCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
 		val everMatched = newLocation.moveToPreviousCellUntil { focusEnabledFilter(it) && it.editable }
-		if (commit) commitCellEditorValue()
+		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
 	}
 
@@ -625,9 +625,9 @@ class DataGrid<RowData>(
 	fun focusNextCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
 		val everMatched = newLocation.moveToNextCellUntil { focusEnabledFilter(it) && it.editable }
-		if (commit) commitCellEditorValue()
+		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
-		else disposeCellEditor()
+		else disposeEditorCell()
 	}
 
 	/**
@@ -638,24 +638,24 @@ class DataGrid<RowData>(
 	fun focusPreviousRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
 		val everMatched = newLocation.moveToPreviousRowUntil { focusEnabledFilter(it) && it.isElementRow }
-		if (commit) commitCellEditorValue()
+		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
-		else disposeCellEditor()
+		else disposeEditorCell()
 	}
 
 	fun focusNextRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
 		val everMatched = newLocation.moveToNextRowUntil { focusEnabledFilter(it) && it.isElementRow }
-		if (commit) commitCellEditorValue()
+		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
-		else disposeCellEditor()
+		else disposeEditorCell()
 	}
 
 	fun closeCellEditor(commit: Boolean = false) {
 		if (editorCell == null) return
 		val wasFocused = isFocused
-		if (commit) commitCellEditorValue()
-		disposeCellEditor()
+		if (commit) commitEditorCellValue()
+		disposeEditorCell()
 		if (wasFocused) focusSelf()
 	}
 
@@ -693,16 +693,16 @@ class DataGrid<RowData>(
 		hScrollModel.value = clamp(hScrollModel.value, minXScroll, maxXScroll)
 	}
 
-	private fun commitCellEditorValue() {
+	private fun commitEditorCellValue() {
 		val editorCell = editorCell ?: return
 		@Suppress("UNCHECKED_CAST")
 		val column = _columns[cellFocusCol.index] as DataGridColumn<RowData, Any?>
 		val element = data[cellFocusRow.index]
-		column.setCellData(element, editorCell.getData())
+		column.setCellData(element, editorCell.inputValue)
 		_observableData.notifyElementModified(cellFocusRow.index)
 	}
 
-	private fun disposeCellEditor() {
+	private fun disposeEditorCell() {
 		val editorCell = editorCell ?: return
 		cellFocusCol.clear()
 		cellFocusRow.clear()
@@ -1265,9 +1265,7 @@ class DataGrid<RowData>(
 						@Suppress("unchecked_cast")
 						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
-
-						val cellData = column.getCellData(element)
-						cell.setData(cellData)
+						cell.inputValue = column.getCellData(element)
 
 						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = maxOf(iRowHeight, pad.expandHeight(cell.height))
@@ -1384,8 +1382,7 @@ class DataGrid<RowData>(
 						@Suppress("unchecked_cast")
 						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
-						val cellData = column.getCellData(element)
-						cell.setData(cellData)
+						cell.inputValue = column.getCellData(element)
 
 						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight(cell.height))
@@ -1725,7 +1722,7 @@ class DataGrid<RowData>(
 	}
 
 	override fun dispose() {
-		disposeCellEditor()
+		disposeEditorCell()
 		super.dispose()
 	}
 
@@ -1891,27 +1888,15 @@ fun <E> Context.dataGrid(init: ComponentInit<DataGrid<E>> = {}): DataGrid<E> {
 }
 
 
-interface DataGridCell<in CellData> : UiComponent {
-	fun setData(value: CellData)
+interface DataGridCell<CellData> : UiComponent {
+
+	/**
+	 * This component's input value.
+	 */
+	var inputValue: CellData?
 }
 
-interface DataGridEditorCell<CellData> : DataGridCell<CellData> {
-
-	/**
-	 * Dispatched on value commit.
-	 */
-	val changed: Signal<() -> Unit>
-
-	/**
-	 * Returns true if the editor cell has a valid value. It is up to the editor cell to display validation feedback.
-	 */
-	fun validateData(): Boolean
-
-	/**
-	 * Returns the editor's current data.
-	 */
-	fun getData(): CellData
-
+interface DataGridEditorCell<CellData> : DataGridCell<CellData>, InputComponent<CellData?> {
 }
 
 enum class ColumnSortDirection {

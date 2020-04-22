@@ -18,9 +18,7 @@
 
 package com.acornui.component.style
 
-import com.acornui.Disposable
-import com.acornui.DisposedException
-import com.acornui.assertionsEnabled
+import com.acornui.*
 import com.acornui.collection.*
 import com.acornui.function.as1
 import kotlin.properties.ReadWriteProperty
@@ -156,27 +154,25 @@ class Styles(private val host: Stylable) : Disposable {
 	/**
 	 * Removes a style object from calculation.
 	 */
-	fun unbind(style: StyleRo) {
+	fun <T : Style> unbind(style: T): T {
 		style.changed.remove(::invalidateStyles.as1)
 		styles.remove(style)
+		return style
 	}
 
 	/**
 	 * When [validateStyles] is called, any watched style objects whose calculated values have changed will have
 	 * the given callback invoked.
 	 */
-	fun <T : Style> watch(style: T, callback: (T) -> Unit) {
-		if (isDisposed) return
+	fun <T : Style> watch(style: T, callback: (T) -> Unit): ManagedDisposable {
+		if (isDisposed) throw DisposedException()
 		if (assertionsEnabled)
 			check(styles.contains(style)) { "A style object is being watched without being bound. Use `val yourStyle = bind(YourStyle())`." }
-		styleWatchers.add(StyleWatcher(style, callback))
-	}
-
-	/**
-	 * Removes the given style from change watching.
-	 */
-	fun unwatch(style: Style) {
-		styleWatchers.removeFirst { it.style === style }
+		val styleWatcher = StyleWatcher(style, callback)
+		styleWatchers.add(styleWatcher)
+		return {
+			styleWatchers.remove(styleWatcher)
+		}.toManagedDisposable()
 	}
 
 	/**

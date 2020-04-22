@@ -53,6 +53,17 @@ fun (()->Any?).toDisposable(): Disposable {
 }
 
 /**
+ * Converts a lambda to a [ManagedDisposable] object, where the lambda is called on [Disposable.dispose].
+ */
+fun (()->Any?).toManagedDisposable(): ManagedDisposable {
+	return object : ManagedDisposable {
+		override fun dispose() {
+			this@toManagedDisposable()
+		}
+	}
+}
+
+/**
  * Used to mark parts of the Acorn API as not being ready for public.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)

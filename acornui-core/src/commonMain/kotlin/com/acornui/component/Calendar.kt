@@ -123,11 +123,12 @@ open class Calendar(
 			_headers = null
 		}
 		_headerFactory = value
+		invalidateLayout()
 	}
 
 	private var _headers: Array<Labelable>? = null
 
-	val headers: Array<Labelable>
+	private val headers: Array<Labelable>
 		get() {
 			if (_headers == null) {
 				grid.apply {

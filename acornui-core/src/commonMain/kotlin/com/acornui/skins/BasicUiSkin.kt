@@ -780,7 +780,7 @@ open class BasicUiSkin(
 					)
 			)
 		}
-		target.addStyleRule(formStyle, withAncestor(formStyleTag))
+		target.addStyleRule(formStyle, formStyleTag)
 	}
 
 	protected open fun softKeyboardStyle() {

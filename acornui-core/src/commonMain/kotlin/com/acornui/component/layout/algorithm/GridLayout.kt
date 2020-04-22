@@ -334,7 +334,7 @@ open class GridLayoutStyle : StyleBase() {
 
 	/**
 	 * The default vertical alignment of the cells relative to their rows.
-	 * May be overriden on the individual cell via [GridLayoutData]
+	 * May be overridden on the individual cell via [GridLayoutData]
 	 */
 	var verticalAlign by prop(VAlign.BASELINE)
 

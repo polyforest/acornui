@@ -24,6 +24,15 @@ interface StringFormatter<in T> {
 	fun format(value: T): String
 }
 
+class WithNullFormatter<in T>(
+		private val inner: StringFormatter<T>,
+		var nullString: String = ""
+) : StringFormatter<T?> {
+	override fun format(value: T?): String = if (value == null) nullString else inner.format(value)
+}
+
+fun <T> StringFormatter<T>.withNull(nullString: String = "") = WithNullFormatter(this, nullString)
+
 interface StringParser<out T> {
 
 	/**
@@ -38,6 +47,7 @@ object ToStringFormatter : StringFormatter<Any?> {
 	}
 }
 
+// TODO: Remove in 1.4 with SAM conversions
 fun <E> stringFormatter(valueToString: (E) -> String): StringFormatter<E> = object : StringFormatter<E> {
 	override fun format(value: E): String {
 		return valueToString(value)

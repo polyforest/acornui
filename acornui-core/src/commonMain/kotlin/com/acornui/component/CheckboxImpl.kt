@@ -18,17 +18,24 @@ package com.acornui.component
 
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
+import com.acornui.signal.Signal
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class CheckboxImpl(
 		owner: Context
-) : ButtonImpl(owner) {
+) : ButtonImpl(owner), InputComponent<Boolean> {
 
 	init {
 		styleTags.add(CheckboxImpl)
 		toggleOnClick = true
 	}
+
+	@Suppress("UNCHECKED_CAST")
+	final override val changed: Signal<(CheckboxImpl) -> Unit> = toggledChanged as Signal<(CheckboxImpl) -> Unit>
+
+	override val inputValue: Boolean
+		get() = toggled
 
 	companion object : StyleTag
 }

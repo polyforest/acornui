@@ -52,6 +52,7 @@ fun LayoutElementRo.clampWidth(value: Float?): Float? {
 fun LayoutElementRo.clampHeight(value: Float?): Float? {
 	return clamp(value, minHeight, maxHeight)
 }
+
 /**
  * A LayoutElement is a Transformable component that can be used in layout algorithms.
  * It has features responsible for providing explicit dimensions, and returning measured dimensions.

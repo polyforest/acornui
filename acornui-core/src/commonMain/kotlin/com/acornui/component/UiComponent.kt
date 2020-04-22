@@ -18,15 +18,13 @@
 
 package com.acornui.component
 
-import com.acornui.NodeRo
-import com.acornui.Lifecycle
-import com.acornui.LifecycleRo
+import com.acornui.*
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
 import com.acornui.component.style.Stylable
 import com.acornui.component.style.StylableRo
+import com.acornui.component.style.Style
 import com.acornui.di.Context
-import com.acornui.findChildLevelOrder
 import com.acornui.focus.Focusable
 import com.acornui.input.MouseState
 import com.acornui.math.MinMaxRo
@@ -63,6 +61,21 @@ interface UiComponentRo : LifecycleRo, ColorTransformableRo, InteractiveElementR
 	 * @param rayCache If the ray is already calculated, pass this to avoid re-calculating the pick ray from the camera.
 	 */
 	fun getChildrenUnderPoint(canvasX: Float, canvasY: Float, onlyInteractive: Boolean, returnAll: Boolean, out: MutableList<UiComponentRo>, rayCache: RayRo? = null): MutableList<UiComponentRo>
+
+	/**
+	 * Binds a style to have its calculated values set when [ValidationFlags.STYLES] is validated.
+	 */
+	fun <T : Style> bind(style: T): T
+
+	/**
+	 * Removes a style from calculation.
+	 */
+	fun <T : Style> unbind(style: T): T
+
+	/**
+	 * Watches a style for changes. This style must be bound via [bind].
+	 */
+	fun <T : Style> watch(style: T, callback: (T) -> Unit): ManagedDisposable
 
 	/**
 	 * If false, this component will not be rendered, interact with user input, included in layouts, or included in

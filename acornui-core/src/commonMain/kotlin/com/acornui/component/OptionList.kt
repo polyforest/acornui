@@ -52,6 +52,7 @@ import com.acornui.popup.lift
 import com.acornui.properties.afterChange
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 import com.acornui.text.StringFormatter
 import com.acornui.text.ToStringFormatter
 import kotlin.contracts.InvocationKind
@@ -59,7 +60,7 @@ import kotlin.contracts.contract
 
 open class OptionList<E : Any>(
 		owner: Context
-) : ContainerImpl(owner), Clearable {
+) : ContainerImpl(owner), Clearable, InputComponent<E?> {
 
 	constructor(owner: Context, data: List<E?>) : this(owner) {
 		data(data)
@@ -84,14 +85,14 @@ open class OptionList<E : Any>(
 	 */
 	val input = _input.asRo()
 
-	private val _changed = own(Signal0())
+	private val _changed = own(Signal1<OptionList<E>>())
 
 	/**
 	 * Dispatched on value commit.
 	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
 	 * when the selected item or text is programmatically changed.
 	 */
-	val changed = _changed.asRo()
+	final override val changed = _changed.asRo()
 
 	/**
 	 * The formatter to be used when converting a data element to a string.
@@ -116,7 +117,7 @@ open class OptionList<E : Any>(
 	 * Sets the currently selected item.
 	 * Note that this does not invoke [input] or [changed] signals.
 	 */
-	var selectedItem: E?
+	override var inputValue: E?
 		get() = dataScroller.selection.selectedItem
 		set(value) {
 			dataScroller.selection.selectedItem = value
@@ -182,7 +183,7 @@ open class OptionList<E : Any>(
 			val value = newSelection.firstOrNull()
 			textInput.text = if (value == null) "" else formatter.format(value)
 			focus()
-			_changed.dispatch()
+			_changed.dispatch(this@OptionList)
 			close()
 		}
 	}
@@ -311,7 +312,7 @@ open class OptionList<E : Any>(
 
 		blurred().add {
 			close()
-			_changed.dispatch()
+			_changed.dispatch(this)
 		}
 	}
 
@@ -331,7 +332,7 @@ open class OptionList<E : Any>(
 				val highlighted = dataScroller.highlighted.selectedItem
 				if (highlighted != null) {
 					// An item was highlighted.
-					selectedItem = highlighted
+					inputValue = highlighted
 					focus()
 				} else {
 					// Text was typed. Try to match an item from the data.
@@ -341,7 +342,7 @@ open class OptionList<E : Any>(
 				}
 				close()
 				focusManager.highlightFocused()
-				_changed.dispatch()
+				_changed.dispatch(this)
 			}
 			Ascii.DOWN -> {
 				event.handled = true
@@ -487,7 +488,7 @@ open class OptionList<E : Any>(
 	}
 
 	override fun clear() {
-		selectedItem = null
+		inputValue = null
 	}
 
 	override fun dispose() {

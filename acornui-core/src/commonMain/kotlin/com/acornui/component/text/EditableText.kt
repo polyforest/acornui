@@ -43,6 +43,7 @@ import com.acornui.selection.SelectionRange
 import com.acornui.selection.selectAll
 import com.acornui.selection.unselect
 import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 import com.acornui.string.isLetterOrDigit2
 import com.acornui.substringInRange
 import com.acornui.time.delayedCallback
@@ -58,7 +59,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private val _input = own(Signal0())
 	val input = _input.asRo()
 
-	private val _changed = own(Signal0())
+	private val _changed = own(Signal1<TextInput>())
 	val changed = _changed.asRo()
 
 	var editable by afterChange(true) {
@@ -162,7 +163,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.blurredSelf().add {
 			host.unselect()
 			if (isActive)
-				_changed.dispatch()
+				_changed.dispatch(host)
 		}
 
 		host.char().add {
@@ -249,14 +250,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.undo().add {
 			if (!it.defaultPrevented()) {
 				_input.dispatch()
-				_changed.dispatch()
+				_changed.dispatch(host)
 			}
 		}
 
 		host.redo().add {
 			if (!it.defaultPrevented()) {
 				_input.dispatch()
-				_changed.dispatch()
+				_changed.dispatch(host)
 			}
 		}
 	}
@@ -332,7 +333,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 					if (_changed.isNotEmpty()) {
 						// Only mark the key event as handled if there are change handlers.
 						event.handled = true
-						_changed.dispatch()
+						_changed.dispatch(host)
 					}
 				}
 			}

@@ -279,9 +279,13 @@ typealias PointsToModel = (modelStart: Vector2Ro, diffPoints: Vector2Ro, out: Ve
 
 open class TossScrollModelBinding(
 		private val tossScroller: TossScroller,
-		private val hScrollModel: ScrollModel,
-		private val vScrollModel: ScrollModel
+		private val handler: (diff: Vector2Ro) -> Unit
 ) : Disposable {
+
+	constructor(tossScroller: TossScroller, hScrollModel: ScrollModel, vScrollModel: ScrollModel) : this(tossScroller, {
+		hScrollModel.value -= it.x
+		vScrollModel.value -= it.y
+	})
 
 	private val lastPositionLocal = vec2()
 	private val diff = vec2()
@@ -298,8 +302,7 @@ open class TossScrollModelBinding(
 	private fun tossHandler(event: DragInteractionRo) {
 		diff.set(event.positionLocal).sub(lastPositionLocal)
 		localToModel(diff)
-		hScrollModel.value -= diff.x
-		vScrollModel.value -= diff.y
+		handler(diff)
 		lastPositionLocal.set(event.positionLocal)
 	}
 

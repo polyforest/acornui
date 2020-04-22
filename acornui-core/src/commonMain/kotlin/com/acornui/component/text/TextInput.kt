@@ -44,7 +44,7 @@ import com.acornui.time.tick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-interface TextInput : Focusable, SelectableComponent, Stylable, Clearable {
+interface TextInput : InputComponent<String>, Focusable, SelectableComponent, Stylable, Clearable {
 
 	val charStyle: CharStyle
 	val flowStyle: TextFlowStyle
@@ -61,7 +61,7 @@ interface TextInput : Focusable, SelectableComponent, Stylable, Clearable {
 	 * This is only dispatched on a user interaction, such as pressing ENTER or TAB. It is not dispatched when
 	 * the text is programmatically changed.
 	 */
-	val changed: Signal<() -> Unit>
+	override val changed: Signal<(TextInput) -> Unit>
 
 	var editable: Boolean
 	var maxLength: Int?
@@ -113,7 +113,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 	override val input: Signal<() -> Unit>
 		get() = editableText.input
 
-	override val changed: Signal<() -> Unit>
+	override val changed: Signal<(TextInput) -> Unit>
 		get() = editableText.changed
 
 	override var editable: Boolean
@@ -129,6 +129,12 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 		}
 
 	override var text: String
+		get() = editableText.text
+		set(value) {
+			editableText.text = value
+		}
+
+	override var inputValue: String
 		get() = editableText.text
 		set(value) {
 			editableText.text = value
@@ -273,7 +279,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	override val input: Signal<() -> Unit>
 		get() = editableText.input
 
-	override val changed: Signal<() -> Unit>
+	override val changed: Signal<(TextInput) -> Unit>
 		get() = editableText.changed
 
 	override var editable: Boolean
@@ -289,6 +295,12 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		}
 
 	override var text: String
+		get() = editableText.text
+		set(value) {
+			editableText.text = value
+		}
+
+	override var inputValue: String
 		get() = editableText.text
 		set(value) {
 			editableText.text = value

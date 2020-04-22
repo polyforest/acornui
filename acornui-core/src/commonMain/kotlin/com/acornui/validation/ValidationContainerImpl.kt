@@ -75,6 +75,7 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 	}
 
 	private val contents = addChild(ElementLayoutContainer<S, U, E>(this, layoutAlgorithm).apply {
+		unbind(style) // Use this validation container for style inheritance.
 		layoutData = contentsLayoutData
 	})
 
@@ -98,10 +99,7 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 	var messageFactory: VerticalLayoutContainer<ListItemRenderer<ValidationInfo>>.() -> ListItemRenderer<ValidationInfo> = {
 		validationMessageView {
 			click().add {
-				data?.validatedData?.componentId?.let {
-					val c = this@ValidationContainerImpl.findComponentById(it)
-					c?.focus()
-				}
+				(data?.validatedData?.component as? UiComponentRo?)?.focus()
 			}
 		} layout { width = 300f }
 	}
@@ -119,6 +117,9 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 
 		bind(_data) {
 			invalidateProperties()
+		}
+		bind(_isBusy) {
+			contents.interactivityMode = if (it) InteractivityMode.NONE else InteractivityMode.ALL
 		}
 	}
 

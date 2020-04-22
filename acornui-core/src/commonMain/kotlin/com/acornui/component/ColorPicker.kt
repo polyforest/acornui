@@ -37,27 +37,30 @@ import com.acornui.input.keyDown
 import com.acornui.math.*
 import com.acornui.popup.lift
 import com.acornui.properties.afterChange
-import com.acornui.signal.Signal
-import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 import com.acornui.toInt
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class ColorPicker(owner: Context) : ContainerImpl(owner) {
+open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
 
 	val style = bind(ColorPickerStyle())
 
+	private val _changed = own(Signal1<ColorPicker>())
+	final override val changed = _changed.asRo()
+
 	private var background: UiComponent? = null
 	private var colorSwatch: UiComponent? = null
-	private val colorPalette = ColorPalette(this)
+	private val colorPalette = colorPalette {
+		changed.add {
+			_changed.dispatch(this@ColorPicker)
+		}
+	}
 
 	private val colorPaletteLift = lift {
 		+colorPalette
 		onClosed = this@ColorPicker::close
 	}
-
-	val changed: Signal<() -> Unit>
-		get() = colorPalette.changed
 
 	var color: ColorRo
 		get() = colorPalette.color
@@ -65,6 +68,12 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner) {
 			val v = value.copy().clamp()
 			colorPalette.color = v
 			colorSwatch?.colorTint = v
+		}
+
+	override var inputValue: ColorRo
+		get() = color
+		set(value) {
+			color = value
 		}
 
 	var value: HsvRo
@@ -184,7 +193,7 @@ class ColorPickerStyle : StyleBase() {
 
 	override val type = Companion
 
-	var padding: PadRo by prop(Pad(2f))
+	var padding by prop<PadRo>(Pad(2f))
 	var background by prop(noSkin)
 	var defaultSwatchWidth by prop(14f)
 	var defaultSwatchHeight by prop(14f)
@@ -200,10 +209,10 @@ inline fun Context.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPick
 	return c
 }
 
-class ColorPalette(owner: Context) : ContainerImpl(owner) {
+class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
 
-	private val _changed = own(Signal0())
-	val changed = _changed.asRo()
+	private val _changed = own(Signal1<ColorPalette>())
+	override val changed = _changed.asRo()
 
 	private val handleWidth = 7f
 
@@ -271,7 +280,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 		val previous = this.value
 		if (previous == value) return
 		this.value = value
-		_changed.dispatch()
+		_changed.dispatch(this)
 	}
 
 	/**
@@ -281,10 +290,8 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 		val previous = color
 		if (previous == value) return
 		this.color = value
-		_changed.dispatch()
+		_changed.dispatch(this)
 	}
-
-
 
 	private val valueRect = addChild(rect {
 		style.margin = Pad(0f, 0f, 0f, handleWidth)
@@ -325,6 +332,10 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 				invalidate(COLORS)
 			}
 		}
+
+	override var inputValue: ColorRo
+		get() = color
+		set(value) { color = value }
 
 	private var _value: HsvRo = Color.WHITE.toHsv(Hsv())
 	var value: HsvRo
@@ -419,6 +430,11 @@ class ColorPalette(owner: Context) : ContainerImpl(owner) {
 
 }
 
+inline fun Context.colorPalette(init: ComponentInit<ColorPalette> = {}): ColorPalette {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ColorPalette(this).apply(init)
+}
+
 class ColorPaletteStyle : StyleBase() {
 
 	override val type = Companion
@@ -438,16 +454,22 @@ class ColorPaletteStyle : StyleBase() {
 /**
  * A Color picker with a text input for a hexdecimal color representation.
  */
-open class ColorPickerWithText(owner: Context) : ContainerImpl(owner) {
+open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
 
-	val changed: Signal<() -> Unit>
-		get() = colorPicker.changed
+	private val _changed = Signal1<ColorPickerWithText>()
+	final override val changed = _changed.asRo()
 
 	var color: ColorRo
 		get() = colorPicker.color
 		set(value) {
 			colorPicker.color = value
 			updateText()
+		}
+
+	override var inputValue: ColorRo
+		get() = color
+		set(value) {
+			color = value
 		}
 
 	var value: HsvRo
@@ -497,6 +519,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner) {
 	private val colorPicker: ColorPicker = colorPicker {
 		changed.add {
 			updateText()
+			_changed.dispatch(this@ColorPickerWithText)
 		}
 	}
 

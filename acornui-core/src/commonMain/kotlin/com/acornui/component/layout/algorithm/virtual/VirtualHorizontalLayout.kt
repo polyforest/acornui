@@ -133,7 +133,7 @@ open class VirtualHorizontalLayoutStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	/**
 	 * The horizontal alignment of each element within the measured width.

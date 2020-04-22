@@ -16,11 +16,11 @@
 
 package com.acornui.component
 
-import com.acornui.Disposable
 import com.acornui.Lifecycle
+import com.acornui.ManagedDisposable
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
-import com.acornui.di.own
+import com.acornui.function.as1
 import com.acornui.input.interaction.click
 import com.acornui.signal.Signal0
 
@@ -60,10 +60,10 @@ fun <T> Context.radioButton(group: RadioGroup<T>, data: T, label: String, init: 
 	return b
 }
 
-class RadioGroup<T>(val owner: Context) : Disposable {
+class RadioGroup<T>(val owner: Context) : ManagedDisposable {
 
 	init {
-		owner.own(this)
+		owner.disposed.add(::dispose.as1)
 	}
 
 	private val _changed = Signal0()
@@ -129,6 +129,7 @@ class RadioGroup<T>(val owner: Context) : Disposable {
 	}
 
 	override fun dispose() {
+		owner.disposed.remove(::dispose.as1)
 		_changed.dispose()
 		toggledButton = null
 		_radioButtons.clear()

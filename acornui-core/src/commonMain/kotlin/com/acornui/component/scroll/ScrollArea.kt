@@ -50,11 +50,11 @@ open class ScrollArea<E : UiComponent>(
 			if (!event.handled && !keyState.keyIsDown(Ascii.CONTROL)) {
 				if (vScrollModel.max > 0f && event.deltaY != 0f) {
 					event.handled = true
-					vScrollModel.value += event.deltaY
+					vScrollBar.userChange(vScrollBar.inputValue + event.deltaY)
 				}
 				if (hScrollModel.max > 0f && event.deltaX != 0f) {
 					event.handled = true
-					hScrollModel.value += event.deltaX
+					hScrollBar.userChange(hScrollBar.inputValue + event.deltaX)
 				}
 			}
 		}
@@ -103,7 +103,10 @@ open class ScrollArea<E : UiComponent>(
 			_tossScrolling = value
 			if (value) {
 				tossScroller = TossScroller(this)
-				tossBinding = TossScrollModelBinding(tossScroller!!, hScrollModel, vScrollModel)
+				tossBinding = TossScrollModelBinding(tossScroller!!) {
+					hScrollBar.userChange(hScrollBar.inputValue - it.x)
+					vScrollBar.userChange(vScrollBar.inputValue - it.y)
+				}
 			} else {
 				tossScroller?.dispose()
 				tossScroller = null
@@ -226,6 +229,8 @@ open class ScrollArea<E : UiComponent>(
 	 */
 	fun scrollTo(bounds: MinMaxRo) {
 		stopToss()
+		val hScrollModel = hScrollBar.scrollModel
+		val vScrollModel = vScrollBar.scrollModel
 		val contentsSetW = _contentsWidth - hScrollModel.max
 		val contentsSetH = _contentsHeight - vScrollModel.max
 		if (bounds.xMin >= hScrollModel.value || bounds.xMax <= hScrollModel.value + contentsSetW) {
@@ -246,6 +251,8 @@ open class ScrollArea<E : UiComponent>(
 	 * Sets the [hScrollModel] value to [x] and the [vScrollModel] value to [y].
 	 */
 	fun scrollTo(x: Float, y: Float) {
+		val hScrollModel = hScrollBar.scrollModel
+		val vScrollModel = vScrollBar.scrollModel
 		hScrollModel.value = x
 		vScrollModel.value = y
 	}
@@ -325,8 +332,8 @@ open class ScrollArea<E : UiComponent>(
 			corner.visible = false
 		}
 
-		hScrollModel.max = maxOf(0f, scrollRect.contentsWidth - contentsSetW)
-		vScrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
+		hScrollBar.scrollModel.max = maxOf(0f, scrollRect.contentsWidth - contentsSetW)
+		vScrollBar.scrollModel.max = maxOf(0f, scrollRect.contentsHeight - contentsSetH)
 
 		scrollRect.getAttachment<TossScroller>(TossScroller)?.enabled = needsHScrollBar || needsVScrollBar
 
@@ -358,11 +365,11 @@ open class ScrollArea<E : UiComponent>(
 }
 
 fun ScrollArea<*>.tweenScrollX(duration: Float, ease: Interpolation, toScrollX: Float, delay: Float = 0f): Tween {
-	return createPropertyTween(this, "scrollX", duration, ease, { hScrollModel.value }, { hScrollModel.value = it }, toScrollX, delay)
+	return createPropertyTween(this, "scrollX", duration, ease, { hScrollModel.value }, { scrollTo(it, vScrollModel.value) }, toScrollX, delay)
 }
 
 fun ScrollArea<*>.tweenScrollY(duration: Float, ease: Interpolation, toScrollY: Float, delay: Float = 0f): Tween {
-	return createPropertyTween(this, "scrollY", duration, ease, { vScrollModel.value }, { vScrollModel.value = it }, toScrollY, delay)
+	return createPropertyTween(this, "scrollY", duration, ease, { vScrollModel.value }, { scrollTo(hScrollModel.value, it) }, toScrollY, delay)
 }
 
 enum class ScrollPolicy {
@@ -401,17 +408,12 @@ class ScrollAreaStyle : StyleBase() {
 	/**
 	 *
 	 */
-	var borderRadii: CornersRo by prop(Corners())
+	var borderRadii by prop<CornersRo>(Corners())
 
 	/**
 	 * If true, the scroll area will automatically scroll to show the focused element.
 	 */
 	var autoScrollToFocused by prop(true)
-
-	override fun notifyChanged() {
-		super.notifyChanged()
-		println("Scroll area style changed")
-	}
 
 	companion object : StyleType<ScrollAreaStyle>
 }

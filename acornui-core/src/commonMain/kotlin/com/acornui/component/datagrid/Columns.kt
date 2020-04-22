@@ -28,12 +28,12 @@ import com.acornui.di.own
 import com.acornui.math.Bounds
 import com.acornui.observe.bind
 import com.acornui.selection.selectAll
-import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 import com.acornui.system.userInfo
 import com.acornui.text.*
 import com.acornui.time.DateRo
 
-abstract class IntColumn<in E>() : DataGridColumn<E, Int?>() {
+abstract class IntColumn<in E> : DataGridColumn<E, Int?>() {
 
 	val formatter = numberFormatter().apply {
 		maxFractionDigits = 0
@@ -69,22 +69,22 @@ abstract class FloatColumn<in E> : DataGridColumn<E, Float?>() {
 	}
 }
 
-class NumberCell(owner: Context, private val formatter: NumberFormatter) : ContainerImpl(owner), DataGridCell<Number?> {
+class NumberCell<T : Number>(owner: Context, private val formatter: NumberFormatter) : ContainerImpl(owner), DataGridCell<T?> {
 
 	private val textField = addChild(text { selectable = false; flowStyle.horizontalAlign = FlowHAlign.RIGHT })
-	private var _data: Number? = null
 
 	init {
 		bind(userInfo.currentLocale.changed) {
-			textField.label = formatter.format(_data)
+			textField.label = formatter.format(inputValue)
 		}
 	}
 
-	override fun setData(value: Number?) {
-		if (_data == value) return
-		_data = value
-		textField.label = formatter.format(value)
-	}
+	override var inputValue: T? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			textField.label = formatter.format(value)
+		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
@@ -95,14 +95,10 @@ class NumberCell(owner: Context, private val formatter: NumberFormatter) : Conta
 
 abstract class NumberEditorCell(owner: Context) : ContainerImpl(owner) {
 
-	private val _changed = own(Signal0())
-	val changed = _changed.asRo()
-
 	protected val input = addChild(textInput())
 	private var _data: Number? = null
 
 	init {
-		input.changed.add(_changed::dispatch)
 		input.selectAll()
 	}
 
@@ -121,36 +117,37 @@ abstract class NumberEditorCell(owner: Context) : ContainerImpl(owner) {
 
 class IntEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCell<Int?> {
 
+	private val _changed = own(Signal1<IntEditorCell>())
+	override val changed = _changed.asRo()
+
 	init {
+		input.changed.add {
+			_changed.dispatch(this)
+		}
 		input.restrictPattern = RestrictPatterns.INTEGER
 	}
 
-	override fun validateData(): Boolean {
-		return true
-	}
+	override var inputValue: Int?
+		get() = input.text.toIntOrNull()
+		set(value) = setNumber(value)
 
-	override fun getData(): Int? {
-		return input.text.toIntOrNull()
-	}
-
-	override fun setData(value: Int?) = setNumber(value)
 }
 
 class FloatEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCell<Float?> {
 
+	private val _changed = own(Signal1<FloatEditorCell>())
+	override val changed = _changed.asRo()
+
 	init {
+		input.changed.add {
+			_changed.dispatch(this)
+		}
 		input.restrictPattern = RestrictPatterns.FLOAT
 	}
 
-	override fun validateData(): Boolean {
-		return true
-	}
-
-	override fun getData(): Float? {
-		return input.text.toFloatOrNull()
-	}
-
-	override fun setData(value: Float?) = setNumber(value)
+	override var inputValue: Float?
+		get() = input.text.toFloatOrNull()
+		set(value) = setNumber(value)
 }
 
 abstract class StringColumn<in E> : DataGridColumn<E, String>() {
@@ -173,36 +170,35 @@ abstract class StringColumn<in E> : DataGridColumn<E, String>() {
 	}
 }
 
-class StringCell<E>(owner: Context, val formatter: StringFormatter<E> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
+class StringCell<E>(owner: Context, val formatter: StringFormatter<E?> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
 
-	override fun setData(value: E) {
-		label = formatter.format(value)
-	}
+	override var inputValue: E? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			text = formatter.format(value)
+		}
 }
 
 class StringEditorCell(owner: Context) : ContainerImpl(owner), DataGridEditorCell<String> {
 
-	private val _changed = own(Signal0())
+	private val _changed = own(Signal1<StringEditorCell>())
 	override val changed = _changed.asRo()
 
 	private val input = addChild(textInput())
 
 	init {
-		input.changed.add(_changed::dispatch)
+		input.changed.add {
+			_changed.dispatch(this)
+		}
 		input.selectAll()
 	}
 
-	override fun validateData(): Boolean {
-		return true
-	}
-
-	override fun getData(): String {
-		return input.text
-	}
-
-	override fun setData(value: String) {
-		input.text = value
-	}
+	override var inputValue: String?
+		get() = input.text
+		set(value) {
+			input.text = value ?: ""
+		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
@@ -215,7 +211,7 @@ abstract class DateColumn<in E> : DataGridColumn<E, DateRo?>() {
 
 	val formatter = dateFormatter {
 		dateStyle = DateTimeFormatStyle.SHORT
-	}
+	}.withNull()
 
 	private val parser = dateParser().apply {
 		allowTwoDigitYears = true
@@ -238,38 +234,28 @@ abstract class DateColumn<in E> : DataGridColumn<E, DateRo?>() {
 	}
 }
 
-class DateCell(owner: Context, private val formatter: StringFormatter<DateRo>) : ContainerImpl(owner), DataGridCell<DateRo?> {
+class DateCell(owner: Context, private val formatter: StringFormatter<DateRo?>) : ContainerImpl(owner), DataGridCell<DateRo?> {
 
 	private val textField = addChild(text { selectable = false })
 
-	override fun setData(value: DateRo?) {
-		textField.label = if (value == null) "" else formatter.format(value)
-	}
+	override var inputValue: DateRo? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			textField.label = formatter.format(value)
+		}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		super.updateLayout(explicitWidth, explicitHeight, out)
 		textField.size(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
 	}
-
 }
 
 open class DateEditorCell(owner: Context) : DatePicker(owner), DataGridEditorCell<DateRo?> {
 
 	init {
 		open()
-	}
-
-	override fun validateData(): Boolean {
-		return true
-	}
-
-	override fun getData(): DateRo? {
-		return selectedDate
-	}
-
-	override fun setData(value: DateRo?) {
-		selectedDate = value
 	}
 }
 

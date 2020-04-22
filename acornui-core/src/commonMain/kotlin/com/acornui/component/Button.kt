@@ -59,13 +59,13 @@ open class ButtonImpl(
 
 	val style = bind(ButtonStyle())
 
-	private val _toggledChanged = own(Signal1<ButtonRo>())
+	private val _toggledChanged = own(Signal1<ButtonImpl>())
 
 	/**
 	 * Dispatched when the toggled flag has changed via user interaction. This will only be invoked if [toggleOnClick]
 	 * is true, and the user clicks this button.
 	 */
-	override val toggledChanged = _toggledChanged.asRo()
+	final override val toggledChanged = _toggledChanged.asRo()
 
 	/**
 	 * If true, when this button is pressed, the selected state will be toggled.

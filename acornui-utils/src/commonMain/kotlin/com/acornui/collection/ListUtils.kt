@@ -437,7 +437,6 @@ inline fun <E> List<E>.forEachReversed2(lastIndex: Int = this.lastIndex, startIn
  * Does not cause allocation.
  */
 fun List<Float>.sum(startIndex: Int, lastIndex: Int): Float {
-	if (startIndex == lastIndex) return this[startIndex]
 	var t = 0f
 	for (i in startIndex..lastIndex) {
 		t += this[i]

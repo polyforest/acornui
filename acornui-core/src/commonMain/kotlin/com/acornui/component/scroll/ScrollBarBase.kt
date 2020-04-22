@@ -40,11 +40,12 @@ import com.acornui.math.Easing
 import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Vector2Ro
 import com.acornui.math.vec2
+import com.acornui.properties.afterChange
+import com.acornui.signal.Signal1
 import com.acornui.time.callLater
 import com.acornui.time.onTick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.properties.Delegates
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -55,6 +56,9 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 	private lateinit var thumbDrag: DragAttachment
 	private val _scrollModel = own(ScrollModelImpl())
 	val scrollModel: ClampedScrollModel = _scrollModel
+
+	private val _changed = own(Signal1<ScrollBarBase>())
+	final override val changed = _changed.asRo()
 
 	val style = bind(ScrollBarStyle())
 
@@ -67,8 +71,8 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 	 * The value to multiply against the scroll model to convert to points.
 	 * In other words, how many points per 1 unit on the scroll model.
 	 */
-	var modelToPoints by Delegates.observable(1f) {
-		prop, old, new ->
+	var modelToPoints by afterChange(1f) {
+		new ->
 		check(!(new.isNaN() || new.isInfinite())) { "modelToPoints may not be NaN" }
 		invalidate(ValidationFlags.LAYOUT)
 	}
@@ -194,7 +198,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 		if (!event.isFabricated)
 			pageDirection = isPositive
 		if (pageDirection == isPositive)
-			scrollModel.value += if (isPositive) pageSize else -pageSize
+			userChange(scrollModel.value + if (isPositive) pageSize else -pageSize)
 	}
 
 	private fun dragHandler(event: DragInteractionRo) {
@@ -204,7 +208,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 		val thumb = thumb ?: return
 		positionTmp.set(event.positionLocal.x + track.x - thumb.width * 0.5f, event.positionLocal.y + track.y - thumb.height * 0.5f)
 		val newValue = getModelValue(positionTmp)
-		scrollModel.value = newValue
+		userChange(newValue)
 	}
 
 	private fun dragStartHandler() {
@@ -219,19 +223,19 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 	}
 
 	open fun stepDec() {
-		scrollModel.value = (scrollModel.rawValue - stepSize / modelToPoints)
+		userChange(scrollModel.rawValue - stepSize / modelToPoints)
 	}
 
 	open fun stepInc() {
-		scrollModel.value = (scrollModel.rawValue + stepSize / modelToPoints)
+		userChange(scrollModel.rawValue + stepSize / modelToPoints)
 	}
 
 	open fun pageUp() {
-		scrollModel.value = (scrollModel.rawValue - pageSize)
+		userChange(scrollModel.rawValue - pageSize)
 	}
 
 	open fun pageDown() {
-		scrollModel.value = (scrollModel.rawValue + pageSize)
+		userChange(scrollModel.rawValue + pageSize)
 	}
 
 	protected abstract fun getModelValue(position: Vector2Ro): Float
@@ -272,6 +276,16 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 			return style.naturalHeight
 		}
 
+	override val inputValue: Float
+		get() = scrollModel.value
+
+	/**
+	 * Set the data as a user change, dispatching the [changed] signal.
+	 */
+	fun userChange(newValue: Float) {
+		scrollModel.rawValue = newValue
+		_changed.dispatch(this)
+	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val decrementButton = decrementButton
@@ -371,7 +385,7 @@ class ScrollBarStyle : StyleBase() {
 	companion object : StyleType<ScrollBarStyle>
 }
 
-interface ScrollBar : Context, LayoutDataProvider<ScrollBarLayoutData> {
+interface ScrollBar : Context, LayoutDataProvider<ScrollBarLayoutData>, InputComponent<Float> {
 	companion object : StyleTag
 }
 

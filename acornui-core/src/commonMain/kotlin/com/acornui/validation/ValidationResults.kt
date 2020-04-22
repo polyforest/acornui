@@ -16,8 +16,10 @@
 
 package com.acornui.validation
 
+import com.acornui.component.InputComponent
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.TextStyleTags
+import kotlinx.serialization.Serializable
 
 /**
  * The results of a validation operation.
@@ -62,7 +64,7 @@ data class ValidationInfo(
 		val validatedData: ValidatedData<*>? = null
 )
 
-data class ValidatedData<T>(val name: String, val componentId: String, val data: T)
+data class ValidatedData<out T>(val name: String, val component: InputComponent<T>, val data: T)
 
 /**
  * True if this validation info list contains no errors.

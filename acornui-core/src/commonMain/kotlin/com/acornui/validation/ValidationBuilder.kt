@@ -17,7 +17,6 @@
 package com.acornui.validation
 
 import com.acornui.component.*
-import com.acornui.component.text.TextInput
 import com.acornui.di.Context
 import com.acornui.findChildLevelOrder
 import com.acornui.focus.enterTarget
@@ -74,8 +73,8 @@ suspend fun ValidationBuilder.required(validatedData: ValidatedData<String>): Va
 	return validatedData
 }
 
-fun TextInput.validatedData(name: String = formLabel ?: ""): ValidatedData<String> {
-	return ValidatedData(name, componentId, text)
+fun <T, R> R.validatedData(name: String = formLabel ?: ""): ValidatedData<T> where R : InputComponent<T>, R : UiComponentRo {
+	return ValidatedData(name, this, inputValue)
 }
 
 /**
@@ -95,7 +94,15 @@ private fun Boolean.toValidationLevel(): ValidationLevel = if (this) ValidationL
 
 /**
  * Creates a button with the following attributes:
- * - Must be inside
+ * - The label is set to the given i18n string.
+ * - When ENTER is pressed within the form, this button will be virtually clicked.
+ * - When this button is clicked, the form is validated and if there are are no validation errors, submitted.
+ * - Must be inside a validation container.
+ *
+ * @param i18nBundleName The i18n bundle for localized strings.
+ * @param i18nBundleKey The string key within the i18n bundle.
+ * @param submit The action to invoke when the form is valid and this button has been clicked.
+ * @param init An initialization block for further button configuration.
  */
 fun <T> ValidationContainer<T>.submitButton(
 		i18nBundleName: String = "ui",

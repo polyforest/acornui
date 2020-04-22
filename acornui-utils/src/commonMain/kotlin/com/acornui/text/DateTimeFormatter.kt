@@ -16,7 +16,6 @@
 
 package com.acornui.text
 
-import com.acornui.collection.indexOfFirst
 import com.acornui.i18n.Locale
 import com.acornui.time.*
 

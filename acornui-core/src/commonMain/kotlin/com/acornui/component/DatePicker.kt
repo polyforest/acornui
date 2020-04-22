@@ -38,13 +38,14 @@ import com.acornui.popup.lift
 import com.acornui.recycle.Clearable
 import com.acornui.properties.afterChange
 import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 import com.acornui.text.*
 import com.acornui.time.Date
 import com.acornui.time.DateRo
 
 open class DatePicker(
 		owner: Context
-) : ContainerImpl(owner), Clearable {
+) : ContainerImpl(owner), Clearable, InputComponent<DateRo?> {
 
 	private val _input = own(Signal0())
 
@@ -54,14 +55,14 @@ open class DatePicker(
 	 */
 	val input = _input.asRo()
 
-	private val _changed = own(Signal0())
+	private val _changed = own(Signal1<DatePicker>())
 
 	/**
 	 * Dispatched on value commit.
 	 * It is dispatched when the user selects a date, or commits the value of the text input. It is not dispatched
 	 * when the selected date or text is programmatically changed.
 	 */
-	val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	/**
 	 * The formatter to be used when converting a date element to a string.
@@ -81,7 +82,7 @@ open class DatePicker(
 	 * Sets the currently selected date.
 	 * Note that this does not invoke [input] or [changed] signals.
 	 */
-	var selectedDate: DateRo?
+	override var inputValue: DateRo?
 		get() = calendar.selection.selectedItem
 		set(value) {
 			calendar.selection.selectedItem = value
@@ -106,7 +107,7 @@ open class DatePicker(
 			if (it.isEnterOrReturn) {
 				if (isOpen) {
 					close()
-					_changed.dispatch()
+					_changed.dispatch(this@DatePicker)
 				} else {
 					open()
 				}
@@ -143,7 +144,7 @@ open class DatePicker(
 			textInput.text = if (value == null) "" else formatter.format(value)
 			this@DatePicker.focus()
 			close()
-			_changed.dispatch()
+			_changed.dispatch(this@DatePicker)
 		}
 	}
 
@@ -212,24 +213,22 @@ open class DatePicker(
 		blurred().add {
 			close()
 			if (isActive)
-				_changed.dispatch()
+				_changed.dispatch(this@DatePicker)
 		}
 	}
-
-	private var _isOpen = false
 
 	/**
 	 * True if the calendar component is currently shown.
 	 */
-	val isOpen: Boolean
-		get() = _isOpen
+	var isOpen: Boolean = false
+		private set
 
 	/**
 	 * Displays the calendar component.
 	 */
 	fun open() {
-		if (_isOpen) return
-		_isOpen = true
+		if (isOpen) return
+		isOpen = true
 		calendar.highlighted.clear()
 		selectDateFromText()
 		calendarLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
@@ -241,8 +240,8 @@ open class DatePicker(
 	 * Hides the calendar component.
 	 */
 	fun close() {
-		if (!_isOpen) return
-		_isOpen = false
+		if (!isOpen) return
+		isOpen = false
 		removeChild(calendarLift)
 	}
 
@@ -250,7 +249,7 @@ open class DatePicker(
 	 * Toggles the display of the calendar component.
 	 */
 	fun toggleOpen() {
-		if (_isOpen) close()
+		if (isOpen) close()
 		else open()
 	}
 
@@ -286,7 +285,7 @@ open class DatePicker(
 
 	override fun clear() {
 		textInput.clear()
-		selectedDate = null
+		inputValue = null
 	}
 
 	override fun dispose() {

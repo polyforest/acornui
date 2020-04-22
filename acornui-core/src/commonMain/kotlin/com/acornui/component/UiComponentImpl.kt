@@ -616,25 +616,11 @@ open class UiComponentImpl(
 
 	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) = styles.getRulesByType(type, out)
 
-	/**
-	 * Binds a style to have its calculated values set when [ValidationFlags.STYLES] is validated.
-	 */
-	protected fun <T : Style> bind(style: T): T = styles.bind(style)
+	final override fun <T : Style> bind(style: T): T = styles.bind(style)
 
-	/**
-	 * Removes a style from calculation.
-	 */
-	protected fun unbind(style: StyleRo) = styles.unbind(style)
+	final override fun <T : Style> unbind(style: T) = styles.unbind(style)
 
-	/**
-	 * Watches a style for changes. This style must be bound via [bind].
-	 */
-	protected fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
-
-	/**
-	 * Removes a style from change watching.
-	 */
-	protected fun unwatch(style: Style) = styles.unwatch(style)
+	override fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
 
 	override fun invalidateStyles() {
 		invalidate(ValidationFlags.STYLES)
