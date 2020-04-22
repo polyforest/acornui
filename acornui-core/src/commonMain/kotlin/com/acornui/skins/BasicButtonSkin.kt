@@ -164,7 +164,7 @@ private class BasicCheckboxSkin(
 	private val textField: TextField
 
 	init {
-		style.gap = 0f // ic icons have a bit of padding around them already
+		style.gap = 4f
 		style.verticalAlign = VAlign.MIDDLE
 		+box
 		textField = +text("") {
@@ -189,7 +189,7 @@ private class BasicCheckboxSkin(
 		super.updateLayout(explicitWidth, explicitHeight, out)
 		// If the text field is visible, use it as a baseline.
 		// The vertical alignment is MIDDLE,
-		if (textField.visible) out.baseline = textField.baselineY
+		out.baseline = if (textField.visible) textField.baselineY else box.baselineY
 	}
 }
 
@@ -206,6 +206,11 @@ private class BasicCheckboxBox(
 	private val upState = +iconAtlas(theme.atlasPaths, upRegion)
 
 	override var label: String = ""
+
+	init {
+		style.padding = Pad(-3f) // The icon is only 18px and has 3px of padding around it.
+		baselineOverride = 14f // To line up with the check mark
+	}
 
 	override var buttonState: ButtonState by afterChangeWithInit(ButtonState.UP) { value ->
 		upState.visible = false
