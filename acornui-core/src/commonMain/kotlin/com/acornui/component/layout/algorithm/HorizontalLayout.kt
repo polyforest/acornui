@@ -161,7 +161,7 @@ class HorizontalLayoutStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	/**
 	 * The horizontal alignment of the entire row within the explicit width.

@@ -22,7 +22,7 @@ import com.acornui.signal.Signal
 /**
  * A UiComponent that can be observed for changes.
  */
-interface InputComponent<out T> : Observable {
+interface InputComponent<out T> : Observable, UiComponentRo {
 
 	/**
 	 * Dispatched on value commit.

@@ -301,39 +301,6 @@ open class UiComponentImpl(
 	}
 
 	//-----------------------------------------------
-	// Focusable
-	//-----------------------------------------------
-
-	override val focusableStyle: FocusableStyle by lazy {
-		bind(FocusableStyle()).apply {
-			watch(this) {
-				refreshFocusHighlight()
-			}
-		}
-	}
-
-	override var focusHighlightDelegate: UiComponentRo? by afterChange(null, ::refreshFocusHighlight.as1)
-
-	override var showFocusHighlight by afterChange(false, ::refreshFocusHighlight.as1)
-
-	private var focusTarget: UiComponentRo? = null
-	private var focusHighlighter: Highlighter? = null
-
-	private fun refreshFocusHighlight() {
-		validate(ValidationFlags.STYLES)
-		if (focusTarget != null)
-			focusHighlighter?.unhighlight(focusTarget!!)
-		if (showFocusHighlight) {
-			focusTarget = focusHighlightDelegate ?: this
-			focusHighlighter = focusableStyle.highlighter
-			focusHighlighter?.highlight(focusTarget!!)
-		} else {
-			focusTarget = null
-			focusHighlighter = null
-		}
-	}
-
-	//-----------------------------------------------
 	// LayoutElement
 	//-----------------------------------------------
 
@@ -404,10 +371,10 @@ open class UiComponentImpl(
 		invalidate(ValidationFlags.LAYOUT)
 	}
 
-	override var minWidth: Float by validationProp(0f, ValidationFlags.LAYOUT)
-	override var minHeight: Float by validationProp(0f, ValidationFlags.LAYOUT)
-	override var maxWidth: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
-	override var maxHeight: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
+	final override var minWidth: Float by validationProp(0f, ValidationFlags.LAYOUT)
+	final override var minHeight: Float by validationProp(0f, ValidationFlags.LAYOUT)
+	final override var maxWidth: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
+	final override var maxHeight: Float by validationProp(Float.MAX_VALUE, ValidationFlags.LAYOUT)
 
 	final override var defaultWidth: Float? by validationProp(null, ValidationFlags.LAYOUT)
 
@@ -620,7 +587,7 @@ open class UiComponentImpl(
 
 	final override fun <T : Style> unbind(style: T) = styles.unbind(style)
 
-	override fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
+	final override fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
 
 	override fun invalidateStyles() {
 		invalidate(ValidationFlags.STYLES)

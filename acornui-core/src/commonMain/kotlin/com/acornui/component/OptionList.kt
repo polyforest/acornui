@@ -39,6 +39,7 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
+import com.acornui.focus.focusHighlightDelegate
 import com.acornui.focus.focusSelf
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo

@@ -44,38 +44,38 @@ class ValidationBuilder(context: Context) : Context by context {
  */
 val validEmailRegex = Regex("""[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?""")
 
-/**
- * Validators for [required] and [emailOrBlank].
- */
-suspend fun ValidationBuilder.requiredEmail(validatedData: ValidatedData<String>): ValidatedData<String> {
-	return emailOrBlank(required(validatedData))
-}
-
-/**
- * Validates that the data part is either blank or matches an email regex.
- * @see [validEmailRegex]
- */
-suspend fun ValidationBuilder.emailOrBlank(validatedData: ValidatedData<String>): ValidatedData<String> {
-	+ValidationInfo(
-			message = string("validation.email", "ui").replaceTokens(validatedData.name),
-			level = (validatedData.data.isBlank() || validEmailRegex.matches(validatedData.data)).toValidationLevel(),
-			validatedData = validatedData
-	)
-	return validatedData
-}
-
-suspend fun ValidationBuilder.required(validatedData: ValidatedData<String>): ValidatedData<String> {
-	+ValidationInfo(
-			message = string("validation.required", "ui").replaceTokens(validatedData.name),
-			level = validatedData.data.isNotBlank().toValidationLevel(),
-			validatedData = validatedData
-	)
-	return validatedData
-}
-
-fun <T, R> R.validatedData(name: String = formLabel ?: ""): ValidatedData<T> where R : InputComponent<T>, R : UiComponentRo {
-	return ValidatedData(name, this, inputValue)
-}
+///**
+// * Validators for [required] and [emailOrBlank].
+// */
+//suspend fun ValidationBuilder.requiredEmail(validatedData: ValidatedData<String>): ValidatedData<String> {
+//	return emailOrBlank(required(validatedData))
+//}
+//
+///**
+// * Validates that the data part is either blank or matches an email regex.
+// * @see [validEmailRegex]
+// */
+//suspend fun ValidationBuilder.emailOrBlank(validatedData: ValidatedData<String>): ValidatedData<String> {
+//	+ValidationInfo(
+//			message = string("validation.email", "ui").replaceTokens(validatedData.name),
+//			level = (validatedData.data.isBlank() || validEmailRegex.matches(validatedData.data)).toValidationLevel(),
+//			validatedData = validatedData
+//	)
+//	return validatedData
+//}
+//
+//suspend fun ValidationBuilder.required(validatedData: ValidatedData<String>): ValidatedData<String> {
+//	+ValidationInfo(
+//			message = string("validation.required", "ui").replaceTokens(validatedData.name),
+//			level = validatedData.data.isNotBlank().toValidationLevel(),
+//			validatedData = validatedData
+//	)
+//	return validatedData
+//}
+//
+//fun <T, R> R.validatedData(name: String = formLabel ?: ""): ValidatedData<T> where R : InputComponent<T>, R : UiComponentRo {
+//	return ValidatedData(name, this, inputValue)
+//}
 
 /**
  * Gets the form label associated with this input.

@@ -19,10 +19,7 @@ package com.acornui.focus
 import com.acornui.Disposable
 import com.acornui.TreeWalk
 import com.acornui.childWalkLevelOrder
-import com.acornui.component.ElementContainer
-import com.acornui.component.Highlighter
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
+import com.acornui.component.*
 import com.acornui.component.style.StyleBase
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
@@ -120,8 +117,6 @@ interface FocusManager : Disposable {
  */
 interface Focusable : Context {
 
-	val focusableStyle: FocusableStyle
-
 	/**
 	 * True if this Focusable object should be included in the focus order.
 	 * Note that this does not affect directly setting this element to be focused via [focusSelf] or using
@@ -149,31 +144,10 @@ interface Focusable : Context {
 	val focusEnabledChildren: Boolean
 
 	/**
-	 * If true, this component will render its focus highlight as provided by the [focusableStyle].
-	 */
-	var showFocusHighlight: Boolean
-
-	/**
 	 * If set, when the focus manager is changing focus to this component, the provided focus delegate will be given
 	 * focus instead. Note that setting this will remove this component from the focus order.
 	 */
 	var focusDelegate: UiComponentRo?
-
-	/**
-	 * If set, the provided delegate will be highlighted instead of this component.
-	 * The highlighter will still be obtained from this component's [focusableStyle].
-	 * It can be used in conjunction with [focusDelegate] like so:
-	 * ```
-	 * panel {
-	 *     focusEnabled = true
-	 *
-	 *     val textInput = +textInput()
-	 *     textInput.focusHighlightDelegate = this // The focus highlight will surround the panel, not the text input.
-	 *     focusDelegate = textInput // When the panel is attempted to be given focus, the text input will be given focus instead.
-	 * }
-	 * ```
-	 */
-	var focusHighlightDelegate: UiComponentRo?
 }
 
 /**
@@ -316,11 +290,11 @@ fun UiComponentRo.focus(highlight: Boolean = false) {
 	}
 }
 
-class FocusableStyle : StyleBase() {
+class FocusableStyle : HighlightStyle() {
 
-	override val type = Companion
+	override val type: StyleType<FocusableStyle> = FocusableStyle
 
-	var highlighter by prop<Highlighter?>(null)
-
-	companion object : StyleType<FocusableStyle>
+	companion object : StyleType<FocusableStyle> {
+		override val extends = HighlightStyle
+	}
 }

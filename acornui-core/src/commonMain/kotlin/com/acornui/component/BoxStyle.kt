@@ -32,17 +32,17 @@ open class BoxStyle : DpiStyle() {
 	
 	override val type: StyleType<BoxStyle> = Companion
 
-	var linearGradient: LinearGradient? by prop(null)
-	var backgroundColor: ColorRo by prop(Color.BLACK)
+	var linearGradient by prop<LinearGradient?>(null)
+	var backgroundColor by prop(Color.BLACK)
 
-	var borderColors: BorderColorsRo by prop(BorderColors())
+	var borderColors by prop<BorderColorsRo>(BorderColors())
 
-	var borderThicknesses: PadRo by prop(Pad())
+	var borderThicknesses by prop<PadRo>(Pad())
 
-	var borderRadii: CornersRo by prop(Corners())
+	var borderRadii by prop<CornersRo>(Corners())
 
-	var margin: PadRo by prop(Pad())
-	var padding: PadRo by prop(Pad())
+	var margin by prop<PadRo>(Pad())
+	var padding by prop<PadRo>(Pad())
 
 	companion object : StyleType<BoxStyle> {
 		override val extends: StyleType<*>? = DpiStyle
@@ -146,24 +146,24 @@ data class ColorStop(
 		/**
 		 * The percent towards the end position of the gradient. This number is absolute, not relative to
 		 * the previous color stop.
-		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
+		 * If neither [dp] or [percent] is set, this stop will be halfway between the previous stop and the next.
 		 */
 		val percent: Float? = null,
 
 		/**
-		 * The number of pixels towards the end position of the gradient. This number is absolute, not relative to
+		 * The number of dips towards the end position of the gradient. This number is absolute, not relative to
 		 * the previous color stop.
-		 * If neither [pixels] or [percent] is set, this stop will be halfway between the previous stop and the next.
+		 * If neither [dp] or [percent] is set, this stop will be halfway between the previous stop and the next.
 		 */
-		val pixels: Float? = null
+		val dp: Float? = null
 ) {
 
-	constructor(rgba: Long, percent: Float? = null, pixels: Float? = null) : this(Color(rgba), percent, pixels)
+	constructor(rgba: Long, dp: Float? = null, pixels: Float? = null) : this(Color(rgba), dp, pixels)
 
 	fun toCssString(): String {
 		var str = color.toCssString()
 		if (percent != null) str += " ${percent * 100f}%"
-		else if (pixels != null) str += " ${pixels}px"
+		else if (dp != null) str += " ${dp}px"
 		return str
 	}
 

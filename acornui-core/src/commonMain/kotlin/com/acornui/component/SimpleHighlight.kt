@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused", "UNUSED_PARAMETER")
+
 package com.acornui.component
 
-import com.acornui.Disposable
+import com.acornui.component.style.StyleBase
+import com.acornui.component.style.StyleType
 import com.acornui.di.Context
-import com.acornui.di.ContextImpl
-import com.acornui.component.Highlighter.Companion.HIGHLIGHT_PRIORITY
+import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
-import com.acornui.popup.PopUpInfo
-import com.acornui.popup.PopUpManager
-import com.acornui.time.callLater
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -119,51 +118,21 @@ inline fun Context.simpleHighlight(atlasPaths: Map<Float, String>, regionName: S
 	return SimpleHighlight(this, atlasPaths, regionName).apply(init)
 }
 
-interface Highlighter : Disposable {
+open class HighlightStyle : StyleBase() {
 
-	fun unhighlight(target: UiComponentRo)
+	override val type: StyleType<HighlightStyle> = HighlightStyle
 
-	fun highlight(target: UiComponentRo)
+	/**
+	 * The factory for the highlight view.
+	 */
+	var highlight by prop<Context.() -> HighlightView?> { null }
 
-	companion object {
-		const val HIGHLIGHT_PRIORITY = 99999f
-	}
-}
+	/**
+	 * This will be set as the pop up priority for the highlight.
+	 */
+	var highlightPriority by prop(99999f)
 
-class HighlighterImpl(
-		owner: Context,
-		private val highlight: HighlightView
-) : ContextImpl(owner), Highlighter {
+	var junk by prop(Color.WHITE)
 
-	private val popUpManager by PopUpManager
-
-	private val popUpInfo = PopUpInfo(
-			highlight,
-			isModal = false,
-			priority = HIGHLIGHT_PRIORITY,
-			dispose = false,
-			focus = false,
-			highlightFocused = false
-	)
-
-	override fun unhighlight(target: UiComponentRo) {
-		highlight.highlighted = null
-		callLater {
-			popUpManager.removePopUp(popUpInfo)
-		}
-	}
-
-	override fun highlight(target: UiComponentRo) {
-		highlight.highlighted = target
-		callLater {
-			popUpManager.addPopUp(popUpInfo)
-		}
-	}
-
-	override fun dispose() {
-		super.dispose()
-		popUpManager.removePopUp(popUpInfo)
-		if (!highlight.isDisposed)
-			highlight.dispose()
-	}
+	companion object : StyleType<HighlightStyle>
 }

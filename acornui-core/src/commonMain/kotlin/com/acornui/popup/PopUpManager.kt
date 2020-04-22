@@ -230,10 +230,6 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		child.layoutData = popUpInfo.layoutData
 	}
 
-	private fun notValidatingCheck() {
-		check(!view.isValidating) { "Cannot add or remove pop-ups during validation. Use callLater or a UI event handler." }
-	}
-
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
 		removePopUp(popUpInfo, true)
 	}
@@ -252,7 +248,6 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	private fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>, allowDisposal: Boolean) {
-		notValidatingCheck()
 		val wasFocused = popUpInfo.child.isFocused
 		val removed = _currentPopUps.remove(popUpInfo)
 		if (!removed) return // Pop-up not found

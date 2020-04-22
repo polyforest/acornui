@@ -28,6 +28,7 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
+import com.acornui.focus.focusHighlightDelegate
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown

@@ -400,8 +400,8 @@ open class Rect(
 
 						if (colorStop.percent != null) {
 							pixel = maxOf(pixel, colorStop.percent * len)
-						} else if (colorStop.pixels != null) {
-							pixel = maxOf(pixel, colorStop.pixels)
+						} else if (colorStop.dp != null) {
+							pixel = maxOf(pixel, colorStop.dp)
 						} else if (i == numColorStops - 1) {
 							pixel = len
 						} else if (i > 0) {
@@ -413,9 +413,9 @@ open class Rect(
 									nextKnownJ = j
 									nextKnownPixel = maxOf(pixel, jColorStop.percent * len)
 									break
-								} else if (jColorStop.pixels != null) {
+								} else if (jColorStop.dp != null) {
 									nextKnownJ = j
-									nextKnownPixel = maxOf(pixel, jColorStop.pixels)
+									nextKnownPixel = maxOf(pixel, jColorStop.dp)
 								}
 							}
 							pixel += (nextKnownPixel - pixel) / (1f + nextKnownJ.toFloat() - i.toFloat())

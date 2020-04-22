@@ -44,6 +44,7 @@ import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.math.*
+import kotlin.random.Random
 
 open class BasicUiSkin(
 		protected val target: UiComponent,
@@ -108,16 +109,28 @@ open class BasicUiSkin(
 	}
 
 	protected open fun focusStyle() {
-		target.getAttachment<Highlighter>(Highlighter)?.dispose()
-		val focusHighlighter = HighlighterImpl(target, simpleHighlight(theme.atlasPaths, "FocusRect") {
-			colorTint = theme.focusHighlightColor
-		})
-		target.setAttachment(Highlighter, focusHighlighter)
 		val focusableStyle = FocusableStyle().apply {
-			highlighter = focusHighlighter
+			highlight = {
+				simpleHighlight(theme.atlasPaths, "HighlightRect") {
+					colorTint = theme.focusHighlightColor
+				}
+			}
+			junk = theme.focusHighlightColor
 		}
 		target.addStyleRule(focusableStyle)
 	}
+//
+//	protected open fun validationStyle() {
+//		target.getAttachment<Highlighter>(Highlighter)?.dispose()
+//		val focusHighlighter = HighlighterImpl(target, simpleHighlight(theme.atlasPaths, "HighlightRect") {
+//			colorTint = theme.focusHighlightColor
+//		})
+//		target.setAttachment(Highlighter, focusHighlighter)
+//		val focusableStyle = ValidationStyle().apply {
+//			highlighter = focusHighlighter
+//		}
+//		target.addStyleRule(focusableStyle)
+//	}
 
 	protected open fun textFontStyle() {
 		theme.bodyFont.addStyles()
@@ -560,7 +573,7 @@ open class BasicUiSkin(
 			borderRadii = Corners(theme.borderRadius)
 			borderThicknesses = Pad(theme.strokeThickness + 1f)
 			cellFocusHighlight = {
-				SimpleHighlight(target, theme.atlasPaths, "FocusRect").apply { colorTint = theme.focusHighlightColor }
+				SimpleHighlight(target, theme.atlasPaths, "HighlightRect").apply { colorTint = theme.focusHighlightColor }
 			}
 			headerCellBackground = {
 				button {

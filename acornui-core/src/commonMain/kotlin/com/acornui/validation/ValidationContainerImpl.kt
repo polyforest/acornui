@@ -99,7 +99,9 @@ class ValidationContainerImpl<T, S : Style, out U : LayoutData, E : UiComponent>
 	var messageFactory: VerticalLayoutContainer<ListItemRenderer<ValidationInfo>>.() -> ListItemRenderer<ValidationInfo> = {
 		validationMessageView {
 			click().add {
-				(data?.validatedData?.component as? UiComponentRo?)?.focus()
+				data?.componentId?.let {
+					this@ValidationContainerImpl.findComponentById(it)?.focus(highlight = true)
+				}
 			}
 		} layout { width = 300f }
 	}
@@ -310,12 +312,3 @@ inline fun Context.validationMessageView(init: ComponentInit<ValidationMessageVi
 //	override fun clear() {
 //	}
 //}
-
-class ValidationContainerStyle : StyleBase() {
-
-	override val type = Companion
-
-	var highlighter by prop<Highlighter?>(null)
-
-	companion object : StyleType<ValidationContainerStyle>
-}
