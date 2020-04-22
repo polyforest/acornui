@@ -224,6 +224,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		val index = _currentPopUps.sortedInsertionIndex(popUpInfo)
 		_currentPopUps.add(index, popUpInfo)
 		view.addElement(index, child)
+		child.validate()
 		refresh()
 		if (popUpInfo.focus)
 			child.focus(popUpInfo.highlightFocused)
