@@ -275,6 +275,7 @@ inline fun charStyle(init: CharStyle.() -> Unit = {}): CharStyle {
 }
 
 object FontWeight {
+	const val HAIRLINE = "hairline"
 	const val THIN = "thin"
 	const val EXTRA_LIGHT = "extra-light"
 	const val LIGHT = "light"
@@ -284,7 +285,7 @@ object FontWeight {
 	const val BOLD = "bold"
 	const val BLACK = "black"
 
-	val values = listOf(THIN, EXTRA_LIGHT, LIGHT, REGULAR, MEDIUM, SEMI_BOLD, BOLD, BLACK)
+	val values = listOf(HAIRLINE, THIN, EXTRA_LIGHT, LIGHT, REGULAR, MEDIUM, SEMI_BOLD, BOLD, BLACK)
 }
 
 object FontStyle {
