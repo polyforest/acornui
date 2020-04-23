@@ -38,7 +38,7 @@ data class Theme(
 		 * If null, this will default to the [com.acornui.WindowConfig.backgroundColor] property.
 		 */
 		val bgColor: ColorRo? = null,
-		
+
 		val panelBgColor: ColorRo = Color(0xe7edf1ff),
 
 		val fill: ColorRo = Color(0xf3f9faff),
@@ -69,6 +69,11 @@ data class Theme(
 		 * Text input, text area.
 		 */
 		val inputFill: ColorRo = Color(0.97f, 0.97f, 0.97f, 1f),
+
+		/**
+		 * Text input, text area.
+		 */
+		val inputCornerRadius: Float = 2f,
 
 		val strokeThickness: Float = 1f,
 		val borderRadius: Float = 8f,
@@ -114,7 +119,7 @@ data class Theme(
 		val bodyFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333333ff)),
 		val menuFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333366ff)),
 		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
-		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x27273aff))
+		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.SMALL, color = Color.RED/*Color(0x27273aff)*/)
 ) {
 
 	@Deprecated("Use atlasPaths", ReplaceWith("atlasPaths"))

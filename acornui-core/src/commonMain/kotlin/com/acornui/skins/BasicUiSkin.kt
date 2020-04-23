@@ -149,6 +149,7 @@ open class BasicUiSkin(
 					style.apply {
 						backgroundColor = theme.inputFill
 						borderColors = BorderColors(theme.stroke)
+						borderRadii = Corners(theme.inputCornerRadius)
 						borderThicknesses = Pad(theme.strokeThickness)
 					}
 				}
