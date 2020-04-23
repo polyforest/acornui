@@ -16,50 +16,14 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.algorithm.GridLayout
-import com.acornui.component.layout.algorithm.GridLayoutData
-import com.acornui.component.layout.algorithm.GridLayoutStyle
+import com.acornui.component.layout.algorithm.GridLayoutContainer
 import com.acornui.component.style.styleTag
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.di.Context
-import com.acornui.validation.ValidationContainerImpl
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
-
-val formStyleTag = styleTag()
-
-typealias FormContainer<T> = ValidationContainerImpl<T, GridLayoutStyle, GridLayoutData, UiComponent>
-
-/**
- * Creates a grid layout container with a style tag for forms.
- *
- * The basic skin will set this as two columns, where the first column is right aligned and the second column left
- * aligned.
- */
-inline fun <T> Context.form(init: ComponentInit<FormContainer<T>> = {}): FormContainer<T> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return ValidationContainerImpl<T, GridLayoutStyle, GridLayoutData, UiComponent>(this, GridLayout()).apply {
-		styleTags.add(formStyleTag)
-		init()
-	}
-}
-
-/**
- * Creates a grid layout container with a style tag for forms.
- *
- * The basic skin will set this as two columns, where the first column is right aligned and the second column left
- * aligned.
- */
-@JvmName("unvalidatedForm")
-inline fun Context.form(init: ComponentInit<FormContainer<Nothing>> = {}): FormContainer<Nothing> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return ValidationContainerImpl<Nothing, GridLayoutStyle, GridLayoutData, UiComponent>(this, GridLayout()).apply {
-		styleTags.add(formStyleTag)
-		init()
-	}
-}
 
 val formLabelStyleTag = styleTag()
 
@@ -68,4 +32,20 @@ inline fun Context.formLabel(text: String = "", init: ComponentInit<TextField> =
 	return text(text) {
 		styleTags.add(formLabelStyleTag)
 	}.apply(init)
+}
+
+val formStyleTag = styleTag()
+
+@JvmName("gridT")
+inline fun <E : UiComponent> Context.gridForm(init: ComponentInit<GridLayoutContainer<E>> = {}): GridLayoutContainer<E> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return GridLayoutContainer<E>(this).apply {
+		styleTags.add(formStyleTag)
+		init()
+	}
+}
+
+inline fun Context.gridForm(init: ComponentInit<GridLayoutContainer<UiComponent>> = {}): GridLayoutContainer<UiComponent> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return gridForm<UiComponent>(init)
 }
