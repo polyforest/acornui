@@ -29,6 +29,7 @@ import com.acornui.graphic.ColorRo
 import com.acornui.graphic.DpiStyle
 import com.acornui.math.Corners
 import com.acornui.math.CornersRo
+import com.acornui.math.MathUtils.clamp
 import com.acornui.math.Pad
 import com.acornui.math.PadRo
 import kotlin.contracts.InvocationKind
@@ -301,6 +302,15 @@ object FontSize {
 	const val EXTRA_LARGE = "extra-large"
 
 	val values = listOf(EXTRA_SMALL, SMALL, REGULAR, LARGE, EXTRA_LARGE)
+
+	/**
+	 * Returns a clamped relative size.
+	 */
+	fun relativeSize(size: String, delta: Int): String {
+		val index = values.indexOf(size)
+		if (index == -1) return REGULAR
+		return values[clamp(index + delta, 0, values.lastIndex)]
+	}
 }
 
 class TextFlowStyle : StyleBase() {

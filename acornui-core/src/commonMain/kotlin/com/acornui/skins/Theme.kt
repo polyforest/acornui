@@ -76,7 +76,7 @@ data class Theme(
 		val inputCornerRadius: Float = 2f,
 
 		val strokeThickness: Float = 1f,
-		val borderRadius: Float = 8f,
+		val borderRadius: Float = 4f,
 
 		val textDisabledColor: ColorRo = Color(0x666666ff),
 

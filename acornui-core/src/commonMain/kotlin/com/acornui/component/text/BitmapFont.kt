@@ -338,7 +338,7 @@ suspend fun FontLoader.loadAndCacheFont(charStyle: CharStyle): FontAndDpiScaling
 	val screenDensity = maxOf(charStyle.scaleX, charStyle.scaleY)
 
 	// Calculate the desired font size in pixels based off the pixel density and font size key.
-	val desiredDp = (charStyle.fontSizes[charStyle.fontSize] ?: error("Unknown size: $charStyle.fontSize")).toFloat()
+	val desiredDp = (charStyle.fontSizes[charStyle.fontSize] ?: error("Unknown size: ${charStyle.fontSize}")).toFloat()
 	val desiredPx = (desiredDp * screenDensity + 0.5f).toInt()
 
 	val fontFamily = loadAndCacheFamily(charStyle.fontFamily

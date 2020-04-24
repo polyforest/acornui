@@ -178,13 +178,6 @@ open class BasicUiSkin(
 		target.addStyleRule(charStyle {
 			colorTint = theme.infoColor
 		}, withAncestor(TextStyleTags.info))
-
-		target.addStyleRule(charStyle { fontStyle = FontStyle.ITALIC }, withAncestor(TextStyleTags.emphasis))
-		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_SMALL }, withAncestor(TextStyleTags.extraSmall))
-		target.addStyleRule(charStyle { fontSize = FontSize.SMALL }, withAncestor(TextStyleTags.small))
-		target.addStyleRule(charStyle { fontSize = FontSize.REGULAR }, withAncestor(TextStyleTags.regular))
-		target.addStyleRule(charStyle { fontSize = FontSize.LARGE }, withAncestor(TextStyleTags.large))
-		target.addStyleRule(charStyle { fontSize = FontSize.EXTRA_LARGE }, withAncestor(TextStyleTags.extraLarge))
 	}
 
 	protected open fun panelStyle() {
@@ -271,7 +264,13 @@ open class BasicUiSkin(
 		}, filter)
 
 		target.addStyleRule(charStyle { fontWeight = strongWeight }, filter and withAncestor(TextStyleTags.strong))
+
 		target.addStyleRule(charStyle { fontStyle = emphasisStyle }, filter and withAncestor(TextStyleTags.emphasis))
+		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, -2) }, filter and withAncestor(TextStyleTags.extraSmall))
+		target.addStyleRule(charStyle { priority = 100f; colorTint = Color.RED; fontSize = FontSize.relativeSize(size, -1) }, AlwaysFilter)
+		target.addStyleRule(charStyle { fontSize = size; priority = 1f }, filter and withAncestor(TextStyleTags.regular))
+		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, 1) }, filter and withAncestor(TextStyleTags.large))
+		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, 2) }, filter and withAncestor(TextStyleTags.extraLarge))
 	}
 
 	protected open fun themeRectStyle() {

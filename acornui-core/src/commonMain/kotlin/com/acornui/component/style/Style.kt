@@ -88,8 +88,15 @@ interface Style : StyleRo, Clearable {
 
 	override val modTag: ModTag
 
+	/**
+	 * Style rules with a higher priority will have their explicit values take precedence over lower priorities.
+	 * If two styles are of equal priority, the descendent will take priority over the ancestor.
+	 */
 	override var priority: Float
 
+	/**
+	 * A filter for whether or not the style rule should be applied.
+	 */
 	override var filter: StyleFilter
 }
 

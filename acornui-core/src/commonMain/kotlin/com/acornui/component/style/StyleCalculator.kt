@@ -28,7 +28,7 @@ interface StyleCalculator {
 	 * 
 	 * @return Returns true if the calculated values have changed.
 	 */
-	fun calculate(target: StylableRo, out: Style): Boolean
+	fun calculate(target: StylableRo, out: Style, debugInfo: StyleDebugInfo? = null): Boolean
 }
 
 object CascadingStyleCalculator : StyleCalculator {
@@ -42,7 +42,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
-	override fun calculate(target: StylableRo, out: Style): Boolean {
+	override fun calculate(target: StylableRo, out: Style, debugInfo: StyleDebugInfo?): Boolean {
 		// Collect all style rule objects for the bound style type and tags.
 		// These entries will be sorted first by priority, and then by ancestry level.
 		target.walkStylableAncestry { ancestor ->
@@ -93,66 +93,7 @@ object CascadingStyleCalculator : StyleCalculator {
 		return hasChanged
 	}
 
-	fun getDebugInfo(style: Style, target: StylableRo): List<StyleRuleDebugInfo> {
-		// Collect all style rule objects for the bound style type and tags.
-		// These entries will be sorted first by priority, and then by ancestry level.
-		val appliedRules = ArrayList<StyleRuleDebugInfo>()
-		target.walkStylableAncestry { ancestor ->
-			style.type.walkInheritance { styleType ->
-				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed { entry ->
-					if (entry.filter(target)) {
-						val index = entries.sortedInsertionIndex(entry, comparator = entrySortComparator)
-						entries.add(index, entry)
-						appliedRules.add(index, StyleRuleDebugInfo(ancestor, entry))
-					}
-				}
-			}
-		}
 
-		// Apply style entries to the calculated values of the bound style.
-		for (i in 0..entries.lastIndex) {
-			val entry = entries[i]
-			val ruleInfo = appliedRules[i]
-			for (j in 0..entry.allProps.lastIndex) {
-				val prop = entry.allProps[j]
-				if (prop.explicitIsSet) {
-					val found = style.allProps.first { it.name == prop.name }
-					if (found.calculatedIsSet) {
-						found.calculatedValue = prop.explicitValue
-						ruleInfo.calculated[prop.name!!] = prop.explicitValue
-					}
-				}
-			}
-		}
-
-		calculated.clear()
-		entries.clear()
-		return appliedRules
-	}
 }
 
-fun List<StyleRuleDebugInfo>.prettyPrint(): String {
-	var str = ""
-	for (styleRuleDebugInfo in this) {
-		if (str.isNotEmpty()) str += ", \n"
-		str += styleRuleDebugInfo.prettyPrint()
-	}
-	return str
-}
-
-class StyleRuleDebugInfo(
-		val ancestor: StylableRo,
-		val entry: StyleRo) {
-
-	val calculated: MutableMap<String, Any?> = HashMap()
-
-	fun prettyPrint(): String {
-		var str = "$ancestor ${entry.filter} ${entry.priority} {\n"
-		for ((key, value) in calculated) {
-			str += "	$key = $value\n"
-		}
-		str += "}"
-		return str
-	}
-}
+class StyleDebugInfo()
