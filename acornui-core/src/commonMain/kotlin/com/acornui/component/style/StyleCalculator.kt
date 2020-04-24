@@ -19,75 +19,95 @@ package com.acornui.component.style
 import com.acornui.collection.*
 
 /**
- * A style calculator is responsible for setting the calculated values
+ * Responsible for setting the calculated values on a [Style] object.
+ *
+ * See [calculate] for documentation on style precedence rules.
  */
-interface StyleCalculator {
+object CascadingStyleCalculator {
 
-	/**
-	 * Sets the calculated values for the given style.
-	 * 
-	 * @return Returns true if the calculated values have changed.
-	 */
-	fun calculate(target: StylableRo, out: Style, debugInfo: StyleDebugInfo? = null): Boolean
-}
-
-object CascadingStyleCalculator : StyleCalculator {
-
-	private val entries = ArrayList<StyleRo>()
-	private val calculated = stringMapOf<Any?>()
-	private val tmp = ArrayList<StyleRo>()
-	private val tmpCalculated = ArrayList<Boolean>()
+	private val rules = ArrayList<StyleRo>()
+	private val calculated = ArrayList<Boolean>()
 
 	private val entrySortComparator = { o1: StyleRo, o2: StyleRo ->
 		-o1.priority.compareTo(o2.priority) // Higher priority values come first.
 	}
 
-	override fun calculate(target: StylableRo, out: Style, debugInfo: StyleDebugInfo?): Boolean {
-		// Collect all style rule objects for the bound style type and tags.
-		// These entries will be sorted first by priority, and then by ancestry level.
+	/**
+	 * Populates the calculated values for a style object.
+	 *
+	 * The calculated values will be based on the [StyleRo] objects within the [StylableRo.styleRules] lists up the
+	 * [StylableRo.styleParent] ancestry.
+	 *
+	 * The applied style rules will be filtered as follows:
+	 *
+	 * The [StyleRo.type] must match the type or a supertype of [out].
+	 * The [StyleRo.filter] must return true for the given [target].
+	 *
+	 * The applied style rules will be ordered as follows:
+	 *
+	 * - First by explicit priority value (higher values first).
+	 * - Second by ancestry level (child before parent).
+	 * - Third by type covariance (style sub-types before super-types). See [StyleType.extends].
+	 * - Finally by rule index (higher indices first).
+	 *
+	 * @param target The [StylableRo] object to use for collecting cascading style rules.
+	 * @param out The mutable [Style] object on which to populate calculated values.
+	 */
+	fun calculate(target: StylableRo, out: Style, debugInfo: StyleDebugInfo? = null): Boolean {
+
+		// Collect all style rules in the order they should be applied.
 		target.walkStylableAncestry { ancestor ->
 			out.type.walkInheritance { styleType ->
-				ancestor.getRulesByType(styleType, tmp)
-				tmp.forEachReversed { entry ->
-					if (entry.filter(target)) {
-						entries.addSorted(entry, comparator = entrySortComparator)
+				ancestor.styleRules.forEachReversed { rule ->
+					if (rule.type == styleType && rule.filter(target)) {
+						rules.addSorted(rule, comparator = entrySortComparator)
 					}
 				}
 			}
 		}
 
+		// The number of properties not yet calculated.
+		var remaining = out.allProps.size
+
+		// Initialize a list of booleans where true indicates that a calculated value has been found.
 		for (i in 0..out.allProps.lastIndex) {
-			tmpCalculated.add(out.allProps[i].explicitIsSet)
+			val v = out.allProps[i].explicitIsSet
+			if (v) remaining--
+			calculated.add(v)
 		}
 
 		// Apply style entries to the calculated values of the bound style.
 		var hasChanged = false
-		entries.forEach { entry: StyleRo ->
-			for (i in 0..entry.allProps.lastIndex) {
-				val prop = entry.allProps[i]
+
+		rulesLoop@
+		for (ruleIndex in 0..rules.lastIndex) {
+			val entry = rules[ruleIndex]
+			for (propIndex in 0..entry.allProps.lastIndex) {
+				val prop = entry.allProps[propIndex]
 				if (prop.explicitIsSet) {
 					val foundIndex = out.allProps.indexOfFirst { it.name == prop.name }
 					val found = out.allProps[foundIndex]
-					if (!tmpCalculated[foundIndex]) {
-						tmpCalculated[foundIndex] = true
+					if (!calculated[foundIndex]) {
+						calculated[foundIndex] = true
+						remaining--
 						val v = prop.explicitValue
 						if (!found.calculatedIsSet || found.calculatedValue != v) {
 							found.calculatedValue = v
 							hasChanged = true
 						}
+						if (remaining == 0) break@rulesLoop
 					}
 				}
 			}
 		}
-		for (i in 0..out.allProps.lastIndex) {
-			if (!tmpCalculated[i]) {
+		for (i in 0..calculated.lastIndex) {
+			if (!calculated[i]) {
 				out.allProps[i].clearCalculated()
 				hasChanged = true
 			}
 		}
-		tmpCalculated.clear()
 		calculated.clear()
-		entries.clear()
+		rules.clear()
 		if (hasChanged) 
 			out.modTag.increment()
 		return hasChanged
@@ -96,4 +116,6 @@ object CascadingStyleCalculator : StyleCalculator {
 
 }
 
-class StyleDebugInfo()
+class StyleDebugInfo(
+//		val rulesApplied: List<>
+)

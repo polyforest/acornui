@@ -21,6 +21,7 @@ package com.acornui.component.style
 import com.acornui.*
 import com.acornui.collection.*
 import com.acornui.function.as1
+import com.acornui.signal.Signal
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -38,15 +39,12 @@ interface StylableRo {
 	 */
 	val styleRules: List<StyleRo>
 
-	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) {
-		out.clear()
-		styleRules.filterTo(out, { it.type == type })
-	}
-
 	/**
 	 * The stylable component parent from which style rules are inherited.
 	 */
 	val styleParent: StylableRo?
+
+	val stylesInvalidated: Signal<(StylableRo)->Unit>
 
 	fun invalidateStyles()
 }
@@ -78,9 +76,7 @@ fun Stylable.addStyleRule(style: Style, filter: StyleFilter = AlwaysFilter, prio
 class Styles(private val host: Stylable) : Disposable {
 
 	val styleTags = ActiveList<StyleTag>()
-	val styleRules = ActiveList<StyleRo>()
-
-	private val entriesByType = HashMap<StyleType<*>, MutableList<StyleRo>>()
+	val styleRules = WatchedElementsActiveList<StyleRo>()
 
 	/**
 	 * A list of styles to validate.
@@ -92,52 +88,11 @@ class Styles(private val host: Stylable) : Disposable {
 
 	init {
 		styleTags.addBinding(host::invalidateStyles)
-		styleRules.added.add {
-			index, entry ->
-			add(entry)
-		}
-		styleRules.removed.add {
-			index, entry ->
-			remove(entry)
-		}
-		styleRules.changed.add {
-			index, oldEntry, newEntry ->
-			remove(oldEntry)
-			add(newEntry)
-		}
-		styleRules.reset.add {
-			for (list in entriesByType.values) {
-				for (entry in list) {
-					entry.changed.remove(::invalidateStyles.as1)
-				}
-			}
-			entriesByType.clear()
-			for (entry in styleRules) add(entry)
-		}
-	}
-
-	private fun add(entry: StyleRo) {
-		entriesByType.getOrPut(entry.type) { ArrayList() }.add(entry)
-		invalidateStyles()
-		entry.changed.add(::invalidateStyles.as1)
-	}
-
-	private fun remove(entry: StyleRo) {
-		entriesByType[entry.type]?.remove(entry)
-		invalidateStyles()
-		entry.changed.remove(::invalidateStyles.as1)
+		styleRules.addBinding(host::invalidateStyles)
 	}
 
 	private fun invalidateStyles() {
 		host.invalidateStyles()
-	}
-
-	fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<T>) {
-		@Suppress("UNCHECKED_CAST")
-		val entries = entriesByType[type] as List<T>?
-		out.clear()
-		if (entries != null)
-			out.addAll(entries)
 	}
 
 	/**
@@ -201,6 +156,9 @@ class Styles(private val host: Stylable) : Disposable {
 
 interface StyleType<out T : StyleRo> {
 
+	/**
+	 * If set, style rules of this supertype will be applied.
+	 */
 	val extends: StyleType<*>?
 		get() = null
 }

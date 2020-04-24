@@ -552,7 +552,19 @@ open class UiComponentImpl(
 	// Stylable
 	//-----------------------------------------------
 
-	override var styleParentOverride: StylableRo? by validationProp(null, ValidationFlags.STYLES)
+	private val _stylesInvalidated = own(Signal1<UiComponent>())
+	override val stylesInvalidated = _stylesInvalidated.asRo()
+
+	override fun invalidateStyles() {
+		invalidate(ValidationFlags.STYLES)
+	}
+
+	final override var styleParentOverride: StylableRo? = null
+		set(value) {
+			if (field == value) return
+			field = value
+			styleParent = value ?: styleParentDefault
+		}
 
 	/**
 	 * The stylable component parent from which style rules are inherited.
@@ -561,12 +573,16 @@ open class UiComponentImpl(
 	 *
 	 * Note that this doesn't use the display graph to avoid expensive styles invalidation on add/remove.
 	 */
-	override val styleParent: StylableRo?
-		get() = styleParentOverride ?: styleParentDefault
+	final override var styleParent: StylableRo? = null
+		protected set(value) {
+			if (field == value) return
+			value?.stylesInvalidated?.remove(::invalidateStyles.as1)
+			field = value
+			value?.stylesInvalidated?.add(::invalidateStyles.as1)
+			invalidateStyles()
+		}
 
-	private val styleParentDefault: StylableRo? by lazy {
-		owner.findOwner { it is StylableRo } as StylableRo? ?: stage
-	}
+	private val styleParentDefault: StylableRo? = owner.findOwner { it is StylableRo } as StylableRo? ?: stage
 
 	private var _styles: Styles? = null
 	private val styles: Styles
@@ -581,20 +597,18 @@ open class UiComponentImpl(
 	final override val styleRules: MutableList<StyleRo>
 		get() = styles.styleRules
 
-	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) = styles.getRulesByType(type, out)
-
 	final override fun <T : Style> bind(style: T): T = styles.bind(style)
 
 	final override fun <T : Style> unbind(style: T) = styles.unbind(style)
 
 	final override fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
 
-	override fun invalidateStyles() {
-		invalidate(ValidationFlags.STYLES)
-	}
-
 	protected open fun updateStyles() {
 		_styles?.validateStyles()
+	}
+
+	init {
+		styleParent = styleParentDefault
 	}
 
 	//-----------------------------------------------
@@ -924,6 +938,8 @@ open class UiComponentImpl(
 			}
 			window.requestRender()
 			onInvalidated(flagsInvalidated)
+			if (flagsInvalidated containsFlag ValidationFlags.STYLES)
+				_stylesInvalidated.dispatch(this)
 			_invalidated.dispatch(this, flagsInvalidated)
 		}
 		return flagsInvalidated

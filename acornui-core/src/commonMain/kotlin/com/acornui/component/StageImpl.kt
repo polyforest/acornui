@@ -76,6 +76,7 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	}
 
 	init {
+		styleParent = null
 		styleTags.add(Stage)
 		cameraOverride = cam
 		own(timer(5.seconds, 10, callback = ::skinCheck))
@@ -109,8 +110,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 			timer.dispose()
 
 	}
-
-	override val styleParent: StylableRo? = null
 
 	/**
 	 * Invoked when the window's size or scaling has changed.

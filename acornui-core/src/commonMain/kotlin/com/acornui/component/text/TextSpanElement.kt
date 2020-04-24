@@ -26,6 +26,7 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.gl.core.CachedGl20
 import com.acornui.graphic.Texture
+import com.acornui.signal.Signal1
 import kotlinx.coroutines.Job
 
 interface TextSpanElementRo<out T : TextElementRo> : ElementParentRo<T> {
@@ -116,10 +117,24 @@ interface TextSpanElement : ElementParent<TextElement>, TextSpanElementRo<TextEl
 
 class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement, Stylable {
 
+	private val _stylesInvalidated = Signal1<Stylable>()
+	override val stylesInvalidated = _stylesInvalidated.asRo()
+
 	private val gl = inject(CachedGl20)
 	private val fontLoader = inject(FontLoader)
 
 	override var textParent: TextNodeRo? = null
+		set(value) {
+			if (field == value) return
+			field?.stylesInvalidated?.remove(::parentStylesInvalidatedHandler)
+			field = value
+			field?.stylesInvalidated?.add(::parentStylesInvalidatedHandler)
+			invalidateStyles()
+		}
+
+	private fun parentStylesInvalidatedHandler(s: StylableRo) {
+		_stylesInvalidated.dispatch(this)
+	}
 
 	override val styleParent: StylableRo?
 		get() = textParent
@@ -162,11 +177,8 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 	override val styleRules: MutableList<StyleRo>
 		get() = styles.styleRules
 
-	override fun <T : StyleRo> getRulesByType(type: StyleType<T>, out: MutableList<StyleRo>) =
-			styles.getRulesByType(type, out)
-
 	override fun invalidateStyles() {
-		textParent?.invalidate(ValidationFlags.STYLES)
+		textParent?.invalidateStyles()
 	}
 
 	override fun validateStyles() {

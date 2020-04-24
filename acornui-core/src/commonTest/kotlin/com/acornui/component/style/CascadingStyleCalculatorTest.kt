@@ -18,6 +18,8 @@ package com.acornui.component.style
 
 import com.acornui.collection.AlwaysFilter
 import com.acornui.component.ComponentInit
+import com.acornui.signal.Signal
+import com.acornui.signal.emptySignal
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.test.Test
@@ -36,13 +38,11 @@ class CascadingStyleCalculatorTest {
 		// b : a
 		// c : a
 
-		val a = object : Stylable {
+		val a = object : SimpleStylable() {
 			override val styleTags = arrayListOf(tagA)
 			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent: Stylable? = null
-
-			override fun invalidateStyles() {}
 
 			init {
 				simpleStyle(withAncestor(tagA), -1f) {
@@ -65,13 +65,11 @@ class CascadingStyleCalculatorTest {
 			}
 		}
 
-		val stylableB = object : Stylable {
+		val stylableB = object : SimpleStylable() {
 			override val styleTags = arrayListOf(tagB)
 			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent: Stylable? = a
-
-			override fun invalidateStyles() {}
 
 			init {
 				simpleStyle(withAncestor(tagB), -1f) {
@@ -81,13 +79,11 @@ class CascadingStyleCalculatorTest {
 			}
 		}
 
-		val c = object : Stylable {
+		val c = object : SimpleStylable() {
 			override val styleTags = arrayListOf(tagC)
 			override val styleRules = arrayListOf<StyleRo>()
 
 			override val styleParent = a
-
-			override fun invalidateStyles() {}
 
 			init {
 				simpleStyle(withAncestor(tagC)) {
@@ -117,10 +113,11 @@ class CascadingStyleCalculatorTest {
 
 }
 
-private fun <T : StyleRo> Stylable.filterRules(type: StyleType<T>, out: MutableList<T>) {
-	out.clear()
-	@Suppress("UNCHECKED_CAST")
-	(styleRules as Iterable<T>).filterTo(out, { it.type == type })
+private abstract class SimpleStylable : Stylable {
+
+	override val stylesInvalidated: Signal<(StylableRo) -> Unit> = emptySignal()
+
+	override fun invalidateStyles() {}
 }
 
 private class SimpleStyle : StyleBase() {

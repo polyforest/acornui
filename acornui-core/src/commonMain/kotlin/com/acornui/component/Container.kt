@@ -146,6 +146,7 @@ open class ContainerImpl(
 	//-------------------------------------------------------------------------------------------------
 
 	override fun onInvalidated(flagsInvalidated: Int) {
+		super.onInvalidated(flagsInvalidated)
 		val flagsToCascade = flagsInvalidated and cascadingFlags
 		if (flagsToCascade > 0) {
 			// This component has flags that have been invalidated that must cascade down to the children.
@@ -345,7 +346,6 @@ open class ContainerImpl(
 		var defaultBubblingFlags = ValidationFlags.HIERARCHY_ASCENDING
 
 		var defaultCascadingFlags = ValidationFlags.HIERARCHY_DESCENDING or
-				ValidationFlags.STYLES or
 				ValidationFlags.INTERACTIVITY_MODE or
 				ValidationFlags.TRANSFORM or
 				ValidationFlags.COLOR_TINT or

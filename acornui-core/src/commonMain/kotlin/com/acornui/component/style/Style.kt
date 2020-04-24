@@ -18,7 +18,6 @@ package com.acornui.component.style
 
 import com.acornui.Disposable
 import com.acornui.collection.AlwaysFilter
-import com.acornui.collection.first
 import com.acornui.component.UiComponent
 import com.acornui.component.layout.spacer
 import com.acornui.di.Context
@@ -182,7 +181,7 @@ fun <T : Style> T.set(other: T) {
 	for (i in 0..allProps.lastIndex) {
 		val p = allProps[i]
 		val otherP = other.allProps.first { it.name == p.name }
-		if (p.explicitValue != otherP.value) {
+		if (p.explicitIsSet && p.explicitValue != otherP.value) {
 			hasChanged = true
 			p.explicitValue = otherP.value
 		}
@@ -195,10 +194,8 @@ class StyleProp<T>(
 		val defaultValue: T
 ) : ReadWriteProperty<Style, T>, Clearable {
 
-	private var _explicitIsSet = false
-
-	val explicitIsSet: Boolean
-		get() = _explicitIsSet
+	var explicitIsSet: Boolean = false
+		private set
 
 	private var _explicitValue: T? = null
 
@@ -209,25 +206,19 @@ class StyleProp<T>(
 	var explicitValue: T
 		get() = _explicitValue as T
 		set(v) {
-			_explicitIsSet = true
+			explicitIsSet = true
 			_explicitValue = v
-			_calculatedIsSet = true
-			_calculatedValue = v
+			calculatedValue = v
 		}
 
-	private var _calculatedIsSet = false
-
-	val calculatedIsSet: Boolean
-		get() = _calculatedIsSet
-
-	private var _calculatedValue: T = defaultValue
+	var calculatedIsSet: Boolean = false
+		private set
 
 	@Suppress("UNCHECKED_CAST")
-	var calculatedValue: T
-		get() = _calculatedValue
+	var calculatedValue: T = defaultValue
 		set(value) {
-			_calculatedIsSet = true
-			_calculatedValue = value
+			calculatedIsSet = true
+			field = value
 		}
 
 	var name: String? = null
@@ -248,17 +239,17 @@ class StyleProp<T>(
 	 * Returns the calculated value.
 	 */
 	val value: T
-		get() = _calculatedValue
+		get() = calculatedValue
 
 	@Suppress("unchecked_cast")
 	override fun getValue(thisRef: Style, property: KProperty<*>): T {
-		return _calculatedValue
+		return calculatedValue
 	}
 
 	override fun setValue(thisRef: Style, property: KProperty<*>, value: T) = setValue(thisRef, value)
 
 	fun setValue(thisRef: Style, value: T) {
-		if (_explicitIsSet && _explicitValue == value) return // No-op
+		if (explicitIsSet && _explicitValue == value) return // No-op
 		explicitValue = value
 		thisRef.notifyChanged()
 	}
@@ -268,19 +259,19 @@ class StyleProp<T>(
 	 */
 	fun clearCalculated() {
 		if (explicitIsSet) return
-		_calculatedIsSet = false
-		_calculatedValue = defaultValue
+		calculatedValue = defaultValue
+		calculatedIsSet = false
 	}
 
 	override fun clear() {
-		_explicitIsSet = false
 		_explicitValue = null
-		_calculatedIsSet = false
-		_calculatedValue = defaultValue
+		explicitIsSet = false
+		calculatedValue = defaultValue
+		calculatedIsSet = false
 	}
 
 	override fun toString(): String {
-		return "${if (_explicitIsSet) "*" else ""}$name=$_explicitValue"
+		return "${if (explicitIsSet) "*" else ""}$name=$_explicitValue"
 	}
 }
 
