@@ -149,7 +149,7 @@ class HorizontalLayout : LayoutAlgorithm<HorizontalLayoutStyle, HorizontalLayout
 
 }
 
-class HorizontalLayoutStyle : StyleBase() {
+open class HorizontalLayoutStyle : StyleBase() {
 
 	override val type: StyleType<HorizontalLayoutStyle> = Companion
 

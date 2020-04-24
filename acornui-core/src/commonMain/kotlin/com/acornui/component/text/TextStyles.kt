@@ -323,8 +323,21 @@ class TextFlowStyle : StyleBase() {
 	var tabSize by prop(4)
 
 	var horizontalAlign by prop(FlowHAlign.LEFT)
+
 	var verticalAlign by prop(FlowVAlign.BASELINE)
+
 	var multiline by prop(true)
+
+	/**
+	 * If false (default), the measured size be the max of the explicit size if set.
+	 */
+	var sizeToContents by prop(false)
+
+	/**
+	 * If true (default), this component will be clipped to the explicit size.
+	 * The measured size will be the min of the explicit and measured dimensions.
+	 */
+	var allowClipping by prop(true)
 
 	companion object : StyleType<TextFlowStyle>
 }

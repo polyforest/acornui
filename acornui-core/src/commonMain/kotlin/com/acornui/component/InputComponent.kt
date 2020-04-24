@@ -22,16 +22,18 @@ import com.acornui.signal.Signal
 /**
  * A UiComponent that can be observed for changes.
  */
-interface InputComponent<out T> : Observable, UiComponentRo {
+interface InputComponentRo<out T> : Observable, UiComponentRo {
 
 	/**
 	 * Dispatched on value commit.
 	 * This is only dispatched on a user interaction.
 	 */
-	override val changed: Signal<(InputComponent<T>) -> Unit>
+	override val changed: Signal<(InputComponentRo<T>) -> Unit>
 
 	/**
 	 * This component's input value.
 	 */
 	val inputValue: T
 }
+
+interface InputComponent<out T> : UiComponent, InputComponentRo<T>

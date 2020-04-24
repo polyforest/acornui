@@ -54,7 +54,7 @@ interface TextInput : InputComponent<String>, Focusable, SelectableComponent, St
 	 * Dispatched on each input character.
 	 * Note - this does not invoke when the text is programmatically changed.
 	 */
-	val input: Signal<() -> Unit>
+	val input: Signal<(TextInput) -> Unit>
 
 	/**
 	 * Dispatched on value commit.
@@ -110,7 +110,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 	override val flowStyle: TextFlowStyle
 		get() = editableText.flowStyle
 
-	override val input: Signal<() -> Unit>
+	override val input: Signal<(TextInput) -> Unit>
 		get() = editableText.input
 
 	override val changed: Signal<(TextInput) -> Unit>
@@ -262,7 +262,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	override val textInputStyle = bind(TextInputStyle())
 
 	private val editableText = EditableText(this).apply {
-		textField.allowClipping = false
+		textField.flowStyle.allowClipping = false // TODO: Clipping within a text area
 	}
 
 	private val scroller = addChild(scrollArea {
@@ -276,7 +276,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	override val flowStyle: TextFlowStyle
 		get() = editableText.flowStyle
 
-	override val input: Signal<() -> Unit>
+	override val input: Signal<(TextInput) -> Unit>
 		get() = editableText.input
 
 	override val changed: Signal<(TextInput) -> Unit>
@@ -469,7 +469,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		out.set(
 				explicitWidth ?: textInputStyle.defaultWidth,
 				explicitHeight ?: margin.expandHeight(scroller.height),
-				baseline = editableText.baseline + editableText.y
+				editableText.baselineY
 		)
 		background?.size(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
 		background?.position(margin.left, margin.top)

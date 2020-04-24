@@ -270,7 +270,6 @@ fun UiComponentRo.tooltipAttachment(): TooltipAttachment {
 	return createOrReuseAttachment(TooltipAttachment) { TooltipAttachment(this) }
 }
 
-@Suppress("unused")
 fun UiComponentRo.tooltip(value: String?) {
 	val attachment = tooltipAttachment()
 	attachment.tooltip = if (value == null) null else attachment.tooltipManager.createTooltip(value)

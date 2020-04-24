@@ -44,6 +44,7 @@ import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.math.*
+import com.acornui.validation.FormInputStyle
 import kotlin.random.Random
 
 open class BasicUiSkin(
@@ -795,6 +796,22 @@ open class BasicUiSkin(
 			)
 		}
 		target.addStyleRule(formStyle, formStyleTag)
+
+		val formInputStyle = FormInputStyle().apply {
+			errorIcon = {
+				atlas(theme.atlasPaths, "ic_error_outline_white_24dp") {
+					colorTint = theme.errorColor
+					baselineOverride = 15f
+				}
+			}
+			warningIcon = {
+				atlas(theme.atlasPaths, "ic_warning_white_24dp") {
+					colorTint = theme.warningColor
+					baselineOverride = 15f
+				}
+			}
+		}
+		target.addStyleRule(formInputStyle)
 	}
 
 	protected open fun softKeyboardStyle() {

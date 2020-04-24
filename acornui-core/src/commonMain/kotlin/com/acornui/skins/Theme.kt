@@ -119,7 +119,7 @@ data class Theme(
 		val bodyFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333333ff)),
 		val menuFont: ThemeFontVo = ThemeFontVo("Roboto", color = Color(0x333366ff)),
 		val headingFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.LARGE, color = Color(0x333355ff)),
-		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.SMALL, color = Color.RED/*Color(0x27273aff)*/)
+		val formLabelFont: ThemeFontVo = ThemeFontVo("Roboto", size = FontSize.SMALL, color = Color(0x27273aff))
 ) {
 
 	@Deprecated("Use atlasPaths", ReplaceWith("atlasPaths"))

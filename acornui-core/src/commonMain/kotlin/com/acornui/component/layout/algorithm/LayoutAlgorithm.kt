@@ -24,7 +24,6 @@ import com.acornui.math.Bounds
 
 /**
  * A LayoutAlgorithm implementation sizes and positions layout elements.
- *
  */
 interface LayoutAlgorithm<S : Style, out T : LayoutData> : LayoutDataProvider<T> {
 

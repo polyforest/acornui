@@ -141,7 +141,7 @@ class VerticalLayout : LayoutAlgorithm<VerticalLayoutStyle, VerticalLayoutData> 
 	}
 }
 
-class VerticalLayoutStyle : StyleBase() {
+open class VerticalLayoutStyle : StyleBase() {
 
 	override val type: StyleType<VerticalLayoutStyle> = Companion
 

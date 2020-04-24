@@ -249,11 +249,6 @@ interface TextNode : TextNodeRo, UiComponent {
 	override var textField: TextField?
 
 	/**
-	 * If true, this component's vertices will be clipped to the explicit size.
-	 */
-	var allowClipping: Boolean
-
-	/**
 	 * Sets the text selection.
 	 * @param rangeStart The starting index of this node. The selection range indices are relative to the text field
 	 * and text nodes themselves don't know their starting index. Therefore it is provided.

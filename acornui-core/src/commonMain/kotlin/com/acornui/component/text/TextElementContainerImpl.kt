@@ -43,15 +43,6 @@ abstract class TextElementContainerImpl<E : TextNode>(owner: Context) : ElementC
 			return _textElements
 		}
 
-	override var allowClipping: Boolean = true
-		set(value) {
-			if (field == value) return
-			field = value
-			elements.forEach { it: E ->
-				it.allowClipping = value
-			}
-		}
-
 	init {
 		validation.addNode(TEXT_ELEMENTS, dependencies = ValidationFlags.HIERARCHY_ASCENDING, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
 		validation.addNode(LINES, dependencies = ValidationFlags.LAYOUT, onValidate = ::updateLines)

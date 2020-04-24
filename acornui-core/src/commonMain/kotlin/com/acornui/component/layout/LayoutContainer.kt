@@ -22,7 +22,7 @@ import com.acornui.math.Bounds
 abstract class LayoutContainer<S : Style, out U : LayoutData>(
 		owner: Context,
 		private val layoutAlgorithm: LayoutAlgorithm<S, U>
-) : ContainerImpl(owner), LayoutDataProvider<U>, Focusable {
+) : ContainerImpl(owner), LayoutDataProvider<U> {
 
 	protected val elements: MutableList<UiComponent> = ArrayList()
 

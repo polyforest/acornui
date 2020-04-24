@@ -69,8 +69,6 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 			ValidationFlags.HIERARCHY_ASCENDING or
 					ValidationFlags.LAYOUT
 
-	override var allowClipping: Boolean by validationProp(true, TextValidationFlags.VERTICES)
-
 	init {
 		validation.addNode(TextValidationFlags.TEXT_ELEMENTS, dependencies = 0, dependents = ValidationFlags.LAYOUT, onValidate = ::updateTextElements)
 		validation.addNode(TextValidationFlags.SELECTION, dependencies = TextValidationFlags.TEXT_ELEMENTS or ValidationFlags.STYLES, dependents = ValidationFlags.VERTICES_GLOBAL, onValidate = ::updateSelection)
@@ -241,9 +239,11 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		}
 		val measuredHeight = y + padding.bottom
 		measuredWidth += padding.left + padding.right
-		if (measuredWidth > out.width) out.width = measuredWidth
-		if (measuredHeight > out.height) out.height = measuredHeight
+		if (flowStyle.sizeToContents || measuredWidth > out.width) out.width = measuredWidth
+		if (flowStyle.sizeToContents || measuredHeight > out.height) out.height = measuredHeight
 		out.baseline = padding.top + (lines.firstOrNull()?.baseline ?: 0f)
+
+		flowStyle.clipBounds(explicitWidth, explicitHeight, out)
 	}
 
 	private val LineInfoRo.lastClearsLine: Boolean
@@ -322,10 +322,8 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 		val padding = flowStyle.padding
 		val leftClip = padding.left
 		val topClip = padding.top
-		val w = (if (allowClipping) explicitWidth else null) ?: Float.MAX_VALUE
-		val h = (if (allowClipping) explicitHeight else null) ?: Float.MAX_VALUE
-		val rightClip = w - padding.right
-		val bottomClip = h - padding.bottom
+		val rightClip = _bounds.width - padding.right
+		val bottomClip = _bounds.height - padding.bottom
 		for (i in 0..textElements.lastIndex) {
 			textElements[i].updateVertices(leftClip, topClip, rightClip, bottomClip)
 		}
@@ -445,6 +443,24 @@ class Paragraph(owner: Context) : UiComponentImpl(owner), TextNode, ElementParen
 			element.textParent = this@Paragraph
 			invalidate(bubblingFlags)
 			return oldElement
+		}
+	}
+}
+
+/**
+ * If [TextFlowStyle.allowClipping] is true, clips the bounds to at most the given explicit dimensions (if set).
+ */
+internal fun TextFlowStyle.clipBounds(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
+	if (allowClipping) {
+		if (explicitWidth != null) {
+			if (explicitWidth < out.width)
+				out.width = explicitWidth
+		}
+		if (explicitHeight != null) {
+			if (explicitHeight < out.height)
+				out.height = explicitHeight
+			if (explicitHeight < out.baseline)
+				out.baseline = explicitHeight
 		}
 	}
 }

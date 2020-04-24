@@ -16,6 +16,7 @@
 
 package com.acornui.validation
 
+import com.acornui.component.InputComponent
 import com.acornui.component.style.StyleTag
 import com.acornui.component.text.TextStyleTags
 
@@ -54,13 +55,20 @@ data class ValidationInfo(
 		/**
 		 * The severity. If this is [ValidationLevel.ERROR] then [ValidationResults.success] will return false.
 		 */
-		val level: ValidationLevel = ValidationLevel.ERROR,
+		val level: ValidationLevel,
+
+		/**
+		 * The name of the validated component.
+		 */
+		val name: String,
 
 		/**
 		 * The component responsible for this validation.
 		 */
-		val componentId: String? = null
+		val component: InputComponent<*>
 )
+
+typealias Validator<T> = suspend (T) -> ValidationResults<T>
 
 /**
  * True if this validation info list contains no errors.

@@ -71,11 +71,6 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	var text: String
 
 	/**
-	 * If true (default), the contents will be clipped to the explicit size of this text field.
-	 */
-	var allowClipping: Boolean
-
-	/**
 	 * The font for the root character style.
 	 * Note that it's up to the span element character styles to decide what font to use for glyphs. This root
 	 * font is only used for sizing the text field when there are no text elements.
@@ -165,7 +160,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 	init {
 		element = _textContents
-		// Add the styles as rules so that they cascade down into the text spans:
+		// Add the styles as rules so that their explicit properties cascade down into the text spans:
 		addStyleRule(flowStyle)
 		addStyleRule(charStyle)
 		styleTags.add(TextField)
@@ -190,18 +185,6 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		}
 		selectionManager.selectionChanged.add(::refreshSelection.as2)
 	}
-
-	/**
-	 * If true (default), the contents will be clipped to the explicit size of this text field.
-	 */
-	override var allowClipping: Boolean = true
-		set(value) {
-			if (field == value) return
-			field = value
-			_textContents.allowClipping = value
-			element?.allowClipping = value
-			invalidateLayout()
-		}
 
 	override fun onElementChanged(oldElement: TextNode?, newElement: TextNode?) {
 		super.onElementChanged(oldElement, newElement)
@@ -265,15 +248,10 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 			val padding = flowStyle.padding
 			val lineHeight: Float = (fontData?.lineHeight?.toFloat() ?: 0f) / fontScaleY
 			out.height = padding.expandHeight(lineHeight)
+			if (flowStyle.sizeToContents)
+				out.width = padding.left + padding.right
 			out.baseline = padding.top + (fontData?.baseline?.toFloat() ?: 0f) / fontScaleY
-		}
-
-		if (contents.allowClipping) {
-			if (explicitWidth != null) out.width = explicitWidth
-			if (explicitHeight != null) {
-				out.height = explicitHeight
-				out.baseline = minOf(explicitHeight, out.baseline)
-			}
+			flowStyle.clipBounds(explicitWidth, explicitHeight, out)
 		}
 	}
 

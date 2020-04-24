@@ -325,7 +325,7 @@ class FlowLayoutStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad())
+	var padding by prop<PadRo>(Pad())
 	var horizontalAlign by prop(FlowHAlign.LEFT)
 	var verticalAlign by prop(FlowVAlign.BASELINE)
 	var multiline by prop(true)

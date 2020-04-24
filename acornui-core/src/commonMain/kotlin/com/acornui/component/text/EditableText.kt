@@ -56,7 +56,7 @@ import com.acornui.time.onTick
 @Suppress("LeakingThis")
 class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
-	private val _input = own(Signal0())
+	private val _input = own(Signal1<TextInput>())
 	val input = _input.asRo()
 
 	private val _changed = own(Signal1<TextInput>())
@@ -147,6 +147,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private val cmd = own(commander())
 
+	/**
+	 * When this component is blurred, only dispatch a changed event if the value has changed.
+	 */
+	private var pendingChange = false
+
 	init {
 		host.click().add {
 			if (it.fromTouch) {
@@ -163,7 +168,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		host.blurredSelf().add {
 			host.unselect()
 			if (isActive)
-				_changed.dispatch(host)
+				dispatchChanged()
 		}
 
 		host.char().add {
@@ -172,7 +177,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				if (glyphs?.containsKey(it.char) == true && it.char != '\n' && it.char != '\r') {
 					it.handled = true
 					replaceSelection(it.char.toString())
-					_input.dispatch()
+					dispatchInput()
 				}
 			}
 		}
@@ -185,7 +190,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 					val glyphs = getFontAtSelection()?.glyphs
 					replaceSelection(str.filter { char -> glyphs?.containsKey(char) == true && char != '\n' && char != '\r' }, CommandGroup())
 					currentGroup = CommandGroup()
-					_input.dispatch()
+					dispatchInput()
 				}
 			}
 		}
@@ -213,7 +218,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 						replaceSelection("", CommandGroup())
 					it.addItem(ClipboardItemType.PLAIN_TEXT, subStr)
 					currentGroup = CommandGroup()
-					_input.dispatch()
+					dispatchInput()
 				}
 			}
 		}
@@ -247,19 +252,20 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				selectionManager.selection = it.newSelection
 		}
 
-		host.undo().add {
-			if (!it.defaultPrevented()) {
-				_input.dispatch()
-				_changed.dispatch(host)
-			}
-		}
-
-		host.redo().add {
-			if (!it.defaultPrevented()) {
-				_input.dispatch()
-				_changed.dispatch(host)
-			}
-		}
+		// TODO: Support undo/redo
+//		host.undo().add {
+//			if (!it.defaultPrevented()) {
+//				dispatchInput()
+//				dispatchChanged()
+//			}
+//		}
+//
+//		host.redo().add {
+//			if (!it.defaultPrevented()) {
+//				dispatchInput()
+//				dispatchChanged()
+//			}
+//		}
 	}
 
 	private fun getFontAtSelection(): BitmapFont? {
@@ -307,18 +313,18 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				event.preventDefault() // Otherwise backspace causes browser BACK in IE.
 				event.handled = true
 				backspace(event)
-				_input.dispatch()
+				dispatchInput()
 			}
 			Ascii.TAB -> if (allowTab) {
 				event.preventDefault() // Prevent focus manager from tabbing.
 				event.handled = true
 				replaceSelection("\t")
-				_input.dispatch()
+				dispatchInput()
 			}
 			Ascii.DELETE -> {
 				event.handled = true
 				delete()
-				_input.dispatch()
+				dispatchInput()
 			}
 			Ascii.ENTER, Ascii.RETURN -> {
 				val sel = firstSelection
@@ -328,12 +334,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				if (multiline ?: flowStyle.multiline) {
 					event.handled = true
 					replaceSelection("\n")
-					_input.dispatch()
+					dispatchInput()
 				} else {
 					if (_changed.isNotEmpty()) {
-						// Only mark the key event as handled if there are change handlers.
-						event.handled = true
-						_changed.dispatch(host)
+						// Only mark the key event as handled if there are change handlers and there was a change.
+						if (dispatchChanged())
+							event.handled = true
 					}
 				}
 			}
@@ -601,6 +607,18 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		if (oldSelection.filter { it.target == host } != newSelection.filter { it.target == host }) {
 			invalidate(TEXT_CURSOR)
 		}
+	}
+
+	private fun dispatchInput() {
+		pendingChange = true
+		_input.dispatch(host)
+	}
+
+	private fun dispatchChanged(): Boolean {
+		if (!pendingChange) return true
+		pendingChange = false
+		_changed.dispatch(host)
+		return false
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

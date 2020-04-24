@@ -315,7 +315,7 @@ data class GridColumn(
 
 open class GridLayoutStyle : StyleBase() {
 
-	override val type = Companion
+	override val type: StyleType<GridLayoutStyle> = Companion
 
 	/**
 	 * The gap between rows.
