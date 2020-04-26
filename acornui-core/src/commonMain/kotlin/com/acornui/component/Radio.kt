@@ -18,11 +18,20 @@ package com.acornui.component
 
 import com.acornui.Lifecycle
 import com.acornui.ManagedDisposable
+import com.acornui.component.layout.ElementLayoutContainer
+import com.acornui.component.layout.LayoutData
+import com.acornui.component.layout.algorithm.*
+import com.acornui.component.style.Style
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
+import com.acornui.di.own
 import com.acornui.function.as1
 import com.acornui.input.interaction.click
 import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.jvm.JvmName
 
 interface RadioButtonRo<out T> : ButtonRo {
 	val data: T
@@ -45,22 +54,7 @@ open class RadioButtonImpl<out T>(
 	companion object : StyleTag
 }
 
-fun <T> Context.radioButton(group: RadioGroup<T>, data: T, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
-	val b = RadioButtonImpl(this, data)
-	group.register(b)
-	b.init()
-	return b
-}
-
-fun <T> Context.radioButton(group: RadioGroup<T>, data: T, label: String, init: ComponentInit<RadioButtonImpl<T>> = {}): RadioButtonImpl<T> {
-	val b = RadioButtonImpl(this, data)
-	group.register(b)
-	b.label = label
-	b.init()
-	return b
-}
-
-class RadioGroup<T>(val owner: Context) : ManagedDisposable {
+class RadioGroupController<T>(val owner: Context) : ManagedDisposable {
 
 	init {
 		owner.disposed.add(::dispose.as1)
@@ -75,7 +69,7 @@ class RadioGroup<T>(val owner: Context) : ManagedDisposable {
 
 	@Suppress("UNCHECKED_CAST")
 	private val toggledChangedHandler: (ButtonRo) -> Unit = {
-		selectedData = (it as RadioButton<T>).data
+		inputValue = (it as RadioButton<T>).data
 		_changed.dispatch()
 	}
 
@@ -88,7 +82,7 @@ class RadioGroup<T>(val owner: Context) : ManagedDisposable {
 		button.toggledChanged.add(toggledChangedHandler)
 		button.disposed.add(disposedHandler)
 		_radioButtons.add(button)
-		if (button.data == selectedData)
+		if (button.data == inputValue)
 			toggledButton = button
 	}
 
@@ -107,22 +101,15 @@ class RadioGroup<T>(val owner: Context) : ManagedDisposable {
 			field?.toggled = true
 		}
 
-	var selectedData: T? = null
+	var inputValue: T? = null
 		set(value) {
 			field = value
 			toggledButton = _radioButtons.find { it.data == value }
 		}
 
-	fun radioButton(data: T, label: String, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
+	fun radioButton(data: T, label: String = "", init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
 		val b = RadioButtonImpl(owner, data)
 		b.label = label
-		register(b)
-		b.init()
-		return b
-	}
-
-	fun radioButton(data: T, init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> {
-		val b = RadioButtonImpl(owner, data)
 		register(b)
 		b.init()
 		return b
@@ -136,8 +123,44 @@ class RadioGroup<T>(val owner: Context) : ManagedDisposable {
 	}
 }
 
-fun <T> Context.radioGroup(init: RadioGroup<T>.() -> Unit = {}): RadioGroup<T> {
-	val group = RadioGroup<T>(this)
-	group.init()
-	return group
+open class RadioGroupView<S : Style, U : LayoutData, E : UiComponent, T>(owner: Context, layoutAlgorithm: LayoutAlgorithm<S, U>) : ElementLayoutContainer<S, U, E>(owner, layoutAlgorithm), InputComponent<T?> {
+
+	private val _changed = own(Signal1<RadioGroupView<S, U, E, T>>())
+	override val changed = _changed.asRo()
+
+	private val group = RadioGroupController<T>(this)
+
+	fun radioButton(data: T, label: String = "", init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> = group.radioButton(data, label, init)
+
+	override var inputValue: T?
+		get() = group.inputValue
+		set(value) {
+			group.inputValue = value
+		}
+}
+
+typealias HRadioGroupView<E, T> = RadioGroupView<HorizontalLayoutStyle, HorizontalLayoutData, E, T>
+
+@JvmName("hGroupT")
+inline fun <E : UiComponent, T> Context.hRadioGroup(init: ComponentInit<HRadioGroupView<E, T>> = {}): HRadioGroupView<E, T> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return HRadioGroupView<E, T>(this, HorizontalLayout()).apply(init)
+}
+
+inline fun <T> Context.hRadioGroup(init: ComponentInit<HRadioGroupView<UiComponent, T>> = {}): HRadioGroupView<UiComponent, T> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return HRadioGroupView<UiComponent, T>(this, HorizontalLayout()).apply(init)
+}
+
+typealias VRadioGroupView<E, T> = RadioGroupView<VerticalLayoutStyle, VerticalLayoutData, E, T>
+
+@JvmName("vGroupT")
+inline fun <E : UiComponent, T> Context.vRadioGroup(init: ComponentInit<VRadioGroupView<E, T>> = {}): VRadioGroupView<E, T> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return VRadioGroupView<E, T>(this, VerticalLayout()).apply(init)
+}
+
+inline fun <T> Context.vRadioGroup(init: ComponentInit<VRadioGroupView<UiComponent, T>> = {}): VRadioGroupView<UiComponent, T> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return VRadioGroupView<UiComponent, T>(this, VerticalLayout()).apply(init)
 }

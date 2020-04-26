@@ -25,7 +25,6 @@ import com.acornui.component.style.StyleType
 import com.acornui.component.style.noSkinOptional
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.focus.showFocusHighlight
 import com.acornui.function.as1
 import com.acornui.math.Bounds
 import com.acornui.minus

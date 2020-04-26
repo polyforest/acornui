@@ -34,8 +34,11 @@ open class CheckboxImpl(
 	@Suppress("UNCHECKED_CAST")
 	final override val changed: Signal<(CheckboxImpl) -> Unit> = toggledChanged as Signal<(CheckboxImpl) -> Unit>
 
-	override val inputValue: Boolean
+	override var inputValue: Boolean
 		get() = toggled
+		set(value) {
+			toggled = value
+		}
 
 	companion object : StyleTag
 }

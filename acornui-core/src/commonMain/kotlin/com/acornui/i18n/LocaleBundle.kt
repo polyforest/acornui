@@ -21,7 +21,9 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.own
 import com.acornui.logging.Log
+import com.acornui.observe.Bindable
 import com.acornui.observe.bind
+import com.acornui.observe.or
 import com.acornui.system.userInfo
 import kotlinx.coroutines.launch
 
@@ -48,6 +50,17 @@ val Context.i18nBundleName: String
  */
 fun Context.i18n(callback: suspend () -> Unit): Disposable {
 	return bind(userInfo.currentLocale.changed) {
+		launch {
+			callback()
+		}
+	}
+}
+
+/**
+ * Creates a binding to the user's current Locale and [other].
+ */
+fun Context.i18n(other: Bindable, callback: suspend () -> Unit): Disposable {
+	return bind(userInfo.currentLocale.changed or other) {
 		launch {
 			callback()
 		}

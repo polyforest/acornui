@@ -22,6 +22,7 @@ import com.acornui.component.button
 import com.acornui.component.style.styleTag
 import com.acornui.di.Context
 import com.acornui.focus.enterTarget
+import com.acornui.i18n.i18n
 import com.acornui.i18n.string
 import com.acornui.input.interaction.click
 import com.acornui.observe.bind
@@ -59,10 +60,8 @@ fun <T> ValidationForm<T, *, *>.submitButton(
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return button {
 		styleTags.add(submitButtonStyleTag)
-		bind(userInfo.currentLocale) {
-			launch {
-				label = string(i18nBundleKey, i18nBundleName, it)
-			}
+		i18n {
+			label = string(i18nBundleKey, i18nBundleName)
 		}
 		enterTarget(this)
 		click().add {

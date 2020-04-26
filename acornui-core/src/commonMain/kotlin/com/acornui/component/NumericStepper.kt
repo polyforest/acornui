@@ -39,7 +39,7 @@ import com.acornui.text.numberFormatter
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
+class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner), InputComponent<Float> {
 
 	val style = bind(NumericStepperStyle())
 
@@ -49,7 +49,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 	 * The user has changed this stepper's value.
 	 * This will not be dispatched on a programmatic change, only user input.
 	 */
-	val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	val formatter: NumberFormatter = numberFormatter().apply {
 		useGrouping = false
@@ -95,7 +95,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 			if (newMax == _max) return
 			_max = newMax
 			if (_value > _max) {
-				this.value = _max
+				this.inputValue = _max
 			}
 		}
 
@@ -110,7 +110,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 			if (newMin == _min) return
 			_min = newMin
 			if (_value < _min) {
-				this.value = _min
+				this.inputValue = _min
 			}
 		}
 
@@ -127,7 +127,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 		mouseDown().add {
 			if (!it.handled) {
 				it.handled = true
-				userChange(value + step)
+				userChange(inputValue + step)
 			}
 		}
 		enableDownRepeat()
@@ -138,7 +138,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 		mouseDown().add {
 			if (!it.handled) {
 				it.handled = true
-				userChange(value - step)
+				userChange(inputValue - step)
 			}
 		}
 		enableDownRepeat()
@@ -146,7 +146,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 
 	private var _value: Float = 0f
 
-	var value: Float
+	override var inputValue: Float
 		get() = _value
 		set(value) {
 			val oldValue = _value
@@ -174,10 +174,10 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 			if (!e.handled) {
 				if (e.keyCode == Ascii.UP) {
 					e.handled = true
-					userChange(value + step)
+					userChange(inputValue + step)
 				} else if (e.keyCode == Ascii.DOWN) {
 					e.handled = true
-					userChange(value - step)
+					userChange(inputValue - step)
 				}
 			}
 		}
@@ -198,7 +198,7 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 		if (oldValue == newValue) return
 		this.min = min
 		this.max = max
-		this.value = newValue
+		this.inputValue = newValue
 		_changed.dispatch(this)
 	}
 
@@ -215,9 +215,9 @@ class NumericStepper(owner: Context) : ElementContainerImpl<UiComponent>(owner) 
 	fun setSizeToFit(text: String?) = textInput.setSizeToFit(text)
 
 	private fun updateProperties() {
-		textInput.text = formatter.format(value)
-		stepUpButton.disabled = value >= _max
-		stepDownButton.disabled = value <= _min
+		textInput.text = formatter.format(inputValue)
+		stepUpButton.disabled = inputValue >= _max
+		stepDownButton.disabled = inputValue <= _min
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

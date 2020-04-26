@@ -11,7 +11,6 @@ import com.acornui.component.layout.algorithm.LayoutAlgorithm
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.Style
 import com.acornui.di.Context
-import com.acornui.focus.Focusable
 import com.acornui.math.Bounds
 
 /**
