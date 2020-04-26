@@ -149,8 +149,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	/**
 	 * When this component is blurred, only dispatch a changed event if the value has changed.
+	 * It will start as true so that the first value commit, even if the value is still "", will be counted.
 	 */
-	private var pendingChange = false
+	private var pendingChange = true
 
 	init {
 		host.click().add {
