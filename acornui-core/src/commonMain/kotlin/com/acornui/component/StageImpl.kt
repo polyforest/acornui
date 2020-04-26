@@ -19,7 +19,6 @@
 package com.acornui.component
 
 import com.acornui.component.layout.LayoutElement
-import com.acornui.component.style.StylableRo
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
@@ -76,7 +75,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	}
 
 	init {
-		styleParent = null
 		styleTags.add(Stage)
 		cameraOverride = cam
 		own(timer(5.seconds, 10, callback = ::skinCheck))

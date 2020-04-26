@@ -62,6 +62,11 @@ class CascadingStyleCalculatorTest {
 				simpleStyle(withAncestor(tagB), priority = 1f) {
 					foo = "AForB_foo"
 				}
+
+				// This lower priority should not override the explicit value foo on b
+				simpleStyle(withAncestor(tagB), priority = -1f) {
+					foo = "PriorityFail"
+				}
 			}
 		}
 

@@ -582,7 +582,7 @@ open class UiComponentImpl(
 			invalidateStyles()
 		}
 
-	private val styleParentDefault: StylableRo? = owner.findOwner { it is StylableRo } as StylableRo? ?: stage
+	private val styleParentDefault: StylableRo? = owner.findOwner { it is StylableRo } as StylableRo?
 
 	private var _styles: Styles? = null
 	private val styles: Styles
@@ -605,6 +605,10 @@ open class UiComponentImpl(
 
 	protected open fun updateStyles() {
 		_styles?.validateStyles()
+	}
+
+	fun getStyleDebugInfos(): List<StyleDebugInfo> {
+		return styles.getStyleDebugInfos()
 	}
 
 	init {

@@ -45,7 +45,6 @@ import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.math.*
 import com.acornui.validation.FormInputStyle
-import kotlin.random.Random
 
 open class BasicUiSkin(
 		protected val target: UiComponent,
@@ -134,9 +133,9 @@ open class BasicUiSkin(
 //	}
 
 	protected open fun textFontStyle() {
-		theme.bodyFont.addStyles()
-		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading))
-		theme.formLabelFont.addStyles(withAncestor(formLabelStyleTag))
+		theme.bodyFont.addStyles(name = "CharStyle_body")
+		theme.headingFont.addStyles(withAncestor(TextStyleTags.heading), name = "CharStyle_heading")
+		theme.formLabelFont.addStyles(withAncestor(formLabelStyleTag), name = "CharStyle_formLabel")
 	}
 
 	protected open fun textStyle() {
@@ -254,8 +253,9 @@ open class BasicUiSkin(
 		target.addStyleRule(headingGroupStyle, HeadingGroup)
 	}
 
-	protected fun ThemeFontVo.addStyles(filter: StyleFilter = AlwaysFilter) {
+	protected fun ThemeFontVo.addStyles(filter: StyleFilter = AlwaysFilter, name: String? = null) {
 		target.addStyleRule(charStyle {
+			this.name = name + "_general"
 			colorTint = color
 			fontFamily = family
 			fontSize = size
@@ -267,7 +267,7 @@ open class BasicUiSkin(
 
 		target.addStyleRule(charStyle { fontStyle = emphasisStyle }, filter and withAncestor(TextStyleTags.emphasis))
 		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, -2) }, filter and withAncestor(TextStyleTags.extraSmall))
-		target.addStyleRule(charStyle { priority = 100f; colorTint = Color.RED; fontSize = FontSize.relativeSize(size, -1) }, AlwaysFilter)
+		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, -1) }, filter and withAncestor(TextStyleTags.small))
 		target.addStyleRule(charStyle { fontSize = size; priority = 1f }, filter and withAncestor(TextStyleTags.regular))
 		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, 1) }, filter and withAncestor(TextStyleTags.large))
 		target.addStyleRule(charStyle { fontSize = FontSize.relativeSize(size, 2) }, filter and withAncestor(TextStyleTags.extraLarge))

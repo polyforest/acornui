@@ -19,7 +19,10 @@
 package com.acornui.component.style
 
 import com.acornui.*
-import com.acornui.collection.*
+import com.acornui.collection.ActiveList
+import com.acornui.collection.AlwaysFilter
+import com.acornui.collection.ArrayList
+import com.acornui.collection.WatchedElementsActiveList
 import com.acornui.function.as1
 import com.acornui.signal.Signal
 import kotlin.properties.ReadWriteProperty
@@ -65,13 +68,18 @@ interface Stylable : StylableRo {
 
 }
 
-fun Stylable.addStyleRule(style: Style, tag: StyleTag, priority: Float = 0f) = addStyleRule(style, tag.filter, priority)
+fun Stylable.addStyleRule(style: Style, tag: StyleTag) = addStyleRule(style, tag.filter)
 
-fun Stylable.addStyleRule(style: Style, filter: StyleFilter = AlwaysFilter, priority: Float = 0f) {
+fun Stylable.addStyleRule(style: Style, filter: StyleFilter = AlwaysFilter) {
 	style.filter = filter
-	style.priority = priority
 	styleRules.add(style)
 }
+
+@Deprecated("Set priority on style directly", level = DeprecationLevel.ERROR)
+fun Stylable.addStyleRule(style: Style, tag: StyleTag, priority: Float): Nothing = error("unused")
+
+@Deprecated("Set priority on style directly", level = DeprecationLevel.ERROR)
+fun Stylable.addStyleRule(style: Style, filter: StyleFilter = AlwaysFilter, priority: Float): Nothing = error("unused")
 
 class Styles(private val host: Stylable) : Disposable {
 
@@ -139,6 +147,17 @@ class Styles(private val host: Stylable) : Disposable {
 			CascadingStyleCalculator.calculate(host, styles[i])
 		}
 		styleWatchers.forEach(action = StyleWatcher<*>::check)
+	}
+
+	/**
+	 * Returns a list of style debug infos for the bound styles.
+	 */
+	fun getStyleDebugInfos(): List<StyleDebugInfo> {
+		val debugInfos = ArrayList(styles.size) { StyleDebugInfo() }
+		for (i in 0..styles.lastIndex) {
+			CascadingStyleCalculator.calculate(host, styles[i], debugInfos[i])
+		}
+		return debugInfos
 	}
 
 	override fun dispose() {

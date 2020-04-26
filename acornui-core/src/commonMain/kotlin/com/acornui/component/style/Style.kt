@@ -41,6 +41,11 @@ interface StyleRo : Observable {
 	val type: StyleType<*>
 
 	/**
+	 * A display name for debugging.
+	 */
+	val name: String?
+
+	/**
 	 * The style properties, as calculated by a [StyleCalculator].
 	 */
 	val allProps: List<StyleProp<*>>
@@ -119,6 +124,11 @@ abstract class StyleBase : Style, Disposable {
 	override var priority: Float by afterChange(0f, ::notifyChanged.as1)
 	override var filter: StyleFilter by afterChange(AlwaysFilter, ::notifyChanged.as1)
 
+	/**
+	 * May be set for debugging purposes.
+	 */
+	override var name: String? = null
+
 	override fun clear() {
 		var hasChanged = false
 		for (i in 0..allProps.lastIndex) {
@@ -145,9 +155,9 @@ abstract class StyleBase : Style, Disposable {
 		_changed.dispose()
 	}
 
-	override fun toString(): String {
+	fun toDebugString(): String {
 		val props = allProps.joinToString(", ")
-		return "Style($props)"
+		return "${name ?: "Style"}($props)"
 	}
 }
 
@@ -181,7 +191,7 @@ fun <T : Style> T.set(other: T) {
 	for (i in 0..allProps.lastIndex) {
 		val p = allProps[i]
 		val otherP = other.allProps.first { it.name == p.name }
-		if (p.explicitIsSet && p.explicitValue != otherP.value) {
+		if (p.explicitValue != otherP.value) {
 			hasChanged = true
 			p.explicitValue = otherP.value
 		}
