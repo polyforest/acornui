@@ -16,7 +16,10 @@
 
 package com.acornui.validation
 
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.ElementContainerImpl
+import com.acornui.component.InteractivityMode
+import com.acornui.component.UiComponent
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
@@ -26,12 +29,9 @@ import com.acornui.component.style.StyleType
 import com.acornui.di.Context
 import com.acornui.function.as1
 import com.acornui.math.Bounds
-import com.acornui.signal.Signal
 import com.acornui.time.CallbackWrapper
 import com.acornui.time.delayedCallback
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -39,20 +39,31 @@ import kotlin.contracts.contract
 class ValidationForm<T, S : Style, out U : LayoutData>(
 		owner: Context,
 		layoutAlgorithm: LayoutAlgorithm<S, U>
-) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U>, InputComponent<T> {
+) : ElementContainerImpl<UiComponent>(owner), LayoutDataProvider<U> {
 
 	val style = bind(ValidationFormStyle())
 
+	/**
+	 * The layout data applied to the validation messages area.
+	 */
+	val messagesLayoutData = VerticalLayoutData().apply {
+		widthPercent = 1f
+		priority = -1f
+	}
+
 	private val messages = addChild(validationResultsView {
-		layoutData = VerticalLayoutData().apply {
-			widthPercent = 1f
-		}
+		layoutData = messagesLayoutData
 	})
 
+	/**
+	 * The layout data applied to the contents area.
+	 */
+	val contentsLayoutData = VerticalLayoutData().apply {
+		fill()
+	}
+
 	private val contents = addChild(ElementLayoutContainer<S, U, UiComponent>(this, layoutAlgorithm).apply {
-		layoutData = VerticalLayoutData().apply {
-			fill()
-		}
+		layoutData = contentsLayoutData
 	})
 
 	/**
@@ -61,12 +72,6 @@ class ValidationForm<T, S : Style, out U : LayoutData>(
 	val contentsStyle: S = bind(contents.unbind(contents.style))
 
 	private val vLayout = VerticalLayout()
-
-	init {
-		watch(style) {
-		}
-
-	}
 
 	override fun createLayoutData(): U = contents.createLayoutData()
 
@@ -77,11 +82,6 @@ class ValidationForm<T, S : Style, out U : LayoutData>(
 	override fun onElementRemoved(index: Int, element: UiComponent) {
 		contents.removeElement(element)
 	}
-
-	override val changed: Signal<(InputComponent<T>) -> Unit>
-		get() = TODO("Not yet implemented")
-	override val inputValue: T
-		get() = TODO("Not yet implemented")
 
 	private val _childrenToLayout = ArrayList<LayoutElement>()
 
