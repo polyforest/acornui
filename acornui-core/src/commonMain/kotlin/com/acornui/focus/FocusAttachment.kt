@@ -30,12 +30,23 @@ class FocusAttachment(
 	private val focusManager = inject(FocusManager)
 
 	private val _focused = Signal0()
+
+	/**
+	 * Dispatched when the previously focused is not owned by this component and the newly focused is.
+	 *
+	 * `!target.owns(old) && target.owns(new)`
+	 *
+	 * @see isFocused
+	 */
 	val focused = _focused.asRo()
 
 	private val _focusedSelf = Signal0()
 
 	/**
-	 * Dispatched when this component becomes the newly focused component. (Not including if an owned component becomes focused)
+	 * Dispatched when this is the newly focused component.
+	 *
+	 * `new === target && old !== target`
+	 *
 	 * @see isFocusedSelf
 	 * @see FocusManager.focused
 	 * @see focused
@@ -45,8 +56,10 @@ class FocusAttachment(
 	private val _blurred = Signal0()
 
 	/**
-	 * Dispatched when this component was previously focused, and after a focus change this component then owns the
-	 * newly focused component.
+	 * Dispatched when the previously focused is owned by this component and the newly focused is not.
+	 *
+	 * `target.owns(old) && !target.owns(new)`
+	 *
 	 * @see isFocused
 	 * @see FocusManager.focused
 	 */
@@ -55,7 +68,10 @@ class FocusAttachment(
 	private val _blurredSelf = Signal0()
 
 	/**
-	 * Dispatched when this component loses focus. (Including losing focus to an owned component)
+	 * Dispatched when this was the previously focused component.
+	 *
+	 * `old === target && new !== target`
+	 *
 	 * @see isFocusedSelf
 	 * @see FocusManager.focused
 	 * @see blurred
@@ -94,9 +110,7 @@ fun UiComponentRo.focusAttachment(): FocusAttachment {
 }
 
 /**
- * Dispatched when this component was previously not focused, and after a focus change this component then owns the
- * newly focused component.
- * @see isFocused
+ * @see FocusAttachment.focused
  */
 fun UiComponentRo.focused(): Signal<() -> Unit> {
 	return focusAttachment().focused
