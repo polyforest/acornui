@@ -93,6 +93,7 @@ private class FocusHighlightAttachment(private val host: UiComponentRo) : Dispos
 	}
 
 	override fun dispose() {
+		showHighlight = false
 		host.unbind(style)
 		watched.dispose()
 	}

@@ -247,12 +247,14 @@ class FocusManagerImpl() : FocusManager {
 		return _focused ?: root
 	}
 
-	private var highlighted: UiComponentRo? = null
+	private var _highlighted: UiComponentRo? = null
+	private var highlighted: UiComponentRo?
+		get() = _highlighted
 		set(value) {
-			if (field != value) {
-				field?.showFocusHighlight = false
-				field = value
-				field?.showFocusHighlight = true
+			if (_highlighted != value) {
+				_highlighted?.showFocusHighlight = false
+				_highlighted = value
+				_highlighted?.showFocusHighlight = true
 			}
 		}
 
@@ -267,7 +269,7 @@ class FocusManagerImpl() : FocusManager {
 	override fun dispose() {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
-		highlighted = null
+		_highlighted = null
 		pendingFocusable = null
 		_focused = null
 		_focusedChanged.dispose()
