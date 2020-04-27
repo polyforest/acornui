@@ -16,6 +16,7 @@
 
 package com.acornui.component.datagrid
 
+import com.acornui.collection.Filter
 import com.acornui.collection.indexOfLast
 
 interface RowLocationRo<RowData> {
@@ -309,7 +310,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
  * Calls [RowLocation.moveToPreviousRow] until there are no more previous rows, or the [predicate] has returned true.
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : RowLocation<*>> T.moveToPreviousRowUntil(predicate: (T) -> Boolean): Boolean {
+fun <T : RowLocation<*>> T.moveToPreviousRowUntil(predicate: Filter<T>): Boolean {
 	while (hasPreviousRow) {
 		moveToPreviousRow()
 		if (predicate(this)) return true
@@ -321,7 +322,7 @@ fun <T : RowLocation<*>> T.moveToPreviousRowUntil(predicate: (T) -> Boolean): Bo
  * Calls [RowLocation.moveToNextRow] until there are no more next rows, or the [predicate] has returned true.
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : RowLocation<*>> T.moveToNextRowUntil(predicate: (T) -> Boolean): Boolean {
+fun <T : RowLocation<*>> T.moveToNextRowUntil(predicate: Filter<T>): Boolean {
 	while (hasNextRow) {
 		moveToNextRow()
 		if (predicate(this)) return true
@@ -333,7 +334,7 @@ fun <T : RowLocation<*>> T.moveToNextRowUntil(predicate: (T) -> Boolean): Boolea
  * While [predicate] returns false, calls [RowLocation.moveToNextRow].
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : RowLocation<*>> T.findNextRow(predicate: (T) -> Boolean): Boolean {
+fun <T : RowLocation<*>> T.findNextRow(predicate: Filter<T>): Boolean {
 	while (true) {
 		if (predicate(this)) return true
 		if (!hasNextRow) return false
@@ -345,7 +346,7 @@ fun <T : RowLocation<*>> T.findNextRow(predicate: (T) -> Boolean): Boolean {
  * While [predicate] returns false, calls [RowLocation.moveToPreviousRow].
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : RowLocation<*>> T.findPreviousRow(predicate: (T) -> Boolean): Boolean {
+fun <T : RowLocation<*>> T.findPreviousRow(predicate: Filter<T>): Boolean {
 	while (true) {
 		if (predicate(this)) return true
 		if (!hasPreviousRow) return false

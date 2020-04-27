@@ -16,6 +16,8 @@
 
 package com.acornui.component.datagrid
 
+import com.acornui.collection.Filter
+
 interface CellLocationRo<RowData> : RowLocationRo<RowData> {
 	val columnIndex: Int
 	val column: DataGridColumn<RowData, *>
@@ -116,7 +118,7 @@ class CellLocation<RowData>(dataGrid: DataGrid<RowData>) : RowLocation<RowData>(
  * Calls [CellLocation.moveToPreviousCell] until there are no more previous cells, or the [predicate] has returned true.
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : CellLocation<*>> T.moveToPreviousCellUntil(predicate: (T) -> Boolean): Boolean {
+fun <T : CellLocation<*>> T.moveToPreviousCellUntil(predicate: Filter<T>): Boolean {
 	while (hasPreviousCell) {
 		moveToPreviousCell()
 		if (predicate(this)) return true
@@ -128,10 +130,35 @@ fun <T : CellLocation<*>> T.moveToPreviousCellUntil(predicate: (T) -> Boolean): 
  * Calls [CellLocation.moveToNextCell] until there are no more next cells, or the [predicate] has returned true.
  * @return Returns true if the predicate was ever matched.
  */
-fun <T : CellLocation<*>> T.moveToNextCellUntil(predicate: (T) -> Boolean): Boolean {
+fun <T : CellLocation<*>> T.moveToNextCellUntil(predicate: Filter<T>): Boolean {
 	while (hasNextCell) {
 		moveToNextCell()
 		if (predicate(this)) return true
 	}
 	return false
+}
+
+
+/**
+ * While [predicate] returns false, calls [CellLocation.moveToNextCell].
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : CellLocation<*>> T.findNextCell(predicate: Filter<T>): Boolean {
+	while (true) {
+		if (predicate(this)) return true
+		if (!hasNextCell) return false
+		moveToNextCell()
+	}
+}
+
+/**
+ * While [predicate] returns false, calls [CellLocation.moveToPreviousCell].
+ * @return Returns true if the predicate was ever matched.
+ */
+fun <T : CellLocation<*>> T.findPreviousCell(predicate: Filter<T>): Boolean {
+	while (true) {
+		if (predicate(this)) return true
+		if (!hasPreviousCell) return false
+		moveToPreviousCell()
+	}
 }
