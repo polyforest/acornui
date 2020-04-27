@@ -261,7 +261,8 @@ class ContextMarker(val value: String) {
 /**
  * When this object is disposed, the target will also be disposed.
  */
-fun <T : Disposable> Context.own(target: T): T {
+fun <T : Disposable?> Context.own(target: T): T {
+	if (target == null) return target
 	val callback = target::dispose.as1
 	require(!disposed.contains(callback)) { "target already owned." }
 	disposed.add(callback)
@@ -487,6 +488,20 @@ private class LazyDependency<T : Any>(private val key: Context.Key<T>) : ReadOnl
 		if (value == null)
 			value = thisRef.inject(key)
 		return value as T
+	}
+}
+
+private class OptionalLazyDependency<T : Any>(private val key: Context.Key<T>) : ReadOnlyProperty<Context, T?> {
+
+	private var valueIsSet = false
+	private var value: T? = null
+
+	override fun getValue(thisRef: Context, property: KProperty<*>): T? {
+		if (!valueIsSet) {
+			value = thisRef.injectOptional(key)
+			valueIsSet = true
+		}
+		return value
 	}
 }
 
