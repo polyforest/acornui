@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_PARAMETER", "UNUSED_ANONYMOUS_PARAMETER", "unused", "RedundantModalityModifier", "CascadeIf")
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_ANONYMOUS_PARAMETER", "unused", "RedundantModalityModifier", "CascadeIf", "MemberVisibilityCanBePrivate")
 
 package com.acornui.component.datagrid
 
@@ -334,7 +334,8 @@ class DataGrid<RowData>(
 
 	private val keyState by KeyState
 
-	var focusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
+	var rowFocusEnabledFilter: Filter<RowLocationRo<RowData>> = { true }
+	var cellFocusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
 
 	init {
 		focusEnabled = true
@@ -401,13 +402,29 @@ class DataGrid<RowData>(
 				vScrollModel.value += it.deltaY / vScrollBar.modelToPoints
 		}
 
+		focused().add(::focusedHandler)
 		blurred().add(::blurredHandler)
+	}
+
+	private fun focusedHandler() {
+//		if (!editable || editorCell?.visible == true) return
+//		println("Focused $cellFocusLocation")
+//		focusFirstEditableCell()
 	}
 
 	private fun blurredHandler() {
 		editorCellCheck()
 		commitEditorCellValue()
 		disposeEditorCell()
+	}
+
+	fun focusFirstEditableCell() {
+		val loc = CellLocation(this, _dataView.localIndexToSource(0), 0)
+		val foundRow = loc.findNextRow { it.rowFocusable }
+		if (!foundRow) return
+		val foundCol = loc.findNextCell { it.cellFocusable }
+		if (!foundCol) return
+		focusCell(loc)
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
@@ -421,7 +438,7 @@ class DataGrid<RowData>(
 					loc.position = 0
 
 					val everMatched = loc.findNextRow {
-						focusEnabledFilter(it) && it.isElementRow
+						rowFocusEnabledFilter(it) && it.isElementRow
 					}
 					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
@@ -431,7 +448,7 @@ class DataGrid<RowData>(
 					event.handled = true
 					loc.position = totalRows - 1
 					val everMatched = loc.findPreviousRow {
-						focusEnabledFilter(it) && it.isElementRow
+						rowFocusEnabledFilter(it) && it.isElementRow
 					}
 					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
@@ -445,7 +462,7 @@ class DataGrid<RowData>(
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position + pageSize, 0, totalRows - 1)
 					val everMatched = loc.findNextRow {
-						focusEnabledFilter(it) && it.isElementRow
+						rowFocusEnabledFilter(it) && it.isElementRow
 					}
 					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
@@ -456,7 +473,7 @@ class DataGrid<RowData>(
 					val pageSize = _cellMetrics.rowHeights.lastIndex - 1
 					loc.position = clamp(loc.position - pageSize, 0, totalRows - 1)
 					val everMatched = loc.findPreviousRow {
-						focusEnabledFilter(it) && it.isElementRow
+						rowFocusEnabledFilter(it) && it.isElementRow
 					}
 					commitEditorCellValue()
 					if (everMatched) focusCell(loc)
@@ -524,7 +541,7 @@ class DataGrid<RowData>(
 				commitEditorCellValue()
 				disposeEditorCell()
 			}
-			if (editable && focusEnabledFilter(cell)) {
+			if (editable && rowFocusEnabledFilter(cell) && cellFocusEnabledFilter(cell)) {
 				focusCell(cell)
 			}
 		}
@@ -564,9 +581,8 @@ class DataGrid<RowData>(
 	 */
 	val cellFocusLocation: CellLocation<RowData>?
 		get() {
-			if (cellFocusRow.index == -1) {
+			if (cellFocusRow.index == -1)
 				return null
-			}
 			return CellLocation(this, sourceIndexToLocal(cellFocusRow.index)!!, cellFocusCol.index)
 		}
 
@@ -612,7 +628,7 @@ class DataGrid<RowData>(
 	 */
 	fun focusPreviousCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		val everMatched = newLocation.moveToPreviousCellUntil { focusEnabledFilter(it) && it.editable }
+		val everMatched = newLocation.moveToPreviousCellUntil { it.cellFocusable }
 		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
 	}
@@ -624,7 +640,7 @@ class DataGrid<RowData>(
 	 */
 	fun focusNextCell(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		val everMatched = newLocation.moveToNextCellUntil { focusEnabledFilter(it) && it.editable }
+		val everMatched = newLocation.moveToNextCellUntil { it.cellFocusable }
 		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
 		else disposeEditorCell()
@@ -637,7 +653,7 @@ class DataGrid<RowData>(
 	 */
 	fun focusPreviousRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		val everMatched = newLocation.moveToPreviousRowUntil { focusEnabledFilter(it) && it.isElementRow }
+		val everMatched = newLocation.moveToPreviousRowUntil { it.rowFocusable }
 		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
 		else disposeEditorCell()
@@ -645,11 +661,17 @@ class DataGrid<RowData>(
 
 	fun focusNextRow(commit: Boolean) {
 		val newLocation = cellFocusLocation ?: return
-		val everMatched = newLocation.moveToNextRowUntil { focusEnabledFilter(it) && it.isElementRow }
+		val everMatched = newLocation.moveToNextRowUntil { it.rowFocusable }
 		if (commit) commitEditorCellValue()
 		if (everMatched) focusCell(newLocation)
 		else disposeEditorCell()
 	}
+
+	val CellLocationRo<RowData>.rowFocusable: Boolean
+		get() = rowFocusEnabledFilter(this) && isElementRow
+
+	val CellLocationRo<RowData>.cellFocusable: Boolean
+		get() = rowFocusEnabledFilter(this) && cellFocusEnabledFilter(this) && editable
 
 	fun closeCellEditor(commit: Boolean = false) {
 		if (editorCell == null) return
@@ -666,8 +688,6 @@ class DataGrid<RowData>(
 		if (rowLocation.position < _cellMetrics.startPosition) {
 			vScrollModel.value = rowLocation.position.toFloat()
 		} else if (rowLocation.position > _cellMetrics.endPosition - 1f) {
-
-
 			sizeCellsReversed(
 					width = _bottomCellMetrics.bounds.width,
 					height = _bottomCellMetrics.bounds.height,
@@ -707,7 +727,7 @@ class DataGrid<RowData>(
 		cellFocusCol.clear()
 		cellFocusRow.clear()
 		this.editorCell = null
-		if (editorCell.isFocused) focus()
+		if (editorCell.isFocused) focusSelf()
 		editorCell.dispose()
 	}
 
@@ -1486,7 +1506,7 @@ class DataGrid<RowData>(
 			editorCell.visible = true
 			if (isFocusedSelf) editorCell.focus()
 			var y = 0f
-			for (i in 0..rowIndex - 1) {
+			for (i in 0 until rowIndex) {
 				y += rowHeights[i]
 			}
 			// Partial row visibility
@@ -1494,7 +1514,7 @@ class DataGrid<RowData>(
 			editorCell.size(_columnWidths[columnIndex], rowHeights[rowIndex])
 			editorCell.position(x, y)
 		} else {
-			if (editorCell.isFocused) focus()
+			if (editorCell.isFocused) focusSelf()
 			editorCell.visible = false
 		}
 	}
@@ -1540,7 +1560,7 @@ class DataGrid<RowData>(
 	 * @see iterateVisibleColumns
 	 * This assumes the COLUMNS_WIDTHS_VALIDATION flag has already been validated.
 	 */
-	private inline fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<RowData, *>, columnX: Float, columnWidth: Float) -> Boolean) {
+	private fun iterateVisibleColumnsInternal(callback: (columnIndex: Int, column: DataGridColumn<RowData, *>, columnX: Float, columnWidth: Float) -> Boolean) {
 		if (firstVisibleColumn == -1) return
 		val xOffset = -hScrollModel.value
 		for (i in firstVisibleColumn..lastVisibleColumn) {
