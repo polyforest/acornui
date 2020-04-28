@@ -18,7 +18,6 @@ package com.acornui.popup
 
 import com.acornui.Disposable
 import com.acornui.collection.addBefore
-import com.acornui.collection.firstOrNull
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
@@ -41,15 +40,15 @@ import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.clickHandledForAFrame
 import com.acornui.input.keyDown
-import com.acornui.isAncestorOf
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
-import com.acornui.recycle.Clearable
 import com.acornui.properties.afterChange
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce
 import com.acornui.start
+import com.acornui.time.callLater
 import com.acornui.tween.Tween
 import com.acornui.tween.tweenAlpha
 
@@ -63,7 +62,7 @@ interface PopUpManager : Clearable {
 	/**
 	 * Returns a list of the current pop-ups.
 	 */
-	val currentPopUps: List<PopUpInfo<*>>
+	val currentPopUps: List<PopUpInfo<UiComponent>>
 
 	/**
 	 * Adds the pop-up to the pop-up layer.
@@ -101,7 +100,6 @@ class PopUpInfo<T : UiComponent>(
 
 		/**
 		 * The child to add when the pop-up is activated.
-		 * If the child has layoutData set, it is expected to be of type [CanvasLayoutData]
 		 */
 		val child: T,
 
@@ -149,9 +147,11 @@ class PopUpInfo<T : UiComponent>(
 			center()
 		}
 ) : Comparable<PopUpInfo<*>> {
+
 	override fun compareTo(other: PopUpInfo<*>): Int {
 		return priority.compareTo(other.priority)
 	}
+
 }
 
 class PopUpManagerStyle : StyleBase() {
@@ -182,18 +182,16 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		return view
 	}
 
-	private val _currentPopUps = ArrayList<PopUpInfo<*>>()
-	override val currentPopUps: List<PopUpInfo<*>>
-		get() = _currentPopUps
-
-	private fun refresh() {
-		refreshModalBlocker()
-	}
+	private val lastModalIndex: Int
+		get() = currentPopUps.indexOfLast { it.isModal }
 
 	private fun refreshModalBlocker() {
 		if (!view.isDisposed)
-			view.modalIndex = _currentPopUps.indexOfLast { it.isModal }
+			view.modalIndex = lastModalIndex
 	}
+
+	private var _currentPopUps = mutableListOf<PopUpInfo<UiComponent>>()
+	override var currentPopUps: List<PopUpInfo<UiComponent>> = _currentPopUps
 
 	override fun clear() {
 		while (_currentPopUps.isNotEmpty()) {
@@ -202,12 +200,13 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	override fun requestModalClose() {
-		val lastModalIndex = _currentPopUps.indexOfLast { it.isModal }
+		val lastModalIndex = lastModalIndex
 		if (lastModalIndex == -1) return // no modals
-		var i = _currentPopUps.lastIndex
+		val currentPopUps = currentPopUps
+		var i = currentPopUps.lastIndex
 		while (i >= 0 && i >= lastModalIndex) {
 			@Suppress("UNCHECKED_CAST")
-			val p = _currentPopUps[i--] as PopUpInfo<UiComponent>
+			val p = currentPopUps[i--]
 			if (p.onCloseRequested(p.child))
 				removePopUp(p)
 			else
@@ -216,59 +215,71 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	override fun <T : UiComponent> addPopUp(popUpInfo: PopUpInfo<T>) {
-		removePopUp(popUpInfo.child, allowDisposal = false)
+		removePopUp(popUpInfo.child)
 		val child = popUpInfo.child
+		child.disposed.add(::popUpChildDisposedHandler)
 		if (child is Closeable)
 			child.closed.add(::childClosedHandler)
-		child.disposed.add(::popUpChildDisposedHandler)
-		val index = _currentPopUps.sortedInsertionIndex(popUpInfo)
-		_currentPopUps.add(index, popUpInfo)
-		view.addElement(index, child)
-		child.validate()
-		refresh()
-		if (popUpInfo.focus)
-			child.focus(popUpInfo.highlightFocused)
-		child.layoutData = popUpInfo.layoutData
+
+		val index = currentPopUps.sortedInsertionIndex(popUpInfo)
+		@Suppress("UNCHECKED_CAST")
+		_currentPopUps.add(index, popUpInfo as PopUpInfo<UiComponent>)
+
+		callLater {
+			updateView(popUpInfo)
+		}
 	}
 
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
-		removePopUp(popUpInfo, true)
+		val child = popUpInfo.child
+		child.disposed.remove(::popUpChildDisposedHandler)
+		if (child is Closeable)
+			child.closed.remove(::childClosedHandler)
+
+		@Suppress("UNCHECKED_CAST")
+		_currentPopUps.remove(popUpInfo as PopUpInfo<UiComponent>)
+
+		callLater {
+			updateView(popUpInfo)
+		}
+
+	}
+
+	private fun updateView(popUpInfo: PopUpInfo<UiComponent>) {
+		val currentPopUps = currentPopUps
+		val index = currentPopUps.indexOf(popUpInfo)
+		val child = popUpInfo.child
+
+		if (index == -1) {
+			if (!currentPopUps.any { it.child == child }) {
+				// Child was not re-added in a different pop-up.
+				val wasFocused = child.isFocused
+				view.removeElement(child)
+				child.layoutData = null
+				if (popUpInfo.dispose && !child.isDisposed)
+					child.dispose()
+				if (wasFocused) {
+					val currentPopUp = currentPopUps.lastOrNull()
+					if (currentPopUp?.focus == true) {
+						currentPopUp.child.focus(currentPopUp.highlightFocused)
+					} else {
+						view.focusModalFill()
+					}
+				}
+				refreshModalBlocker()
+			}
+		} else {
+			child.layoutData = popUpInfo.layoutData
+			view.addElement(index, child)
+			if (popUpInfo.focus)
+				child.focus(popUpInfo.highlightFocused)
+			refreshModalBlocker()
+		}
 	}
 
 	override fun removePopUp(child: UiComponent) {
-		removePopUp(child, allowDisposal = true)
-	}
-
-	/**
-	 * Removes the pop-up with the given component.
-	 */
-	private fun removePopUp(child: UiComponent, allowDisposal: Boolean) {
-		val info = currentPopUps.firstOrNull { it.child == child }
-		if (info != null)
-			removePopUp(info, allowDisposal)
-	}
-
-	private fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>, allowDisposal: Boolean) {
-		val wasFocused = popUpInfo.child.isFocused
-		val removed = _currentPopUps.remove(popUpInfo)
-		if (!removed) return // Pop-up not found
-		val child = popUpInfo.child
-		view.removeElement(child)
-		if (child is Closeable)
-			child.closed.remove(::childClosedHandler)
-		child.disposed.remove(::popUpChildDisposedHandler)
-		popUpInfo.onClosed(child)
-		if (allowDisposal && popUpInfo.dispose && !child.isDisposed)
-			child.dispose()
-		refresh()
-		val currentPopUp = _currentPopUps.lastOrNull()
-		if (wasFocused) {
-			if (currentPopUp?.focus == true) {
-				currentPopUp.child.focus(currentPopUp.highlightFocused)
-			} else {
-				view.focusModalFill()
-			}
-		}
+		val found = currentPopUps.find { it.child == child } ?: return
+		removePopUp(found)
 	}
 
 	private fun childClosedHandler(child: Closeable) {
@@ -276,7 +287,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 	}
 
 	private fun popUpChildDisposedHandler(child: UiComponent) {
-		removePopUp(child, allowDisposal = false)
+		removePopUp(child)
 	}
 
 	override fun dispose() {
@@ -292,7 +303,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 
 	private val popUpManagerStyle = bind(PopUpManagerStyle())
 
-	private val modalFillContainer = addChild(stack {
+	val modalFillContainer = addChild(stack {
 		focusEnabled = true
 		visible = false
 		click().add {
@@ -303,8 +314,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 
 	var modalIndex: Int = -1
 		set(value) {
-			if (value >= elements.size)
-				throw IllegalArgumentException("modalIndex must be less than elements.size")
+			require(value < elements.size) { "modalIndex must be less than elements.size" }
 			field = value
 			// Reorder the modal fill container and set its visibility.
 			if (value == -1) {
@@ -355,14 +365,14 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 
 	override fun onActivated() {
 		super.onActivated()
-		focusManager.focusedChanging.add(::focusChangingHandler)
 		stage.keyDown().add(::rootKeyDownHandler)
+		focusManager.focusedChanging.add(::focusChangingHandler)
 	}
 
 	override fun onDeactivated() {
 		// Must be before super.onDeactivated or the focus change prevention will get stuck.
-		focusManager.focusedChanging.remove(::focusChangingHandler)
 		stage.keyDown().remove(::rootKeyDownHandler)
+		focusManager.focusedChanging.remove(::focusChangingHandler)
 		super.onDeactivated()
 	}
 
@@ -373,14 +383,18 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		}
 	}
 
+	fun focusModalFill() {
+		modalFillContainer.focusSelf()
+	}
+
 	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
+		val modalFillContainer = modalFillContainer
 		if (!isBeneathModal(new)) return
 		if (old === modalFillContainer && new === stage) {
 			cancel.cancel()
 			return
 		}
-		val elements = elements
-		val modalFillIndex = _children.indexOf(modalFillContainer)
+		val lastModalIndex = modalIndex
 		val focusables = focusManager.focusables
 		val focusIndex = focusables.indexOf(new)
 		val isForwards = focusIndex >= focusables.indexOf(old)
@@ -388,7 +402,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		val toFocus: UiComponentRo = if (isForwards) {
 			if (old == modalFillContainer) {
 				var firstFocusable: UiComponentRo = modalFillContainer
-				for (i in modalFillIndex..elements.lastIndex) {
+				for (i in lastModalIndex..elements.lastIndex) {
 					firstFocusable = elements[i].firstFocusable ?: continue
 					break
 				}
@@ -399,7 +413,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		} else {
 			if (old == modalFillContainer) {
 				var lastFocusable: UiComponentRo = modalFillContainer
-				for (i in elements.lastIndex downTo modalFillIndex) {
+				for (i in elements.lastIndex downTo lastModalIndex) {
 					lastFocusable = elements[i].lastFocusable ?: continue
 					break
 				}
@@ -416,18 +430,14 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 	 * Returns true if the target element is underneath the modal fill container.
 	 */
 	private fun isBeneathModal(target: UiComponentRo?): Boolean {
-		if (!showModal || elements.isEmpty() || target === modalFillContainer || target == null) return false
-		val modalFillIndex = _children.indexOf(modalFillContainer)
-		for (i in _children.lastIndex downTo modalFillIndex) {
-			if (_children[i].isAncestorOf(target)) {
+		val lastModalIndex = modalIndex
+		if (lastModalIndex == -1 || target == null || target === modalFillContainer || elements.isEmpty()) return false
+		for (i in elements.lastIndex downTo lastModalIndex) {
+			if (elements[i].isAncestorOf(target)) {
 				return false
 			}
 		}
 		return true
-	}
-
-	fun focusModalFill() {
-		modalFillContainer.focusSelf()
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
