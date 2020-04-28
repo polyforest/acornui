@@ -25,6 +25,7 @@ import com.acornui.component.style.StyleTag
 import com.acornui.component.text.text
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
+import com.acornui.di.dependencyFactory
 import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.input.interaction.rollOut
@@ -35,7 +36,6 @@ import com.acornui.mainContext
 import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.math.vec2
-import com.acornui.observe.bind
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
 import com.acornui.time.tick
@@ -146,10 +146,18 @@ interface TooltipManager {
 
 	fun createTooltip(value: String): Tooltip<String>
 
-	companion object : Context.Key<TooltipManager>
+	companion object : Context.Key<TooltipManager> {
+		override val factory = dependencyFactory {
+			TooltipManagerImpl(it)
+		}
+	}
 }
 
-class TooltipManagerImpl(private val popUpManager: PopUpManager, private val stage: Stage) : TooltipManager, Disposable {
+class TooltipManagerImpl(owner: Context) : ContextImpl(owner), TooltipManager {
+
+
+	private val popUpManager by PopUpManager
+	private val stage by Stage
 
 	private val _tooltips = ActiveList<Tooltip<*>>()
 	override val tooltips: MutableList<Tooltip<*>> = _tooltips
@@ -158,7 +166,7 @@ class TooltipManagerImpl(private val popUpManager: PopUpManager, private val sta
 
 	private var enterFrameHandle: Disposable? = null
 
-	private val defaultTooltipView: ItemRenderer<String> by lazy { TooltipView(stage) }
+	private val defaultTooltipView: ItemRenderer<String> = TooltipView(this)
 
 	init {
 		_tooltips.addBinding {
