@@ -615,10 +615,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun dispatchChanged(): Boolean {
-		if (!pendingChange) return true
+		if (!pendingChange) return false
 		pendingChange = false
 		_changed.dispatch(host)
-		return false
+		return true
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
