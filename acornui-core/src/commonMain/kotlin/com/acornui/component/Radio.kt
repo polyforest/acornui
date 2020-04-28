@@ -137,6 +137,12 @@ open class RadioGroupView<S : Style, U : LayoutData, E : UiComponent, T>(owner: 
 		set(value) {
 			group.inputValue = value
 		}
+
+	init {
+		group.changed.add {
+			_changed.dispatch(this)
+		}
+	}
 }
 
 typealias HRadioGroupView<E, T> = RadioGroupView<HorizontalLayoutStyle, HorizontalLayoutData, E, T>
