@@ -20,6 +20,11 @@ plugins {
 
 kotlin {
 	sourceSets {
+		commonMain {
+			dependencies {
+				api("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.2")
+			}
+		}
 		commonTest {
 			dependencies {
 				implementation(project(":acornui-test-utils"))
