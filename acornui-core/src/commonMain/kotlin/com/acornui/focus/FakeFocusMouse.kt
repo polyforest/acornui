@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.acornui.focus
 
 import com.acornui.Disposable
-import com.acornui.component.*
+import com.acornui.component.UiComponentRo
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.input.interaction.*
 import com.acornui.time.nowMs
-import com.acornui.toDisposable
 
 /**
  * Dispatches mouse events when using SPACE or ENTER key presses on the focused element.
@@ -37,33 +38,6 @@ class FakeFocusMouse(
 
 	private val fakeMouseEvent = MouseInteraction()
 	private var downKey: Int? = null
-	private var downElement: UiComponentRo? = null
-
-	private val keyDownHandler = { event: KeyInteractionRo ->
-		if (!event.handled) {
-			val target = focus.focused
-			if (target != null) {
-				val isRepeat = event.isRepeat && target.downRepeatEnabled()
-				if ((downKey == null || isRepeat) && !event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)) {
-					downKey = event.keyCode
-					downElement = target
-					dispatchFakeMouseEvent(target, MouseInteractionRo.MOUSE_DOWN)
-				}
-			}
-		}
-	}
-
-	private val keyUpHandler = { event: KeyInteractionRo ->
-		if (event.keyCode == downKey) {
-			downKey = null
-
-			val downElement = downElement!!
-			this.downElement = null
-			dispatchFakeMouseEvent(downElement, MouseInteractionRo.MOUSE_UP)
-			if (!downElement.dispatchClick().handled)
-				getEnterTarget(event)?.dispatchClick()
-		}
-	}
 
 	private fun dispatchFakeMouseEvent(target: UiComponentRo, type: InteractionType<MouseInteractionRo>) {
 		fakeMouseEvent.clear()
@@ -74,46 +48,82 @@ class FakeFocusMouse(
 		interactivity.dispatch(target, fakeMouseEvent)
 	}
 
-	private fun getEnterTarget(event: KeyInteractionRo): UiComponentRo? {
-		val target = focus.focused?.findParent {
-			it.getAttachment<EnterTarget>(EnterTarget)?.filter?.invoke(event) == true
-		}
-		return target?.enterTarget ?: target
+	init {
+		focus.focusedChanged.add(::focusChangedHandler)
 	}
 
-	init {
-		stage.keyDown().add(keyDownHandler)
-		stage.keyUp().add(keyUpHandler)
+	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+		focused = new
+	}
+
+	/**
+	 * Handle key interaction on the focused element, this will mean the [InteractionEvent.handled] value will be set
+	 * in time for other handlers.
+	 */
+	private var focused: UiComponentRo? = null
+		set(value) {
+			field?.keyDown()?.remove(::keyDownHandler)
+			field?.keyUp()?.remove(::keyUpHandler)
+			field = value
+			value?.keyDown()?.add(::keyDownHandler)
+			value?.keyUp()?.add(::keyUpHandler)
+			downKey = null
+		}
+
+	private fun keyDownHandler(event: KeyInteractionRo) {
+		if (!event.handled) {
+			val target = event.target
+			val isRepeat = event.isRepeat && target.downRepeatEnabled()
+			if ((downKey == null || isRepeat) && !event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)) {
+				downKey = event.keyCode
+				dispatchFakeMouseEvent(target, MouseInteractionRo.MOUSE_DOWN)
+				if (fakeMouseEvent.handled)
+					event.handled = true
+			}
+		}
+	}
+
+	private fun keyUpHandler(event: KeyInteractionRo) {
+		if (event.keyCode == downKey) {
+			downKey = null
+			dispatchFakeMouseEvent(event.target, MouseInteractionRo.MOUSE_UP)
+			if (fakeMouseEvent.handled)
+				event.handled = true
+			val fakeClickEvent = event.target.dispatchClick()
+			if (fakeClickEvent.handled)
+				event.handled = true
+		}
 	}
 
 	override fun dispose() {
+		focused = null
 		super.dispose()
-		stage.keyDown().remove(keyDownHandler)
-		stage.keyUp().remove(keyUpHandler)
 	}
 }
 
 /**
- * The target for when ENTER or RETURN is pressed.
+ * @param target //The target for when ENTER or RETURN is pressed.
  */
-class EnterTarget(val target: UiComponentRo, val filter: (KeyInteractionRo) -> Boolean) {
+class EnterTarget(val host: UiComponentRo, val target: UiComponentRo) : Disposable {
 
-	companion object
+	init {
+		host.keyUp().add(::hostKeyUpHandler)
+	}
+
+	private fun hostKeyUpHandler(event: KeyInteractionRo) {
+		if (!event.handled && !event.hasAnyModifier && event.isEnterOrReturn) {
+			target.dispatchClick()
+		}
+	}
+
+	override fun dispose() {
+		host.keyUp().remove(::hostKeyUpHandler)
+	}
 }
 
-private val UiComponentRo.enterTarget: UiComponentRo?
-	get() = getAttachment<EnterTarget>(EnterTarget)?.target
-
 /**
- * The FakeFocusMouse by default will respond to ENTER or RETURN key presses and fabricate MOUSE_DOWN and MOUSE_UP
- * events on the focused element.  If the enter target is set on an ancestor of the focused element, that target will
- * be used instead.
+ *
  */
-fun UiComponentRo.enterTarget(target: UiComponentRo, filter: (KeyInteractionRo) -> Boolean = { !it.handled && it.keyCode != Ascii.SPACE }): Disposable {
-	createOrReuseAttachment(EnterTarget) {
-		EnterTarget(target, filter)
-	}
-	return {
-		removeAttachment<EnterTarget>(EnterTarget)
-	}.toDisposable()
+fun UiComponentRo.enterTarget(target: UiComponentRo): Disposable {
+	return EnterTarget(this, target)
 }
