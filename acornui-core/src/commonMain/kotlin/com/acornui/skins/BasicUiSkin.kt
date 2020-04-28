@@ -40,7 +40,6 @@ import com.acornui.filter.BlurQuality
 import com.acornui.focus.FocusableStyle
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
-import com.acornui.input.SoftKeyboardView
 import com.acornui.input.interaction.ContextMenuStyle
 import com.acornui.input.interaction.ContextMenuView
 import com.acornui.math.*
@@ -89,7 +88,6 @@ open class BasicUiSkin(
 		tooltipStyle()
 		imageButtonStyle()
 		formStyle()
-		softKeyboardStyle()
 		dropShadowStyle()
 		itemRendererStyle()
 	}
@@ -811,20 +809,6 @@ open class BasicUiSkin(
 			}
 		}
 		target.addStyleRule(formInputStyle)
-	}
-
-	protected open fun softKeyboardStyle() {
-		val panelStyle = panelStyle {
-			background = {
-				rect {
-					style.backgroundColor = theme.panelBgColor
-					style.borderColors = BorderColors(theme.stroke)
-					style.borderRadii = Corners(0f)
-					style.borderThicknesses = Pad(theme.strokeThickness)
-				}
-			}
-		}
-		target.addStyleRule(panelStyle, SoftKeyboardView)
 	}
 
 	protected open fun dropShadowStyle() {

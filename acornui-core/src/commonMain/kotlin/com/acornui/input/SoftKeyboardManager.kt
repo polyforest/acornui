@@ -16,27 +16,26 @@
 
 package com.acornui.input
 
-import com.acornui.component.UiComponent
+import com.acornui.Disposable
 import com.acornui.di.Context
-import com.acornui.di.dependencyFactory
-import com.acornui.observe.Observable
 
-interface SoftKeyboardManager : Observable {
+interface SoftKeyboardManager {
 
-	fun createView(owner: Context): UiComponent
+	fun create(): SoftKeyboard
 
-	val isShowing: Boolean
-	val keyboardType: String?
+	companion object : Context.Key<SoftKeyboardManager>
+}
+
+interface SoftKeyboard : Disposable {
 	
-	fun show(type: String = SoftKeyboardType.DEFAULT)
-	fun hide()
+	//val input: Signal<() -> Unit>
 
-	companion object : Context.Key<SoftKeyboardManager> {
+	//var type: String = SoftKeyboardType.DEFAULT
 
-		override val factory = dependencyFactory {
-			SoftKeyboardManagerImpl(it)
-		}
-	}
+	var text: String
+
+	fun focus()
+	fun blur()
 }
 
 object SoftKeyboardType {

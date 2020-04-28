@@ -44,9 +44,9 @@ import kotlin.time.seconds
 open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(owner), Focusable {
 
 	init {
-		dependencies += listOf(Stage to this, TooltipManager to TooltipManagerImpl(inject(PopUpManager), this))
+		dependencies += listOf(Stage to this)
 	}
-	
+
 	private val defaultBackgroundColor = gl.getParameterfv(Gl20.COLOR_CLEAR_VALUE, Color())
 
 	final override val style = bind(StageStyle())
@@ -54,9 +54,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 
 	private val popUpManager = inject(PopUpManager)
 	private val popUpManagerView: UiComponent
-
-	private val softKeyboardManager by SoftKeyboardManager
-	private var softKeyboardView: UiComponent? = null
 
 	private val cam = orthographicCamera(false)
 
@@ -85,7 +82,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 		popUpManagerView = addChild(popUpManager.init(this))
 		popUpManagerView.layoutInvalidatingFlags = 0
 
-		softKeyboardManager.changed.add(::invalidateLayout.as1)
 		gl.colorMask(true, true, true, true)
 		gl.stencilFunc(Gl20.EQUAL, 0, -1)
 		gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
@@ -144,7 +140,6 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	//-------------------------------------------------------------
 	// External elements
 	// Pop up manager view
-	// Soft keyboard view
 	//-------------------------------------------------------------
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
@@ -154,20 +149,12 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		val w = window.width
 		val h = window.height
-		val softKeyboardH: Float = if (softKeyboardManager.isShowing) {
-			if (softKeyboardView == null)
-				softKeyboardView = addChild(softKeyboardManager.createView(this))
-			val keyboardView = softKeyboardView!!
-			keyboardView.size(w, null)
-			keyboardView.position(0f, h - keyboardView.height)
-			keyboardView.height
-		} else 0f
 
 		elementsToLayout.forEach { it: LayoutElement ->
 			// Elements of the stage all are explicitly sized to the dimensions of the stage.
-			it.size(w, h - softKeyboardH)
+			it.size(w, h)
 		}
-		popUpManagerView.size(w, h - softKeyboardH)
+		popUpManagerView.size(w, h)
 		out.set(w, h)
 	}
 
@@ -181,10 +168,5 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 		gl.uniforms.setCamera(this)
 		super.draw()
 		gl.batch.flush()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		softKeyboardManager.changed.remove(::invalidateLayout.as1)
 	}
 }

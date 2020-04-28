@@ -29,7 +29,9 @@ import com.acornui.function.as1
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.input.*
-import com.acornui.input.interaction.*
+import com.acornui.input.interaction.ClipboardItemType
+import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.commandPlat
 import com.acornui.isWhitespace2
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
@@ -42,7 +44,6 @@ import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
 import com.acornui.selection.selectAll
 import com.acornui.selection.unselect
-import com.acornui.signal.Signal0
 import com.acornui.signal.Signal1
 import com.acornui.string.isLetterOrDigit2
 import com.acornui.substringInRange
@@ -67,6 +68,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	var maxLength: Int? = null
+
+	private val softKeyboard: SoftKeyboard? = own(injectOptional(SoftKeyboardManager)?.create())
 
 	val textField = addChild(TextFieldImpl(this).apply { selectionTarget = host })
 
@@ -95,6 +98,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			if (_text == value) return
 			_text = if (_restrictPattern == null) value else value.replace(_restrictPattern!!, "")
 			_text = _text.replace("\r", "")
+			softKeyboard?.text = _text
 			refreshText()
 		}
 
@@ -154,20 +158,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var pendingChange = true
 
 	init {
-		host.click().add {
-			if (it.fromTouch) {
-				it.handled = true
-				host.touchScreenKeyboard.show(host.touchScreenInputType)
-			}
-		}
-
 		host.focusedSelf().add {
 			if (charStyle.selectable)
 				host.selectAll()
+			softKeyboard?.focus()
 		}
 
 		host.blurredSelf().add {
 			host.unselect()
+			softKeyboard?.blur()
 			if (isActive)
 				dispatchChanged()
 		}

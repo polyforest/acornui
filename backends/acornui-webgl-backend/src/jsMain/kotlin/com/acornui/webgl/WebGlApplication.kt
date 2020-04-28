@@ -33,6 +33,8 @@ import com.acornui.gl.core.Gl20CachedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
+import com.acornui.input.SoftKeyboardManager
+import com.acornui.input.SoftKeyboardManagerImpl
 import com.acornui.io.Bandwidth
 import com.acornui.io.Loader
 import com.acornui.io.RequestSettings
@@ -133,6 +135,10 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 
 	protected open val fileIoManagerTask by task(FileIoManager) {
 		JsFileIoManager(rootElement)
+	}
+
+	protected open val softKeyboardManagerTask by task(SoftKeyboardManager) {
+		SoftKeyboardManagerImpl()
 	}
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
