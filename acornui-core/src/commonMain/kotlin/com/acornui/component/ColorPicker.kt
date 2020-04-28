@@ -77,10 +77,10 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 			colorSwatch?.colorTint = v
 		}
 
-	var value: HsvRo
-		get() = colorPalette.value
+	var hsv: HsvRo
+		get() = colorPalette.hsv
 		set(value) {
-			colorPalette.value = value
+			colorPalette.hsv = value
 			colorSwatch?.colorTint = value.toRgb(tmpColor).copy().clamp()
 		}
 
@@ -124,7 +124,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 		}
 
 		colorPalette.changed.add {
-			colorSwatch?.colorTint = value.toRgb(tmpColor).copy()
+			colorSwatch?.colorTint = hsv.toRgb(tmpColor).copy()
 		}
 
 		watch(style) {
@@ -266,7 +266,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
-			tmpHSV.set(value)
+			tmpHSV.set(hsv)
 			tmpHSV.h = 360f * MathUtils.clamp(tmpVec.x / width, 0f, 1f)
 			tmpHSV.s = 1f - MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
@@ -278,9 +278,9 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 	 * Sets the value and triggers a changed signal.
 	 */
 	fun userChange(value: HsvRo) {
-		val previous = this.value
+		val previous = this.hsv
 		if (previous == value) return
-		this.value = value
+		this.hsv = value
 		_changed.dispatch(this)
 	}
 
@@ -300,7 +300,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(value)
+			tmpHSV.set(hsv)
 			tmpHSV.v = 1f - p
 			userChange(tmpHSV)
 		}
@@ -317,7 +317,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
 
-			tmpHSV.set(value)
+			tmpHSV.set(hsv)
 			tmpHSV.a = 1f - p
 			userChange(tmpHSV)
 		}
@@ -329,7 +329,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		set(value) {
 			if (_color != value) {
 				_color = value.copy()
-				_value = value.toHsv()
+				_hsv = value.toHsv()
 				invalidate(COLORS)
 			}
 		}
@@ -338,12 +338,12 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		get() = color
 		set(value) { color = value }
 
-	private var _value: HsvRo = Color.WHITE.toHsv(Hsv())
-	var value: HsvRo
-		get() = _value
+	private var _hsv: HsvRo = Color.WHITE.toHsv(Hsv())
+	var hsv: HsvRo
+		get() = _hsv
 		set(value) {
-			if (_value != value) {
-				_value = value.copy()
+			if (_hsv != value) {
+				_hsv = value.copy()
 				_color = value.toRgb()
 				invalidate(COLORS)
 			}
@@ -376,7 +376,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 	}
 
 	private fun updateColors() {
-		tmpHSV.set(value)
+		tmpHSV.set(hsv)
 		tmpHSV.v = 1f
 		tmpHSV.a = 1f
 		valueRect.style.linearGradient = LinearGradient(GradientDirection.BOTTOM,
@@ -412,9 +412,9 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		alphaRect.size(s.sliderWidth + handleWidth, sliderHeight)
 		alphaRect.position(valueRect.right + s.gap - handleWidth, padding.top)
 
-		hueSaturationIndicator!!.position(saturationRect.x + value.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - value.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
-		valueIndicator!!.position(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - value.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
-		alphaIndicator!!.position(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - value.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
+		hueSaturationIndicator!!.position(saturationRect.x + hsv.h / 360f * saturationRect.width - hueSaturationIndicator!!.width * 0.5f, saturationRect.y + (1f - hsv.s) * saturationRect.height - hueSaturationIndicator!!.height * 0.5f)
+		valueIndicator!!.position(valueRect.x + handleWidth - valueIndicator!!.width * 0.5f, (1f - hsv.v) * sliderHeight + padding.top - valueIndicator!!.height * 0.5f)
+		alphaIndicator!!.position(alphaRect.x + handleWidth - alphaIndicator!!.width * 0.5f, (1f - hsv.a) * sliderHeight + padding.top - alphaIndicator!!.height * 0.5f)
 
 		val bg = background!!
 		bg.size(w, h)
@@ -475,9 +475,9 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 		}
 
 	var value: HsvRo
-		get() = colorPicker.value
+		get() = colorPicker.hsv
 		set(value) {
-			colorPicker.value = value
+			colorPicker.hsv = value
 			updateText()
 		}
 
