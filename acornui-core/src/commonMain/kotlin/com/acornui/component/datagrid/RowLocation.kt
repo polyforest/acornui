@@ -17,7 +17,6 @@
 package com.acornui.component.datagrid
 
 import com.acornui.collection.Filter
-import com.acornui.collection.indexOfLast
 
 interface RowLocationRo<RowData> {
 
@@ -133,7 +132,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	final override var position: Int
 		get() = _position
 		set(newPosition) {
-			if (newPosition == dataGrid._totalRows) {
+			if (newPosition == dataGrid.totalRows) {
 				moveToLastRow() // An optimization for the common case.
 				return
 			}
@@ -194,7 +193,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 * Returns true if this location is within bounds.
 	 */
 	override val isValid: Boolean
-		get() = _position >= 0 && _position < dataGrid._totalRows
+		get() = _position >= 0 && _position < dataGrid.totalRows
 
 	/**
 	 * The index of this row within the source [DataGrid.data] list.
@@ -256,7 +255,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 	 * Move the cursor so that [moveToPreviousRow] will bring us to the last position.
 	 */
 	fun moveToLastRow(): RowLocation<RowData> {
-		_position = dataGrid._totalRows
+		_position = dataGrid.totalRows
 		_groupIndex = maxOf(0, displayGroupCaches.indexOfLast { it.shouldRender })
 		_groupPosition = groupCache.size
 		return this
@@ -266,7 +265,7 @@ open class RowLocation<RowData>(protected val dataGrid: DataGrid<RowData>) : Row
 		get() = _position > 0
 
 	final override val hasNextRow: Boolean
-		get() = _position < dataGrid._totalRows - 1
+		get() = _position < dataGrid.totalRows - 1
 
 	fun moveToPreviousRow() {
 		_position--

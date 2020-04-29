@@ -41,6 +41,11 @@ interface DataGridCellMetricsRo {
 		get() = endPosition - startPosition
 
 	/**
+	 * Returns true if the row index is within the position range.
+	 */
+	fun rowIsVisible(rowIndex: Int): Boolean = rowIndex in startPosition.toInt() .. endPosition.toInt()
+
+	/**
 	 * The heights of each visible row.  (Rows startPosition.toInt() through endPosition.toInt())
 	 * This includes header and footer rows.
 	 */

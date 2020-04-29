@@ -244,7 +244,7 @@ class DataGrid<RowData>(
 	private inner class DataGridTossScrollBinding : TossScrollModelBinding(tossScroller, hScrollModel, vScrollModel) {
 
 		override fun localToModel(diffPoints: Vector2) {
-			if (_totalRows <= 0) return
+			if (totalRows <= 0) return
 			val firstRowHeight = _cellMetrics.rowHeights.first()
 			diffPoints.scl(1f, 1f / firstRowHeight)
 		}
@@ -313,18 +313,14 @@ class DataGrid<RowData>(
 	private val rowIterator = RowLocation(this)
 
 	/**
-	 * @suppress
-	 */
-	internal var _totalRows = 0
-
-	/**
 	 * The total number of rows, counting header and footer rows.
 	 */
-	val totalRows: Int
+	var totalRows: Int = 0
 		get() {
 			validate(ValidationFlags.LAYOUT)
-			return _totalRows
+			return field
 		}
+		private set
 
 	/**
 	 * Returns true if there is a cell editor opened.
@@ -407,12 +403,13 @@ class DataGrid<RowData>(
 	}
 
 	private fun focusedHandler() {
-//		if (!editable || editorCell?.visible == true) return
-//		println("Focused $cellFocusLocation")
-//		focusFirstEditableCell()
+		if (!editable || editorCell?.visible == true) return
+		println("Focused $cellFocusLocation")
+		focusFirstEditableCell()
 	}
 
 	private fun blurredHandler() {
+		println("blurred")
 		editorCellCheck()
 		commitEditorCellValue()
 		disposeEditorCell()
@@ -482,8 +479,8 @@ class DataGrid<RowData>(
 				Ascii.TAB -> {
 					// Edit the next column
 					event.handled = true
-					if (event.shiftKey) focusPreviousCell(true) else focusNextCell(true)
 					event.preventDefault() // Prevent default tab-focus behavior
+					if (event.shiftKey) focusPreviousCell(true) else focusNextCell(true)
 				}
 				Ascii.ENTER, Ascii.RETURN -> {
 					// Edit the next row
@@ -1008,12 +1005,12 @@ class DataGrid<RowData>(
 
 		val hScrollBarH = if (hScrollBar.visible) hScrollBar.naturalHeight else 0f
 
-		_totalRows = calculateTotalRows()
+		totalRows = calculateTotalRows()
 		var contentsH = if (explicitHeight == null) null else border.reduceHeight(explicitHeight) - headerCells.height - hScrollBarH
 		sizeCellsReversed(
 				width = contentsW,
 				height = contentsH,
-				endPosition = _totalRows.toFloat(),
+				endPosition = totalRows.toFloat(),
 				cellCache = cache.bottomCellCache,
 				cellsContainer = measureContents,
 				headerAndFootersContainer = measureContents,
@@ -1023,7 +1020,7 @@ class DataGrid<RowData>(
 		val bottomBounds = _bottomCellMetrics.bounds
 		val bottomRowCount = _bottomCellMetrics.visibleRows
 		vScrollBar.modelToPoints = bottomBounds.height / maxOf(0.0001f, bottomRowCount)
-		vScrollBar.scrollModel.max = maxOf(0f, _totalRows - bottomRowCount)
+		vScrollBar.scrollModel.max = maxOf(0f, totalRows - bottomRowCount)
 		vScrollBar.visible = vScrollPolicy != ScrollPolicy.OFF && vScrollBar.scrollModel.max > 0.0001f
 		val vScrollBarW = if (vScrollBar.visible) vScrollBar.naturalWidth else 0f
 
@@ -1240,7 +1237,7 @@ class DataGrid<RowData>(
 		val rowHeight = rowHeight
 		val rowHeight2 = pad.reduceHeight(rowHeight)
 		var heightSum: Float
-		val maxRows = minOf(_totalRows, maxRows)
+		val maxRows = minOf(totalRows, maxRows)
 		val maxHeight = height ?: Float.MAX_VALUE
 
 		if (allowVirtual && rowHeight != null) {
@@ -1358,7 +1355,7 @@ class DataGrid<RowData>(
 		val pad = style.cellPadding
 		val rowHeight = rowHeight
 		val rowHeight2 = pad.reduceHeight(rowHeight)
-		val maxRows = minOf(_totalRows, maxRows)
+		val maxRows = minOf(totalRows, maxRows)
 		var rowsShown = 0
 		var heightSum = 0f
 		var iRowHeight: Float = minRowHeight
@@ -1495,24 +1492,18 @@ class DataGrid<RowData>(
 		editorCellCheck()
 		val editorCell = editorCell ?: return
 		val columnIndex = cellFocusCol.index
+		val cellMetrics = _cellMetrics
 		val x = _columnPositions[columnIndex] - hScrollModel.value
-		val rowHeights = _cellMetrics.rowHeights
 
 		rowIterator.sourceIndex = cellFocusRow.index
 		val position = rowIterator.position
-		val rowIndex = position - vScrollModel.value.toInt()
+		val rowIndex = position - cellMetrics.startPosition.toInt()
 
-		if (rowIndex >= 0 && rowIndex < rowHeights.size) {
+		if (cellMetrics.rowIsVisible(rowIterator.position)) {
 			editorCell.visible = true
 			if (isFocusedSelf) editorCell.focus()
-			var y = 0f
-			for (i in 0 until rowIndex) {
-				y += rowHeights[i]
-			}
-			// Partial row visibility
-			y -= rowHeights[0] * (vScrollModel.value - floor(vScrollModel.value))
-			editorCell.size(_columnWidths[columnIndex], rowHeights[rowIndex])
-			editorCell.position(x, y)
+			editorCell.size(_columnWidths[columnIndex], cellMetrics.rowHeights[rowIndex])
+			editorCell.position(x, cellMetrics.rowPositions[rowIndex])
 		} else {
 			if (editorCell.isFocused) focusSelf()
 			editorCell.visible = false

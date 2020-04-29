@@ -226,7 +226,9 @@ abstract class DateColumn<in E> : DataGridColumn<E, DateRo?>() {
 
 	override fun createEditorCell(owner: Context): DataGridEditorCell<DateRo?> = DateEditorCell(owner).apply {
 		formatter = this@DateColumn.formatter
-		open()
+		activated.add {
+			open()
+		}
 	}
 
 	override fun compareRows(row1: E, row2: E): Int {
@@ -255,7 +257,9 @@ class DateCell(owner: Context, private val formatter: StringFormatter<DateRo?>) 
 open class DateEditorCell(owner: Context) : DatePicker(owner), DataGridEditorCell<DateRo?> {
 
 	init {
-		open()
+		activated.add {
+			open()
+		}
 	}
 }
 
