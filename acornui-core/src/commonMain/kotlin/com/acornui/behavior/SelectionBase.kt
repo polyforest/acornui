@@ -17,7 +17,6 @@
 package com.acornui.behavior
 
 import com.acornui.Disposable
-import com.acornui.collection.copy
 import com.acornui.signal.Cancel
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal2
@@ -112,7 +111,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 
 	/**
 	 * Dispatched when the selection has changed based on user interaction from via [setSelectedItemsUser] and the
-	 * [changing] signal was not canceled.
+	 * [changing] signal was not cancelled.
 	 * This is not no-oped; calling [setSelectedItemsUser] with the currently selected items will still result
 	 * in a [changed] event.
 	 */
@@ -172,7 +171,7 @@ abstract class SelectionBase<E : Any> : Selection<E>, Disposable {
 			val previousSelection = HashSet(_selection)
 			if (_changing.isNotEmpty()) {
 				_changing.dispatch(previousSelection, items, cancel.reset())
-				if (cancel.canceled) return
+				if (cancel.isCancelled) return
 			}
 			setSelectedItemsInternal(items)
 			_changed.dispatch(previousSelection, items)

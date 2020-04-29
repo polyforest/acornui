@@ -36,8 +36,7 @@ class DownRepeat(
 	private val stage = target.stage
 	private val interactivity = inject(InteractivityManager)
 
-	// TODO: This style won't inherit
-	val style = DownRepeatStyle()
+	val style = target.bind(DownRepeatStyle())
 
 	private var repeatTimer: Disposable? = null
 
@@ -78,7 +77,7 @@ class DownRepeat(
 
 	override fun dispose() {
 		super.dispose()
-		style.dispose()
+		target.unbind(DownRepeatStyle())
 		target.mouseDown().remove(::mouseDownHandler)
 		stage.mouseUp().remove(::rawMouseUpHandler)
 		repeatTimer?.dispose()

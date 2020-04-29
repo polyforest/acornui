@@ -211,7 +211,7 @@ class GlfwWindowImpl(
 		glfwSetWindowCloseCallback(windowId) {
 			if (!forceClose) {
 				_closeRequested.dispatch(cancel.reset())
-				if (cancel.canceled) {
+				if (cancel.isCancelled) {
 					glfwSetWindowShouldClose(windowId, false)
 				}
 			}

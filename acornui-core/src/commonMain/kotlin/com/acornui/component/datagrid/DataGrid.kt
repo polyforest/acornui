@@ -404,12 +404,10 @@ class DataGrid<RowData>(
 
 	private fun focusedHandler() {
 		if (!editable || editorCell?.visible == true) return
-		println("Focused $cellFocusLocation")
 		focusFirstEditableCell()
 	}
 
 	private fun blurredHandler() {
-		println("blurred")
 		editorCellCheck()
 		commitEditorCellValue()
 		disposeEditorCell()
@@ -533,7 +531,7 @@ class DataGrid<RowData>(
 		val cell = getCellFromPosition(event.canvasX, event.canvasY)
 		event.handled = true
 		_cellClicked.dispatch(cell, cellClickedCancel.reset())
-		if (!cellClickedCancel.canceled) {
+		if (!cellClickedCancel.isCancelled) {
 			if (isEditing) {
 				commitEditorCellValue()
 				disposeEditorCell()

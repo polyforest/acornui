@@ -19,13 +19,17 @@ package com.acornui.focus
 import com.acornui.Disposable
 import com.acornui.TreeWalk
 import com.acornui.childWalkLevelOrder
-import com.acornui.component.*
-import com.acornui.component.style.StyleBase
+import com.acornui.component.ElementContainer
+import com.acornui.component.HighlightStyle
+import com.acornui.component.UiComponent
+import com.acornui.component.UiComponentRo
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
 import com.acornui.di.owns
 import com.acornui.isAncestorOf
+import com.acornui.recycle.Clearable
 import com.acornui.signal.Cancel
+import com.acornui.signal.CancelRo
 import com.acornui.signal.Signal
 
 /**
@@ -40,15 +44,16 @@ interface FocusManager : Disposable {
 
 	/**
 	 * Dispatched when the focused object is about to change.
-	 * (oldFocusable, newFocusable, cancel)
+	 * This may be cancelled to prevent the focus from committing.
+	 *
+	 * Calling [focus] during this dispatch will cancel the change.
 	 */
-	val focusedChanging: Signal<(UiComponentRo?, UiComponentRo?, Cancel) -> Unit>
+	val focusedChanging: Signal<(FocusChangingEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the focused object changes.
-	 * (oldFocusable, newFocusable)
 	 */
-	val focusedChanged: Signal<(UiComponentRo?, UiComponentRo?) -> Unit>
+	val focusedChanged: Signal<(FocusChangedEventRo) -> Unit>
 
 	/**
 	 * Refreshes the focusable's order in the focus list.
@@ -66,21 +71,23 @@ interface FocusManager : Disposable {
 	 *
 	 * @param value The target to focus. If this is null, the manager's root will be focused. (This is typically the
 	 * stage)
+	 * @param options Options to place on the change event.
+	 *
 	 * @see UiComponentRo.focusSelf
 	 * @see UiComponentRo.blurSelf
 	 */
-	fun focused(value: UiComponentRo?)
+	fun focus(value: UiComponentRo?, options: FocusOptions = FocusOptions.default)
 
 	/**
 	 * Clears the current focus.
 	 */
-	fun clearFocused() = focused(null)
+	fun clearFocused() = focus(null)
 
 	/**
 	 * Sets focus to the [nextFocusable].
 	 */
-	fun focusNext() {
-		focused(nextFocusable())
+	fun focusNext(options: FocusOptions = FocusOptions.default) {
+		focus(nextFocusable(), options)
 	}
 
 	/**
@@ -91,8 +98,8 @@ interface FocusManager : Disposable {
 	/**
 	 * Sets focus to [previousFocusable].
 	 */
-	fun focusPrevious() {
-		focused(previousFocusable())
+	fun focusPrevious(options: FocusOptions = FocusOptions.default) {
+		focus(previousFocusable(), options)
 	}
 
 	/**
@@ -105,10 +112,6 @@ interface FocusManager : Disposable {
 	 */
 	val focusables: List<UiComponentRo>
 
-	fun unhighlightFocused()
-
-	fun highlightFocused()
-
 	companion object : Context.Key<FocusManager>
 }
 
@@ -120,13 +123,13 @@ interface Focusable : Context {
 	/**
 	 * True if this Focusable object should be included in the focus order.
 	 * Note that this does not affect directly setting this element to be focused via [focusSelf] or using
-	 * [FocusManager.focused]
+	 * [FocusManager.focus]
 	 */
 	val focusEnabled: Boolean
 
 	/**
-	 * The focus order weight. This number is relative to the closest ancestor where [isFocusContainer] is true, if
-	 * there is one. A higher number means this component will be later in the order.
+	 * The focus order weight. This number is relative to the closest display ancestor where [isFocusContainer] is true,
+	 * if there is one. A higher number means this component will be later in the order.
 	 * (An order of 1f will be focused before a Focusable component with the same parent with an order of 2f)
 	 * In the case of a tie, the order within the display graph (breadth-first) is used.
 	 */
@@ -134,7 +137,7 @@ interface Focusable : Context {
 
 	/**
 	 * If true, this is component will be considered a focus container. That means it is a demarcation for focus order
-	 * on all Focusable descendants.
+	 * on all Focusable display descendants.
 	 */
 	val isFocusContainer: Boolean
 
@@ -148,6 +151,63 @@ interface Focusable : Context {
 	 * focus instead. Note that setting this will remove this component from the focus order.
 	 */
 	var focusDelegate: UiComponentRo?
+}
+
+data class FocusOptions(
+
+		/**
+		 * If true, scrollable regions should scroll to show the newly focused component in view.
+		 */
+		val scrollToFocused: Boolean = true,
+
+		/**
+		 * If true, the component should highlight, indicating visually its focus.
+		 */
+		val highlight: Boolean = false
+) {
+
+	companion object {
+		val default = FocusOptions()
+		val highlight = FocusOptions(highlight = true)
+	}
+}
+
+interface FocusChangedEventRo {
+
+	val old: UiComponentRo?
+	val new: UiComponentRo?
+
+	val options: FocusOptions
+}
+
+interface FocusChangingEventRo : FocusChangedEventRo, CancelRo {
+
+	/**
+	 * Cancels the change event.
+	 */
+	override fun cancel()
+}
+
+
+class FocusChangeEvent : FocusChangingEventRo, Clearable {
+
+	override var old: UiComponentRo? = null
+	override var new: UiComponentRo? = null
+
+	override var options: FocusOptions = FocusOptions.default
+
+	override var isCancelled: Boolean = false
+
+	override fun cancel() {
+		isCancelled = true
+	}
+
+	override fun clear() {
+		old = null
+		new = null
+		options = FocusOptions.default
+		isCancelled = false
+	}
 }
 
 /**
@@ -237,7 +297,7 @@ val UiComponentRo.canFocusSelf: Boolean
  * @see focus
  */
 fun UiComponentRo.focusSelf() {
-	inject(FocusManager).focused(this)
+	inject(FocusManager).focus(this)
 }
 
 /**
@@ -274,20 +334,18 @@ val UiComponentRo.canFocus: Boolean
 	get() = firstFocusable != null
 
 /**
- * Sets focus to the first descendant (abiding by focus order) that can be focused.
+ * Sets focus to the first descendant (abiding by focus order) that can be focused, if possible.
  *
  * @see canFocus
  */
-fun UiComponentRo.focus(highlight: Boolean = false) {
+fun UiComponentRo.focus(options: FocusOptions = FocusOptions.default) {
 	val focusManager = inject(FocusManager)
-	val toFocus = firstFocusable
-	if (toFocus == null) {
-		focusManager.clearFocused()
-	} else {
-		toFocus.focusSelf()
-		if (highlight)
-			focusManager.highlightFocused()
-	}
+	val toFocus = firstFocusable ?: return
+	focusManager.focus(toFocus, options)
+}
+
+@Deprecated("Use FocusOptions", ReplaceWith("focus(FocusOptions(highlight = highlight))"), DeprecationLevel.ERROR)
+fun UiComponentRo.focus(highlight: Boolean) {
 }
 
 class FocusableStyle : HighlightStyle() {

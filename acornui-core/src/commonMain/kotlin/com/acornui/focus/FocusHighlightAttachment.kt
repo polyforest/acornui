@@ -130,9 +130,13 @@ var UiComponentRo.focusHighlightDelegate: UiComponentRo?
  * If true, this component will render its focus highlight as provided by the [focusableStyle].
  */
 var UiComponentRo.showFocusHighlight: Boolean
-	get() = focusHighlightAttachment.showHighlight
+	get() {
+		// If the highlight has never been set to true, don't create the highlight attachment.
+		return getAttachment<FocusHighlightAttachment>(FocusHighlightAttachment)?.showHighlight == true
+	}
 	set(value) {
-		focusHighlightAttachment.showHighlight = value
+		if (value != showFocusHighlight)
+			focusHighlightAttachment.showHighlight = value
 	}
 
 /**

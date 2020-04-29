@@ -20,14 +20,14 @@ import com.acornui.recycle.Clearable
 
 interface PropagationRo {
 
-	fun immediatePropagationStopped(): Boolean
+	val immediatePropagationStopped: Boolean
 
 	/**
 	 * Immediately stops execution of the sequence, neither progressing further, or finishing the current level.
 	 */
 	fun stopImmediatePropagation()
 
-	fun propagationStopped(): Boolean
+	val propagationStopped: Boolean
 
 	/**
 	 * Stops the sequence from going to the next level, but will continue along the current level.
@@ -42,36 +42,31 @@ interface PropagationRo {
  *
  * @author nbilyk
  */
-open class Propagation : PropagationRo, Clearable {
+class Propagation : PropagationRo, Clearable {
 
-	private var _immediatePropagationStopped = false
-	private var _propagationStopped = false
-
-	override fun immediatePropagationStopped(): Boolean {
-		return _immediatePropagationStopped
-	}
+	override var immediatePropagationStopped: Boolean = false
+		private set
 
 	/**
 	 * Immediately stops execution of the sequence, neither progressing further, or finishing the current level.
 	 */
 	override fun stopImmediatePropagation() {
-		_immediatePropagationStopped = true
-		_propagationStopped = true
+		immediatePropagationStopped = true
+		propagationStopped = true
 	}
 
-	override fun propagationStopped(): Boolean {
-		return _propagationStopped
-	}
+	override var propagationStopped: Boolean = false
+		private set
 
 	/**
 	 * Stops the sequence from going to the next level, but will continue along the current level.
 	 */
 	override fun stopPropagation() {
-		_propagationStopped = true
+		propagationStopped = true
 	}
 
 	override fun clear() {
-		_immediatePropagationStopped = false
-		_propagationStopped = false
+		immediatePropagationStopped = false
+		propagationStopped = false
 	}
 }

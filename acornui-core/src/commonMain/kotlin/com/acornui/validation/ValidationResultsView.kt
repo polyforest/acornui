@@ -32,6 +32,7 @@ import com.acornui.component.text.text
 import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
+import com.acornui.focus.FocusOptions
 import com.acornui.focus.focus
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -118,7 +119,7 @@ class ValidationInfoItemRenderer(owner: Context) : HorizontalLayoutContainer<UiC
 
 		click().add {
 			println("Focusing component ${data?.name}")
-			data?.component?.focus(highlight = true)
+			data?.component?.focus(FocusOptions(highlight = true))
 		}
 	}
 

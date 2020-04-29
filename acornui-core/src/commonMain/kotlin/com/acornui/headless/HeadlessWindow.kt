@@ -17,7 +17,6 @@
 package com.acornui.headless
 
 import com.acornui.WindowConfig
-import com.acornui.browser.Location
 import com.acornui.graphic.Window
 import com.acornui.signal.*
 
@@ -108,7 +107,7 @@ class HeadlessWindow(config: WindowConfig) : Window {
 
 	override fun requestClose(force: Boolean) {
 		_closeRequested.dispatch(closeCancel.reset())
-		if (!closeCancel.canceled) {
+		if (!closeCancel.isCancelled) {
 			closeIsRequested = true
 		}
 	}

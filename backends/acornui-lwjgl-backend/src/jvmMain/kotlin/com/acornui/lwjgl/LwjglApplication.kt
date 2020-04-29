@@ -32,7 +32,6 @@ import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
-import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.CachedGl20
@@ -268,7 +267,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 
 	protected open fun initializeSpecialInteractivity(owner: Context) {
 		JvmClickDispatcher(owner)
-		FakeFocusMouse(owner)
 		UndoDispatcher(owner)
 		ContextMenuManager(owner)
 	}

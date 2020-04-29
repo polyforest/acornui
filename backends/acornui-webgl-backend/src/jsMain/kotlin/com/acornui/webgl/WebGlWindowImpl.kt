@@ -27,7 +27,6 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.floor
 
 /**
  * @author nbilyk
@@ -94,7 +93,7 @@ class WebGlWindowImpl(
 		window.onbeforeunload = { event ->
 			oBU?.invoke(event)
 			_closeRequested.dispatch(cancel.reset())
-			if (cancel.canceled) {
+			if (cancel.isCancelled) {
 				event.preventDefault()
 				event.returnValue = ""
 			}

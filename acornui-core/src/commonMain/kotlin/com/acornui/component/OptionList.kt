@@ -37,10 +37,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.focus.blurred
-import com.acornui.focus.focus
-import com.acornui.focus.focusHighlightDelegate
-import com.acornui.focus.focusSelf
+import com.acornui.focus.*
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.click
@@ -342,7 +339,6 @@ open class OptionList<E : Any>(
 					if (typedItem != null) textInput.text = formatter.format(typedItem)
 				}
 				close()
-				focusManager.highlightFocused()
 				_changed.dispatch(this)
 			}
 			Ascii.DOWN -> {

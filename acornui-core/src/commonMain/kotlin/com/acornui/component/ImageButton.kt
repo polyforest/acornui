@@ -23,6 +23,7 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
+import com.acornui.focus.mousePressOnKey
 import com.acornui.gl.core.useColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.input.interaction.MouseOrTouchState
@@ -54,6 +55,7 @@ class ImageButton(
 		cursor(StandardCursor.HAND)
 
 		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
+		mousePressOnKey()
 	}
 
 	var disabled: Boolean by afterChange(false) {

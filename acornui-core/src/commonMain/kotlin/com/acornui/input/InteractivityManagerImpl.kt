@@ -246,14 +246,14 @@ open class InteractivityManagerImpl(
 		// Capture phase
 		if (useCapture) {
 			for (i in rawAncestry.lastIndex downTo 0) {
-				if (event.propagation.propagationStopped()) break
+				if (event.propagation.propagationStopped) break
 				dispatchForCurrentTarget(rawAncestry[i], event, isCapture = true)
 			}
 		}
 		// Bubble phase
 		if (useBubble) {
 			for (i in 0..rawAncestry.lastIndex) {
-				if (event.propagation.propagationStopped()) break
+				if (event.propagation.propagationStopped) break
 				dispatchForCurrentTarget(rawAncestry[i], event, isCapture = false)
 			}
 		}

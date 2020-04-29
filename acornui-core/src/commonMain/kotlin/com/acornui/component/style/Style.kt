@@ -32,7 +32,10 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * A Style object contains maps of style properties.
+ * A Style object contains property maps of explicit and calculated values that can be set by a skin.
+ *
+ * The rules for cascading calculated values are defined in [CascadingStyleCalculator.calculate].
+ * @see com.acornui.skins.BasicUiSkin
  */
 interface StyleRo : Observable {
 
@@ -113,8 +116,10 @@ class NoopStyle : StyleBase(), StyleType<NoopStyle> {
 
 /**
  * The base class for a typical [Style] implementation.
+ *
+ * NB: Style objects are not disposable; anything observing a style object must handle its own cleanup.
  */
-abstract class StyleBase : Style, Disposable {
+abstract class StyleBase : Style {
 
 	private val _changed = Signal1<StyleBase>()
 	override val changed = _changed.asRo()
@@ -149,10 +154,6 @@ abstract class StyleBase : Style, Disposable {
 	override fun notifyChanged() {
 		modTag.increment()
 		_changed.dispatch(this)
-	}
-
-	override fun dispose() {
-		_changed.dispose()
 	}
 
 	fun toDebugString(): String {

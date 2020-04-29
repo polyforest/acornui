@@ -149,7 +149,7 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 			if (_currentIndex != index) {
 				e.handled = true
 				_userCurrentIndexChanged.dispatch(this, _currentIndex, index, cancel.reset())
-				if (!cancel.canceled) {
+				if (!cancel.isCancelled) {
 					currentIndex = index
 				}
 			}

@@ -100,7 +100,7 @@ class IconButtonLayoutStyle : StyleBase() {
 	/**
 	 * The Padding object with left, bottom, top, and right padding.
 	 */
-	var padding: PadRo by prop(Pad(4f))
+	var padding by prop<PadRo>(Pad(4f))
 
 	/**
 	 * The horizontal alignment of the entire row within the explicit width.
@@ -126,36 +126,6 @@ class IconButtonLayoutStyle : StyleBase() {
 inline fun Context.basicIconButtonSkin(texture: ButtonSkin, init: ComponentInit<BasicIconButtonSkin> = {}): BasicIconButtonSkin {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return BasicIconButtonSkin(this, texture).apply(init)
-}
-
-@Deprecated("DSL changed")
-fun Context.basicIconButtonSkin(texture: ButtonSkin,
-
-								/**
-							   * The padding around the text and icon.
-							   */
-							  padding: PadRo = Pad(4f),
-
-								/**
-							   * The horizontal gap between the icon and the textfield.
-							   */
-							  hGap: Float = 4f,
-
-								/**
-							   * The vertical alignment between the icon and the label.
-							   */
-							  vAlign: VAlign = VAlign.MIDDLE,
-
-								/**
-							   * If false, the icon will be on the right instead of left.
-							   */
-							  iconOnLeft: Boolean = true
-
-): IconButtonSkin = BasicIconButtonSkin(this, texture).apply {
-	layoutStyle.padding = padding
-	layoutStyle.gap = hGap
-	layoutStyle.verticalAlign = vAlign
-	layoutStyle.iconOnLeft = iconOnLeft
 }
 
 inline fun Context.basicIconButtonSkin(theme: Theme, init: ComponentInit<BasicIconButtonSkin> = {}): IconButtonSkin {

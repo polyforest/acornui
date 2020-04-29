@@ -119,7 +119,7 @@ interface InteractionEvent : InteractionEventRo, Clearable {
 	override val propagation: Propagation
 
 	override fun isStopped(): Boolean {
-		return propagation.immediatePropagationStopped()
+		return propagation.immediatePropagationStopped
 	}
 
 }

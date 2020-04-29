@@ -23,6 +23,10 @@ import com.acornui.di.owns
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
 
+/**
+ * The focus attachment takes general focus changing/changed signals and separates it into signals more relevant to
+ * the target component.
+ */
 class FocusAttachment(
 		private val target: UiComponentRo
 ) : ContextImpl(target) {
@@ -48,8 +52,8 @@ class FocusAttachment(
 	 * `new === target && old !== target`
 	 *
 	 * @see isFocusedSelf
-	 * @see FocusManager.focused
-	 * @see focused
+	 * @see FocusManager.focus
+	 * @see focus
 	 */
 	val focusedSelf = _focusedSelf.asRo()
 
@@ -61,7 +65,7 @@ class FocusAttachment(
 	 * `target.owns(old) && !target.owns(new)`
 	 *
 	 * @see isFocused
-	 * @see FocusManager.focused
+	 * @see FocusManager.focus
 	 */
 	val blurred = _blurred.asRo()
 
@@ -73,7 +77,7 @@ class FocusAttachment(
 	 * `old === target && new !== target`
 	 *
 	 * @see isFocusedSelf
-	 * @see FocusManager.focused
+	 * @see FocusManager.focus
 	 * @see blurred
 	 */
 	val blurredSelf = _blurredSelf.asRo()
@@ -82,7 +86,10 @@ class FocusAttachment(
 		focusManager.focusedChanged.add(::focusChangedHandler)
 	}
 
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
+	private fun focusChangedHandler(event: FocusChangedEventRo) {
+		val old = event.old
+		val new = event.new
+
 		if (_focusedSelf.isNotEmpty() && new === target && old !== target)
 			_focusedSelf.dispatch()
 		if (_blurredSelf.isNotEmpty() && old === target && new !== target)

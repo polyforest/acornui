@@ -261,7 +261,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 				if (wasFocused) {
 					val currentPopUp = currentPopUps.lastOrNull()
 					if (currentPopUp?.focus == true) {
-						currentPopUp.child.focus(currentPopUp.highlightFocused)
+						currentPopUp.child.focus(FocusOptions(highlight = currentPopUp.highlightFocused))
 					} else {
 						view.focusModalFill()
 					}
@@ -272,7 +272,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 			child.layoutData = popUpInfo.layoutData
 			view.addElement(index, child)
 			if (popUpInfo.focus)
-				child.focus(popUpInfo.highlightFocused)
+				child.focus(FocusOptions(highlight = popUpInfo.highlightFocused))
 			refreshModalBlocker()
 		}
 	}
@@ -387,11 +387,13 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		modalFillContainer.focusSelf()
 	}
 
-	private fun focusChangingHandler(old: UiComponentRo?, new: UiComponentRo?, cancel: Cancel) {
+	private fun focusChangingHandler(event: FocusChangingEventRo) {
+		val old = event.old
+		val new = event.new
 		val modalFillContainer = modalFillContainer
 		if (!isBeneathModal(new)) return
 		if (old === modalFillContainer && new === stage) {
-			cancel.cancel()
+			event.cancel()
 			return
 		}
 		val lastModalIndex = modalIndex
@@ -423,7 +425,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 			}
 		}
 		toFocus.focusSelf()
-		cancel.cancel()
+		event.cancel()
 	}
 
 	/**

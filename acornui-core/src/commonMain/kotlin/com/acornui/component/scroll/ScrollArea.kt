@@ -22,6 +22,7 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.di.Context
+import com.acornui.focus.FocusChangedEventRo
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.wheel
@@ -166,8 +167,9 @@ open class ScrollArea<E : UiComponent>(
 		focusManager.focusedChanged.remove(::focusChangedHandler)
 	}
 
-	private fun focusChangedHandler(old: UiComponentRo?, new: UiComponentRo?) {
-		if (style.autoScrollToFocused && new != null && isAncestorOf(new) && tossScroller?.userIsActive != true) {
+	private fun focusChangedHandler(event: FocusChangedEventRo) {
+		val new = event.new
+		if (new != null && event.options.scrollToFocused && style.autoScrollToFocused && isAncestorOf(new) && tossScroller?.userIsActive != true) {
 			scrollTo(new)
 		}
 	}

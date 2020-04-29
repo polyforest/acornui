@@ -87,7 +87,7 @@ open class WindowPanel(owner: Context) : ElementContainerImpl<UiComponent>(owner
 
 	open fun close() {
 		_closing.dispatch(this, cancel.reset())
-		if (!cancel.canceled) {
+		if (!cancel.isCancelled) {
 			_closed.dispatch(this)
 		}
 	}

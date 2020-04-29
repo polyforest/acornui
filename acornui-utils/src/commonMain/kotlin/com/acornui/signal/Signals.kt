@@ -295,21 +295,26 @@ interface Stoppable {
 
 /**
  * A utility class to use as a parameter within a Signal that indicates that the behavior of signal should be
- * canceled. Typically, a signal that can be cancelled should be named as a gerund. Such as, changing, invalidating, etc.
+ * cancelled. Typically, a signal that can be cancelled should be named as a gerund. Such as, changing, invalidating, etc.
  */
-open class Cancel {
+interface CancelRo {
 
-	private var _canceled: Boolean = false
+	val isCancelled: Boolean
 
-	val canceled: Boolean
-		get() = _canceled
+	fun cancel()
+}
 
-	open fun cancel() {
-		_canceled = true
+class Cancel : CancelRo {
+
+	override var isCancelled: Boolean = false
+		private set
+
+	override fun cancel() {
+		isCancelled = true
 	}
 
 	fun reset(): Cancel {
-		_canceled = false
+		isCancelled = false
 		return this
 	}
 }

@@ -21,6 +21,8 @@ import com.acornui.component.HtmlComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.parentWalk
 import com.acornui.di.Context
+import com.acornui.focus.FocusChangedEventRo
+import com.acornui.focus.FocusChangingEventRo
 import com.acornui.focus.Focusable
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -40,9 +42,9 @@ class JsHtmlComponent(
 	private val component = DomComponent(element)
 	override val boxStyle = bind(BoxStyle())
 
-	private val focusedChangingHandler = { oldFocusable: Focusable?, newFocusable: Focusable?, cancel: Cancel ->
-		if (oldFocusable == this) {
-			cancel.cancel()
+	private val focusedChangingHandler = { event: FocusChangingEventRo ->
+		if (event.old == this) {
+			event.cancel()
 		}
 	}
 

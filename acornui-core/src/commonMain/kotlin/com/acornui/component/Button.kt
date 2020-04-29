@@ -27,6 +27,7 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
+import com.acornui.focus.mousePressOnKey
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
@@ -92,6 +93,8 @@ open class ButtonImpl(
 			skin = addChild(it.skin(this))
 		}
 		validation.addNode(ValidationFlags.PROPERTIES, dependencies = ValidationFlags.STYLES, dependents = ValidationFlags.LAYOUT, onValidate = ::updateProperties)
+
+		mousePressOnKey()
 	}
 
 	/**

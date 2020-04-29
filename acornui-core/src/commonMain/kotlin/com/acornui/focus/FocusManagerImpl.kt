@@ -22,7 +22,7 @@ import com.acornui.collection.poll
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
-import com.acornui.di.ownerWalk
+import com.acornui.component.parentWalk
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.MouseInteractionRo
@@ -31,9 +31,7 @@ import com.acornui.input.keyDown
 import com.acornui.input.mouseDown
 import com.acornui.input.touchStart
 import com.acornui.isBefore
-import com.acornui.signal.Cancel
-import com.acornui.signal.Signal2
-import com.acornui.signal.Signal3
+import com.acornui.signal.Signal1
 
 // TODO: handle blur/focus when not the only html element on screen.
 
@@ -50,10 +48,9 @@ class FocusManagerImpl() : FocusManager {
 	private val root: ElementContainer<UiComponent>
 		get() = _root!!
 
-	private val focusedChangingCancel: Cancel = Cancel()
-	private val _focusedChanging = Signal3<UiComponentRo?, UiComponentRo?, Cancel>()
+	private val _focusedChanging = Signal1<FocusChangingEventRo>()
 	override val focusedChanging = _focusedChanging.asRo()
-	private val _focusedChanged = Signal2<UiComponentRo?, UiComponentRo?>()
+	private val _focusedChanged = Signal1<FocusChangedEventRo>()
 	override val focusedChanged = _focusedChanged.asRo()
 
 	private var _focused: UiComponentRo? = null
@@ -73,9 +70,8 @@ class FocusManagerImpl() : FocusManager {
 	private val rootKeyDownHandler = { event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			val previousFocused = focused
-			if (event.shiftKey) focusPrevious()
-			else focusNext()
-			highlightFocused()
+			if (event.shiftKey) focusPrevious(FocusOptions.highlight)
+			else focusNext(FocusOptions.highlight)
 			if (previousFocused != focused)
 				event.preventDefault() // Prevent the browser's default tab interactivity if we've handled it.
 		} else if (!event.defaultPrevented() && event.keyCode == Ascii.ESCAPE) {
@@ -98,7 +94,8 @@ class FocusManagerImpl() : FocusManager {
 		var p: UiComponentRo? = target
 		while (p != null) {
 			if (p.focusEnabled) {
-				focused(p)
+				if (focused != p)
+					focus(p)
 				break
 			}
 			p = p.parent
@@ -122,7 +119,7 @@ class FocusManagerImpl() : FocusManager {
 				invalidFocusables.add(value)
 			else {
 				if (_focused === value) {
-					focused(null)
+					focus(null)
 				}
 			}
 		}
@@ -149,8 +146,8 @@ class FocusManagerImpl() : FocusManager {
 
 	private fun UiComponentRo.calculateFocusDemarcations(out: MutableList<UiComponentRo>) {
 		out.add(this)
-		ownerWalk { 
-			if (it is UiComponentRo && it.isFocusContainer && it.isActive) {
+		parent?.parentWalk {
+			if (it.isFocusContainer) {
 				out.add(it)
 			}
 			true 
@@ -182,45 +179,40 @@ class FocusManagerImpl() : FocusManager {
 	override val focused: UiComponentRo?
 		get() = _focused
 
-	private var pendingFocusable: UiComponentRo? = null
-	private val focusStack = ArrayList<UiComponentRo?>()
 
-	override fun focused(value: UiComponentRo?) {
+	private val eventQueue = ArrayList<FocusChangeEvent>()
+
+	override fun focus(value: UiComponentRo?, options: FocusOptions) {
 		val delegate = value?.focusDelegate
-		if (delegate != null) return focused(delegate)
-		if (_focusedChanging.isDispatching || _focusedChanged.isDispatching) {
-			if (focusStack.contains(value)) {
-				throw Exception("Attempted focus overflow on element: $value")
-			}
-			focusStack.add(value)
-			pendingFocusable = value
-			return
-		}
-		val newValue = if (value?.isActive == true) value else root
+		if (delegate != null) return focus(delegate)
+
 		val oldFocused = _focused
-		if (oldFocused == newValue)
-			return focusPending()
-		_focusedChanging.dispatch(oldFocused, newValue, focusedChangingCancel.reset())
-		if (focusedChangingCancel.canceled)
-			return focusPending()
-		unhighlightFocused()
 
-		_focused = if (!newValue.isActive) {
-			// Only happens when the root is being removed.
-			null
-		} else {
-			newValue
-		}
-		_focusedChanged.dispatch(oldFocused, _focused)
-		focusPending()
-	}
+		val e = FocusChangeEvent()
+		e.options = options
+		e.new = value ?: root
+		e.old = oldFocused
+		check( eventQueue.size < 10) { "Call stack exceeded." }
+		eventQueue.add(e)
 
-	private fun focusPending() {
-		if (pendingFocusable == null) focusStack.clear() else {
-			val next = pendingFocusable
-			pendingFocusable = null
-			focused(next)
+		if (!_focusedChanging.isDispatching && !_focusedChanged.isDispatching) {
+			while (eventQueue.isNotEmpty()) {
+				val next = eventQueue.poll()
+				_focusedChanging.dispatch(next)
+				val cancelled = next.isCancelled
+				next.isCancelled = false
+				if (!cancelled && eventQueue.isEmpty()) {
+					_focused?.showFocusHighlight = false
+					_focused = next.new
+					if (next.options.highlight) {
+						next.new?.showFocusHighlight = true
+					}
+					_focusedChanged.dispatch(next)
+				}
+			}
 		}
+
+
 	}
 
 	override fun nextFocusable(): UiComponentRo {
@@ -247,30 +239,9 @@ class FocusManagerImpl() : FocusManager {
 		return _focused ?: root
 	}
 
-	private var _highlighted: UiComponentRo? = null
-	private var highlighted: UiComponentRo?
-		get() = _highlighted
-		set(value) {
-			if (_highlighted != value) {
-				_highlighted?.showFocusHighlight = false
-				_highlighted = value
-				_highlighted?.showFocusHighlight = true
-			}
-		}
-
-	override fun unhighlightFocused() {
-		highlighted = null
-	}
-
-	override fun highlightFocused() {
-		highlighted = if (_focused != _root) _focused else null
-	}
-
 	override fun dispose() {
 		if (isDisposed) throw DisposedException()
 		isDisposed = true
-		_highlighted = null
-		pendingFocusable = null
 		_focused = null
 		_focusedChanged.dispose()
 		_focusedChanging.dispose()

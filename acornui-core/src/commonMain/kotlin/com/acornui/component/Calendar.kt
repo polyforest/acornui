@@ -31,6 +31,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.focus.FocusOptions
 import com.acornui.focus.focus
 import com.acornui.graphic.Color
 import com.acornui.input.Ascii
@@ -381,8 +382,7 @@ open class Calendar(
 			}
 			val cell = cells.getOrNull(row * 7 + col)
 			if (cell != null && cell.focusEnabled && cell.isRendered && cell.interactivityEnabled) {
-				cell.focus()
-				focusManager.highlightFocused()
+				cell.focus(FocusOptions.highlight)
 				break
 			}
 		}

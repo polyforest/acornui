@@ -24,7 +24,6 @@ import com.acornui.di.Context
 import com.acornui.di.contextKey
 import com.acornui.error.stack
 import com.acornui.file.FileIoManager
-import com.acornui.focus.FakeFocusMouse
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusManagerImpl
 import com.acornui.gl.core.CachedGl20
@@ -124,9 +123,16 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	protected val focusManagerTask by task(FocusManager) {
 		// When the focused element changes, make sure the document's active element is the canvas.
 		val canvas = get(CANVAS)
+		var canvasHasFocus = false
+		canvas.addEventListener("blur", {
+			canvasHasFocus = false
+		})
+		canvas.addEventListener("focus", {
+			canvasHasFocus = true
+		})
 		val focusManager = FocusManagerImpl()
-		focusManager.focusedChanged.add { old, new ->
-			if (new != null) {
+		focusManager.focusedChanged.add {
+			if (it.new != null && !canvasHasFocus) {
 				canvas.focus()
 			}
 		}
@@ -172,7 +178,6 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 
 	override suspend fun initializeSpecialInteractivity(owner: Context) {
 		super.initializeSpecialInteractivity(owner)
-		FakeFocusMouse(owner)
 		JsClickDispatcher(owner, get(CANVAS))
 	}
 

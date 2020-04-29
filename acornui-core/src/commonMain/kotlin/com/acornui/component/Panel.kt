@@ -77,7 +77,7 @@ open class Panel(
 
 	open fun close() {
 		closing.dispatch(this, cancel.reset())
-		if (!cancel.canceled) {
+		if (!cancel.isCancelled) {
 			closed.dispatch(this)
 		}
 	}

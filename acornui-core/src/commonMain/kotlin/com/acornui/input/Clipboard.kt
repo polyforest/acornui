@@ -33,7 +33,7 @@ interface Clipboard {
 	 * Triggers a copy event for the currently focused target.
 	 * For browser back-ends, this method may only be invoked as a result of a user interaction.
 	 * @return Returns true if the copy interaction was successfully invoked.
-	 * @see com.acornui.focus.FocusManager.focused
+	 * @see com.acornui.focus.FocusManager.focus
 	 */
 	fun triggerCopy(): Boolean
 
