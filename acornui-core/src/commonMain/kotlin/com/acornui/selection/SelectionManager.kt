@@ -69,6 +69,7 @@ class SelectionManagerImpl(owner: Context) : ContextImpl(owner), SelectionManage
 		get() = _selection
 		set(value) {
 			val old = _selection
+			if (old == value) return
 			_selection = value
 			_selectionChanged.dispatch(old, value)
 		}

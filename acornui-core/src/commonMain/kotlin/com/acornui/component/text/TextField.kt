@@ -25,6 +25,8 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.clearCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
+import com.acornui.focus.focus
+import com.acornui.focus.isFocused
 import com.acornui.function.as2
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
@@ -34,7 +36,6 @@ import com.acornui.input.interaction.CopyInteractionRo
 import com.acornui.input.interaction.DragAttachment
 import com.acornui.input.interaction.DragInteractionRo
 import com.acornui.math.Bounds
-import com.acornui.selection.Selectable
 import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
 import com.acornui.selection.SelectionRange
@@ -61,7 +62,7 @@ interface TextField : SingleElementContainer<TextNode>, Labelable, SelectableCom
 	/**
 	 * The Selectable target to use for the selection range.
 	 */
-	var selectionTarget: Selectable
+	var selectionTarget: SelectableComponent
 
 	/**
 	 * Sets this text field's contents to a simple text flow.
@@ -135,7 +136,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 	/**
 	 * The Selectable target to use for the selection range.
 	 */
-	override var selectionTarget: Selectable = this
+	override var selectionTarget: SelectableComponent = this
 		set(value) {
 			if (field == value) return
 			field = value
@@ -196,6 +197,8 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		if (!charStyle.selectable) return
 		if (!event.handled) {
 			event.handled = true
+			if (!selectionTarget.isFocused)
+				selectionTarget.focus()
 			selectionManager.selection = getNewSelection(event) ?: emptyList()
 		}
 	}

@@ -402,12 +402,12 @@ class DataGrid<RowData>(
 		blurred().add(::blurredHandler)
 	}
 
-	private fun focusedHandler() {
+	private fun focusedHandler(event: FocusChangedEventRo) {
 		if (!editable || editorCell?.visible == true) return
 		focusFirstEditableCell()
 	}
 
-	private fun blurredHandler() {
+	private fun blurredHandler(event: FocusChangedEventRo) {
 		editorCellCheck()
 		commitEditorCellValue()
 		disposeEditorCell()

@@ -16,8 +16,6 @@
 
 package com.acornui.string
 
-import com.acornui.isWhitespace2
-
 @Deprecated("Renamed to StringReader", ReplaceWith("StringReader(data)"))
 fun StringParser(data: String): StringReader = StringReader(data)
 
@@ -46,11 +44,11 @@ class StringReader(val data: String) {
 	val length: Int = data.length
 
 	fun white(): String {
-		return getString { it.isWhitespace2() }
+		return getString { it.isWhitespace() }
 	}
 
 	fun notWhite(): String {
-		return getString { !it.isWhitespace2() }
+		return getString { !it.isWhitespace() }
 	}
 
 	fun getBool(): Boolean? {
@@ -92,7 +90,7 @@ class StringReader(val data: String) {
 		while (p < length) {
 			val it = data[p]
 			if (quoteStart == null) {
-				if (it.isWhitespace2()) {
+				if (it.isWhitespace()) {
 				} else if (it == '"' || it == '\'') {
 					quoteStart = it
 				} else {

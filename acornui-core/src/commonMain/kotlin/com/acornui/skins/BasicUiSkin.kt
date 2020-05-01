@@ -113,22 +113,9 @@ open class BasicUiSkin(
 					colorTint = theme.focusHighlightColor
 				}
 			}
-			junk = theme.focusHighlightColor
 		}
 		target.addStyleRule(focusableStyle)
 	}
-//
-//	protected open fun validationStyle() {
-//		target.getAttachment<Highlighter>(Highlighter)?.dispose()
-//		val focusHighlighter = HighlighterImpl(target, simpleHighlight(theme.atlasPaths, "HighlightRect") {
-//			colorTint = theme.focusHighlightColor
-//		})
-//		target.setAttachment(Highlighter, focusHighlighter)
-//		val focusableStyle = ValidationStyle().apply {
-//			highlighter = focusHighlighter
-//		}
-//		target.addStyleRule(focusableStyle)
-//	}
 
 	protected open fun textFontStyle() {
 		theme.bodyFont.addStyles(name = "CharStyle_body")

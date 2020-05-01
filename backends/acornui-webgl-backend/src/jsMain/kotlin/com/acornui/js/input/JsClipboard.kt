@@ -30,13 +30,11 @@ import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import kotlin.browser.document
-import kotlin.browser.window
 
 class JsClipboard(
 		private val canvas: HTMLElement,
 		private val focusManager: FocusManager,
-		private val interactivityManager: InteractivityManager,
-		captureAllKeyboardInput: Boolean
+		private val interactivityManager: InteractivityManager
 ) : Clipboard, Disposable {
 
 	private val pasteEvent = JsPasteInteraction()
@@ -111,7 +109,7 @@ class JsClipboard(
 		}
 	}
 
-	private val target: EventTarget = if (captureAllKeyboardInput) window else canvas
+	private val target: EventTarget = canvas
 
 	init {
 		target.addEventListener("paste", pasteHandler, true)

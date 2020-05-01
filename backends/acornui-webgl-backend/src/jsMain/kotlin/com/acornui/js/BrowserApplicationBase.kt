@@ -28,7 +28,6 @@ import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.di.contextKey
 import com.acornui.focus.FocusManager
-import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.io.*
@@ -39,7 +38,6 @@ import com.acornui.js.input.JsKeyInput
 import com.acornui.js.input.JsMouseInput
 import com.acornui.js.window.JsLocation
 import com.acornui.uncaughtExceptionHandler
-import com.acornui.webgl.loadTexture
 import org.w3c.dom.HTMLElement
 import kotlin.browser.window
 import kotlin.time.seconds
@@ -85,7 +83,7 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 	}
 
 	protected open val keyInputTask by task(KeyInput) {
-		JsKeyInput(get(CANVAS), config().input.jsCaptureAllKeyboardInput)
+		JsKeyInput(get(CANVAS))
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {
@@ -131,8 +129,7 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 		JsClipboard(
 				get(CANVAS),
 				get(FocusManager),
-				get(InteractivityManager),
-				config().input.jsCaptureAllKeyboardInput
+				get(InteractivityManager)
 		)
 	}
 

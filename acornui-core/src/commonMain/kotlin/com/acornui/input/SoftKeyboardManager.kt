@@ -17,7 +17,10 @@
 package com.acornui.input
 
 import com.acornui.Disposable
+import com.acornui.component.ComponentInit
 import com.acornui.di.Context
+import com.acornui.di.own
+import com.acornui.signal.Signal
 
 interface SoftKeyboardManager {
 
@@ -27,15 +30,32 @@ interface SoftKeyboardManager {
 }
 
 interface SoftKeyboard : Disposable {
-	
-	//val input: Signal<() -> Unit>
+
+	val input: Signal<() -> Unit>
+	val selectionChanged: Signal<() -> Unit>
 
 	//var type: String = SoftKeyboardType.DEFAULT
 
 	var text: String
 
+	val selectionStart: Int
+	val selectionEnd: Int
+
+	fun setSelectionRange(selectionStart: Int, selectionEnd: Int);
+
 	fun focus()
 	fun blur()
+}
+
+/**
+ * Constructs and owns a new soft keyboard.
+ * If the back-end doesn't support soft keyboards, null will be returned.
+ */
+inline fun Context.softKeyboard(init: ComponentInit<SoftKeyboard> = {}): SoftKeyboard? {
+	//contract { callsInPlace(init, InvocationKind.AT_MOST_ONCE) }
+	val k = own(injectOptional(SoftKeyboardManager)?.create())
+	k?.init()
+	return k
 }
 
 object SoftKeyboardType {

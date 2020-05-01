@@ -22,6 +22,7 @@ import com.acornui.di.ContextImpl
 import com.acornui.di.owns
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal0
+import com.acornui.signal.Signal1
 
 /**
  * The focus attachment takes general focus changing/changed signals and separates it into signals more relevant to
@@ -33,7 +34,7 @@ class FocusAttachment(
 
 	private val focusManager = inject(FocusManager)
 
-	private val _focused = Signal0()
+	private val _focused = Signal1<FocusChangedEventRo>()
 
 	/**
 	 * Dispatched when the previously focused is not owned by this component and the newly focused is.
@@ -44,7 +45,7 @@ class FocusAttachment(
 	 */
 	val focused = _focused.asRo()
 
-	private val _focusedSelf = Signal0()
+	private val _focusedSelf = Signal1<FocusChangedEventRo>()
 
 	/**
 	 * Dispatched when this is the newly focused component.
@@ -57,7 +58,7 @@ class FocusAttachment(
 	 */
 	val focusedSelf = _focusedSelf.asRo()
 
-	private val _blurred = Signal0()
+	private val _blurred = Signal1<FocusChangedEventRo>()
 
 	/**
 	 * Dispatched when the previously focused is owned by this component and the newly focused is not.
@@ -69,7 +70,7 @@ class FocusAttachment(
 	 */
 	val blurred = _blurred.asRo()
 
-	private val _blurredSelf = Signal0()
+	private val _blurredSelf = Signal1<FocusChangedEventRo>()
 
 	/**
 	 * Dispatched when this was the previously focused component.
@@ -90,14 +91,14 @@ class FocusAttachment(
 		val old = event.old
 		val new = event.new
 
-		if (_focusedSelf.isNotEmpty() && new === target && old !== target)
-			_focusedSelf.dispatch()
 		if (_blurredSelf.isNotEmpty() && old === target && new !== target)
-			_blurredSelf.dispatch()
+			_blurredSelf.dispatch(event)
+		if (_focusedSelf.isNotEmpty() && new === target && old !== target)
+			_focusedSelf.dispatch(event)
 		if (_blurred.isNotEmpty() && target.owns(old) && !target.owns(new))
-			_blurred.dispatch()
+			_blurred.dispatch(event)
 		if (_focused.isNotEmpty() && !target.owns(old) && target.owns(new))
-			_focused.dispatch()
+			_focused.dispatch(event)
 	}
 
 	override fun dispose() {
@@ -119,27 +120,27 @@ fun UiComponentRo.focusAttachment(): FocusAttachment {
 /**
  * @see FocusAttachment.focused
  */
-fun UiComponentRo.focused(): Signal<() -> Unit> {
+fun UiComponentRo.focused(): Signal<(FocusChangedEventRo) -> Unit> {
 	return focusAttachment().focused
 }
 
 /**
  * @see FocusAttachment.blurred
  */
-fun UiComponentRo.blurred(): Signal<() -> Unit> {
+fun UiComponentRo.blurred(): Signal<(FocusChangedEventRo) -> Unit> {
 	return focusAttachment().blurred
 }
 
 /**
  * @see FocusAttachment.focusedSelf
  */
-fun UiComponentRo.focusedSelf(): Signal<() -> Unit> {
+fun UiComponentRo.focusedSelf(): Signal<(FocusChangedEventRo) -> Unit> {
 	return focusAttachment().focusedSelf
 }
 
 /**
  * @see FocusAttachment.blurredSelf
  */
-fun UiComponentRo.blurredSelf(): Signal<() -> Unit> {
+fun UiComponentRo.blurredSelf(): Signal<(FocusChangedEventRo) -> Unit> {
 	return focusAttachment().blurredSelf
 }

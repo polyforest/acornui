@@ -28,6 +28,7 @@ import com.acornui.focus.blurred
 import com.acornui.focus.focus
 import com.acornui.focus.focused
 import com.acornui.focus.isFocusedSelf
+import com.acornui.function.as1
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.graphic.*
 import com.acornui.input.interaction.click
@@ -138,7 +139,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 		}
 
-		blurred().add(::close)
+		blurred().add(::close.as1)
 	}
 
 	private var isOpen by afterChange(false) {

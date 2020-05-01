@@ -132,7 +132,5 @@ open class HighlightStyle : StyleBase() {
 	 */
 	var highlightPriority by prop(99999f)
 
-	var junk by prop(Color.WHITE)
-
 	companion object : StyleType<HighlightStyle>
 }

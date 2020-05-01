@@ -28,14 +28,14 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.KeyboardEvent
-import kotlin.browser.window
+import kotlin.collections.isNotEmpty
+import kotlin.collections.set
 
 /**
  * @author nbilyk
  */
 class JsKeyInput(
-		canvas: HTMLElement,
-		captureAllKeyboardInput: Boolean
+		canvas: HTMLElement
 ) : KeyInput {
 
 	private val _keyDown = Signal1<KeyInteractionRo>()
@@ -82,12 +82,9 @@ class JsKeyInput(
 		downMap.clear()
 	}
 
-	private val eventTarget: EventTarget = if (captureAllKeyboardInput) window else canvas
+	private val eventTarget: EventTarget = canvas
 
 	init {
-		if (!captureAllKeyboardInput && !canvas.hasAttribute("tabIndex")) {
-			canvas.tabIndex = 0
-		}
 		val options = js("{}")
 		options["capture"] = true
 		options["passive"] = false
@@ -115,42 +112,5 @@ class JsKeyInput(
 		_keyDown.dispose()
 		_keyUp.dispose()
 		_char.dispose()
-	}
-}
-
-/**
- * Sets the values of this key interaction to match that of the javascript keyboard event.
- * @return Returns the receiver for chaining.
- */
-fun KeyInteraction.set(jsEvent: KeyboardEvent): KeyInteraction {
-	clear()
-	timestamp = jsEvent.timeStamp.toLong()
-	location = keyLocationFromInt(jsEvent.location)
-	keyCode = jsEvent.keyCode
-	altKey = jsEvent.altKey
-	ctrlKey = jsEvent.ctrlKey
-	metaKey = jsEvent.metaKey
-	shiftKey = jsEvent.shiftKey
-	isRepeat = jsEvent.repeat
-	return this
-}
-
-/**
- * Sets the values of this char interaction to match that of the javascript keyboard event.
- * @return Returns the receiver for chaining.
- */
-fun CharInteraction.set(jsEvent: KeyboardEvent): CharInteraction {
-	clear()
-	char = jsEvent.charCode.toChar()
-	return this
-}
-
-fun keyLocationFromInt(location: Int): KeyLocation {
-	return when (location) {
-		0 -> KeyLocation.STANDARD
-		1 -> KeyLocation.LEFT
-		2 -> KeyLocation.RIGHT
-		3 -> KeyLocation.NUMBER_PAD
-		else -> KeyLocation.UNKNOWN
 	}
 }

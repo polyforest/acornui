@@ -32,6 +32,7 @@ import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.math.*
+import com.acornui.math.MathUtils.clamp
 import com.acornui.mvc.CommandGroup
 import com.acornui.mvc.invokeCommand
 import com.acornui.recycle.Clearable
@@ -89,6 +90,22 @@ interface TextInput : InputComponent<String>, Focusable, SelectableComponent, St
 	 * @see SoftKeyboardType
 	 */
 	var touchScreenInputType: String
+
+
+	/**
+	 * Replaces the given range with the provided text.
+	 * This is functionally the same as:
+	 * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
+	 *
+	 * @param startIndex The starting character index for the replacement. (Inclusive)
+	 * @param endIndex The ending character index for the replacement. (Exclusive)
+	 *
+	 * E.g.
+	 * +text("Hello World") {
+	 *   replaceTextRange(1, 5, "i") // Hi World
+	 * }
+	 */
+	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
 
 	// TODO: add prompt
 
@@ -224,6 +241,10 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 		)
 		background?.size(margin.reduceWidth(out.width), margin.reduceHeight(out.height))
 		background?.position(margin.left, margin.top)
+	}
+
+	override fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
+		editableText.replaceTextRange(startIndex, endIndex, newText)
 	}
 
 	override fun clear() {
@@ -384,6 +405,10 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		keyDown().add(::scrollToSelected)
 	}
 
+	override fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String) {
+		editableText.replaceTextRange(startIndex, endIndex, newText)
+	}
+
 	override var touchScreenInputType = SoftKeyboardType.DEFAULT
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
@@ -482,24 +507,6 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 	private val firstSelection: SelectionRange?
 		get() = selectionManager.selection.firstOrNull { it.target == this }
 
-}
-
-
-/**
- * Replaces the given range with the provided text.
- * This is functionally the same as:
- * text.substring(0, startIndex) + newText + text.substring(endIndex, text.length)
- *
- * @param startIndex The starting character index for the replacement. (Inclusive)
- * @param endIndex The ending character index for the replacement. (Exclusive)
- *
- * E.g.
- * +text("Hello World") {
- *   replaceTextRange(1, 5, "i") // Hi World
- * }
- */
-fun TextInput.replaceTextRange(startIndex: Int, endIndex: Int, newText: String, group: CommandGroup? = null) {
-	invokeCommand(ReplaceTextRangeCommand(this, startIndex, text.substring(MathUtils.clamp(startIndex, 0, text.length), MathUtils.clamp(endIndex, 0, text.length)), newText, group))
 }
 
 var TextInput.selectable: Boolean

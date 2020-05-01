@@ -24,12 +24,8 @@ import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
 import com.acornui.component.parentWalk
 import com.acornui.input.Ascii
-import com.acornui.input.interaction.KeyInteractionRo
-import com.acornui.input.interaction.MouseInteractionRo
-import com.acornui.input.interaction.TouchInteractionRo
+import com.acornui.input.interaction.*
 import com.acornui.input.keyDown
-import com.acornui.input.mouseDown
-import com.acornui.input.touchStart
 import com.acornui.isBefore
 import com.acornui.signal.Signal1
 
@@ -79,16 +75,16 @@ class FocusManagerImpl() : FocusManager {
 		}
 	}
 
-	private fun rootMouseDownHandler(event: MouseInteractionRo) {
+	private fun rootClickDownHandler(event: ClickInteractionRo) {
 		if (event.defaultPrevented()) return
 		focusFirstAncestor(event.target)
 	}
 
-	private fun rootTouchStartHandler(event: TouchInteractionRo) {
-		if (event.defaultPrevented()) return
-		if (event.touches.size == 1)
-			focusFirstAncestor(event.target)
-	}
+//	private fun rootTouchStartHandler(event: TouchInteractionRo) {
+//		if (event.defaultPrevented()) return
+//		if (event.touches.size == 1)
+//			focusFirstAncestor(event.target)
+//	}
 
 	private fun focusFirstAncestor(target: UiComponentRo?) {
 		var p: UiComponentRo? = target
@@ -108,8 +104,8 @@ class FocusManagerImpl() : FocusManager {
 		_root = root
 		_focused = root
 		root.keyDown().add(rootKeyDownHandler)
-		root.mouseDown(isCapture = false).add(::rootMouseDownHandler)
-		root.touchStart(isCapture = false).add(::rootTouchStartHandler)
+		root.click(isCapture = false).add(::rootClickDownHandler)
+//		root.touchStart(isCapture = false).add(::rootTouchStartHandler)
 	}
 
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
@@ -211,8 +207,6 @@ class FocusManagerImpl() : FocusManager {
 				}
 			}
 		}
-
-
 	}
 
 	override fun nextFocusable(): UiComponentRo {
@@ -245,10 +239,10 @@ class FocusManagerImpl() : FocusManager {
 		_focused = null
 		_focusedChanged.dispose()
 		_focusedChanging.dispose()
-		val root = _root ?: throw Exception("Not initialized.")
+		val root = _root ?: error("Not initialized.")
 		root.keyDown().remove(rootKeyDownHandler)
-		root.mouseDown(isCapture = false).remove(::rootMouseDownHandler)
-		root.touchStart(isCapture = false).remove(::rootTouchStartHandler)
+		root.click(isCapture = false).remove(::rootClickDownHandler)
+//		root.touchStart(isCapture = false).remove(::rootTouchStartHandler)
 		_root = null
 	}
 

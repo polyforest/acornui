@@ -27,8 +27,7 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 
 	val info = BitmapFontWriter.FontInfo()
 	val settingsFile = inputDir.resolve("settings.json")
-	val json = Json()
-	val settings = if (settingsFile.exists()) json.fromJson(FontGeneratorSettings::class.java, settingsFile.readText()) else FontGeneratorSettings()
+	val settings = settingsFile.toFontSettings() ?: FontGeneratorSettings()
 	check(settings.sizes.isNotEmpty()) { "font sizes must not be empty." }
 
 	info.padding = BitmapFontWriter.Padding(settings.padding, settings.padding, settings.padding, settings.padding)
@@ -39,8 +38,8 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 		if (!folder.isDirectory) return@forEach
 
 		// Settings file override
-		val settingsFileOverride = inputDir.resolve("settings.json")
-		val settingsFinal = if (settingsFileOverride.exists()) json.fromJson(FontGeneratorSettings::class.java, settingsFileOverride.readText()) else settings
+		val settingsFileOverride = folder.resolve("settings.json")
+		val settingsFinal = settingsFileOverride.toFontSettings() ?: settings
 		val folderRelPath = folder.relativeTo(inputDir).path
 
 		val fonts = ArrayList<Font>()
@@ -94,6 +93,11 @@ fun processFonts(inputDir: File, outputDir: File, fontsManifestFilename: String 
 	}
 
 	app.exit()
+}
+
+private fun File.toFontSettings(): FontGeneratorSettings? {
+	val json = Json()
+	return if (exists()) json.fromJson(FontGeneratorSettings::class.java, readText()) else null
 }
 
 class FontGeneratorSettings {

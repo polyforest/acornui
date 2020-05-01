@@ -21,6 +21,7 @@ package com.acornui.focus
 import com.acornui.ManagedDisposable
 import com.acornui.collection.Filter
 import com.acornui.component.UiComponentRo
+import com.acornui.component.isAncestorOf
 import com.acornui.component.stage
 import com.acornui.di.ContextImpl
 import com.acornui.function.as1
@@ -116,13 +117,15 @@ fun UiComponentRo.mousePressOnKey(): KeyToMouseBinding {
  */
 class EnterTargetClickBinding(val host: UiComponentRo, var target: UiComponentRo?) : ManagedDisposable {
 
+	private val stage = host.stage
+
 	init {
 		host.disposed.add(::dispose.as1)
-		host.keyUp().add(::hostKeyUpHandler)
+		stage.keyUp().add(::stageKeyUpHandler)
 	}
 
-	private fun hostKeyUpHandler(event: KeyInteractionRo) {
-		if (!event.handled && !event.hasAnyModifier && event.isEnterOrReturn) {
+	private fun stageKeyUpHandler(event: KeyInteractionRo) {
+		if (!event.handled && !event.hasAnyModifier && event.isEnterOrReturn && host.isAncestorOf(event.target)) {
 			target?.dispatchClick()
 		}
 	}
@@ -130,7 +133,7 @@ class EnterTargetClickBinding(val host: UiComponentRo, var target: UiComponentRo
 	override fun dispose() {
 		target = null
 		host.disposed.remove(::dispose.as1)
-		host.keyUp().remove(::hostKeyUpHandler)
+		stage.keyUp().remove(::stageKeyUpHandler)
 	}
 }
 

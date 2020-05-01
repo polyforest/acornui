@@ -305,6 +305,7 @@ private val whitespaceChars = mapOf(
 		0x3000.toChar() to true
 )
 
+@Deprecated("Kotlin MPP now supports isWhitespace", ReplaceWith("this.isWhitespace()"))
 fun Char.isWhitespace2(): Boolean {
 	return whitespaceChars.containsKey(this)
 }

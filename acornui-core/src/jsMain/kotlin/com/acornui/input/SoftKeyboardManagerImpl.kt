@@ -18,70 +18,181 @@
 
 package com.acornui.input
 
+import com.acornui.Disposable
+import com.acornui.focus.FocusManager
+import com.acornui.input.interaction.KeyInteraction
+import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.set
+import com.acornui.signal.Signal0
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.InputEvent
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
-import kotlin.browser.window
 
-class SoftKeyboardManagerImpl() : SoftKeyboardManager {
+class SoftKeyboardManagerImpl(
+		private val focusManager: FocusManager,
+		private val interactivityManager: InteractivityManager,
+		private val root: HTMLElement
+) : SoftKeyboardManager, Disposable {
 
-	override fun create(): SoftKeyboard = SoftKeyboardImpl()
-}
-
-class SoftKeyboardImpl : SoftKeyboard {
-
-	private var isFocused: Boolean = false
 	private val hiddenInput: HTMLInputElement
+	private val keyEvent = KeyInteraction()
+	private val delegatedKeys = listOf(Ascii.ESCAPE, Ascii.TAB, Ascii.ENTER, Ascii.RETURN)
 
 	init {
-		// create the hidden input element
 		hiddenInput = document.createElement("input") as HTMLInputElement
+
 		hiddenInput.apply {
-			type = "text";
-			style.position = "absolute"
-			style.opacity = "0"
-			style.asDynamic().pointerEvents = "none"
-			style.zIndex = "0"
+			type = "text"
+			tabIndex = -1
+//			style.position = "absolute"
+//			style.opacity = "0"
+//			style.asDynamic().pointerEvents = "none"
+//			style.zIndex = "0"
 
 			// hide native blue text cursor on iOS
-			style.transform = "scale(0)"
+//			style.transform = "scale(0)"
 
-			// setup the keydown listener
-			addEventListener("keydown", { e ->
-				e as KeyboardEvent
+			// Delegate key events that need to be handled by the canvas.
 
-				if (isFocused) {
-					// hack to fix touch event bug in iOS Safari
-					window.focus();
-					focus();
+			val options = js("{}")
+			options["capture"] = true
+			options["passive"] = false
 
-					// continue with the keydown event
-					println("Mobile c: " + e.charCode)
-					//self.keydown(e, self);
-				}
-			});
+			addEventListener("keydown", {
+				e ->
+				delegateEvent(e as KeyboardEvent, KeyInteractionRo.KEY_DOWN)
+			}, options)
+
+			addEventListener("keyup", {
+				e ->
+				delegateEvent(e as KeyboardEvent, KeyInteractionRo.KEY_UP)
+			}, options)
 		}
 		document.body?.appendChild(hiddenInput)
 	}
+
+	private fun delegateEvent(e: KeyboardEvent, type: InteractionType<InteractionEventRo>) {
+		if (delegatedKeys.contains(e.keyCode)) {
+			val focused = focusManager.focused
+			if (focused != null) {
+				keyEvent.set(e)
+				keyEvent.type = type
+				println("keyEvent ${keyEvent.type} ${keyEvent.keyCode}")
+				interactivityManager.dispatch(focused, keyEvent)
+			}
+		}
+	}
+
+	override fun create(): SoftKeyboard = SoftKeyboardImpl(hiddenInput)
+
+	override fun dispose() {
+		document.body?.removeChild(hiddenInput)
+	}
+}
+
+class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard {
+
+	private val _input = Signal0()
+	override val input = _input.asRo()
+	private val _selectionChanged = Signal0()
+
+	override val selectionChanged = _selectionChanged.asRo()
+
+	private var isFocused: Boolean = false
+
+	// JS will dispatch a selectionChange event when setting the selection.
+	private var isSettingSelection: Boolean = false
+	private var id = ++c
+
+	init {
+		// create the hidden input element
+
+		document.addEventListener("focusout", {
+			println("Document focusout ${it.target} ${document.activeElement}")
+		})
+
+		document.addEventListener("focusin", {
+			println("Document focusin ${it.target} ${document.activeElement}")
+		})
+	}
+
+	private var _text = ""
 	override var text: String
-		get() = hiddenInput.value ?: ""
+		get() = _text
 		set(value) {
+			if (_text == value) return
+			_text = value
 			hiddenInput.value = value
 		}
 
 	override fun focus() {
+		println("Focus $id")
 		isFocused = true
-//		hiddenInput.focus()
+		hiddenInput.value = text
+		hiddenInput.focus()
+		hiddenInput.addEventListener("blur", ::preventBlur, true)
+		hiddenInput.addEventListener("input", ::inputHandler)
+		document.addEventListener("selectionchange", ::selectionChangeHandler)
 	}
 
 	override fun blur() {
 		isFocused = false
-//		hiddenInput.blur()
+		hiddenInput.removeEventListener("blur", ::preventBlur, true)
+		hiddenInput.removeEventListener("input", ::inputHandler)
+		document.removeEventListener("selectionchange", ::selectionChangeHandler)
+		println("Blur $id")
+		hiddenInput.blur()
+	}
+
+	private fun preventBlur(e: Event) {
+		println("Hidden input preventBlur ${document.activeElement}")
+		e.preventDefault()
+		hiddenInput.focus()
+	}
+
+	private fun inputHandler(e: Event) {
+		e as InputEvent
+		println("Input ${hiddenInput.value}")
+		_text = hiddenInput.value
+		_input.dispatch()
+	}
+
+	private fun selectionChangeHandler(e: Event) {
+		if (isSettingSelection) return
+		println("selectionChangeHandler ${selectionStart} ${selectionEnd}")
+		_selectionChanged.dispatch()
+	}
+
+	override val selectionStart: Int
+		get() = if (hiddenInput.selectionDirection == "backward") hiddenInput.selectionEnd ?: 0 else hiddenInput.selectionStart ?: 0
+
+	override val selectionEnd: Int
+		get() = if (hiddenInput.selectionDirection == "backward") hiddenInput.selectionStart ?: 0 else hiddenInput.selectionEnd ?: 0
+
+	override fun setSelectionRange(selectionStart: Int, selectionEnd: Int) {
+		println("setSelectionRange $selectionStart $selectionEnd")
+
+		if (isFocused) {
+//			isSettingSelection = true
+			hiddenInput.setSelectionRange(minOf(selectionStart, selectionEnd), maxOf(selectionStart, selectionEnd), if (selectionEnd >= selectionStart) "forward" else "backward")
+//			isSettingSelection = false
+		}
 	}
 
 	// TODO: Canvas position / size
 
 	override fun dispose() {
-		document.body?.removeChild(hiddenInput)
+		if (isFocused) blur()
+		_input.dispose()
+		_selectionChanged.dispose()
+	}
+
+	companion object {
+		private var c = 0
+
+
 	}
 }

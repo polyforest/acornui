@@ -32,6 +32,7 @@ import com.acornui.gl.core.Gl20CachedImpl
 import com.acornui.graphic.RgbData
 import com.acornui.graphic.Texture
 import com.acornui.graphic.Window
+import com.acornui.input.InteractivityManager
 import com.acornui.input.SoftKeyboardManager
 import com.acornui.input.SoftKeyboardManagerImpl
 import com.acornui.io.Bandwidth
@@ -70,6 +71,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 		root.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		root.clear()
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
+		canvas.tabIndex = 0
 		canvas.style.setProperty("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
 		canvas.style.apply {
 			width = "100%"
@@ -144,7 +146,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	}
 
 	protected open val softKeyboardManagerTask by task(SoftKeyboardManager) {
-		SoftKeyboardManagerImpl()
+		SoftKeyboardManagerImpl(get(FocusManager), get(InteractivityManager), get(CANVAS))
 	}
 
 	protected open val textureLoader by task(Loaders.textureLoader) {
