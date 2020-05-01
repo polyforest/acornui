@@ -16,9 +16,9 @@
 
 package com.acornui.component.text
 
-import com.acornui.io.Decorator
 import com.acornui.component.text.GlyphData.Companion.EMPTY_CHAR
-import com.acornui.component.text.GlyphData.Companion.UNKNOWN_CHAR
+import com.acornui.component.text.GlyphData.Companion.REPLACEMENT_CHAR
+import com.acornui.component.text.GlyphData.Companion.WHITE_SQUARE
 import com.acornui.math.IntRectangle
 import com.acornui.string.StringReader
 import com.acornui.replace2
@@ -167,11 +167,16 @@ object AngelCodeParser {
 			}
 		}
 		this[EMPTY_CHAR] = GlyphData(EMPTY_CHAR)
-		val nbspChar = '�'
+		val nbspChar = 0x00A0.toChar()
 		if (this[nbspChar] == null) {
 			this[nbspChar] = space.copy(char = nbspChar)
 		}
-		this[UNKNOWN_CHAR] = (this['?'] ?: space).copy(char = UNKNOWN_CHAR)
+		if (!containsKey(REPLACEMENT_CHAR)) {
+			this[REPLACEMENT_CHAR] = (this['?'] ?: space).copy(char = REPLACEMENT_CHAR)
+		}
+		if (!containsKey(WHITE_SQUARE))
+			this[WHITE_SQUARE] = this[REPLACEMENT_CHAR]!!.copy(char = WHITE_SQUARE)
+		println("this[WHITE_SQUARE] ${this[WHITE_SQUARE]}")
 	}
 
 	private fun nextLine(parser: StringReader): Boolean {

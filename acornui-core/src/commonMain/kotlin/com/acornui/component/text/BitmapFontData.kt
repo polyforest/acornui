@@ -16,7 +16,6 @@
 
 package com.acornui.component.text
 
-import com.acornui.isWhitespace2
 import com.acornui.math.IntPadRo
 import com.acornui.math.IntRectangle
 import com.acornui.math.IntRectangleRo
@@ -68,7 +67,7 @@ data class BitmapFontData(
 	fun getGlyphSafe(char: Char): GlyphData {
 		val existing = glyphs[char]
 		if (existing != null) return existing
-		if (char.isWhitespace2() || char.toInt() > 0xFF) {
+		if (char.isWhitespace() || char.toInt() > 0xFF) {
 			return glyphs[0.toChar()]!!
 		}
 		return glyphs[(-1).toChar()]!!
@@ -234,9 +233,20 @@ data class GlyphData(
 
 	companion object {
 
-		const val EMPTY_CHAR = (-2).toChar()
+		/**
+		 * Replaces an empty whitespace character.
+		 */
+		const val EMPTY_CHAR = 0.toChar()
 
-		const val UNKNOWN_CHAR = (-1).toChar()
+		/**
+		 * Replaces a missing or unsupported Unicode character.
+		 */
+		const val WHITE_SQUARE = (0x25A1).toChar()
+
+		/**
+		 * Replaces an invalid or unrecognizable character. Indicates a Unicode error.
+		 */
+		const val REPLACEMENT_CHAR = (0xFFFD).toChar()
 	}
 
 }
