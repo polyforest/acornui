@@ -184,7 +184,7 @@ abstract class ClickDispatcher(
 	protected fun fireClickEvent(): Boolean {
 		if (pendingClick) {
 			pendingClick = false
-			interactivityManager.dispatch(clickEvent.target, clickEvent)
+			interactivityManager.dispatch(clickEvent, clickEvent.target)
 			return true
 		}
 		return false

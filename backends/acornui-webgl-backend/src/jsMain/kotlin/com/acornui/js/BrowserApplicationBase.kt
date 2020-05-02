@@ -27,7 +27,6 @@ import com.acornui.component.HtmlComponent
 import com.acornui.cursor.CursorManager
 import com.acornui.di.Context
 import com.acornui.di.contextKey
-import com.acornui.focus.FocusManager
 import com.acornui.graphic.Window
 import com.acornui.input.*
 import com.acornui.io.*
@@ -87,7 +86,7 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {
-		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
+		InteractivityManagerImpl(get(MouseInput), get(KeyInput))
 	}
 
 	protected open val cursorManagerTask by task(CursorManager) {
@@ -128,7 +127,6 @@ abstract class BrowserApplicationBase(mainContext: MainContext) : JsApplicationB
 	protected open val clipboardTask by task(Clipboard) {
 		JsClipboard(
 				get(CANVAS),
-				get(FocusManager),
 				get(InteractivityManager)
 		)
 	}

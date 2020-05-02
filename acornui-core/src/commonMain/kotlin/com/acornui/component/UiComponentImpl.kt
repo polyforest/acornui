@@ -34,10 +34,7 @@ import com.acornui.graphic.CameraRo
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.graphic.Window
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
-import com.acornui.input.InteractivityManager
-import com.acornui.input.MouseState
+import com.acornui.input.*
 import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.math.MathUtils.offsetRound
@@ -104,7 +101,7 @@ open class UiComponentImpl(
 	protected val window by Window
 
 	protected val mouseState by MouseState
-	protected val interactivity by InteractivityManager
+	protected val interactivityManager by InteractivityManager
 	protected val gl by CachedGl20
 	protected val stage by Stage
 

@@ -17,7 +17,6 @@
 package com.acornui.lwjgl.input
 
 import com.acornui.Disposable
-import com.acornui.focus.FocusManager
 import com.acornui.input.*
 import com.acornui.input.interaction.*
 import org.lwjgl.glfw.GLFW
@@ -25,7 +24,6 @@ import org.lwjgl.glfw.GLFW
 
 class JvmClipboard(
 		private val keyInput: KeyInput,
-		private val focusManager: FocusManager,
 		private val interactivityManager: InteractivityManager,
 		private val windowId: Long
 ) : Clipboard, Disposable {
@@ -43,27 +41,25 @@ class JvmClipboard(
 	}
 
 	override fun triggerCopy(): Boolean {
-		val focused = focusManager.focused ?: return false
 		copyEvent.clear()
 		copyEvent.type = CopyInteractionRo.COPY
-		interactivityManager.dispatch(focused, copyEvent)
+		interactivityManager.dispatch(copyEvent)
 		return true
 	}
 
 	private fun keyDownHandler(e: KeyInteractionRo) {
-		val focused = focusManager.focused ?: return
 		if (e.commandPlat && e.keyCode == Ascii.V) {
 			pasteEvent.clear()
 			pasteEvent.type = PasteInteractionRo.PASTE
-			interactivityManager.dispatch(focused, pasteEvent)
+			interactivityManager.dispatch(pasteEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.C) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.COPY
-			interactivityManager.dispatch(focused, copyEvent)
+			interactivityManager.dispatch(copyEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.X) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.CUT
-			interactivityManager.dispatch(focused, copyEvent)
+			interactivityManager.dispatch(copyEvent)
 		}
 	}
 

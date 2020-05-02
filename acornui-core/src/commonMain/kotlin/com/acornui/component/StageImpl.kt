@@ -22,7 +22,6 @@ import com.acornui.component.layout.LayoutElement
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
-import com.acornui.function.as1
 import com.acornui.function.as2
 import com.acornui.gl.core.DefaultShaderProgram
 import com.acornui.gl.core.Gl20
@@ -30,7 +29,6 @@ import com.acornui.gl.core.ShaderBatch
 import com.acornui.graphic.Color
 import com.acornui.graphic.centerCamera
 import com.acornui.graphic.orthographicCamera
-import com.acornui.input.SoftKeyboardManager
 import com.acornui.logging.Log
 import com.acornui.math.*
 import com.acornui.popup.PopUpManager
@@ -72,13 +70,13 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	}
 
 	init {
+		interactivityManager.init(this)
+		focusManager.init(this)
 		styleTags.add(Stage)
 		cameraOverride = cam
 		own(timer(5.seconds, 10, callback = ::skinCheck))
 		focusEnabled = true
 		interactivityMode = InteractivityMode.ALWAYS
-		interactivity.init(this)
-		focusManager.init(this)
 		popUpManagerView = addChild(popUpManager.init(this))
 		popUpManagerView.layoutInvalidatingFlags = 0
 

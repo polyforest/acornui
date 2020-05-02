@@ -18,13 +18,12 @@
 
 package com.acornui.input
 
+import com.acornui.Disposable
 import com.acornui.collection.arrayListObtain
 import com.acornui.collection.arrayListPool
-import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
 import com.acornui.component.ancestry
 import com.acornui.component.getChildUnderPoint
-import com.acornui.focus.FocusManager
 import com.acornui.input.interaction.*
 import com.acornui.recycle.ClearableObjectPool
 import com.acornui.signal.StoppableSignal
@@ -40,12 +39,20 @@ import com.acornui.time.nowMs
  */
 open class InteractivityManagerImpl(
 		private val mouseInput: MouseInput,
-		private val keyInput: KeyInput,
-		private val focus: FocusManager) : InteractivityManager {
+		private val keyInput: KeyInput) : InteractivityManager, Disposable {
 
 	private var _root: UiComponentRo? = null
 	private val root: UiComponentRo
 		get() = _root!!
+
+	private var _activeElement: UiComponentRo? = null
+	override val activeElement: UiComponentRo
+		get() = _activeElement ?: root
+
+	override fun activeElement(value: UiComponentRo?) {
+		_activeElement = value
+		println("Active element: $value")
+	}
 
 	private val mousePool = ClearableObjectPool { MouseInteraction() }
 	private val touchPool = ClearableObjectPool { TouchInteraction() }
@@ -104,7 +111,7 @@ open class InteractivityManagerImpl(
 		mouse.set(event)
 		mouse.type = type
 		val ele = root.getChildUnderPoint(mouse.canvasX + 0.5f, mouse.canvasY + 0.5f, onlyInteractive = true) ?: root
-		dispatch(ele, mouse, true, true)
+		dispatch(mouse, ele, true, true)
 		if (mouse.defaultPrevented())
 			event.preventDefault()
 		mousePool.free(mouse)
@@ -122,7 +129,7 @@ open class InteractivityManagerImpl(
 		touch.type = type
 		val first = event.changedTouches.first()
 		val ele = root.getChildUnderPoint(first.canvasX + 0.5f, first.canvasY + 0.5f, onlyInteractive = true) ?: root
-		dispatch(ele, touch, useCapture = true, useBubble = true)
+		dispatch(touch, ele, useCapture = true, useBubble = true)
 		if (touch.defaultPrevented())
 			event.preventDefault()
 		touchPool.free(touch)
@@ -142,27 +149,27 @@ open class InteractivityManagerImpl(
 	}
 
 	private fun <T : KeyInteractionRo> keyHandler(type: InteractionType<T>, event: KeyInteractionRo) {
-		val f = focus.focused ?: return
+		val f = activeElement
 		val key = keyPool.obtain()
 		key.type = type
 		key.set(event)
-		dispatch(f, key)
+		dispatch(key, f)
 		if (key.defaultPrevented()) event.preventDefault()
 		keyPool.free(key)
 	}
 
 	private fun <T : CharInteractionRo> charHandler(type: InteractionType<T>, event: CharInteractionRo) {
-		val f = focus.focused ?: return
+		val f = activeElement
 		val char = charPool.obtain()
 		char.type = CharInteractionRo.CHAR
 		char.set(event)
-		dispatch(f, char)
+		dispatch(char, f)
 		if (char.defaultPrevented())
 			event.preventDefault()
 		charPool.free(char)
 	}
 
-	override fun init(root: StageRo) {
+	override fun init(root: UiComponentRo) {
 		check(_root == null) {
 			"Already initialized"
 		}
@@ -221,7 +228,7 @@ open class InteractivityManagerImpl(
 	 */
 	override fun dispatch(canvasX: Float, canvasY: Float, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
 		val ele = root.getChildUnderPoint(canvasX, canvasY, onlyInteractive = true) ?: root
-		dispatch(ele, event, useCapture, useBubble)
+		dispatch(event, ele, useCapture, useBubble)
 	}
 
 	/**
@@ -229,7 +236,7 @@ open class InteractivityManagerImpl(
 	 * This will first dispatch a capture event from the stage down to the given target, and then
 	 * a bubbling event up to the stage.
 	 */
-	override fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(event: InteractionEvent, target: UiComponentRo, useCapture: Boolean, useBubble: Boolean) {
 		event.target = target
 		if (!useCapture && !useBubble) {
 			// Dispatch only for current target.
@@ -268,6 +275,7 @@ open class InteractivityManagerImpl(
 	}
 
 	override fun dispose() {
+		_activeElement = null
 		mouseOverTarget(null)
 
 		val mouse = mouseInput

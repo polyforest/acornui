@@ -44,7 +44,6 @@ import com.acornui.math.Bounds
 import com.acornui.math.Easing
 import com.acornui.properties.afterChange
 import com.acornui.recycle.Clearable
-import com.acornui.signal.Cancel
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce
 import com.acornui.start
@@ -366,13 +365,13 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 	override fun onActivated() {
 		super.onActivated()
 		stage.keyDown().add(::rootKeyDownHandler)
-		focusManager.focusedChanging.add(::focusChangingHandler)
+		stage.focusedEvent(true).add(::focusHandler)
 	}
 
 	override fun onDeactivated() {
 		// Must be before super.onDeactivated or the focus change prevention will get stuck.
 		stage.keyDown().remove(::rootKeyDownHandler)
-		focusManager.focusedChanging.remove(::focusChangingHandler)
+		stage.focusedEvent(true).remove(::focusHandler)
 		super.onDeactivated()
 	}
 
@@ -387,13 +386,14 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		modalFillContainer.focusSelf()
 	}
 
-	private fun focusChangingHandler(event: FocusChangingEventRo) {
-		val old = event.old
-		val new = event.new
+	private fun focusHandler(event: FocusEventRo) {
+		val old = event.relatedTarget
+		val new = event.target
+		println("pop up focus handler $new")
 		val modalFillContainer = modalFillContainer
 		if (!isBeneathModal(new)) return
 		if (old === modalFillContainer && new === stage) {
-			event.cancel()
+			event.preventDefault()
 			return
 		}
 		val lastModalIndex = modalIndex
@@ -424,8 +424,8 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 				modalFillContainer
 			}
 		}
-		toFocus.focusSelf()
-		event.cancel()
+		toFocus.focusSelf(event.options)
+		event.preventDefault()
 	}
 
 	/**

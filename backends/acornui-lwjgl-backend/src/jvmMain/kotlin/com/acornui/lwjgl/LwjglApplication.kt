@@ -155,7 +155,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	protected open val focusManagerTask by task(FocusManager) {
-		FocusManagerImpl()
+		FocusManagerImpl(get(InteractivityManager))
 	}
 
 	protected open val mouseInputTask by task(MouseInput) {
@@ -206,7 +206,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	}
 
 	protected open val interactivityTask by task(InteractivityManager) {
-		InteractivityManagerImpl(get(MouseInput), get(KeyInput), get(FocusManager))
+		InteractivityManagerImpl(get(MouseInput), get(KeyInput))
 	}
 
 	protected open val persistenceTask by task(Persistence) {
@@ -229,7 +229,6 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 	protected open val clipboardTask by task(Clipboard) {
 		JvmClipboard(
 				get(KeyInput),
-				get(FocusManager),
 				get(InteractivityManager),
 				getWindowId()
 		)

@@ -91,7 +91,7 @@ fun UiComponentRo.dispatchClick(): ClickInteractionRo {
 	fakeClickEvent.button = WhichButton.LEFT
 	fakeClickEvent.timestamp = nowMs()
 	fakeClickEvent.count = 1
-	inject(InteractivityManager).dispatch(this, fakeClickEvent)
+	inject(InteractivityManager).dispatch(fakeClickEvent, this)
 	return fakeClickEvent
 }
 

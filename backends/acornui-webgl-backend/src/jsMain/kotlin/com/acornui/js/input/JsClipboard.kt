@@ -17,7 +17,6 @@
 package com.acornui.js.input
 
 import com.acornui.Disposable
-import com.acornui.focus.FocusManager
 import com.acornui.input.Clipboard
 import com.acornui.input.InteractionEventBase
 import com.acornui.input.InteractivityManager
@@ -33,7 +32,6 @@ import kotlin.browser.document
 
 class JsClipboard(
 		private val canvas: HTMLElement,
-		private val focusManager: FocusManager,
 		private val interactivityManager: InteractivityManager
 ) : Clipboard, Disposable {
 
@@ -77,36 +75,29 @@ class JsClipboard(
 	}
 
 	private val pasteHandler: (Event) -> dynamic = {
-		val focused = focusManager.focused
-		if (focused != null) {
-			pasteEvent.clear()
-			pasteEvent.type = PasteInteractionRo.PASTE
-			pasteEvent.set(it as ClipboardEvent)
-			interactivityManager.dispatch(focused, pasteEvent)
-			if (pasteEvent.defaultPrevented()) it.preventDefault()
-		}
+		pasteEvent.clear()
+		pasteEvent.type = PasteInteractionRo.PASTE
+		pasteEvent.set(it as ClipboardEvent)
+		interactivityManager.dispatch(pasteEvent)
+		if (pasteEvent.defaultPrevented()) it.preventDefault()
 	}
 
 	private val copyHandler: (Event) -> dynamic = {
-		val focused = focusManager.focused
-		if (focused != null && !ignoreCopyEvent) {
+		if (!ignoreCopyEvent) {
 			copyEvent.clear()
 			copyEvent.type = CopyInteractionRo.COPY
 			copyEvent.set(it as ClipboardEvent)
-			interactivityManager.dispatch(focused, copyEvent)
+			interactivityManager.dispatch(copyEvent)
 			if (copyEvent.defaultPrevented()) it.preventDefault()
 		}
 	}
 
 	private val cutHandler: (Event) -> dynamic = {
-		val focused = focusManager.focused
-		if (focused != null) {
-			copyEvent.clear()
-			copyEvent.type = CopyInteractionRo.CUT
-			copyEvent.set(it as ClipboardEvent)
-			interactivityManager.dispatch(focused, copyEvent)
-			if (copyEvent.defaultPrevented()) it.preventDefault()
-		}
+		copyEvent.clear()
+		copyEvent.type = CopyInteractionRo.CUT
+		copyEvent.set(it as ClipboardEvent)
+		interactivityManager.dispatch(copyEvent)
+		if (copyEvent.defaultPrevented()) it.preventDefault()
 	}
 
 	private val target: EventTarget = canvas

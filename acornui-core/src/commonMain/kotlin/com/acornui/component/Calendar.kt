@@ -352,7 +352,7 @@ open class Calendar(
 	}
 
 	private fun moveSelectedCell(xD: Int, yD: Int) {
-		val focusedIndex = cells.indexOf(focusManager.focused)
+		val focusedIndex = cells.indexOf(interactivityManager.activeElement)
 		val currentRow: Int
 		val currentCol: Int
 		if (focusedIndex == -1) {

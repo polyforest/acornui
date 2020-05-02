@@ -188,7 +188,8 @@ fun UiComponentRo.ancestry(out: MutableList<UiComponentRo>): MutableList<UiCompo
  * X is considered to be an ancestor of Y if doing a parent walk starting from Y, X is then reached.
  * This will return true if X === Y
  */
-fun UiComponentRo.isAncestorOf(child: UiComponentRo): Boolean {
+fun UiComponentRo.isAncestorOf(child: UiComponentRo?): Boolean {
+	if (child == null) return false
 	var isAncestor = false
 	child.parentWalk {
 		isAncestor = it === this
@@ -204,7 +205,7 @@ fun UiComponentRo.findComponentById(componentId: String): UiComponentRo? {
 	} as UiComponentRo?
 }
 
-fun UiComponentRo.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
+fun UiComponentRo?.isDescendantOf(ancestor: UiComponentRo): Boolean = ancestor.isAncestorOf(this)
 
 interface UiComponent : UiComponentRo, Lifecycle, ColorTransformable, InteractiveElement, Stylable, Context {
 

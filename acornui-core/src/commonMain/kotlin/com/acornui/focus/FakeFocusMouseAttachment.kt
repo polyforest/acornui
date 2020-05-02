@@ -94,7 +94,7 @@ class KeyToMouseBinding(
 		fakeMouseEvent.type = type
 		fakeMouseEvent.button = WhichButton.LEFT
 		fakeMouseEvent.timestamp = nowMs()
-		interactivity.dispatch(target, fakeMouseEvent)
+		interactivity.dispatch(fakeMouseEvent, target)
 	}
 
 	override fun dispose() {

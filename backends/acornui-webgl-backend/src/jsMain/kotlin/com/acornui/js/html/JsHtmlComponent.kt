@@ -21,13 +21,11 @@ import com.acornui.component.HtmlComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.parentWalk
 import com.acornui.di.Context
-import com.acornui.focus.FocusChangedEventRo
-import com.acornui.focus.FocusChangingEventRo
-import com.acornui.focus.Focusable
+import com.acornui.focus.FocusEventRo
+import com.acornui.focus.blurredEvent
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
-import com.acornui.signal.Cancel
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
@@ -42,10 +40,8 @@ class JsHtmlComponent(
 	private val component = DomComponent(element)
 	override val boxStyle = bind(BoxStyle())
 
-	private val focusedChangingHandler = { event: FocusChangingEventRo ->
-		if (event.old == this) {
-			event.cancel()
-		}
+	private fun blurHandler(e: FocusEventRo) {
+		e.preventDefault()
 	}
 
 	private var parentElement: Element
@@ -69,12 +65,12 @@ class JsHtmlComponent(
 
 	override fun onActivated() {
 		super.onActivated()
-		focusManager.focusedChanging.add(focusedChangingHandler)
+		blurredEvent().add(::blurHandler)
 		parentElement.appendChild(component.element)
 	}
 
 	override fun onDeactivated() {
-		focusManager.focusedChanging.remove(focusedChangingHandler)
+		blurredEvent().remove(::blurHandler)
 		super.onDeactivated()
 		parentElement.removeChild(component.element)
 	}

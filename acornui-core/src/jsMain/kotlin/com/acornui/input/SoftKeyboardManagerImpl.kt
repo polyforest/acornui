@@ -76,13 +76,11 @@ class SoftKeyboardManagerImpl(
 
 	private fun delegateEvent(e: KeyboardEvent, type: InteractionType<InteractionEventRo>) {
 		if (delegatedKeys.contains(e.keyCode)) {
-			val focused = focusManager.focused
-			if (focused != null) {
-				keyEvent.set(e)
-				keyEvent.type = type
-				println("keyEvent ${keyEvent.type} ${keyEvent.keyCode}")
-				interactivityManager.dispatch(focused, keyEvent)
-			}
+			val focused = interactivityManager.activeElement
+			keyEvent.set(e)
+			keyEvent.type = type
+			println("keyEvent ${keyEvent.type} ${keyEvent.keyCode}")
+			interactivityManager.dispatch(keyEvent, focused)
 		}
 	}
 

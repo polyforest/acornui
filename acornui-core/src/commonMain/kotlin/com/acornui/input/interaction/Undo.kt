@@ -16,12 +16,10 @@
 
 package com.acornui.input.interaction
 
-import com.acornui.component.Stage
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
-import com.acornui.focus.FocusManager
 import com.acornui.input.*
 import com.acornui.signal.StoppableSignal
 
@@ -47,8 +45,6 @@ class UndoDispatcher(owner: Context) : ContextImpl(owner) {
 
 	private val key by KeyInput
 	private val interactivity by InteractivityManager
-	private val focus by FocusManager
-	private val stage by Stage
 
 	private val event = UndoInteraction()
 
@@ -58,12 +54,12 @@ class UndoDispatcher(owner: Context) : ContextImpl(owner) {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.REDO
-				interactivity.dispatch(focus.focused ?: stage, event)
+				interactivity.dispatch(event)
 			} else if (e.commandPlat && e.keyCode == Ascii.Z) {
 				e.handled = true
 				event.clear()
 				event.type = UndoInteractionRo.UNDO
-				interactivity.dispatch(focus.focused ?: stage, event)
+				interactivity.dispatch(event)
 			}
 		}
 	}

@@ -19,18 +19,17 @@ package com.acornui.focus
 import com.acornui.Disposable
 import com.acornui.TreeWalk
 import com.acornui.childWalkLevelOrder
-import com.acornui.component.ElementContainer
-import com.acornui.component.HighlightStyle
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
+import com.acornui.component.*
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
-import com.acornui.di.owns
+import com.acornui.input.InteractionEventBase
+import com.acornui.input.InteractionEventRo
+import com.acornui.input.InteractionType
+import com.acornui.input.InteractivityManager
+import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.isAncestorOf
 import com.acornui.recycle.Clearable
-import com.acornui.signal.Cancel
-import com.acornui.signal.CancelRo
-import com.acornui.signal.Signal
+import com.acornui.signal.StoppableSignal
 
 /**
  * @author nbilyk
@@ -43,27 +42,9 @@ interface FocusManager : Disposable {
 	fun init(root: ElementContainer<UiComponent>)
 
 	/**
-	 * Dispatched when the focused object is about to change.
-	 * This may be cancelled to prevent the focus from committing.
-	 *
-	 * Calling [focus] during this dispatch will cancel the change.
-	 */
-	val focusedChanging: Signal<(FocusChangingEventRo) -> Unit>
-
-	/**
-	 * Dispatched when the focused object changes.
-	 */
-	val focusedChanged: Signal<(FocusChangedEventRo) -> Unit>
-
-	/**
 	 * Refreshes the focusable's order in the focus list.
 	 */
 	fun invalidateFocusableOrder(value: UiComponentRo)
-
-	/**
-	 * Returns the currently focused element. This will be null if the root of the focus manager is being removed.
-	 */
-	val focused: UiComponentRo?
 
 	/**
 	 * Sets the currently focused element.
@@ -172,41 +153,32 @@ data class FocusOptions(
 	}
 }
 
-interface FocusChangedEventRo {
-
-	val old: UiComponentRo?
-	val new: UiComponentRo?
-
-	val options: FocusOptions
-}
-
-interface FocusChangingEventRo : FocusChangedEventRo, CancelRo {
+interface FocusEventRo : InteractionEventRo {
 
 	/**
-	 * Cancels the change event.
+	 * On a blur event, this is the newly focused component, on a focus event, this is the previously focused component.
 	 */
-	override fun cancel()
+	val relatedTarget: UiComponentRo?
+
+	val options: FocusOptions
+
+	companion object {
+
+		val BLURRED = InteractionType<FocusEventRo>("blurred")
+		val FOCUSED = InteractionType<FocusEventRo>("focused")
+	}
 }
 
+class FocusEvent : InteractionEventBase(), FocusEventRo, Clearable {
 
-class FocusChangeEvent : FocusChangingEventRo, Clearable {
-
-	override var old: UiComponentRo? = null
-	override var new: UiComponentRo? = null
+	override var relatedTarget: UiComponentRo? = null
 
 	override var options: FocusOptions = FocusOptions.default
 
-	override var isCancelled: Boolean = false
-
-	override fun cancel() {
-		isCancelled = true
-	}
-
 	override fun clear() {
-		old = null
-		new = null
+		super.clear()
+		relatedTarget = null
 		options = FocusOptions.default
-		isCancelled = false
 	}
 }
 
@@ -278,9 +250,7 @@ fun UiComponentRo.invalidateFocusOrderDeep() {
  * @see isFocused
  */
 val UiComponentRo.isFocusedSelf: Boolean
-	get() {
-		return this === inject(FocusManager).focused
-	}
+	get() = this === inject(InteractivityManager).activeElement
 
 /**
  * Returns true if this component is allowed to be focused.
@@ -296,8 +266,8 @@ val UiComponentRo.canFocusSelf: Boolean
  * @see canFocusSelf
  * @see focus
  */
-fun UiComponentRo.focusSelf() {
-	inject(FocusManager).focus(this)
+fun UiComponentRo.focusSelf(options: FocusOptions = FocusOptions.default) {
+	inject(FocusManager).focus(this, options)
 }
 
 /**
@@ -305,19 +275,17 @@ fun UiComponentRo.focusSelf() {
  */
 fun UiComponentRo.blurSelf() {
 	val focusManager = inject(FocusManager)
-	if (focusManager.focused == this)
+	if (isFocusedSelf)
 		focusManager.clearFocused()
 }
 
 /**
- * Returns true if this component owns the currently focused element.
- *
- * Reminder: `this.owns(this) == true`
+ * Returns true if this component is an ancestor of the currently focused element.
  */
 val UiComponentRo.isFocused: Boolean
 	get() {
-		val focused = inject(FocusManager).focused
-		return focused != null && owns(focused)
+		val focused = inject(InteractivityManager).activeElement
+		return isAncestorOf(focused)
 	}
 
 /**
@@ -355,4 +323,19 @@ class FocusableStyle : HighlightStyle() {
 	companion object : StyleType<FocusableStyle> {
 		override val extends = HighlightStyle
 	}
+}
+
+
+/**
+ *
+ */
+fun UiComponentRo.focusedEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
+	return createOrReuse(FocusEventRo.FOCUSED, isCapture)
+}
+
+/**
+ *
+ */
+fun UiComponentRo.blurredEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
+	return createOrReuse(FocusEventRo.BLURRED, isCapture)
 }

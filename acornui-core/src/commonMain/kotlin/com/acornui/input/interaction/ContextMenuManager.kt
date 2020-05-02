@@ -46,7 +46,7 @@ class ContextMenuManager(owner: Context) : ContextImpl(owner), Disposable {
 		if (!event.defaultPrevented()) {
 			contextEvent.clear()
 			contextEvent.type = ContextMenuInteractionRo.CONTEXT_MENU
-			interactivity.dispatch(event.target, contextEvent)
+			interactivity.dispatch(contextEvent, event.target)
 			if (!contextEvent.defaultPrevented() && contextEvent.menuGroups.isNotEmpty()) {
 				event.preventDefault() // Prevent native context menu
 

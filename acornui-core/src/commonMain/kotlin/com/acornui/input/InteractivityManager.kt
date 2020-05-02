@@ -16,8 +16,6 @@
 
 package com.acornui.input
 
-import com.acornui.Disposable
-import com.acornui.component.StageRo
 import com.acornui.component.UiComponentRo
 import com.acornui.di.Context
 import com.acornui.recycle.Clearable
@@ -28,12 +26,25 @@ import com.acornui.signal.StoppableSignal
  * A manager that feeds user input as events to layout elements.
  * @author nbilyk
  */
-interface InteractivityManager : Disposable {
+interface InteractivityManager {
 
 	/**
 	 * Initializes the interactivity manager with the root element for dispatching.
+	 * This should be only used internally.
 	 */
-	fun init(root: StageRo)
+	fun init(root: UiComponentRo)
+
+	/**
+	 * Sets the currently active element.
+	 * This should be only used internally.
+	 */
+	fun activeElement(value: UiComponentRo?)
+
+	/**
+	 * Returns the currently active component. This will be the target for events without a position, such as key input,
+	 * mouse wheel, gamepad, etc.
+	 */
+	val activeElement: UiComponentRo
 
 	/**
 	 * Produces a new Signal for the specified interaction type.
@@ -52,8 +63,8 @@ interface InteractivityManager : Disposable {
 	 * Dispatches an interaction for a single interactive element.
 	 * This will first dispatch a capture event from the stage down to the given target, and then
 	 * a bubbling event up to the stage.
-	 * @param target The target for the event.
-	 * @param event The event to dispatch on each ancestor.
+	 * @param event The event to dispatch.
+	 * @param target The target for the event. By default this is [activeElement].
 	 * @param useCapture If true, there will be a capture phase. That is, starting from the highest ancestor
 	 * (the Stage if the target is active) the event will be dispatched on each ancestor down to (and including)
 	 * the target.
@@ -62,7 +73,7 @@ interface InteractivityManager : Disposable {
 	 * If both [useCapture] and [useBubble] are false, only the target will have the event dispatched. (Using the
 	 * bubble-phase signal)
 	 */
-	fun dispatch(target: UiComponentRo, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true)
+	fun dispatch(event: InteractionEvent, target: UiComponentRo = activeElement, useCapture: Boolean = true, useBubble: Boolean = true)
 
 	companion object : Context.Key<InteractivityManager>
 }

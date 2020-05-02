@@ -22,7 +22,8 @@ import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.component.style.*
 import com.acornui.di.Context
-import com.acornui.focus.FocusChangedEventRo
+import com.acornui.focus.FocusEventRo
+import com.acornui.focus.focusedEvent
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.wheel
@@ -159,17 +160,17 @@ open class ScrollArea<E : UiComponent>(
 		super.onActivated()
 		// Must call super.onActivated first so that the priority of this scroll area's changed handler is less than
 		// that of nested scroll areas.
-		focusManager.focusedChanged.add(::focusChangedHandler)
+		stage.focusedEvent().add(::focusChangedHandler)
 	}
 
 	override fun onDeactivated() {
 		super.onDeactivated()
-		focusManager.focusedChanged.remove(::focusChangedHandler)
+		stage.focusedEvent().remove(::focusChangedHandler)
 	}
 
-	private fun focusChangedHandler(event: FocusChangedEventRo) {
-		val new = event.new
-		if (new != null && event.options.scrollToFocused && style.autoScrollToFocused && isAncestorOf(new) && tossScroller?.userIsActive != true) {
+	private fun focusChangedHandler(event: FocusEventRo) {
+		val new = event.target
+		if (event.options.scrollToFocused && style.autoScrollToFocused && isAncestorOf(new) && tossScroller?.userIsActive != true) {
 			scrollTo(new)
 		}
 	}
