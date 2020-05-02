@@ -16,11 +16,8 @@
 
 package com.acornui.component.text
 
-import com.acornui.component.ContainerImpl
-import com.acornui.component.InteractivityMode
-import com.acornui.component.ValidationFlags
+import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
-import com.acornui.component.rect
 import com.acornui.di.own
 import com.acornui.focus.blurredSelf
 import com.acornui.focus.focusedSelf
@@ -34,6 +31,7 @@ import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.commandPlat
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
+import com.acornui.math.Vector3
 import com.acornui.properties.afterChange
 import com.acornui.repeat2
 import com.acornui.selection.SelectionManager
@@ -156,6 +154,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	init {
 		host.focusedSelf().add {
+			softKeyboard?.position(localToCanvas(Vector3()))
 			softKeyboard?.focus()
 			if (charStyle.selectable)
 				host.selectAll()
@@ -264,6 +263,12 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			}
 		}
 	}
+
+	var softKeyboardType: String = SoftKeyboardType.DEFAULT
+		set(value) {
+			field = value
+			softKeyboard?.type = value
+		}
 
 	private fun getFontAtSelection(): BitmapFont? {
 		val firstSelection = firstSelection ?: return null

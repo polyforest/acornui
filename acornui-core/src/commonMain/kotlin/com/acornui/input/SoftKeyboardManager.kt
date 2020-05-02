@@ -20,6 +20,7 @@ import com.acornui.Disposable
 import com.acornui.component.ComponentInit
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.math.Vector3Ro
 import com.acornui.signal.Signal
 
 interface SoftKeyboardManager {
@@ -34,18 +35,30 @@ interface SoftKeyboard : Disposable {
 	val input: Signal<() -> Unit>
 	val selectionChanged: Signal<() -> Unit>
 
-	//var type: String = SoftKeyboardType.DEFAULT
+	/**
+	 * The type of virtual keyboard.
+	 * @see SoftKeyboardType
+	 */
+	var type: String
 
 	var text: String
 
 	val selectionStart: Int
 	val selectionEnd: Int
 
-	fun setSelectionRange(selectionStart: Int, selectionEnd: Int);
+	fun setSelectionRange(selectionStart: Int, selectionEnd: Int)
+
+	/**
+	 * Sets the canvas position for the input. This is so the canvas is scrolled to the correct
+	 * position when the keyboard opens.
+	 */
+	fun position(x: Float, y: Float)
 
 	fun focus()
 	fun blur()
 }
+
+fun SoftKeyboard.position(value: Vector3Ro) = position(value.x, value.y)
 
 /**
  * Constructs and owns a new soft keyboard.

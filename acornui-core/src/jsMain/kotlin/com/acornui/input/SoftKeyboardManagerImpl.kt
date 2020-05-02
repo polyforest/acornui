@@ -29,6 +29,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.InputEvent
 import org.w3c.dom.events.KeyboardEvent
+import setTimeout
 import kotlin.browser.document
 
 class SoftKeyboardManagerImpl(
@@ -47,13 +48,13 @@ class SoftKeyboardManagerImpl(
 		hiddenInput.apply {
 			type = "text"
 			tabIndex = -1
-//			style.position = "absolute"
-//			style.opacity = "0"
-//			style.asDynamic().pointerEvents = "none"
-//			style.zIndex = "0"
+			style.position = "absolute"
+			style.opacity = "0"
+			style.asDynamic().pointerEvents = "none"
+			style.zIndex = "0"
 
 			// hide native blue text cursor on iOS
-//			style.transform = "scale(0)"
+			style.transform = "scale(0)"
 
 			// Delegate key events that need to be handled by the canvas.
 
@@ -79,19 +80,18 @@ class SoftKeyboardManagerImpl(
 			val focused = interactivityManager.activeElement
 			keyEvent.set(e)
 			keyEvent.type = type
-			println("keyEvent ${keyEvent.type} ${keyEvent.keyCode}")
 			interactivityManager.dispatch(keyEvent, focused)
 		}
 	}
 
-	override fun create(): SoftKeyboard = SoftKeyboardImpl(hiddenInput)
+	override fun create(): SoftKeyboard = SoftKeyboardImpl(hiddenInput, root)
 
 	override fun dispose() {
 		document.body?.removeChild(hiddenInput)
 	}
 }
 
-class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard {
+class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement, private val root: HTMLElement) : SoftKeyboard {
 
 	private val _input = Signal0()
 	override val input = _input.asRo()
@@ -100,22 +100,15 @@ class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard
 	override val selectionChanged = _selectionChanged.asRo()
 
 	private var isFocused: Boolean = false
+	private var x = 0f
+	private var y = 0f
 
-	// JS will dispatch a selectionChange event when setting the selection.
-	private var isSettingSelection: Boolean = false
-	private var id = ++c
-
-	init {
-		// create the hidden input element
-
-		document.addEventListener("focusout", {
-			println("Document focusout ${it.target} ${document.activeElement}")
-		})
-
-		document.addEventListener("focusin", {
-			println("Document focusin ${it.target} ${document.activeElement}")
-		})
-	}
+	override var type: String = SoftKeyboardType.DEFAULT
+		set(value) {
+			field = value
+			if (isFocused)
+				hiddenInput.type = value
+		}
 
 	private var _text = ""
 	override var text: String
@@ -123,12 +116,14 @@ class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard
 		set(value) {
 			if (_text == value) return
 			_text = value
-			hiddenInput.value = value
+			if (isFocused)
+				hiddenInput.value = value
 		}
 
 	override fun focus() {
-		println("Focus $id")
 		isFocused = true
+		refreshPosition()
+		hiddenInput.type = type
 		hiddenInput.value = text
 		hiddenInput.focus()
 		hiddenInput.addEventListener("blur", ::preventBlur, true)
@@ -141,26 +136,21 @@ class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard
 		hiddenInput.removeEventListener("blur", ::preventBlur, true)
 		hiddenInput.removeEventListener("input", ::inputHandler)
 		document.removeEventListener("selectionchange", ::selectionChangeHandler)
-		println("Blur $id")
 		hiddenInput.blur()
 	}
 
 	private fun preventBlur(e: Event) {
-		println("Hidden input preventBlur ${document.activeElement}")
 		e.preventDefault()
 		hiddenInput.focus()
 	}
 
 	private fun inputHandler(e: Event) {
 		e as InputEvent
-		println("Input ${hiddenInput.value}")
 		_text = hiddenInput.value
 		_input.dispatch()
 	}
 
 	private fun selectionChangeHandler(e: Event) {
-		if (isSettingSelection) return
-		println("selectionChangeHandler ${selectionStart} ${selectionEnd}")
 		_selectionChanged.dispatch()
 	}
 
@@ -171,13 +161,25 @@ class SoftKeyboardImpl(private val hiddenInput: HTMLInputElement) : SoftKeyboard
 		get() = if (hiddenInput.selectionDirection == "backward") hiddenInput.selectionStart ?: 0 else hiddenInput.selectionEnd ?: 0
 
 	override fun setSelectionRange(selectionStart: Int, selectionEnd: Int) {
-		println("setSelectionRange $selectionStart $selectionEnd")
-
 		if (isFocused) {
-//			isSettingSelection = true
 			hiddenInput.setSelectionRange(minOf(selectionStart, selectionEnd), maxOf(selectionStart, selectionEnd), if (selectionEnd >= selectionStart) "forward" else "backward")
-//			isSettingSelection = false
 		}
+	}
+
+	override fun position(x: Float, y: Float) {
+		this.x = x
+		this.y = y
+		if (isFocused) {
+			refreshPosition()
+		}
+	}
+
+	private fun refreshPosition() {
+//		println("Set position $x $y")
+//		val toX = x.toInt() + root.offsetLeft
+//		val toY = y.toInt() + root.offsetTop
+//		hiddenInput.style.left = "${toX}px"
+//		hiddenInput.style.top = "${toY}px"
 	}
 
 	// TODO: Canvas position / size

@@ -86,10 +86,10 @@ interface TextInput : InputComponent<String>, Focusable, SelectableComponent, St
 	var allowTab: Boolean
 
 	/**
-	 * The hinting to use for the touch screen keyboard.
+	 * The hinting to use for the virtual keyboard.
 	 * @see SoftKeyboardType
 	 */
-	var touchScreenInputType: String
+	var softKeyboardType: String
 
 
 	/**
@@ -211,7 +211,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 		invalidateLayout()
 	}
 
-	override var touchScreenInputType = SoftKeyboardType.DEFAULT
+	override var softKeyboardType = SoftKeyboardType.DEFAULT
 
 	override fun updateStyles() {
 		super.updateStyles()
@@ -409,7 +409,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		editableText.replaceTextRange(startIndex, endIndex, newText)
 	}
 
-	override var touchScreenInputType = SoftKeyboardType.DEFAULT
+	override var softKeyboardType = SoftKeyboardType.DEFAULT
 
 	private fun scrollToSelected(event: KeyInteractionRo) {
 		val contents = contents ?: return
