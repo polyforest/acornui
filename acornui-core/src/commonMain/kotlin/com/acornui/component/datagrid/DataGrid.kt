@@ -334,7 +334,7 @@ class DataGrid<RowData>(
 	var cellFocusEnabledFilter: Filter<CellLocationRo<RowData>> = { true }
 
 	init {
-		focusEnabled = true
+		isFocusContainer = true
 		styleTags.add(Companion)
 		if (assertionsEnabled) {
 			_columns.bindUniqueAssertion()
@@ -389,6 +389,8 @@ class DataGrid<RowData>(
 
 		// User interaction:
 
+		contents.focusEnabled = true
+		contents.focusOrder = -1f
 		contents.click().add(::contentsClickedHandler)
 
 		keyDown().add(::keyDownHandler)
@@ -398,13 +400,15 @@ class DataGrid<RowData>(
 				vScrollModel.value += it.deltaY / vScrollBar.modelToPoints
 		}
 
-		focused().add(::focusedHandler)
+		contents.focusedSelf().add(::focusedHandler)
 		blurred().add(::blurredHandler)
 	}
 
 	private fun focusedHandler(event: FocusEventRo) {
-		if (!editable || editorCell?.visible == true) return
-		focusFirstEditableCell()
+		println("Contents focused handler")
+		if (!editable || isEditing) return
+		if (event.initiator == FocusInitiator.USER_KEY)
+			focusFirstEditableCell()
 	}
 
 	private fun blurredHandler(event: FocusEventRo) {
@@ -414,7 +418,7 @@ class DataGrid<RowData>(
 	}
 
 	fun focusFirstEditableCell() {
-		val loc = CellLocation(this, _dataView.localIndexToSource(0), 0)
+		val loc = CellLocation(this, 0, 0)
 		val foundRow = loc.findNextRow { it.rowFocusable }
 		if (!foundRow) return
 		val foundCol = loc.findNextCell { it.cellFocusable }
@@ -423,7 +427,7 @@ class DataGrid<RowData>(
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {
-		if (event.defaultPrevented()) return
+		if (event.defaultPrevented() || event.handled) return
 
 		val loc = cellFocusLocation
 		if (loc != null) {

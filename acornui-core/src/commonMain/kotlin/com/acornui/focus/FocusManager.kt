@@ -26,7 +26,6 @@ import com.acornui.input.InteractionEventBase
 import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
 import com.acornui.input.InteractivityManager
-import com.acornui.input.interaction.ClickInteractionRo
 import com.acornui.isAncestorOf
 import com.acornui.recycle.Clearable
 import com.acornui.signal.StoppableSignal
@@ -53,22 +52,23 @@ interface FocusManager : Disposable {
 	 * @param value The target to focus. If this is null, the manager's root will be focused. (This is typically the
 	 * stage)
 	 * @param options Options to place on the change event.
+	 * @param initiator The source of the focus change.
 	 *
 	 * @see UiComponentRo.focusSelf
 	 * @see UiComponentRo.blurSelf
 	 */
-	fun focus(value: UiComponentRo?, options: FocusOptions = FocusOptions.default)
+	fun focus(value: UiComponentRo?, options: FocusOptions = FocusOptions.default, initiator: FocusInitiator = FocusInitiator.OTHER)
 
 	/**
 	 * Clears the current focus.
 	 */
-	fun clearFocused() = focus(null)
+	fun clearFocused(initiator: FocusInitiator = FocusInitiator.OTHER) = focus(null, FocusOptions.highlight, initiator)
 
 	/**
 	 * Sets focus to the [nextFocusable].
 	 */
-	fun focusNext(options: FocusOptions = FocusOptions.default) {
-		focus(nextFocusable(), options)
+	fun focusNext(options: FocusOptions = FocusOptions.default, initiator: FocusInitiator = FocusInitiator.OTHER) {
+		focus(nextFocusable(), options, initiator)
 	}
 
 	/**
@@ -79,8 +79,8 @@ interface FocusManager : Disposable {
 	/**
 	 * Sets focus to [previousFocusable].
 	 */
-	fun focusPrevious(options: FocusOptions = FocusOptions.default) {
-		focus(previousFocusable(), options)
+	fun focusPrevious(options: FocusOptions = FocusOptions.default, initiator: FocusInitiator = FocusInitiator.OTHER) {
+		focus(previousFocusable(), options, initiator)
 	}
 
 	/**
@@ -153,12 +153,35 @@ data class FocusOptions(
 	}
 }
 
+enum class FocusInitiator {
+
+	/**
+	 * A click event triggered the focus change.
+	 */
+	USER_POINT,
+
+	/**
+	 * A key event triggered the focus change. (TAB)
+	 */
+	USER_KEY,
+
+	/**
+	 * The focus event was triggered by some other event.
+	 */
+	OTHER
+}
+
 interface FocusEventRo : InteractionEventRo {
 
 	/**
 	 * On a blur event, this is the newly focused component, on a focus event, this is the previously focused component.
 	 */
 	val relatedTarget: UiComponentRo?
+
+	/**
+	 * The source of the focus change.
+	 */
+	val initiator: FocusInitiator
 
 	val options: FocusOptions
 
@@ -175,10 +198,13 @@ class FocusEvent : InteractionEventBase(), FocusEventRo, Clearable {
 
 	override var options: FocusOptions = FocusOptions.default
 
+	override var initiator: FocusInitiator = FocusInitiator.OTHER
+
 	override fun clear() {
 		super.clear()
 		relatedTarget = null
 		options = FocusOptions.default
+		initiator = FocusInitiator.OTHER
 	}
 }
 
@@ -266,8 +292,8 @@ val UiComponentRo.canFocusSelf: Boolean
  * @see canFocusSelf
  * @see focus
  */
-fun UiComponentRo.focusSelf(options: FocusOptions = FocusOptions.default) {
-	inject(FocusManager).focus(this, options)
+fun UiComponentRo.focusSelf(options: FocusOptions = FocusOptions.default, initiator: FocusInitiator = FocusInitiator.OTHER) {
+	inject(FocusManager).focus(this, options, initiator)
 }
 
 /**
@@ -306,10 +332,10 @@ val UiComponentRo.canFocus: Boolean
  *
  * @see canFocus
  */
-fun UiComponentRo.focus(options: FocusOptions = FocusOptions.default) {
+fun UiComponentRo.focus(options: FocusOptions = FocusOptions.default, initiator: FocusInitiator = FocusInitiator.OTHER) {
 	val focusManager = inject(FocusManager)
 	val toFocus = firstFocusable ?: return
-	focusManager.focus(toFocus, options)
+	focusManager.focus(toFocus, options, initiator)
 }
 
 @Deprecated("Use FocusOptions", ReplaceWith("focus(FocusOptions(highlight = highlight))"), DeprecationLevel.ERROR)

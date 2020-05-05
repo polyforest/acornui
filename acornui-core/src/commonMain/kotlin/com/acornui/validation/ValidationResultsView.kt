@@ -34,6 +34,7 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.focus.FocusOptions
 import com.acornui.focus.focus
+import com.acornui.focus.mousePressOnKey
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
 import kotlin.contracts.InvocationKind
@@ -118,9 +119,10 @@ class ValidationInfoItemRenderer(owner: Context) : HorizontalLayoutContainer<UiC
 		cursor(StandardCursor.HAND)
 
 		click().add {
-			println("Focusing component ${data?.name}")
+			it.handled = true
 			data?.component?.focus(FocusOptions(highlight = true))
 		}
+		mousePressOnKey()
 	}
 
 	override var index: Int = -1

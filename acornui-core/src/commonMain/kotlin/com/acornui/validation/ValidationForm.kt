@@ -16,10 +16,7 @@
 
 package com.acornui.validation
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.ElementContainerImpl
-import com.acornui.component.InteractivityMode
-import com.acornui.component.UiComponent
+import com.acornui.component.*
 import com.acornui.component.layout.ElementLayoutContainer
 import com.acornui.component.layout.LayoutData
 import com.acornui.component.layout.LayoutElement
@@ -62,25 +59,28 @@ class ValidationForm<T, S : Style, out U : LayoutData>(
 		fill()
 	}
 
-	private val contents = addChild(ElementLayoutContainer<S, U, UiComponent>(this, layoutAlgorithm).apply {
+	private val _contents = addChild(ElementLayoutContainer<S, U, UiComponent>(this, layoutAlgorithm).apply {
 		layoutData = contentsLayoutData
 	})
+
+	val contents: UiComponentRo
+		get() = _contents
 
 	/**
 	 * The layout style for the contents area.
 	 */
-	val contentsStyle: S = bind(contents.unbind(contents.style))
+	val contentsStyle: S = bind(_contents.unbind(_contents.style))
 
 	private val vLayout = VerticalLayout()
 
-	override fun createLayoutData(): U = contents.createLayoutData()
+	override fun createLayoutData(): U = _contents.createLayoutData()
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: UiComponent) {
-		contents.addElement(newIndex, element)
+		_contents.addElement(newIndex, element)
 	}
 
 	override fun onElementRemoved(index: Int, element: UiComponent) {
-		contents.removeElement(element)
+		_contents.removeElement(element)
 	}
 
 	private val _childrenToLayout = ArrayList<LayoutElement>()
@@ -113,11 +113,11 @@ class ValidationForm<T, S : Style, out U : LayoutData>(
 
 	suspend fun validateForm(showResults: Boolean = true): ValidationResults<T> {
 		resultsFeedback = null
-		contents.interactivityMode = InteractivityMode.NONE
+		_contents.interactivityMode = InteractivityMode.NONE
 		val formOutputBuilder = formOutputBuilder ?: error("formOutput must be set")
 		val builder = ValidationResultsBuilder(showResults)
 		val formOutput = builder.formOutputBuilder()
-		contents.interactivityMode = InteractivityMode.ALL
+		_contents.interactivityMode = InteractivityMode.ALL
 		val results = ValidationResults(formOutput, builder.results)
 		if (showResults)
 			resultsFeedback = results

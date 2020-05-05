@@ -25,6 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.Matrix4Ro
+import com.acornui.popup.PopUpPriority
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -130,7 +131,7 @@ open class HighlightStyle : StyleBase() {
 	/**
 	 * This will be set as the pop up priority for the highlight.
 	 */
-	var highlightPriority by prop(99999f)
+	var highlightPriority by prop(PopUpPriority.HIGHLIGHT)
 
 	companion object : StyleType<HighlightStyle>
 }

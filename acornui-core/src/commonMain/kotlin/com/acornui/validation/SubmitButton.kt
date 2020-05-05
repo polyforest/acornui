@@ -63,7 +63,7 @@ fun <T> ValidationForm<T, *, *>.submitButton(
 		i18n {
 			label = string(i18nBundleKey, i18nBundleName)
 		}
-		enterTarget(this)
+		contents.enterTarget(this)
 		click().add {
 			launch {
 				disabled = true

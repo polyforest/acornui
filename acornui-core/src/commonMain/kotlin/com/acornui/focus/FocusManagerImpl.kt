@@ -58,12 +58,12 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	private val rootKeyDownHandler = { event: KeyInteractionRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			val previousFocused = focused
-			if (event.shiftKey) focusPrevious(FocusOptions.highlight)
-			else focusNext(FocusOptions.highlight)
+			if (event.shiftKey) focusPrevious(FocusOptions.highlight, FocusInitiator.USER_KEY)
+			else focusNext(FocusOptions.highlight, FocusInitiator.USER_KEY)
 			if (previousFocused != focused)
 				event.preventDefault() // Prevent the browser's default tab interactivity if we've handled it.
 		} else if (!event.defaultPrevented() && event.keyCode == Ascii.ESCAPE) {
-			clearFocused()
+			clearFocused(FocusInitiator.USER_KEY)
 		}
 	}
 
@@ -73,18 +73,12 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		focusFirstAncestor(event.target)
 	}
 
-//	private fun rootTouchStartHandler(event: TouchInteractionRo) {
-//		if (event.defaultPrevented()) return
-//		if (event.touches.size == 1)
-//			focusFirstAncestor(event.target)
-//	}
-
 	private fun focusFirstAncestor(target: UiComponentRo?) {
 		var p: UiComponentRo? = target
 		while (p != null) {
 			if (p.focusEnabled) {
 				if (focused != p)
-					focus(p)
+					focus(p, initiator = FocusInitiator.USER_POINT)
 				break
 			}
 			p = p.parent
@@ -96,7 +90,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		check(_root == null) { "Already initialized." }
 		_root = root
 		root.keyDown().add(rootKeyDownHandler)
-		root.click(isCapture = false).add(::rootClickDownHandler)
+		root.click(isCapture = true).add(::rootClickDownHandler)
 //		root.touchStart(isCapture = false).add(::rootTouchStartHandler)
 	}
 
@@ -107,7 +101,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 				invalidFocusables.add(value)
 			else {
 				if (interactivityManager.activeElement === value) {
-					focus(null)
+					clearFocused()
 				}
 			}
 		}
@@ -122,11 +116,12 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 
 		var r = 0
 		for (i in 0..minOf(focusDemarcations1.lastIndex, focusDemarcations2.lastIndex)) {
-			val d1 = focusDemarcations1[i]
-			val d2 = focusDemarcations2[i]
+			val d1 = focusDemarcations1[focusDemarcations1.lastIndex - i]
+			val d2 = focusDemarcations2[focusDemarcations2.lastIndex - i]
 			r = d1.compareFocusOrder(d2)
 			if (r != 0) break
 		}
+		if (r == 0) r = focusDemarcations1.size.compareTo(focusDemarcations2.size) // A focus enabled container should come before its children.
 		focusDemarcations1.clear()
 		focusDemarcations2.clear()
 		return r
@@ -138,7 +133,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			if (it.isFocusContainer) {
 				out.add(it)
 			}
-			true 
+			true
 		}
 	}
 
@@ -164,13 +159,13 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		}
 	}
 
-	private data class PendingFocus(val target: UiComponentRo?, val options: FocusOptions)
+	private data class PendingFocus(val target: UiComponentRo?, val options: FocusOptions, val initiator: FocusInitiator)
 	private var isChangingFocus = false
 	private val pending = ArrayList<PendingFocus>()
 
-	override fun focus(value: UiComponentRo?, options: FocusOptions) {
+	override fun focus(value: UiComponentRo?, options: FocusOptions, initiator: FocusInitiator) {
 		val delegate = value?.focusDelegate
-		if (delegate != null) return focus(delegate)
+		if (delegate != null) return focus(delegate, options, initiator)
 
 		if (!isChangingFocus) {
 			isChangingFocus = true
@@ -189,11 +184,12 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 				focusEvent.relatedTarget = previous
 				focusEvent.type = FocusEventRo.FOCUSED
 				focusEvent.options = options
+				focusEvent.initiator = initiator
 
 				interactivityManager.dispatch(focusEvent, target)
 				if (!blurEvent.defaultPrevented() && !focusEvent.defaultPrevented()) {
 					previous.showFocusHighlight = false
-					interactivityManager.activeElement(focusEvent.target)
+					interactivityManager.activeElement(target)
 					if (focusEvent.options.highlight) {
 						// Show the highlight on the explicit target
 						value?.showFocusHighlight = true
@@ -203,10 +199,10 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			isChangingFocus = false
 			if (pending.isNotEmpty()) {
 				val next = pending.poll()
-				focus(next.target, next.options)
+				focus(next.target, next.options, next.initiator)
 			}
 		} else {
-			val toAdd = PendingFocus(value, options)
+			val toAdd = PendingFocus(value, options, initiator)
 			if (pending.lastOrNull() != toAdd) {
 				pending.add(toAdd)
 				check( pending.size < 10) { "Call stack exceeded." }
@@ -243,7 +239,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		isDisposed = true
 		val root = _root ?: error("Not initialized.")
 		root.keyDown().remove(rootKeyDownHandler)
-		root.click(isCapture = false).remove(::rootClickDownHandler)
+		root.click(isCapture = true).remove(::rootClickDownHandler)
 		_root = null
 	}
 

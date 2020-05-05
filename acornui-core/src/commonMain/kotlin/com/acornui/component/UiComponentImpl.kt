@@ -293,7 +293,14 @@ open class UiComponentImpl(
 
 	final override var visible: Boolean by validationProp(true, ValidationFlags.LAYOUT_ENABLED)
 
-	override val componentId: String by lazy {
+	var componentIdOverride: String? = null
+	override var componentId: String
+		get() = componentIdOverride ?: componentIdDefault
+		set(value) {
+			componentIdOverride = value
+		}
+
+	private val componentIdDefault: String by lazy {
 		this::class.simpleName + "_" + UidUtil.createUid()
 	}
 
@@ -1006,6 +1013,10 @@ open class UiComponentImpl(
 		bubbleSignals.clear()
 		attachments.clear()
 		window.scaleChanged.remove(::invalidateLayout.as2)
+	}
+
+	override fun toString(): String {
+		return componentId
 	}
 
 	companion object {

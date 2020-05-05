@@ -72,6 +72,8 @@ open class StageImpl(owner: Context) : Stage, ElementContainerImpl<UiComponent>(
 	init {
 		interactivityManager.init(this)
 		focusManager.init(this)
+		dependencies += TooltipManager to TooltipManagerImpl(this)
+
 		styleTags.add(Stage)
 		cameraOverride = cam
 		own(timer(5.seconds, 10, callback = ::skinCheck))

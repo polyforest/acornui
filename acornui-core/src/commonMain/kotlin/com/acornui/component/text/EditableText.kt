@@ -348,6 +348,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 			Ascii.END -> cursorEnd(event)
 			Ascii.A -> {
 				if (event.commandPlat) {
+					event.handled = true
 					val n = contents.textElements.size
 					selectionManager.selection = listOf(SelectionRange(host, 0, n))
 				}
@@ -368,7 +369,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
 		var i = clamp(sel.endIndex, 0, n)
-		if (i == 0) return
 		if (event.commandPlat) i = previousWordIndex(i) else --i
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
 	}
@@ -391,7 +391,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
 		var i = clamp(sel.endIndex, 0, n)
-		if (i == n) return
 		if (event.commandPlat) i = nextWordIndex(i) else ++i
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else i, i))
 	}
@@ -444,6 +443,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val line = contents.getLineOrNullAt(sel.endIndex) ?: return
+		event.handled = true
 		val nextLine = contents.getLineOrNullAt(line.endIndex)
 		if (nextLine != null) {
 			if (column == -1)
@@ -456,6 +456,9 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
+	/**
+	 *
+	 */
 	private fun lineEnd(line: LineInfoRo): Int {
 		val contents = textField.element ?: return -1
 		val n = contents.textElements.size
@@ -465,7 +468,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun cursorHome(event: KeyInteractionRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
-		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: return
+		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: contents.lines.firstOrNull() ?: return
+		event.handled = true
 		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) 0 else line.startIndex
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
@@ -474,7 +478,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun cursorEnd(event: KeyInteractionRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
-		val line = contents.getLineOrNullAt(sel.endIndex) ?: return
+		val line = contents.getLineOrNullAt(sel.endIndex) ?: contents.lines.lastOrNull() ?: return
+		event.handled = true
 		val pos = lineEnd(line)
 		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) contents.textElements.size else pos
@@ -485,6 +490,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val currentLine = contents.getLineOrNullAt(minOf(sel.endIndex, contents.textElements.size - 1)) ?: return
+		event.handled = true
 		var line: LineInfoRo? = currentLine
 		var h = line?.height ?: 0f
 		while (line != null && h < pageHeight) {
@@ -505,6 +511,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val currentLine = contents.getLineOrNullAt(sel.endIndex) ?: return
+		event.handled = true
 		var line: LineInfoRo? = currentLine
 		var h = line?.height ?: 0f
 		while (line != null && h < pageHeight) {

@@ -38,6 +38,7 @@ import com.acornui.math.Easing
 import com.acornui.math.vec2
 import com.acornui.popup.PopUpInfo
 import com.acornui.popup.PopUpManager
+import com.acornui.popup.PopUpPriority
 import com.acornui.time.tick
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -146,11 +147,7 @@ interface TooltipManager {
 
 	fun createTooltip(value: String): Tooltip<String>
 
-	companion object : Context.Key<TooltipManager> {
-		override val factory = dependencyFactory {
-			TooltipManagerImpl(it)
-		}
-	}
+	companion object : Context.Key<TooltipManager>
 }
 
 class TooltipManagerImpl(owner: Context) : ContextImpl(owner), TooltipManager {
@@ -230,7 +227,7 @@ class TooltipManagerImpl(owner: Context) : ContextImpl(owner), TooltipManager {
 data class Tooltip<E>(
 		val data: E,
 		val view: ItemRenderer<E>,
-		val priority: Float = 0f
+		val priority: Float = PopUpPriority.TOOLTIP
 )
 
 class TooltipView(owner: Context) : ContainerImpl(owner), ItemRenderer<String> {

@@ -389,7 +389,6 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 	private fun focusHandler(event: FocusEventRo) {
 		val old = event.relatedTarget
 		val new = event.target
-		println("pop up focus handler $new")
 		val modalFillContainer = modalFillContainer
 		if (!isBeneathModal(new)) return
 		if (old === modalFillContainer && new === stage) {
@@ -424,7 +423,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 				modalFillContainer
 			}
 		}
-		toFocus.focusSelf(event.options)
+		toFocus.focusSelf(event.options, event.initiator)
 		event.preventDefault()
 	}
 
@@ -459,4 +458,9 @@ fun Context.removePopUp(popUpInfo: PopUpInfo<*>) {
 
 fun Context.removePopUp(popUpInfoChild: UiComponent) {
 	inject(PopUpManager).removePopUp(popUpInfoChild)
+}
+
+object PopUpPriority {
+	const val HIGHLIGHT = 2000f
+	const val TOOLTIP = 3000f
 }

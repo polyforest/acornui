@@ -339,7 +339,7 @@ fun NodeRo.lowestCommonAncestor(other: NodeRo): NodeRo? {
 }
 
 /**
- * Returns true if this ChildRo is before the [other] ChildRo. This considers the parent to come before the child.
+ * Returns true if this node is before the [other] node. This considers the parent to come before the child.
  * Returns null if there is no common ancestor.
  */
 fun NodeRo.isBefore(other: NodeRo): Boolean? {

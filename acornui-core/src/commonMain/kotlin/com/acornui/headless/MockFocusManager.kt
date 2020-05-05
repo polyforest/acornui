@@ -3,6 +3,7 @@ package com.acornui.headless
 import com.acornui.component.ElementContainer
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentRo
+import com.acornui.focus.FocusInitiator
 import com.acornui.focus.FocusManager
 import com.acornui.focus.FocusOptions
 
@@ -13,7 +14,7 @@ object MockFocusManager : FocusManager {
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
 	}
 
-	override fun focus(value: UiComponentRo?, options: FocusOptions) {
+	override fun focus(value: UiComponentRo?, options: FocusOptions, initiator: FocusInitiator) {
 	}
 
 	override fun nextFocusable(): UiComponentRo = throw UnsupportedOperationException()
