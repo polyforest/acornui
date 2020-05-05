@@ -115,7 +115,7 @@ open class OptionList<E : Any>(
 	 * Sets the currently selected item.
 	 * Note that this does not invoke [input] or [changed] signals.
 	 */
-	override var inputValue: E?
+	override var value: E?
 		get() = dataScroller.selection.selectedItem
 		set(value) {
 			dataScroller.selection.selectedItem = value
@@ -330,7 +330,7 @@ open class OptionList<E : Any>(
 				val highlighted = dataScroller.highlighted.selectedItem
 				if (highlighted != null) {
 					// An item was highlighted.
-					inputValue = highlighted
+					value = highlighted
 					focus()
 				} else {
 					// Text was typed. Try to match an item from the data.
@@ -485,7 +485,7 @@ open class OptionList<E : Any>(
 	}
 
 	override fun clear() {
-		inputValue = null
+		value = null
 	}
 
 	override fun dispose() {

@@ -33,7 +33,7 @@ interface InputComponentRo<out T> : Observable, UiComponentRo {
 	/**
 	 * This component's input value.
 	 */
-	val inputValue: T
+	val value: T
 }
 
 interface InputComponent<out T> : UiComponent, InputComponentRo<T>

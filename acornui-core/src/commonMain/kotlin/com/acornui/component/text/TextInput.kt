@@ -151,7 +151,7 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 			editableText.text = value
 		}
 
-	override var inputValue: String
+	override var value: String
 		get() = editableText.text
 		set(value) {
 			editableText.text = value
@@ -321,7 +321,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 			editableText.text = value
 		}
 
-	override var inputValue: String
+	override var value: String
 		get() = editableText.text
 		set(value) {
 			editableText.text = value

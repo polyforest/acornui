@@ -65,12 +65,12 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 	@Deprecated("Use inputValue", ReplaceWith("inputValue"))
 	var color: ColorRo
-		get() = inputValue
+		get() = value
 		set(value) {
-			inputValue = value
+			this.value = value
 		}
 
-	override var inputValue: ColorRo
+	override var value: ColorRo
 		get() = colorPalette.color
 		set(value) {
 			val v = value.copy().clamp()
@@ -133,7 +133,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 			background = addChild(0, it.background(this))
 			colorSwatch?.dispose()
 			colorSwatch = addChild(it.colorSwatch(this)).apply {
-				colorTint = this@ColorPicker.inputValue
+				colorTint = this@ColorPicker.value
 				interactivityMode = InteractivityMode.NONE
 			}
 
@@ -335,7 +335,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 			}
 		}
 
-	override var inputValue: ColorRo
+	override var value: ColorRo
 		get() = color
 		set(value) { color = value }
 
@@ -463,19 +463,19 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 
 	@Deprecated("Use inputValue", ReplaceWith("inputValue"))
 	var color: ColorRo
-		get() = inputValue
+		get() = value
 		set(value) {
-			inputValue = value
+			this.value = value
 		}
 
-	override var inputValue: ColorRo
-		get() = colorPicker.inputValue
+	override var value: ColorRo
+		get() = colorPicker.value
 		set(value) {
-			colorPicker.inputValue = value
+			colorPicker.value = value
 			updateText()
 		}
 
-	var value: HsvRo
+	var hsv: HsvRo
 		get() = colorPicker.hsv
 		set(value) {
 			colorPicker.hsv = value
@@ -574,7 +574,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 	fun toggleOpen() = colorPicker.toggleOpen()
 
 	private fun updateText() {
-		val str = "#" + inputValue.toRgbaString()
+		val str = "#" + value.toRgbaString()
 		textInput.text = str
 		text.text = str
 	}

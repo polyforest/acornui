@@ -612,7 +612,7 @@ class DataGrid<RowData>(
 		@Suppress("unchecked_cast")
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
 		editorCell.changed.add(::commitEditorCellValue.as1)
-		editorCell.inputValue = col.getCellData(row)
+		editorCell.value = col.getCellData(row)
 		editorCellContainer.addElement(editorCell)
 		editorCell.focus()
 		this.editorCell = editorCell
@@ -717,7 +717,7 @@ class DataGrid<RowData>(
 		@Suppress("UNCHECKED_CAST")
 		val column = _columns[cellFocusCol.index] as DataGridColumn<RowData, Any?>
 		val element = data[cellFocusRow.index]
-		column.setCellData(element, editorCell.inputValue)
+		column.setCellData(element, editorCell.value)
 		_observableData.notifyElementModified(cellFocusRow.index)
 	}
 
@@ -1284,7 +1284,7 @@ class DataGrid<RowData>(
 						@Suppress("unchecked_cast")
 						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
-						cell.inputValue = column.getCellData(element)
+						cell.value = column.getCellData(element)
 
 						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = maxOf(iRowHeight, pad.expandHeight(cell.height))
@@ -1401,7 +1401,7 @@ class DataGrid<RowData>(
 						@Suppress("unchecked_cast")
 						val cell = cellCache.columnCellCaches[columnIndex].obtain(rowIterator.position) as DataGridCell<Any?>
 						if (!cell.isActive) cellsContainer.addElement(cell)
-						cell.inputValue = column.getCellData(element)
+						cell.value = column.getCellData(element)
 
 						cell.size(pad.reduceWidth(columnWidth), rowHeight2)
 						iRowHeight = rowHeight ?: maxOf(iRowHeight, pad.expandHeight(cell.height))
@@ -1906,7 +1906,7 @@ interface DataGridCell<CellData> : UiComponent {
 	/**
 	 * This component's input value.
 	 */
-	var inputValue: CellData?
+	var value: CellData?
 }
 
 interface DataGridEditorCell<CellData> : DataGridCell<CellData>, InputComponent<CellData?> {

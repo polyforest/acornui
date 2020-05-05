@@ -75,11 +75,11 @@ class NumberCell<T : Number>(owner: Context, private val formatter: NumberFormat
 
 	init {
 		bind(userInfo.currentLocale.changed) {
-			textField.label = formatter.format(inputValue)
+			textField.label = formatter.format(value)
 		}
 	}
 
-	override var inputValue: T? = null
+	override var value: T? = null
 		set(value) {
 			if (field == value) return
 			field = value
@@ -127,7 +127,7 @@ class IntEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCel
 		input.restrictPattern = RestrictPatterns.INTEGER
 	}
 
-	override var inputValue: Int?
+	override var value: Int?
 		get() = input.text.toIntOrNull()
 		set(value) = setNumber(value)
 
@@ -145,7 +145,7 @@ class FloatEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorC
 		input.restrictPattern = RestrictPatterns.FLOAT
 	}
 
-	override var inputValue: Float?
+	override var value: Float?
 		get() = input.text.toFloatOrNull()
 		set(value) = setNumber(value)
 }
@@ -172,7 +172,7 @@ abstract class StringColumn<in E> : DataGridColumn<E, String>() {
 
 class StringCell<E>(owner: Context, val formatter: StringFormatter<E?> = ToStringFormatter) : TextFieldImpl(owner), DataGridCell<E> {
 
-	override var inputValue: E? = null
+	override var value: E? = null
 		set(value) {
 			if (field == value) return
 			field = value
@@ -194,7 +194,7 @@ class StringEditorCell(owner: Context) : ContainerImpl(owner), DataGridEditorCel
 		input.selectAll()
 	}
 
-	override var inputValue: String?
+	override var value: String?
 		get() = input.text
 		set(value) {
 			input.text = value ?: ""
@@ -240,7 +240,7 @@ class DateCell(owner: Context, private val formatter: StringFormatter<DateRo?>) 
 
 	private val textField = addChild(text { selectable = false })
 
-	override var inputValue: DateRo? = null
+	override var value: DateRo? = null
 		set(value) {
 			if (field == value) return
 			field = value

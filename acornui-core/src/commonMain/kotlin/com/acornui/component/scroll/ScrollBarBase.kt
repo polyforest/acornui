@@ -276,7 +276,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 			return style.naturalHeight
 		}
 
-	override val inputValue: Float
+	override val value: Float
 		get() = scrollModel.value
 
 	/**

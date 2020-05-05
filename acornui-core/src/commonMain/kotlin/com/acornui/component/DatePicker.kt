@@ -83,7 +83,7 @@ open class DatePicker(
 	 * Sets the currently selected date.
 	 * Note that this does not invoke [input] or [changed] signals.
 	 */
-	override var inputValue: DateRo?
+	override var value: DateRo?
 		get() = calendar.selection.selectedItem
 		set(value) {
 			calendar.selection.selectedItem = value
@@ -286,7 +286,7 @@ open class DatePicker(
 
 	override fun clear() {
 		textInput.clear()
-		inputValue = null
+		value = null
 	}
 
 	override fun dispose() {

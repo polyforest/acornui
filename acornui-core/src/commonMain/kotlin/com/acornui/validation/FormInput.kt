@@ -43,8 +43,8 @@ open class FormInput<T>(owner: Context) : SingleElementContainerImpl<InputCompon
 	private val _changed = own(Signal1<InputComponentRo<T>>())
 	override val changed = _changed.asRo()
 
-	override val inputValue: T
-		get() = requiredElement.inputValue
+	override val value: T
+		get() = requiredElement.value
 
 	override var label: String
 		get() = labelTextField.label
@@ -116,7 +116,7 @@ open class FormInput<T>(owner: Context) : SingleElementContainerImpl<InputCompon
 		validationFeedback = null
 		if (validationJob == null) {
 			validationJob = async {
-				val value = requiredElement.inputValue
+				val value = requiredElement.value
 				val results = validators.fold(emptyList<ValidationInfo>(), { acc, validator ->
 					acc + validator.invoke(value).results
 				})

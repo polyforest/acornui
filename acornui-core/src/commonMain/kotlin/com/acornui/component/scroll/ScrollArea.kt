@@ -52,11 +52,11 @@ open class ScrollArea<E : UiComponent>(
 			if (!event.handled && !keyState.keyIsDown(Ascii.CONTROL)) {
 				if (vScrollModel.max > 0f && event.deltaY != 0f) {
 					event.handled = true
-					vScrollBar.userChange(vScrollBar.inputValue + event.deltaY)
+					vScrollBar.userChange(vScrollBar.value + event.deltaY)
 				}
 				if (hScrollModel.max > 0f && event.deltaX != 0f) {
 					event.handled = true
-					hScrollBar.userChange(hScrollBar.inputValue + event.deltaX)
+					hScrollBar.userChange(hScrollBar.value + event.deltaX)
 				}
 			}
 		}
@@ -106,8 +106,8 @@ open class ScrollArea<E : UiComponent>(
 			if (value) {
 				tossScroller = TossScroller(this)
 				tossBinding = TossScrollModelBinding(tossScroller!!) {
-					hScrollBar.userChange(hScrollBar.inputValue - it.x)
-					vScrollBar.userChange(vScrollBar.inputValue - it.y)
+					hScrollBar.userChange(hScrollBar.value - it.x)
+					vScrollBar.userChange(vScrollBar.value - it.y)
 				}
 			} else {
 				tossScroller?.dispose()

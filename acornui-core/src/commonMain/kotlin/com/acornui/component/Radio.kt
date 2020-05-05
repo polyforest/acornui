@@ -132,7 +132,7 @@ open class RadioGroupView<S : Style, U : LayoutData, E : UiComponent, T>(owner: 
 
 	fun radioButton(data: T, label: String = "", init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> = group.radioButton(data, label, init)
 
-	override var inputValue: T?
+	override var value: T?
 		get() = group.inputValue
 		set(value) {
 			group.inputValue = value
