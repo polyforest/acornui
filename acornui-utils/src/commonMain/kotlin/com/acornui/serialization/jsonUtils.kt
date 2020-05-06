@@ -37,8 +37,7 @@ fun <T> toJson(value: T, factory: To<T>): String {
 	return json.write(value, factory)
 }
 
-@PublishedApi
-internal val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false))
+private val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false))
 
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
 	return jsonx.parse(deserializer, jsonStr)
@@ -47,7 +46,7 @@ fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T 
 /**
  * Attempts to deserialize the [jsonStr] with a try/catch, constructing the object via [onFail] on failure.
  */
-inline fun <T> jsonParseOrElse(deserializer: DeserializationStrategy<T>, jsonStr: String?, onFail: () -> T): T {
+fun <T> jsonParseOrElse(deserializer: DeserializationStrategy<T>, jsonStr: String?, onFail: () -> T): T {
 	if (jsonStr.isNullOrEmpty()) return onFail()
 	return try {
 		jsonx.parse(deserializer, jsonStr)

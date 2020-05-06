@@ -607,12 +607,10 @@ open class UiComponentImpl(
 
 	final override fun <T : Style> watch(style: T, callback: (T) -> Unit) = styles.watch(style, callback)
 
+	override fun getStyleDebugInfos(): List<StyleDebugInfo> = styles.getStyleDebugInfos()
+
 	protected open fun updateStyles() {
 		_styles?.validateStyles()
-	}
-
-	fun getStyleDebugInfos(): List<StyleDebugInfo> {
-		return styles.getStyleDebugInfos()
 	}
 
 	init {

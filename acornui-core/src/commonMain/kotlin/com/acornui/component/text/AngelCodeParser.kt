@@ -176,7 +176,6 @@ object AngelCodeParser {
 		}
 		if (!containsKey(WHITE_SQUARE))
 			this[WHITE_SQUARE] = this[REPLACEMENT_CHAR]!!.copy(char = WHITE_SQUARE)
-		println("this[WHITE_SQUARE] ${this[WHITE_SQUARE]}")
 	}
 
 	private fun nextLine(parser: StringReader): Boolean {

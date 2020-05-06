@@ -194,6 +194,8 @@ class TextSpanElementImpl(owner: Context) : ContextImpl(owner), TextSpanElement,
 		}
 	}
 
+	override fun getStyleDebugInfos(): List<StyleDebugInfo> = styles.getStyleDebugInfos()
+
 	override val lineHeight: Float
 		get() = (font?.data?.lineHeight?.toFloat() ?: 0f) / scaleY
 

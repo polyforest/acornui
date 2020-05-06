@@ -50,6 +50,12 @@ interface StylableRo {
 	val stylesInvalidated: Signal<(StylableRo)->Unit>
 
 	fun invalidateStyles()
+
+	fun getStyleDebugInfos(): List<StyleDebugInfo>
+}
+
+fun StylableRo.printStyleDebugInfos() {
+	println(getStyleDebugInfos().joinToString("\n\n") { it.toDebugString() })
 }
 
 interface Stylable : StylableRo {
