@@ -63,18 +63,11 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 		onClosed = this@ColorPicker::close
 	}
 
-	@Deprecated("Use inputValue", ReplaceWith("inputValue"))
-	var color: ColorRo
-		get() = value
-		set(value) {
-			this.value = value
-		}
-
 	override var value: ColorRo
-		get() = colorPalette.color
+		get() = colorPalette.value
 		set(value) {
 			val v = value.copy().clamp()
-			colorPalette.color = v
+			colorPalette.value = v
 			colorSwatch?.colorTint = v
 		}
 
@@ -289,9 +282,9 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 	 * Sets the color and triggers a changed signal.
 	 */
 	fun userChange(value: ColorRo) {
-		val previous = color
+		val previous = this.value
 		if (previous == value) return
-		this.color = value
+		this.value = value
 		_changed.dispatch(this)
 	}
 
@@ -324,20 +317,16 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		}
 	})
 
-	private var _color: ColorRo = Color.WHITE
-	var color: ColorRo
-		get() = _color
+	private var _value: ColorRo = Color.WHITE
+	override var value: ColorRo
+		get() = _value
 		set(value) {
-			if (_color != value) {
-				_color = value.copy()
+			if (_value != value) {
+				_value = value.copy()
 				_hsv = value.toHsv()
 				invalidate(COLORS)
 			}
 		}
-
-	override var value: ColorRo
-		get() = color
-		set(value) { color = value }
 
 	private var _hsv: HsvRo = Color.WHITE.toHsv(Hsv())
 	var hsv: HsvRo
@@ -345,7 +334,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		set(value) {
 			if (_hsv != value) {
 				_hsv = value.copy()
-				_color = value.toRgb()
+				_value = value.toRgb()
 				invalidate(COLORS)
 			}
 		}
@@ -460,13 +449,6 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 
 	private val _changed = Signal1<ColorPickerWithText>()
 	final override val changed = _changed.asRo()
-
-	@Deprecated("Use inputValue", ReplaceWith("inputValue"))
-	var color: ColorRo
-		get() = value
-		set(value) {
-			this.value = value
-		}
 
 	override var value: ColorRo
 		get() = colorPicker.value

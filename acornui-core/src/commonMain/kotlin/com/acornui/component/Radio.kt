@@ -69,7 +69,7 @@ class RadioGroupController<T>(val owner: Context) : ManagedDisposable {
 
 	@Suppress("UNCHECKED_CAST")
 	private val toggledChangedHandler: (ButtonRo) -> Unit = {
-		inputValue = (it as RadioButton<T>).data
+		value = (it as RadioButton<T>).data
 		_changed.dispatch()
 	}
 
@@ -82,7 +82,7 @@ class RadioGroupController<T>(val owner: Context) : ManagedDisposable {
 		button.toggledChanged.add(toggledChangedHandler)
 		button.disposed.add(disposedHandler)
 		_radioButtons.add(button)
-		if (button.data == inputValue)
+		if (button.data == value)
 			toggledButton = button
 	}
 
@@ -101,7 +101,7 @@ class RadioGroupController<T>(val owner: Context) : ManagedDisposable {
 			field?.toggled = true
 		}
 
-	var inputValue: T? = null
+	var value: T? = null
 		set(value) {
 			field = value
 			toggledButton = _radioButtons.find { it.data == value }
@@ -133,9 +133,9 @@ open class RadioGroupView<S : Style, U : LayoutData, E : UiComponent, T>(owner: 
 	fun radioButton(data: T, label: String = "", init: ComponentInit<RadioButton<T>> = {}): RadioButton<T> = group.radioButton(data, label, init)
 
 	override var value: T?
-		get() = group.inputValue
+		get() = group.value
 		set(value) {
-			group.inputValue = value
+			group.value = value
 		}
 
 	init {
