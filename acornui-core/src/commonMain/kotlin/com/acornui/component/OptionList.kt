@@ -306,15 +306,7 @@ open class OptionList<E : Any>(
 				toggleOpen()
 			}
 		}
-
-		blurred().add(::blurredHandler)
-		dataScroller.blurred().add(::blurredHandler)
-	}
-
-	private fun blurredHandler(event: FocusEventRo) {
-		if (!owns(event.relatedTarget)) {
-			close()
-		}
+		blurred().add { close() }
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {

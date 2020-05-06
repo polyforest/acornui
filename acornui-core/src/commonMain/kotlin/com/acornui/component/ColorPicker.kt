@@ -130,12 +130,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 		}
 
-		blurred().add(::blurredHandler)
-		colorPalette.blurred().add(::blurredHandler)
-	}
-
-	private fun blurredHandler(event: FocusEventRo) {
-		if (!owns(event.relatedTarget)) {
+		blurred().add {
 			close()
 		}
 	}

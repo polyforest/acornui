@@ -19,10 +19,7 @@ package com.acornui.component.text
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.di.own
-import com.acornui.focus.blurredSelf
-import com.acornui.focus.focusedSelf
-import com.acornui.focus.isFocused
-import com.acornui.focus.isFocusedSelf
+import com.acornui.focus.*
 import com.acornui.function.as1
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -154,14 +151,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var pendingChange = true
 
 	init {
-		host.focusedSelf().add {
+		host.focusedEvent().add {
 			softKeyboard?.position(localToCanvas(Vector3()))
 			softKeyboard?.focus()
 			if (charStyle.selectable)
 				host.selectAll()
 		}
 
-		host.blurredSelf().add {
+		host.blurredEvent().add {
 			host.unselect()
 			softKeyboard?.blur()
 			if (isActive)

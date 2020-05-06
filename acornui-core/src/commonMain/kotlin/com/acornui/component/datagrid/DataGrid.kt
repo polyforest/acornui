@@ -30,6 +30,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.di.owns
 import com.acornui.focus.*
 import com.acornui.function.as1
 import com.acornui.input.Ascii
@@ -412,9 +413,11 @@ class DataGrid<RowData>(
 	}
 
 	private fun blurredHandler(event: FocusEventRo) {
-		editorCellCheck()
-		commitEditorCellValue()
-		disposeEditorCell()
+		if (!owns(event.relatedTarget)) {
+			editorCellCheck()
+			commitEditorCellValue()
+			disposeEditorCell()
+		}
 	}
 
 	fun focusFirstEditableCell() {

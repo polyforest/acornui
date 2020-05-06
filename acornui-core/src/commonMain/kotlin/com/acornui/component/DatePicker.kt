@@ -26,6 +26,8 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.di.owns
+import com.acornui.focus.FocusEventRo
 import com.acornui.focus.blurred
 import com.acornui.focus.focus
 import com.acornui.focus.focusHighlightDelegate
@@ -211,10 +213,9 @@ open class DatePicker(
 			}
 			this.downArrow = downArrow
 		}
+
 		blurred().add {
 			close()
-			if (isActive)
-				_changed.dispatch(this@DatePicker)
 		}
 	}
 
