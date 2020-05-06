@@ -99,7 +99,7 @@ class RectangleTest {
 	@Test
 	fun plusAssignPad() {
 		val r = Rectangle(x = 1f, y = 2f, width = 3f, height = 4f)
-		r += Pad(top = 3f, right = 4f, bottom =  5f, left = 6f)
+		r += Pad(left = 6f, top = 3f, right = 4f, bottom =  5f)
 		assertEquals(Rectangle(x = 1f - 6f, y = 2f - 3f, width = 3f + 4f + 6f, height = 4f + 3f + 5f), r)
 	}
 }

@@ -380,7 +380,7 @@ class TabNavigatorStyle : StyleBase() {
 	/**
 	 * The padding around the tabs.
 	 */
-	var tabBarPadding by prop(Pad(0f, 0f, -1f, 0f))
+	var tabBarPadding by prop(Pad(0f, 0f, 0f, -1f))
 
 	/**
 	 * The component to be placed in the behind the contents.

@@ -268,7 +268,7 @@ open class BasicUiSkin(
 
 	protected open fun tabNavigatorStyle() {
 		val tabNavStyle = TabNavigatorStyle().apply {
-			tabBarPadding = Pad(0f, 0f, -theme.strokeThickness, 0f)
+			tabBarPadding = Pad(0f, 0f, 0f, -theme.strokeThickness)
 			contentsPadding = Pad(theme.strokeThickness)
 			background = {
 				rect {
@@ -485,11 +485,11 @@ open class BasicUiSkin(
 		target.addStyleRule(dataScrollerStyle, DataScroller)
 
 		val verticalLayoutStyle = VirtualVerticalLayoutStyle()
-		verticalLayoutStyle.padding = Pad(top = 0f, right = 5f, bottom = 0f, left = 5f)
+		verticalLayoutStyle.padding = Pad(left = 5f, top = 0f, right = 5f, bottom = 0f)
 		target.addStyleRule(verticalLayoutStyle, withParent(DataScroller))
 
 		val horizontalLayoutStyle = VirtualHorizontalLayoutStyle()
-		horizontalLayoutStyle.padding = Pad(top = 5f, right = 0f, bottom = 5f, left = 0f)
+		horizontalLayoutStyle.padding = Pad(left = 0f, top = 5f, right = 0f, bottom = 5f)
 		target.addStyleRule(horizontalLayoutStyle, withParent(DataScroller))
 	}
 
@@ -498,7 +498,7 @@ open class BasicUiSkin(
 			downArrow = {
 				iconAtlas(theme.atlasPaths, "ic_expand_more_white_24dp")
 			}
-			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
+			padding = Pad(theme.strokeThickness, theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness)
 			background = {
 				rect {
 					style.apply {
@@ -512,7 +512,7 @@ open class BasicUiSkin(
 		}
 		target.addStyleRule(optionListStyle, OptionList)
 
-		val pad = Pad(top = 0f, right = theme.strokeThickness, bottom = theme.strokeThickness, left = theme.strokeThickness)
+		val pad = Pad(left = theme.strokeThickness, top = 0f, right = theme.strokeThickness, bottom = theme.strokeThickness)
 		val dataScrollerStyle = DataScrollerStyle().apply {
 			padding = pad
 			background = {
@@ -584,7 +584,7 @@ open class BasicUiSkin(
 		dataGridGroupHeaderStyle.background = {
 			rect {
 				style.backgroundColor = theme.controlBarBgColor
-				style.borderThicknesses = Pad(0f, 0f, 1f, 0f)
+				style.borderThicknesses = Pad(0f, 0f, 0f, 1f)
 				style.borderColors = BorderColors(theme.stroke)
 			}
 		}
@@ -649,7 +649,7 @@ open class BasicUiSkin(
 			downArrow = {
 				iconAtlas(theme.atlasPaths, "ic_date_range_white_24dp")
 			}
-			padding = Pad(theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness, theme.strokeThickness)
+			padding = Pad(theme.strokeThickness, theme.strokeThickness, theme.strokeThickness + 2f, theme.strokeThickness)
 			background = {
 				rect {
 					style.apply {

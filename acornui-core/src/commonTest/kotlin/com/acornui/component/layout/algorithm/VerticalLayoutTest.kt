@@ -46,7 +46,7 @@ class VerticalLayoutTest {
 		val style = layout.style
 		val gap = 7f
 		style.gap = gap
-		val padding = Pad(7f, 8f, 9f, 6f)
+		val padding = Pad(6f, 7f, 8f, 9f)
 		style.padding = padding
 		val list = arrayListOf(Spacer(owner, 10f, 5f), Spacer(owner, 12f, 3f), Spacer(owner, 28f, 29f))
 		val size = Bounds()

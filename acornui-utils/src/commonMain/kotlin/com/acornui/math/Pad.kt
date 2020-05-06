@@ -84,7 +84,7 @@ interface PadRo {
 	}
 
 	fun copy(top: Float = this.top, right: Float = this.right, bottom: Float = this.bottom, left: Float = this.left): Pad {
-		return Pad(top, right, bottom, left)
+		return Pad(left, top, right, bottom)
 	}
 }
 
@@ -95,16 +95,15 @@ interface PadRo {
  */
 @Serializable(with = PadSerializer::class)
 class Pad(
+		override var left: Float,
 		override var top: Float,
 		override var right: Float,
-		override var bottom: Float,
-		override var left: Float) : PadRo, Clearable {
+		override var bottom: Float
+) : PadRo, Clearable {
 
 	constructor() : this(0f, 0f, 0f, 0f)
 
 	constructor(all: Float) : this(all, all, all, all)
-
-	constructor(all: Array<Float>) : this(all[0], all[1], all[2], all[3])
 
 	/**
 	 * Sets all values to the given float.
@@ -131,11 +130,11 @@ class Pad(
 	/**
 	 * Sets values to the given values.
 	 */
-	fun set(top: Float = 0f, right: Float = 0f, bottom: Float = 0f, left: Float = 0f): Pad {
+	fun set(left: Float = 0f, top: Float = 0f, right: Float = 0f, bottom: Float = 0f): Pad {
+		this.left = left
 		this.top = top
 		this.right = right
 		this.bottom = bottom
-		this.left = left
 		return this
 	}
 
@@ -197,42 +196,42 @@ class Pad(
 	 * Ceils each value of this padding object. E.g. `top = ceil(top)`
 	 */
 	fun ceil(): Pad {
+		left = ceil(left)
 		top = ceil(top)
 		right = ceil(right)
 		bottom = ceil(bottom)
-		left = ceil(left)
 		return this
 	}
 
 	override fun clear() {
+		left = 0f
 		top = 0f
 		right = 0f
 		bottom = 0f
-		left = 0f
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is PadRo) return false
 
+		if (left != other.left) return false
 		if (top != other.top) return false
 		if (right != other.right) return false
 		if (bottom != other.bottom) return false
-		if (left != other.left) return false
 
 		return true
 	}
 
 	override fun hashCode(): Int {
-		var result = top.hashCode()
+		var result = left.hashCode()
+		result = 31 * result + top.hashCode()
 		result = 31 * result + right.hashCode()
 		result = 31 * result + bottom.hashCode()
-		result = 31 * result + left.hashCode()
 		return result
 	}
 
 	override fun toString(): String {
-		return "Pad(top=$top, right=$right, bottom=$bottom, left=$left)"
+		return "Pad(left=$left, top=$top, right=$right, bottom=$bottom)"
 	}
 
 
@@ -249,16 +248,16 @@ object PadSerializer : KSerializer<Pad> {
 	}
 
 	override fun serialize(encoder: Encoder, value: Pad) {
-		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.top, value.right, value.bottom, value.left))
+		encoder.encodeSerializableValue(Float.serializer().list, listOf(value.left, value.top, value.right, value.bottom))
 	}
 
 	override fun deserialize(decoder: Decoder): Pad {
 		val values = decoder.decodeSerializableValue(Float.serializer().list)
 		return Pad(
-				top = values[0],
-				right = values[1],
-				bottom = values[2],
-				left = values[3]
+				left = values[0],
+				top = values[1],
+				right = values[2],
+				bottom = values[3]
 		)
 	}
 }
@@ -269,9 +268,9 @@ operator fun Matrix4Ro.times(p: PadRo): Pad {
 	val bR = rot(vec3(p.right, p.bottom, 0f))
 	val bL = rot(vec3(-p.left, p.bottom, 0f))
 	return Pad(
+			left = -minOf4(tL.x, tR.x, bR.x, bL.x),
 			top = -minOf4(tL.y, tR.y, bR.y, bL.y),
 			right = maxOf4(tL.x, tR.x, bR.x, bL.x),
-			bottom = maxOf4(tL.y, tR.y, bR.y, bL.y),
-			left = -minOf4(tL.x, tR.x, bR.x, bL.x)
+			bottom = maxOf4(tL.y, tR.y, bR.y, bL.y)
 	)
 }

@@ -289,7 +289,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 	}
 
 	private val valueRect = addChild(rect {
-		style.margin = Pad(0f, 0f, 0f, handleWidth)
+		style.margin = Pad(handleWidth, 0f, 0f, 0f)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -306,7 +306,7 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 	})
 
 	private val alphaRect = addChild(rect {
-		style.margin = Pad(0f, 0f, 0f, handleWidth)
+		style.margin = Pad(handleWidth, 0f, 0f, 0f)
 		dragAttachment(0f).drag.add {
 			canvasToLocal(tmpVec.set(it.position))
 			val p = MathUtils.clamp(tmpVec.y / height, 0f, 1f)
@@ -567,7 +567,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 		super.updateStyles()
 		textInput.validate(ValidationFlags.STYLES)
 		val textInputStyle = textInput.textInputStyle
-		text.flowStyle.padding = pad.set(top = textInputStyle.margin.top + textInputStyle.padding.top, right = 0f, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom, left = 0f)
+		text.flowStyle.padding = pad.set(left = 0f, top = textInputStyle.margin.top + textInputStyle.padding.top, right = 0f, bottom = textInputStyle.margin.bottom + textInputStyle.padding.bottom)
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {

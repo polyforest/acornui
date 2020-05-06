@@ -47,7 +47,7 @@ private class BasicButtonSkin(
 			snapToPixel = false
 			style.apply {
 				backgroundColor = Color.WHITE
-				margin = Pad(top = borderThickness.top, right = borderThickness.right, bottom = 0f, left = borderThickness.left)
+				margin = Pad(left = borderThickness.left, top = borderThickness.top, right = borderThickness.right, bottom = 0f)
 				this.borderRadii = Corners(
 						topLeft = vec2(borderRadius.topLeft.x - borderThickness.left, borderRadius.topLeft.y - borderThickness.top),
 						topRight = vec2(borderRadius.topRight.x - borderThickness.right, borderRadius.topRight.y - borderThickness.top),
@@ -63,7 +63,7 @@ private class BasicButtonSkin(
 			snapToPixel = false
 			style.apply {
 				backgroundColor = Color.WHITE
-				margin = Pad(top = 0f, right = borderThickness.right, bottom = borderThickness.bottom, left = borderThickness.left)
+				margin = Pad(left = borderThickness.left, top = 0f, right = borderThickness.right, bottom = borderThickness.bottom)
 				this.borderRadii = Corners(
 						topLeft = vec2(), topRight = vec2(),
 						bottomLeft = vec2(borderRadius.bottomLeft.x - borderThickness.left, borderRadius.bottomLeft.y - borderThickness.bottom),
@@ -266,7 +266,7 @@ private class BasicTabSkin(owner: Context, theme: Theme) : SingleElementContaine
 	init {
 		val corners = Corners(topLeft = theme.borderRadius, topRight = theme.borderRadius, bottomLeft = 0f, bottomRight = 0f)
 		notToggled = addChild(basicIconButtonSkin(texture = basicButtonSkin(theme, corners)))
-		val borderThickness = Pad(top = theme.strokeThickness, right = theme.strokeThickness, bottom = 0f, left = theme.strokeThickness)
+		val borderThickness = Pad(left = theme.strokeThickness, top = theme.strokeThickness, right = theme.strokeThickness, bottom = 0f)
 		toggled = addChild(basicIconButtonSkin(texture = basicButtonSkin(theme, corners, borderThickness)))
 	}
 
