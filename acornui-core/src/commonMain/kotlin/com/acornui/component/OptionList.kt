@@ -443,7 +443,6 @@ open class OptionList<E : Any>(
 				field = value
 				if (value) {
 					dataScroller.highlighted.clear()
-					listLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
 					addChild(listLift)
 					textInput.focusSelf()
 				} else {

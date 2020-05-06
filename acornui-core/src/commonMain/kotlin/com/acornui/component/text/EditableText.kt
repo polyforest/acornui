@@ -21,6 +21,7 @@ import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.di.own
 import com.acornui.focus.blurredSelf
 import com.acornui.focus.focusedSelf
+import com.acornui.focus.isFocused
 import com.acornui.focus.isFocusedSelf
 import com.acornui.function.as1
 import com.acornui.graphic.Color
@@ -623,11 +624,10 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun updateTextCursor() {
 		val contents = textField.element ?: return
-		textField.validate(ValidationFlags.LAYOUT)
 
 		val textElement = if (!charStyle.selectable || !window.isActive) null else {
 			val sel = firstSelection
-			if (host.isFocusedSelf && sel != null) {
+			if (host.isFocused && sel != null) {
 				val rangeEnd = contents.textElements.size
 				val end = clamp(sel.endIndex, 0, rangeEnd)
 				if (end >= rangeEnd) contents.placeholder else contents.textElements[end]

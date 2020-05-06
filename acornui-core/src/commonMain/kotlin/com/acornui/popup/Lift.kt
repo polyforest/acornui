@@ -50,8 +50,9 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 
 	/**
 	 * The pop-up manager will place higher priority pop-ups in front of lower priority pop-ups.
+	 * If this is null, the priority will be the same as the last pop-up when the lift is added to the stage.
 	 */
-	var priority: Float = 0f
+	var priority: Float? = null
 
 	/**
 	 * If true, the contents will be focused when added to the stage.
@@ -68,6 +69,8 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 	}
 
 	val style = contents.style
+
+	private val popUpManager by PopUpManager
 
 	init {
 		isFocusContainer = true
@@ -92,6 +95,7 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 		super.onActivated()
 		window.sizeChanged.add(::windowResizedHandler.as2)
 
+		val priority = priority ?: popUpManager.currentPopUps.lastOrNull()?.priority ?: 0f
 		addPopUp(PopUpInfo(contents, dispose = false, isModal = isModal, priority = priority, focus = focus, highlightFocused = highlightFocused, onClosed = { onClosed?.invoke() }))
 		invalidate(CONTENTS_TRANSFORM)
 	}

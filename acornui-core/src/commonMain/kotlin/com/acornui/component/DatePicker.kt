@@ -232,9 +232,8 @@ open class DatePicker(
 		isOpen = true
 		calendar.highlighted.clear()
 		selectDateFromText()
-		calendarLift.priority = inject(PopUpManager).currentPopUps.lastOrNull()?.priority ?: 0f
 		addChild(calendarLift)
-		textInput.focus()
+//		textInput.focus()
 	}
 
 	/**
