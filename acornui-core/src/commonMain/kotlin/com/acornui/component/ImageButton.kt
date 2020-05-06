@@ -24,7 +24,7 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.focus.mousePressOnKey
-import com.acornui.gl.core.useColorTransformation
+import com.acornui.gl.core.mulColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.math.Bounds
@@ -99,7 +99,7 @@ class ImageButton(
 	}
 
 	override fun draw() {
-		gl.uniforms.useColorTransformation(colorTransformation) {
+		gl.uniforms.mulColorTransformation(colorTransformation) {
 			super.draw()
 		}
 	}

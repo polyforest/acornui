@@ -337,9 +337,10 @@ fun Uniforms.setColorTransformation(value: ColorTransformationRo?) {
 }
 
 /**
- * Adds a color transformation to the current stack, using that color transformation within [inner].
+ * Sets the color transformation to the current color transformation multiplied by [value], calls [inner], then resets
+ * the color transformation back to its previous value.
  */
-fun Uniforms.useColorTransformation(value: ColorTransformationRo?, inner: () -> Unit) {
+fun Uniforms.mulColorTransformation(value: ColorTransformationRo?, inner: () -> Unit) {
 	val cT = ColorTransformation.obtain()
 	val previous = getColorTransformation(cT)
 	val combined = if (previous == null || value == null) value else previous.mul(value)

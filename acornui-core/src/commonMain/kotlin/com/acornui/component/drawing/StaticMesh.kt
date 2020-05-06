@@ -109,7 +109,7 @@ open class StaticMeshComponent(
 	override fun draw() {
 		val mesh = mesh ?: return
 		colorTransformation.tint(colorTintGlobal)
-		gl.uniforms.useColorTransformation(colorTransformation) {
+		gl.uniforms.mulColorTransformation(colorTransformation) {
 			mesh.render()
 		}
 	}

@@ -17,7 +17,7 @@
 package com.acornui.filter
 
 import com.acornui.di.Context
-import com.acornui.gl.core.useColorTransformation
+import com.acornui.gl.core.mulColorTransformation
 import com.acornui.graphic.ColorRo
 import com.acornui.math.ColorTransformation
 import com.acornui.math.Matrix4Ro
@@ -38,7 +38,7 @@ class ColorTransformationFilter(
 	}
 
 	override fun render(inner: () -> Unit) {
-		gl.uniforms.useColorTransformation(colorTransformationGlobal) {
+		gl.uniforms.mulColorTransformation(colorTransformationGlobal) {
 			inner()
 		}
 	}

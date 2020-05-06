@@ -19,7 +19,7 @@ package com.acornui.filter
 import com.acornui.component.ComponentInit
 import com.acornui.component.Sprite
 import com.acornui.di.Context
-import com.acornui.gl.core.useColorTransformation
+import com.acornui.gl.core.mulColorTransformation
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -71,7 +71,7 @@ open class GlowFilter(owner: Context) : RenderFilterBase(owner) {
 	}
 
 	override fun render(inner: () -> Unit) {
-		gl.uniforms.useColorTransformation(colorTransformation) {
+		gl.uniforms.mulColorTransformation(colorTransformation) {
 			blurSprite.render()
 		}
 		blurFilter.drawOriginalToScreen()

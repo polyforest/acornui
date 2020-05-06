@@ -80,6 +80,10 @@ inline fun Gl20.useViewport(region: IntRectangleRo, inner: () -> Unit) = useView
 
 private val viewportTmp = IntArray(4)
 
+/**
+ * Temporarily uses a viewport rectangle, resetting to the old viewport after [inner].
+ * @see Gl20.viewport
+ */
 fun Gl20.useViewport(viewport: RectangleRo, scaleX: Float, scaleY: Float, inner: () -> Unit) {
 	getParameteriv(Gl20.VIEWPORT, viewportTmp)
 	useViewport(
