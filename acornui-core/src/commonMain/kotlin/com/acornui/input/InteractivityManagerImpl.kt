@@ -51,7 +51,6 @@ open class InteractivityManagerImpl(
 
 	override fun activeElement(value: UiComponentRo?) {
 		_activeElement = value
-		println("Active element: $value")
 	}
 
 	private val mousePool = ClearableObjectPool { MouseInteraction() }
