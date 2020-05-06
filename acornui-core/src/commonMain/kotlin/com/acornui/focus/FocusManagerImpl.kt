@@ -19,10 +19,8 @@ package com.acornui.focus
 import com.acornui.DisposedException
 import com.acornui.collection.addSorted
 import com.acornui.collection.poll
-import com.acornui.component.ElementContainer
-import com.acornui.component.UiComponent
-import com.acornui.component.UiComponentRo
-import com.acornui.component.parentWalk
+import com.acornui.collection.sortedInsertionIndex
+import com.acornui.component.*
 import com.acornui.input.Ascii
 import com.acornui.input.InteractivityManager
 import com.acornui.input.interaction.ClickInteractionRo
@@ -55,6 +53,9 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	private val focused: UiComponentRo
 		get() = interactivityManager.activeElement
 
+	private val focusedInsertionIndex: Int
+		get() = focusables.sortedInsertionIndex(focused, matchForwards = false, comparator = ::focusOrderComparator)
+
 	private var isDisposed: Boolean = false
 
 	private val rootKeyDownHandler = { event: KeyInteractionRo ->
@@ -72,20 +73,8 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	private fun rootClickDownHandler(event: ClickInteractionRo) {
 		if (event.defaultPrevented())
 			return
-		focusFirstAncestor(event.target)
-	}
-
-	private fun focusFirstAncestor(target: UiComponentRo?) {
-		var p: UiComponentRo? = target
-		while (p != null) {
-			if (p.focusEnabled) {
-				if (focused != p)
-					focus(p, initiator = FocusInitiator.USER_POINT)
-				break
-			}
-			p = p.parent
-		}
-		Unit
+		if (focused != event.target)
+			focus(event.target, initiator = FocusInitiator.USER_POINT)
 	}
 
 	override fun init(root: ElementContainer<UiComponent>) {
@@ -93,7 +82,6 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		_root = root
 		root.keyDown().add(rootKeyDownHandler)
 		root.click(isCapture = true).add(::rootClickDownHandler)
-//		root.touchStart(isCapture = false).add(::rootTouchStartHandler)
 	}
 
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
@@ -152,12 +140,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			// Use poll instead of pop because the invalid focusables are more likely to be closer to already in order than not.
 			val focusable = invalidFocusables.poll()
 			if (!focusable.includeInFocusOrder) continue
-			if (_focusables.isEmpty()) {
-				// Trivial case
-				_focusables.add(focusable)
-			} else {
-				_focusables.addSorted(focusable, comparator = ::focusOrderComparator)
-			}
+			_focusables.addSorted(focusable, comparator = ::focusOrderComparator)
 		}
 	}
 
@@ -210,8 +193,8 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	}
 
 	override fun nextFocusable(): UiComponentRo {
-		var index = focusables.indexOf(focused)
-		if (index == -1) index = 0
+		var index = focusedInsertionIndex
+		if (!focused.includeInFocusOrder) index--
 		for (i in 1..focusables.lastIndex) {
 			var j = index + i
 			if (j > focusables.lastIndex) j -= focusables.size
@@ -222,8 +205,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	}
 
 	override fun previousFocusable(): UiComponentRo {
-		var index = focusables.indexOf(focused)
-		if (index == -1) index = focusables.size
+		val index = focusedInsertionIndex
 		for (i in 1..focusables.lastIndex) {
 			var j = index - i
 			if (j < 0) j += focusables.size
