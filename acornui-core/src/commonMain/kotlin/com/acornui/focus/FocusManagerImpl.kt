@@ -25,7 +25,9 @@ import com.acornui.component.UiComponentRo
 import com.acornui.component.parentWalk
 import com.acornui.input.Ascii
 import com.acornui.input.InteractivityManager
-import com.acornui.input.interaction.*
+import com.acornui.input.interaction.ClickInteractionRo
+import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.isBefore
 
@@ -160,54 +162,51 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	}
 
 	private data class PendingFocus(val target: UiComponentRo?, val options: FocusOptions, val initiator: FocusInitiator)
-	private var isChangingFocus = false
-	private val pending = ArrayList<PendingFocus>()
+
+	private val focusQueue = ArrayList<PendingFocus>()
 
 	override fun focus(value: UiComponentRo?, options: FocusOptions, initiator: FocusInitiator) {
-		val delegate = value?.focusDelegate
-		if (delegate != null) return focus(delegate, options, initiator)
+		val n = focusQueue.size
+		check(n < 10) { "Focus call stack exceeded: ${focusQueue.joinToString { it.target.toString() }}" }
+		val next = PendingFocus(value, options, initiator)
+		if (focusQueue.lastOrNull() != next) {
+			focusQueue.add(next)
+		}
+		if (n == 0) {
+			handleQueue()
+		}
+	}
 
-		if (!isChangingFocus) {
-			isChangingFocus = true
-
+	private fun handleQueue() {
+		var cursor = 0
+		while (cursor < focusQueue.size) {
+			val next = focusQueue[cursor++]
 			val previous = interactivityManager.activeElement
-			if (previous !== value) {
-				val blurEvent = FocusEvent()
-				blurEvent.type = FocusEventRo.BLURRED
-				blurEvent.relatedTarget = value
-				blurEvent.options = options
+			val blurEvent = FocusEvent()
+			blurEvent.type = FocusEventRo.BLURRED
+			blurEvent.relatedTarget = next.target
+			blurEvent.options = next.options
 
-				interactivityManager.dispatch(blurEvent, previous)
+			interactivityManager.dispatch(blurEvent, previous)
 
-				val target = value ?: root
-				val focusEvent = FocusEvent()
-				focusEvent.relatedTarget = previous
-				focusEvent.type = FocusEventRo.FOCUSED
-				focusEvent.options = options
-				focusEvent.initiator = initiator
+			val target = next.target ?: root
+			val focusEvent = FocusEvent()
+			focusEvent.relatedTarget = previous
+			focusEvent.type = FocusEventRo.FOCUSED
+			focusEvent.options = next.options
+			focusEvent.initiator = next.initiator
 
-				interactivityManager.dispatch(focusEvent, target)
-				if (!blurEvent.defaultPrevented() && !focusEvent.defaultPrevented()) {
-					previous.showFocusHighlight = false
-					interactivityManager.activeElement(target)
-					if (focusEvent.options.highlight) {
-						// Show the highlight on the explicit target
-						value?.showFocusHighlight = true
-					}
+			interactivityManager.dispatch(focusEvent, target)
+			if (!blurEvent.defaultPrevented() && !focusEvent.defaultPrevented()) {
+				previous.showFocusHighlight = false
+				interactivityManager.activeElement(target)
+				if (focusEvent.options.highlight) {
+					// Show the highlight on the explicit target
+					next.target?.showFocusHighlight = true
 				}
 			}
-			isChangingFocus = false
-			if (pending.isNotEmpty()) {
-				val next = pending.poll()
-				focus(next.target, next.options, next.initiator)
-			}
-		} else {
-			val toAdd = PendingFocus(value, options, initiator)
-			if (pending.lastOrNull() != toAdd) {
-				pending.add(toAdd)
-				check( pending.size < 10) { "Call stack exceeded." }
-			}
 		}
+		focusQueue.clear()
 	}
 
 	override fun nextFocusable(): UiComponentRo {
@@ -244,6 +243,6 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	}
 
 	private val UiComponentRo.includeInFocusOrder: Boolean
-		get() = isActive && focusEnabled && focusDelegate == null
+		get() = isActive && focusEnabled
 
 }

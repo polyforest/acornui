@@ -24,11 +24,8 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.focus.blurred
-import com.acornui.focus.focus
-import com.acornui.focus.focused
-import com.acornui.focus.isFocusedSelf
-import com.acornui.function.as1
+import com.acornui.di.owns
+import com.acornui.focus.*
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.graphic.*
 import com.acornui.input.interaction.click
@@ -59,6 +56,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 	}
 
 	private val colorPaletteLift = lift {
+		focus = true
 		+colorPalette
 		onClosed = this@ColorPicker::close
 	}
@@ -114,7 +112,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 		styleTags.add(ColorPicker)
 
 		click().add {
-			toggleOpen()
+			isOpen = !isOpen
 		}
 
 		colorPalette.changed.add {
@@ -132,17 +130,26 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 		}
 
-		blurred().add(::close.as1)
+		blurred().add(::blurredHandler)
+		colorPalette.blurred().add(::blurredHandler)
 	}
 
-	private var isOpen by afterChange(false) {
-		if (it) {
-			addChild(colorPaletteLift)
-		} else {
-			removeChild(colorPaletteLift)
+	private fun blurredHandler(event: FocusEventRo) {
+		if (!owns(event.relatedTarget)) {
+			close()
 		}
 	}
 
+	var isOpen: Boolean = false
+		set(value) {
+			if (field == value) return
+			field = value
+			if (value) {
+				addChild(colorPaletteLift)
+			} else {
+				removeChild(colorPaletteLift)
+			}
+		}
 
 	fun open() {
 		isOpen = true
@@ -150,10 +157,6 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 	fun close() {
 		isOpen = false
-	}
-
-	fun toggleOpen() {
-		isOpen = !isOpen
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
@@ -197,7 +200,7 @@ class ColorPickerStyle : StyleBase() {
 	companion object : StyleType<ColorPickerStyle>
 }
 
-inline fun Context.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker  {
+inline fun Context.colorPicker(init: ComponentInit<ColorPicker> = {}): ColorPicker {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPicker(this)
 	c.init()
@@ -385,7 +388,8 @@ class ColorPalette(owner: Context) : ContainerImpl(owner), InputComponent<ColorR
 		val padding = s.padding
 
 		val numSliders = showValuePicker.toInt() + showAlphaPicker.toInt()
-		val w = explicitWidth ?: s.defaultPaletteWidth + numSliders * (s.sliderWidth + s.gap) + padding.left + padding.right
+		val w = explicitWidth
+				?: s.defaultPaletteWidth + numSliders * (s.sliderWidth + s.gap) + padding.left + padding.right
 		val h = explicitHeight ?: s.defaultPaletteHeight + padding.top + padding.bottom
 
 		hueRect.size(w - padding.right - padding.left - numSliders * (s.sliderWidth + s.gap), h - padding.top - padding.bottom)
@@ -517,6 +521,9 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 
 	init {
 		styleTags.add(Companion)
+
+		isFocusContainer = true
+
 		colorPicker.focusEnabled = false
 		colorPicker.focusEnabledChildren = false
 
@@ -526,11 +533,14 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 				openTextEditor()
 			}
 		}
-		text.focused().add {
+		focused().add {
 			openTextEditor()
 		}
-		textInput.blurred().add {
-			closeTextEditor()
+		blurred().add {
+			if (!owns(it.relatedTarget)) {
+				close()
+				closeTextEditor()
+			}
 		}
 	}
 
@@ -543,17 +553,21 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 
 	fun closeTextEditor() {
 		if (!textInput.visible) return
+//		if (textInput.isFocused)
+//			focusSelf()
 		textInput.visible = false
 		text.visible = true
-//		if (textInput.isFocusedSelf)
-//			this@ColorPickerWithText.focusSelf()
 	}
+
+	var isOpen: Boolean
+		get() = colorPicker.isOpen
+		set(value) {
+			colorPicker.isOpen = value
+		}
 
 	fun open() = colorPicker.open()
 
 	fun close() = colorPicker.close()
-
-	fun toggleOpen() = colorPicker.toggleOpen()
 
 	private fun updateText() {
 		val str = "#" + value.toRgbaString()
@@ -578,7 +592,7 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 	companion object : StyleTag
 }
 
-inline fun Context.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText  {
+inline fun Context.colorPickerWithText(init: ComponentInit<ColorPickerWithText> = {}): ColorPickerWithText {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val c = ColorPickerWithText(this)
 	c.init()

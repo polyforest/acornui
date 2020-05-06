@@ -19,11 +19,14 @@ package com.acornui.popup
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LayoutDataProvider
 import com.acornui.di.Context
+import com.acornui.focus.focus
 import com.acornui.function.as2
 import com.acornui.math.Bounds
 import com.acornui.math.Matrix4
 import com.acornui.math.vec2
 import com.acornui.math.vec3
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * The Lift component will place its elements as children in the pop up layer, automatically transforming the children
@@ -53,8 +56,11 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 	/**
 	 * If true, the contents will be focused when added to the stage.
 	 */
-	var focus = true
+	var focus = false
 
+	/**
+	 * If true and [focus] is true, when the first focusable element is focused, it will also be highlighted.
+	 */
 	var highlightFocused = false
 
 	private val contents = stack {
@@ -154,20 +160,9 @@ class Lift(owner: Context) : ElementContainerImpl<UiComponent>(owner), LayoutDat
 	}
 }
 
-fun Context.lift(init: ComponentInit<Lift>): Lift {
+inline fun Context.lift(init: ComponentInit<Lift> = {}): Lift {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val l = Lift(this)
 	l.init()
 	return l
-}
-
-private class LiftStack(private val delegate: UiComponentRo) : StackLayoutContainer<UiComponent>(delegate) {
-
-	init {
-		includeInLayout = false
-	}
-
-	// TODO:
-//	override val concatenatedColorTint: ColorRo
-//		get() = delegate.concatenatedColorTint
-
 }

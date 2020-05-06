@@ -37,6 +37,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.di.owns
 import com.acornui.focus.*
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
@@ -267,8 +268,6 @@ open class OptionList<E : Any>(
 
 	init {
 		isFocusContainer = true
-		focusEnabled = true
-		focusDelegate = textInput
 		textInput.focusHighlightDelegate = this
 
 		styleTags.add(OptionList)
@@ -308,9 +307,13 @@ open class OptionList<E : Any>(
 			}
 		}
 
-		blurred().add {
+		blurred().add(::blurredHandler)
+		dataScroller.blurred().add(::blurredHandler)
+	}
+
+	private fun blurredHandler(event: FocusEventRo) {
+		if (!owns(event.relatedTarget)) {
 			close()
-			_changed.dispatch(this)
 		}
 	}
 
@@ -327,19 +330,23 @@ open class OptionList<E : Any>(
 			}
 			Ascii.RETURN, Ascii.ENTER -> {
 				event.handled = true
-				val highlighted = dataScroller.highlighted.selectedItem
-				if (highlighted != null) {
-					// An item was highlighted.
-					value = highlighted
-					focus()
+				if (!isOpen && !editable) {
+					open()
 				} else {
-					// Text was typed. Try to match an item from the data.
-					val typedItem = textToItem(text)
-					dataScroller.selection.selectedItem = typedItem
-					if (typedItem != null) textInput.text = formatter.format(typedItem)
+					val highlighted = dataScroller.highlighted.selectedItem
+					if (highlighted != null) {
+						// An item was highlighted.
+						value = highlighted
+						focus()
+					} else {
+						// Text was typed. Try to match an item from the data.
+						val typedItem = textToItem(text)
+						dataScroller.selection.selectedItem = typedItem
+						if (typedItem != null) textInput.text = formatter.format(typedItem)
+					}
+					close()
+					_changed.dispatch(this)
 				}
-				close()
-				_changed.dispatch(this)
 			}
 			Ascii.DOWN -> {
 				event.handled = true
@@ -370,8 +377,7 @@ open class OptionList<E : Any>(
 	}
 
 	private fun highlightNext(delta: Int) {
-		if (delta <= 0) return
-		if (!isOpen) return
+		if (!isOpen || delta <= 0) return
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) -1 else data.indexOf(highlighted)
 		val nextIndex = minOf(data.lastIndex, selectedIndex + delta)
@@ -384,8 +390,7 @@ open class OptionList<E : Any>(
 	}
 
 	private fun highlightPrevious(delta: Int) {
-		if (delta <= 0) return
-		if (!isOpen) return
+		if (!isOpen || delta <= 0) return
 		val highlighted = dataScroller.highlighted.selectedItem
 		val selectedIndex = if (highlighted == null) data.size else data.indexOf(highlighted)
 		val previousIndex = maxOf(0, selectedIndex - delta)

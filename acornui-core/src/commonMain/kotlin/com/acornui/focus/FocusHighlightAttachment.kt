@@ -107,18 +107,8 @@ private val UiComponentRo.focusHighlightAttachment: FocusHighlightAttachment
 	}
 
 /**
- * If set, the provided delegate will be highlighted instead of this component.
+ * If set, the provided delegate will be highlighted instead of this component when it's focused.
  * The highlighter will still be obtained from this component's [focusableStyle].
- * It can be used in conjunction with [Focusable.focusDelegate] like so:
- * ```
- * panel {
- *     focusEnabled = true
- *
- *     val textInput = +textInput()
- *     textInput.focusHighlightDelegate = this // The focus highlight will surround the panel, not the text input.
- *     focusDelegate = textInput // When the panel is attempted to be given focus, the text input will be given focus instead.
- * }
- * ```
  */
 var UiComponentRo.focusHighlightDelegate: UiComponentRo?
 	get() = focusHighlightAttachment.highlightDelegate
