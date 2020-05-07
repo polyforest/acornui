@@ -151,14 +151,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var pendingChange = true
 
 	init {
-		host.focusedEvent().add {
+		host.focusEvent().add {
 			softKeyboard?.position(localToCanvas(Vector3()))
 			softKeyboard?.focus()
 			if (charStyle.selectable)
 				host.selectAll()
 		}
 
-		host.blurredEvent().add {
+		host.blurEvent().add {
 			host.unselect()
 			softKeyboard?.blur()
 			if (isActive)

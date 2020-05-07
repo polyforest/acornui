@@ -22,7 +22,7 @@ import com.acornui.component.UiComponentImpl
 import com.acornui.component.parentWalk
 import com.acornui.di.Context
 import com.acornui.focus.FocusEventRo
-import com.acornui.focus.blurredEvent
+import com.acornui.focus.blurEvent
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.math.*
@@ -65,12 +65,12 @@ class JsHtmlComponent(
 
 	override fun onActivated() {
 		super.onActivated()
-		blurredEvent().add(::blurHandler)
+		blurEvent().add(::blurHandler)
 		parentElement.appendChild(component.element)
 	}
 
 	override fun onDeactivated() {
-		blurredEvent().remove(::blurHandler)
+		blurEvent().remove(::blurHandler)
 		super.onDeactivated()
 		parentElement.removeChild(component.element)
 	}

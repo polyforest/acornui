@@ -308,6 +308,10 @@ inline fun Context.context(init: ComponentInit<ContextImpl>): ContextImpl {
 	return ContextImpl(this).apply(init)
 }
 
+/**
+ * Returns true if `this` is an ancestor in [other]'s ownership chain.
+ * Ownership chains are based on construction, not based on display hierarchy.
+ */
 fun Context?.owns(other: Context?): Boolean {
 	if (this == null) return false
 	var p: Context? = other

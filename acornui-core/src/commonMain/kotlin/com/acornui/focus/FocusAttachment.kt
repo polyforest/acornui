@@ -83,10 +83,10 @@ class FocusAttachment(
 	val blurredSelf = _blurredSelf.asRo()
 
 	init {
-		target.blurredEvent().add(::blurredHandler)
-		stage.blurredEvent().add(::stageBlurredHandler)
-		target.focusedEvent().add(::focusedHandler)
-		stage.focusedEvent().add(::stageFocusedHandler)
+		target.blurEvent().add(::blurredHandler)
+		stage.blurEvent().add(::stageBlurredHandler)
+		target.focusEvent().add(::focusedHandler)
+		stage.focusEvent().add(::stageFocusedHandler)
 	}
 
 	private fun blurredHandler(event: FocusEventRo) {
@@ -110,10 +110,10 @@ class FocusAttachment(
 
 	override fun dispose() {
 		super.dispose()
-		target.blurredEvent().remove(::blurredHandler)
-		stage.blurredEvent().remove(::stageBlurredHandler)
-		target.focusedEvent().remove(::focusedHandler)
-		stage.focusedEvent().remove(::stageFocusedHandler)
+		target.blurEvent().remove(::blurredHandler)
+		stage.blurEvent().remove(::stageBlurredHandler)
+		target.focusEvent().remove(::focusedHandler)
+		stage.focusEvent().remove(::stageFocusedHandler)
 	}
 
 	companion object

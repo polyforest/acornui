@@ -22,6 +22,7 @@ import com.acornui.childWalkLevelOrder
 import com.acornui.component.*
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
+import com.acornui.di.owns
 import com.acornui.input.InteractionEventBase
 import com.acornui.input.InteractionEventRo
 import com.acornui.input.InteractionType
@@ -187,8 +188,8 @@ interface FocusEventRo : InteractionEventRo {
 
 	companion object {
 
-		val BLURRED = InteractionType<FocusEventRo>("blurred")
-		val FOCUSED = InteractionType<FocusEventRo>("focused")
+		val BLUR = InteractionType<FocusEventRo>("blur")
+		val FOCUS = InteractionType<FocusEventRo>("focus")
 	}
 }
 
@@ -306,12 +307,12 @@ fun UiComponentRo.blurSelf() {
 }
 
 /**
- * Returns true if this component is an ancestor of the currently focused element.
+ * Returns true if this component [owns] the currently focused element.
  */
 val UiComponentRo.isFocused: Boolean
 	get() {
 		val focused = inject(InteractivityManager).activeElement
-		return isAncestorOf(focused)
+		return owns(focused)
 	}
 
 /**
@@ -355,13 +356,13 @@ class FocusableStyle : HighlightStyle() {
 /**
  *
  */
-fun UiComponentRo.focusedEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
-	return createOrReuse(FocusEventRo.FOCUSED, isCapture)
+fun UiComponentRo.focusEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
+	return createOrReuse(FocusEventRo.FOCUS, isCapture)
 }
 
 /**
  *
  */
-fun UiComponentRo.blurredEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
-	return createOrReuse(FocusEventRo.BLURRED, isCapture)
+fun UiComponentRo.blurEvent(isCapture: Boolean = false): StoppableSignal<FocusEventRo> {
+	return createOrReuse(FocusEventRo.BLUR, isCapture)
 }

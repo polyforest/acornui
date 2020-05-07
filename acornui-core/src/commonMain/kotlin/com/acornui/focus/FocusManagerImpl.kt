@@ -166,7 +166,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			val next = focusQueue[cursor++]
 			val previous = interactivityManager.activeElement
 			val blurEvent = FocusEvent()
-			blurEvent.type = FocusEventRo.BLURRED
+			blurEvent.type = FocusEventRo.BLUR
 			blurEvent.relatedTarget = next.target
 			blurEvent.options = next.options
 
@@ -175,7 +175,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			val target = next.target ?: root
 			val focusEvent = FocusEvent()
 			focusEvent.relatedTarget = previous
-			focusEvent.type = FocusEventRo.FOCUSED
+			focusEvent.type = FocusEventRo.FOCUS
 			focusEvent.options = next.options
 			focusEvent.initiator = next.initiator
 
