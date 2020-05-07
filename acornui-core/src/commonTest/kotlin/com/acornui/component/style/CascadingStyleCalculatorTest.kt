@@ -123,6 +123,10 @@ private abstract class SimpleStylable : Stylable {
 	override val stylesInvalidated: Signal<(StylableRo) -> Unit> = emptySignal()
 
 	override fun invalidateStyles() {}
+
+	override fun getStyleDebugInfos(): List<StyleDebugInfo> {
+		return emptyList()
+	}
 }
 
 private class SimpleStyle : StyleBase() {
