@@ -54,7 +54,7 @@ private class LongPressAttachment(
 		target.touchStart(isCapture).add(::touchStartHandler)
 		target.touchEnd(isCapture).add(::touchEndHandler)
 		target.touchMove(isCapture).add(::touchMoveHandler)
-		target.rightClick(isCapture).add(::rightClickHandler)
+		target.rightClick(true).add(::rightClickHandler)
 	}
 
 	private fun touchStartHandler(event: TouchInteractionRo) {
@@ -103,7 +103,7 @@ private class LongPressAttachment(
 		stopTimer()
 		target.touchStart(isCapture).remove(::touchStartHandler)
 		target.touchEnd(isCapture).remove(::touchEndHandler)
-		target.rightClick(isCapture).remove(::rightClickHandler)
+		target.rightClick(true).remove(::rightClickHandler)
 		_longPress.dispose()
 	}
 
