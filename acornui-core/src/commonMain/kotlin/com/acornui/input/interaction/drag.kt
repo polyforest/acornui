@@ -471,11 +471,21 @@ fun UiComponentRo.clearDragAttachment(key: Any = DragAttachment) {
 }
 
 /**
- * Creates or reuses a drag attachment with the given key.
+ * Creates or reuses a drag attachment, setting its affordance.
+ * @param affordance The distance the mouse or touch must move before being considered a drag.
+ * @param key The key for the attachment. If two drag behaviors with different affordances are desired, they must have
+ * separate keys.
  * @see DragAttachment.affordance
  */
-fun UiComponentRo.dragAttachment(affordance: Float = DragAttachment.DEFAULT_AFFORDANCE, key: Any = DragAttachment): DragAttachment {
+fun UiComponentRo.dragAttachment(affordance: Float, key: Any = DragAttachment): DragAttachment {
 	return createOrReuseAttachment(key) { DragAttachment(this, affordance) }.also { it.affordance = affordance }
+}
+
+/**
+ * Creates or reuses a drag attachment without changing the affordance.
+ */
+fun UiComponentRo.dragAttachment(key: Any = DragAttachment): DragAttachment {
+	return createOrReuseAttachment(key) { DragAttachment(this, DragAttachment.DEFAULT_AFFORDANCE) }
 }
 
 /**

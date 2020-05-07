@@ -32,7 +32,8 @@ import com.acornui.signal.StoppableSignalImpl
  */
 private class RollOverAttachment(
 		private val target: UiComponentRo,
-		private val isCapture: Boolean) : ContextImpl(target) {
+		private val isCapture: Boolean
+) : ContextImpl(target) {
 
 	private val _over = StoppableSignalImpl<MouseInteractionRo>()
 	val over = _over.asRo()

@@ -23,6 +23,7 @@ import com.acornui.collection.poll
 import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.di.ContextImpl
+import com.acornui.di.own
 import com.acornui.input.InteractionType
 import com.acornui.input.interaction.*
 import com.acornui.math.*
@@ -41,38 +42,38 @@ class TossScroller(
 		val target: UiComponent,
 
 		/**
-		 *
+		 * The duration to slow down after a toss.
 		 */
 		var slowTime: Duration = DEFAULT_SLOW_TIME,
 
-		val slowEase: Interpolation = DEFAULT_SLOW_EASE,
-
-		private val dragAttachment: DragAttachment = target.dragAttachment(minTossDistance)
+		/**
+		 * The easing to slow down after a toss.
+		 */
+		val slowEase: Interpolation = DEFAULT_SLOW_EASE
 ) : ContextImpl(target) {
 
-	private val _tossStart = StoppableSignalImpl<DragInteraction>()
+	private val dragAttachment = DragAttachment(target, minTossDistance)
+
+	private val _tossStart = own(StoppableSignalImpl<DragInteraction>())
 
 	/**
 	 *  Dispatched when the toss has begun.
 	 */
-	val tossStart: StoppableSignal<DragInteractionRo>
-		get() = _tossStart
+	val tossStart: StoppableSignal<DragInteractionRo> = _tossStart
 
-	private val _toss = StoppableSignalImpl<DragInteraction>()
+	private val _toss = own(StoppableSignalImpl<DragInteraction>())
 
 	/**
 	 *  Dispatched every frame the toss is being updated.
 	 */
-	val toss: StoppableSignal<DragInteractionRo>
-		get() = _toss
+	val toss: StoppableSignal<DragInteractionRo> = _toss
 
-	private val _tossEnd = StoppableSignalImpl<DragInteraction>()
+	private val _tossEnd = own(StoppableSignalImpl<DragInteraction>())
 
 	/**
 	 * Dispatched when the toss has ended.
 	 */
-	val tossEnd: StoppableSignal<DragInteractionRo>
-		get() = _tossEnd
+	val tossEnd: StoppableSignal<DragInteractionRo> = _tossEnd
 
 	/**
 	 * The velocity when the drag ended.
@@ -248,12 +249,6 @@ class TossScroller(
 	override fun dispose() {
 		super.dispose()
 		stop()
-		_tossStart.dispose()
-		_toss.dispose()
-		_tossEnd.dispose()
-		dragAttachment.dragStart.remove(::dragStartHandler)
-		dragAttachment.drag.remove(::dragHandler)
-		dragAttachment.dragEnd.remove(::dragEndHandler)
 		target.click(isCapture = true).remove(::clickHandler)
 	}
 
