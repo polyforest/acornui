@@ -37,8 +37,10 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.di.owns
-import com.acornui.focus.*
+import com.acornui.focus.blurredAll
+import com.acornui.focus.focus
+import com.acornui.focus.focusHighlightDelegate
+import com.acornui.focus.focusSelf
 import com.acornui.input.Ascii
 import com.acornui.input.interaction.KeyInteractionRo
 import com.acornui.input.interaction.click
@@ -46,7 +48,6 @@ import com.acornui.input.keyDown
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
 import com.acornui.observe.bind
-import com.acornui.popup.PopUpManager
 import com.acornui.popup.lift
 import com.acornui.properties.afterChange
 import com.acornui.recycle.Clearable
@@ -57,7 +58,7 @@ import com.acornui.text.ToStringFormatter
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class OptionList<E : Any>(
+class OptionList<E : Any>(
 		owner: Context
 ) : ContainerImpl(owner), Clearable, InputComponent<E?> {
 
@@ -91,7 +92,7 @@ open class OptionList<E : Any>(
 	 * It is dispatched when the user selects an item, or commits the value of the text input. It is not dispatched
 	 * when the selected item or text is programmatically changed.
 	 */
-	final override val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	/**
 	 * The formatter to be used when converting a data element to a string.
@@ -306,7 +307,11 @@ open class OptionList<E : Any>(
 				toggleOpen()
 			}
 		}
-		blurred().add { close() }
+
+		// dataScroller, because it's in a pop-up (lift), is not an ancestor and must be watched for blur.
+		blurredAll(this, dataScroller).add {
+			close()
+		}
 	}
 
 	private fun keyDownHandler(event: KeyInteractionRo) {

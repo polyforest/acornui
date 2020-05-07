@@ -18,10 +18,9 @@ package com.acornui.focus
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuseAttachment
-import com.acornui.component.stage
+import com.acornui.component.isAncestorOf
 import com.acornui.di.ContextImpl
 import com.acornui.di.own
-import com.acornui.di.owns
 import com.acornui.signal.Signal
 import com.acornui.signal.Signal1
 
@@ -36,9 +35,9 @@ class FocusAttachment(
 	private val _focused = own(Signal1<FocusEventRo>())
 
 	/**
-	 * Dispatched when the previously focused is not owned by this component and the newly focused is.
+	 * Dispatched when the previously focused is not an ancestor of this component and the newly focused is.
 	 *
-	 * `!target.owns(old) && target.owns(new)`
+	 * `!target.isAncestorOf(old) && target.isAncestorOf(new)`
 	 *
 	 * @see isFocused
 	 */
@@ -60,9 +59,9 @@ class FocusAttachment(
 	private val _blurred = own(Signal1<FocusEventRo>())
 
 	/**
-	 * Dispatched when the previously focused is owned by this component and the newly focused is not.
+	 * Dispatched when the previously focused is an ancestor of this component and the newly focused is not.
 	 *
-	 * `target.owns(old) && !target.owns(new)`
+	 * `target.isAncestorOf(old) && !target.isAncestorOf(new)`
 	 *
 	 * @see isFocused
 	 * @see FocusManager.focus
@@ -84,36 +83,26 @@ class FocusAttachment(
 
 	init {
 		target.blurEvent().add(::blurredHandler)
-		stage.blurEvent().add(::stageBlurredHandler)
 		target.focusEvent().add(::focusedHandler)
-		stage.focusEvent().add(::stageFocusedHandler)
 	}
 
 	private fun blurredHandler(event: FocusEventRo) {
 		if (event.target === target)
 			_blurredSelf.dispatch(event)
-	}
-	private fun stageBlurredHandler(event: FocusEventRo) {
-		if (_blurred.isNotEmpty() && target.owns(event.target) && !target.owns(event.relatedTarget))
+		if (_blurred.isNotEmpty() && !target.isAncestorOf(event.relatedTarget))
 			_blurred.dispatch(event)
 	}
-
 	private fun focusedHandler(event: FocusEventRo) {
 		if (event.target === target)
 			_focusedSelf.dispatch(event)
-	}
-
-	private fun stageFocusedHandler(event: FocusEventRo) {
-		if (_focused.isNotEmpty() && !target.owns(event.relatedTarget) && target.owns(event.target))
+		if (_focused.isNotEmpty() && !target.isAncestorOf(event.relatedTarget))
 			_focused.dispatch(event)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		target.blurEvent().remove(::blurredHandler)
-		stage.blurEvent().remove(::stageBlurredHandler)
 		target.focusEvent().remove(::focusedHandler)
-		stage.focusEvent().remove(::stageFocusedHandler)
 	}
 
 	companion object
@@ -149,4 +138,70 @@ fun UiComponentRo.focusedSelf(): Signal<(FocusEventRo) -> Unit> {
  */
 fun UiComponentRo.blurredSelf(): Signal<(FocusEventRo) -> Unit> {
 	return focusAttachment().blurredSelf
+}
+
+/**
+ * Creates a signal that will be dispatched when none of the provided components is an ancestor of the new focus.
+ *
+ * @param components The list of components to watch for blur.
+ * @return Returns the signal for this condition change. This signal must be disposed if any of the provided components
+ * are not owned.
+ */
+fun blurredAll(vararg components: UiComponentRo): Signal1<FocusEventRo> {
+	return object : Signal1<FocusEventRo>() {
+
+		private fun blurHandler(event: FocusEventRo) {
+			val anyFocused = components.any {
+				it.isAncestorOf(event.relatedTarget)
+			}
+			if (!anyFocused)
+				dispatch(event)
+		}
+
+		init {
+			components.forEach { c ->
+				c.blurEvent().add(::blurHandler)
+			}
+		}
+
+		override fun dispose() {
+			components.forEach { c ->
+				c.blurEvent().remove(::blurHandler)
+			}
+			super.dispose()
+		}
+	}
+}
+
+/**
+ * Creates a signal that will be dispatched when any of the provided components is an ancestor of the new focus.
+ *
+ * @param components The list of components to watch for focus.
+ * @return Returns the signal for this condition change. This signal must be disposed if any of the provided components
+ * are not owned.
+ */
+fun focusedAny(vararg components: UiComponentRo): Signal1<FocusEventRo> {
+	return object : Signal1<FocusEventRo>() {
+
+		private fun focusHandler(event: FocusEventRo) {
+			val anyWereFocused = components.any {
+				it.isAncestorOf(event.relatedTarget)
+			}
+			if (!anyWereFocused)
+				dispatch(event)
+		}
+
+		init {
+			components.forEach { c ->
+				c.focusEvent().add(::focusHandler)
+			}
+		}
+
+		override fun dispose() {
+			components.forEach { c ->
+				c.focusEvent().remove(::focusHandler)
+			}
+			super.dispose()
+		}
+	}
 }

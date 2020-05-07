@@ -24,7 +24,6 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
-import com.acornui.di.owns
 import com.acornui.focus.*
 import com.acornui.gl.core.TextureMagFilter
 import com.acornui.graphic.*
@@ -40,12 +39,12 @@ import com.acornui.toInt
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
+class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
 
 	val style = bind(ColorPickerStyle())
 
 	private val _changed = own(Signal1<ColorPicker>())
-	final override val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	private var background: UiComponent? = null
 	private var colorSwatch: UiComponent? = null
@@ -130,7 +129,7 @@ open class ColorPicker(owner: Context) : ContainerImpl(owner), InputComponent<Co
 
 		}
 
-		blurred().add {
+		blurredAll(this, colorPalette).add {
 			close()
 		}
 	}
@@ -444,10 +443,10 @@ class ColorPaletteStyle : StyleBase() {
 /**
  * A Color picker with a text input for a hexdecimal color representation.
  */
-open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
+class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComponent<ColorRo> {
 
 	private val _changed = Signal1<ColorPickerWithText>()
-	final override val changed = _changed.asRo()
+	override val changed = _changed.asRo()
 
 	override var value: ColorRo
 		get() = colorPicker.value
@@ -523,35 +522,39 @@ open class ColorPickerWithText(owner: Context) : ContainerImpl(owner), InputComp
 		colorPicker.focusEnabledChildren = false
 
 		keyDown().add {
-			if (it.isEnterOrReturn && isFocusedSelf) {
+			if (!it.handled && it.isEnterOrReturn) {
 				it.handled = true
-				openTextEditor()
+				// If enter or return is pressed -
+				// If the editor is open and hasn't changed (handled will be false), close the editor
+				// If the editor is closed, open it
+				textEditorIsOpen = !textEditorIsOpen
 			}
 		}
+
 		focused().add {
 			openTextEditor()
 		}
+
 		blurred().add {
-			if (!owns(it.relatedTarget)) {
-				close()
-				closeTextEditor()
-			}
+			closeTextEditor()
 		}
 	}
 
+	var textEditorIsOpen: Boolean = false
+		set(value) {
+			if (field == value) return
+			field = value
+			textInput.visible = value
+			text.visible = !value
+			textInput.focus()
+		}
+
 	fun openTextEditor() {
-		if (textInput.visible) return
-		textInput.visible = true
-		text.visible = false
-		textInput.focus()
+		textEditorIsOpen = true
 	}
 
 	fun closeTextEditor() {
-		if (!textInput.visible) return
-//		if (textInput.isFocused)
-//			focusSelf()
-		textInput.visible = false
-		text.visible = true
+		textEditorIsOpen = false
 	}
 
 	var isOpen: Boolean

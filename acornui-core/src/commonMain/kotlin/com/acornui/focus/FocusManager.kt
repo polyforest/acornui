@@ -307,12 +307,12 @@ fun UiComponentRo.blurSelf() {
 }
 
 /**
- * Returns true if this component [owns] the currently focused element.
+ * Returns true if this component [isAncestorOf] the currently focused element.
  */
 val UiComponentRo.isFocused: Boolean
 	get() {
 		val focused = inject(InteractivityManager).activeElement
-		return owns(focused)
+		return isAncestorOf(focused)
 	}
 
 /**

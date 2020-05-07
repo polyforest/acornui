@@ -31,10 +31,10 @@ import com.acornui.frameTimeS
 import com.acornui.function.as2
 import com.acornui.input.*
 import com.acornui.input.interaction.KeyInteractionRo
-import com.acornui.math.*
-import com.acornui.math.MathUtils.clamp
-import com.acornui.mvc.CommandGroup
-import com.acornui.mvc.invokeCommand
+import com.acornui.math.Bounds
+import com.acornui.math.Rectangle
+import com.acornui.math.minOf4
+import com.acornui.math.vec2
 import com.acornui.recycle.Clearable
 import com.acornui.repeat2
 import com.acornui.selection.SelectableComponent
@@ -107,12 +107,8 @@ interface TextInput : InputComponent<String>, Focusable, SelectableComponent, St
 	 */
 	fun replaceTextRange(startIndex: Int, endIndex: Int, newText: String)
 
-	// TODO: add prompt
-
 	companion object : StyleTag
 }
-
-// TODO: instead of cursor component, just use 4 vertices
 
 class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 

@@ -151,14 +151,14 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private var pendingChange = true
 
 	init {
-		host.focusEvent().add {
+		host.focused().add {
 			softKeyboard?.position(localToCanvas(Vector3()))
 			softKeyboard?.focus()
-			if (charStyle.selectable)
+			if (charStyle.selectable && it.initiator != FocusInitiator.USER_POINT)
 				host.selectAll()
 		}
 
-		host.blurEvent().add {
+		host.blurred().add {
 			host.unselect()
 			softKeyboard?.blur()
 			if (isActive)
@@ -466,7 +466,8 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun cursorHome(event: KeyInteractionRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
-		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: contents.lines.firstOrNull() ?: return
+		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex))
+				?: contents.lines.firstOrNull() ?: return
 		event.handled = true
 		val metaKey = event.commandPlat
 		val toIndex = if (metaKey) 0 else line.startIndex

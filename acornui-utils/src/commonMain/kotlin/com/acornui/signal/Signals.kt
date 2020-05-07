@@ -179,7 +179,7 @@ abstract class SignalBase<T : Any> : Signal<T>, Clearable, Disposable {
 	}
 }
 
-class Signal0 : SignalBase<() -> Unit>() {
+open class Signal0 : SignalBase<() -> Unit>() {
 
 	@Synchronized
 	fun dispatch() = dispatch { it() }
@@ -190,7 +190,7 @@ class Signal0 : SignalBase<() -> Unit>() {
 	fun asRo(): Signal<() -> Unit> = this
 }
 
-class Signal1<P1> : SignalBase<(P1) -> Unit>() {
+open class Signal1<P1> : SignalBase<(P1) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1) = dispatch { it(p1) }
@@ -201,7 +201,7 @@ class Signal1<P1> : SignalBase<(P1) -> Unit>() {
 	fun asRo(): Signal<(P1) -> Unit> = this
 }
 
-class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
+open class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2) = dispatch { it(p1, p2) }
@@ -212,7 +212,7 @@ class Signal2<P1, P2> : SignalBase<(P1, P2) -> Unit>() {
 	fun asRo(): Signal<(P1, P2) -> Unit> = this
 }
 
-class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
+open class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3) = dispatch { it(p1, p2, p3) }
@@ -223,7 +223,7 @@ class Signal3<P1, P2, P3> : SignalBase<(P1, P2, P3) -> Unit>() {
 	fun asRo(): Signal<(P1, P2, P3) -> Unit> = this
 }
 
-class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
+open class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4) = dispatch { it(p1, p2, p3, p4) }
@@ -234,7 +234,7 @@ class Signal4<P1, P2, P3, P4> : SignalBase<(P1, P2, P3, P4) -> Unit>() {
 	fun asRo(): Signal<(P1, P2, P3, P4) -> Unit> = this
 }
 
-class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
+open class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5) = dispatch { it(p1, p2, p3, p4, p5) }
@@ -245,7 +245,7 @@ class Signal5<P1, P2, P3, P4, P5> : SignalBase<(P1, P2, P3, P4, P5) -> Unit>() {
 	fun asRo(): Signal<(P1, P2, P3, P4, P5) -> Unit> = this
 }
 
-class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
+open class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6) = dispatch { it(p1, p2, p3, p4, p5, p6) }
@@ -256,7 +256,7 @@ class Signal6<P1, P2, P3, P4, P5, P6> : SignalBase<(P1, P2, P3, P4, P5, P6) -> U
 	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6) -> Unit> = this
 }
 
-class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
+open class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, P7) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7) = dispatch { it(p1, p2, p3, p4, p5, p6, p7) }
@@ -267,7 +267,7 @@ class Signal7<P1, P2, P3, P4, P5, P6, P7> : SignalBase<(P1, P2, P3, P4, P5, P6, 
 	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6, P7) -> Unit> = this
 }
 
-class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
+open class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8) }
@@ -278,7 +278,7 @@ class Signal8<P1, P2, P3, P4, P5, P6, P7, P8> : SignalBase<(P1, P2, P3, P4, P5, 
 	fun asRo(): Signal<(P1, P2, P3, P4, P5, P6, P7, P8) -> Unit> = this
 }
 
-class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
+open class Signal9<P1, P2, P3, P4, P5, P6, P7, P8, P9> : SignalBase<(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit>() {
 
 	@Synchronized
 	fun dispatch(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9) = dispatch { it(p1, p2, p3, p4, p5, p6, p7, p8, p9) }

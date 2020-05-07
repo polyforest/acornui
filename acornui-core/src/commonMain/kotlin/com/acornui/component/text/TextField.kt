@@ -31,10 +31,7 @@ import com.acornui.function.as2
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.clipboardCopy
-import com.acornui.input.interaction.ClipboardItemType
-import com.acornui.input.interaction.CopyInteractionRo
-import com.acornui.input.interaction.DragAttachment
-import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.*
 import com.acornui.math.Bounds
 import com.acornui.selection.SelectableComponent
 import com.acornui.selection.SelectionManager
@@ -176,9 +173,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 
 			if (cS.selectable) {
 				cursor(StandardCursor.IBEAM)
-				createOrReuseAttachment(DRAG_ATTACHMENT_KEY) { DragAttachment(this, 0f).apply {
-					drag.add(::dragHandler)
-				} }
+				dragAttachment(0f, DRAG_ATTACHMENT_KEY).drag.add(::dragHandler)
 			} else {
 				clearCursor()
 				disposeAttachment<DragAttachment>(DRAG_ATTACHMENT_KEY)
