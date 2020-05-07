@@ -185,8 +185,7 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		get() = currentPopUps.indexOfLast { it.isModal }
 
 	private fun refreshModalBlocker() {
-		if (!view.isDisposed)
-			view.modalIndex = lastModalIndex
+		view.modalIndex = lastModalIndex
 	}
 
 	private var _currentPopUps = mutableListOf<PopUpInfo<UiComponent>>()
@@ -224,9 +223,11 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		@Suppress("UNCHECKED_CAST")
 		_currentPopUps.add(index, popUpInfo as PopUpInfo<UiComponent>)
 
-		callLater {
-			updateView(popUpInfo)
-		}
+		child.layoutData = popUpInfo.layoutData
+		view.addElement(index, child)
+		if (popUpInfo.focus)
+			child.focus(FocusOptions(highlight = popUpInfo.highlightFocused))
+		refreshModalBlocker()
 	}
 
 	override fun <T : UiComponent> removePopUp(popUpInfo: PopUpInfo<T>) {
@@ -238,42 +239,20 @@ class PopUpManagerImpl(owner: Context) : ContextImpl(owner), PopUpManager, Dispo
 		@Suppress("UNCHECKED_CAST")
 		_currentPopUps.remove(popUpInfo as PopUpInfo<UiComponent>)
 
-		callLater {
-			updateView(popUpInfo)
-		}
-
-	}
-
-	private fun updateView(popUpInfo: PopUpInfo<UiComponent>) {
-		val currentPopUps = currentPopUps
-		val index = currentPopUps.indexOf(popUpInfo)
-		val child = popUpInfo.child
-
-		if (index == -1) {
-			if (!currentPopUps.any { it.child == child }) {
-				// Child was not re-added in a different pop-up.
-				val wasFocused = child.isFocused
-				view.removeElement(child)
-				child.layoutData = null
-				if (popUpInfo.dispose && !child.isDisposed)
-					child.dispose()
-				if (wasFocused) {
-					val currentPopUp = currentPopUps.lastOrNull()
-					if (currentPopUp?.focus == true) {
-						currentPopUp.child.focus(FocusOptions(highlight = currentPopUp.highlightFocused))
-					} else {
-						view.focusModalFill()
-					}
-				}
-				refreshModalBlocker()
+		val wasFocused = child.isFocused
+		view.removeElement(child)
+		child.layoutData = null
+		if (popUpInfo.dispose && !child.isDisposed)
+			child.dispose()
+		if (wasFocused) {
+			val currentPopUp = currentPopUps.lastOrNull()
+			if (currentPopUp?.focus == true) {
+				currentPopUp.child.focus(FocusOptions(highlight = currentPopUp.highlightFocused))
+			} else {
+				view.focusModalFill()
 			}
-		} else {
-			child.layoutData = popUpInfo.layoutData
-			view.addElement(index, child)
-			if (popUpInfo.focus)
-				child.focus(FocusOptions(highlight = popUpInfo.highlightFocused))
-			refreshModalBlocker()
 		}
+		refreshModalBlocker()
 	}
 
 	override fun removePopUp(child: UiComponent) {
@@ -365,13 +344,13 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 	override fun onActivated() {
 		super.onActivated()
 		stage.keyDown().add(::rootKeyDownHandler)
-		stage.focusedEvent(true).add(::focusHandler)
+		stage.focusEvent(true).add(::focusHandler)
 	}
 
 	override fun onDeactivated() {
 		// Must be before super.onDeactivated or the focus change prevention will get stuck.
 		stage.keyDown().remove(::rootKeyDownHandler)
-		stage.focusedEvent(true).remove(::focusHandler)
+		stage.focusEvent(true).remove(::focusHandler)
 		super.onDeactivated()
 	}
 
@@ -439,6 +418,15 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 			}
 		}
 		return true
+	}
+
+	override fun update() {
+		super.update()
+		if (invalidFlags > 0) {
+			// Pop-up manager is special in that pop-up components may add pop-ups during their validation.
+			// This check allows for a re-validation pass if that was the case.
+			super.update()
+		}
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
