@@ -442,8 +442,8 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 	}
 
 	fun validate() {
-//		if (isValid) return
-//		isValid = true
+		if (isValid) return
+		isValid = true
 		currentTarget.canvasToLocal(_positionLocal.set(position))
 		currentTarget.canvasToLocal(_previousPositionLocal.set(previousPosition))
 		_positionLocalDelta.set(_positionLocal).sub(_previousPositionLocal)
