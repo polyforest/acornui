@@ -166,9 +166,9 @@ class TextInputImpl(owner: Context) : ContainerImpl(owner), TextInput {
 		}
 
 	override var password: Boolean
-		get() = editableText.password
+		get() = editableText.isPassword
 		set(value) {
-			editableText.password = value
+			editableText.isPassword = value
 		}
 
 	override var allowTab: Boolean
@@ -266,7 +266,16 @@ interface TextArea : TextInput {
 	 */
 	var vScrollPolicy: ScrollPolicy
 
+	/**
+	 * The unclipped width of the contents.
+	 * This will perform a layout validation.
+	 */
 	val contentsWidth: Float
+
+	/**
+	 * The unclipped height of the contents.
+	 * This will perform a layout validation.
+	 */
 	val contentsHeight: Float
 
 	companion object : StyleTag
@@ -336,9 +345,9 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 		}
 
 	override var password: Boolean
-		get() = editableText.password
+		get() = editableText.isPassword
 		set(value) {
-			editableText.password = value
+			editableText.isPassword = value
 		}
 
 	override var allowTab: Boolean

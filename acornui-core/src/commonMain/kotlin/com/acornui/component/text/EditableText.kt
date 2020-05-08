@@ -92,29 +92,27 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private fun setTextInternal(value: String) {
 		if (_text == value) return
-		_text = if (_restrictPattern == null) value else value.replace(_restrictPattern!!, "")
+		val restrictPattern = restrictPattern
+		_text = if (restrictPattern == null) value else value.replace(restrictPattern, "")
 		_text = _text.replace("\r", "")
-		refreshText()
+		refreshDisplayText()
 	}
 
 	var placeholder: String = ""
 
-	private var _restrictPattern: Regex? = null
-
-	var restrictPattern: Regex?
-		get() = _restrictPattern
+	var restrictPattern: Regex? = null
 		set(value) {
-			if (_restrictPattern == value) return
-			_restrictPattern = value
+			if (field == value) return
+			field = value
 			if (value != null) {
-				_text = _text.replace(_restrictPattern!!, "")
+				_text = _text.replace(value, "")
 			}
-			refreshText()
+			refreshDisplayText()
 		}
 
-	private fun refreshText() {
+	private fun refreshDisplayText() {
 		column = -1
-		textField.text = if (_password) _text.toPassword() else _text
+		textField.text = if (isPassword) _text.toPassword() else _text
 	}
 
 	val charStyle: CharStyle
@@ -124,17 +122,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		get() = textField.flowStyle
 
 	/**
-	 * The mask to use as replacement characters when [password] is set to true.
+	 * The mask to use as replacement characters when [isPassword] is set to true.
 	 */
 	var passwordMask = "*"
 
-	private var _password = false
-	var password: Boolean
-		get() = _password
+	var isPassword: Boolean = false
 		set(value) {
-			if (value == _password) return
-			_password = value
-			refreshText()
+			if (value == field) return
+			field = value
+			refreshDisplayText()
 		}
 
 	private val selectionManager = inject(SelectionManager)
@@ -252,7 +248,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 		softKeyboard?.apply {
 			selectionChanged.add {
-				println("Setting selection $selectionStart $selectionEnd")
 				selectionManager.selection = listOf(SelectionRange(host, selectionStart, selectionEnd))
 			}
 			input.add {
@@ -567,7 +562,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun replaceSelection(str: String) {
-		var str2 = if (_restrictPattern == null) str else str.replace(_restrictPattern!!, "")
+		var str2 = if (restrictPattern == null) str else str.replace(restrictPattern!!, "")
 		val sel = firstSelection ?: return
 		val maxLength = maxLength
 		if (maxLength != null) {

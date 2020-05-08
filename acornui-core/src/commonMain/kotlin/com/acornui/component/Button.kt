@@ -83,7 +83,7 @@ open class ButtonImpl(
 		click().add {
 			if (toggleOnClick) {
 				it.handled = true
-				setUserToggled(!toggled)
+				setToggledUser(!toggled)
 			}
 		}
 		cursor(StandardCursor.HAND)
@@ -100,7 +100,7 @@ open class ButtonImpl(
 	/**
 	 * Sets the toggled value and dispatches a toggled changed signal.
 	 */
-	fun setUserToggled(value: Boolean) {
+	fun setToggledUser(value: Boolean) {
 		toggled = value
 		indeterminate = false
 		_toggledChanged.dispatch(this)

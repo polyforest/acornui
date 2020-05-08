@@ -47,19 +47,19 @@ import kotlin.contracts.contract
 
 open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvider<StackLayoutData> {
 
-	private val _userCurrentIndexChanged = own(Signal4<TabNavigator, Int, Int, Cancel>())
+	private val _currentIndexChanging = own(Signal4<TabNavigator, Int, Int, Cancel>())
 
 	/**
-	 * Dispatched when the current tab index is about to change due to a tab click event.
+	 * Dispatched when the current tab index is about to change due to a user event.
 	 * The handler should have the signature:
 	 * (this: TabNavigator, previousIndex: Int, newIndex: Int, cancel: Cancel)
 	 */
-	val userCurrentIndexChanged = _userCurrentIndexChanged.asRo()
+	val currentIndexChanging = _currentIndexChanging.asRo()
 
 	private val _currentIndexChanged = own(Signal3<TabNavigator, Int, Int>())
 
 	/**
-	 * Dispatched when the current tab index has changed. The handler should have the signature
+	 * Dispatched when the current tab index has changed due to a user event. The handler should have the signature
 	 * (this: TabNavigator, previousIndex: Int, newIndex: Int)
 	 */
 	val currentIndexChanged = _currentIndexChanged.asRo()
@@ -146,18 +146,20 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 	private fun tabClickHandler(e: ClickInteractionRo) {
 		if (!e.handled) {
 			val index = tabBar.elements.indexOf(e.currentTarget)
-			if (_currentIndex != index) {
+			if (index != currentIndex) {
 				e.handled = true
-				_userCurrentIndexChanged.dispatch(this, _currentIndex, index, cancel.reset())
-				if (!cancel.isCancelled) {
-					currentIndex = index
-				}
+				setCurrentIndexUser(index)
 			}
 		}
 	}
 
 	override fun createLayoutData(): StackLayoutData = StackLayoutData()
 
+	/**
+	 * Sets the current tab index.
+	 * This does not trigger a [currentIndexChanging] or [currentIndexChanged] event.
+	 * @see setCurrentIndexUser
+	 */
 	var currentIndex: Int
 		get() = _currentIndex
 		set(value) {
@@ -165,8 +167,20 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 			if (value == previousIndex) return
 			_currentIndex = value
 			updateSelectedTab()
-			_currentIndexChanged.dispatch(this, previousIndex, value)
 		}
+
+	/**
+	 * Sets the current tab index, dispatching [currentIndexChanged].
+	 */
+	fun setCurrentIndexUser(index: Int) {
+		val previousIndex = _currentIndex
+		if (previousIndex == index) return
+		_currentIndexChanging.dispatch(this, previousIndex, index, cancel.reset())
+		if (!cancel.isCancelled) {
+			currentIndex = index
+			_currentIndexChanged.dispatch(this, previousIndex, index)
+		}
+	}
 
 	/**
 	 * Adds the given tab.

@@ -47,7 +47,7 @@ open class RadioButtonImpl<out T>(
 	init {
 		styleTags.add(RadioButtonImpl)
 		click().add {
-			if (!toggled) setUserToggled(true)
+			if (!toggled) setToggledUser(true)
 		}
 	}
 
