@@ -90,8 +90,6 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 	val tabs: List<TabNavigatorTab>
 		get() = _tabs
 
-	private var _currentIndex = 0
-
 	private var selectedTab: TabNavigatorTab? = null
 
 	private val cancel = Cancel()
@@ -160,12 +158,11 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 	 * This does not trigger a [currentIndexChanging] or [currentIndexChanged] event.
 	 * @see setCurrentIndexUser
 	 */
-	var currentIndex: Int
-		get() = _currentIndex
+	var currentIndex: Int = 0
 		set(value) {
-			val previousIndex = _currentIndex
+			val previousIndex = field
 			if (value == previousIndex) return
-			_currentIndex = value
+			field = value
 			updateSelectedTab()
 		}
 
@@ -173,7 +170,7 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 	 * Sets the current tab index, dispatching [currentIndexChanged].
 	 */
 	fun setCurrentIndexUser(index: Int) {
-		val previousIndex = _currentIndex
+		val previousIndex = currentIndex
 		if (previousIndex == index) return
 		_currentIndexChanging.dispatch(this, previousIndex, index, cancel.reset())
 		if (!cancel.isCancelled) {
@@ -305,8 +302,8 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 	//-----------------------------------------------------
 
 	private fun updateSelectedTab() {
-		val newSelectedTab: TabNavigatorTab? = if (_currentIndex >= 0 && _currentIndex < _tabs.size) {
-			_tabs[_currentIndex]
+		val newSelectedTab: TabNavigatorTab? = if (currentIndex >= 0 && currentIndex < _tabs.size) {
+			_tabs[currentIndex]
 		} else {
 			null
 		}
