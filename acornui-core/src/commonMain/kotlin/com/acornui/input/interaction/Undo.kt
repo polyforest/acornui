@@ -23,22 +23,22 @@ import com.acornui.di.ContextImpl
 import com.acornui.input.*
 import com.acornui.signal.StoppableSignal
 
-interface UndoInteractionRo : InteractionEventRo {
+interface UndoEventRo : EventRo {
 
 	companion object {
-		val UNDO = InteractionType<UndoInteractionRo>("undo")
-		val REDO = InteractionType<UndoInteractionRo>("redo")
+		val UNDO = EventType<UndoEventRo>("undo")
+		val REDO = EventType<UndoEventRo>("redo")
 	}
 }
 
-class UndoInteraction : UndoInteractionRo, InteractionEventBase()
+class UndoEvent : UndoEventRo, EventBase()
 
-fun UiComponentRo.undo(isCapture: Boolean = false): StoppableSignal<UndoInteractionRo> {
-	return createOrReuse(UndoInteractionRo.UNDO, isCapture)
+fun UiComponentRo.undo(isCapture: Boolean = false): StoppableSignal<UndoEventRo> {
+	return createOrReuse(UndoEventRo.UNDO, isCapture)
 }
 
-fun UiComponentRo.redo(isCapture: Boolean = false): StoppableSignal<UndoInteractionRo> {
-	return createOrReuse(UndoInteractionRo.REDO, isCapture)
+fun UiComponentRo.redo(isCapture: Boolean = false): StoppableSignal<UndoEventRo> {
+	return createOrReuse(UndoEventRo.REDO, isCapture)
 }
 
 class UndoDispatcher(owner: Context) : ContextImpl(owner) {
@@ -46,19 +46,19 @@ class UndoDispatcher(owner: Context) : ContextImpl(owner) {
 	private val key by KeyInput
 	private val interactivity by InteractivityManager
 
-	private val event = UndoInteraction()
+	private val event = UndoEvent()
 
-	private val keyDownHandler =  { e: KeyInteractionRo ->
+	private val keyDownHandler =  { e: KeyEventRo ->
 		if (!e.handled) {
 			if (e.commandPlat && (e.keyCode == Ascii.Y || (e.shiftKey && e.keyCode == Ascii.Z))) {
 				e.handled = true
 				event.clear()
-				event.type = UndoInteractionRo.REDO
+				event.type = UndoEventRo.REDO
 				interactivity.dispatch(event)
 			} else if (e.commandPlat && e.keyCode == Ascii.Z) {
 				e.handled = true
 				event.clear()
-				event.type = UndoInteractionRo.UNDO
+				event.type = UndoEventRo.UNDO
 				interactivity.dispatch(event)
 			}
 		}

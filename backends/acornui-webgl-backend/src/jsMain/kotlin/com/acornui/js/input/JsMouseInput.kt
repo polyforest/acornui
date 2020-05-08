@@ -50,28 +50,28 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 			}
 		}
 
-	private val _touchStart = Signal1<TouchInteractionRo>()
+	private val _touchStart = Signal1<TouchEventRo>()
 	override val touchStart = _touchStart.asRo()
-	private val _touchEnd = Signal1<TouchInteractionRo>()
+	private val _touchEnd = Signal1<TouchEventRo>()
 	override val touchEnd = _touchEnd.asRo()
-	private val _touchMove = Signal1<TouchInteractionRo>()
+	private val _touchMove = Signal1<TouchEventRo>()
 	override val touchMove = _touchMove.asRo()
-	private val _touchCancel = Signal1<TouchInteractionRo>()
+	private val _touchCancel = Signal1<TouchEventRo>()
 	override val touchCancel = _touchCancel.asRo()
-	private val _mouseDown: Signal1<MouseInteraction> = Signal1()
+	private val _mouseDown: Signal1<com.acornui.input.interaction.MouseEvent> = Signal1()
 	override val mouseDown = _mouseDown.asRo()
-	private val _mouseUp = Signal1<MouseInteractionRo>()
+	private val _mouseUp = Signal1<MouseEventRo>()
 	override val mouseUp = _mouseUp.asRo()
-	private val _mouseMove = Signal1<MouseInteractionRo>()
+	private val _mouseMove = Signal1<MouseEventRo>()
 	override val mouseMove = _mouseMove.asRo()
-	private val _mouseWheel = Signal1<WheelInteractionRo>()
+	private val _mouseWheel = Signal1<WheelEventRo>()
 	override val mouseWheel = _mouseWheel.asRo()
 	private val _overCanvasChanged = Signal1<Boolean>()
 	override val overCanvasChanged = _overCanvasChanged.asRo()
 
-	private val touchEvent = TouchInteraction()
-	private val mouseEvent = MouseInteraction()
-	private val wheelEvent = WheelInteraction()
+	private val touchEvent = TouchEvent()
+	private val mouseEvent = MouseEvent()
+	private val wheelEvent = WheelEvent()
 
 	private var _overCanvas: Boolean = false
 	
@@ -225,7 +225,7 @@ class JsMouseInput(private val canvas: HTMLElement) : MouseInput {
 		touchY = firstTouch?.canvasY ?: -1f
 	}
 
-	private fun TouchInteraction.set(jsEvent: TouchEvent) {
+	private fun com.acornui.input.interaction.TouchEvent.set(jsEvent: TouchEvent) {
 		val bounds = canvas.getBoundingClientRect()
 		timestamp = jsEvent.timeStamp.toLong()
 		clearTouches()

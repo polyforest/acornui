@@ -18,11 +18,11 @@ package com.acornui.js.input
 
 import com.acornui.Disposable
 import com.acornui.input.Clipboard
-import com.acornui.input.InteractionEventBase
+import com.acornui.input.EventBase
 import com.acornui.input.InteractivityManager
 import com.acornui.input.interaction.ClipboardItemType
-import com.acornui.input.interaction.CopyInteractionRo
-import com.acornui.input.interaction.PasteInteractionRo
+import com.acornui.input.interaction.CopyEventRo
+import com.acornui.input.interaction.PasteEventRo
 import com.acornui.js.html.ClipboardEvent
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLTextAreaElement
@@ -35,8 +35,8 @@ class JsClipboard(
 		private val interactivityManager: InteractivityManager
 ) : Clipboard, Disposable {
 
-	private val pasteEvent = JsPasteInteraction()
-	private val copyEvent = JsCopyInteraction()
+	private val pasteEvent = JsPasteEvent()
+	private val copyEvent = JsCopyEvent()
 
 	/**
 	 * If we are fabricating a copy interaction on a temporary text area via [copy], do not handle
@@ -76,7 +76,7 @@ class JsClipboard(
 
 	private val pasteHandler: (Event) -> dynamic = {
 		pasteEvent.clear()
-		pasteEvent.type = PasteInteractionRo.PASTE
+		pasteEvent.type = PasteEventRo.PASTE
 		pasteEvent.set(it as ClipboardEvent)
 		interactivityManager.dispatch(pasteEvent)
 		if (pasteEvent.defaultPrevented()) it.preventDefault()
@@ -85,7 +85,7 @@ class JsClipboard(
 	private val copyHandler: (Event) -> dynamic = {
 		if (!ignoreCopyEvent) {
 			copyEvent.clear()
-			copyEvent.type = CopyInteractionRo.COPY
+			copyEvent.type = CopyEventRo.COPY
 			copyEvent.set(it as ClipboardEvent)
 			interactivityManager.dispatch(copyEvent)
 			if (copyEvent.defaultPrevented()) it.preventDefault()
@@ -94,7 +94,7 @@ class JsClipboard(
 
 	private val cutHandler: (Event) -> dynamic = {
 		copyEvent.clear()
-		copyEvent.type = CopyInteractionRo.CUT
+		copyEvent.type = CopyEventRo.CUT
 		copyEvent.set(it as ClipboardEvent)
 		interactivityManager.dispatch(copyEvent)
 		if (copyEvent.defaultPrevented()) it.preventDefault()
@@ -116,7 +116,7 @@ class JsClipboard(
 }
 
 
-private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
+private class JsPasteEvent : EventBase(), PasteEventRo {
 
 	private var jsEvent: ClipboardEvent? = null
 
@@ -150,7 +150,7 @@ private class JsPasteInteraction : InteractionEventBase(), PasteInteractionRo {
 }
 
 
-private class JsCopyInteraction : InteractionEventBase(), CopyInteractionRo {
+private class JsCopyEvent : EventBase(), CopyEventRo {
 
 	private var jsEvent: ClipboardEvent? = null
 

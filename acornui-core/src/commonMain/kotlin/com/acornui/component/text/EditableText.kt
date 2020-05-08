@@ -25,7 +25,7 @@ import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
 import com.acornui.input.*
 import com.acornui.input.interaction.ClipboardItemType
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.commandPlat
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils.clamp
@@ -291,7 +291,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	private var column = -1
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
+	private fun keyDownHandler(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		if (event.defaultPrevented()) return
 		resetCursorBlink()
@@ -357,7 +357,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		textCursor.colorTint = cursorColorOne
 	}
 
-	private fun cursorLeft(event: KeyInteractionRo) {
+	private fun cursorLeft(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
@@ -379,7 +379,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		return i
 	}
 
-	private fun cursorRight(event: KeyInteractionRo) {
+	private fun cursorRight(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val n = contents.textElements.size
@@ -417,7 +417,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
-	private fun cursorUp(event: KeyInteractionRo) {
+	private fun cursorUp(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex)) ?: return
@@ -432,7 +432,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
-	private fun cursorDown(event: KeyInteractionRo) {
+	private fun cursorDown(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val line = contents.getLineOrNullAt(sel.endIndex) ?: return
@@ -458,7 +458,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		return if (line.endIndex == n) n else line.endIndex - 1
 	}
 
-	private fun cursorHome(event: KeyInteractionRo) {
+	private fun cursorHome(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val line = contents.getLineOrNullAt(minOf(contents.textElements.size - 1, sel.endIndex))
@@ -469,7 +469,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
 
-	private fun cursorEnd(event: KeyInteractionRo) {
+	private fun cursorEnd(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val line = contents.getLineOrNullAt(sel.endIndex) ?: contents.lines.lastOrNull() ?: return
@@ -480,7 +480,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		selectionManager.selection = listOf(SelectionRange(host, if (event.shiftKey) sel.startIndex else toIndex, toIndex))
 	}
 
-	private fun cursorPageUp(event: KeyInteractionRo) {
+	private fun cursorPageUp(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val currentLine = contents.getLineOrNullAt(minOf(sel.endIndex, contents.textElements.size - 1)) ?: return
@@ -501,7 +501,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 		}
 	}
 
-	private fun cursorPageDown(event: KeyInteractionRo) {
+	private fun cursorPageDown(event: KeyEventRo) {
 		val contents = textField.element ?: return
 		val sel = firstSelection ?: return
 		val currentLine = contents.getLineOrNullAt(sel.endIndex) ?: return
@@ -533,7 +533,7 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 * If there is a non-empty selection, that selection is replaced with nothing. If there is an empty selection,
 	 * the previous character is deleted.
 	 */
-	private fun backspace(event: KeyInteractionRo) {
+	private fun backspace(event: KeyEventRo) {
 		val sel = firstSelection ?: return
 		if (sel.startIndex != sel.endIndex) {
 			replaceTextRange(sel.min, sel.max, "")

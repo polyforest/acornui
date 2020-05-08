@@ -38,22 +38,22 @@ class JsKeyInput(
 		canvas: HTMLElement
 ) : KeyInput {
 
-	private val _keyDown = Signal1<KeyInteractionRo>()
+	private val _keyDown = Signal1<KeyEventRo>()
 	override val keyDown = _keyDown.asRo()
-	private val _keyUp = Signal1<KeyInteractionRo>()
+	private val _keyUp = Signal1<KeyEventRo>()
 	override val keyUp = _keyUp.asRo()
-	private val _char = Signal1<CharInteractionRo>()
+	private val _char = Signal1<CharEventRo>()
 	override val char = _char.asRo()
 
-	private val keyEvent = KeyInteraction()
-	private val charEvent = CharInteraction()
+	private val keyEvent = KeyEvent()
+	private val charEvent = CharEvent()
 
 	private val downMap: MutableMultiMap2<Int, KeyLocation, Boolean> = multiMap2()
 
 	private val keyDownHandler = { jsEvent: Event ->
 		(jsEvent as KeyboardEvent)
 		keyEvent.set(jsEvent)
-		keyEvent.type = KeyInteractionRo.KEY_DOWN
+		keyEvent.type = KeyEventRo.KEY_DOWN
 		if (!jsEvent.repeat) {
 			downMap[keyEvent.keyCode][keyEvent.location] = true
 		}
@@ -65,7 +65,7 @@ class JsKeyInput(
 	private val keyUpHandler = { jsEvent: Event ->
 		(jsEvent as KeyboardEvent)
 		keyEvent.set(jsEvent)
-		keyEvent.type = KeyInteractionRo.KEY_UP
+		keyEvent.type = KeyEventRo.KEY_UP
 		if (downMap.containsKey(keyEvent.keyCode))
 			downMap[keyEvent.keyCode].clear() // Browsers give incorrect key location properties on key up.
 		_keyUp.dispatch(keyEvent)

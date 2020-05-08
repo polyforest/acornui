@@ -27,10 +27,7 @@ import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.di.owns
-import com.acornui.focus.FocusEventRo
-import com.acornui.focus.blurred
-import com.acornui.focus.focus
-import com.acornui.focus.focusHighlightDelegate
+import com.acornui.focus.*
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.isEnterOrReturn
 import com.acornui.input.keyDown
@@ -214,7 +211,7 @@ open class DatePicker(
 			this.downArrow = downArrow
 		}
 
-		blurred().add {
+		blurredAll(this, calendar).add {
 			close()
 		}
 	}

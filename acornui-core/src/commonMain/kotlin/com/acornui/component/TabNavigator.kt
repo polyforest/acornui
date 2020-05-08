@@ -35,7 +35,7 @@ import com.acornui.factory.lazyInstance
 import com.acornui.graphic.Scaling
 import com.acornui.i18n.i18nBundleName
 import com.acornui.i18n.labelI18n
-import com.acornui.input.interaction.ClickInteractionRo
+import com.acornui.input.interaction.ClickEventRo
 import com.acornui.input.interaction.click
 import com.acornui.math.Bounds
 import com.acornui.math.Pad
@@ -143,7 +143,7 @@ open class TabNavigator(owner: Context) : ContainerImpl(owner), LayoutDataProvid
 		}
 	}
 
-	private fun tabClickHandler(e: ClickInteractionRo) {
+	private fun tabClickHandler(e: ClickEventRo) {
 		if (!e.handled) {
 			val index = tabBar.elements.indexOf(e.currentTarget)
 			if (index != currentIndex) {

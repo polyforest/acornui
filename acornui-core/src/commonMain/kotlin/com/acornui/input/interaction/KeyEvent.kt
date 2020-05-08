@@ -18,12 +18,12 @@ package com.acornui.input.interaction
 
 import com.acornui.system.Platform
 import com.acornui.input.Ascii
-import com.acornui.input.InteractionEventBase
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventBase
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 import com.acornui.system.userInfo
 
-interface KeyInteractionRo : InteractionEventRo {
+interface KeyEventRo : EventRo {
 
 	/**
 	 * The ascii keyCode.
@@ -74,23 +74,23 @@ interface KeyInteractionRo : InteractionEventRo {
 	val isFabricated: Boolean
 
 	companion object {
-		val KEY_DOWN = InteractionType<KeyInteractionRo>("keyDown")
-		val KEY_UP = InteractionType<KeyInteractionRo>("keyUp")
+		val KEY_DOWN = EventType<KeyEventRo>("keyDown")
+		val KEY_UP = EventType<KeyEventRo>("keyUp")
 	}
 }
 
 /**
- * Returns true if [KeyInteractionRo.altKey], [KeyInteractionRo.ctrlKey], [KeyInteractionRo.metaKey], or
- * [KeyInteractionRo.shiftKey] is true.
+ * Returns true if [KeyEventRo.altKey], [KeyEventRo.ctrlKey], [KeyEventRo.metaKey], or
+ * [KeyEventRo.shiftKey] is true.
  */
-val KeyInteractionRo.hasAnyModifier: Boolean
+val KeyEventRo.hasAnyModifier: Boolean
 	get() = altKey || ctrlKey || metaKey || shiftKey
 
-			/**
+/**
  * An event representing an interaction with the keyboard.
  * @author nbilyk
  */
-open class KeyInteraction : InteractionEventBase(), KeyInteractionRo {
+open class KeyEvent : EventBase(), KeyEventRo {
 
 	/**
 	 * The ascii keyCode.
@@ -141,7 +141,7 @@ open class KeyInteraction : InteractionEventBase(), KeyInteractionRo {
 	 */
 	override var isFabricated: Boolean = false
 
-	fun set(other: KeyInteractionRo) {
+	fun set(other: KeyEventRo) {
 		keyCode = other.keyCode
 		location = other.location
 		altKey = other.altKey
@@ -183,8 +183,8 @@ enum class KeyLocation {
 /**
  * The command key on mac os, otherwise, the ctrl key.
  */
-val KeyInteractionRo.commandPlat: Boolean
+val KeyEventRo.commandPlat: Boolean
 	get() = if (userInfo.platform == Platform.APPLE) metaKey else ctrlKey
 
-val KeyInteractionRo.isEnterOrReturn: Boolean
+val KeyEventRo.isEnterOrReturn: Boolean
 	get() = keyCode == Ascii.ENTER || keyCode == Ascii.RETURN

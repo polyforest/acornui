@@ -19,7 +19,7 @@ package com.acornui.js.input
 import com.acornui.di.Context
 import com.acornui.input.WhichButton
 import com.acornui.input.interaction.ClickDispatcher
-import com.acornui.input.interaction.ClickInteractionRo
+import com.acornui.input.interaction.ClickEventRo
 import com.acornui.time.nowMs
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
@@ -64,7 +64,7 @@ class JsClickDispatcher(
 		val canvasY = jsEvent.pageY.toFloat() - rootElement.offsetTop.toFloat()
 		release(WhichButton.LEFT, canvasX, canvasY, nowMs(), true)
 		clickEvent.button = WhichButton.RIGHT
-		clickEvent.type = ClickInteractionRo.RIGHT_CLICK
+		clickEvent.type = ClickEventRo.RIGHT_CLICK
 		if (fireClickEvent()) {
 			// If anything is listening to right-click, prevent default to stop the default context webgl menu.
 			if (clickEvent.handled || clickEvent.defaultPrevented())

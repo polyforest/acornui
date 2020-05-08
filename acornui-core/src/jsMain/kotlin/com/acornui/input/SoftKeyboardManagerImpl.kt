@@ -20,8 +20,8 @@ package com.acornui.input
 
 import com.acornui.Disposable
 import com.acornui.focus.FocusManager
-import com.acornui.input.interaction.KeyInteraction
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.KeyEvent
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.set
 import com.acornui.signal.Signal0
 import org.w3c.dom.HTMLElement
@@ -29,7 +29,6 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.InputEvent
 import org.w3c.dom.events.KeyboardEvent
-import setTimeout
 import kotlin.browser.document
 
 class SoftKeyboardManagerImpl(
@@ -39,7 +38,7 @@ class SoftKeyboardManagerImpl(
 ) : SoftKeyboardManager, Disposable {
 
 	private val hiddenInput: HTMLInputElement
-	private val keyEvent = KeyInteraction()
+	private val keyEvent = KeyEvent()
 	private val delegatedKeys = listOf(Ascii.ESCAPE, Ascii.TAB, Ascii.ENTER, Ascii.RETURN)
 
 	init {
@@ -64,18 +63,18 @@ class SoftKeyboardManagerImpl(
 
 			addEventListener("keydown", {
 				e ->
-				delegateEvent(e as KeyboardEvent, KeyInteractionRo.KEY_DOWN)
+				delegateEvent(e as KeyboardEvent, KeyEventRo.KEY_DOWN)
 			}, options)
 
 			addEventListener("keyup", {
 				e ->
-				delegateEvent(e as KeyboardEvent, KeyInteractionRo.KEY_UP)
+				delegateEvent(e as KeyboardEvent, KeyEventRo.KEY_UP)
 			}, options)
 		}
 		document.body?.appendChild(hiddenInput)
 	}
 
-	private fun delegateEvent(e: KeyboardEvent, type: InteractionType<InteractionEventRo>) {
+	private fun delegateEvent(e: KeyboardEvent, type: EventType<EventRo>) {
 		if (delegatedKeys.contains(e.keyCode)) {
 			val focused = interactivityManager.activeElement
 			keyEvent.set(e)

@@ -16,11 +16,11 @@
 
 package com.acornui.input.interaction
 
-import com.acornui.input.InteractionEventBase
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventBase
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 
-interface CharInteractionRo : InteractionEventRo {
+interface CharEventRo : EventRo {
 
 	val char: Char
 
@@ -30,20 +30,20 @@ interface CharInteractionRo : InteractionEventRo {
 	val isFabricated: Boolean
 
 	companion object {
-		val CHAR = InteractionType<CharInteractionRo>("char")
+		val CHAR = EventType<CharEventRo>("char")
 	}
 }
 
 /**
  * An event representing a character input.
  */
-open class CharInteraction : InteractionEventBase(), CharInteractionRo {
+open class CharEvent : EventBase(), CharEventRo {
 
 	override var char: Char = 0.toChar()
 
 	override var isFabricated: Boolean = false
 
-	fun set(other: CharInteractionRo) {
+	fun set(other: CharEventRo) {
 		char = other.char
 		isFabricated = other.isFabricated
 	}

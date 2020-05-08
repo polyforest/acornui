@@ -7,7 +7,7 @@ import org.w3c.dom.events.KeyboardEvent
  * Sets the values of this key interaction to match that of the javascript keyboard event.
  * @return Returns the receiver for chaining.
  */
-fun KeyInteraction.set(jsEvent: KeyboardEvent): KeyInteraction {
+fun KeyEvent.set(jsEvent: KeyboardEvent): KeyEvent {
 	clear()
 	timestamp = jsEvent.timeStamp.toLong()
 	location = keyLocationFromInt(jsEvent.location)
@@ -24,7 +24,7 @@ fun KeyInteraction.set(jsEvent: KeyboardEvent): KeyInteraction {
  * Sets the values of this char interaction to match that of the javascript keyboard event.
  * @return Returns the receiver for chaining.
  */
-fun CharInteraction.set(jsEvent: KeyboardEvent): CharInteraction {
+fun CharEvent.set(jsEvent: KeyboardEvent): CharEvent {
 	clear()
 	char = jsEvent.charCode.toChar()
 	return this

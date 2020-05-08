@@ -112,7 +112,7 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${version.toVersionString()}"
 			Log.error(message)
-			if (debug)
+			if (isDebug)
 				window.alert(message)
 		}
 		uncaughtExceptionHandler
@@ -196,7 +196,7 @@ fun MainContext.webGlApplication(rootId: String, appConfig: AppConfig = AppConfi
 
 /**
  * A flag for enabling getError() gl checks.
- * This is separate from [debug] because of the extremely high performance cost.
+ * This is separate from [isDebug] because of the extremely high performance cost.
  */
 val glDebug: Boolean by lazy {
 	if (!userInfo.isBrowser) false

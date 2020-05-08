@@ -22,4 +22,4 @@ package com.acornui
  * On the JS backend debug=true exists as a querystring parameter.
  * On the JVM backend -Ddebug=true exists as a vm parameter.
  */
-expect val debug: Boolean
+expect val isDebug: Boolean

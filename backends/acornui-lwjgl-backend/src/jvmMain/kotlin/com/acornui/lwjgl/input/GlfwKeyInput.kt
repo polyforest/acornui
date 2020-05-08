@@ -35,15 +35,15 @@ import org.lwjgl.glfw.GLFWKeyCallback
  */
 class GlfwKeyInput(private val window: Long) : KeyInput {
 
-	private val _keyDown = Signal1<KeyInteractionRo>()
+	private val _keyDown = Signal1<KeyEventRo>()
 	override val keyDown = _keyDown.asRo()
-	private val _keyUp = Signal1<KeyInteractionRo>()
+	private val _keyUp = Signal1<KeyEventRo>()
 	override val keyUp = _keyUp.asRo()
-	private val _char = Signal1<CharInteractionRo>()
+	private val _char = Signal1<CharEventRo>()
 	override val char = _char.asRo()
 
-	private val keyEvent = KeyInteraction()
-	private val charEvent = CharInteraction()
+	private val keyEvent = KeyEvent()
+	private val charEvent = CharEvent()
 
 	private val keyCodeMap: HashMap<Int, Pair<Int, KeyLocation>>
 	private val downMap: MutableMultiMap2<Int, KeyLocation, Boolean> = multiMap2()
@@ -143,16 +143,16 @@ class GlfwKeyInput(private val window: Long) : KeyInput {
 			when (action) {
 				GLFW.GLFW_PRESS -> {
 					downMap[keyEvent.keyCode][keyEvent.location] = true
-					keyEvent.type = KeyInteractionRo.KEY_DOWN
+					keyEvent.type = KeyEventRo.KEY_DOWN
 					_keyDown.dispatch(keyEvent)
 				}
 				GLFW.GLFW_RELEASE -> {
 					downMap.remove(keyEvent.keyCode, keyEvent.location, removeEmptyMaps = false)
-					keyEvent.type = KeyInteractionRo.KEY_UP
+					keyEvent.type = KeyEventRo.KEY_UP
 					_keyUp.dispatch(keyEvent)
 				}
 				GLFW.GLFW_REPEAT -> {
-					keyEvent.type = KeyInteractionRo.KEY_DOWN
+					keyEvent.type = KeyEventRo.KEY_DOWN
 					keyEvent.isRepeat = true
 					_keyDown.dispatch(keyEvent)
 				}

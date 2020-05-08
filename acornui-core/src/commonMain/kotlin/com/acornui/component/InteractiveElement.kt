@@ -19,8 +19,8 @@ package com.acornui.component
 import com.acornui.component.layout.LayoutElement
 import com.acornui.component.layout.LayoutElementRo
 import com.acornui.di.Context
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 import com.acornui.input.InteractivityManager
 import com.acornui.math.RayRo
 import com.acornui.math.Vector3
@@ -65,18 +65,18 @@ interface InteractiveElementRo : LayoutElementRo, CanvasTransformableRo, Attachm
 	 */
 	fun intersectsGlobalRay(globalRay: RayRo, intersection: Vector3): Boolean
 
-	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean
-	fun <T: InteractionEventRo> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean
+	fun <T: EventRo> handlesInteraction(type: EventType<T>): Boolean
+	fun <T: EventRo> handlesInteraction(type: EventType<T>, isCapture: Boolean): Boolean
 
 	fun hasInteraction(): Boolean
 
-	fun <T: InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean = false): Boolean
+	fun <T: EventRo> hasInteraction(type: EventType<T>, isCapture: Boolean = false): Boolean
 
-	fun <T: InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false): StoppableSignal<T>?
+	fun <T: EventRo> getInteractionSignal(type: EventType<T>, isCapture: Boolean = false): StoppableSignal<T>?
 
-	fun <T: InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean = false)
+	fun <T: EventRo> addInteractionSignal(type: EventType<T>, signal: StoppableSignal<T>, isCapture: Boolean = false)
 
-	fun <T: InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean = false)
+	fun <T: EventRo> removeInteractionSignal(type: EventType<T>, isCapture: Boolean = false)
 }
 
 private val tmpVec = vec3()
@@ -131,7 +131,7 @@ enum class InteractivityMode {
  * Creates or reuses a stoppable signal for the specified interaction type.
  * This should be used in the same style you see in CommonInteractions.kt
  */
-fun <T : InteractionEventRo> UiComponentRo.createOrReuse(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
+fun <T : EventRo> UiComponentRo.createOrReuse(type: EventType<T>, isCapture: Boolean): StoppableSignal<T> {
 	val existing = getInteractionSignal(type, isCapture)
 	return if (existing != null) {
 		existing

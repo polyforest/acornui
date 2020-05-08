@@ -35,8 +35,8 @@ import com.acornui.focus.*
 import com.acornui.function.as1
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
-import com.acornui.input.interaction.ClickInteractionRo
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.ClickEventRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.dragAttachment
 import com.acornui.input.keyDown
@@ -429,7 +429,7 @@ class DataGrid<RowData>(
 		focusCell(loc)
 	}
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
+	private fun keyDownHandler(event: KeyEventRo) {
 		if (event.defaultPrevented() || event.handled) return
 
 		val loc = cellFocusLocation
@@ -533,7 +533,7 @@ class DataGrid<RowData>(
 		return CellLocation(this, rowIterator, columnIndex)
 	}
 
-	private fun contentsClickedHandler(event: ClickInteractionRo) {
+	private fun contentsClickedHandler(event: ClickEventRo) {
 		if (event.handled) return
 		val cell = getCellFromPosition(event.canvasX, event.canvasY)
 		event.handled = true
@@ -1621,7 +1621,7 @@ class DataGrid<RowData>(
 		return headerCellBackground
 	}
 
-	private fun headerCellBackgroundClickedHandler(e: ClickInteractionRo) {
+	private fun headerCellBackgroundClickedHandler(e: ClickEventRo) {
 		if (!columnSortingEnabled || e.handled) {
 			return
 		}

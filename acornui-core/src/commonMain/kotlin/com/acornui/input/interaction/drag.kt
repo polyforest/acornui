@@ -71,23 +71,23 @@ class DragAttachment(
 	val userIsActive: Boolean
 		get() = watchingMouse || watchingTouch
 
-	private val dragEvent: DragInteraction = DragInteraction()
+	private val dragEvent: DragEvent = DragEvent()
 
-	private val _dragStart = Signal1<DragInteractionRo>()
+	private val _dragStart = Signal1<DragEventRo>()
 
 	/**
 	 * Dispatched when the drag has passed the [affordance] distance.
 	 */
 	val dragStart = _dragStart.asRo()
 
-	private val _drag = Signal1<DragInteractionRo>()
+	private val _drag = Signal1<DragEventRo>()
 
 	/**
 	 * Dispatched on each frame during a drag.
 	 */
 	val drag = _drag.asRo()
 
-	private val _dragEnd = Signal1<DragInteractionRo>()
+	private val _dragEnd = Signal1<DragEventRo>()
 
 	/**
 	 * Dispatched when the drag has completed.
@@ -121,7 +121,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageMouseMoveHandler(event: MouseInteractionRo) {
+	private fun stageMouseMoveHandler(event: MouseEventRo) {
 		event.handled = true
 	}
 
@@ -129,7 +129,7 @@ class DragAttachment(
 	// Mouse UX
 	//--------------------------------------------------------------
 
-	private fun mouseDownHandler(event: MouseInteractionRo) {
+	private fun mouseDownHandler(event: MouseEventRo) {
 		if (!watchingMouse && !watchingTouch && allowMouseStart(event)) {
 			isTouch = false
 			touchId = -1
@@ -145,7 +145,7 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageMouseUpHandler(event: MouseInteractionRo) {
+	private fun stageMouseUpHandler(event: MouseEventRo) {
 		event.handled = true
 		position.set(event.canvasX, event.canvasY)
 		setIsWatchingMouse(false)
@@ -157,7 +157,7 @@ class DragAttachment(
 	 * This does not determine if a drag start may begin.
 	 * @see allowMouseDragStart
 	 */
-	private fun allowMouseStart(event: MouseInteractionRo): Boolean {
+	private fun allowMouseStart(event: MouseEventRo): Boolean {
 		return enabled && !event.isFabricated && event.button == WhichButton.LEFT && !event.handled
 	}
 
@@ -169,7 +169,7 @@ class DragAttachment(
 	// Touch UX
 	//--------------------------------------------------------------
 
-	private fun touchStartHandler(event: TouchInteractionRo) {
+	private fun touchStartHandler(event: TouchEventRo) {
 		if (!watchingMouse && !watchingTouch && allowTouchStart(event)) {
 			isTouch = true
 			setIsWatchingTouch(true)
@@ -191,7 +191,7 @@ class DragAttachment(
 	 * This does not determine if a drag start may begin.
 	 * @see allowTouchDragStart
 	 */
-	private fun allowTouchStart(event: TouchInteractionRo): Boolean {
+	private fun allowTouchStart(event: TouchEventRo): Boolean {
 		return enabled && !event.handled
 	}
 
@@ -199,7 +199,7 @@ class DragAttachment(
 		return position.manhattanDst(startPosition) >= affordance
 	}
 
-	private fun allowTouchEnd(event: TouchInteractionRo): Boolean {
+	private fun allowTouchEnd(event: TouchEventRo): Boolean {
 		return event.touches.find { it.identifier == touchId } == null
 	}
 
@@ -218,13 +218,13 @@ class DragAttachment(
 		}
 	}
 
-	private fun stageTouchMoveHandler(event: TouchInteractionRo) {
+	private fun stageTouchMoveHandler(event: TouchEventRo) {
 		event.handled = true
 		if (preventDefaultOnTouchMove)
 			event.preventDefault()
 	}
 
-	private fun stageTouchEndHandler(event: TouchInteractionRo) {
+	private fun stageTouchEndHandler(event: TouchEventRo) {
 		if (allowTouchEnd(event)) {
 			touchId = -1
 			event.handled = true
@@ -246,7 +246,7 @@ class DragAttachment(
 		else if (watchingMouse)
 			position.set(mouse.mouseX, mouse.mouseY)
 		if (isDragging) {
-			dispatchDragEvent(DragInteraction.DRAG, _drag)
+			dispatchDragEvent(DragEvent.DRAG, _drag)
 		} else {
 			if (!isDragging && allowMouseDragStart()) {
 				setIsDragging(true)
@@ -258,29 +258,29 @@ class DragAttachment(
 		if (isDragging == value) return
 		isDragging = value
 		if (value) {
-			dispatchDragEvent(DragInteraction.DRAG_START, _dragStart)
+			dispatchDragEvent(DragEvent.DRAG_START, _dragStart)
 			if (dragEvent.defaultPrevented()) {
 				isDragging = false
 			} else {
 				stage.click(isCapture = true).add(::clickBlocker, true) // Set the next click to be marked as handled.
-				dispatchDragEvent(DragInteraction.DRAG, _drag)
+				dispatchDragEvent(DragEvent.DRAG, _drag)
 			}
 		} else {
 			if (target.isActive) {
-				dispatchDragEvent(DragInteraction.DRAG, _drag)
+				dispatchDragEvent(DragEvent.DRAG, _drag)
 			}
-			dispatchDragEvent(DragInteraction.DRAG_END, _dragEnd)
+			dispatchDragEvent(DragEvent.DRAG_END, _dragEnd)
 
 			callLater { stage.click(isCapture = true).remove(::clickBlocker) }
 		}
 	}
 
-	private fun clickBlocker(event: ClickInteractionRo) {
+	private fun clickBlocker(event: ClickEventRo) {
 		event.handled = true
 		event.preventDefault()
 	}
 
-	private fun dispatchDragEvent(type: InteractionType<DragInteractionRo>, signal: Signal1<DragInteractionRo>) {
+	private fun dispatchDragEvent(type: EventType<DragEventRo>, signal: Signal1<DragEventRo>) {
 		dragEvent.clear()
 		dragEvent.target = target
 		dragEvent.currentTarget = target
@@ -318,7 +318,7 @@ class DragAttachment(
 	 * Forces the drag operation to begin.
 	 * This can be a way to transfer a drag operation from one component to another.
 	 */
-	fun start(event: DragInteractionRo) {
+	fun start(event: DragEventRo) {
 		stop()
 		startPosition.set(event.startPosition)
 		startPositionLocal.set(event.startPositionLocal)
@@ -359,7 +359,7 @@ class DragAttachment(
 	}
 }
 
-interface DragInteractionRo : InteractionEventRo {
+interface DragEventRo : EventRo {
 
 	/**
 	 * The starting position (in canvas coordinates) for the drag.
@@ -402,7 +402,7 @@ interface DragInteractionRo : InteractionEventRo {
 	val touchId: Int
 }
 
-class DragInteraction : InteractionEventBase(), DragInteractionRo {
+class DragEvent : EventBase(), DragEventRo {
 
 	override val startPosition: Vector2 = vec2()
 
@@ -455,9 +455,9 @@ class DragInteraction : InteractionEventBase(), DragInteractionRo {
 
 
 	companion object {
-		val DRAG_START = InteractionType<DragInteractionRo>("dragStart")
-		val DRAG = InteractionType<DragInteractionRo>("drag")
-		val DRAG_END = InteractionType<DragInteractionRo>("dragEnd")
+		val DRAG_START = EventType<DragEventRo>("dragStart")
+		val DRAG = EventType<DragEventRo>("drag")
+		val DRAG_END = EventType<DragEventRo>("dragEnd")
 	}
 
 }
@@ -491,20 +491,20 @@ fun UiComponentRo.dragAttachment(key: Any = DragAttachment): DragAttachment {
 /**
  * @see DragAttachment.dragStart
  */
-fun UiComponentRo.dragStart(): Signal<(DragInteractionRo) -> Unit> {
+fun UiComponentRo.dragStart(): Signal<(DragEventRo) -> Unit> {
 	return dragAttachment().dragStart
 }
 
 /**
  * @see DragAttachment.drag
  */
-fun UiComponentRo.drag(): Signal<(DragInteractionRo) -> Unit> {
+fun UiComponentRo.drag(): Signal<(DragEventRo) -> Unit> {
 	return dragAttachment().drag
 }
 
 /**
  * @see DragAttachment.dragEnd
  */
-fun UiComponentRo.dragEnd(): Signal<(DragInteractionRo) -> Unit> {
+fun UiComponentRo.dragEnd(): Signal<(DragEventRo) -> Unit> {
 	return dragAttachment().dragEnd
 }

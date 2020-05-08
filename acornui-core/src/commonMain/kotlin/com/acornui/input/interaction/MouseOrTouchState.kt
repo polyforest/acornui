@@ -67,35 +67,35 @@ class MouseOrTouchState(private val host: UiComponentRo) : Disposable {
 			_isDownChanged.dispatch()
 		}
 
-	private val rollOverHandler = { event: MouseInteractionRo ->
+	private val rollOverHandler = { event: MouseEventRo ->
 		isOver = true
 	}
 
-	private val rollOutHandler = { event: MouseInteractionRo ->
+	private val rollOutHandler = { event: MouseEventRo ->
 		isOver = false
 	}
 
-	private val mouseDownHandler = { event: MouseInteractionRo ->
+	private val mouseDownHandler = { event: MouseEventRo ->
 		if (!isDown && event.button == WhichButton.LEFT) {
 			isDown = true
 			stage.mouseUp().add(stageMouseUpHandler, true)
 		}
 	}
 
-	private val touchStartHandler = { event: TouchInteractionRo ->
+	private val touchStartHandler = { event: TouchEventRo ->
 		if (!isDown) {
 			isDown = true
 			stage.touchEnd().add(stageTouchEndHandler, true)
 		}
 	}
 
-	private val stageMouseUpHandler = { event: MouseInteractionRo ->
+	private val stageMouseUpHandler = { event: MouseEventRo ->
 		if (event.button == WhichButton.LEFT) {
 			isDown = false
 		}
 	}
 
-	private val stageTouchEndHandler = { event: TouchInteractionRo ->
+	private val stageTouchEndHandler = { event: TouchEventRo ->
 		isDown = false
 	}
 

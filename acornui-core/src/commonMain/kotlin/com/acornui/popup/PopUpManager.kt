@@ -36,7 +36,7 @@ import com.acornui.di.own
 import com.acornui.focus.*
 import com.acornui.graphic.Color
 import com.acornui.input.Ascii
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.click
 import com.acornui.input.interaction.clickHandledForAFrame
 import com.acornui.input.keyDown
@@ -47,7 +47,6 @@ import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal0
 import com.acornui.signal.addOnce
 import com.acornui.start
-import com.acornui.time.callLater
 import com.acornui.tween.Tween
 import com.acornui.tween.tweenAlpha
 
@@ -354,7 +353,7 @@ private class PopUpManagerView(owner: Context) : ElementLayoutContainer<CanvasLa
 		super.onDeactivated()
 	}
 
-	private fun rootKeyDownHandler(event: KeyInteractionRo) {
+	private fun rootKeyDownHandler(event: KeyEventRo) {
 		if (!event.handled && event.keyCode == Ascii.ESCAPE) {
 			event.handled = true
 			_modalCloseRequested.dispatch()

@@ -16,4 +16,4 @@
 
 package com.acornui
 
-var assertionsEnabled: Boolean = debug
+var assertionsEnabled: Boolean = isDebug

@@ -22,10 +22,9 @@ import com.acornui.childWalkLevelOrder
 import com.acornui.component.*
 import com.acornui.component.style.StyleType
 import com.acornui.di.Context
-import com.acornui.di.owns
-import com.acornui.input.InteractionEventBase
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventBase
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 import com.acornui.input.InteractivityManager
 import com.acornui.isAncestorOf
 import com.acornui.recycle.Clearable
@@ -172,7 +171,7 @@ enum class FocusInitiator {
 	OTHER
 }
 
-interface FocusEventRo : InteractionEventRo {
+interface FocusEventRo : EventRo {
 
 	/**
 	 * On a blur event, this is the newly focused component, on a focus event, this is the previously focused component.
@@ -188,12 +187,12 @@ interface FocusEventRo : InteractionEventRo {
 
 	companion object {
 
-		val BLUR = InteractionType<FocusEventRo>("blur")
-		val FOCUS = InteractionType<FocusEventRo>("focus")
+		val BLUR = EventType<FocusEventRo>("blur")
+		val FOCUS = EventType<FocusEventRo>("focus")
 	}
 }
 
-class FocusEvent : InteractionEventBase(), FocusEventRo, Clearable {
+class FocusEvent : EventBase(), FocusEventRo, Clearable {
 
 	override var relatedTarget: UiComponentRo? = null
 

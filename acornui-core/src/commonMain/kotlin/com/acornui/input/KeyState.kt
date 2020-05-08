@@ -48,19 +48,19 @@ interface KeyInput : KeyState {
 	 * Dispatched when the user has pressed down a key
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val keyDown: Signal<(KeyInteractionRo) -> Unit>
+	val keyDown: Signal<(KeyEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has released a key
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val keyUp: Signal<(KeyInteractionRo) -> Unit>
+	val keyUp: Signal<(KeyEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has inputted a character.
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val char: Signal<(CharInteractionRo) -> Unit>
+	val char: Signal<(CharEventRo) -> Unit>
 
 	companion object : Context.Key<KeyInput> {
 		override val extends: Context.Key<*>? = KeyState

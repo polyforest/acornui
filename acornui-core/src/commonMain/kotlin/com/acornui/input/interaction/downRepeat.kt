@@ -40,13 +40,13 @@ class DownRepeat(
 
 	private var repeatTimer: Disposable? = null
 
-	private val mouseDownRepeat = MouseInteraction()
+	private val mouseDownRepeat = MouseEvent()
 
 	private fun mouseRepeatHandler() {
 		if (!target.mouseIsOver()) return
 		val e = mouseDownRepeat
 		e.clear()
-		e.type = MouseInteractionRo.MOUSE_DOWN
+		e.type = MouseEventRo.MOUSE_DOWN
 		e.isFabricated = true
 		e.canvasX = mouseState.mouseX
 		e.canvasY = mouseState.mouseY
@@ -56,7 +56,7 @@ class DownRepeat(
 		interactivity.dispatch(e.canvasX, e.canvasY, e)
 	}
 
-	private fun mouseDownHandler(event: MouseInteractionRo) {
+	private fun mouseDownHandler(event: MouseEventRo) {
 		if (event !== mouseDownRepeat) {
 			repeatTimer?.dispose()
 			repeatTimer = timer(style.repeatInterval, -1, style.repeatDelay, ::mouseRepeatHandler.as1)
@@ -64,7 +64,7 @@ class DownRepeat(
 		}
 	}
 
-	private fun rawMouseUpHandler(event: MouseInteractionRo) {
+	private fun rawMouseUpHandler(event: MouseEventRo) {
 		if (event.button == WhichButton.LEFT) {
 			repeatTimer?.dispose()
 			repeatTimer = null

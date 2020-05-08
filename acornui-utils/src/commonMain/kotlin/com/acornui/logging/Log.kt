@@ -21,7 +21,7 @@ import com.acornui.error.stack
 import com.acornui.lineSeparator
 import com.acornui.recycle.Clearable
 import kotlinx.coroutines.CoroutineExceptionHandler
-import com.acornui.debug as debugFlag
+import com.acornui.isDebug as debugFlag
 
 interface Logger {
 
@@ -89,6 +89,10 @@ object Log : Logger {
 	val targets: MutableList<Logger> = arrayListOf(PrintTarget())
 
 	override var level: Int = if (debugFlag) Logger.DEBUG else Logger.INFO
+		set(value) {
+			field = value
+			println("Set to $value")
+		}
 
 	override fun log(message: Any?, level: Int) {
 		if (level <= this.level) {

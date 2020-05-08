@@ -18,9 +18,9 @@ package com.acornui.input.interaction
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.canvasToLocal
-import com.acornui.input.InteractionEventBase
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventBase
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 import com.acornui.math.Vector2
 import com.acornui.math.Vector2Ro
 import com.acornui.math.vec2
@@ -28,7 +28,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.ClearableObjectPool
 import kotlin.math.sqrt
 
-interface TouchInteractionRo : InteractionEventRo {
+interface TouchEventRo : EventRo {
 
 	/**
 	 * The number of milliseconds from the Unix epoch.
@@ -54,16 +54,16 @@ interface TouchInteractionRo : InteractionEventRo {
 
 	companion object {
 
-		val TOUCH_START = InteractionType<TouchInteractionRo>("touchStart")
-		val TOUCH_MOVE = InteractionType<TouchInteractionRo>("touchMove")
-		val TOUCH_END = InteractionType<TouchInteractionRo>("touchEnd")
-		val TOUCH_CANCEL = InteractionType<TouchInteractionRo>("touchCancel")
+		val TOUCH_START = EventType<TouchEventRo>("touchStart")
+		val TOUCH_MOVE = EventType<TouchEventRo>("touchMove")
+		val TOUCH_END = EventType<TouchEventRo>("touchEnd")
+		val TOUCH_CANCEL = EventType<TouchEventRo>("touchCancel")
 
 	}
 
 }
 
-class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
+class TouchEvent : TouchEventRo, EventBase() {
 
 	/**
 	 * The number of milliseconds from the Unix epoch.
@@ -96,7 +96,7 @@ class TouchInteraction : TouchInteractionRo, InteractionEventBase() {
 			}
 		}
 
-	fun set(event: TouchInteractionRo) {
+	fun set(event: TouchEventRo) {
 		type = event.type
 		clearTouches()
 		changedTouches.addTouches(event.changedTouches)

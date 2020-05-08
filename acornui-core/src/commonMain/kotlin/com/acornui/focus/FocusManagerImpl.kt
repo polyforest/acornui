@@ -23,8 +23,8 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.*
 import com.acornui.input.Ascii
 import com.acornui.input.InteractivityManager
-import com.acornui.input.interaction.ClickInteractionRo
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.ClickEventRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.isBefore
@@ -58,7 +58,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 
 	private var isDisposed: Boolean = false
 
-	private val rootKeyDownHandler = { event: KeyInteractionRo ->
+	private val rootKeyDownHandler = { event: KeyEventRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			val previousFocused = focused
 			if (event.shiftKey) focusPrevious(FocusOptions.highlight, FocusInitiator.USER_KEY)
@@ -70,7 +70,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		}
 	}
 
-	private fun rootClickHandler(event: ClickInteractionRo) {
+	private fun rootClickHandler(event: ClickEventRo) {
 		if (event.defaultPrevented())
 			return
 		if (focused != event.target)

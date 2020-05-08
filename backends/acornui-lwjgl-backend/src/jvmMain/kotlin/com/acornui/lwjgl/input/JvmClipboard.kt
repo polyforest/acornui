@@ -28,8 +28,8 @@ class JvmClipboard(
 		private val windowId: Long
 ) : Clipboard, Disposable {
 
-	private val pasteEvent = JvmPasteInteraction(windowId)
-	private val copyEvent = JvmCopyInteraction(windowId)
+	private val pasteEvent = JvmPasteEvent(windowId)
+	private val copyEvent = JvmCopyEvent(windowId)
 
 	init {
 		keyInput.keyDown.add(::keyDownHandler)
@@ -42,23 +42,23 @@ class JvmClipboard(
 
 	override fun triggerCopy(): Boolean {
 		copyEvent.clear()
-		copyEvent.type = CopyInteractionRo.COPY
+		copyEvent.type = CopyEventRo.COPY
 		interactivityManager.dispatch(copyEvent)
 		return true
 	}
 
-	private fun keyDownHandler(e: KeyInteractionRo) {
+	private fun keyDownHandler(e: KeyEventRo) {
 		if (e.commandPlat && e.keyCode == Ascii.V) {
 			pasteEvent.clear()
-			pasteEvent.type = PasteInteractionRo.PASTE
+			pasteEvent.type = PasteEventRo.PASTE
 			interactivityManager.dispatch(pasteEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.C) {
 			copyEvent.clear()
-			copyEvent.type = CopyInteractionRo.COPY
+			copyEvent.type = CopyEventRo.COPY
 			interactivityManager.dispatch(copyEvent)
 		} else if (e.commandPlat && e.keyCode == Ascii.X) {
 			copyEvent.clear()
-			copyEvent.type = CopyInteractionRo.CUT
+			copyEvent.type = CopyEventRo.CUT
 			interactivityManager.dispatch(copyEvent)
 		}
 	}
@@ -68,7 +68,7 @@ class JvmClipboard(
 	}
 }
 
-private class JvmPasteInteraction(private val windowId: Long) : InteractionEventBase(), PasteInteractionRo {
+private class JvmPasteEvent(private val windowId: Long) : EventBase(), PasteEventRo {
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getItemByType(type: ClipboardItemType<T>): T? {
@@ -92,7 +92,7 @@ private class JvmPasteInteraction(private val windowId: Long) : InteractionEvent
 }
 
 
-private class JvmCopyInteraction(private val windowId: Long) : InteractionEventBase(), CopyInteractionRo {
+private class JvmCopyEvent(private val windowId: Long) : EventBase(), CopyEventRo {
 
 	override fun <T : Any> addItem(type: ClipboardItemType<T>, value: T) {
 		when (type) {

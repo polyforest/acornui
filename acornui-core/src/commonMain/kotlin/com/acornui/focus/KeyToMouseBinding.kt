@@ -38,14 +38,14 @@ class KeyToMouseBinding(
 
 	private val interactivity by InteractivityManager
 
-	private val fakeMouseEvent = MouseInteraction()
+	private val fakeMouseEvent = MouseEvent()
 
 	/**
 	 * The filter for a key down interaction to determine if the mouse event should be triggered.
 	 * Default is:
 	 * `!event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)`
 	 */
-	var filter: Filter<KeyInteractionRo> = { event ->
+	var filter: Filter<KeyEventRo> = { event ->
 		!event.hasAnyModifier && (event.keyCode == Ascii.SPACE || event.isEnterOrReturn)
 	}
 
@@ -53,23 +53,23 @@ class KeyToMouseBinding(
 		host.keyDown().add(::keyDownHandler)
 	}
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
+	private fun keyDownHandler(event: KeyEventRo) {
 		if (!event.handled) {
 			val target = event.target
 			val isRepeat = event.isRepeat && target.downRepeatEnabled()
 			if ((downKey == null || isRepeat) && filter(event)) {
 				downKey = event.keyCode
-				dispatchFakeMouseEvent(target, MouseInteractionRo.MOUSE_DOWN)
+				dispatchFakeMouseEvent(target, MouseEventRo.MOUSE_DOWN)
 				if (fakeMouseEvent.handled)
 					event.handled = true
 			}
 		}
 	}
 
-	private fun keyUpHandler(event: KeyInteractionRo) {
+	private fun keyUpHandler(event: KeyEventRo) {
 		if (event.keyCode == downKey) {
 			downKey = null
-			dispatchFakeMouseEvent(event.target, MouseInteractionRo.MOUSE_UP)
+			dispatchFakeMouseEvent(event.target, MouseEventRo.MOUSE_UP)
 			if (fakeMouseEvent.handled)
 				event.handled = true
 			val fakeClickEvent = event.target.dispatchClick()
@@ -88,7 +88,7 @@ class KeyToMouseBinding(
 				stage.keyUp().add(::keyUpHandler)
 		}
 
-	private fun dispatchFakeMouseEvent(target: UiComponentRo, type: InteractionType<MouseInteractionRo>) {
+	private fun dispatchFakeMouseEvent(target: UiComponentRo, type: EventType<MouseEventRo>) {
 		fakeMouseEvent.clear()
 		fakeMouseEvent.isFabricated = true
 		fakeMouseEvent.type = type
@@ -124,7 +124,7 @@ class EnterTargetClickBinding(val host: UiComponentRo, var target: UiComponentRo
 		stage.keyUp().add(::stageKeyUpHandler)
 	}
 
-	private fun stageKeyUpHandler(event: KeyInteractionRo) {
+	private fun stageKeyUpHandler(event: KeyEventRo) {
 		if (!event.handled && !event.hasAnyModifier && event.isEnterOrReturn && host.isAncestorOf(event.target)) {
 			target?.dispatchClick()
 		}

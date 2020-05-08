@@ -19,7 +19,7 @@ package com.acornui.input.interaction
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
 import com.acornui.component.stage
-import com.acornui.input.InteractionType
+import com.acornui.input.EventType
 import com.acornui.input.WhichButton
 import com.acornui.input.mouseDown
 import com.acornui.input.mouseUp
@@ -30,7 +30,7 @@ import com.acornui.signal.StoppableSignalImpl
  * An interaction where the user touches down on a target, then releases outside of that target. (Including outside
  * the canvas)
  */
-class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<MouseInteraction>() {
+class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<MouseEvent>() {
 
 	private val stage = target.stage
 
@@ -38,7 +38,7 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
 	private var downCount = 0
 
 	private val mouseDownHandler = {
-		event: MouseInteractionRo ->
+		event: MouseEventRo ->
 		if (downCount == 0) {
 			// When the target interactive element has been given a touch down, listen for the next touch up,
 			// no matter where it is.
@@ -53,11 +53,11 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
 
 	// TODO: Workaround for https://youtrack.jetbrains.com/issue/KT-10350
 	private val stageMouseUpHandler = {
-		event: MouseInteractionRo ->
+		event: MouseEventRo ->
 		_rawTouchUpHandler(event)
 	}
 
-	private fun _rawTouchUpHandler(event: MouseInteractionRo) {
+	private fun _rawTouchUpHandler(event: MouseEventRo) {
 		if (downButtons[event.button.ordinal]) {
 			downButtons[event.button.ordinal] = false
 			downCount--
@@ -86,8 +86,8 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
 	}
 
 	companion object {
-		val MOUSE_UP_OUTSIDE = InteractionType<MouseInteraction>("mouseUpOutside")
-		private val mouseUpOutsideEvent: MouseInteraction = MouseInteraction()
+		val MOUSE_UP_OUTSIDE = EventType<MouseEvent>("mouseUpOutside")
+		private val mouseUpOutsideEvent: MouseEvent = MouseEvent()
 
 		init {
 			mouseUpOutsideEvent.type = MOUSE_UP_OUTSIDE
@@ -100,6 +100,6 @@ class MouseUpOutside(private val target: UiComponentRo) : StoppableSignalImpl<Mo
  * on a different element. This does not have capture or bubble phases; a touchUpOutside event for a child does
  * not necessarily mean a touchUpOutside event for its parent.
  */
-fun UiComponentRo.mouseUpOutside(): StoppableSignal<MouseInteraction> {
+fun UiComponentRo.mouseUpOutside(): StoppableSignal<MouseEvent> {
 	return createOrReuse(MouseUpOutside.MOUSE_UP_OUTSIDE, false)
 }

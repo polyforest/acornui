@@ -35,8 +35,8 @@ import com.acornui.focus.FocusOptions
 import com.acornui.focus.focus
 import com.acornui.graphic.Color
 import com.acornui.input.Ascii
-import com.acornui.input.interaction.ClickInteractionRo
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.ClickEventRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.MouseOrTouchState
 import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
@@ -171,7 +171,7 @@ open class Calendar(
 			return _cells!!
 		}
 
-	private fun cellClickedHandler(e: ClickInteractionRo) {
+	private fun cellClickedHandler(e: ClickEventRo) {
 		if (selectable && !e.handled) {
 			@Suppress("UNCHECKED_CAST")
 			val cell = e.currentTarget as CalendarItemRenderer
@@ -342,7 +342,7 @@ open class Calendar(
 		out.set(panel.bounds)
 	}
 
-	private fun keyDownHandler(e: KeyInteractionRo) {
+	private fun keyDownHandler(e: KeyEventRo) {
 		when (e.keyCode) {
 			Ascii.UP -> moveSelectedCell(0, -1)
 			Ascii.RIGHT -> moveSelectedCell(1, 0)

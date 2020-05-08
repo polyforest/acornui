@@ -18,14 +18,14 @@ object MockInteractivityManager : InteractivityManager {
 	override val activeElement: UiComponentRo
 		get() = root
 
-	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
+	override fun <T : EventRo> getSignal(host: UiComponentRo, type: EventType<T>, isCapture: Boolean): StoppableSignal<T> {
 		return StoppableSignalImpl()
 	}
 
-	override fun dispatch(canvasX: Float, canvasY: Float, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(canvasX: Float, canvasY: Float, event: Event, useCapture: Boolean, useBubble: Boolean) {
 	}
 
-	override fun dispatch(event: InteractionEvent, target: UiComponentRo, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(event: Event, target: UiComponentRo, useCapture: Boolean, useBubble: Boolean) {
 	}
 
 

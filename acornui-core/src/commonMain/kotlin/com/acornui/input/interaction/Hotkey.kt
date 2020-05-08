@@ -68,7 +68,7 @@ data class Hotkey(
 		labelList.joinToString("+")
 	}
 
-	fun matches(interaction: KeyInteractionRo): Boolean {
+	fun matches(interaction: KeyEventRo): Boolean {
 		return interaction.keyCode == keyCode &&
 				(location == KeyLocation.UNKNOWN || interaction.location == location) &&
 				interaction.altKey == altKey &&
@@ -79,7 +79,7 @@ data class Hotkey(
 
 }
 
-fun Hotkey.bind(component: UiComponent, callback: (KeyInteractionRo) -> Unit) {
+fun Hotkey.bind(component: UiComponent, callback: (KeyEventRo) -> Unit) {
 	component.keyDown().add {
 		if (matches(it)) {
 			callback(it)

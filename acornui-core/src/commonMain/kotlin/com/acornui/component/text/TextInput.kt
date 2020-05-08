@@ -30,7 +30,7 @@ import com.acornui.focus.Focusable
 import com.acornui.frameTimeS
 import com.acornui.function.as2
 import com.acornui.input.*
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.math.Bounds
 import com.acornui.math.Rectangle
 import com.acornui.math.minOf4
@@ -416,7 +416,7 @@ class TextAreaImpl(owner: Context) : ContainerImpl(owner), TextArea {
 
 	override var softKeyboardType = SoftKeyboardType.DEFAULT
 
-	private fun scrollToSelected(event: KeyInteractionRo) {
+	private fun scrollToSelected(event: KeyEventRo) {
 		val contents = contents ?: return
 		val sel = firstSelection ?: return
 		val e = (if (sel.endIndex >= contents.textElements.size) contents.placeholder else contents.textElements[sel.endIndex]) ?: return

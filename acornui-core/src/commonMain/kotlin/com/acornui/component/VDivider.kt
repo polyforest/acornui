@@ -24,7 +24,7 @@ import com.acornui.component.style.noSkin
 import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
-import com.acornui.input.interaction.DragInteractionRo
+import com.acornui.input.interaction.DragEventRo
 import com.acornui.input.interaction.drag
 import com.acornui.math.Bounds
 import com.acornui.math.MathUtils
@@ -62,7 +62,7 @@ open class VDivider(owner: Context) : ElementContainerImpl<UiComponent>(owner) {
 		}
 	}
 
-	private fun dividerDragHandler(event: DragInteractionRo) {
+	private fun dividerDragHandler(event: DragEventRo) {
 		mousePosition(_mouse)
 		split(_mouse.y / height)
 	}

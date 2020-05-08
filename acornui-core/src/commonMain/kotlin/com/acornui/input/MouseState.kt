@@ -18,10 +18,10 @@ package com.acornui.input
 
 import com.acornui.Disposable
 import com.acornui.di.Context
-import com.acornui.input.interaction.MouseInteractionRo
-import com.acornui.input.interaction.TouchInteractionRo
+import com.acornui.input.interaction.MouseEventRo
+import com.acornui.input.interaction.TouchEventRo
 import com.acornui.input.interaction.TouchRo
-import com.acornui.input.interaction.WheelInteractionRo
+import com.acornui.input.interaction.WheelEventRo
 import com.acornui.signal.Signal
 
 /**
@@ -115,53 +115,53 @@ interface MouseInput : MouseState {
 	 * Dispatched when the user has touched down on a touch device.
 	 *
 	 * Both a touch start and a mouse down event will be dispatched, if only the touch start event is desired, invoke
-	 * [TouchInteractionRo.preventDefault] on the touch start event.
+	 * [TouchEventRo.preventDefault] on the touch start event.
 	 */
-	val touchStart: Signal<(TouchInteractionRo) -> Unit>
+	val touchStart: Signal<(TouchEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has released a touch on a touch device.
 	 *
 	 * Both a touch end and a mouse up event will be dispatched, if only the touch end event is desired, invoke
-	 * [TouchInteractionRo.preventDefault] on the touch end event.
+	 * [TouchEventRo.preventDefault] on the touch end event.
 	 */
-	val touchEnd: Signal<(TouchInteractionRo) -> Unit>
+	val touchEnd: Signal<(TouchEventRo) -> Unit>
 
 	/**
 	 * Dispatched when one of the touch points has moved.
 	 *
 	 * Both a touch move and a mouse move event will be dispatched, if only the touch move event is desired, invoke
-	 * [TouchInteractionRo.preventDefault] on the touch move event.
+	 * [TouchEventRo.preventDefault] on the touch move event.
 	 */
-	val touchMove: Signal<(TouchInteractionRo) -> Unit>
+	val touchMove: Signal<(TouchEventRo) -> Unit>
 
 	/**
 	 * Dispatched when one or more touch points have been disrupted in an implementation-specific manner (for example,
 	 * too many touch points are created).
 	 */
-	val touchCancel: Signal<(TouchInteractionRo) -> Unit>
+	val touchCancel: Signal<(TouchEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has pressed down.
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val mouseDown: Signal<(MouseInteractionRo) -> Unit>
+	val mouseDown: Signal<(MouseEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has released from a touch down (either via mouse or touch)
 	 * Do not keep a reference to this event, it will be recycled.
 	 */
-	val mouseUp: Signal<(MouseInteractionRo) -> Unit>
+	val mouseUp: Signal<(MouseEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has moved their mouse, or pressed down on a touch surface and moved.
 	 */
-	val mouseMove: Signal<(MouseInteractionRo) -> Unit>
+	val mouseMove: Signal<(MouseEventRo) -> Unit>
 
 	/**
 	 * Dispatched when the user has used the mouse wheel.
 	 */
-	val mouseWheel: Signal<(WheelInteractionRo) -> Unit>
+	val mouseWheel: Signal<(WheelEventRo) -> Unit>
 
 	companion object : Context.Key<MouseInput> {
 		override val extends: Context.Key<*>? = MouseState

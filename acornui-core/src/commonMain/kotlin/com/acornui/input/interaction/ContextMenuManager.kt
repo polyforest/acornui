@@ -34,7 +34,7 @@ import com.acornui.signal.StoppableSignal
 
 class ContextMenuManager(owner: Context) : ContextImpl(owner), Disposable {
 
-	private val contextEvent = ContextMenuInteraction()
+	private val contextEvent = ContextMenuEvent()
 	private val interactivity by InteractivityManager
 	private val popUpManager by PopUpManager
 
@@ -42,10 +42,10 @@ class ContextMenuManager(owner: Context) : ContextImpl(owner), Disposable {
 		stage.rightClick().add(::rightClickHandler)
 	}
 
-	private fun rightClickHandler(event: MouseInteractionRo) {
+	private fun rightClickHandler(event: MouseEventRo) {
 		if (!event.defaultPrevented()) {
 			contextEvent.clear()
-			contextEvent.type = ContextMenuInteractionRo.CONTEXT_MENU
+			contextEvent.type = ContextMenuEventRo.CONTEXT_MENU
 			interactivity.dispatch(contextEvent, event.target)
 			if (!contextEvent.defaultPrevented() && contextEvent.menuGroups.isNotEmpty()) {
 				event.preventDefault() // Prevent native context menu
@@ -63,17 +63,17 @@ class ContextMenuManager(owner: Context) : ContextImpl(owner), Disposable {
 	}
 }
 
-interface ContextMenuInteractionRo : InteractionEventRo {
+interface ContextMenuEventRo : EventRo {
 
 	fun addMenuGroup(group: ContextMenuGroup, priority: Float = 0f)
 
 	companion object {
 
-		val CONTEXT_MENU = InteractionType<ContextMenuInteractionRo>("contextMenu")
+		val CONTEXT_MENU = EventType<ContextMenuEventRo>("contextMenu")
 	}
 }
 
-class ContextMenuInteraction : InteractionEventBase(), ContextMenuInteractionRo {
+class ContextMenuEvent : EventBase(), ContextMenuEventRo {
 
 	private val _menuGroups = ArrayList<ContextMenuGroup>()
 
@@ -159,7 +159,7 @@ class ContextMenuView(owner: Context) : ContainerImpl(owner) {
 
 	private val _mousePosition = vec2()
 
-	private val stageMouseMoveHandler = { e: MouseInteractionRo ->
+	private val stageMouseMoveHandler = { e: MouseEventRo ->
 		updateHighlight()
 	}
 
@@ -193,7 +193,7 @@ class ContextMenuView(owner: Context) : ContainerImpl(owner) {
 		stage.mouseMove().remove(stageMouseMoveHandler)
 	}
 
-	private fun clickHandler(event: MouseInteractionRo) {
+	private fun clickHandler(event: MouseEventRo) {
 		if (!event.defaultPrevented()) {
 			val e = getElementUnderPosition(mousePosition(_mousePosition)) ?: return
 			e.item.onSelected()
@@ -352,6 +352,6 @@ class ContextMenuStyle : StyleBase() {
 /**
  * Dispatched when the mouse or touch is pressed down on this element.
  */
-fun UiComponentRo.contextMenu(isCapture: Boolean = false): StoppableSignal<ContextMenuInteractionRo> {
-	return createOrReuse(ContextMenuInteractionRo.CONTEXT_MENU, isCapture)
+fun UiComponentRo.contextMenu(isCapture: Boolean = false): StoppableSignal<ContextMenuEventRo> {
+	return createOrReuse(ContextMenuEventRo.CONTEXT_MENU, isCapture)
 }

@@ -49,7 +49,7 @@ interface InteractivityManager {
 	/**
 	 * Produces a new Signal for the specified interaction type.
 	 */
-	fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>
+	fun <T : EventRo> getSignal(host: UiComponentRo, type: EventType<T>, isCapture: Boolean): StoppableSignal<T>
 
 	/**
 	 * Dispatches an interaction for the layout element at the given stage position.
@@ -57,7 +57,7 @@ interface InteractivityManager {
 	 * @param canvasY The y coordinate relative to the canvas.
 	 * @param event The interaction event to dispatch.
 	 */
-	fun dispatch(canvasX: Float, canvasY: Float, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true)
+	fun dispatch(canvasX: Float, canvasY: Float, event: Event, useCapture: Boolean = true, useBubble: Boolean = true)
 
 	/**
 	 * Dispatches an interaction for a single interactive element.
@@ -73,13 +73,13 @@ interface InteractivityManager {
 	 * If both [useCapture] and [useBubble] are false, only the target will have the event dispatched. (Using the
 	 * bubble-phase signal)
 	 */
-	fun dispatch(event: InteractionEvent, target: UiComponentRo = activeElement, useCapture: Boolean = true, useBubble: Boolean = true)
+	fun dispatch(event: Event, target: UiComponentRo = activeElement, useCapture: Boolean = true, useBubble: Boolean = true)
 
 	companion object : Context.Key<InteractivityManager>
 }
 
 @Suppress("unused")
-data class InteractionType<out T : InteractionEventRo>(val displayName: String) {
+data class EventType<out T : EventRo>(val displayName: String) {
 
 	override fun toString(): String {
 		return "InteractionType($displayName)"
@@ -88,9 +88,9 @@ data class InteractionType<out T : InteractionEventRo>(val displayName: String) 
 	companion object
 }
 
-interface InteractionEventRo : Stoppable {
+interface EventRo : Stoppable {
 
-	val type: InteractionType<InteractionEventRo>
+	val type: EventType<EventRo>
 
 	/**
 	 * The object dispatching the event. Unlike [currentTarget] this will not change during the bubble or capture
@@ -117,13 +117,13 @@ interface InteractionEventRo : Stoppable {
 	fun defaultPrevented(): Boolean
 
 	companion object {
-		val UNKNOWN = InteractionType<InteractionEventRo>("unknown")
+		val UNKNOWN = EventType<EventRo>("unknown")
 	}
 }
 
-interface InteractionEvent : InteractionEventRo, Clearable {
+interface Event : EventRo, Clearable {
 
-	override var type: InteractionType<InteractionEventRo>
+	override var type: EventType<EventRo>
 	override var target: UiComponentRo
 	override var currentTarget: UiComponentRo
 
@@ -136,11 +136,11 @@ interface InteractionEvent : InteractionEventRo, Clearable {
 }
 
 /**
- * A convenient base class for [InteractionEvent] implementations.
+ * A convenient base class for [Event] implementations.
  */
-abstract class InteractionEventBase : InteractionEvent {
+abstract class EventBase : Event {
 
-	override var type: InteractionType<InteractionEventRo> = InteractionEventRo.UNKNOWN
+	override var type: EventType<EventRo> = EventRo.UNKNOWN
 
 	override var handled: Boolean = false
 
@@ -172,7 +172,7 @@ abstract class InteractionEventBase : InteractionEvent {
 	}
 
 	override fun clear() {
-		type = InteractionEventRo.UNKNOWN
+		type = EventRo.UNKNOWN
 		propagation.clear()
 		handled = false
 		_target = null

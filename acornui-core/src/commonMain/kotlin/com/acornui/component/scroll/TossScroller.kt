@@ -24,7 +24,7 @@ import com.acornui.component.UiComponent
 import com.acornui.component.createOrReuseAttachment
 import com.acornui.di.ContextImpl
 import com.acornui.di.own
-import com.acornui.input.InteractionType
+import com.acornui.input.EventType
 import com.acornui.input.interaction.*
 import com.acornui.math.*
 import com.acornui.math.MathUtils.clamp
@@ -54,26 +54,26 @@ class TossScroller(
 
 	private val dragAttachment = DragAttachment(target, minTossDistance)
 
-	private val _tossStart = own(StoppableSignalImpl<DragInteraction>())
+	private val _tossStart = own(StoppableSignalImpl<DragEvent>())
 
 	/**
 	 *  Dispatched when the toss has begun.
 	 */
-	val tossStart: StoppableSignal<DragInteractionRo> = _tossStart
+	val tossStart: StoppableSignal<DragEventRo> = _tossStart
 
-	private val _toss = own(StoppableSignalImpl<DragInteraction>())
+	private val _toss = own(StoppableSignalImpl<DragEvent>())
 
 	/**
 	 *  Dispatched every frame the toss is being updated.
 	 */
-	val toss: StoppableSignal<DragInteractionRo> = _toss
+	val toss: StoppableSignal<DragEventRo> = _toss
 
-	private val _tossEnd = own(StoppableSignalImpl<DragInteraction>())
+	private val _tossEnd = own(StoppableSignalImpl<DragEvent>())
 
 	/**
 	 * Dispatched when the toss has ended.
 	 */
-	val tossEnd: StoppableSignal<DragInteractionRo> = _tossEnd
+	val tossEnd: StoppableSignal<DragEventRo> = _tossEnd
 
 	/**
 	 * The velocity when the drag ended.
@@ -124,7 +124,7 @@ class TossScroller(
 	val hasVelocity: Boolean
 		get() = _timer != null
 
-	private val event = DragInteraction()
+	private val event = DragEvent()
 	private val startPosition = vec2()
 	private val position = vec2()
 
@@ -166,7 +166,7 @@ class TossScroller(
 		}
 	}
 
-	private fun dispatchDragEvent(type: InteractionType<DragInteraction>, signal: StoppableSignalImpl<DragInteraction>) {
+	private fun dispatchDragEvent(type: EventType<DragEvent>, signal: StoppableSignalImpl<DragEvent>) {
 		event.clear()
 		event.target = target
 		event.currentTarget = target
@@ -188,7 +188,7 @@ class TossScroller(
 		target.click(isCapture = true).add(::clickHandler)
 	}
 
-	private fun dragStartHandler(event: DragInteractionRo) {
+	private fun dragStartHandler(event: DragEventRo) {
 		stop()
 		startPosition.set(event.startPosition)
 		position.set(event.position)
@@ -200,12 +200,12 @@ class TossScroller(
 		dispatchDragEvent(TOSS_START, _tossStart)
 	}
 
-	private fun dragHandler(event: DragInteractionRo) {
+	private fun dragHandler(event: DragEventRo) {
 		position.set(event.position)
 		dispatchDragEvent(TOSS, _toss)
 	}
 
-	private fun dragEndHandler(event: DragInteractionRo) {
+	private fun dragEndHandler(event: DragEventRo) {
 		position.set(event.position)
 		pushHistory()
 		// Calculate the velocity.
@@ -219,7 +219,7 @@ class TossScroller(
 		clearHistory()
 	}
 
-	private fun clickHandler(event: ClickInteractionRo) {
+	private fun clickHandler(event: ClickEventRo) {
 		if (clickPreventer > 0) {
 			event.propagation.stopImmediatePropagation()
 		}
@@ -254,9 +254,9 @@ class TossScroller(
 
 	companion object {
 
-		val TOSS_START = InteractionType<DragInteraction>("tossStart")
-		val TOSS = InteractionType<DragInteraction>("toss")
-		val TOSS_END = InteractionType<DragInteraction>("tossEnd")
+		val TOSS_START = EventType<DragEvent>("tossStart")
+		val TOSS = EventType<DragEvent>("toss")
+		val TOSS_END = EventType<DragEvent>("tossEnd")
 
 		val DEFAULT_SLOW_TIME = 0.8.seconds
 		val DEFAULT_SLOW_EASE = Easing.pow3Out
@@ -290,11 +290,11 @@ open class TossScrollModelBinding(
 		tossScroller.toss.add(::tossHandler)
 	}
 
-	private fun tossStartHandler(event: DragInteractionRo) {
+	private fun tossStartHandler(event: DragEventRo) {
 		lastPositionLocal.set(event.positionLocal)
 	}
 
-	private fun tossHandler(event: DragInteractionRo) {
+	private fun tossHandler(event: DragEventRo) {
 		diff.set(event.positionLocal).sub(lastPositionLocal)
 		localToModel(diff)
 		handler(diff)

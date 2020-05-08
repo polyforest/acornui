@@ -126,7 +126,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 				before = {
 					window.makeCurrent()
 				},
-				after = if (debug) { {
+				after = if (isDebug) { {
 					val errorCode = GL11.glGetError()
 					if (errorCode != GL11.GL_NO_ERROR) {
 						error("GL ERROR: code: $errorCode ${getErrorString(errorCode)}")
@@ -147,7 +147,7 @@ open class LwjglApplication(mainContext: MainContext) : ApplicationBase(mainCont
 		uncaughtExceptionHandler = {
 			val message = it.stack + "\n${version.toVersionString()}"
 			Log.error(message)
-			if (debug)
+			if (isDebug)
 				window.alert(message)
 			exitProcess(1)
 		}

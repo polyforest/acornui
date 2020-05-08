@@ -8,7 +8,7 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentRo
 import com.acornui.di.own
 import com.acornui.function.as2
-import com.acornui.input.interaction.UndoInteractionRo
+import com.acornui.input.interaction.UndoEventRo
 import com.acornui.input.interaction.redo
 import com.acornui.input.interaction.undo
 import com.acornui.recycle.Clearable
@@ -68,13 +68,13 @@ class DataBindingHistory<T>(
 			delayedPush()
 	}
 
-	private fun undoHandler(undoInteraction: UndoInteractionRo) {
+	private fun undoHandler(undoInteraction: UndoEventRo) {
 		if (undoInteraction.handled) return
 		undoInteraction.handled = true
 		undo()
 	}
 
-	private fun redoHandler(redoInteraction: UndoInteractionRo) {
+	private fun redoHandler(redoInteraction: UndoEventRo) {
 		if (redoInteraction.handled) return
 		redoInteraction.handled = true
 		redo()

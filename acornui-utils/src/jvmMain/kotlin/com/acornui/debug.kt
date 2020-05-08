@@ -19,6 +19,6 @@ package com.acornui
 /**
  * A flag for enabling various debugging features like debug logging.
  */
-actual val debug: Boolean by lazy {
+actual val isDebug: Boolean by lazy {
 	System.getProperty("debug")?.toLowerCase() == "true"
 }

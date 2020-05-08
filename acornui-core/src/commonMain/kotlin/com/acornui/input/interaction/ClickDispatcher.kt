@@ -48,7 +48,7 @@ abstract class ClickDispatcher(
 	var multiClickSpeed: Int = 400
 
 	private val downButtons: Array<MutableList<UiComponentRo>?> = Array(WhichButton.values().size) { null }
-	protected val clickEvent = ClickInteraction()
+	protected val clickEvent = ClickEvent()
 
 	private var lastTarget: UiComponentRo? = null
 	private var currentCount = 0
@@ -68,7 +68,7 @@ abstract class ClickDispatcher(
 		stage.touchCancel(isCapture = true).add(::rootTouchCancelHandler)
 	}
 
-	private fun rootMouseDownHandler(event: MouseInteractionRo) {
+	private fun rootMouseDownHandler(event: MouseEventRo) {
 		if (!preventMouse) {
 			if (event.defaultPrevented()) {
 				clearDownButton(event.button)
@@ -82,7 +82,7 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	private fun rootTouchStartHandler(event: TouchInteractionRo) {
+	private fun rootTouchStartHandler(event: TouchEventRo) {
 		val first = event.changedTouches.first()
 		val downElement = stage.getChildUnderPoint(first.canvasX, first.canvasY, onlyInteractive = true)
 		if (downElement != null) {
@@ -101,13 +101,13 @@ abstract class ClickDispatcher(
 		downButtons[button.ordinal] = ancestry
 	}
 
-	private fun rootMouseUpHandler(event: MouseInteractionRo) {
+	private fun rootMouseUpHandler(event: MouseEventRo) {
 		if (!preventMouse) {
 			release(event.button, event.canvasX, event.canvasY, event.timestamp, false)
 		}
 	}
 
-	private fun rootTouchEndHandler(event: TouchInteractionRo) {
+	private fun rootTouchEndHandler(event: TouchEventRo) {
 		if (event.defaultPrevented()) {
 			clearDownButton(WhichButton.LEFT)
 			return
@@ -122,7 +122,7 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	private fun rootTouchCancelHandler(event: TouchInteractionRo) {
+	private fun rootTouchCancelHandler(event: TouchEventRo) {
 		clearDownButton(WhichButton.LEFT)
 	}
 
@@ -165,18 +165,18 @@ abstract class ClickDispatcher(
 		}
 	}
 
-	private fun getClickType(button: WhichButton): InteractionType<ClickInteractionRo> {
+	private fun getClickType(button: WhichButton): EventType<ClickEventRo> {
 		return when (button) {
-			WhichButton.LEFT -> ClickInteractionRo.LEFT_CLICK
-			WhichButton.RIGHT -> ClickInteractionRo.RIGHT_CLICK
-			WhichButton.MIDDLE -> ClickInteractionRo.MIDDLE_CLICK
-			WhichButton.BACK -> ClickInteractionRo.BACK_CLICK
-			WhichButton.FORWARD -> ClickInteractionRo.FORWARD_CLICK
+			WhichButton.LEFT -> ClickEventRo.LEFT_CLICK
+			WhichButton.RIGHT -> ClickEventRo.RIGHT_CLICK
+			WhichButton.MIDDLE -> ClickEventRo.MIDDLE_CLICK
+			WhichButton.BACK -> ClickEventRo.BACK_CLICK
+			WhichButton.FORWARD -> ClickEventRo.FORWARD_CLICK
 			else -> throw Exception("Unknown click type.")
 		}
 	}
 
-	protected fun fireHandler(e: InteractionEventRo) {
+	protected fun fireHandler(e: EventRo) {
 		if (!e.defaultPrevented())
 			fireClickEvent()
 	}
@@ -216,12 +216,12 @@ class JvmClickDispatcher(owner: Context) : ClickDispatcher(owner) {
 		stage.touchEnd().add(::touchEndHandler)
 	}
 
-	private fun mouseUpHandler(e: MouseInteractionRo) {
+	private fun mouseUpHandler(e: MouseEventRo) {
 		if (!e.isFabricated && !e.defaultPrevented())
 			fireClickEvent()
 	}
 
-	private fun touchEndHandler(e: TouchInteractionRo) {
+	private fun touchEndHandler(e: TouchEventRo) {
 		if (!e.isFabricated && !e.defaultPrevented())
 			fireClickEvent()
 	}

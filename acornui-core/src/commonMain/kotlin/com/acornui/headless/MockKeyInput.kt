@@ -17,8 +17,8 @@
 package com.acornui.headless
 
 import com.acornui.input.KeyInput
-import com.acornui.input.interaction.CharInteractionRo
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.CharEventRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.KeyLocation
 import com.acornui.signal.Signal
 import com.acornui.signal.emptySignal
@@ -28,9 +28,9 @@ object MockKeyInput : KeyInput {
 		return false
 	}
 
-	override val keyDown: Signal<(KeyInteractionRo) -> Unit> = emptySignal()
-	override val keyUp: Signal<(KeyInteractionRo) -> Unit> = emptySignal()
-	override val char: Signal<(CharInteractionRo) -> Unit> = emptySignal()
+	override val keyDown: Signal<(KeyEventRo) -> Unit> = emptySignal()
+	override val keyUp: Signal<(KeyEventRo) -> Unit> = emptySignal()
+	override val char: Signal<(CharEventRo) -> Unit> = emptySignal()
 
 	override fun dispose() {
 	}

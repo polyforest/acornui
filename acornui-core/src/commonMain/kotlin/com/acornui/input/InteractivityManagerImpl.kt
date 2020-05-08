@@ -53,11 +53,11 @@ open class InteractivityManagerImpl(
 		_activeElement = value
 	}
 
-	private val mousePool = ClearableObjectPool { MouseInteraction() }
-	private val touchPool = ClearableObjectPool { TouchInteraction() }
-	private val wheelPool = ClearableObjectPool { WheelInteraction() }
-	private val keyPool = ClearableObjectPool { KeyInteraction() }
-	private val charPool = ClearableObjectPool { CharInteraction() }
+	private val mousePool = ClearableObjectPool { MouseEvent() }
+	private val touchPool = ClearableObjectPool { TouchEvent() }
+	private val wheelPool = ClearableObjectPool { WheelEvent() }
+	private val keyPool = ClearableObjectPool { KeyEvent() }
+	private val charPool = ClearableObjectPool { CharEvent() }
 
 	private val overTargets = ArrayList<UiComponentRo>()
 
@@ -66,34 +66,34 @@ open class InteractivityManagerImpl(
 			mouseOverTarget(null)
 	}
 
-	private fun rawTouchStartHandler(event: TouchInteractionRo) {
-		touchHandler(TouchInteractionRo.TOUCH_START, event)
+	private fun rawTouchStartHandler(event: TouchEventRo) {
+		touchHandler(TouchEventRo.TOUCH_START, event)
 	}
 
-	private fun rawTouchEndHandler(event: TouchInteractionRo) {
-		touchHandler(TouchInteractionRo.TOUCH_END, event)
+	private fun rawTouchEndHandler(event: TouchEventRo) {
+		touchHandler(TouchEventRo.TOUCH_END, event)
 	}
 
-	private fun rawTouchMoveHandler(event: TouchInteractionRo) {
-		touchHandler(TouchInteractionRo.TOUCH_MOVE, event)
+	private fun rawTouchMoveHandler(event: TouchEventRo) {
+		touchHandler(TouchEventRo.TOUCH_MOVE, event)
 	}
 
-	private fun rawMouseDownHandler(event: MouseInteractionRo) {
-		mouseHandler(MouseInteractionRo.MOUSE_DOWN, event)
+	private fun rawMouseDownHandler(event: MouseEventRo) {
+		mouseHandler(MouseEventRo.MOUSE_DOWN, event)
 	}
 
-	private fun rawMouseUpHandler(event: MouseInteractionRo) {
-		mouseHandler(MouseInteractionRo.MOUSE_UP, event)
+	private fun rawMouseUpHandler(event: MouseEventRo) {
+		mouseHandler(MouseEventRo.MOUSE_UP, event)
 	}
 
-	private fun rawMouseMoveHandler(event: MouseInteractionRo) {
-		mouseOverTarget(mouseHandler(MouseInteractionRo.MOUSE_MOVE, event))
+	private fun rawMouseMoveHandler(event: MouseEventRo) {
+		mouseOverTarget(mouseHandler(MouseEventRo.MOUSE_MOVE, event))
 	}
 
-	private fun rawWheelHandler(event: WheelInteractionRo) {
+	private fun rawWheelHandler(event: WheelEventRo) {
 		val wheel = wheelPool.obtain()
 		wheel.set(event)
-		wheel.type = WheelInteractionRo.MOUSE_WHEEL
+		wheel.type = WheelEventRo.MOUSE_WHEEL
 		dispatch(event.canvasX + 0.5f, event.canvasY + 0.5f, wheel)
 		if (wheel.defaultPrevented())
 			event.preventDefault()
@@ -105,7 +105,7 @@ open class InteractivityManagerImpl(
 	 * [root].
 	 * @return Returns the component the mouse is over, or null.
 	 */
-	private fun <T : MouseInteractionRo> mouseHandler(type: InteractionType<T>, event: MouseInteractionRo): UiComponentRo? {
+	private fun <T : MouseEventRo> mouseHandler(type: EventType<T>, event: MouseEventRo): UiComponentRo? {
 		val mouse = mousePool.obtain()
 		mouse.set(event)
 		mouse.type = type
@@ -122,7 +122,7 @@ open class InteractivityManagerImpl(
 	 * [root].
 	 * @return Returns the component the first touch is over, or null.
 	 */
-	private fun touchHandler(type: InteractionType<TouchInteractionRo>, event: TouchInteractionRo): UiComponentRo? {
+	private fun touchHandler(type: EventType<TouchEventRo>, event: TouchEventRo): UiComponentRo? {
 		val touch = touchPool.obtain()
 		touch.set(event)
 		touch.type = type
@@ -135,19 +135,19 @@ open class InteractivityManagerImpl(
 		return ele
 	}
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
-		keyHandler(KeyInteractionRo.KEY_DOWN, event)
+	private fun keyDownHandler(event: KeyEventRo) {
+		keyHandler(KeyEventRo.KEY_DOWN, event)
 	}
 
-	private fun keyUpHandler(event: KeyInteractionRo) {
-		keyHandler(KeyInteractionRo.KEY_UP, event)
+	private fun keyUpHandler(event: KeyEventRo) {
+		keyHandler(KeyEventRo.KEY_UP, event)
 	}
 
-	private fun charHandler(event: CharInteractionRo) {
-		charHandler(CharInteractionRo.CHAR, event)
+	private fun charHandler(event: CharEventRo) {
+		charHandler(CharEventRo.CHAR, event)
 	}
 
-	private fun <T : KeyInteractionRo> keyHandler(type: InteractionType<T>, event: KeyInteractionRo) {
+	private fun <T : KeyEventRo> keyHandler(type: EventType<T>, event: KeyEventRo) {
 		val f = activeElement
 		val key = keyPool.obtain()
 		key.type = type
@@ -157,10 +157,10 @@ open class InteractivityManagerImpl(
 		keyPool.free(key)
 	}
 
-	private fun <T : CharInteractionRo> charHandler(type: InteractionType<T>, event: CharInteractionRo) {
+	private fun <T : CharEventRo> charHandler(type: EventType<T>, event: CharEventRo) {
 		val f = activeElement
 		val char = charPool.obtain()
-		char.type = CharInteractionRo.CHAR
+		char.type = CharEventRo.CHAR
 		char.set(event)
 		dispatch(char, f)
 		if (char.defaultPrevented())
@@ -200,14 +200,14 @@ open class InteractivityManagerImpl(
 		if (previousOverTarget != null) {
 			mouse.relatedTarget = target
 			mouse.target = previousOverTarget
-			mouse.type = MouseInteractionRo.MOUSE_OUT
+			mouse.type = MouseEventRo.MOUSE_OUT
 			dispatch(overTargets, mouse)
 		}
 		if (target != null) {
 			target.ancestry(overTargets)
 			mouse.relatedTarget = previousOverTarget
 			mouse.target = target
-			mouse.type = MouseInteractionRo.MOUSE_OVER
+			mouse.type = MouseEventRo.MOUSE_OVER
 			dispatch(overTargets, mouse)
 		} else {
 			overTargets.clear()
@@ -215,7 +215,7 @@ open class InteractivityManagerImpl(
 		mousePool.free(mouse)
 	}
 
-	override fun <T : InteractionEventRo> getSignal(host: UiComponentRo, type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T> {
+	override fun <T : EventRo> getSignal(host: UiComponentRo, type: EventType<T>, isCapture: Boolean): StoppableSignal<T> {
 		return StoppableSignalImpl()
 	}
 
@@ -225,7 +225,7 @@ open class InteractivityManagerImpl(
 	 * @param canvasY The y coordinate relative to the canvas.
 	 * @param event The interaction event to dispatch.
 	 */
-	override fun dispatch(canvasX: Float, canvasY: Float, event: InteractionEvent, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(canvasX: Float, canvasY: Float, event: Event, useCapture: Boolean, useBubble: Boolean) {
 		val ele = root.getChildUnderPoint(canvasX, canvasY, onlyInteractive = true) ?: root
 		dispatch(event, ele, useCapture, useBubble)
 	}
@@ -235,7 +235,7 @@ open class InteractivityManagerImpl(
 	 * This will first dispatch a capture event from the stage down to the given target, and then
 	 * a bubbling event up to the stage.
 	 */
-	override fun dispatch(event: InteractionEvent, target: UiComponentRo, useCapture: Boolean, useBubble: Boolean) {
+	override fun dispatch(event: Event, target: UiComponentRo, useCapture: Boolean, useBubble: Boolean) {
 		event.target = target
 		if (!useCapture && !useBubble) {
 			// Dispatch only for current target.
@@ -248,7 +248,7 @@ open class InteractivityManagerImpl(
 		}
 	}
 
-	private fun dispatch(rawAncestry: List<UiComponentRo>, event: InteractionEvent, useCapture: Boolean = true, useBubble: Boolean = true) {
+	private fun dispatch(rawAncestry: List<UiComponentRo>, event: Event, useCapture: Boolean = true, useBubble: Boolean = true) {
 		// Capture phase
 		if (useCapture) {
 			for (i in rawAncestry.lastIndex downTo 0) {
@@ -265,7 +265,7 @@ open class InteractivityManagerImpl(
 		}
 	}
 
-	private fun dispatchForCurrentTarget(currentTarget: UiComponentRo, event: InteractionEvent, isCapture: Boolean) {
+	private fun dispatchForCurrentTarget(currentTarget: UiComponentRo, event: Event, isCapture: Boolean) {
 		val signal = currentTarget.getInteractionSignal(event.type, isCapture) as StoppableSignalImpl?
 		if (signal != null && signal.isNotEmpty()) {
 			event.currentTarget = currentTarget

@@ -150,16 +150,16 @@ open class UiComponentImpl(
 	override val interactivityEnabled: Boolean
 		get() = interactivityModeInherited == InteractivityMode.ALL || interactivityModeInherited == InteractivityMode.ALWAYS
 
-	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>): Boolean {
+	override fun <T : EventRo> handlesInteraction(type: EventType<T>): Boolean {
 		return handlesInteraction(type, true) || handlesInteraction(type, false)
 	}
 
-	override fun <T : InteractionEventRo> handlesInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
-		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
+	override fun <T : EventRo> handlesInteraction(type: EventType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<EventRo>(type, isCapture) != null
 	}
 
-	private val captureSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
-	private val bubbleSignals = HashMap<InteractionType<*>, StoppableSignal<*>>()
+	private val captureSignals = HashMap<EventType<*>, StoppableSignal<*>>()
+	private val bubbleSignals = HashMap<EventType<*>, StoppableSignal<*>>()
 	private val attachments = HashMap<Any, Any>()
 
 	// NodeRo properties
@@ -441,23 +441,23 @@ open class UiComponentImpl(
 		return captureSignals.isNotEmpty() || bubbleSignals.isNotEmpty()
 	}
 
-	final override fun <T : InteractionEventRo> hasInteraction(type: InteractionType<T>, isCapture: Boolean): Boolean {
-		return getInteractionSignal<InteractionEventRo>(type, isCapture) != null
+	final override fun <T : EventRo> hasInteraction(type: EventType<T>, isCapture: Boolean): Boolean {
+		return getInteractionSignal<EventRo>(type, isCapture) != null
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <T : InteractionEventRo> getInteractionSignal(type: InteractionType<T>, isCapture: Boolean): StoppableSignal<T>? {
+	override fun <T : EventRo> getInteractionSignal(type: EventType<T>, isCapture: Boolean): StoppableSignal<T>? {
 		val handlers = if (isCapture) captureSignals else bubbleSignals
 		return handlers[type] as StoppableSignal<T>?
 	}
 
-	final override fun <T : InteractionEventRo> addInteractionSignal(type: InteractionType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
+	final override fun <T : EventRo> addInteractionSignal(type: EventType<T>, signal: StoppableSignal<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) captureSignals else bubbleSignals
 		handlers[type] = signal
 	}
 
 
-	final override fun <T : InteractionEventRo> removeInteractionSignal(type: InteractionType<T>, isCapture: Boolean) {
+	final override fun <T : EventRo> removeInteractionSignal(type: EventType<T>, isCapture: Boolean) {
 		val handlers = if (isCapture) captureSignals else bubbleSignals
 		handlers.remove(type)
 	}

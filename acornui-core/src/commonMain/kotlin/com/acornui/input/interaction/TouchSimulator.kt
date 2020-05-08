@@ -40,7 +40,7 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 	private val position = vec2()
 
 	private var enterFrameRef: Disposable? = null
-	private val fakeTouchEvent = TouchInteraction()
+	private val fakeTouchEvent = TouchEvent()
 	private val interactivity by InteractivityManager
 	private val mouseState by MouseState
 	private val keyState by KeyState
@@ -51,14 +51,14 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 		stage.keyUp().add(::keyUpHandler)
 	}
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
+	private fun keyDownHandler(event: KeyEventRo) {
 		if (!event.isRepeat && event.keyCode == Ascii.ALT && !event.handled) {
 			event.handled = true
 			isSimulating = true
 		}
 	}
 
-	private fun keyUpHandler(event: KeyInteractionRo) {
+	private fun keyUpHandler(event: KeyEventRo) {
 		if (event.keyCode == Ascii.ALT) {
 			event.handled = true
 			isSimulating = false
@@ -73,7 +73,7 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 			stage.addElement(handle)
 
 			fakeTouchEvent.clear()
-			fakeTouchEvent.type = TouchInteractionRo.TOUCH_START
+			fakeTouchEvent.type = TouchEventRo.TOUCH_START
 			populateTouches()
 			interactivity.dispatch(startPosition.x, startPosition.y, fakeTouchEvent)
 
@@ -84,7 +84,7 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 			// Remove any currently active touches.
 			position.set(mouseState.mouseX, mouseState.mouseY)
 			fakeTouchEvent.clear()
-			fakeTouchEvent.type = TouchInteractionRo.TOUCH_END
+			fakeTouchEvent.type = TouchEventRo.TOUCH_END
 			populateTouches()
 			interactivity.dispatch(position.x, position.y, fakeTouchEvent)
 
@@ -125,7 +125,7 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 		})
 	}
 
-	private fun mouseDownHandler(event: MouseInteractionRo) {
+	private fun mouseDownHandler(event: MouseEventRo) {
 		if (event.button != WhichButton.LEFT) return
 		event.preventDefault()
 		event.propagation.stopImmediatePropagation()
@@ -133,12 +133,12 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 		position.set(event.canvasX, event.canvasY)
 
 		fakeTouchEvent.clear()
-		fakeTouchEvent.type = TouchInteractionRo.TOUCH_START
+		fakeTouchEvent.type = TouchEventRo.TOUCH_START
 		populateTouches()
 		interactivity.dispatch(position.x, position.y, fakeTouchEvent)
 	}
 
-	private fun mouseMoveHandler(event: MouseInteractionRo) {
+	private fun mouseMoveHandler(event: MouseEventRo) {
 		event.preventDefault()
 		event.propagation.stopImmediatePropagation()
 		position.set(event.canvasX, event.canvasY)
@@ -146,12 +146,12 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 			startPosition.set(position)
 
 		fakeTouchEvent.clear()
-		fakeTouchEvent.type = TouchInteractionRo.TOUCH_MOVE
+		fakeTouchEvent.type = TouchEventRo.TOUCH_MOVE
 		populateTouches()
 		interactivity.dispatch(position.x, position.y, fakeTouchEvent)
 	}
 
-	private fun mouseUpHandler(event: MouseInteractionRo) {
+	private fun mouseUpHandler(event: MouseEventRo) {
 		if (event.button != WhichButton.LEFT) return
 		event.preventDefault()
 		event.propagation.stopImmediatePropagation()
@@ -162,7 +162,7 @@ class TouchSimulator(owner: Context) : ContextImpl(owner), Disposable {
 			startPosition.set(position)
 
 		fakeTouchEvent.clear()
-		fakeTouchEvent.type = TouchInteractionRo.TOUCH_END
+		fakeTouchEvent.type = TouchEventRo.TOUCH_END
 		populateTouches()
 		interactivity.dispatch(position.x, position.y, fakeTouchEvent)
 	}

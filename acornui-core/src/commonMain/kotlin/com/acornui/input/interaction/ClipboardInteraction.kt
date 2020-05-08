@@ -17,25 +17,25 @@
 package com.acornui.input.interaction
 
 import com.acornui.graphic.Texture
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 
-interface PasteInteractionRo : InteractionEventRo {
+interface PasteEventRo : EventRo {
 
 	fun <T : Any> getItemByType(type: ClipboardItemType<T>): T?
 
 	companion object {
-		val PASTE = InteractionType<PasteInteractionRo>("paste")
+		val PASTE = EventType<PasteEventRo>("paste")
 	}
 }
 
-interface CopyInteractionRo : InteractionEventRo {
+interface CopyEventRo : EventRo {
 
 	fun <T : Any> addItem(type: ClipboardItemType<T>, value: T)
 
 	companion object {
-		val COPY = InteractionType<CopyInteractionRo>("copy")
-		val CUT = InteractionType<CopyInteractionRo>("cut")
+		val COPY = EventType<CopyEventRo>("copy")
+		val CUT = EventType<CopyEventRo>("cut")
 	}
 }
 

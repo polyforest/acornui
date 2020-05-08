@@ -188,7 +188,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		newElement?.textField = this
 	}
 
-	private fun dragHandler(event: DragInteractionRo) {
+	private fun dragHandler(event: DragEventRo) {
 		if (!charStyle.selectable) return
 		if (!event.handled) {
 			event.handled = true
@@ -198,7 +198,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		}
 	}
 
-	private fun getNewSelection(event: DragInteractionRo): List<SelectionRange>? {
+	private fun getNewSelection(event: DragEventRo): List<SelectionRange>? {
 		val contents = element ?: return emptyList()
 		val p1 = event.startPositionLocal
 		val p2 = event.positionLocal
@@ -277,7 +277,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		stage.clipboardCopy().remove(::copyHandler)
 	}
 
-	private fun copyHandler(e: CopyInteractionRo) {
+	private fun copyHandler(e: CopyEventRo) {
 		if (!e.defaultPrevented() && selectable && isRendered) {
 			e.handled = true
 			val sel = firstSelection

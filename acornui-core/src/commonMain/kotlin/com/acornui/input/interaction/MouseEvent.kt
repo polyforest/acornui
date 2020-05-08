@@ -19,15 +19,15 @@ package com.acornui.input.interaction
 import com.acornui.component.InteractiveElement
 import com.acornui.component.UiComponentRo
 import com.acornui.component.canvasToLocal
-import com.acornui.input.InteractionEventBase
-import com.acornui.input.InteractionEventRo
-import com.acornui.input.InteractionType
+import com.acornui.input.EventBase
+import com.acornui.input.EventRo
+import com.acornui.input.EventType
 import com.acornui.input.WhichButton
 import com.acornui.math.Vector2
 import com.acornui.math.vec2
 import kotlin.math.sqrt
 
-interface MouseInteractionRo : InteractionEventRo {
+interface MouseEventRo : EventRo {
 
 	/**
 	 * The x position of the mouse event relative to the root canvas.
@@ -70,7 +70,7 @@ interface MouseInteractionRo : InteractionEventRo {
 	/**
 	 * Calculates the average velocity in pixels per millisecond of this touch event compared to a previous touch event.
 	 */
-	fun velocity(previous: MouseInteractionRo): Float {
+	fun velocity(previous: MouseEventRo): Float {
 		val xDiff = previous.canvasX - canvasX
 		val yDiff = previous.canvasY - canvasY
 		val distance = sqrt((xDiff * xDiff + yDiff * yDiff).toDouble()).toFloat()
@@ -83,20 +83,20 @@ interface MouseInteractionRo : InteractionEventRo {
 		/**
 		 * Dispatched when a mouse button has been pressed down.
 		 */
-		val MOUSE_DOWN = InteractionType<MouseInteractionRo>("mouseDown")
+		val MOUSE_DOWN = EventType<MouseEventRo>("mouseDown")
 
 		/**
 		 * Dispatched when a mouse button has been released.
 		 */
-		val MOUSE_UP = InteractionType<MouseInteractionRo>("mouseUp")
+		val MOUSE_UP = EventType<MouseEventRo>("mouseUp")
 
 		/**
 		 * Dispatched when the mouse has moved.
 		 */
-		val MOUSE_MOVE = InteractionType<MouseInteractionRo>("mouseMove")
+		val MOUSE_MOVE = EventType<MouseEventRo>("mouseMove")
 
-		val MOUSE_OVER = InteractionType<MouseInteractionRo>("mouseOver")
-		val MOUSE_OUT = InteractionType<MouseInteractionRo>("mouseOut")
+		val MOUSE_OVER = EventType<MouseEventRo>("mouseOver")
+		val MOUSE_OUT = EventType<MouseEventRo>("mouseOut")
 	}
 }
 
@@ -104,7 +104,7 @@ interface MouseInteractionRo : InteractionEventRo {
  * Representing a mouse event, as provided to [InteractiveElement] objects by the [InteractivityManager]
  * @author nbilyk
  */
-open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
+open class MouseEvent : EventBase(), MouseEventRo {
 
 	/**
 	 * The x position of the mouse event relative to the root canvas.
@@ -169,7 +169,7 @@ open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
 			_localPositionIsValid = false
 		}
 
-	open fun set(event: MouseInteractionRo) {
+	open fun set(event: MouseEventRo) {
 		type = event.type
 		canvasX = event.canvasX
 		canvasY = event.canvasY
@@ -190,24 +190,24 @@ open class MouseInteraction : InteractionEventBase(), MouseInteractionRo {
 	}
 }
 
-interface WheelInteractionRo : MouseInteractionRo {
+interface WheelEventRo : MouseEventRo {
 
 	val deltaX: Float
 	val deltaY: Float
 	val deltaZ: Float
 
 	companion object {
-		val MOUSE_WHEEL = InteractionType<WheelInteractionRo>("mouseWheel")
+		val MOUSE_WHEEL = EventType<WheelEventRo>("mouseWheel")
 	}
 }
 
-class WheelInteraction : MouseInteraction(), WheelInteractionRo {
+class WheelEvent : MouseEvent(), WheelEventRo {
 
 	override var deltaX: Float = 0f
 	override var deltaY: Float = 0f
 	override var deltaZ: Float = 0f
 
-	fun set(event: WheelInteractionRo) {
+	fun set(event: WheelEventRo) {
 		super.set(event)
 		deltaX = event.deltaX
 		deltaY = event.deltaY

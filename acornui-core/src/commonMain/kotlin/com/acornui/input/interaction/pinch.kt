@@ -52,7 +52,7 @@ data class PinchPoints(override val first: Vector2 = vec2(), override val second
 	}
 }
 
-interface PinchInteractionRo : InteractionEventRo {
+interface PinchEventRo : EventRo {
 
 	/**
 	 * The two touch points that initiated the pinch, in canvas coordinates.
@@ -117,7 +117,7 @@ interface PinchInteractionRo : InteractionEventRo {
 		get() = distance - startDistance
 }
 
-class PinchInteraction : PinchInteractionRo, InteractionEventBase() {
+class PinchEvent : PinchEventRo, EventBase() {
 
 	override val startPoints = PinchPoints()
 	override val points = PinchPoints()
@@ -129,9 +129,9 @@ class PinchInteraction : PinchInteractionRo, InteractionEventBase() {
 	}
 
 	companion object {
-		val PINCH_START = InteractionType<PinchInteractionRo>("pinchStart")
-		val PINCH = InteractionType<PinchInteractionRo>("pinch")
-		val PINCH_END = InteractionType<PinchInteractionRo>("pinchEnd")
+		val PINCH_START = EventType<PinchEventRo>("pinchStart")
+		val PINCH = EventType<PinchEventRo>("pinch")
+		val PINCH_END = EventType<PinchEventRo>("pinchEnd")
 	}
 }
 
@@ -160,23 +160,23 @@ class PinchAttachment(
 	val isPinching: Boolean
 		get() = _isPinching
 
-	private val pinchEvent: PinchInteraction = PinchInteraction()
+	private val pinchEvent: PinchEvent = PinchEvent()
 
-	private val _pinchStart = Signal1<PinchInteractionRo>()
+	private val _pinchStart = Signal1<PinchEventRo>()
 
 	/**
 	 * Dispatched when the pinch has begun. This will be after the pinch has passed the affordance value.
 	 */
 	val pinchStart = _pinchStart.asRo()
 
-	private val _pinch = Signal1<PinchInteractionRo>()
+	private val _pinch = Signal1<PinchEventRo>()
 
 	/**
 	 * Dispatched on each frame during a pinch.
 	 */
 	val pinch = _pinch.asRo()
 
-	private val _pinchEnd = Signal1<PinchInteractionRo>()
+	private val _pinchEnd = Signal1<PinchEventRo>()
 
 	/**
 	 * Dispatched when the pinch has completed.
@@ -191,7 +191,7 @@ class PinchAttachment(
 		stop()
 	}
 
-	private fun clickBlocker(event: ClickInteractionRo) {
+	private fun clickBlocker(event: ClickEventRo) {
 		event.handled = true
 		event.preventDefault()
 	}
@@ -200,7 +200,7 @@ class PinchAttachment(
 	// Touch UX
 	//--------------------------------------------------------------
 
-	private fun touchStartHandler(event: TouchInteractionRo) {
+	private fun touchStartHandler(event: TouchEventRo) {
 		if (!watchingTouch && allowTouchStart(event)) {
 			setWatchingTouch(true)
 			event.handled = true
@@ -220,15 +220,15 @@ class PinchAttachment(
 	 * This does not determine if a pinch start may begin.
 	 * @see allowTouchPinchStart
 	 */
-	private fun allowTouchStart(event: TouchInteractionRo): Boolean {
+	private fun allowTouchStart(event: TouchEventRo): Boolean {
 		return enabled && event.touches.size == 2
 	}
 
-	private fun allowTouchPinchStart(event: TouchInteractionRo): Boolean {
+	private fun allowTouchPinchStart(event: TouchEventRo): Boolean {
 		return Vector2.manhattanDst(event.touches[0].canvasX, event.touches[0].canvasY, event.touches[1].canvasX, event.touches[1].canvasY) >= affordance
 	}
 
-	private fun allowTouchEnd(event: TouchInteractionRo): Boolean {
+	private fun allowTouchEnd(event: TouchEventRo): Boolean {
 		return event.touches.size < 2
 	}
 
@@ -245,7 +245,7 @@ class PinchAttachment(
 		}
 	}
 
-	private fun stageTouchMoveHandler(event: TouchInteractionRo) {
+	private fun stageTouchMoveHandler(event: TouchEventRo) {
 		if (event.touches.size < 2) return
 		val firstT = event.touches[0]
 		points.first.set(firstT.canvasX, firstT.canvasY)
@@ -255,7 +255,7 @@ class PinchAttachment(
 		if (_isPinching) {
 			event.handled = true
 			event.preventDefault()
-			dispatchPinchEvent(PinchInteraction.PINCH, _pinch)
+			dispatchPinchEvent(PinchEvent.PINCH, _pinch)
 		} else {
 			if (!_isPinching && allowTouchPinchStart(event)) {
 				setIsPinching(true)
@@ -263,7 +263,7 @@ class PinchAttachment(
 		}
 	}
 
-	private fun stageTouchEndHandler(event: TouchInteractionRo) {
+	private fun stageTouchEndHandler(event: TouchEventRo) {
 		if (allowTouchEnd(event)) {
 			event.handled = true
 			setWatchingTouch(false)
@@ -279,24 +279,24 @@ class PinchAttachment(
 		if (_isPinching == value) return
 		_isPinching = value
 		if (value) {
-			dispatchPinchEvent(PinchInteraction.PINCH_START, _pinchStart)
+			dispatchPinchEvent(PinchEvent.PINCH_START, _pinchStart)
 			if (pinchEvent.defaultPrevented()) {
 				_isPinching = false
 			} else {
 				stage.click(isCapture = true).add(::clickBlocker, true) // Set the next click to be marked as handled.
-				dispatchPinchEvent(PinchInteraction.PINCH, _pinch)
+				dispatchPinchEvent(PinchEvent.PINCH, _pinch)
 			}
 		} else {
 			if (target.isActive) {
-				dispatchPinchEvent(PinchInteraction.PINCH, _pinch)
+				dispatchPinchEvent(PinchEvent.PINCH, _pinch)
 			}
-			dispatchPinchEvent(PinchInteraction.PINCH_END, _pinchEnd)
+			dispatchPinchEvent(PinchEvent.PINCH_END, _pinchEnd)
 
 			callLater { stage.click(isCapture = true).remove(::clickBlocker) }
 		}
 	}
 
-	private fun dispatchPinchEvent(type: InteractionType<PinchInteractionRo>, signal: Signal1<PinchInteractionRo>) {
+	private fun dispatchPinchEvent(type: EventType<PinchEventRo>, signal: Signal1<PinchEventRo>) {
 		pinchEvent.clear()
 		pinchEvent.target = target
 		pinchEvent.currentTarget = target
@@ -358,7 +358,7 @@ fun UiComponent.pinchAttachment(affordance: Float = PinchAttachment.DEFAULT_AFFO
  * @see PinchAttachment.pinchStart
  */
 @ExperimentalAcorn
-fun UiComponent.pinchStart(): Signal<(PinchInteractionRo) -> Unit> {
+fun UiComponent.pinchStart(): Signal<(PinchEventRo) -> Unit> {
 	return pinchAttachment().pinchStart
 }
 
@@ -366,7 +366,7 @@ fun UiComponent.pinchStart(): Signal<(PinchInteractionRo) -> Unit> {
  * @see PinchAttachment.pinch
  */
 @ExperimentalAcorn
-fun UiComponent.pinch(): Signal<(PinchInteractionRo) -> Unit> {
+fun UiComponent.pinch(): Signal<(PinchEventRo) -> Unit> {
 	return pinchAttachment().pinch
 }
 
@@ -374,6 +374,6 @@ fun UiComponent.pinch(): Signal<(PinchInteractionRo) -> Unit> {
  * @see PinchAttachment.pinchEnd
  */
 @ExperimentalAcorn
-fun UiComponent.pinchEnd(): Signal<(PinchInteractionRo) -> Unit> {
+fun UiComponent.pinchEnd(): Signal<(PinchEventRo) -> Unit> {
 	return pinchAttachment().pinchEnd
 }

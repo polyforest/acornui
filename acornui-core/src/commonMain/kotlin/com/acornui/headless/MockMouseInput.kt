@@ -18,10 +18,10 @@ package com.acornui.headless
 
 import com.acornui.input.MouseInput
 import com.acornui.input.WhichButton
-import com.acornui.input.interaction.MouseInteractionRo
-import com.acornui.input.interaction.TouchInteractionRo
+import com.acornui.input.interaction.MouseEventRo
+import com.acornui.input.interaction.TouchEventRo
 import com.acornui.input.interaction.TouchRo
-import com.acornui.input.interaction.WheelInteractionRo
+import com.acornui.input.interaction.WheelEventRo
 import com.acornui.signal.Signal
 import com.acornui.signal.emptySignal
 
@@ -36,14 +36,14 @@ object MockMouseInput : MouseInput {
 	override val touchY: Float = 0f
 	override val touches: List<TouchRo> = emptyList()
 
-	override val touchStart: Signal<(TouchInteractionRo) -> Unit> = emptySignal()
-	override val touchEnd: Signal<(TouchInteractionRo) -> Unit> = emptySignal()
-	override val touchMove: Signal<(TouchInteractionRo) -> Unit> = emptySignal()
-	override val touchCancel: Signal<(TouchInteractionRo) -> Unit> = emptySignal()
-	override val mouseDown: Signal<(MouseInteractionRo) -> Unit> = emptySignal()
-	override val mouseUp: Signal<(MouseInteractionRo) -> Unit> = emptySignal()
-	override val mouseMove: Signal<(MouseInteractionRo) -> Unit> = emptySignal()
-	override val mouseWheel: Signal<(WheelInteractionRo) -> Unit> = emptySignal()
+	override val touchStart: Signal<(TouchEventRo) -> Unit> = emptySignal()
+	override val touchEnd: Signal<(TouchEventRo) -> Unit> = emptySignal()
+	override val touchMove: Signal<(TouchEventRo) -> Unit> = emptySignal()
+	override val touchCancel: Signal<(TouchEventRo) -> Unit> = emptySignal()
+	override val mouseDown: Signal<(MouseEventRo) -> Unit> = emptySignal()
+	override val mouseUp: Signal<(MouseEventRo) -> Unit> = emptySignal()
+	override val mouseMove: Signal<(MouseEventRo) -> Unit> = emptySignal()
+	override val mouseWheel: Signal<(WheelEventRo) -> Unit> = emptySignal()
 
 	override fun mouseIsDown(button: WhichButton): Boolean {
 		return false

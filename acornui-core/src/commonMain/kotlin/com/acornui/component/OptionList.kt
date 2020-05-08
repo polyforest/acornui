@@ -42,7 +42,7 @@ import com.acornui.focus.focus
 import com.acornui.focus.focusHighlightDelegate
 import com.acornui.focus.focusSelf
 import com.acornui.input.Ascii
-import com.acornui.input.interaction.KeyInteractionRo
+import com.acornui.input.interaction.KeyEventRo
 import com.acornui.input.interaction.click
 import com.acornui.input.keyDown
 import com.acornui.math.Bounds
@@ -314,7 +314,7 @@ class OptionList<E : Any>(
 		}
 	}
 
-	private fun keyDownHandler(event: KeyInteractionRo) {
+	private fun keyDownHandler(event: KeyEventRo) {
 		if (event.defaultPrevented()) return
 		when (event.keyCode) {
 			Ascii.ESCAPE -> {

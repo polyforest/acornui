@@ -18,31 +18,31 @@ package com.acornui.input.interaction
 
 import com.acornui.component.UiComponentRo
 import com.acornui.component.createOrReuse
-import com.acornui.input.InteractionType
+import com.acornui.input.EventType
 import com.acornui.input.InteractivityManager
 import com.acornui.input.WhichButton
 import com.acornui.signal.StoppableSignal
 import com.acornui.time.callLater
 import com.acornui.time.nowMs
 
-interface ClickInteractionRo : MouseInteractionRo {
+interface ClickEventRo : MouseEventRo {
 
 	val count: Int
 	val fromTouch: Boolean
 
 	companion object {
-		val LEFT_CLICK = InteractionType<ClickInteractionRo>("leftClick")
-		val RIGHT_CLICK = InteractionType<ClickInteractionRo>("rightClick")
-		val BACK_CLICK = InteractionType<ClickInteractionRo>("backClick")
-		val FORWARD_CLICK = InteractionType<ClickInteractionRo>("forwardClick")
-		val MIDDLE_CLICK = InteractionType<ClickInteractionRo>("middleClick")
+		val LEFT_CLICK = EventType<ClickEventRo>("leftClick")
+		val RIGHT_CLICK = EventType<ClickEventRo>("rightClick")
+		val BACK_CLICK = EventType<ClickEventRo>("backClick")
+		val FORWARD_CLICK = EventType<ClickEventRo>("forwardClick")
+		val MIDDLE_CLICK = EventType<ClickEventRo>("middleClick")
 	}
 }
 
 /**
- * @author nbilyk
+ * An event representing a touchStart/mouseDown touchEnd/mouseUp on the same component.
  */
-open class ClickInteraction : ClickInteractionRo, MouseInteraction() {
+open class ClickEvent : ClickEventRo, MouseEvent() {
 
 	/**
 	 * In a standard click event, this is always 1. When used in a multi click event, count is the number of
@@ -61,32 +61,32 @@ open class ClickInteraction : ClickInteractionRo, MouseInteraction() {
 /**
  * A click interaction is where there is a touch down event, then a touch up event on that same target.
  */
-fun UiComponentRo.click(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
-	return createOrReuse(ClickInteractionRo.LEFT_CLICK, isCapture)
+fun UiComponentRo.click(isCapture: Boolean = false): StoppableSignal<ClickEventRo> {
+	return createOrReuse(ClickEventRo.LEFT_CLICK, isCapture)
 }
 
-fun UiComponentRo.rightClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
-	return createOrReuse(ClickInteractionRo.RIGHT_CLICK, isCapture)
+fun UiComponentRo.rightClick(isCapture: Boolean = false): StoppableSignal<ClickEventRo> {
+	return createOrReuse(ClickEventRo.RIGHT_CLICK, isCapture)
 }
 
-fun UiComponentRo.middleClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
-	return createOrReuse(ClickInteractionRo.MIDDLE_CLICK, isCapture)
+fun UiComponentRo.middleClick(isCapture: Boolean = false): StoppableSignal<ClickEventRo> {
+	return createOrReuse(ClickEventRo.MIDDLE_CLICK, isCapture)
 }
 
-fun UiComponentRo.backClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
-	return createOrReuse(ClickInteractionRo.BACK_CLICK, isCapture)
+fun UiComponentRo.backClick(isCapture: Boolean = false): StoppableSignal<ClickEventRo> {
+	return createOrReuse(ClickEventRo.BACK_CLICK, isCapture)
 }
 
-fun UiComponentRo.forwardClick(isCapture: Boolean = false): StoppableSignal<ClickInteractionRo> {
-	return createOrReuse(ClickInteractionRo.FORWARD_CLICK, isCapture)
+fun UiComponentRo.forwardClick(isCapture: Boolean = false): StoppableSignal<ClickEventRo> {
+	return createOrReuse(ClickEventRo.FORWARD_CLICK, isCapture)
 }
 
-private val fakeClickEvent = ClickInteraction()
+private val fakeClickEvent = ClickEvent()
 
-fun UiComponentRo.dispatchClick(): ClickInteractionRo {
+fun UiComponentRo.dispatchClick(): ClickEventRo {
 	fakeClickEvent.clear()
 	fakeClickEvent.isFabricated = true
-	fakeClickEvent.type = ClickInteractionRo.LEFT_CLICK
+	fakeClickEvent.type = ClickEventRo.LEFT_CLICK
 	fakeClickEvent.target = this
 	fakeClickEvent.button = WhichButton.LEFT
 	fakeClickEvent.timestamp = nowMs()
@@ -95,7 +95,7 @@ fun UiComponentRo.dispatchClick(): ClickInteractionRo {
 	return fakeClickEvent
 }
 
-private val clickHandler = { event: ClickInteractionRo ->
+private val clickHandler = { event: ClickEventRo ->
 	event.handled = true
 	event.preventDefault()
 }

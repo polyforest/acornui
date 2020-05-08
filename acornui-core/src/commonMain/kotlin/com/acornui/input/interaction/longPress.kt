@@ -57,7 +57,7 @@ private class LongPressAttachment(
 		target.rightClick(true).add(::rightClickHandler)
 	}
 
-	private fun touchStartHandler(event: TouchInteractionRo) {
+	private fun touchStartHandler(event: TouchEventRo) {
 		stopTimer()
 		if (event.touches.size != 1) return
 		val t = event.touches.firstOrNull() ?: return
@@ -66,7 +66,7 @@ private class LongPressAttachment(
 		timerRef = timer(longPressTime, callback = ::timerHandler.as1)
 	}
 
-	private fun touchMoveHandler(event: TouchInteractionRo) {
+	private fun touchMoveHandler(event: TouchEventRo) {
 		val t = event.touches.firstOrNull() ?: return
 
 		if (Vector2.manhattanDst(t.canvasX, t.canvasY, startCanvasX, startCanvasY) > affordance) {
@@ -79,7 +79,7 @@ private class LongPressAttachment(
 		_longPress.dispatch()
 	}
 
-	private fun touchEndHandler(event: TouchInteractionRo) {
+	private fun touchEndHandler(event: TouchEventRo) {
 		if (preventTouchEnd) {
 			event.preventDefault()
 			preventTouchEnd = false
@@ -92,7 +92,7 @@ private class LongPressAttachment(
 		timerRef = null
 	}
 
-	private fun rightClickHandler(event: ClickInteractionRo) {
+	private fun rightClickHandler(event: ClickEventRo) {
 		// Prevent the webgl context menu:
 		if (_longPress.isNotEmpty())
 			event.preventDefault()

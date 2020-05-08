@@ -35,7 +35,7 @@ import com.acornui.di.own
 import com.acornui.focus.Focusable
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
-import com.acornui.input.interaction.MouseInteractionRo
+import com.acornui.input.interaction.MouseEventRo
 import com.acornui.input.interaction.click
 import com.acornui.input.mouseMove
 import com.acornui.input.wheel
@@ -213,7 +213,7 @@ class DataScroller<E : Any, out S : Style, out T : LayoutData>(
 		}
 	}
 
-	private fun stageMouseMoveHandler(e: MouseInteractionRo) {
+	private fun stageMouseMoveHandler(e: MouseEventRo) {
 		if (highlightable) updateHighlight()
 	}
 

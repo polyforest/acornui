@@ -172,12 +172,12 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 			alphaTick = onTick(::onAlphaTick)
 	}
 
-	private fun decrementPressHandler(event: MouseInteractionRo) {
+	private fun decrementPressHandler(event: MouseEventRo) {
 		event.handled = true
 		stepDec()
 	}
 
-	private fun incrementPressHandler(event: MouseInteractionRo) {
+	private fun incrementPressHandler(event: MouseEventRo) {
 		event.handled = true
 		stepInc()
 	}
@@ -187,7 +187,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 	/**
 	 * When pressing down on the track
 	 */
-	private fun pageModePressHandler(event: MouseInteractionRo) {
+	private fun pageModePressHandler(event: MouseEventRo) {
 		if (!style.pageMode || event.target !== this || thumbDrag.isDragging) return
 		val track = track ?: return
 		val thumb = thumb ?: return
@@ -201,7 +201,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 			userChange(scrollModel.value + if (isPositive) pageSize else -pageSize)
 	}
 
-	private fun dragHandler(event: DragInteractionRo) {
+	private fun dragHandler(event: DragEventRo) {
 		if (style.pageMode || event.target !== this || thumbDrag.isDragging) return
 		event.handled = true
 		val track = track ?: return
@@ -216,7 +216,7 @@ abstract class ScrollBarBase(owner: Context) : ContainerImpl(owner), ScrollBar {
 		mousePosition(thumbOffset).sub(thumb.x, thumb.y)
 	}
 
-	private fun thumbDragHandler(event: DragInteractionRo) {
+	private fun thumbDragHandler(event: DragEventRo) {
 		event.handled = true
 		mousePosition(positionTmp).sub(thumbOffset)
 		scrollModel.rawValue = getModelValue(positionTmp)
