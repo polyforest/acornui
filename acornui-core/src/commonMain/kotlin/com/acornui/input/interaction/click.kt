@@ -95,7 +95,7 @@ fun UiComponentRo.dispatchClick(): ClickEventRo {
 	return fakeClickEvent
 }
 
-private val clickHandler = { event: ClickEventRo ->
+private val preventDefaultHandler = { event: ClickEventRo ->
 	event.handled = true
 	event.preventDefault()
 }
@@ -104,6 +104,8 @@ private val clickHandler = { event: ClickEventRo ->
  * Marks any click events as handled and default prevented for one frame.
  */
 fun UiComponentRo.clickHandledForAFrame() {
-	click().add(clickHandler)
-	callLater { click().remove(clickHandler) }
+	if (!click().contains(preventDefaultHandler)) {
+		click().add(preventDefaultHandler)
+		callLater { click().remove(preventDefaultHandler) }
+	}
 }

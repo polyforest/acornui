@@ -543,6 +543,7 @@ class DataGrid<RowData>(
 				disposeEditorCell()
 			}
 			if (editable && rowFocusEnabledFilter(cell) && cellFocusEnabledFilter(cell)) {
+				event.preventDefault() // Prevent default focus
 				focusCell(cell)
 			}
 		}
