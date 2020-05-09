@@ -32,6 +32,9 @@ interface SoftKeyboardManager {
 
 interface SoftKeyboard : Disposable {
 
+	/**
+	 * Dispatched after the user has input changes to the text.
+	 */
 	val input: Signal<() -> Unit>
 	val selectionChanged: Signal<() -> Unit>
 
@@ -110,6 +113,11 @@ object SoftKeyboardType {
 	 * A keypad optimized for entering URLs. This may have the "/" key more prominently available, for example.
 	 */
 	const val URL = "url"
+
+	/**
+	 * A keypad optimized for entering passwords.
+	 */
+	const val PASSWORD = "password"
 }
 
 val Context.touchScreenKeyboard: SoftKeyboardManager

@@ -28,7 +28,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.KeyboardEvent
-import kotlin.collections.isNotEmpty
 import kotlin.collections.set
 
 /**
@@ -38,6 +37,7 @@ class JsKeyInput(
 		canvas: HTMLElement
 ) : KeyInput {
 
+	private var options: dynamic = js("{}")
 	private val _keyDown = Signal1<KeyEventRo>()
 	override val keyDown = _keyDown.asRo()
 	private val _keyUp = Signal1<KeyEventRo>()
@@ -85,7 +85,6 @@ class JsKeyInput(
 	private val eventTarget: EventTarget = canvas
 
 	init {
-		val options = js("{}")
 		options["capture"] = true
 		options["passive"] = false
 
@@ -105,10 +104,10 @@ class JsKeyInput(
 	}
 
 	override fun dispose() {
-		eventTarget.removeEventListener("keydown", keyDownHandler, true)
-		eventTarget.removeEventListener("keyup", keyUpHandler, true)
-		eventTarget.removeEventListener("keypress", keyPressHandler, true)
-		eventTarget.removeEventListener("blur", blurHandler, true)
+		eventTarget.removeEventListener("keydown", keyDownHandler, options)
+		eventTarget.removeEventListener("keyup", keyUpHandler, options)
+		eventTarget.removeEventListener("keypress", keyPressHandler, options)
+		eventTarget.removeEventListener("blur", blurHandler, options)
 		_keyDown.dispose()
 		_keyUp.dispose()
 		_char.dispose()

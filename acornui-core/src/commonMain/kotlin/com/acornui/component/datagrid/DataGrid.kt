@@ -406,7 +406,6 @@ class DataGrid<RowData>(
 	}
 
 	private fun focusedHandler(event: FocusEventRo) {
-		println("Contents focused handler")
 		if (!editable || isEditing) return
 		if (event.initiator == FocusInitiator.USER_KEY)
 			focusFirstEditableCell()

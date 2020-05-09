@@ -19,7 +19,10 @@ package com.acornui.component.text
 import com.acornui.component.*
 import com.acornui.component.layout.algorithm.LineInfoRo
 import com.acornui.di.own
-import com.acornui.focus.*
+import com.acornui.focus.FocusInitiator
+import com.acornui.focus.blurred
+import com.acornui.focus.focused
+import com.acornui.focus.isFocused
 import com.acornui.function.as1
 import com.acornui.graphic.Color
 import com.acornui.graphic.ColorRo
@@ -56,11 +59,21 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	var editable by afterChange(true) {
 		textCursor.visible = it
+		if (!it)
+			softKeyboard?.blur()
 	}
 
 	var maxLength: Int? = null
 
-	private val softKeyboard: SoftKeyboard? = softKeyboard()
+	private var softKeyboard: SoftKeyboard? = softKeyboard()?.apply {
+		selectionChanged.add {
+			selectionManager.selection = listOf(SelectionRange(host, selectionStart, selectionEnd))
+		}
+		input.add {
+			setTextInternal(text)
+			dispatchInput()
+		}
+	}
 
 	val textField = addChild(TextFieldImpl(this).apply { selectionTarget = host })
 
@@ -126,10 +139,15 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 */
 	var passwordMask = "*"
 
+	/**
+	 * If true, the text will be masked with [passwordMask] and the
+	 * [softKeyboardType] will be set to [SoftKeyboardType.PASSWORD].
+	 */
 	var isPassword: Boolean = false
 		set(value) {
 			if (value == field) return
 			field = value
+			softKeyboardType = if (value) SoftKeyboardType.PASSWORD else SoftKeyboardType.DEFAULT
 			refreshDisplayText()
 		}
 
@@ -148,15 +166,16 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 
 	init {
 		host.focused().add {
-			softKeyboard?.position(localToCanvas(Vector3()))
-			softKeyboard?.focus()
 			if (charStyle.selectable && it.initiator != FocusInitiator.USER_POINT)
 				host.selectAll()
+			if (editable)
+				softKeyboard?.focus()
 		}
 
 		host.blurred().add {
 			host.unselect()
-			softKeyboard?.blur()
+			if (editable)
+				softKeyboard?.blur()
 			if (isActive)
 				dispatchChanged()
 		}
@@ -246,15 +265,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 //			}
 //		}
 
-		softKeyboard?.apply {
-			selectionChanged.add {
-				selectionManager.selection = listOf(SelectionRange(host, selectionStart, selectionEnd))
-			}
-			input.add {
-				setTextInternal(text)
-				dispatchInput()
-			}
-		}
 	}
 
 	var softKeyboardType: String = SoftKeyboardType.DEFAULT
@@ -591,11 +601,16 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	private fun selectionChangedHandler(oldSelection: List<SelectionRange>, newSelection: List<SelectionRange>) {
 		if (oldSelection.filter { it.target == host } != newSelection.filter { it.target == host }) {
 			resetCursorBlink()
-			val firstSelection = firstSelection
-			if (softKeyboard?.selectionChanged?.isDispatching != true)
-				softKeyboard?.setSelectionRange(firstSelection?.startIndex ?: 0, firstSelection?.endIndex ?: 0)
+			refreshSoftKeyboardSelection()
 			invalidate(TEXT_CURSOR)
 		}
+	}
+
+	private fun refreshSoftKeyboardSelection() {
+		val firstSelection = firstSelection
+		val softKeyboard = softKeyboard
+		if (softKeyboard != null && !softKeyboard.selectionChanged.isDispatching)
+			softKeyboard.setSelectionRange(firstSelection?.startIndex ?: 0, firstSelection?.endIndex ?: 0)
 	}
 
 	private fun dispatchInput() {
@@ -613,6 +628,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
 		textField.size(explicitWidth, explicitHeight)
 		out.set(textField.bounds)
+	}
+
+	private val tmpVec3 = Vector3()
+
+	override fun updateDrawRegion() {
+		super.updateDrawRegion()
+		softKeyboard?.position(localToCanvas(tmpVec3.set(0f, 0f, 0f)))
 	}
 
 	private fun updateTextCursor() {

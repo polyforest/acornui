@@ -123,23 +123,6 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	}
 
 	protected val focusManagerTask by task(FocusManager) {
-//		// When the focused element changes, make sure the document's active element is the canvas.
-//		val canvas = get(CANVAS)
-//		var canvasHasFocus = false
-//		canvas.addEventListener("blur", {
-//			canvasHasFocus = false
-//		})
-//		canvas.addEventListener("focus", {
-//			canvasHasFocus = true
-//		})
-//		val focusManager = FocusManagerImpl(get(InteractivityManager))
-//		focusManager.focusedChanged.add {
-//			if (it.new != null && !canvasHasFocus) {
-//				canvas.focus()
-//			}
-//		}
-//		focusManager
-
 		FocusManagerImpl(get(InteractivityManager))
 	}
 
@@ -183,6 +166,30 @@ open class WebGlApplication(mainContext: MainContext, private val rootId: String
 	override suspend fun initializeSpecialInteractivity(owner: Context) {
 		super.initializeSpecialInteractivity(owner)
 		JsClickDispatcher(owner, get(CANVAS))
+	}
+
+	override suspend fun onStageCreated(stage: Stage) {
+		super.onStageCreated(stage)
+		focusCanvasOnStageFocus(get(CANVAS), stage)
+	}
+
+	/**
+	 * When the focused element changes, make sure the document's active element is the canvas.
+	 */
+	protected open fun focusCanvasOnStageFocus(canvas: HTMLCanvasElement, stage: Stage) {
+//		var canvasHasFocus = false
+//		canvas.addEventListener("blur", {
+//			canvasHasFocus = false
+//		})
+//		canvas.addEventListener("focus", {
+//			canvasHasFocus = true
+//		})
+//		stage.focusEvent(true).add {
+//			if (!canvasHasFocus) {
+//				canvas.focus()
+//			}
+//		}
+		canvas.focus()
 	}
 
 	companion object {

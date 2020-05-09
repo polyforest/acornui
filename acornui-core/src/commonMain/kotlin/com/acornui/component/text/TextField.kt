@@ -25,6 +25,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.clearCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
+import com.acornui.focus.FocusInitiator
 import com.acornui.focus.focus
 import com.acornui.focus.isFocused
 import com.acornui.function.as2
@@ -193,7 +194,7 @@ open class TextFieldImpl(owner: Context) : SingleElementContainerImpl<TextNode>(
 		if (!event.handled) {
 			event.handled = true
 			if (!selectionTarget.isFocused)
-				selectionTarget.focus()
+				selectionTarget.focus(initiator = FocusInitiator.USER_POINT)
 			selectionManager.selection = getNewSelection(event) ?: emptyList()
 		}
 	}

@@ -73,15 +73,17 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 	private fun rootClickHandler(event: ClickEventRo) {
 		if (event.defaultPrevented())
 			return
-		if (focused != event.target)
-			focus(event.target, initiator = FocusInitiator.USER_POINT)
+		val focusableAncestor = event.target.findParent { it.includeInFocusOrder }
+		val toFocus = if (focusableAncestor == null || focusableAncestor == root) event.target else focusableAncestor
+		if (focused != toFocus)
+			focus(toFocus, initiator = FocusInitiator.USER_POINT)
 	}
 
 	override fun init(root: ElementContainer<UiComponent>) {
 		check(_root == null) { "Already initialized." }
 		_root = root
 		root.keyDown().add(rootKeyDownHandler)
-		root.click(isCapture = true).add(::rootClickHandler)
+		root.click().add(::rootClickHandler)
 	}
 
 	override fun invalidateFocusableOrder(value: UiComponentRo) {
@@ -178,7 +180,6 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 			focusEvent.type = FocusEventRo.FOCUS
 			focusEvent.options = next.options
 			focusEvent.initiator = next.initiator
-
 			interactivityManager.dispatch(focusEvent, target)
 			if (!blurEvent.defaultPrevented() && !focusEvent.defaultPrevented()) {
 				previous.showFocusHighlight = false
@@ -220,7 +221,7 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		isDisposed = true
 		val root = _root ?: error("Not initialized.")
 		root.keyDown().remove(rootKeyDownHandler)
-		root.click(isCapture = true).remove(::rootClickHandler)
+		root.click().remove(::rootClickHandler)
 		_root = null
 	}
 
