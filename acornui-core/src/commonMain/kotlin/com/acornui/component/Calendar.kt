@@ -31,6 +31,7 @@ import com.acornui.cursor.StandardCursor
 import com.acornui.cursor.cursor
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.focus.FocusInitiator
 import com.acornui.focus.FocusOptions
 import com.acornui.focus.focus
 import com.acornui.graphic.Color
@@ -344,14 +345,14 @@ open class Calendar(
 
 	private fun keyDownHandler(e: KeyEventRo) {
 		when (e.keyCode) {
-			Ascii.UP -> moveSelectedCell(0, -1)
-			Ascii.RIGHT -> moveSelectedCell(1, 0)
-			Ascii.DOWN -> moveSelectedCell(0, 1)
-			Ascii.LEFT -> moveSelectedCell(-1, 0)
+			Ascii.UP -> moveSelectedCell(0, -1, FocusInitiator.USER_KEY)
+			Ascii.RIGHT -> moveSelectedCell(1, 0, FocusInitiator.USER_KEY)
+			Ascii.DOWN -> moveSelectedCell(0, 1, FocusInitiator.USER_KEY)
+			Ascii.LEFT -> moveSelectedCell(-1, 0, FocusInitiator.USER_KEY)
 		}
 	}
 
-	private fun moveSelectedCell(xD: Int, yD: Int) {
+	private fun moveSelectedCell(xD: Int, yD: Int, focusInitiator: FocusInitiator) {
 		val focusedIndex = cells.indexOf(interactivityManager.activeElement)
 		val currentRow: Int
 		val currentCol: Int
@@ -382,7 +383,7 @@ open class Calendar(
 			}
 			val cell = cells.getOrNull(row * 7 + col)
 			if (cell != null && cell.focusEnabled && cell.isRendered && cell.interactivityEnabled) {
-				cell.focus(FocusOptions.highlight)
+				cell.focus(FocusOptions.highlight, focusInitiator)
 				break
 			}
 		}

@@ -32,7 +32,6 @@ import com.acornui.di.Context
 import com.acornui.di.own
 import com.acornui.di.owns
 import com.acornui.focus.*
-import com.acornui.function.as1
 import com.acornui.input.Ascii
 import com.acornui.input.KeyState
 import com.acornui.input.interaction.ClickEventRo
@@ -429,7 +428,8 @@ class DataGrid<RowData>(
 	}
 
 	private fun keyDownHandler(event: KeyEventRo) {
-		if (event.defaultPrevented() || event.handled) return
+		if (event.defaultPrevented()) return
+//		event.handled
 
 		val loc = cellFocusLocation
 		if (loc != null) {
@@ -538,12 +538,12 @@ class DataGrid<RowData>(
 		event.handled = true
 		_cellClicked.dispatch(cell, cellClickedCancel.reset())
 		if (!cellClickedCancel.isCancelled) {
+			event.preventDefault() // Prevent default focus
 			if (isEditing) {
 				commitEditorCellValue()
 				disposeEditorCell()
 			}
 			if (editable && rowFocusEnabledFilter(cell) && cellFocusEnabledFilter(cell)) {
-				event.preventDefault() // Prevent default focus
 				focusCell(cell)
 			}
 		}
@@ -614,7 +614,6 @@ class DataGrid<RowData>(
 		val row = data[sourceIndex]
 		@Suppress("unchecked_cast")
 		val editorCell = col.createEditorCell(this) as DataGridEditorCell<Any?>
-		editorCell.changed.add(::commitEditorCellValue.as1)
 		editorCell.value = col.getCellData(row)
 		editorCellContainer.addElement(editorCell)
 		editorCell.focus()

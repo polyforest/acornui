@@ -25,6 +25,7 @@ import com.acornui.component.layout.algorithm.FlowHAlign
 import com.acornui.component.text.*
 import com.acornui.di.Context
 import com.acornui.di.own
+import com.acornui.input.SoftKeyboardType
 import com.acornui.math.Bounds
 import com.acornui.observe.bind
 import com.acornui.selection.selectAll
@@ -125,6 +126,7 @@ class IntEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorCel
 			_changed.dispatch(this)
 		}
 		input.restrictPattern = RestrictPatterns.INTEGER
+		input.softKeyboardType = SoftKeyboardType.NUMERIC
 	}
 
 	override var value: Int?
@@ -143,6 +145,7 @@ class FloatEditorCell(owner: Context) : NumberEditorCell(owner), DataGridEditorC
 			_changed.dispatch(this)
 		}
 		input.restrictPattern = RestrictPatterns.FLOAT
+		input.softKeyboardType = SoftKeyboardType.DECIMAL
 	}
 
 	override var value: Float?

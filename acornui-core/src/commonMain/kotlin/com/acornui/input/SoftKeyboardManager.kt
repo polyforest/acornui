@@ -25,7 +25,7 @@ import com.acornui.signal.Signal
 
 interface SoftKeyboardManager {
 
-	fun create(): SoftKeyboard
+	fun create(): SoftKeyboard?
 
 	companion object : Context.Key<SoftKeyboardManager>
 }

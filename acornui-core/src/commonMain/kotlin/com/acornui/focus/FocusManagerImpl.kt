@@ -57,12 +57,13 @@ class FocusManagerImpl(private val interactivityManager: InteractivityManager) :
 		get() = focusables.sortedInsertionIndex(focused, matchForwards = false, comparator = ::focusOrderComparator)
 
 	private var isDisposed: Boolean = false
+	private val tabFocusOptions = FocusOptions(scrollToFocused = true, highlight = true)
 
 	private val rootKeyDownHandler = { event: KeyEventRo ->
 		if (!event.defaultPrevented() && event.keyCode == Ascii.TAB) {
 			val previousFocused = focused
-			if (event.shiftKey) focusPrevious(FocusOptions.highlight, FocusInitiator.USER_KEY)
-			else focusNext(FocusOptions.highlight, FocusInitiator.USER_KEY)
+			if (event.shiftKey) focusPrevious(tabFocusOptions, FocusInitiator.USER_KEY)
+			else focusNext(tabFocusOptions, FocusInitiator.USER_KEY)
 			if (previousFocused != focused)
 				event.preventDefault() // Prevent the browser's default tab interactivity if we've handled it.
 		} else if (!event.defaultPrevented() && event.keyCode == Ascii.ESCAPE) {

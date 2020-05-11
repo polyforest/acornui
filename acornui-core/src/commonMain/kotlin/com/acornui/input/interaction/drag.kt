@@ -277,7 +277,6 @@ class DragAttachment(
 
 	private fun clickBlocker(event: ClickEventRo) {
 		event.handled = true
-		event.preventDefault()
 	}
 
 	private fun dispatchDragEvent(type: EventType<DragEventRo>, signal: Signal1<DragEventRo>) {

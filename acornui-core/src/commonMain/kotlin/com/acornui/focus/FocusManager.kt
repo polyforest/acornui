@@ -139,7 +139,7 @@ data class FocusOptions(
 		/**
 		 * If true, scrollable regions should scroll to show the newly focused component in view.
 		 */
-		val scrollToFocused: Boolean = true,
+		val scrollToFocused: Boolean = false,
 
 		/**
 		 * If true, the component should highlight, indicating visually its focus.

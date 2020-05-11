@@ -158,12 +158,6 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	 */
 	var allowTab: Boolean = false
 
-	/**
-	 * When this component is blurred, only dispatch a changed event if the value has changed.
-	 * It will start as true so that the first value commit, even if the value is still "", will be counted.
-	 */
-	private var pendingChange = true
-
 	init {
 		host.focused().add {
 			if (charStyle.selectable && it.initiator != FocusInitiator.USER_POINT)
@@ -334,17 +328,13 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 				val sel = firstSelection
 				val multiline = if (sel == null || sel.min >= contents.textElements.size) null
 				else contents.textElements[sel.min].parentSpan?.textParent?.multiline
+				event.handled = true
 
 				if (multiline ?: flowStyle.multiline) {
-					event.handled = true
 					replaceSelection("\n")
 					dispatchInput()
 				} else {
-					if (_changed.isNotEmpty()) {
-						// Only mark the key event as handled if there are change handlers and there was a change.
-						if (dispatchChanged())
-							event.handled = true
-					}
+					dispatchChanged()
 				}
 			}
 			Ascii.HOME -> cursorHome(event)
@@ -614,15 +604,11 @@ class EditableText(private val host: TextInput) : ContainerImpl(host) {
 	}
 
 	private fun dispatchInput() {
-		pendingChange = true
 		_input.dispatch(host)
 	}
 
-	private fun dispatchChanged(): Boolean {
-		if (!pendingChange) return false
-		pendingChange = false
+	private fun dispatchChanged() {
 		_changed.dispatch(host)
-		return true
 	}
 
 	override fun updateLayout(explicitWidth: Float?, explicitHeight: Float?, out: Bounds) {
