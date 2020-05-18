@@ -35,7 +35,7 @@ class SoftKeyboardManagerImpl(
 		private val root: HTMLElement
 ) : SoftKeyboardManager {
 
-	override fun create(): SoftKeyboard? = null//SoftKeyboardImpl(root, interactivityManager)
+	override fun create(): SoftKeyboard? = SoftKeyboardImpl(root, interactivityManager)
 
 }
 
