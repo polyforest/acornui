@@ -1,9 +1,7 @@
 # <a href="https://www.acornui.com"><img src="http://www.acornui.com/img/acornUiLogoText.svg" height="80" /></a>
 ![](https://github.com/polyforest/acornui/workflows/CI/badge.svg)
 
-Acorn UI is a Kotlin framework for developing rich, cross-platform applications and games.
-
-Acorn UI allows you to develop write once, run anywhere content with excellent hardware-accelerated performance.
+Acorn UI is a Kotlin framework for developing rich, scalable, single-page applications.
 
 Head over to our [Wiki](https://github.com/polyforest/acornui/wiki) to go through our getting started guide, examples, and documentation.
 
@@ -20,5 +18,3 @@ Head over to our [Wiki](https://github.com/polyforest/acornui/wiki) to go throug
 
 ## Attribution
 **Acorn UI is a product of [Poly Forest, LLC](https://polyforest.com)**
-
-Certain parts of Acorn UI, such as the mathematics and OpenGL abstractions were derived from [LibGDX](https://github.com/libgdx/libgdx).   
