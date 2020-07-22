@@ -32,6 +32,7 @@ buildscript {
 }
 
 apply(plugin = "kotlin-sam-with-receiver")
+apply(from = "$rootDir/mavenPublish.gradle.kts")
 
 samWithReceiver {
 	annotation("org.gradle.api.HasImplicitReceiver")
