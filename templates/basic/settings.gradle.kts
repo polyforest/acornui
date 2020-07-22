@@ -1,23 +1,27 @@
-rootProject.name = "basic-acorn-project"
+rootProject.name = "example"
 
 pluginManagement {
 	val acornVersion: String by settings
-	buildscript {
-		repositories {
-			if (acornVersion.endsWith("-SNAPSHOT")) {
-				maven("https://oss.sonatype.org/content/repositories/snapshots")
-				mavenLocal()
+	val kotlinVersion: String by settings
+	repositories {
+		maven("https://dl.bintray.com/kotlin/kotlin-eap")
+		maven("https://oss.sonatype.org/content/repositories/snapshots")
+		gradlePluginPortal()
+		mavenCentral()
+		jcenter()
+		mavenLocal()
+	}
+	resolutionStrategy {
+		eachPlugin {
+			when(requested.id.namespace) {
+				"com.acornui" -> useVersion(acornVersion)
+				"org.jetbrains.kotlin.plugin",
+				"org.jetbrains.kotlin" ->
+					useVersion(kotlinVersion)
 			}
-			mavenCentral()
-			jcenter()
-			maven("https://dl.bintray.com/kotlin/kotlin-eap/")
-		}
-		dependencies {
-			classpath("com.acornui:gradle-app-plugins:$acornVersion")
 		}
 	}
 }
-apply(plugin = "com.acornui.settings")
 
-// Add sub-projects here:
+// Add modules as they are created.  By default, subprojects take on the name of their root directory in gradle.
 include("app")

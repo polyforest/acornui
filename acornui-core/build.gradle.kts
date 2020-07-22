@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,3 @@
  * limitations under the License.
  */
 
-plugins {
-	id("com.acornui.kotlin-mpp")
-}
-
-kotlin {
-	sourceSets {
-		commonMain {
-			dependencies {
-				implementation(project(":acornui-utils"))
-			}
-		}
-		commonTest {
-			dependencies {
-				implementation(project(":acornui-test-utils"))
-			}
-		}
-	}
-}
