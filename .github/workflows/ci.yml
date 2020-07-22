@@ -40,8 +40,8 @@ jobs:
           target: "~/artifacts.acornui.com/templates/"
           strip_components: 2
       - name: Clear Acornui.com Version Cache
-          uses: fjogeleit/http-request-action@master
-          with:
-            url: "https://www.acornui.com/clearcache.php"
-            method: "POST"
-            username: ${{ secrets.BANDBOX_FTP_USERNAME }}
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: "https://www.acornui.com/clearcache.php"
+          method: "POST"
+          username: ${{ secrets.BANDBOX_FTP_USERNAME }}
