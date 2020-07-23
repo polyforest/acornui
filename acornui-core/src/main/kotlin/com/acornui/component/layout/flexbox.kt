@@ -34,10 +34,10 @@ import kotlin.contracts.contract
 
 object LayoutStyles {
 
-	val hGroup = StyleTag("hFlex")
-	val vGroup = StyleTag("vFlex")
-	val hFlowGroup = StyleTag("hFlowFlex")
-	val vFlowGroup = StyleTag("vFlowFlex")
+	val hGroup = StyleTag("hGroup")
+	val vGroup = StyleTag("vGroup")
+	val hFlowGroup = StyleTag("hFlowGroup")
+	val vFlowGroup = StyleTag("vFlowGroup")
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
@@ -87,8 +87,8 @@ $hFlowGroup > *, $vFlowGroup > * {
 }
 
 $vGroup, $hGroup, $hFlowGroup, $vFlowGroup {
-	overflow: hidden;
-	padding: ${cssVar(Theme::gap)};
+	
+	padding: ${cssVar(Theme::padding)};
 }
 
 		"""
