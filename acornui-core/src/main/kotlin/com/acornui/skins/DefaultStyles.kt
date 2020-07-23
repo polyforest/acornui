@@ -30,7 +30,6 @@ object DefaultStyles {
 		addCssToHead("""
 $s * {
 	box-sizing: border-box;
-	margin: 0;
 }
 
 $s ul {
@@ -85,6 +84,6 @@ $s ul li {
 	background-color: #666;
 }*/
 
-		""")
+		""", priority = -1.0)
 	}
 }
