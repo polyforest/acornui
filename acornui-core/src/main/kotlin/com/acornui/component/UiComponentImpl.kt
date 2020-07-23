@@ -33,6 +33,7 @@ import com.acornui.di.ContextImpl
 import com.acornui.dom.createElement
 import com.acornui.properties.afterChange
 import org.intellij.lang.annotations.Language
+import org.w3c.dom.DOMStringMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
@@ -86,6 +87,13 @@ open class UiComponentImpl<T : HTMLElement>(
 		set(value) {
 			dom.innerHTML = value
 		}
+
+	final override val dataset: DOMStringMap
+		get() = dom.dataset
+
+	final override fun removeDataAttribute(name: String) {
+		dom.removeAttribute("data-$name")
+	}
 
 	//-----------------------------------------------
 	// Layout properties
@@ -156,6 +164,10 @@ open class UiComponentImpl<T : HTMLElement>(
 
 	final override fun toggleClass(styleTag: StyleTag) {
 		dom.classList.toggle(styleTag.className)
+	}
+
+	final override fun containsClass(styleTag: StyleTag): Boolean {
+		return dom.classList.contains(styleTag.className)
 	}
 
 	//-----------------------------------------------

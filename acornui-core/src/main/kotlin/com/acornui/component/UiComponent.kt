@@ -31,6 +31,7 @@ import com.acornui.di.Context
 import com.acornui.dom.remove
 import com.acornui.signal.WithEventTarget
 import org.intellij.lang.annotations.Language
+import org.w3c.dom.DOMStringMap
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.EventTarget
@@ -50,6 +51,8 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 
 	fun toggleClass(styleTag: StyleTag)
 
+	fun containsClass(styleTag: StyleTag): Boolean
+
 	/**
 	 * A unique string id for this component.
 	 */
@@ -61,6 +64,15 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	 * The parent on the display graph.
 	 */
 	override val parent: WithNode?
+
+	val dataset: DOMStringMap
+
+	/**
+	 * Removes a property from [dataset].
+	 * This is equivalent to:
+	 * `dom.removeAttribute("data-$name")`
+	 */
+	fun removeDataAttribute(name: String)
 }
 
 private val cssPropertyRegex = Regex("""([a-zA-Z\-]+):(.*);""")
