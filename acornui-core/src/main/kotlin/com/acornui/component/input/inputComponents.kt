@@ -406,9 +406,18 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 	 */
 	val toggledChanged = signal<Unit>()
 
-	var toggled: Boolean by afterChange(false) {
-		toggleClass(CommonStyleTags.toggled)
-	}
+	/**
+	 * Returns true if the dom contains the class [CommonStyleTags.toggled].
+	 */
+	var toggled: Boolean
+		get() = containsClass(CommonStyleTags.toggled)
+		set(value) {
+			if (value == toggled) return
+			if (value)
+				addClass(CommonStyleTags.toggled)
+			else
+				removeClass(CommonStyleTags.toggled)
+		}
 
 	companion object {
 
