@@ -61,6 +61,8 @@ $s ul li {
 
 ::-webkit-scrollbar-button {
 	background-color: #666;
+	height: 0;
+	width: 0;
 }
 
 ::-webkit-scrollbar-track {
@@ -68,7 +70,7 @@ $s ul li {
 }
 
 ::-webkit-scrollbar-track-piece {
-	background-color: #000;
+	background-color: #0008;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -79,10 +81,6 @@ $s ul li {
 ::-webkit-scrollbar-corner {
 	background-color: #646464;
 }
-
-/*::-webkit-resizer {
-	background-color: #666;
-}*/
 
 		""", priority = -1.0)
 	}

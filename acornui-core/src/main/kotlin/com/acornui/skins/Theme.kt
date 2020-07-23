@@ -40,7 +40,7 @@ data class Theme(
 	/**
 	 * The focus highlight color.
 	 */
-	val focus: String = css("2px rgba(49, 104, 254, .6)"),
+	val focus: String = css("2px rgba(49, 104, 254, .8)"),
 
 	/**
 	 * The accent for components when toggled/checked.
