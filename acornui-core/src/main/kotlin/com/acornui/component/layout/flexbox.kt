@@ -19,6 +19,7 @@ package com.acornui.component.layout
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
 import com.acornui.component.WithNode
+import com.acornui.component.layout.LayoutStyles.grid
 import com.acornui.component.layout.LayoutStyles.hFlowGroup
 import com.acornui.component.layout.LayoutStyles.hGroup
 import com.acornui.component.layout.LayoutStyles.vGroup
@@ -38,6 +39,7 @@ object LayoutStyles {
 	val vGroup = StyleTag("vGroup")
 	val hFlowGroup = StyleTag("hFlowGroup")
 	val vFlowGroup = StyleTag("vFlowGroup")
+	val grid = StyleTag("grid")
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
@@ -86,8 +88,13 @@ $hFlowGroup > *, $vFlowGroup > * {
 	margin: 0 ${cssVar(Theme::gap)} ${cssVar(Theme::gap)} 0;
 }
 
-$vGroup, $hGroup, $hFlowGroup, $vFlowGroup {
-	
+$grid {
+	display: inline-grid;
+	column-gap: ${cssVar(Theme::gap)};
+  	row-gap: ${cssVar(Theme::gap)};
+}
+
+$vGroup, $hGroup, $hFlowGroup, $vFlowGroup, $grid {
 	padding: ${cssVar(Theme::padding)};
 }
 
@@ -164,6 +171,14 @@ inline fun Context.vFlowGroup(init: ComponentInit<FlowGroup> = {}): FlowGroup {
 	return FlowGroup(this).apply {
 		contents.removeClass(hFlowGroup)
 		contents.addClass(vFlowGroup)
+		init()
+	}
+}
+
+inline fun Context.grid(init: ComponentInit<DivComponent> = {}): DivComponent {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return DivComponent(this).apply {
+		addClass(grid)
 		init()
 	}
 }
