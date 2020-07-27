@@ -56,7 +56,7 @@ open class StageImpl(owner: Context) : Stage, DivComponent(owner) {
 		init {
 			addCssToHead("""
 $styleTag *:focus {
-	box-shadow: 0 0 0 ${cssVar(Theme::focus)};
+	box-shadow: 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
 	outline: none;
 	transition: box-shadow 0.2s ease-in-out;
 }

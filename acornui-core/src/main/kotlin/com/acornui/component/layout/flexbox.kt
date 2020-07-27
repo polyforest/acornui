@@ -72,10 +72,6 @@ $grid {
   	row-gap: ${cssVar(Theme::gap)};
 }
 
-$vGroup, $hGroup, $grid {
-	padding: ${cssVar(Theme::padding)};
-}
-
 		"""
 		)
 	}
@@ -126,13 +122,11 @@ open class FlowGroup(owner: Context) : DivComponent(owner) {
 			addCssToHead("""
 $styleTag {
 	display: inline-flex;
-	overflow: hidden;
 }				
 
 $contentsTag {
 	width: inherit;
 	height: inherit;
-	padding: ${cssVar(Theme::padding)};
 	display: inline-flex;
 	flex-wrap: wrap;
 	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;

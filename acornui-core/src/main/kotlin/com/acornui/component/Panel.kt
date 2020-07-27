@@ -36,6 +36,7 @@ $styleTag {
 	background: ${cssVar(Theme::panelBackground)};
 	box-shadow: ${cssVar(Theme::panelShadow)};
 	border-radius: ${cssVar(Theme::borderRadius)};
+	padding: ${cssVar(Theme::padding)};
 }			
 		""")
 	}

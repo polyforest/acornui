@@ -40,7 +40,9 @@ data class Theme(
 	/**
 	 * The focus highlight color.
 	 */
-	val focus: String = css("2px rgba(49, 104, 254, .8)"),
+	val focus: String = css("rgba(49, 104, 254, .8)"),
+
+	val focusThickness: String = css("2px"),
 
 	/**
 	 * The accent for components when toggled/checked.
@@ -165,6 +167,7 @@ data class Theme(
 			  ${cssProp(::textColor)}
 			  
 			  ${cssProp(::focus)}
+			  ${cssProp(::focusThickness)}
 			  ${cssProp(::toggled)}
 			  ${cssProp(::toggledInner)}
 			  ${cssProp(::toggledInnerDisabled)}

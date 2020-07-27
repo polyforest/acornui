@@ -198,7 +198,8 @@ $tabsStyle {
 }
 
 $tabsStyle *:focus {
-    box-shadow: inset 0 0 0 ${cssVar(Theme::focus)};
+    border-color: ${cssVar(Theme::focus)};
+	box-shadow: inset 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
 }
 
 $tabsStyle > div {

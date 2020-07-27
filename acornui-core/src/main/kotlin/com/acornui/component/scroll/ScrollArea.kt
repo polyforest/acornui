@@ -22,11 +22,13 @@ import com.acornui.Disposable
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
 import com.acornui.component.style.StyleTag
+import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
 import com.acornui.input.scrolled
 import com.acornui.own
 import com.acornui.signal.signal
+import com.acornui.skins.Theme
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -120,6 +122,7 @@ open class ScrollArea(
 			addCssToHead("""
 $styleTag {
 	overflow: auto;
+	padding: ${cssVar(Theme::padding)};
 }
 			""")
 		}
