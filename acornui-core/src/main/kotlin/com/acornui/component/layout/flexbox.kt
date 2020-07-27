@@ -66,35 +66,13 @@ $hGroup > *:not(:last-child) {
 	margin-right: ${cssVar(Theme::gap)}
 }
 
-$hFlowGroup, $vFlowGroup {
-	display: inline-flex;
-	flex-wrap: wrap;
-	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
-}
-
-$hFlowGroup {
-	flex-direction: row;
-	width: 100%;
-	align-items: baseline;
-}
-
-$vFlowGroup {
-	flex-direction: column;
-	height: 100%;
-	align-items: self-start;
-}
-
-$hFlowGroup > *, $vFlowGroup > * {
-	margin: 0 ${cssVar(Theme::gap)} ${cssVar(Theme::gap)} 0;
-}
-
 $grid {
 	display: inline-grid;
 	column-gap: ${cssVar(Theme::gap)};
   	row-gap: ${cssVar(Theme::gap)};
 }
 
-$vGroup, $hGroup, $hFlowGroup, $vFlowGroup, $grid {
+$vGroup, $hGroup, $grid {
 	padding: ${cssVar(Theme::padding)};
 }
 
@@ -124,8 +102,7 @@ inline fun Context.hGroup(init: ComponentInit<DivComponent> = {}): DivComponent 
  */
 open class FlowGroup(owner: Context) : DivComponent(owner) {
 
-	val contents = addChild(div {
-		addClass(hFlowGroup)
+	private val contents = addChild(div {
 		addClass(contentsTag)
 	})
 
@@ -153,7 +130,28 @@ $styleTag {
 }				
 
 $contentsTag {
+	width: inherit;
+	height: inherit;
+	padding: ${cssVar(Theme::padding)};
+	display: inline-flex;
+	flex-wrap: wrap;
+	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
 }
+
+$contentsTag > * {
+	margin: 0 ${cssVar(Theme::gap)} ${cssVar(Theme::gap)} 0;
+}
+
+$hFlowGroup > $contentsTag {
+	flex-direction: row;
+	align-items: baseline;
+}
+
+$vFlowGroup > $contentsTag {
+	flex-direction: column;
+	align-items: self-start;
+}
+
 			""")
 		}
 	}
@@ -162,6 +160,7 @@ $contentsTag {
 inline fun Context.hFlowGroup(init: ComponentInit<FlowGroup> = {}): FlowGroup {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FlowGroup(this).apply {
+		addClass(hFlowGroup)
 		init()
 	}
 }
@@ -169,8 +168,7 @@ inline fun Context.hFlowGroup(init: ComponentInit<FlowGroup> = {}): FlowGroup {
 inline fun Context.vFlowGroup(init: ComponentInit<FlowGroup> = {}): FlowGroup {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FlowGroup(this).apply {
-		contents.removeClass(hFlowGroup)
-		contents.addClass(vFlowGroup)
+		addClass(vFlowGroup)
 		init()
 	}
 }

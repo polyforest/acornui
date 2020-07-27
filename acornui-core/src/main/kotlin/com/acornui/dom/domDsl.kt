@@ -18,16 +18,11 @@ package com.acornui.dom
 
 import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponent
-import com.acornui.css.toLengthOrNull
-import com.acornui.string.toHyphenCase
 import org.intellij.lang.annotations.Language
 import org.w3c.dom.*
 import kotlin.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 inline fun <reified T : Element> createElement(localName: String, init: ComponentInit<T> = {}): T {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }

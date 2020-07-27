@@ -18,8 +18,11 @@ package com.acornui.dom
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
+import com.acornui.component.WithNode
+import com.acornui.component.asWithNode
 import com.acornui.di.Context
 import org.w3c.dom.*
+import kotlin.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -47,6 +50,11 @@ inline fun Context.br(init: ComponentInit<UiComponentImpl<HTMLBRElement>> = {}):
 	return component("br", init)
 }
 
+inline fun Context.hr(init: ComponentInit<UiComponentImpl<HTMLHRElement>> = {}): UiComponentImpl<HTMLHRElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("hr", init)
+}
+
 inline fun Context.ul(init: ComponentInit<UiComponentImpl<HTMLUListElement>> = {}): UiComponentImpl<HTMLUListElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("ul", init)
@@ -66,3 +74,9 @@ inline fun Context.form(init: ComponentInit<UiComponentImpl<HTMLFormElement>> = 
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("form", init)
 }
+
+/**
+ * Creates a [DocumentFragment].
+ */
+inline fun fragment(init: ComponentInit<WithNode> = {}): WithNode =
+	document.createDocumentFragment().asWithNode().apply(init)

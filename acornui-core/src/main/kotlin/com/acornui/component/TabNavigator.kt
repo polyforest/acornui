@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate", "unused", "CssReplaceWithShorthandSafely")
+@file:Suppress("PropertyName", "MemberVisibilityCanBePrivate", "unused", "CssReplaceWithShorthandSafely",
+	"CssInvalidPropertyValue"
+)
 
 package com.acornui.component
 
@@ -191,7 +193,12 @@ $contentsStyle {
 $tabsStyle {
 	flex-grow: 0;
 	padding: 0;
+	clip-path: polygon(-10% -10%, 110% -10%, 110% 100%, -10% 100%);
 	--${Theme::gap.name}: 0;
+}
+
+$tabsStyle *:focus {
+    box-shadow: inset 0 0 0 ${cssVar(Theme::focus)};
 }
 
 $tabsStyle > div {

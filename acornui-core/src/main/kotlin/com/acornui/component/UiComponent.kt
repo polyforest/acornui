@@ -108,12 +108,14 @@ var Node.host: WithNode?
 fun Node.asWithNode(): WithNode {
 	val h = asDynamic().__host
 	if (h != null) return h
-	val c = WithNodeImpl(this)
-	asDynamic().__host = c
-	return c
+	return WithNodeImpl(this)
 }
 
 class WithNodeImpl(override val dom: Node) : WithNode, DisposableBase() {
+
+	init {
+		dom.asDynamic().__host = this
+	}
 
 	override val parent: WithNode?
 		get() = dom.parentNode?.asWithNode()
