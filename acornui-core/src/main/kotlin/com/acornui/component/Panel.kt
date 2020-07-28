@@ -33,11 +33,26 @@ object Panel {
 
 		addCssToHead("""
 $styleTag {
+	color: ${cssVar(Theme::panelTextColor)};
 	background: ${cssVar(Theme::panelBackground)};
 	box-shadow: ${cssVar(Theme::panelShadow)};
 	border-radius: ${cssVar(Theme::borderRadius)};
 	padding: ${cssVar(Theme::padding)};
-}			
+	
+	--scrollbarButtonColor: ${cssVar(Theme::panelScrollbarButtonColor)};
+	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
+	--scrollbarCornerColor: ${cssVar(Theme::panelScrollbarCornerColor)};
+}
+
+$styleTag ::-webkit-scrollbar-thumb {
+	border-radius: ${cssVar(Theme::borderRadius)};
+}
+
+/* ScrollBar Style */
+
+
+
+
 		""")
 	}
 }

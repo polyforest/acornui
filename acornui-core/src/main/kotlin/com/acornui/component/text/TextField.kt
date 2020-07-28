@@ -19,11 +19,8 @@ package com.acornui.component.text
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
 import com.acornui.component.Labelable
-import com.acornui.component.UiComponentImpl
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
-import com.acornui.dom.createElement
-import org.w3c.dom.HTMLDivElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -44,7 +41,7 @@ interface TextField : Labelable {
 		}
 }
 
-class TextFieldImpl(owner: Context) : TextField, UiComponentImpl<HTMLDivElement>(owner, createElement("span")) {
+class TextFieldImpl(owner: Context) : TextField, DivComponent(owner) {
 
 	init {
 		addClass(styleTag)

@@ -45,41 +45,36 @@ $s ul li {
 /* ScrollBar Style */
 
 * {
-	scrollbar-face-color: #646464;
-	scrollbar-base-color: #646464;
-	scrollbar-3dlight-color: #646464;
-	scrollbar-highlight-color: #646464;
-	scrollbar-track-color: #000;
-	scrollbar-arrow-color: #000;
-	scrollbar-shadow-color: #646464;
+	scrollbar-face-color: ${cssVar(Theme::scrollbarButtonColor)};
+	scrollbar-base-color: ${cssVar(Theme::scrollbarCornerColor)};
+	scrollbar-3dlight-color: ${cssVar(Theme::scrollbarButtonColor)};
+	scrollbar-highlight-color: ${cssVar(Theme::scrollbarButtonColor)};
+	scrollbar-track-color: ${cssVar(Theme::scrollbarTrackColor)};
+	scrollbar-arrow-color: ${cssVar(Theme::scrollbarButtonColor)};
+	scrollbar-shadow-color: ${cssVar(Theme::scrollbarButtonColor)};
 }
 
 ::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
+	width: ${cssVar(Theme::scrollbarThickness)};
+	height: ${cssVar(Theme::scrollbarThickness)};
 }
 
 ::-webkit-scrollbar-button {
-	background-color: #666;
+	background-color: ${cssVar(Theme::scrollbarButtonColor)};
 	height: 0;
 	width: 0;
 }
 
 ::-webkit-scrollbar-track {
-	background-color: #646464;
-}
-
-::-webkit-scrollbar-track-piece {
-	background-color: #0008;
+	background-color: ${cssVar(Theme::scrollbarTrackColor)};
 }
 
 ::-webkit-scrollbar-thumb {
-	height: 50px;
-	background-color: #666;
+	background-color: ${cssVar(Theme::scrollbarButtonColor)};
 }
 
 ::-webkit-scrollbar-corner {
-	background-color: #646464;
+	background-color: ${cssVar(Theme::scrollbarCornerColor)};
 }
 
 		""", priority = -1.0)

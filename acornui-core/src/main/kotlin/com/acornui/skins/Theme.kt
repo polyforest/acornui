@@ -35,7 +35,12 @@ data class Theme(
 	/**
 	 * The default color of text.
 	 */
-	val textColor: String = css("#222"),
+	val textColor: String = css("#ddd"),
+
+	val scrollbarTrackColor: String = css("#111"),
+	val scrollbarButtonColor: String = css("#666"),
+	val scrollbarCornerColor: String = css("#333"),
+	val scrollbarThickness: String = css("8px"),
 
 	/**
 	 * The focus highlight color.
@@ -114,7 +119,7 @@ data class Theme(
 	/**
 	 * The background for input components.
 	 */
-	val inputBackground: String = css("rgba(255,255,255,0.9)"),
+	val inputBackground: String = css("#fffe"),
 
 	/**
 	 * The text color for input components. Default is same as the button text color.
@@ -149,12 +154,20 @@ data class Theme(
 	/**
 	 * The background of a panel.
 	 */
-	val panelBackground: String = css("rgb(234 234 234 / 90%)"),
+	val panelBackground: String = css("#ddd"),
+
+	val panelTextColor: String = css("#222"),
+	val panelScrollbarTrackColor: String = css("transparent"),
+	val panelScrollbarButtonColor: String = css("#666"),
+	val panelScrollbarCornerColor: String = css("transparent"),
 
 	/**
 	 * The box-shadow for panels.
 	 */
-	val panelShadow: String = css("2px 2px 5px rgba(0, 0, 0, 0.4)")
+	val panelShadow: String = css("2px 2px 5px rgba(0, 0, 0, 0.4)"),
+
+	val dataRowEvenBackground: String = css("#eeef"),
+	val dataRowOddBackground: String = css("#ddde")
 
 ) {
 
@@ -165,6 +178,10 @@ data class Theme(
 
 			  ${cssProp(::stageBackground)}
 			  ${cssProp(::textColor)}
+			  ${cssProp(::scrollbarTrackColor)}
+			  ${cssProp(::scrollbarButtonColor)}
+			  ${cssProp(::scrollbarCornerColor)}
+			  ${cssProp(::scrollbarThickness)}
 			  
 			  ${cssProp(::focus)}
 			  ${cssProp(::focusThickness)}
@@ -205,7 +222,16 @@ data class Theme(
 			  ${cssProp(::componentShadow)}
 			  
 			  ${cssProp(::panelBackground)}
+			  ${cssProp(::panelTextColor)}
+			  ${cssProp(::panelScrollbarTrackColor)}
+			  ${cssProp(::panelScrollbarButtonColor)}
+			  ${cssProp(::panelScrollbarCornerColor)}
 			  ${cssProp(::panelShadow)}
+			  
+			  ${cssProp(::dataRowEvenBackground)}
+			  ${cssProp(::dataRowOddBackground)}
+
+			  
 			}
 		""".trimIndent()
 	}
@@ -246,5 +272,8 @@ val darkTheme = Theme(
 
 	panelBackground = css("rgba(30,51,88,0.39)"),
 
-	panelShadow = css("2px 2px 5px rgba(0, 0, 0, 0.9)")
+	panelShadow = css("2px 2px 5px rgba(0, 0, 0, 0.9)"),
+
+	dataRowEvenBackground = css("#242424"),
+	dataRowOddBackground = css("#222")
 )

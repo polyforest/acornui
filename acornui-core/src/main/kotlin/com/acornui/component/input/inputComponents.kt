@@ -484,7 +484,8 @@ $styleTag${CommonStyleTags.disabled} {
 	opacity: ${cssVar(Theme::disabledOpacity)};
 }
 
-$styleTag > span {
+$styleTag > div {
+	overflow: hidden;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
