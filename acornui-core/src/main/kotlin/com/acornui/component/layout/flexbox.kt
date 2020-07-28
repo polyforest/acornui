@@ -47,7 +47,7 @@ object LayoutStyles {
 			"""
 			
 $vGroup {
-	display: inline-flex;
+	display: flex;
 	flex-direction: column;
 	align-items: self-start;
 }
@@ -57,7 +57,7 @@ $vGroup > *:not(:last-child) {
 }
 
 $hGroup {
-	display: inline-flex;
+	display: flex;
 	flex-direction: row;
 	align-items: baseline;
 }
@@ -67,7 +67,7 @@ $hGroup > *:not(:last-child) {
 }
 
 $grid {
-	display: inline-grid;
+	display: grid;
 	column-gap: ${cssVar(Theme::gap)};
   	row-gap: ${cssVar(Theme::gap)};
 }
@@ -121,14 +121,14 @@ open class FlowGroup(owner: Context) : DivComponent(owner) {
 		init {
 			addCssToHead("""
 $styleTag {
-	display: inline-flex;
+	display: flex;
 }				
 
 $contentsTag {
+	display: flex;
+	flex-wrap: wrap;
 	width: inherit;
 	height: inherit;
-	display: inline-flex;
-	flex-wrap: wrap;
 	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
 }
 
@@ -139,11 +139,13 @@ $contentsTag > * {
 $hFlowGroup > $contentsTag {
 	flex-direction: row;
 	align-items: baseline;
+	width: 100%;
 }
 
 $vFlowGroup > $contentsTag {
 	flex-direction: column;
 	align-items: self-start;
+	height: 100%;
 }
 
 			""")
