@@ -173,4 +173,35 @@ val WithEventTarget.changed
 val WithEventTarget.input
 	get() = event<InputEvent>("input")
 
+/**
+ * The focus event fires when an element has received focus. The main difference between this event and [focusin] is that
+ * [focusin] bubbles while focus does not.
+ */
+val WithEventTarget.focus
+	get() = event<FocusEvent>("focus")
+
+/**
+ * The focusin event fires when an element is about to receive focus. The main difference between this event and [focus]
+ * is that focusin bubbles while [focus] does not.
+ */
+val WithEventTarget.focusin
+	get() = event<FocusEvent>("focusin")
+
+/**
+ * The blur event fires when an element has lost focus. The main difference between this event and [focusout] is that
+ * [focusout] bubbles while blur does not.
+ */
+val WithEventTarget.blur
+	get() = event<FocusEvent>("blur")
+
+/**
+ * The focusout event fires when an element is about to lose focus. The main difference between this event and [blur] is
+ * that focusout bubbles while [blur] does not.
+ */
+val WithEventTarget.focusout
+	get() = event<FocusEvent>("focusout")
+
+
+
+
 // TODO: Clipboard
