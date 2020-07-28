@@ -24,6 +24,10 @@
 
 package com.acornui
 
+import com.acornui.component.UiComponent
+import com.acornui.function.as1
+import com.acornui.signal.Signal
+import com.acornui.signal.SignalSubscription
 import org.w3c.dom.DOMRectReadOnly
 import org.w3c.dom.Element
 
@@ -59,3 +63,36 @@ external interface ResizeObserverEntryBoxSize {
 	var blockSize: Number
 	var inlineSize: Number
 }
+
+/**
+ * Creates a [ResizeObserver] and provides a [Signal] interface to it.
+ * If this component is disposed, the observer will be disconnected.
+ */
+val UiComponent.resize: Signal<Array<ResizeObserverEntry>>
+	get() = object : Signal<Array<ResizeObserverEntry>> {
+		override fun listen(isOnce: Boolean, handler: (Array<ResizeObserverEntry>) -> Unit): SignalSubscription {
+			return object : SignalSubscription {
+
+				override val isOnce: Boolean = isOnce
+				override var isPaused: Boolean = false
+				private val disposedWatch: Disposable
+
+				private val observer = ResizeObserver { entries, observer ->
+					if (!isPaused)
+						handler(entries)
+					if (isOnce)
+						observer.disconnect()
+				}
+
+				init {
+					observer.observe(this@resize.dom)
+					disposedWatch = disposed.listen(::dispose.as1)
+				}
+
+				override fun dispose() {
+					disposedWatch.dispose()
+					observer.disconnect()
+				}
+			}
+		}
+	}
