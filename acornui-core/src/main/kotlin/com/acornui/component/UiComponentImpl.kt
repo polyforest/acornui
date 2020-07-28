@@ -96,6 +96,17 @@ open class UiComponentImpl<T : HTMLElement>(
 	}
 
 	//-----------------------------------------------
+
+	var tabIndex: Int?
+		get() = if (dom.hasAttribute("tabindex")) dom.tabIndex else null
+		set(value) {
+			if (value == null)
+				dom.removeAttribute("tabindex")
+			else
+				dom.tabIndex = value
+		}
+
+	//-----------------------------------------------
 	// Layout properties
 	//-----------------------------------------------
 
