@@ -52,6 +52,10 @@ $s ul li {
 	scrollbar-track-color: ${cssVar(Theme::scrollbarTrackColor)};
 	scrollbar-arrow-color: ${cssVar(Theme::scrollbarButtonColor)};
 	scrollbar-shadow-color: ${cssVar(Theme::scrollbarButtonColor)};
+	
+	/* Firefox */
+	scrollbar-color: ${cssVar(Theme::scrollbarButtonColor)} ${cssVar(Theme::scrollbarTrackColor)} ${cssVar(Theme::scrollbarButtonColor)} ;
+	scrollbar-width: thin;
 }
 
 ::-webkit-scrollbar {
