@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.component.layout.FlowGroup
 import com.acornui.component.style.StyleTag
 import com.acornui.css.cssVar
 import com.acornui.di.Context
@@ -25,19 +24,27 @@ import com.acornui.skins.Theme
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-object Panel {
-
-	val styleTag = StyleTag("Panel")
+open class Panel(owner: Context) : DivComponent(owner) {
 
 	init {
+		addClass(styleTag)
+	}
 
-		addCssToHead("""
+	companion object {
+
+		val styleTag = StyleTag("Panel")
+
+		init {
+			addCssToHead("""
 $styleTag {
 	color: ${cssVar(Theme::panelTextColor)};
 	background: ${cssVar(Theme::panelBackground)};
 	box-shadow: ${cssVar(Theme::panelShadow)};
 	border-radius: ${cssVar(Theme::borderRadius)};
 	padding: ${cssVar(Theme::padding)};
+	overflow: hidden;
+	min-width: min-content;
+	min-height: min-content;
 	
 	--scrollbarButtonColor: ${cssVar(Theme::panelScrollbarButtonColor)};
 	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
@@ -47,23 +54,17 @@ $styleTag {
 $styleTag ::-webkit-scrollbar-thumb {
 	border-radius: ${cssVar(Theme::borderRadius)};
 }
-
-/* ScrollBar Style */
-
-
-
-
-		""")
+			""")
+		}
 	}
 }
 
 /**
  * Creates a FlowGroup with Panel styling.
  */
-inline fun Context.panel(init: ComponentInit<FlowGroup> = {}): FlowGroup {
+inline fun Context.panel(init: ComponentInit<Panel> = {}): Panel {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return FlowGroup(this).apply {
-		addClass(Panel.styleTag)
+	return Panel(this).apply {
 		init()
 	}
 }
