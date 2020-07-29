@@ -74,11 +74,6 @@ fun <E, T> recycle(
 	}
 }
 
-@Deprecated("Use mapToRecycled", ReplaceWith("data.mapToRecycled(other, factory, compare)"))
-fun <E1, E2> recycle(data: List<E1>?, other: MutableList<E2>, factory: (E1) -> E2, compare: (E2, E1) -> Boolean) {
-	data.mapToRecycled(other, factory, compare)
-}
-
 /**
  * Recycles elements from this list into [other] list. It is similar to [List.mapTo] except reuses elements that can
  * be found as a match using [compare].

@@ -96,6 +96,7 @@ open class TabNavigator(owner: Context) : DivComponent(owner) {
 	 * ```
 	 */
 	protected val contents = addChild(div {
+		addClass(Panel.panelColorsStyle)
 		addClass(contentsStyle)
 	})
 
@@ -183,11 +184,8 @@ $styleTag {
 $contentsStyle {
 	padding: ${cssVar(Theme::padding)};
 	flex-grow: 1;
-	background: ${cssVar(Theme::panelBackground)};
-	border-radius: ${cssVar(Theme::borderRadius)};
-	border-top-left-radius: 0;
 	overflow: auto;
-	box-shadow: ${cssVar(Theme::panelShadow)};
+	border-top-left-radius: 0;
 }
 
 $tabsStyle {

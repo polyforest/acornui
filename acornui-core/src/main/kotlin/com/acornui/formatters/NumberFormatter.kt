@@ -24,7 +24,7 @@ import kotlin.properties.ReadWriteProperty
 /**
  * This class formats numbers into localized string representations.
  */
-class NumberFormatter() : StringFormatter<Number?>, StringParser<Double> {
+class NumberFormatter : StringFormatter<Number?>, StringParser<Double> {
 
 	var type by watched(NumberFormatType.NUMBER)
 

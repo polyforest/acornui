@@ -28,30 +28,35 @@ open class Panel(owner: Context) : DivComponent(owner) {
 
 	init {
 		addClass(styleTag)
+		addClass(panelColorsStyle)
 	}
 
 	companion object {
 
 		val styleTag = StyleTag("Panel")
+		val panelColorsStyle = StyleTag("Panel_colors")
 
 		init {
 			addCssToHead("""
 $styleTag {
-	color: ${cssVar(Theme::panelTextColor)};
-	background: ${cssVar(Theme::panelBackground)};
-	box-shadow: ${cssVar(Theme::panelShadow)};
-	border-radius: ${cssVar(Theme::borderRadius)};
 	padding: ${cssVar(Theme::padding)};
 	overflow: hidden;
 	min-width: min-content;
 	min-height: min-content;
-	
+}
+
+$panelColorsStyle {
+	color: ${cssVar(Theme::panelTextColor)};
+	background: ${cssVar(Theme::panelBackground)};
+	box-shadow: ${cssVar(Theme::panelShadow)};
+	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
+	border-radius: ${cssVar(Theme::borderRadius)};
 	--scrollbarButtonColor: ${cssVar(Theme::panelScrollbarButtonColor)};
 	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
 	--scrollbarCornerColor: ${cssVar(Theme::panelScrollbarCornerColor)};
 }
 
-$styleTag ::-webkit-scrollbar-thumb {
+$panelColorsStyle ::-webkit-scrollbar-thumb {
 	border-radius: ${cssVar(Theme::borderRadius)};
 }
 			""")
