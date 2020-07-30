@@ -1,7 +1,7 @@
+import com.acornui.build.plugins.produceExecutable
+
 plugins {
-	kotlin("js")
-	kotlin("plugin.serialization")
 	id("com.acornui.js")
 }
 
-kotlin.js.browser.binaries.executable()
+produceExecutable()
