@@ -505,40 +505,6 @@ inline fun <E> List<E>.sumByDouble(startIndex: Int = 0, lastIndex: Int = this.la
 	return sum
 }
 
-///**
-// * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [List.size] (exclusive).
-// *
-// * The returned list is backed by this list.
-// *
-// * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or greater than [List.size].
-// */
-//fun <E> ImmutableList<E>.after(fromIndex: Int): ImmutableList<E> = subList(fromIndex, size)
-//
-///**
-// * [ImmutableList.after], but with fromIndex clamped from 0 to size.
-// */
-//fun <E> ImmutableList<E>.afterSafe(fromIndex: Int): ImmutableList<E> = subList(clamp(fromIndex, 0, size), size)
-//
-///**
-// * [ImmutableList.subList], but the indices will be clamped to this list's bounds.
-// *
-// * @throws IndexOutOfBoundsException if [fromIndex] is greater than [toIndex].
-// */
-//fun <E> ImmutableList<E>.subListSafe(fromIndex: Int, toIndex: Int): ImmutableList<E> = subList(clamp(0, fromIndex, size), clamp(toIndex, 0, size))
-//
-//infix fun <E> ImmutableList<E>.concat(other: ImmutableList<E>): PersistentList<E> =
-//	toPersistentList().addAll(other)
-//
-//infix fun <E> ImmutableList<E>.repeat(n: Int): PersistentList<E> {
-//	if (n == 0) return persistentListOf()
-//	if (n == 1) return toPersistentList()
-//	var s = toPersistentList()
-//	for (i in 1 until n) {
-//		s = this concat s
-//	}
-//	return s
-//}
-
 /**
  * Modifies this list to become the new size.
  */

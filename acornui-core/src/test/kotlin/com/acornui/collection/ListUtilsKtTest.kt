@@ -17,7 +17,6 @@
 package com.acornui.collection
 
 import com.acornui.test.assertListEquals
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -267,14 +266,6 @@ class ListUtilsKtTest {
         assertListEquals(list, list.copy())
 		assertNotSame(list, list.copy())
         assertListEquals(emptyList<Int>(), emptyList<Int>().copy())
-	}
-
-	@Test
-	fun repeat() {
-		assertListEquals(persistentListOf(), persistentListOf(1, 2, 3).repeat(0))
-		assertListEquals( persistentListOf(1, 2, 3), persistentListOf(1, 2, 3).repeat(1))
-		assertListEquals( persistentListOf(1, 2, 3, 1, 2, 3), persistentListOf(1, 2, 3).repeat(2))
-		assertListEquals( persistentListOf(1, 2, 3, 1, 2, 3, 1, 2, 3), persistentListOf(1, 2, 3).repeat(3))
 	}
 
 }
