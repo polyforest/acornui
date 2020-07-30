@@ -17,10 +17,10 @@
 package com.acornui.css
 
 import org.intellij.lang.annotations.Language
+import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 
-fun cssVar(prop: KProperty1<*, String>): String {
+fun cssVar(prop: KProperty<String>): String {
 	return "var(--${prop.name})"
 }
 

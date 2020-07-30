@@ -447,6 +447,7 @@ $styleTag {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 	
 	cursor: pointer;
+	font-weight: bolder;
 }
 
 $styleTag:hover {

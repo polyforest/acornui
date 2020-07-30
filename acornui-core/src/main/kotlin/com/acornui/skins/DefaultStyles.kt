@@ -82,6 +82,11 @@ $s ul li {
 	background-color: ${cssVar(Theme::scrollbarCornerColor)};
 }
 
+footer {
+	color: ${cssVar(Theme::footerTextColor)};
+	background: ${cssVar(Theme::footerBackgroundColor)};
+}
+
 		""", priority = -1.0)
 	}
 }

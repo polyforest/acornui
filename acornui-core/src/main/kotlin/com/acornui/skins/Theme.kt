@@ -135,7 +135,7 @@ data class Theme(
 	/**
 	 * The padding for input components.
 	 */
-	val inputPadding: String = css("2px"),
+	val inputPadding: String = css("4px"),
 
 	/**
 	 * The default gap between elements.
@@ -168,7 +168,10 @@ data class Theme(
 	val panelShadow: String = css("2px 2px 5px rgba(0, 0, 0, 0.4)"),
 
 	val dataRowEvenBackground: String = css("#eeef"),
-	val dataRowOddBackground: String = css("#ddde")
+	val dataRowOddBackground: String = css("#ddde"),
+
+	val footerTextColor: String = css("#222"),
+	val footerBackgroundColor: String = css("#bbb"),
 
 ) {
 
@@ -231,6 +234,9 @@ data class Theme(
 			  
 			  ${cssProp(::dataRowEvenBackground)}
 			  ${cssProp(::dataRowOddBackground)}
+			  
+			  ${cssProp(::footerTextColor)}
+			  ${cssProp(::footerBackgroundColor)}
 
 			  
 			}
@@ -251,11 +257,11 @@ val darkTheme = Theme(
 
 	toggledInner = css("#fff"),
 
-	border = css("#353535"),
+	border = css("#29395d"),
 
 	background = css("rgba(33, 33, 33, 0.9)"),
 
-	buttonBackground = css("rgb(43 43 43 / 90%)"),
+	buttonBackground = css("#1b2235"),
 
 	buttonBackgroundHover = css("rgb(45 45 45 / 90%)"),
 
@@ -269,9 +275,9 @@ val darkTheme = Theme(
 
 	inputBackground = css("rgba(33, 33, 33, 0.9)"),
 
-	componentShadow = css("1px 1px 3px rgba(0, 0, 0, 0.8)"),
+	componentShadow = css("0"),
 
-	panelBackground = css("rgba(30,51,88,0.39)"),
+	panelBackground = css("rgba(31, 35, 37, 0.75)"),
 
 	panelTextColor = css("#ccc"),
 	panelScrollbarTrackColor = css("transparent"),
@@ -280,6 +286,10 @@ val darkTheme = Theme(
 
 	panelShadow = css("2px 2px 5px rgba(0, 0, 0, 0.9)"),
 
-	dataRowEvenBackground = css("#242424"),
-	dataRowOddBackground = css("#222")
+	dataRowEvenBackground = css("#333"),
+	dataRowOddBackground = css("#222"),
+
+	footerTextColor = css("#bbb"),
+	footerBackgroundColor = css("#262728"),
+
 )
