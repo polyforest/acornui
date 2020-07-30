@@ -9,6 +9,8 @@ import com.acornui.logging.Log
 import com.acornui.string.PropertiesParser
 import com.acornui.formatters.getMonths
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
 /**
  * Loads localized resources.
@@ -91,7 +93,7 @@ val isI18nSupported: Boolean by lazy {
 @Serializer(forClass = Locale::class)
 object LocaleSerializer : KSerializer<Locale> {
 
-	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Locale", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Locale", PrimitiveKind.STRING)
 
 	override fun deserialize(decoder: Decoder): Locale {
 		return Locale(decoder.decodeString())

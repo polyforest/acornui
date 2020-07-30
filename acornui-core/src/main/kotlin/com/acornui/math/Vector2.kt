@@ -18,8 +18,13 @@ package com.acornui.math
 
 import com.acornui.number.closeTo
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.listSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -390,16 +395,16 @@ operator fun Double.div(other: Vector2): Vector2 =
 @Serializer(forClass = Vector2::class)
 object Vector2Serializer : KSerializer<Vector2> {
 
-	override val descriptor: SerialDescriptor = SerialDescriptor("Vector2") {
-		listDescriptor<Double>()
+	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Vector2") {
+		listSerialDescriptor<Double>()
 	}
 
 	override fun serialize(encoder: Encoder, value: Vector2) {
-		encoder.encodeSerializableValue(Double.serializer().list, listOf(value.x, value.y))
+		encoder.encodeSerializableValue(ListSerializer(Double.serializer()), listOf(value.x, value.y))
 	}
 
 	override fun deserialize(decoder: Decoder): Vector2 {
-		val values = decoder.decodeSerializableValue(Double.serializer().list)
+		val values = decoder.decodeSerializableValue(ListSerializer(Double.serializer()))
 		return vec2(x = values[0],
 				y = values[1]
 		)

@@ -17,7 +17,7 @@
 package com.acornui.serialization
 
 import com.acornui.system.userInfo
-import kotlin.browser.window
+import kotlinx.browser.window
 
 interface Base64 {
 

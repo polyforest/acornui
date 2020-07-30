@@ -18,7 +18,7 @@ package com.acornui.time
 
 import com.acornui.Owner
 import com.acornui.own
-import kotlin.browser.window
+import kotlinx.browser.window
 
 private class NextFrameCallback(
 		val callback: () -> Unit

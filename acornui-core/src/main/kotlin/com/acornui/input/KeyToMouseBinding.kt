@@ -32,7 +32,7 @@ import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.MouseEventInit
-import kotlin.browser.window
+import kotlinx.browser.window
 
 /**
  * Dispatches mouse events when using SPACE or ENTER key presses on the focused element.

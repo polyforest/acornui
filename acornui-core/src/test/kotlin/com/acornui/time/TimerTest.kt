@@ -68,7 +68,7 @@ class TimerTest {
 			callTime = start.elapsedNow().inMilliseconds
 		}
 		delay(0.5.seconds)
-		assertClose(400.0, callTime, 10.0)
+		assertClose(400.0, callTime, 50.0)
 		exitMain()
 	}
 }

@@ -19,8 +19,13 @@
 package com.acornui.math
 
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.listSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = RectangleSerializer::class)
 data class Rectangle(
@@ -199,16 +204,16 @@ data class Rectangle(
 @Serializer(forClass = Rectangle::class)
 object RectangleSerializer : KSerializer<Rectangle> {
 
-	override val descriptor: SerialDescriptor = SerialDescriptor("Rectangle") {
-		listDescriptor<Double>()
+	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Rectangle") {
+		listSerialDescriptor<Double>()
 	}
 
 	override fun serialize(encoder: Encoder, value: Rectangle) {
-		encoder.encodeSerializableValue(Double.serializer().list, listOf(value.x, value.y, value.width, value.height))
+		encoder.encodeSerializableValue(ListSerializer(Double.serializer()), listOf(value.x, value.y, value.width, value.height))
 	}
 
 	override fun deserialize(decoder: Decoder): Rectangle {
-		val values = decoder.decodeSerializableValue(Double.serializer().list)
+		val values = decoder.decodeSerializableValue(ListSerializer(Double.serializer()))
 		return Rectangle(
 			x = values[0],
 			y = values[1],

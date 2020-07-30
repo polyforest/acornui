@@ -29,10 +29,10 @@ import com.acornui.dom.head
 import com.acornui.logging.Log
 import kotlinx.coroutines.*
 import org.w3c.dom.HTMLElement
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlin.coroutines.CoroutineContext
-import kotlin.dom.clear
+import kotlinx.dom.clear
 import kotlin.time.Duration
 import kotlin.time.seconds
 

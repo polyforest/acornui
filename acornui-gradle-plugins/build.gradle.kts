@@ -24,10 +24,11 @@ plugins {
 	kotlin("jvm")
 }
 
+//val kotlinVersion: String = "1.3.70"
+
 buildscript {
-	val kotlinVersion: String by project
 	dependencies {
-		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$kotlinVersion")
+		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${Config.KOTLIN_VERSION}")
 	}
 }
 
@@ -38,23 +39,29 @@ samWithReceiver {
 	annotation("org.gradle.api.HasImplicitReceiver")
 }
 
-fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit = extensions.configure("samWithReceiver", configure)
-
-val kotlinVersion: String by project
+fun Project.samWithReceiver(configure: SamWithReceiverExtension.() -> Unit): Unit =
+	extensions.configure("samWithReceiver", configure)
 
 dependencies {
-	compileOnly(gradleKotlinDsl())
-	compileOnly(gradleApi())
-	implementation(kotlin("compiler", version = kotlinVersion))
-	implementation(kotlin("gradle-plugin", version = kotlinVersion))
+	implementation(kotlin("gradle-plugin", version = Config.KOTLIN_VERSION))
+	implementation(kotlin("serialization", version = Config.KOTLIN_VERSION))
+	implementation(gradleKotlinDsl())
+	implementation(gradleApi())
 
-	testImplementation(gradleKotlinDsl())
-	testImplementation(gradleTestKit())
-	testImplementation(kotlin("test", version = kotlinVersion))
-	testImplementation(kotlin("test-junit", version = kotlinVersion))
+//	testImplementation(gradleKotlinDsl())
+//	testImplementation(gradleTestKit())
+//	testImplementation(kotlin("test-junit", version = kotlinVersion))
 }
 
-val kotlinLanguageVersion: String by project
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "org.jetbrains.kotlin") {
+			this.useVersion(Config.KOTLIN_VERSION)
+		}
+	}
+}
+
+//val kotlinLanguageVersion: String = "1.3"
 
 java {
 	withSourcesJar()
@@ -75,8 +82,8 @@ kotlin {
 		compilations.configureEach {
 			kotlinOptions {
 				jvmTarget = "1.8"
-				languageVersion = kotlinLanguageVersion
-				apiVersion = kotlinLanguageVersion
+				languageVersion = "1.3"
+				apiVersion = "1.3"
 			}
 		}
 	}
@@ -90,17 +97,5 @@ gradlePlugin {
 			displayName = "Acorn UI JS Configuration"
 			description = "Configuration of an Acorn UI Application project."
 		}
-	}
-}
-
-tasks.named<ProcessResources>("processResources").configure {
-	filesMatching("acorn.properties") {
-		expand(project.properties)
-	}
-}
-
-tasks.named<ProcessResources>("processTestResources").configure {
-	filesMatching("**/gradle.properties") {
-		expand(project.properties)
 	}
 }

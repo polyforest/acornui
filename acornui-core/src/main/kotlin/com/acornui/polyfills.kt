@@ -21,8 +21,9 @@ fun polyfills() {
 	js(
 		"""
 		
-		if (typeof(Promise) == "undefined") { window.Promise = require('promise-polyfill').default; }
-		if (typeof(ResizeObserver) == "undefined") { window.ResizeObserver = require('resize-observer-polyfill').default; }
+// IE and edge no longer supported
+//		if (typeof(Promise) == "undefined") { window.Promise = require('promise-polyfill').default; }
+//		if (typeof(ResizeObserver) == "undefined") { window.ResizeObserver = require('resize-observer-polyfill').default; }
 
 		if (typeof(Element) != "undefined" && typeof(Element.prototype.remove) == "undefined") {
 			Element.prototype.remove = function() {

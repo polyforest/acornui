@@ -22,7 +22,7 @@ import com.acornui.signal.filtered
 import com.acornui.signal.map
 import org.w3c.dom.MutationObserver
 import org.w3c.dom.MutationObserverInit
-import kotlin.browser.document
+import kotlinx.browser.document
 
 /**
  * Dispatched when this component's [UiComponent.dom] element has been added to the document.

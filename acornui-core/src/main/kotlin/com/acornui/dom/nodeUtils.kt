@@ -19,7 +19,7 @@ package com.acornui.dom
 import org.w3c.dom.Node
 import org.w3c.dom.Text
 import org.w3c.dom.get
-import kotlin.browser.document
+import kotlinx.browser.document
 
 fun Node.isAncestorOf(element: Node): Boolean {
 	var p: Node? = element

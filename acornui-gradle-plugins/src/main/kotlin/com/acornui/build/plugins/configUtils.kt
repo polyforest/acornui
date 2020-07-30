@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.acornui
+package com.acornui.build.plugins
 
-import com.acornui.system.userInfo
-import kotlinx.browser.window
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 
-/**
- * A flag for enabling various debugging features like debug logging.
- * This will be true if:
- * debug=true exists as a querystring parameter.
- */
-val isDebug: Boolean by lazy {
-    if (!userInfo.isBrowser) false
-    else window.location.search.contains(Regex("""[&?]debug=(true|1)"""))
+fun Project.produceExecutable() {
+	project.extensions.configure<KotlinJsProjectExtension> {
+		js {
+			browser {
+				binaries.executable()
+			}
+		}
+	}
 }

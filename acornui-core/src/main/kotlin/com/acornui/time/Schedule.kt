@@ -18,7 +18,7 @@ package com.acornui.time
 
 import com.acornui.Disposable
 import com.acornui.toDisposable
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.js.Date
 import kotlin.time.Duration
 import kotlin.time.milliseconds

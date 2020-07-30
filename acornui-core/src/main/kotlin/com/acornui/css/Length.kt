@@ -17,6 +17,11 @@
 package com.acornui.css
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = LengthSerializer::class)
 class Length(private val value: String) {
@@ -43,7 +48,7 @@ class Length(private val value: String) {
 @Serializer(forClass = Length::class)
 object LengthSerializer : KSerializer<Length> {
 
-	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Length", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Length", PrimitiveKind.STRING)
 
 	override fun serialize(encoder: Encoder, value: Length) {
 		encoder.encodeString(value.toString())

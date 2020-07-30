@@ -16,7 +16,7 @@
 
 package com.acornui.browser
 
-import kotlin.browser.window
+import kotlinx.browser.window
 
 @Deprecated("Use window.location directly")
 object Location {

@@ -22,9 +22,10 @@ package com.acornui.signal
  */
 import com.acornui.logging.Log
 import com.acornui.test.benchmark
+import kotlin.test.Ignore
 import kotlin.test.Test
 
-//@Ignore
+@Ignore
 class SignalPerformance {
 
 	@Test fun dispatchSome() {

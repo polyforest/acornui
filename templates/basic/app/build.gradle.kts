@@ -4,4 +4,4 @@ plugins {
 	id("com.acornui.js")
 }
 
-//kotlin.target.produceExecutable()
+kotlin.js.browser.binaries.executable()

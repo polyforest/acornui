@@ -14,3 +14,72 @@
  * limitations under the License.
  */
 
+plugins {
+	`maven-publish`
+	kotlin("js")
+	kotlin("plugin.serialization")
+}
+
+apply(from = "$rootDir/mavenPublish.gradle.kts")
+
+dependencies {
+	// IE and Edge no longer supported
+//	implementation(npm("promise-polyfill", version = "8.1.3")) // For IE11
+//	implementation(npm("resize-observer-polyfill", version = "1.5.1")) // For IE11 and Edge
+	api(kotlin("stdlib", version = Config.KOTLIN_VERSION))
+	api(kotlin("stdlib-js", version = Config.KOTLIN_VERSION))
+	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Config.KOTLIN_COROUTINES_VERSION}")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${Config.KOTLIN_SERIALIZATION_VERSION}")
+	api("org.jetbrains.kotlinx:kotlinx-collections-immutable-js:0.3.2")
+
+	testImplementation(kotlin("test-js"))
+	testImplementation(devNpm("jsdom", version = "16.2.2")) // simulate window/document
+}
+
+kotlin {
+	js {
+
+		browser {
+			testTask {
+				//				useMocha {
+				//					// For async tests use runMainTest and runHeadlessTest which use their own timeout.
+				//					timeout = "30s"
+				//				}
+				useKarma {
+					useChromeHeadless()
+				}
+			}
+		}
+		nodejs {
+			testTask {
+
+				useMocha {
+					// For async tests use runMainTest and runHeadlessTest which use their own timeout.
+					timeout = "30s"
+				}
+			}
+		}
+
+		sourceSets {
+			all {
+				languageSettings.apply {
+					languageVersion = Config.KOTLIN_LANGUAGE_VERSION
+					apiVersion = Config.KOTLIN_LANGUAGE_VERSION
+					enableLanguageFeature("InlineClasses")
+					useExperimentalAnnotation("kotlin.Experimental")
+					useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+					useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+					useExperimentalAnnotation("kotlinx.coroutines.InternalCoroutinesApi")
+				}
+			}
+		}
+	}
+}
+
+val kotlinSourcesJar by tasks.named("kotlinSourcesJar")
+publishing.publications {
+	create<MavenPublication>("default") {
+		from(components["kotlin"])
+		artifact(kotlinSourcesJar)
+	}
+}

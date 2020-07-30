@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package com.acornui
+object Config {
 
-import com.acornui.system.userInfo
-import kotlinx.browser.window
-
-/**
- * A flag for enabling various debugging features like debug logging.
- * This will be true if:
- * debug=true exists as a querystring parameter.
- */
-val isDebug: Boolean by lazy {
-    if (!userInfo.isBrowser) false
-    else window.location.search.contains(Regex("""[&?]debug=(true|1)"""))
+	const val KOTLIN_VERSION = "1.4.0-rc"
+	const val KOTLIN_SERIALIZATION_VERSION = "1.0-M1-1.4.0-rc"
+	const val KOTLIN_COROUTINES_VERSION = "1.3.8-1.4.0-rc"
+	const val KOTLIN_LANGUAGE_VERSION = "1.4"
 }

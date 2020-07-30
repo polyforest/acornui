@@ -1,4 +1,4 @@
-import kotlin.browser.window
+import kotlinx.browser.window
 
 /*
  * Copyright 2020 Poly Forest, LLC

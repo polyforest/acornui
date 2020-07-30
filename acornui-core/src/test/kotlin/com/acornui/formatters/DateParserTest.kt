@@ -83,8 +83,8 @@ class DateParserTest {
 		assertEquals(null, parser.parse("7/13/2014"))
 
 		assertEquals(null, parser.parse("July 13, 2014"))
-		assertEquals(Date(2014, 6, 13), parser.parse("Juli 13, 2014"))
-		assertEquals(Date(currentYear, 6, 13), parser.parse("Juli 13"))
+		assertEquals(Date(2014, 7, 13), parser.parse("Juli 13, 2014"))
+		assertEquals(Date(currentYear, 7, 13), parser.parse("Juli 13"))
 		parser = parser.copy(yearIsOptional = false)
 		assertEquals(null, parser.parse("Juli 13"))
 	}

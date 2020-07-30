@@ -26,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.jvm.Synchronized
 import kotlin.time.Duration
 import kotlin.time.seconds

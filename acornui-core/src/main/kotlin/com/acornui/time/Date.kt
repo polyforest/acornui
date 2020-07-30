@@ -19,6 +19,11 @@ package com.acornui.time
 import com.acornui.formatters.parseDate
 import com.acornui.number.zeroPadding
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.time.Duration
 import kotlin.js.Date as JsDate
 
@@ -355,7 +360,7 @@ fun utcDate(
 @Serializer(forClass = Date::class)
 object DateSerializer : KSerializer<Date> {
 
-	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Date", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
 
 	override fun serialize(encoder: Encoder, value: Date) {
 		encoder.encodeString(value.toIsoString())

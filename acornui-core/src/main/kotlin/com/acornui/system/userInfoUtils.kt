@@ -3,7 +3,7 @@ package com.acornui.system
 import com.acornui.i18n.Locale
 import com.acornui.observe.DataBinding
 import com.acornui.observe.DataBindingImpl
-import kotlin.browser.window
+import kotlinx.browser.window
 
 /**
  * A singleton reference to the user info. This does not need to be scoped; there can only be one machine.

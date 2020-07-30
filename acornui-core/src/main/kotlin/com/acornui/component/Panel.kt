@@ -65,7 +65,7 @@ $panelColorsStyle ::-webkit-scrollbar-thumb {
 }
 
 /**
- * Creates a FlowGroup with Panel styling.
+ * Creates a Panel.
  */
 inline fun Context.panel(init: ComponentInit<Panel> = {}): Panel {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }

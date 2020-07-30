@@ -272,6 +272,11 @@ val darkTheme = Theme(
 
 	panelBackground = css("rgba(30,51,88,0.39)"),
 
+	panelTextColor = css("#ccc"),
+	panelScrollbarTrackColor = css("transparent"),
+	panelScrollbarButtonColor = css("#666"),
+	panelScrollbarCornerColor = css("transparent"),
+
 	panelShadow = css("2px 2px 5px rgba(0, 0, 0, 0.9)"),
 
 	dataRowEvenBackground = css("#242424"),

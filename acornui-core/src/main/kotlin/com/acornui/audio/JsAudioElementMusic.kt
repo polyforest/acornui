@@ -19,7 +19,7 @@ package com.acornui.audio
 import com.acornui.signal.unmanagedSignal
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
-import kotlin.browser.document
+import kotlinx.browser.document
 import kotlin.time.Duration
 import kotlin.time.seconds
 

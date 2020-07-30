@@ -121,7 +121,7 @@ open class FlowGroup(owner: Context) : DivComponent(owner) {
 		init {
 			addCssToHead("""
 $styleTag {
-	display: flex;
+	display: block;
 }				
 
 $contentsTag {
@@ -129,6 +129,10 @@ $contentsTag {
 	flex-wrap: wrap;
 	width: inherit;
 	height: inherit;
+	justify-content: inherit;
+	justify-items: inherit;
+	align-content: inherit;
+	align-items: inherit;
 	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
 }
 

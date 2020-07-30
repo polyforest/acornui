@@ -18,7 +18,6 @@ package com.acornui.math
 
 import com.acornui.serialization.jsonStringify
 import com.acornui.test.assertClose
-import kotlinx.serialization.UnstableDefault
 import kotlin.math.sqrt
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -67,7 +66,6 @@ class Vector3Test {
 		assertNotEquals(vec3(1.0, 2.0, 3.0), vec3(1.0, 2.0, 4.0))
 	}
 
-	@OptIn(UnstableDefault::class)
 	@Test fun serialize() {
 		jsonStringify(Vector3.serializer(), vec3(1.0, 2.0, 3.0))
 	}

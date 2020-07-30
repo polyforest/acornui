@@ -20,7 +20,7 @@ import com.acornui.collection.sortedInsertionIndex
 import com.acornui.component.ComponentInit
 import org.intellij.lang.annotations.Language
 import org.w3c.dom.*
-import kotlin.browser.document
+import kotlinx.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 

@@ -23,8 +23,8 @@ import com.acornui.signal.SignalImpl
 import com.acornui.signal.SignalSubscription
 import com.acornui.signal.once
 import com.acornui.time.markNow
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlin.time.Duration
 import kotlin.time.seconds
 

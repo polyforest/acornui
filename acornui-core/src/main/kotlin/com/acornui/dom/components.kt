@@ -22,7 +22,7 @@ import com.acornui.component.WithNode
 import com.acornui.component.asWithNode
 import com.acornui.di.Context
 import org.w3c.dom.*
-import kotlin.browser.document
+import kotlinx.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 

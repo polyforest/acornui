@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 open class AcornUiJsPlugin : Plugin<Project> {
 
 	override fun apply(project: Project) {
-		val acornVersion: String by project
-
 		project.repositories {
 			maven("https://dl.bintray.com/kotlin/kotlin-eap")
 			maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -22,7 +20,10 @@ open class AcornUiJsPlugin : Plugin<Project> {
 			mavenLocal()
 		}
 
-		println("Applying application plugin acornVersion=$acornVersion")
+		val kotlinVersion: String by project
+		project.pluginManager.apply("org.jetbrains.kotlin.js")
+		project.pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+
 		project.extensions.configure(kotlinJsConfig(project))
 		project.replaceTokensFromProperties()
 	}
@@ -32,7 +33,7 @@ open class AcornUiJsPlugin : Plugin<Project> {
 		val kotlinLanguageVersion: String by project
 		val acornVersion: String by project
 
-		target {
+		js {
 			browser {
 				testTask {
 					useMocha {
@@ -52,25 +53,22 @@ open class AcornUiJsPlugin : Plugin<Project> {
 					useExperimentalAnnotation("kotlin.Experimental")
 					useExperimentalAnnotation("kotlin.time.ExperimentalTime")
 					useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
-					useExperimentalAnnotation("kotlinx.serialization.ImplicitReflectionSerializer")
 					useExperimentalAnnotation("kotlinx.coroutines.InternalCoroutinesApi")
 				}
 			}
 
 			val main by getting {
 				dependencies {
-					implementation(npm("promise-polyfill", version = "8.1.3")) // For IE11
-					implementation(npm("resize-observer-polyfill", version = "1.5.1")) // For IE11 and Edge
-					implementation(kotlin("stdlib-js", version = kotlinVersion))
+					// IE and Edge no longer supported.
+//					implementation(npm("promise-polyfill", version = "8.1.3")) // For IE11
+//					implementation(npm("resize-observer-polyfill", version = "1.5.1")) // For IE11 and Edge
 					implementation("com.acornui:acornui-core:$acornVersion")
 				}
 			}
 
 			val test by getting {
 				dependencies {
-					implementation(kotlin("test", version = kotlinVersion))
 					implementation(kotlin("test-js", version = kotlinVersion))
-
 				}
 			}
 		}

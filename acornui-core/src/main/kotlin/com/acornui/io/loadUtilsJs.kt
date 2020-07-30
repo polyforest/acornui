@@ -22,7 +22,7 @@ import kotlinx.coroutines.await
 import kotlinx.coroutines.coroutineScope
 import org.khronos.webgl.ArrayBuffer
 import org.w3c.xhr.*
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.js.Promise
 import kotlin.time.seconds
 

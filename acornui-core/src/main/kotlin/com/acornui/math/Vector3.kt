@@ -17,8 +17,9 @@
 package com.acornui.math
 
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.list
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.builtins.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -361,16 +362,16 @@ typealias vec3 = Vector3
 @Serializer(forClass = Vector3::class)
 object Vector3Serializer : KSerializer<Vector3> {
 
-	override val descriptor: SerialDescriptor = SerialDescriptor("Vector3") {
-		listDescriptor<Double>()
+	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("Vector3") {
+		listSerialDescriptor<Double>()
 	}
 
 	override fun serialize(encoder: Encoder, value: Vector3) {
-		encoder.encodeSerializableValue(Double.serializer().list, listOf(value.x, value.y, value.z))
+		encoder.encodeSerializableValue(ListSerializer(Double.serializer()), listOf(value.x, value.y, value.z))
 	}
 
 	override fun deserialize(decoder: Decoder): Vector3 {
-		val values = decoder.decodeSerializableValue(Double.serializer().list)
+		val values = decoder.decodeSerializableValue(ListSerializer(Double.serializer()))
 		return vec3(
 			x = values[0],
 			y = values[1],

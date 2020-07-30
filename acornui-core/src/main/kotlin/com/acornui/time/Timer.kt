@@ -19,7 +19,7 @@
 package com.acornui.time
 
 import com.acornui.Disposable
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.time.Duration
 
 /**

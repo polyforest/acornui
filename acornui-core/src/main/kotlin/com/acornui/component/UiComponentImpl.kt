@@ -38,7 +38,7 @@ import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.events.EventTarget
-import kotlin.browser.document
+import kotlinx.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 

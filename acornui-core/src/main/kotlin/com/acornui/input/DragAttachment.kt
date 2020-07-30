@@ -36,7 +36,7 @@ import com.acornui.signal.*
 import com.acornui.time.tick
 import org.w3c.dom.TouchEvent
 import org.w3c.dom.events.MouseEvent
-import kotlin.browser.window
+import kotlinx.browser.window
 
 /**
  * A behavior for a touch down, touch move, then touch up on a target UiComponent.

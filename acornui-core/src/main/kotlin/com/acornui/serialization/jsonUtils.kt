@@ -22,7 +22,6 @@ import com.acornui.logging.Log
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 @Deprecated("use kotlinx serialization")
 fun <T> parseJson(jsonStr: String, factory: From<T>): T {
@@ -34,10 +33,10 @@ fun <T> toJson(value: T, factory: To<T>): String {
 	return json.write(value, factory)
 }
 
-private val jsonx = Json(JsonConfiguration.Default.copy(encodeDefaults = false))
+private val jsonx = Json { encodeDefaults = false }
 
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
-	return jsonx.parse(deserializer, jsonStr)
+	return jsonx.decodeFromString(deserializer, jsonStr)
 }
 
 /**
@@ -46,7 +45,7 @@ fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T 
 fun <T> jsonParseOrElse(deserializer: DeserializationStrategy<T>, jsonStr: String?, onFail: () -> T): T {
 	if (jsonStr.isNullOrEmpty()) return onFail()
 	return try {
-		jsonx.parse(deserializer, jsonStr)
+		jsonx.decodeFromString(deserializer, jsonStr)
 	} catch (e: Throwable) {
 		Log.error(e)
 		onFail()
@@ -54,5 +53,5 @@ fun <T> jsonParseOrElse(deserializer: DeserializationStrategy<T>, jsonStr: Strin
 }
 
 fun <T> jsonStringify(serializer: SerializationStrategy<T>, value: T): String {
-	return jsonx.stringify(serializer, value)
+	return jsonx.encodeToString(serializer, value)
 }

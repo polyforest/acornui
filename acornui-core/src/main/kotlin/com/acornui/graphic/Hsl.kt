@@ -1,8 +1,13 @@
 package com.acornui.graphic
 
 import kotlinx.serialization.*
-import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.math.abs
 
 /**
@@ -63,14 +68,14 @@ data class Hsl(
 @Serializer(forClass = Hsl::class)
 object HslSerializer : KSerializer<Hsl> {
 
-	override val descriptor: SerialDescriptor = PrimitiveDescriptor("Hsl", PrimitiveKind.STRING)
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Hsl", PrimitiveKind.STRING)
 
 	override fun serialize(encoder: Encoder, value: Hsl) {
-		encoder.encodeSerializableValue(Double.serializer().list, listOf(value.h, value.s, value.l, value.a))
+		encoder.encodeSerializableValue(ListSerializer(Double.serializer()), listOf(value.h, value.s, value.l, value.a))
 	}
 
 	override fun deserialize(decoder: Decoder): Hsl {
-		val values = decoder.decodeSerializableValue(Double.serializer().list)
+		val values = decoder.decodeSerializableValue(ListSerializer(Double.serializer()))
 		return Hsl(values[0], values[1], values[2], values[3])
 	}
 }
