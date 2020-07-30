@@ -54,11 +54,10 @@ $panelColorsStyle {
 	--scrollbarButtonColor: ${cssVar(Theme::panelScrollbarButtonColor)};
 	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
 	--scrollbarCornerColor: ${cssVar(Theme::panelScrollbarCornerColor)};
+	--scrollbarBorderRadius: ${cssVar(Theme::borderRadius)};
 }
 
-$panelColorsStyle ::-webkit-scrollbar-thumb {
-	border-radius: ${cssVar(Theme::borderRadius)};
-}
+
 			""")
 		}
 	}

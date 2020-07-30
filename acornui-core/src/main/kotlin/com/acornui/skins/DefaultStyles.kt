@@ -75,6 +75,7 @@ $s ul li {
 
 ::-webkit-scrollbar-thumb {
 	background-color: ${cssVar(Theme::scrollbarButtonColor)};
+	border-radius: ${cssVar(Theme::scrollbarBorderRadius)};
 }
 
 ::-webkit-scrollbar-corner {

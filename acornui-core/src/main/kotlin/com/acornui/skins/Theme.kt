@@ -39,6 +39,7 @@ data class Theme(
 
 	val scrollbarTrackColor: String = css("#111"),
 	val scrollbarButtonColor: String = css("#666"),
+	val scrollbarBorderRadius: String = css("0"),
 	val scrollbarCornerColor: String = css("#333"),
 	val scrollbarThickness: String = css("8px"),
 
