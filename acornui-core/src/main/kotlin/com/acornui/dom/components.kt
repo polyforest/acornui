@@ -36,6 +36,11 @@ inline fun Context.div(init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}
 	return component("div", init)
 }
 
+inline fun Context.span(init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = {}): UiComponentImpl<HTMLSpanElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("span", init)
+}
+
 inline fun Context.a(href: String = "", target: String = "", init: ComponentInit<UiComponentImpl<HTMLAnchorElement>> = {}): UiComponentImpl<HTMLAnchorElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("a") {
@@ -73,6 +78,11 @@ inline fun Context.li(init: ComponentInit<UiComponentImpl<HTMLLIElement>> = {}):
 inline fun Context.form(init: ComponentInit<UiComponentImpl<HTMLFormElement>> = {}): UiComponentImpl<HTMLFormElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("form", init)
+}
+
+inline fun Context.footer(init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("footer", init)
 }
 
 /**
