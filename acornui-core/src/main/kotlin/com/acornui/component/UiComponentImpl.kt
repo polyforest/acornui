@@ -31,6 +31,7 @@ import com.acornui.css.px
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.dom.createElement
+import com.acornui.isDebug
 import com.acornui.properties.afterChange
 import org.intellij.lang.annotations.Language
 import org.w3c.dom.DOMStringMap
@@ -68,7 +69,10 @@ open class UiComponentImpl<T : HTMLElement>(
 		@Suppress("LeakingThis")
 		dom.host = this@UiComponentImpl
 		if (dom.id.isEmpty())
-			dom.id = this::class.simpleName + "_" + UidUtil.createUid()
+			if (isDebug)
+				dom.id = this::class.simpleName + "_" + UidUtil.createUid() // class.simpleName is slow, but informative.
+			else
+				dom.id = UidUtil.createUid()
 	}
 
 	//-----------------------------------------------
