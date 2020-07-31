@@ -20,6 +20,8 @@ import com.acornui.Disposable
 import com.acornui.ResizeObserver
 import com.acornui.toDisposable
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.ParentNode
+import org.w3c.dom.asList
 
 fun HTMLElement.hide() {
 	style.apply {
@@ -45,4 +47,14 @@ fun HTMLElement.addResizeObserver(callback: ()->Unit): Disposable {
 	return {
 		observer.unobserve(this)
 	}.toDisposable()
+}
+
+/**
+ * Returns all elements in the tab order.
+ * This will include elements that are tabbable by default, visible, not hidden, and does not have a tab index of -1.
+ */
+fun ParentNode.getTabbableElements(): List<HTMLElement> {
+	return querySelectorAll("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])").asList().unsafeCast<List<HTMLElement>>().filter {
+		!it.hidden && it.style.display != "none" && it.tabIndex != -1
+	}
 }
