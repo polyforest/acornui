@@ -81,6 +81,12 @@ open class UiComponentImpl<T : HTMLElement>(
 			dom.id = value
 		}
 
+	final override var title: String
+		get() = dom.title
+		set(value) {
+			dom.title = value
+		}
+
 	@Language("html")
 	var innerHtml: String
 		get() = dom.innerHTML

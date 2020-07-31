@@ -81,14 +81,14 @@ open class ApplicationImpl(
 
 	init {
 		// Uncaught exception handler
-		val prevOnError = window.onerror
-		window.onerror = { message, source, lineNo, colNo, error ->
-			prevOnError?.invoke(message, source, lineNo, colNo, error)
-			if (error is Throwable)
-				uncaughtExceptionHandler(error)
-			else
-				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
-		}
+//		val prevOnError = window.onerror
+//		window.onerror = { message, source, lineNo, colNo, error ->
+//			prevOnError?.invoke(message, source, lineNo, colNo, error)
+//			if (error is Throwable)
+//				uncaughtExceptionHandler(error)
+//			else
+//				uncaughtExceptionHandler(Exception("Unknown error: $message $lineNo $source $colNo $error"))
+//		}
 
 		val oBU = window.onbeforeunload
 		window.onbeforeunload = {

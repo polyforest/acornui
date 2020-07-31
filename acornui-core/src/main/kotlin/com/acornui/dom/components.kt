@@ -75,6 +75,37 @@ inline fun Context.li(init: ComponentInit<UiComponentImpl<HTMLLIElement>> = {}):
 	return component("li", init)
 }
 
+open class ImgComponent(owner: Context) : UiComponentImpl<Image>(owner, Image()) {
+
+	var alt: String
+		get() = dom.alt
+		set(value) {
+			dom.alt = value
+		}
+
+	var src: String
+		get() = dom.src
+		set(value) {
+			dom.src = value
+		}
+
+	val naturalWidth: Int
+		get() = dom.naturalWidth
+
+	val naturalHeight: Int
+		get() = dom.naturalHeight
+}
+
+inline fun Context.img(src: String = "", alt: String = "", init: ComponentInit<ImgComponent> = {}): ImgComponent {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return ImgComponent(this).apply {
+		this.src = src
+		this.alt = alt
+		this.title = alt
+		init()
+	}
+}
+
 inline fun Context.form(init: ComponentInit<UiComponentImpl<HTMLFormElement>> = {}): UiComponentImpl<HTMLFormElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("form", init)

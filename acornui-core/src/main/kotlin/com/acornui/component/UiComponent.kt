@@ -58,6 +58,11 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	 */
 	var id: String
 
+	/**
+	 * Text representing advisory information.
+	 */
+	var title: String
+
 	override val dom: HTMLElement
 
 	/**
