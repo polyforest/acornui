@@ -21,18 +21,6 @@ import org.w3c.dom.Text
 import org.w3c.dom.get
 import kotlinx.browser.document
 
-fun Node.isAncestorOf(element: Node): Boolean {
-	var p: Node? = element
-	while (p != null) {
-		if (p == this) return true
-		p = p.parentNode
-	}
-	return false
-}
-
-fun Node.isDescendentOf(element: Node): Boolean =
-	element.isAncestorOf(this)
-
 fun <T : Node> Node.add(index: Int, node: T): T {
 	if (index == childNodes.length)
 		appendChild(node)
@@ -67,3 +55,15 @@ fun Node.removeAt(index: Int): Node {
 
 fun Node.add(data: String): Text =
 	add(document.createTextNode(data))
+
+/**
+ * Walks the [Node.parentNode] ancestry until [targetAncestor] is found, returning the ancestor of this Node that is a
+ * direct child of [targetAncestor]. Will return [this] if `parentNode == targetAncestor`.
+ */
+fun Node?.getParentBeforeAncestor(targetAncestor: Node): Node? {
+	var p: Node? = this
+	while (p != null && p.parentNode != targetAncestor) {
+		p = p.parentNode
+	}
+	return p
+}
