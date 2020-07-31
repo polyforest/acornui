@@ -19,7 +19,7 @@ package com.acornui.signal
 
 /**
  * A utility class to use as a parameter within a Signal that indicates that the behavior of signal should be
- * cancelled. Typically, a signal that can be canceled should be named as a gerund. Such as, changing, invalidating, etc.
+ * cancelled. Typically, a signal that can be cancelled should be named as a gerund. Such as, changing, invalidating, etc.
  */
 interface CancelRo {
 
