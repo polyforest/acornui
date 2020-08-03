@@ -22,6 +22,7 @@ import com.acornui.component.Stage
 import com.acornui.component.stage
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
+import com.acornui.di.ContextMarker
 import com.acornui.di.dependencyMapOf
 import kotlinx.browser.document
 import kotlinx.dom.clear
@@ -88,4 +89,4 @@ fun app(
 	MainContext().multiApp(appConfig, init)
 }
 
-private fun MainContext.appContext(appConfig: AppConfig) : Context = ContextImpl(owner = this, dependencies = dependencyMapOf(AppConfig to appConfig))
+private fun MainContext.appContext(appConfig: AppConfig) : Context = ContextImpl(owner = this, dependencies = dependencyMapOf(AppConfig to appConfig), marker = ContextMarker.APPLICATION)
