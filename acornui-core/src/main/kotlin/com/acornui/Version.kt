@@ -16,8 +16,12 @@
 
 package com.acornui
 
+import com.acornui.collection.find
 import com.acornui.di.Context
+import com.acornui.di.ContextMarker.Companion.MAIN
 import com.acornui.di.contextKey
+import com.acornui.di.dependencyFactory
+import com.acornui.dom.head
 import com.acornui.string.isDigit
 
 typealias Version = KotlinVersion
@@ -48,7 +52,16 @@ private fun List<String>.versionPart(i: Int): Int {
 	return str.takeWhile { it.isDigit() }.toInt()
 }
 
-val versionKey = contextKey<Version>()
+val versionKey = object : Context.Key<Version> {
+
+	override val factory = dependencyFactory(MAIN) {
+		val versionMeta = head.getElementsByTagName("META").find {
+			it?.attributes?.getNamedItem("name")?.value == "version"
+		}
+		val version = versionMeta?.attributes?.getNamedItem("content")?.value
+		version?.toVersion() ?: KotlinVersion(0, 0)
+	}
+}
 
 val Context.version: Version
 	get() = inject(versionKey)

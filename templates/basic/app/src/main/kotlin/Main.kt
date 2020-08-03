@@ -1,4 +1,4 @@
-import com.acornui.application
+import com.acornui.app
 import com.acornui.component.DivComponent
 import com.acornui.component.StageImpl
 import com.acornui.component.input.button
@@ -9,13 +9,12 @@ import com.acornui.dom.addCssToHead
 import com.acornui.dom.head
 import com.acornui.dom.linkElement
 import com.acornui.input.clicked
-import com.acornui.runMain
 import com.acornui.skins.Theme
 import com.acornui.skins.addCssToHead
 import com.acornui.version
 
 /**
- * An example of input controls.
+ * A barebones example with a Theme and a Button.
  */
 class Main(owner: Context) : DivComponent(owner) {
 
@@ -65,13 +64,8 @@ $styleTag {
 
 /**
  * `main` is our main entry point.
- *
- * This method is wrapped in a [runMain] block to set up the main context.
  */
-fun main() = runMain {
-
-	application("acornUiRoot") {
-		// Create and add our main component to the stage:
-		+Main(this)
-	}
+fun main() = app("acornUiRoot") {
+	// Create and add our main component to the stage:
+	+Main(this)
 }

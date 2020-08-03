@@ -23,8 +23,11 @@ import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
 import com.acornui.skins.Theme
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
+ * The Stage is the root element of an application. By default it is 100% width, 100% height.
  * @author nbilyk
  */
 open class StageImpl(owner: Context) : Stage, DivComponent(owner) {
@@ -33,15 +36,8 @@ open class StageImpl(owner: Context) : Stage, DivComponent(owner) {
 		dependencies += listOf(Stage to this)
 	}
 
-//	private val popUpManager = inject(PopUpManager)
-//	private val popUpManagerView: UiComponent
-
 	init {
-//		dependencies += TooltipManager to TooltipManagerImpl(this)
-
 		addClass(styleTag)
-//		popUpManagerView = addChild(popUpManager.init(this))
-//		popUpManagerView.layoutInvalidatingFlags = 0
 	}
 
 	//-------------------------------------------------------------
@@ -62,7 +58,6 @@ $styleTag *:focus {
 }
 
 $styleTag {
-	position: relative;
 	width: 100%;
 	height: 100%;
 	background: ${cssVar(Theme::stageBackground)};
@@ -78,4 +73,12 @@ $styleTag > * {
 		}
 	}
 
+}
+
+/**
+ * Creates a [Stage] component.
+ */
+inline fun Context.stage(init: ComponentInit<StageImpl> = {}): StageImpl {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return StageImpl(this).apply(init)
 }

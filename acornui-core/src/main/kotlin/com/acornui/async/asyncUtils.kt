@@ -19,9 +19,11 @@
 package com.acornui.async
 
 import com.acornui.time.toDelayMillis
+import kotlinx.browser.window
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.js.Promise
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -98,3 +100,18 @@ fun <T : Job> cancellingJobProp(): ReadWriteProperty<Any?, T?> {
 		}
 	}
 }
+
+fun <T> Promise<T>.withTimeout(timeout: Duration): Promise<T> {
+	val timeoutPromise = Promise<T> {
+		_, reject ->
+		val timeoutId = window.setTimeout({
+			reject(TimeoutException(timeout))
+		}, timeout.inMilliseconds.toInt())
+		this@withTimeout.then {
+			window.clearTimeout(timeoutId)
+		}
+	}
+	return Promise.race(arrayOf(this, timeoutPromise))
+}
+
+class TimeoutException(val timeout: Duration) : Exception("Promise timed out after $timeout")

@@ -16,20 +16,27 @@
 
 package com.acornui
 
-import com.acornui.async.withTimeout
+import com.acornui.component.ComponentInit
 import com.acornui.di.*
 import com.acornui.logging.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.coroutines.CoroutineContext
-import kotlin.js.Promise
-import kotlin.time.Duration
 
 class MainContext(
 	dependencies: DependencyMap = DependencyMap(),
-	coroutineContext: CoroutineContext
+	coroutineContext: CoroutineContext = Log.uncaughtExceptionHandler + Job()
 ) : ContextImpl(null, dependencies, coroutineContext, ContextMarker.MAIN)
+
+/**
+ * Constructs a new [MainContext].
+ * @return Returns Unit, in order to be easily used as an expression body of `main()`.
+ */
+inline fun mainContext(dependencies: DependencyMap = DependencyMap(), init: ComponentInit<MainContext> = {}) {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	MainContext(dependencies).apply(init)
+}
 
 /**
  * Finds the [MainContext] on the owner ancestry.
@@ -37,28 +44,9 @@ class MainContext(
 val Context.mainContext: MainContext
 	get() = findOwner { it.marker == ContextMarker.MAIN }!! as MainContext
 
-fun Context.exitMain() {
-	findOwner { it.marker == ContextMarker.MAIN }!!.cancel()
-}
-
 /**
- * @param timeout If greater than zero, a [com.acornui.async.MainTimeoutException] will be thrown if the timeout has
- * been reached before all work has completed.
- * @param block This will be invoked in place with a main context receiver. Within this block applications may be
- * created.
+ * Disposes the main context, thereby disposing all applications.
  */
-fun runMain(timeout: Duration? = null, block: suspend MainContext.() -> Unit) {
-	runMainInternal(timeout, block)
-}
-
-fun runMainInternal(timeout: Duration? = null, block: suspend MainContext.() -> Unit): Promise<Unit> {
-	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-	polyfills()
-
-	return GlobalScope.async {
-		withTimeout(timeout) {
-			MainContext(coroutineContext = coroutineContext + Log.uncaughtExceptionHandler + Job(parent = coroutineContext[Job])).block()
-			Unit
-		}
-	}.asPromise()
+fun Context.exitMain() {
+	findOwner { it.marker == ContextMarker.MAIN }!!.dispose()
 }

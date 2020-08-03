@@ -18,17 +18,27 @@
 
 package com.acornui.test
 
-import com.acornui.number.closeTo
+import com.acornui.AppConfig
+import com.acornui.app
+import com.acornui.async.withTimeout
 import com.acornui.collection.toList
+import com.acornui.component.Stage
 import com.acornui.math.Rectangle
 import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.clamp
+import com.acornui.number.closeTo
+import com.acornui.polyfills
+import initMockDom
 import kotlinx.coroutines.*
-import kotlin.js.Date
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.js.Promise
 import kotlin.math.abs
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
+import kotlin.test.fail
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 import kotlin.time.seconds
@@ -54,19 +64,35 @@ fun assertListEquals(expected: CharArray, actual: CharArray) {
 	assertListEquals(expected.iterator(), actual.iterator())
 }
 
-fun <T> assertListEquals(expected: Array<T>, actual: Array<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+fun <T> assertListEquals(
+	expected: Array<T>,
+	actual: Array<T>,
+	comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }
+) {
 	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Array<T>, actual: Iterable<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+fun <T> assertListEquals(
+	expected: Array<T>,
+	actual: Iterable<T>,
+	comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }
+) {
 	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Iterable<T>, actual: Array<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+fun <T> assertListEquals(
+	expected: Iterable<T>,
+	actual: Array<T>,
+	comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }
+) {
 	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
-fun <T> assertListEquals(expected: Iterable<T>, actual: Iterable<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+fun <T> assertListEquals(
+	expected: Iterable<T>,
+	actual: Iterable<T>,
+	comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }
+) {
 	assertListEquals(expected.iterator(), actual.iterator(), comparator)
 }
 
@@ -79,7 +105,11 @@ fun assertListEquals(expected: Iterable<Double>, actual: Iterable<Double>, toler
 	}
 }
 
-fun <T> assertListEquals(expected: Iterator<T>, actual: Iterator<T>, comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }) {
+fun <T> assertListEquals(
+	expected: Iterator<T>,
+	actual: Iterator<T>,
+	comparator: (a: T, b: T) -> Boolean = { a, b -> a == b }
+) {
 	var expectedSize = 0
 	var actualSize = 0
 	while (expected.hasNext() || actual.hasNext()) {
@@ -233,17 +263,17 @@ fun assertClose(expected: Rectangle, actual: Rectangle, maxDifference: Double = 
 	assertClose(expected.height, actual.height, maxDifference, "height")
 }
 
-fun <T: Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {
+fun <T : Comparable<T>> assertRange(expectedMin: T, expectedMax: T, actual: T) {
 	assertGreaterThan(expectedMin, actual)
 	assertLessThan(expectedMax, actual)
 }
 
-fun <T: Comparable<T>> assertGreaterThan(expectedMin: T, actual: T) {
+fun <T : Comparable<T>> assertGreaterThan(expectedMin: T, actual: T) {
 	if (actual <= expectedMin)
 		fail("expected greater than:<$expectedMin> but was:<$actual>")
 }
 
-fun <T: Comparable<T>> assertLessThan(expectedMax: T, actual: T) {
+fun <T : Comparable<T>> assertLessThan(expectedMax: T, actual: T) {
 	if (actual >= expectedMax)
 		fail("expected less than:<$expectedMax> but was:<$actual>")
 }
@@ -275,20 +305,6 @@ fun benchmark(inner: () -> Unit): Duration {
 	return results[results.size / 2]
 }
 
-private val testScope = GlobalScope + SupervisorJob()
-
-/**
- * Runs a coroutine, converting its deferred result to be used for platform-specific testing.
- * @see asPromise
- */
-fun <R> runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> R): dynamic {
-	return testScope.async {
-		withTimeout(timeout.toLongMilliseconds()) {
-			block()
-		}
-	}.asPromise()
-}
-
 class ExpectedException(message: String? = "An expected exception for unit tests.") : Exception(message)
 
 /**
@@ -303,4 +319,58 @@ inline fun <reified T : Throwable> Promise<Any?>.assertFailsWith(message: String
 	})
 }
 
-fun Promise<Any?>.assertFails(message: String? = null): Promise<Unit> = assertFailsWith<Throwable>()
+fun Promise<Any?>.assertFails(message: String? = null): Promise<Unit> = assertFailsWith<Throwable>(message)
+
+/**
+ * Runs a test in an async block with a timeout.
+ * Additionally, this will initialize polyfills and nodejs mock dom.
+ *
+ * @return Returns a Promise, suitable for asynchronous unit test frameworks.
+ */
+fun runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> Unit): Promise<Unit> {
+	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+	polyfills()
+	initMockDom()
+	return GlobalScope.async {
+		withTimeout(timeout, block)
+	}.asPromise()
+}
+
+/**
+ * Runs a test with a timeout.
+ * Additionally, this will initialize polyfills and nodejs mock dom.
+ *
+ * @param block The block to execute. This will be given two callbacks, resolve, and reject.
+ *
+ * @return Returns a Promise, suitable for asynchronous unit test frameworks.
+ */
+fun runAsyncTest(
+	timeout: Duration = 10.seconds,
+	block: (resolve: () -> Unit, reject: (e: Throwable) -> Unit) -> Unit
+): Promise<Unit> {
+	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+	polyfills()
+	initMockDom()
+	return Promise<Unit> {
+		resolve, reject ->
+		block({ resolve(Unit) }, reject)
+	}.withTimeout(timeout)
+}
+
+/**
+ * Runs a test within an acorn application.
+ * The test will be completed when the stage has been disposed.
+ */
+fun runApplicationTest(
+	appConfig: AppConfig = AppConfig(),
+	timeout: Duration = 10.seconds,
+	block: Stage.(resolve: () -> Unit, reject: (e: Throwable) -> Unit) -> Unit
+): Promise<Unit> =
+	runAsyncTest(timeout) { resolve, reject ->
+		app(appConfig = appConfig) {
+			coroutineContext[Job]!!.invokeOnCompletion {
+				reject(it!!)
+			}
+			block(resolve, reject)
+		}
+	}

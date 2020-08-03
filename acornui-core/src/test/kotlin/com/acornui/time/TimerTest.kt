@@ -17,9 +17,8 @@
 package com.acornui.time
 
 import com.acornui.async.delay
-import com.acornui.exitMain
 import com.acornui.test.assertClose
-import com.acornui.test.runHeadlessTest
+import com.acornui.test.runTest
 import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +27,7 @@ import kotlin.time.seconds
 
 class TimerTest {
 
-	@Test fun dispose() = runHeadlessTest {
+	@Test fun dispose() = runTest {
 		val handle = timer(0.5.seconds) {
 			fail("Disposing handle expected to prevent timer")
 		}
@@ -37,10 +36,9 @@ class TimerTest {
 			handle.dispose()
 		}
 		delay(1.seconds)
-		exitMain()
 	}
 
-	@Test fun disposeOnCallback() = runHeadlessTest {
+	@Test fun disposeOnCallback() = runTest {
 		var c = 0
 		timer(0.1.seconds) {
 			c++
@@ -48,20 +46,18 @@ class TimerTest {
 		}
 		delay(0.5.seconds)
 		assertEquals(1, c)
-		exitMain()
 	}
 
-	@Test fun repetitions() = runHeadlessTest {
+	@Test fun repetitions() = runTest {
 		var c = 0
 		timer(0.1.seconds, repetitions = 3) {
 			c++
 		}
 		delay(0.5.seconds)
 		assertEquals(3, c)
-		exitMain()
 	}
 
-	@Test fun delay() = runHeadlessTest {
+	@Test fun delay() = runTest {
 		val start = markNow()
 		var callTime = -1.0
 		timer(0.1.seconds, delay = 0.3.seconds) {
@@ -69,7 +65,6 @@ class TimerTest {
 		}
 		delay(0.5.seconds)
 		assertClose(400.0, callTime, 50.0)
-		exitMain()
 	}
 }
 

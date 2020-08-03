@@ -16,36 +16,32 @@
 
 package com.acornui.headless
 
+import com.acornui.app
+import com.acornui.async.TimeoutException
 import com.acornui.component.*
 import com.acornui.di.Context
-import com.acornui.di.exit
-import com.acornui.exitMain
 import com.acornui.test.*
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.seconds
 
-class HeadlessTest {
+class ApplicationTest {
 
 	@Test
-	fun expectTimeout1() = runMainTest(timeout = 1.seconds) {
+	fun expectTimeout1() = runTest(timeout = 1.seconds) {
 		delay(2.seconds)
-		exitMain()
 	}.assertFailsWith<TimeoutCancellationException>()
 
 	@Test
-	fun expectTimeout2() = runMainTest(timeout = 1.seconds) {
+	fun expectTimeout2() = runTest(timeout = 1.seconds) {
 		launch {
 			delay(2.seconds)
-			exitMain()
 		}
 	}.assertFailsWith<TimeoutCancellationException>()
 
 	@Test
-	fun expectFails1() = runMainTest() {
+	fun expectFails1() = runTest {
 		launch {
 			delay(1.seconds)
 			throw ExpectedException()
@@ -53,38 +49,32 @@ class HeadlessTest {
 	}.assertFailsWith<ExpectedException>()
 
 	@Test
-	fun expectFails2() = runMainTest {
+	fun expectFails2() = runTest {
 		launch {
 			fail("Expected failure")
 		}
 	}.assertFails()
 
 	@Test
-	fun expectFails3() = runHeadlessTest {
+	fun expectFails3() = runApplicationTest(timeout = 1.seconds) { _, _ ->
 		launch {
-			fail("Expected failure")
+			throw ExpectedException()
 		}
-	}.assertFails()
+	}.assertFailsWith<ExpectedException>()
 
 	@Test
-	fun expectFails4() = runHeadlessTest(timeout = 1.seconds) {
+	fun expectFails4() = runApplicationTest(timeout = 1.seconds) { _, _ ->
 		launch {
 			delay(2.seconds)
 			fail("Expected failure")
 		}
-	}.assertFailsWith<TimeoutCancellationException>()
+	}.assertFailsWith<TimeoutException>()
 
 	@Test
-	fun runHeadlessTest() = runHeadlessTest(timeout = 1.seconds) {
-		exitMain()
-	}
-
-	@Test
-	fun addToStage() = runMainTest {
-		headlessApplication {
+	fun addToStage() = runTest {
+		app {
 			stage.addElement(testComponent())
 			+testComponent()
-			exitMain()
 		}
 	}
 

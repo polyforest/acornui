@@ -21,8 +21,10 @@ import com.acornui.component.UiComponentImpl
 import com.acornui.component.WithNode
 import com.acornui.component.asWithNode
 import com.acornui.di.Context
+import com.acornui.signal.event
 import org.w3c.dom.*
 import kotlinx.browser.document
+import org.w3c.dom.events.Event
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -106,9 +108,68 @@ inline fun Context.img(src: String = "", alt: String = "", init: ComponentInit<I
 	}
 }
 
-inline fun Context.form(init: ComponentInit<UiComponentImpl<HTMLFormElement>> = {}): UiComponentImpl<HTMLFormElement> {
+open class FormComponent(owner: Context) : UiComponentImpl<HTMLFormElement>(owner, createElement("form")) {
+
+	val submitted = event<Event>("submit")
+
+	var acceptCharset: String
+		get() = dom.acceptCharset
+		set(value) {
+			dom.acceptCharset = value
+		}
+
+	var action: String
+		get() = dom.action
+		set(value) {
+			dom.action = value
+		}
+
+	var autocomplete: String
+		get() = dom.autocomplete
+		set(value) {
+			dom.autocomplete = value
+		}
+
+	var enctype: String
+		get() = dom.enctype
+		set(value) {
+			dom.enctype = value
+		}
+
+	var encoding: String
+		get() = dom.encoding
+		set(value) {
+			dom.encoding = value
+		}
+
+	var method: String
+		get() = dom.method
+		set(value) {
+			dom.method = value
+		}
+
+	var noValidate: Boolean
+		get() = dom.noValidate
+		set(value) {
+			dom.noValidate = value
+		}
+
+	/**
+	 * Sets [action] to `"javascript:void(0);"`, thus preventing a page redirect on form submission.
+	 */
+	fun preventAction() {
+		action = "javascript:void(0);"
+	}
+
+	fun submit() = dom.submit()
+	fun reset() = dom.reset()
+	fun checkValidity(): Boolean = dom.checkValidity()
+	fun reportValidity(): Boolean = dom.reportValidity()
+}
+
+inline fun Context.form(init: ComponentInit<FormComponent> = {}): FormComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("form", init)
+	return FormComponent(this).apply(init)
 }
 
 inline fun Context.footer(init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {

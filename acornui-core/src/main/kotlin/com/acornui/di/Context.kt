@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
  *  - Coroutine scoping
  *  - Disposable cleanup
  */
-interface Context : CoroutineScope, Owner {
+interface Context : CoroutineScope, Owner, Disposable {
 
 	/**
 	 * The context that constructed this context.
@@ -283,12 +283,6 @@ fun Context.ownerWalk(callback: (Context) -> Boolean): Context? {
  * @return Returns the first ancestor for which [callback] returned true.
  */
 inline fun Context.findOwner(crossinline callback: (Context) -> Boolean): Context? = ownerWalk { !callback(it) }
-
-/**
- * A DependencyKey is a marker interface indicating an object representing a key of a specific dependency type.
- */
-@Deprecated("Use Context.Key", ReplaceWith("Context.Key<T>"))
-typealias DKey<T> = Context.Key<T>
 
 data class DependencyPair<T : Any>(val key: Context.Key<T>, val value: T)
 

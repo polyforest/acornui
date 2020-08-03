@@ -16,9 +16,8 @@
 
 package com.acornui.time
 
-import com.acornui.exitMain
 import com.acornui.test.assertClose
-import com.acornui.test.runHeadlessTest
+import com.acornui.test.runAsyncTest
 import kotlin.test.Test
 import kotlin.time.TimeSource
 import kotlin.time.seconds
@@ -26,11 +25,12 @@ import kotlin.time.seconds
 class ScheduleTest {
 
 	@Test
-	fun scheduleTest() = runHeadlessTest(timeout = 4.seconds) {
+	fun scheduleTest() = runAsyncTest(timeout = 4.seconds) {
+		resolve, _ ->
 		val mark = TimeSource.Monotonic.markNow()
 		schedule(1.seconds) {
 			assertClose(1.0, mark.elapsedNow().inSeconds, 0.2) // CI For mac has an unusually high variance
-			exitMain()
+			resolve()
 		}
 	}
 }

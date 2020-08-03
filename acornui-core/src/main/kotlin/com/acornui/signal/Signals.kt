@@ -25,6 +25,9 @@ import com.acornui.logging.Log
 import com.acornui.observe.Bindable
 import com.acornui.own
 import com.acornui.recycle.Clearable
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 interface Signal<out T> : Bindable {
 
@@ -72,7 +75,7 @@ interface MutableSignal<T> : Signal<T>, Clearable, Disposable {
  * Adds a handler to this signal that will be automatically removed the next time the signal is dispatched.
  * @see Signal.listen
  */
-fun <T : Any> Signal<T>.once(handler: (T) -> Unit) =
+fun <T> Signal<T>.once(handler: (T) -> Unit) =
 	listen(isOnce = true, handler = handler)
 
 /**
@@ -241,5 +244,11 @@ private class SignalSubscriptionImpl<T>(
 
 	override fun dispose() {
 		disposer(this)
+	}
+}
+
+suspend fun <T> Signal<T>.await()  = suspendCancellableCoroutine { cont: CancellableContinuation<T> ->
+	this@await.once {
+		cont.resume(it)
 	}
 }

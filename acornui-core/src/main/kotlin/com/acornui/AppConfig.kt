@@ -29,33 +29,12 @@ data class AppConfig(
 		/**
 		 * All relative files will be prepended with this string.
 		 */
-		val rootPath: String = "",
-
-		/**
-		 * The properties for the Window.
-		 */
-		val window: WindowConfig = WindowConfig()
+		val rootPath: String = ""
 ) {
 
 	companion object : Context.Key<AppConfig>
 
 }
-
-@Serializable
-data class WindowConfig(
-
-		val title: String = "",
-
-		/**
-		 * The initial width of the window (For JS backends, set the width style on the root div instead).
-		 */
-		val initialWidth: Double = 800.0,
-
-		/**
-		 * The initial height of the window (For JS backends, set the width style on the root div instead).
-		 */
-		val initialHeight: Double = 600.0
-)
 
 /**
  * A convenient way to get the scoped AppConfig.

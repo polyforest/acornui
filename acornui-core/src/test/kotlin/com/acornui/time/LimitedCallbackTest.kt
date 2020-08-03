@@ -17,8 +17,7 @@
 package com.acornui.time
 
 import com.acornui.async.delay
-import com.acornui.exitMain
-import com.acornui.test.runMainTest
+import com.acornui.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.seconds
@@ -26,7 +25,7 @@ import kotlin.time.seconds
 class LimitedCallbackTest {
 
 
-	@Test fun limit() = runMainTest {
+	@Test fun limit() = runTest {
 		var c = 0
 		val call = limitedCallback(0.1.seconds) {
 			c++
@@ -44,11 +43,9 @@ class LimitedCallbackTest {
 		call()
 		delay(0.07.seconds)
 		assertEquals(3, c)
-		exitMain()
-
 	}
 
-	@Test fun dispose() = runMainTest {
+	@Test fun dispose() = runTest {
 		var c = 0
 		val call = limitedCallback(0.1.seconds) {
 			c++
@@ -61,6 +58,5 @@ class LimitedCallbackTest {
 		call.dispose()
 		delay(0.2.seconds)
 		assertEquals(1, c)
-		exitMain()
 	}
 }
