@@ -17,26 +17,8 @@
 package com.acornui.component.style
 
 import com.acornui.component.UiComponent
-import com.acornui.component.layout.spacer
-import com.acornui.di.Context
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
-
-/**
- * The function signature for a factory that provides a component.
- */
-typealias SkinPart = Context.() -> UiComponent
-
-/**
- * The function signature for a factory that optionally provides a component.
- */
-typealias OptionalSkinPart = Context.() -> UiComponent?
-
-/**
- * Used as a placeholder for skin part factories that need to be declared in the skin.
- */
-val noSkin: SkinPart = { spacer() }
-val noSkinOptional: OptionalSkinPart = { null }
 
 inline class StyleTag(val className: String)  {
 

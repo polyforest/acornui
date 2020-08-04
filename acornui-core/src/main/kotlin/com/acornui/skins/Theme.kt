@@ -173,6 +173,8 @@ data class Theme(
 	val footerTextColor: String = css("#222"),
 	val footerBackgroundColor: String = css("#bbb"),
 
+	val loadingSpinnerColor: String = textColor
+
 ) {
 
 	fun toCss(selector: String = ":root"): String {
@@ -237,6 +239,8 @@ data class Theme(
 			  
 			  ${cssProp(::footerTextColor)}
 			  ${cssProp(::footerBackgroundColor)}
+
+			  ${cssProp(::loadingSpinnerColor)}
 
 			  
 			}

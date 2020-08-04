@@ -22,7 +22,6 @@ import com.acornui.component.UiComponentImpl
 import com.acornui.component.connected
 import com.acornui.di.Context
 import com.acornui.dom.createElement
-import com.acornui.frame
 import com.acornui.input.ChangeSignal
 import com.acornui.observe.Observable
 import com.acornui.own

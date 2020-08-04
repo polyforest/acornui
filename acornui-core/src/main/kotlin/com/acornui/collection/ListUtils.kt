@@ -20,10 +20,6 @@ package com.acornui.collection
 
 import com.acornui.math.clamp
 import com.acornui.recycle.Clearable
-//import kotlinx.collections.immutable.ImmutableList
-//import kotlinx.collections.immutable.PersistentList
-//import kotlinx.collections.immutable.persistentListOf
-//import kotlinx.collections.immutable.toPersistentList
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
