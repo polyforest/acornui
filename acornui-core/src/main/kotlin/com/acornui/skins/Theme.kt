@@ -263,9 +263,9 @@ val darkTheme = Theme(
 
 	buttonBackground = css("#1b2235"),
 
-	buttonBackgroundHover = css("rgb(45 45 45 / 90%)"),
+	buttonBackgroundHover = css("#224"),
 
-	buttonBackgroundActive = css("rgb(39 39 39 / 90%)"),
+	buttonBackgroundActive = css("#112"),
 
 	buttonTextColor = css("#ccc"),
 
