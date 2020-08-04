@@ -27,7 +27,6 @@ import org.intellij.lang.annotations.Language
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-
 open class TextInput(owner: Context, type: String = "text") : TextInputBase(owner, type) {
 
 	/**
@@ -144,7 +143,7 @@ abstract class TextInputBase(owner: Context, type: String) : InputUiComponentImp
 
 }
 
-inline fun Context.textInput(init: ComponentInit<TextInput> = {}): TextInputBase {
+inline fun Context.textInput(init: ComponentInit<TextInput> = {}): TextInput {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextInput(this)
 	t.init()
