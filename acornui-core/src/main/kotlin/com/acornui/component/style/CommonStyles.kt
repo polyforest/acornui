@@ -33,6 +33,8 @@ object CommonStyleTags {
 	val toggled = StyleTag("toggled")
 
 	val active = StyleTag("active")
+
+	val hidden = StyleTag("hidden")
 }
 
 var UiComponent.disabledTag: Boolean by StyleTagToggle(CommonStyleTags.disabled)

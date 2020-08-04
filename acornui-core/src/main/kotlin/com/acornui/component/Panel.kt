@@ -55,6 +55,7 @@ $panelColorsStyle {
 	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
 	--scrollbarCornerColor: ${cssVar(Theme::panelScrollbarCornerColor)};
 	--scrollbarBorderRadius: ${cssVar(Theme::borderRadius)};
+	--loadingSpinnerColor: ${cssVar(Theme::panelLoadingSpinnerColor)};
 }
 
 

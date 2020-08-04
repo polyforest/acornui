@@ -16,34 +16,52 @@
 
 package com.acornui.component.style
 
-import com.acornui.component.AttachmentHolder
 import com.acornui.component.UiComponent
-import com.acornui.component.style.LoadingIndicator.loading
+import com.acornui.component.style.LoadingStyles.loading
+import com.acornui.dom.addCssToHead
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-object LoadingIndicator {
+object LoadingStyles {
 
 	val loading = StyleTag("loading")
 
 	val showOnLoading = StyleTag("showOnLoading")
+
+	init {
+		addCssToHead("""
+$showOnLoading {
+	opacity: 0;
+	transition: opacity ease 0.5s;
+}
+			
+$loading $showOnLoading {
+	opacity: 1;
+}
+		""")
+	}
 }
 
+/**
+ * Runs the suspend block wrapped in with [loadingCount] increment/decrement.
+ * This will show elements with the [LoadingStyles.showOnLoading] class.
+ */
 fun UiComponent.launchWithIndicator(
 	context: CoroutineContext = EmptyCoroutineContext,
 	start: CoroutineStart = CoroutineStart.DEFAULT,
 	block: suspend CoroutineScope.() -> Unit
 ) {
 	launch(context, start) {
-
+		loadingCount++
 		block()
+		loadingCount--
 	}
 }
 
-private var UiComponent.loadingCount: Int
+var UiComponent.loadingCount: Int
 	get() = getAttachment("loadingCount") ?: 0
 	set(value) {
 		setAttachment("loadingCount", value)

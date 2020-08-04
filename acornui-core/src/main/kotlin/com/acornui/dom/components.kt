@@ -16,10 +16,8 @@
 
 package com.acornui.dom
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.WithNode
-import com.acornui.component.asWithNode
+import com.acornui.component.*
+import com.acornui.component.style.CommonStyleTags
 import com.acornui.di.Context
 import com.acornui.signal.event
 import org.w3c.dom.*
@@ -170,6 +168,18 @@ open class FormComponent(owner: Context) : UiComponentImpl<HTMLFormElement>(owne
 inline fun Context.form(init: ComponentInit<FormComponent> = {}): FormComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return FormComponent(this).apply(init)
+}
+
+/**
+ * Returns an input element of type 'submit' styled to be invisible.
+ */
+fun Context.hiddenSubmit(init: ComponentInit<UiComponentImpl<HTMLInputElement>> = {}): UiComponentImpl<HTMLInputElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("input") {
+		addClass(CommonStyleTags.hidden)
+		dom.type = "submit"
+		tabIndex = -1
+	}
 }
 
 inline fun Context.footer(init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {

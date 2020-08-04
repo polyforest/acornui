@@ -16,8 +16,11 @@
 
 package com.acornui.input
 
+import com.acornui.component.WithNode
 import com.acornui.signal.WithEventTarget
 import com.acornui.signal.event
+import com.acornui.signal.filtered
+import org.w3c.dom.Node
 import org.w3c.dom.TouchEvent
 import org.w3c.dom.events.*
 import org.w3c.dom.events.Event
@@ -148,7 +151,7 @@ val WithEventTarget.touchEnded
  *
  * [https://developer.mozilla.org/en-US/docs/Web/API/Element/touchcancel_event]
  */
-val WithEventTarget.touchCanceled
+val WithEventTarget.touchCancelled
 	get() = event<TouchEvent>("touchcancel")
 
 /**
@@ -174,8 +177,8 @@ val WithEventTarget.input
 	get() = event<InputEvent>("input")
 
 /**
- * The focus event fires when an element has received focus. The main difference between this event and [focusin] is that
- * [focusin] bubbles while focus does not.
+ * The focus event fires when an element has received focus. The main difference between this event and [focusIn] is that
+ * [focusIn] bubbles while focus does not.
  */
 val WithEventTarget.focus
 	get() = event<FocusEvent>("focus")
@@ -184,12 +187,12 @@ val WithEventTarget.focus
  * The focusin event fires when an element is about to receive focus. The main difference between this event and [focus]
  * is that focusin bubbles while [focus] does not.
  */
-val WithEventTarget.focusin
+val WithEventTarget.focusIn
 	get() = event<FocusEvent>("focusin")
 
 /**
- * The blur event fires when an element has lost focus. The main difference between this event and [focusout] is that
- * [focusout] bubbles while blur does not.
+ * The blur event fires when an element has lost focus. The main difference between this event and [focusOut] is that
+ * [focusOut] bubbles while blur does not.
  */
 val WithEventTarget.blur
 	get() = event<FocusEvent>("blur")
@@ -198,8 +201,24 @@ val WithEventTarget.blur
  * The focusout event fires when an element is about to lose focus. The main difference between this event and [blur] is
  * that focusout bubbles while [blur] does not.
  */
-val WithEventTarget.focusout
+val WithEventTarget.focusOut
 	get() = event<FocusEvent>("focusout")
+
+/**
+ * The [focusOut] event filtered to only dispatch when the new focus is not a descendent of this node.
+ */
+val WithNode.focusOutContainer
+	get() = event<FocusEvent>("focusout").filtered {
+		(it.relatedTarget == null || !dom.contains(it.relatedTarget.unsafeCast<Node>()))
+	}
+
+/**
+ * The [focusIn] event filtered to only dispatch when the previous focus is not a descendent of this node.
+ */
+val WithNode.focusInContainer
+	get() = event<FocusEvent>("focusin").filtered {
+		(it.relatedTarget == null || !dom.contains(it.relatedTarget.unsafeCast<Node>()))
+	}
 
 
 

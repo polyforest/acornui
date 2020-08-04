@@ -18,6 +18,7 @@ package com.acornui.skins
 
 import com.acornui.component.StageImpl
 import com.acornui.component.input.InputStyles
+import com.acornui.component.style.CommonStyleTags
 import com.acornui.css.cssVar
 import com.acornui.dom.addCssToHead
 
@@ -85,6 +86,14 @@ $s ul li {
 footer {
 	color: ${cssVar(Theme::footerTextColor)};
 	background: ${cssVar(Theme::footerBackgroundColor)};
+}
+
+/* 	A way to hide an element without using visibility: hidden. Typically used with Safari workarounds. */
+${CommonStyleTags.hidden} {
+	position: absolute; 
+	left: -9999px; 
+	width: 1px; 
+	height: 1px;
 }
 
 		""", priority = -1.0)

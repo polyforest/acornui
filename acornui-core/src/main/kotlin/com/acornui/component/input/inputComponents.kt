@@ -341,7 +341,8 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 	var toggleOnClick = false
 
 	final override val inputComponent = addChild(InputUiComponentImpl(this, type).apply {
-		style.display = "none"
+		addClass(CommonStyleTags.hidden)
+		tabIndex = -1
 	})
 
 	val labelComponent = addChild(text())
@@ -354,7 +355,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 
 	init {
 		addClass(styleTag)
-		dom.tabIndex = 0
+		tabIndex = 0
 
 		mousePressOnKey()
 

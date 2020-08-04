@@ -166,6 +166,7 @@ data class Theme(
 	 * The box-shadow for panels.
 	 */
 	val panelShadow: String = css("2px 2px 5px rgba(0, 0, 0, 0.4)"),
+	val panelLoadingSpinnerColor: String = panelTextColor,
 
 	val dataRowEvenBackground: String = css("#eeef"),
 	val dataRowOddBackground: String = css("#ddde"),
@@ -233,6 +234,7 @@ data class Theme(
 			  ${cssProp(::panelScrollbarButtonColor)}
 			  ${cssProp(::panelScrollbarCornerColor)}
 			  ${cssProp(::panelShadow)}
+			  ${cssProp(::panelLoadingSpinnerColor)}
 			  
 			  ${cssProp(::dataRowEvenBackground)}
 			  ${cssProp(::dataRowOddBackground)}
