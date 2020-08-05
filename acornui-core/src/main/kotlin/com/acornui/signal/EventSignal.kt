@@ -52,22 +52,14 @@ private class EventSignalSubscriptionImpl<T : Event>(
 		handlerOuter(data)
 	}
 
-	private fun listen() {
-		@Suppress("UNCHECKED_CAST")
-		host.addEventListener(eventName, handlerOuter as ((Event) -> Unit), eventOptions)
-	}
-
-	private fun unlisten() {
-		@Suppress("UNCHECKED_CAST")
-		host.removeEventListener(eventName, handlerOuter as ((Event) -> Unit), eventOptions)
-	}
-
 	init {
-		listen()
+		@Suppress("UNCHECKED_CAST")
+		host.addEventListener(eventName, handlerOuter.unsafeCast<(Event) -> Unit>(), eventOptions)
 	}
 
 	override fun dispose() {
-		unlisten()
+		@Suppress("UNCHECKED_CAST")
+		host.removeEventListener(eventName, handlerOuter.unsafeCast<(Event) -> Unit>(), eventOptions)
 	}
 }
 

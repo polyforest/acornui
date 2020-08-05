@@ -20,6 +20,7 @@ import com.acornui.Disposable
 import com.acornui.ManagedDisposable
 import com.acornui.Owner
 import com.acornui.collection.Filter
+import com.acornui.collection.forEach
 import com.acornui.function.as1
 import com.acornui.logging.Log
 import com.acornui.observe.Bindable
@@ -247,7 +248,38 @@ private class SignalSubscriptionImpl<T>(
 	}
 }
 
-suspend fun <T> Signal<T>.await()  = suspendCancellableCoroutine { cont: CancellableContinuation<T> ->
+class SignalSubscriptionBuilder<T>(override val isOnce: Boolean, val handler: (T) -> Unit) : SignalSubscription {
+
+	private val disposables = ArrayList<Disposable>()
+
+	override var isPaused: Boolean = false
+
+	fun invoke(data: T) {
+		if (isPaused) return
+		if (isOnce)
+			dispose()
+		handler.invoke(data)
+	}
+
+	operator fun <T : Disposable> T.unaryPlus(): T {
+		disposables += this
+		return this
+	}
+
+	override fun dispose() {
+		disposables.forEach(Disposable::dispose)
+		disposables.clear()
+	}
+}
+
+/**
+ * When building a signal subscription as a sequence of events, this may be used to track the disposables for cleanup.
+ */
+fun <T> Signal<T>.buildSubscription(isOnce: Boolean, handler: (T) -> Unit, builder: SignalSubscriptionBuilder<T>.() -> Unit): SignalSubscription {
+	return SignalSubscriptionBuilder(isOnce, handler).apply(builder)
+}
+
+suspend fun <T> Signal<T>.await() = suspendCancellableCoroutine { cont: CancellableContinuation<T> ->
 	this@await.once {
 		cont.resume(it)
 	}

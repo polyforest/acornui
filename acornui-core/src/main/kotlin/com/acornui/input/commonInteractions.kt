@@ -220,7 +220,14 @@ val WithNode.focusInContainer
 		(it.relatedTarget == null || !dom.contains(it.relatedTarget.unsafeCast<Node>()))
 	}
 
-
+/**
+ * The contextmenu event fires when the user attempts to open a context menu. This event is typically triggered by
+ * clicking the right mouse button, or by pressing the context menu key. In the latter case, the context menu is
+ * displayed at the bottom left of the focused element, unless the element is a tree, in which case the context menu is
+ * displayed at the bottom left of the current row.
+ */
+val WithEventTarget.contextMenu
+	get() = event<MouseEvent>("contextmenu")
 
 
 // TODO: Clipboard
