@@ -17,7 +17,6 @@
 package com.acornui.i18n
 
 import com.acornui.Disposable
-import com.acornui.component.Labelable
 import com.acornui.component.UiComponent
 import com.acornui.component.tooltip
 
@@ -32,7 +31,7 @@ import com.acornui.component.tooltip
  * @return Returns a [Disposable] handle to dispose of the binding. This will be disposed automatically when this
  * component is disposed.
  */
-fun <T : Labelable> T.labelI18n(key: String, bundleName: String = i18nBundleName): Disposable = i18n {
+fun UiComponent.labelI18n(key: String, bundleName: String = i18nBundleName): Disposable = i18n {
 	label = string(key, bundleName)
 }
 

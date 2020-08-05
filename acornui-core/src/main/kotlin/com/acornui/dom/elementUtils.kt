@@ -19,9 +19,7 @@ package com.acornui.dom
 import com.acornui.Disposable
 import com.acornui.ResizeObserver
 import com.acornui.toDisposable
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.ParentNode
-import org.w3c.dom.asList
+import org.w3c.dom.*
 
 fun HTMLElement.hide() {
 	style.apply {

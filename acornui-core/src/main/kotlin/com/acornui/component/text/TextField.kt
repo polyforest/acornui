@@ -18,40 +18,16 @@ package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
-import com.acornui.component.Labelable
 import com.acornui.component.style.StyleTag
 import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-interface TextField : Labelable {
-
-	/**
-	 * Sets this text field's contents to a simple text flow.
-	 */
-	var text: String
-
-	/**
-	 * Sets [text].
-	 */
-	override var label: String
-		get() = text
-		set(value) {
-			text = value
-		}
-}
-
-class TextFieldImpl(owner: Context) : TextField, DivComponent(owner) {
+class TextField(owner: Context) : DivComponent(owner) {
 
 	init {
 		addClass(styleTag)
 	}
-
-	override var text: String
-		get() = dom.innerText
-		set(value) {
-			dom.innerText = value
-		}
 
 	companion object {
 		val styleTag = StyleTag("TextFieldImpl")
@@ -59,13 +35,13 @@ class TextFieldImpl(owner: Context) : TextField, DivComponent(owner) {
 }
 
 /**
- * Creates a [TextField] span.
+ * Creates a [TextField] component.
  * @param text The initial text to set.
  * @param init The initializer block.
  */
-inline fun Context.text(text: String = "", init: ComponentInit<TextFieldImpl> = {}): TextFieldImpl  {
+inline fun Context.text(text: String = "", init: ComponentInit<TextField> = {}): TextField  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	val t = TextFieldImpl(this)
+	val t = TextField(this)
 	t.text = text
 	t.init()
 	return t

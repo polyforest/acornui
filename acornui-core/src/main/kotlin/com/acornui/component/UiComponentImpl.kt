@@ -26,6 +26,7 @@ import com.acornui.component.layout.Transform
 import com.acornui.component.layout.TransformOrigin
 import com.acornui.component.layout.toTransformOrigin
 import com.acornui.component.style.StyleTag
+import com.acornui.component.text.text
 import com.acornui.css.Length
 import com.acornui.css.px
 import com.acornui.di.Context
@@ -96,6 +97,21 @@ open class UiComponentImpl<T : HTMLElement>(
 		get() = dom.innerHTML
 		set(value) {
 			dom.innerHTML = value
+		}
+
+	var text: String
+		get() = dom.innerText
+		set(value) {
+			dom.innerText = value
+		}
+
+	/**
+	 * Sets [text].
+	 */
+	open var label: String
+		get() = text
+		set(value) {
+			text = value
 		}
 
 	final override val dataset: DOMStringMap

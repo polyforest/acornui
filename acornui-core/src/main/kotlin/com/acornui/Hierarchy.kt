@@ -272,6 +272,25 @@ inline fun NodeWithParent.findAncestor(predicate: Filter<Node>): Node? {
 	return null
 }
 
+
+/**
+ * Walks the ancestry chain on the display graph, returning the child of the ancestor where [predicate] returned true.
+ *
+ * @param predicate The ancestor (starting with `parent`) is passed to this function, if true is returned, the ancestry
+ * walk will stop and the child of that ancestor is returned.
+ */
+inline fun NodeWithParent.findAncestorBefore(predicate: Filter<Node>): Node? {
+	var c = this
+	var p: NodeWithParent? = parent
+	while (p != null) {
+		val found = predicate(p)
+		if (found) return c
+		c = p
+		p = p.parent
+	}
+	return null
+}
+
 /**
  * Populates an ArrayList with a ChildRo's ancestry.
  * @return Returns the [out] ArrayList

@@ -336,7 +336,7 @@ select:-webkit-autofill:focus {
 	}
 }
 
-open class Button(owner: Context, type: String = "button") : DivWithInputComponent(owner), Labelable {
+open class Button(owner: Context, type: String = "button") : DivWithInputComponent(owner) {
 
 	var toggleOnClick = false
 
@@ -736,7 +736,7 @@ inline fun Context.weekInput(init: ComponentInit<InputUiComponentImpl> = {}): In
 /**
  * An input component such as a radio, switch, or checkbox that should be inline with a label.
  */
-open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(owner), Labelable {
+open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(owner) {
 
 	public final override val inputComponent = addChild(InputUiComponentImpl(this, type))
 	val labelComponent = addChild(label(inputComponent))
@@ -867,7 +867,7 @@ inline fun Context.radio(group: RadioGroup, value: String, defaultChecked: Boole
 	}
 }
 
-class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, createElement<Element>("label").unsafeCast<HTMLLabelElement>()), Labelable {
+class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, createElement<Element>("label").unsafeCast<HTMLLabelElement>()) {
 
 	override var label: String
 		get() = dom.innerText

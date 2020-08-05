@@ -55,15 +55,3 @@ fun Node.removeAt(index: Int): Node {
 
 fun Node.add(data: String): Text =
 	add(document.createTextNode(data))
-
-/**
- * Walks the [Node.parentNode] ancestry until [targetAncestor] is found, returning the ancestor of this Node that is a
- * direct child of [targetAncestor]. Will return [this] if `parentNode == targetAncestor`.
- */
-fun Node?.getParentBeforeAncestor(targetAncestor: Node): Node? {
-	var p: Node? = this
-	while (p != null && p.parentNode != targetAncestor) {
-		p = p.parentNode
-	}
-	return p
-}
