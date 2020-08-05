@@ -19,7 +19,7 @@
 package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.style.StyleTag
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.createElement
 import org.w3c.dom.HTMLElement
@@ -32,9 +32,9 @@ import kotlin.contracts.contract
  */
 object TextStyleTags {
 
-	val error = StyleTag("error")
-	val warning = StyleTag("warning")
-	val info = StyleTag("info")
+	val error by cssClass()
+	val warning by cssClass()
+	val info by cssClass()
 }
 
 /**

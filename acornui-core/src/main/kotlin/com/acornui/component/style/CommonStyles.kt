@@ -28,13 +28,15 @@ object CommonStyleTags {
 	/**
 	 * Some components may be disabled, when they are, they are expected to add this tag.
 	 */
-	val disabled = StyleTag("disabled")
+	val disabled by cssClass()
 
-	val toggled = StyleTag("toggled")
+	val toggled by cssClass()
 
-	val active = StyleTag("active")
+	val active by cssClass()
 
-	val hidden = StyleTag("hidden")
+	val hidden by cssClass()
+
+	val popup by cssClass()
 }
 
 var UiComponent.disabledTag: Boolean by StyleTagToggle(CommonStyleTags.disabled)

@@ -18,7 +18,7 @@ package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -30,7 +30,7 @@ class TextField(owner: Context) : DivComponent(owner) {
 	}
 
 	companion object {
-		val styleTag = StyleTag("TextFieldImpl")
+		val styleTag by cssClass()
 	}
 }
 

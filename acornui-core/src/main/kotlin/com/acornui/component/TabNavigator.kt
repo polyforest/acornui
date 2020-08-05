@@ -23,7 +23,7 @@ package com.acornui.component
 import com.acornui.component.input.Button
 import com.acornui.component.layout.hGroup
 import com.acornui.component.style.CommonStyleTags
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -166,9 +166,9 @@ open class TabNavigator(owner: Context) : DivComponent(owner) {
 
 
 	companion object {
-		val styleTag = StyleTag("TabNavigator")
-		val tabsStyle = StyleTag("TabNavigator_tabs")
-		val contentsStyle = StyleTag("TabNavigator_contents")
+		val styleTag by cssClass()
+		val tabsStyle by cssClass()
+		val contentsStyle by cssClass()
 
 		init {
 

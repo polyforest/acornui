@@ -26,7 +26,7 @@ package com.acornui.component
 
 import com.acornui.*
 import com.acornui.component.layout.LayoutElement
-import com.acornui.component.style.StyleTag
+import com.acornui.component.style.CssClass
 import com.acornui.di.Context
 import com.acornui.dom.remove
 import com.acornui.signal.WithEventTarget
@@ -45,13 +45,13 @@ typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	NodeWithParent, ElementParent<WithNode>, Disposable {
 
-	fun addClass(styleTag: StyleTag)
+	fun addClass(styleTag: CssClass)
 
-	fun removeClass(styleTag: StyleTag)
+	fun removeClass(styleTag: CssClass)
 
-	fun toggleClass(styleTag: StyleTag)
+	fun toggleClass(styleTag: CssClass)
 
-	fun containsClass(styleTag: StyleTag): Boolean
+	fun containsClass(styleTag: CssClass): Boolean
 
 	/**
 	 * A unique string id for this component.

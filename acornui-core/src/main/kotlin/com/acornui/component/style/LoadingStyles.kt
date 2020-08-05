@@ -27,9 +27,9 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 object LoadingStyles {
 
-	val loading = StyleTag("loading")
+	val loading by cssClass()
 
-	val showOnLoading = StyleTag("showOnLoading")
+	val showOnLoading by cssClass()
 
 	init {
 		addCssToHead("""

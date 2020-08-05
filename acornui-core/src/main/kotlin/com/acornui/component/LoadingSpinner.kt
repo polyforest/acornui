@@ -18,7 +18,7 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.css
 import com.acornui.css.cssVar
 import com.acornui.di.Context
@@ -52,8 +52,8 @@ class LoadingSpinner(owner: Context) : DivComponent(owner) {
 
 	companion object {
 
-		val styleTag = StyleTag("LoadingSpinner")
-		val smallSpinnerStyle = StyleTag("LoadingSpinner_small")
+		val styleTag by cssClass()
+		val smallSpinnerStyle by cssClass()
 
 		init {
 			addCssToHead(

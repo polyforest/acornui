@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
 import kotlin.contracts.InvocationKind
@@ -31,7 +31,7 @@ class Rect(
 	}
 
 	companion object {
-		val styleTag = StyleTag("Rect")
+		val styleTag by cssClass()
 
 		init {
 			// So rects are visible by default.

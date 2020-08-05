@@ -21,7 +21,7 @@ package com.acornui.component.scroll
 import com.acornui.Disposable
 import com.acornui.component.ComponentInit
 import com.acornui.component.DivComponent
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -116,7 +116,7 @@ open class ScrollArea(
 
 	companion object {
 
-		val styleTag = StyleTag("ScrollArea")
+		val styleTag by cssClass()
 
 		init {
 			addCssToHead("""

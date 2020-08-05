@@ -19,7 +19,7 @@
 //import com.acornui.component.ComponentInit
 //import com.acornui.component.UiComponent
 //import com.acornui.component.layout.HAlign
-//import com.acornui.component.style.StyleTag
+// import com.acornui.component.style.styleTag
 //import com.acornui.di.Context
 //import com.acornui.math.lerp
 //import com.acornui.math.Vector2Ro

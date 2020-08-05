@@ -25,7 +25,7 @@ import com.acornui.collection.addBefore
 import com.acornui.component.layout.Transform
 import com.acornui.component.layout.TransformOrigin
 import com.acornui.component.layout.toTransformOrigin
-import com.acornui.component.style.StyleTag
+import com.acornui.component.style.CssClass
 import com.acornui.component.text.text
 import com.acornui.css.Length
 import com.acornui.css.px
@@ -191,19 +191,19 @@ open class UiComponentImpl<T : HTMLElement>(
 	// Style properties
 	//-----------------------------------------------
 
-	final override fun addClass(styleTag: StyleTag) {
+	final override fun addClass(styleTag: CssClass) {
 		dom.classList.add(styleTag.className)
 	}
 
-	final override fun removeClass(styleTag: StyleTag) {
+	final override fun removeClass(styleTag: CssClass) {
 		dom.classList.remove(styleTag.className)
 	}
 
-	final override fun toggleClass(styleTag: StyleTag) {
+	final override fun toggleClass(styleTag: CssClass) {
 		dom.classList.toggle(styleTag.className)
 	}
 
-	final override fun containsClass(styleTag: StyleTag): Boolean {
+	final override fun containsClass(styleTag: CssClass): Boolean {
 		return dom.classList.contains(styleTag.className)
 	}
 

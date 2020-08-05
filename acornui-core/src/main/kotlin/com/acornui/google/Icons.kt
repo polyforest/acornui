@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.acornui.google
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
-import com.acornui.component.style.StyleTag
+import com.acornui.component.style.CssClass
+import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.*
@@ -984,12 +987,12 @@ object MaterialIconsCss {
 		head.add(linkElement("https://fonts.googleapis.com/icon?family=Material+Icons", rel = "stylesheet"))
 	}
 
-	val materialIconsStyleTag = StyleTag("material-icons")
+	val materialIconsStyleTag = CssClass("material-icons")
 }
 
 object IconButtonCss {
 
-	val iconButtonStyleTag = StyleTag("iconButton")
+	val iconButtonStyleTag by cssClass()
 
 	init {
 		addCssToHead("""

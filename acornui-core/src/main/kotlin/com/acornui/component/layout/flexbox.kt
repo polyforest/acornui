@@ -22,9 +22,9 @@ import com.acornui.component.WithNode
 import com.acornui.component.layout.LayoutStyles.grid
 import com.acornui.component.layout.LayoutStyles.hFlowGroup
 import com.acornui.component.layout.LayoutStyles.hGroup
-import com.acornui.component.layout.LayoutStyles.vGroup
 import com.acornui.component.layout.LayoutStyles.vFlowGroup
-import com.acornui.component.style.StyleTag
+import com.acornui.component.layout.LayoutStyles.vGroup
+import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -35,11 +35,11 @@ import kotlin.contracts.contract
 
 object LayoutStyles {
 
-	val hGroup = StyleTag("hGroup")
-	val vGroup = StyleTag("vGroup")
-	val hFlowGroup = StyleTag("hFlowGroup")
-	val vFlowGroup = StyleTag("vFlowGroup")
-	val grid = StyleTag("grid")
+	val hGroup by cssClass()
+	val vGroup by cssClass()
+	val hFlowGroup by cssClass()
+	val vFlowGroup by cssClass()
+	val grid by cssClass()
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
@@ -115,8 +115,8 @@ open class FlowGroup(owner: Context) : DivComponent(owner) {
 	}
 
 	companion object {
-		val styleTag = StyleTag("FlowGroup")
-		val contentsTag = StyleTag("contents")
+		val styleTag by cssClass()
+		val contentsTag by cssClass()
 
 		init {
 			addCssToHead("""

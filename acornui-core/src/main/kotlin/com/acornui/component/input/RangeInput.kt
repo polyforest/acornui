@@ -17,7 +17,7 @@
 package com.acornui.component.input
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -104,7 +104,7 @@ open class RangeInput(owner: Context) : InputUiComponentImpl(owner, "range") {
 
 	companion object {
 
-		val styleTag = StyleTag("RangeInput")
+		val styleTag by cssClass()
 
 		init {
 			@Suppress("CssUnresolvedCustomProperty", "CssInvalidPropertyValue")

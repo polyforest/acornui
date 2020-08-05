@@ -17,16 +17,33 @@
 package com.acornui.component.style
 
 import com.acornui.component.UiComponent
+import com.acornui.string.toRadix
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-inline class StyleTag(val className: String)  {
+class CssClass(val className: String) {
 
 	override fun toString(): String = ".$className"
 }
 
+private var styleTagCount = 0
 
-class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<UiComponent, Boolean> {
+fun cssClass(): ReadOnlyProperty<Any?, CssClass> {
+
+	return object : ReadOnlyProperty<Any?, CssClass> {
+
+		private var className: CssClass? = null
+
+		override fun getValue(thisRef: Any?, property: KProperty<*>): CssClass {
+			if (className == null)
+				className = CssClass(property.name + "_" + (++styleTagCount).toRadix(36))
+			return className!!
+		}
+	}
+}
+
+class StyleTagToggle(private val styleTag: CssClass) : ReadWriteProperty<UiComponent, Boolean> {
 
 	override fun getValue(thisRef: UiComponent, property: KProperty<*>): Boolean {
 		return thisRef.dom.classList.contains(styleTag.className)
@@ -39,4 +56,4 @@ class StyleTagToggle(private val styleTag: StyleTag) : ReadWriteProperty<UiCompo
 	}
 }
 
-fun styleTagToggle(styleTag: StyleTag) = StyleTagToggle(styleTag)
+fun styleTagToggle(styleTag: CssClass) = StyleTagToggle(styleTag)

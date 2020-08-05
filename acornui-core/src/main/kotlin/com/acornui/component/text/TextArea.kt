@@ -18,8 +18,7 @@ package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
-import com.acornui.component.style.CommonStyleTags
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -128,7 +127,7 @@ open class TextArea(owner: Context) : UiComponentImpl<HTMLTextAreaElement>(owner
 
 	companion object {
 
-		val styleTag = StyleTag("TextArea")
+		val styleTag by cssClass()
 
 		init {
 			addCssToHead("""

@@ -27,7 +27,7 @@ import com.acornui.Disposable
 import com.acornui.UidUtil
 import com.acornui.component.*
 import com.acornui.component.style.CommonStyleTags
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.component.text.text
 import com.acornui.css.cssVar
 import com.acornui.css.prefix
@@ -59,7 +59,7 @@ import kotlin.js.Date as JsDate
 
 object InputStyles {
 
-	val switch = StyleTag("switch")
+	val switch by cssClass()
 
 	init {
 
@@ -422,7 +422,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 
 	companion object {
 
-		val styleTag = StyleTag("Button")
+		val styleTag by cssClass()
 
 		init {
 			addCssToHead("""
@@ -785,7 +785,7 @@ open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(own
 		}
 
 	companion object {
-		val styleTag = StyleTag("LabeledInput")
+		val styleTag by cssClass()
 
 		init {
 			addCssToHead("""

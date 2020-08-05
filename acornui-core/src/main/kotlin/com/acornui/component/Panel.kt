@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -33,8 +33,8 @@ open class Panel(owner: Context) : DivComponent(owner) {
 
 	companion object {
 
-		val styleTag = StyleTag("Panel")
-		val panelColorsStyle = StyleTag("Panel_colors")
+		val styleTag by cssClass()
+		val panelColorsStyle by cssClass()
 
 		init {
 			addCssToHead("""

@@ -21,7 +21,7 @@
 package com.acornui.component.input
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.style.StyleTag
+ import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import org.intellij.lang.annotations.Language
 import kotlin.contracts.InvocationKind
@@ -137,7 +137,7 @@ abstract class TextInputBase(owner: Context, type: String) : InputUiComponentImp
 
 	companion object {
 
-		val styleTag = StyleTag("TextInput")
+		val styleTag by cssClass()
 
 	}
 
