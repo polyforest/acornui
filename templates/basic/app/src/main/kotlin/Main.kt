@@ -2,7 +2,7 @@ import com.acornui.app
 import com.acornui.component.DivComponent
 import com.acornui.component.StageImpl
 import com.acornui.component.input.button
-import com.acornui.component.style.StyleTag
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.add
 import com.acornui.dom.addCssToHead
@@ -41,7 +41,7 @@ class Main(owner: Context) : DivComponent(owner) {
 	@Suppress("CssOverwrittenProperties")
 	companion object {
 
-		val styleTag = StyleTag("Main")
+		val styleTag by cssClass()
 
 		init {
 			addCssToHead(
