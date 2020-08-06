@@ -37,10 +37,7 @@ import com.acornui.dom.createElement
 import com.acornui.formatters.*
 import com.acornui.google.Icons
 import com.acornui.google.icon
-import com.acornui.input.clicked
-import com.acornui.input.mousePressOnKey
-import com.acornui.input.mousePressed
-import com.acornui.input.mouseReleased
+import com.acornui.input.*
 import com.acornui.number.zeroPadding
 import com.acornui.observe.Observable
 import com.acornui.properties.afterChange
@@ -366,6 +363,13 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 			}
 		}
 
+		touchStarted.listen {
+			active = true
+			stage.touchEnded.once {
+				active = false
+			}
+		}
+
 		clicked.listen {
 			if (it.target != inputComponent.dom) {
 				inputComponent.dom.dispatchEvent(MouseEvent("click", MouseEventInit(bubbles = false)))
@@ -428,6 +432,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 			addCssToHead("""
 
 $styleTag {
+	-webkit-tap-highlight-color: transparent;
 	padding: ${cssVar(Theme::componentPadding)};
 	border-radius: ${cssVar(Theme::borderRadius)};
 	background: ${cssVar(Theme::buttonBackground)};
