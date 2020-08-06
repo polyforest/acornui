@@ -16,15 +16,11 @@
 
 package com.acornui.signal
 
-import com.acornui.Disposable
-import com.acornui.ManagedDisposable
-import com.acornui.Owner
+import com.acornui.*
 import com.acornui.collection.Filter
-import com.acornui.collection.forEach
 import com.acornui.function.as1
 import com.acornui.logging.Log
 import com.acornui.observe.Bindable
-import com.acornui.own
 import com.acornui.recycle.Clearable
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -252,21 +248,26 @@ class SignalSubscriptionBuilder<T>(override val isOnce: Boolean, val handler: (T
 
 	private val disposables = ArrayList<Disposable>()
 
-	override var isPaused: Boolean = false
+	override var isPaused = false
+
+	var isDisposed = false
+		private set
 
 	fun invoke(data: T) {
-		if (isPaused) return
+		if (isPaused || isDisposed) return
 		if (isOnce)
 			dispose()
 		handler.invoke(data)
 	}
 
 	operator fun <T : Disposable> T.unaryPlus(): T {
+		if (isDisposed) throw DisposedException()
 		disposables += this
 		return this
 	}
 
 	override fun dispose() {
+		isDisposed = true
 		disposables.forEach(Disposable::dispose)
 		disposables.clear()
 	}
