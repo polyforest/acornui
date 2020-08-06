@@ -105,10 +105,7 @@ open class UiComponentImpl<T : HTMLElement>(
 			dom.innerText = value
 		}
 
-	/**
-	 * Sets [text].
-	 */
-	open var label: String
+	override var label: String
 		get() = text
 		set(value) {
 			text = value

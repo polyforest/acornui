@@ -73,6 +73,11 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	val dataset: DOMStringMap
 
 	/**
+	 * Sets the text on this component. This may be overridden to set the label on a child component.
+	 */
+	var label: String
+
+	/**
 	 * Removes a property from [dataset].
 	 * This is equivalent to:
 	 * `dom.removeAttribute("data-$name")`

@@ -37,6 +37,9 @@ fun ContextImpl.i18nBundle(bundleName: String) {
  */
 val I18N_BUNDLE = object : Context.Key<String> {}
 
+/**
+ * This context's resource bundle name. This may be set via [i18nBundle].
+ */
 val Context.i18nBundleName: String
 	get() = injectOptional(I18N_BUNDLE) ?: error("No default locale bundle set, use i18nBundle()")
 

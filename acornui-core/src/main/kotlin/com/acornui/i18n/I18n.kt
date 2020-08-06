@@ -30,7 +30,6 @@ interface I18n {
 	}
 }
 
-
 class I18nImpl(
 
 	owner: Context,
