@@ -17,7 +17,7 @@
 package com.acornui.component.layout
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.DivComponent
+import com.acornui.component.Div
 import com.acornui.component.WithNode
 import com.acornui.component.layout.LayoutStyles.grid
 import com.acornui.component.layout.LayoutStyles.hFlowGroup
@@ -77,17 +77,17 @@ $grid {
 	}
 }
 
-inline fun Context.vGroup(init: ComponentInit<DivComponent> = {}): DivComponent {
+inline fun Context.vGroup(init: ComponentInit<Div> = {}): Div {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return DivComponent(this).apply {
+	return Div(this).apply {
 		addClass(vGroup)
 		init()
 	}
 }
 
-inline fun Context.hGroup(init: ComponentInit<DivComponent> = {}): DivComponent {
+inline fun Context.hGroup(init: ComponentInit<Div> = {}): Div {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return DivComponent(this).apply {
+	return Div(this).apply {
 		addClass(hGroup)
 		init()
 	}
@@ -96,7 +96,7 @@ inline fun Context.hGroup(init: ComponentInit<DivComponent> = {}): DivComponent 
 /**
  * A div wrapper to avoid the lack of gap support.
  */
-open class FlowGroup(owner: Context) : DivComponent(owner) {
+open class FlowGroup(owner: Context) : Div(owner) {
 
 	private val contents = addChild(div {
 		addClass(contentsTag)
@@ -173,9 +173,9 @@ inline fun Context.vFlowGroup(init: ComponentInit<FlowGroup> = {}): FlowGroup {
 	}
 }
 
-inline fun Context.grid(init: ComponentInit<DivComponent> = {}): DivComponent {
+inline fun Context.grid(init: ComponentInit<Div> = {}): Div {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return DivComponent(this).apply {
+	return Div(this).apply {
 		addClass(grid)
 		init()
 	}

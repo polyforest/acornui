@@ -16,7 +16,7 @@
 
 package com.acornui.component.input
 
-import com.acornui.component.DivComponent
+import com.acornui.component.Div
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.connected
@@ -36,7 +36,7 @@ import org.w3c.dom.events.InputEvent
 /**
  * The common interface to all [HTMLInputElement] types.
  */
-interface InputUiComponent : UiComponent, Observable, Clearable {
+interface Input : UiComponent, Observable, Clearable {
 
 	/**
 	 * Dispatched on each input character.
@@ -89,8 +89,8 @@ interface InputUiComponent : UiComponent, Observable, Clearable {
 	fun setCustomValidity(error: String)
 }
 
-open class InputUiComponentImpl(owner: Context, type: String) :
-	UiComponentImpl<HTMLInputElement>(owner, createElement("input") { this.type = type }), InputUiComponent {
+open class InputImpl(owner: Context, type: String) :
+	UiComponentImpl<HTMLInputElement>(owner, createElement("input") { this.type = type }), Input {
 
 	/**
 	 * Dispatched on value commit.
@@ -195,11 +195,11 @@ open class InputUiComponentImpl(owner: Context, type: String) :
 }
 
 /**
- * If an input component is encapsulated, it may be convenient to delegate its [InputUiComponent] methods.
+ * If an input component is encapsulated, it may be convenient to delegate its [Input] methods.
  */
-abstract class DivWithInputComponent(owner: Context) : DivComponent(owner), InputUiComponent {
+abstract class DivWithInputComponent(owner: Context) : Div(owner), Input {
 
-	protected abstract val inputComponent: InputUiComponent
+	protected abstract val inputComponent: Input
 
 	final override val changed: Signal<Observable>
 		get() = inputComponent.changed

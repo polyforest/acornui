@@ -24,7 +24,7 @@ import com.acornui.skins.Theme
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class Panel(owner: Context) : DivComponent(owner) {
+open class Panel(owner: Context) : Div(owner) {
 
 	init {
 		addClass(styleTag)

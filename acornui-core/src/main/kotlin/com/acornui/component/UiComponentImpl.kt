@@ -26,7 +26,6 @@ import com.acornui.component.layout.Transform
 import com.acornui.component.layout.TransformOrigin
 import com.acornui.component.layout.toTransformOrigin
 import com.acornui.component.style.CssClass
-import com.acornui.component.text.text
 import com.acornui.css.Length
 import com.acornui.css.px
 import com.acornui.di.Context
@@ -406,13 +405,13 @@ open class UiComponentImpl<T : HTMLElement>(
 /**
  * The most common type of UiComponent base class.
  */
-open class DivComponent(
+open class Div(
 	owner: Context
 ) : UiComponentImpl<HTMLDivElement>(owner, createElement("div"))
 
 inline fun Context.html(@Language("html") html: String = "", init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}): UiComponentImpl<HTMLDivElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return DivComponent(this).apply {
+	return Div(this).apply {
 		this.innerHtml = html
 		init()
 	}

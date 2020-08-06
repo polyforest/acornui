@@ -20,7 +20,7 @@ package com.acornui.component.scroll
 
 import com.acornui.Disposable
 import com.acornui.component.ComponentInit
-import com.acornui.component.DivComponent
+import com.acornui.component.Div
  import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
@@ -34,7 +34,7 @@ import kotlin.contracts.contract
 
 open class ScrollArea(
 		owner: Context
-) : DivComponent(owner) {
+) : Div(owner) {
 
 	init {
 		addClass(styleTag)

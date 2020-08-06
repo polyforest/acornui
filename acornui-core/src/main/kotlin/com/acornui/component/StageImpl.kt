@@ -30,7 +30,7 @@ import kotlin.contracts.contract
  * The Stage is the root element of an application. By default it is 100% width, 100% height.
  * @author nbilyk
  */
-open class StageImpl(owner: Context) : Stage, DivComponent(owner) {
+open class StageImpl(owner: Context) : Stage, Div(owner) {
 
 	init {
 		dependencies += listOf(Stage to this)

@@ -1,5 +1,5 @@
 import com.acornui.app
-import com.acornui.component.DivComponent
+import com.acornui.component.Div
 import com.acornui.component.StageImpl
 import com.acornui.component.input.button
 import com.acornui.component.style.cssClass
@@ -16,7 +16,7 @@ import com.acornui.version
 /**
  * A barebones example with a Theme and a Button.
  */
-class Main(owner: Context) : DivComponent(owner) {
+class Main(owner: Context) : Div(owner) {
 
 	init {
 		println(version)

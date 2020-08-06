@@ -80,6 +80,6 @@ class ApplicationTest {
 
 }
 
-private class TestComponent(owner: Context) : DivComponent(owner)
+private class TestComponent(owner: Context) : Div(owner)
 
 private inline fun Context.testComponent(init: ComponentInit<UiComponent> = {}): UiComponent = TestComponent(this).apply(init)

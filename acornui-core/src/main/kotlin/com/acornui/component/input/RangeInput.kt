@@ -27,7 +27,7 @@ import com.acornui.skins.Theme
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class RangeInput(owner: Context) : InputUiComponentImpl(owner, "range") {
+open class RangeInput(owner: Context) : InputImpl(owner, "range") {
 
 	init {
 		addClass(styleTag)

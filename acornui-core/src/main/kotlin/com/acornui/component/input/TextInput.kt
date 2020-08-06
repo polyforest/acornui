@@ -48,7 +48,7 @@ open class TextInput(owner: Context, type: String = "text") : TextInputBase(owne
 		}
 }
 
-abstract class TextInputBase(owner: Context, type: String) : InputUiComponentImpl(owner, type) {
+abstract class TextInputBase(owner: Context, type: String) : InputImpl(owner, type) {
 
 	init {
 		addClass(styleTag)

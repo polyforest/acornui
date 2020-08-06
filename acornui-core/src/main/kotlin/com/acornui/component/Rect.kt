@@ -24,7 +24,7 @@ import kotlin.contracts.contract
 
 class Rect(
 		owner: Context
-) : DivComponent(owner) {
+) : Div(owner) {
 
 	init {
 		addClass(styleTag)

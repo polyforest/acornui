@@ -337,7 +337,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 
 	var toggleOnClick = false
 
-	final override val inputComponent = addChild(InputUiComponentImpl(this, type).apply {
+	final override val inputComponent = addChild(InputImpl(this, type).apply {
 		addClass(CommonStyleTags.hidden)
 		tabIndex = -1
 	})
@@ -520,12 +520,12 @@ inline fun Context.checkbox(defaultChecked: Boolean = false, init: ComponentInit
 	}
 }
 
-inline fun Context.colorInput(init: ComponentInit<InputUiComponentImpl> = {}): InputUiComponentImpl {
+inline fun Context.colorInput(init: ComponentInit<InputImpl> = {}): InputImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return InputUiComponentImpl(this, "color").apply(init)
+	return InputImpl(this, "color").apply(init)
 }
 
-open class DateInput(owner: Context) : InputUiComponentImpl(owner, "date") {
+open class DateInput(owner: Context) : InputImpl(owner, "date") {
 
 	private val parser = DateTimeParser()
 
@@ -580,9 +580,9 @@ inline fun Context.dateInput(init: ComponentInit<DateInput> = {}): DateInput {
 
 // Does not work in Fx
 @ExperimentalJsExport
-inline fun Context.dateTimeInput(init: ComponentInit<InputUiComponentImpl> = {}): InputUiComponentImpl {
+inline fun Context.dateTimeInput(init: ComponentInit<InputImpl> = {}): InputImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return InputUiComponentImpl(this, "datetime-local").apply(init)
+	return InputImpl(this, "datetime-local").apply(init)
 }
 
 /**
@@ -602,12 +602,12 @@ inline fun Context.fileInput(label: String = "Choose File", init: ComponentInit<
 	}
 }
 
-inline fun Context.hiddenInput(init: ComponentInit<InputUiComponentImpl> = {}): InputUiComponentImpl {
+inline fun Context.hiddenInput(init: ComponentInit<InputImpl> = {}): InputImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return InputUiComponentImpl(this, "hidden").apply(init)
+	return InputImpl(this, "hidden").apply(init)
 }
 
-open class MonthInput(owner: Context) : InputUiComponentImpl(owner, "month") {
+open class MonthInput(owner: Context) : InputImpl(owner, "month") {
 
 	private val parser = DateTimeParser()
 
@@ -667,7 +667,7 @@ inline fun Context.submitInput(label: String = "", init: ComponentInit<Button> =
 	}
 }
 
-open class TimeInput(owner: Context) : InputUiComponentImpl(owner, "time") {
+open class TimeInput(owner: Context) : InputImpl(owner, "time") {
 
 	private val parser = DateTimeParser()
 
@@ -733,9 +733,9 @@ inline fun Context.timeInput(init: ComponentInit<TimeInput> = {}): TimeInput {
 }
 
 @ExperimentalJsExport
-inline fun Context.weekInput(init: ComponentInit<InputUiComponentImpl> = {}): InputUiComponentImpl {
+inline fun Context.weekInput(init: ComponentInit<InputImpl> = {}): InputImpl {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return InputUiComponentImpl(this, "week").apply(init)
+	return InputImpl(this, "week").apply(init)
 }
 
 /**
@@ -743,7 +743,7 @@ inline fun Context.weekInput(init: ComponentInit<InputUiComponentImpl> = {}): In
  */
 open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(owner) {
 
-	public final override val inputComponent = addChild(InputUiComponentImpl(this, type))
+	public final override val inputComponent = addChild(InputImpl(this, type))
 	val labelComponent = addChild(label(inputComponent))
 
 	init {

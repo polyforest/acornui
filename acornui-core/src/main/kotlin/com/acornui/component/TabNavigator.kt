@@ -41,7 +41,7 @@ import org.w3c.dom.set
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-open class TabNavigator(owner: Context) : DivComponent(owner) {
+open class TabNavigator(owner: Context) : Div(owner) {
 
 	class SelectedTabChangeEvent(
 		val previousTab: String?,
@@ -69,7 +69,7 @@ open class TabNavigator(owner: Context) : DivComponent(owner) {
 	/**
 	 * Runs the given block with the [tabs] group as the receiver.
 	 */
-	fun tabs(init: ComponentInit<DivComponent>) {
+	fun tabs(init: ComponentInit<Div>) {
 		tabs.init()
 	}
 

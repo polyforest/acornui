@@ -31,7 +31,7 @@ import kotlin.contracts.contract
 /**
  *
  */
-class LoadingSpinner(owner: Context) : DivComponent(owner) {
+class LoadingSpinner(owner: Context) : Div(owner) {
 
 	var ballCount: Int = 0
 		set(value) {

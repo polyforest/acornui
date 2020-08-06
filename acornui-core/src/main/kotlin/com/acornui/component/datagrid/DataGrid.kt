@@ -48,7 +48,7 @@ import kotlin.contracts.contract
 import kotlin.properties.Delegates
 import com.acornui.dom.footer as footerEl
 
-open class DataGrid<E>(owner: Context) : DivComponent(owner) {
+open class DataGrid<E>(owner: Context) : Div(owner) {
 
 	class DataChangeEvent<E>(val oldData: List<E>, val newData: List<E>)
 
@@ -556,7 +556,7 @@ inline fun <E> Context.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> 
 	}
 }
 
-open class DataGridRow<E>(owner: Context) : DivComponent(owner) {
+open class DataGridRow<E>(owner: Context) : Div(owner) {
 
 	class DataChangeEvent<E>(val old: E?, val new: E?)
 

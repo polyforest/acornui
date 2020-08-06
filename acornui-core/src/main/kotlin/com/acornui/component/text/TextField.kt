@@ -17,13 +17,13 @@
 package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
-import com.acornui.component.DivComponent
+import com.acornui.component.Div
  import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class TextField(owner: Context) : DivComponent(owner) {
+class TextField(owner: Context) : Div(owner) {
 
 	init {
 		addClass(styleTag)

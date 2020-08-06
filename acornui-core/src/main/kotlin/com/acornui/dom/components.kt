@@ -75,7 +75,7 @@ inline fun Context.li(init: ComponentInit<UiComponentImpl<HTMLLIElement>> = {}):
 	return component("li", init)
 }
 
-open class ImgComponent(owner: Context) : UiComponentImpl<Image>(owner, Image()) {
+open class Img(owner: Context) : UiComponentImpl<Image>(owner, Image()) {
 
 	var alt: String
 		get() = dom.alt
@@ -96,9 +96,9 @@ open class ImgComponent(owner: Context) : UiComponentImpl<Image>(owner, Image())
 		get() = dom.naturalHeight
 }
 
-inline fun Context.img(src: String = "", alt: String = "", init: ComponentInit<ImgComponent> = {}): ImgComponent {
+inline fun Context.img(src: String = "", alt: String = "", init: ComponentInit<Img> = {}): Img {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return ImgComponent(this).apply {
+	return Img(this).apply {
 		this.src = src
 		this.alt = alt
 		this.title = alt
@@ -106,7 +106,7 @@ inline fun Context.img(src: String = "", alt: String = "", init: ComponentInit<I
 	}
 }
 
-open class FormComponent(owner: Context) : UiComponentImpl<HTMLFormElement>(owner, createElement("form")) {
+open class Form(owner: Context) : UiComponentImpl<HTMLFormElement>(owner, createElement("form")) {
 
 	val submitted = event<Event>("submit")
 
@@ -165,9 +165,9 @@ open class FormComponent(owner: Context) : UiComponentImpl<HTMLFormElement>(owne
 	fun reportValidity(): Boolean = dom.reportValidity()
 }
 
-inline fun Context.form(init: ComponentInit<FormComponent> = {}): FormComponent {
+inline fun Context.form(init: ComponentInit<Form> = {}): Form {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return FormComponent(this).apply(init)
+	return Form(this).apply(init)
 }
 
 /**
