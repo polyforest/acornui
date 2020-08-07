@@ -27,6 +27,11 @@ import com.acornui.google.MaterialIconsCss
 object DefaultStyles {
 
 	init {
+
+		js("""
+require("focus-visible");			
+		""")
+
 		MaterialIconsCss
 		InputStyles
 		val s = StageStyle.stage

@@ -28,7 +28,6 @@ import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.clamp
 import com.acornui.number.closeTo
-import com.acornui.polyfills
 import initMockDom
 import kotlinx.coroutines.*
 import kotlin.contracts.InvocationKind
@@ -329,7 +328,6 @@ fun Promise<Any?>.assertFails(message: String? = null): Promise<Unit> = assertFa
  */
 fun runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> Unit): Promise<Unit> {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-	polyfills()
 	initMockDom()
 	return GlobalScope.async {
 		withTimeout(timeout, block)
@@ -349,7 +347,6 @@ fun runAsyncTest(
 	block: (resolve: () -> Unit, reject: (e: Throwable) -> Unit) -> Unit
 ): Promise<Unit> {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-	polyfills()
 	initMockDom()
 	return Promise<Unit> {
 		resolve, reject ->
