@@ -12,6 +12,7 @@ import com.acornui.input.clicked
 import com.acornui.skins.CssProps
 import com.acornui.skins.addCssToHead
 import com.acornui.version
+import com.acornui.skins.DefaultStyles
 
 /**
  * A barebones example with a Theme and a Button.
@@ -19,9 +20,8 @@ import com.acornui.version
 class Main(owner: Context) : Div(owner) {
 
 	init {
+		DefaultStyles
 		println(version)
-
-		Theme().addCssToHead()
 		addClass(styleTag)
 
 		head.add(
