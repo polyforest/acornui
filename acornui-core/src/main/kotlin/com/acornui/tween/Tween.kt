@@ -153,6 +153,13 @@ interface Tween : Updatable, Disposable {
 		}
 	}
 
+	/**
+	 * Starts this tween by adding its [update] method to the frame callback.
+	 */
+	fun start(): Tween
+
+	fun stop()
+
 	companion object {
 
 		/**
@@ -251,13 +258,13 @@ abstract class TweenBase : Tween, Disposable {
 
 	private var frameHandle: Disposable? = null
 
-	open fun start(): TweenBase {
+	override fun start(): TweenBase {
 		if (frameHandle == null)
 			frameHandle = frame.listen(::update)
 		return this
 	}
 
-	fun stop() {
+	override fun stop() {
 		frameHandle?.dispose()
 		frameHandle = null
 	}
