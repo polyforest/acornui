@@ -54,8 +54,6 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 
 	/**
 	 * This grid's [data] has changed.
-	 *
-	 * This may not be cancelled.
 	 */
 	val dataChanged = signal<DataChangeEvent<E>>()
 
