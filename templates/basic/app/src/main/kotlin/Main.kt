@@ -5,12 +5,11 @@ import com.acornui.component.input.button
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.add
-import com.acornui.dom.addCssToHead
 import com.acornui.dom.head
 import com.acornui.dom.linkElement
 import com.acornui.input.clicked
 import com.acornui.skins.CssProps
-import com.acornui.skins.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.version
 import com.acornui.skins.DefaultStyles
 
@@ -44,7 +43,7 @@ class Main(owner: Context) : Div(owner) {
 		val styleTag by cssClass()
 
 		init {
-			addCssToHead(
+			addStyleToHead(
 				"""
 
 $styleTag {
