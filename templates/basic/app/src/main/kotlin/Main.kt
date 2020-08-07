@@ -9,7 +9,7 @@ import com.acornui.dom.addCssToHead
 import com.acornui.dom.head
 import com.acornui.dom.linkElement
 import com.acornui.input.clicked
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import com.acornui.skins.addCssToHead
 import com.acornui.version
 

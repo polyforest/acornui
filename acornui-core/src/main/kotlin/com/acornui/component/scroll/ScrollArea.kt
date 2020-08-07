@@ -21,14 +21,13 @@ package com.acornui.component.scroll
 import com.acornui.Disposable
 import com.acornui.component.ComponentInit
 import com.acornui.component.Div
- import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.input.scrolled
 import com.acornui.own
 import com.acornui.signal.signal
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -121,10 +120,10 @@ object ScrollAreaStyle {
 	val scrollArea by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $scrollArea {
 overflow: auto;
-padding: ${cssVar(Theme::padding)};
+padding: ${CssProps.padding.v};
 }
 		""")
 	}

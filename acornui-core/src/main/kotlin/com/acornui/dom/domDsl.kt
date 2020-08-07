@@ -44,15 +44,22 @@ inline fun linkElement(href: String, rel: String, init: ComponentInit<HTMLLinkEl
 		init()
 	}
 
-fun addCssToHead(@Language("CSS") css: String, priority: Double = 0.0): HTMLStyleElement {
+fun addStyleToHead(@Language("CSS") css: String, priority: Double = 0.0): HTMLStyleElement {
 	val ele = styleElement {
-		asDynamic().priority = priority
 		innerHTML = css
 	}
+	addStyleToHead(ele, priority)
+	return ele
+}
+
+fun addStyleToHead(styleElement: HTMLStyleElement, priority: Double = 0.0): HTMLStyleElement {
+	styleElement.asDynamic().priority = priority
+	if (styleElement.isConnected)
+		styleElement.remove()
 	val priorities = head.childNodes.asList().map { (it.asDynamic().priority as Double?) ?: 0.0 }
 	val index = priorities.sortedInsertionIndex(priority)
-	head.add(index, ele)
-	return ele
+	head.add(index, styleElement)
+	return styleElement
 }
 
 val head: HTMLHeadElement

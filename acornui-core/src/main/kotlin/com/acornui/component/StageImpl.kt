@@ -19,10 +19,9 @@
 package com.acornui.component
 
 import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
-import com.acornui.skins.Theme
+import com.acornui.dom.addStyleToHead
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -47,9 +46,9 @@ object StageStyle {
 	val stage by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $stage *:focus {
-	box-shadow: 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
+	box-shadow: 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
 	outline: none;
 	transition: box-shadow 0.2s ease-in-out;
 }
@@ -57,8 +56,8 @@ $stage *:focus {
 $stage {
 	width: 100%;
 	height: 100%;
-	background: ${cssVar(Theme::stageBackground)};
-	color: ${cssVar(Theme::textColor)};
+	background: #444;
+    color: #ddd;
 }
 
 $stage > * {

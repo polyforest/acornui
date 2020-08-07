@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("CssOverwrittenProperties")
+
 package com.acornui.skins
 
 import com.acornui.component.StageStyle
 import com.acornui.component.input.InputStyles
 import com.acornui.component.style.CommonStyleTags
-import com.acornui.css.cssVar
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.google.MaterialIconsCss
 
 object DefaultStyles {
@@ -30,64 +31,76 @@ object DefaultStyles {
 		InputStyles
 		val s = StageStyle.stage
 
-		addCssToHead("""
+		addStyleToHead(
+			"""
 $s * {
 	box-sizing: border-box;
 }
 
 $s ul {
-	padding: 0 0 calc(-1 * ${cssVar(Theme::gap)}) 0;
+	padding: 0 0 calc(-1 * ${CssProps.gap.v}) 0;
 	list-style: none;
 }
 
 $s ul li {
-	margin-bottom: ${cssVar(Theme::gap)} 
+	margin-bottom: ${CssProps.gap.v} 
+}
+
+$s a, $s a:visited {
+	color: ${CssProps.toggled.v};
+	text-decoration: none;
+	border-radius: ${CssProps.borderRadius.v};
+	padding: ${CssProps.inputPadding.v};
+}
+
+$s a:hover {
+	color: ${CssProps.borderHover.v};
+	text-decoration: none;
+}
+
+$s a:active {
+	color: ${CssProps.borderActive.v};
 }
 
 
 /* ScrollBar Style */
 
 * {
-	scrollbar-face-color: ${cssVar(Theme::scrollbarButtonColor)};
-	scrollbar-base-color: ${cssVar(Theme::scrollbarCornerColor)};
-	scrollbar-3dlight-color: ${cssVar(Theme::scrollbarButtonColor)};
-	scrollbar-highlight-color: ${cssVar(Theme::scrollbarButtonColor)};
-	scrollbar-track-color: ${cssVar(Theme::scrollbarTrackColor)};
-	scrollbar-arrow-color: ${cssVar(Theme::scrollbarButtonColor)};
-	scrollbar-shadow-color: ${cssVar(Theme::scrollbarButtonColor)};
+	scrollbar-face-color: ${CssProps.scrollbarButtonColor.v};
+	scrollbar-base-color: ${CssProps.scrollbarCornerColor.v};
+	scrollbar-3dlight-color: ${CssProps.scrollbarButtonColor.v};
+	scrollbar-highlight-color: ${CssProps.scrollbarButtonColor.v};
+	scrollbar-track-color: ${CssProps.scrollbarTrackColor.v};
+	scrollbar-arrow-color: ${CssProps.scrollbarButtonColor.v};
+	scrollbar-shadow-color: ${CssProps.scrollbarButtonColor.v};
 	
 	/* Firefox */
-	scrollbar-color: ${cssVar(Theme::scrollbarButtonColor)} ${cssVar(Theme::scrollbarTrackColor)} ${cssVar(Theme::scrollbarButtonColor)} ;
+	scrollbar-color: ${CssProps.scrollbarButtonColor.v} ${CssProps.scrollbarTrackColor.v} ${CssProps.scrollbarButtonColor.v} ;
 	scrollbar-width: thin;
 }
 
 ::-webkit-scrollbar {
-	width: ${cssVar(Theme::scrollbarThickness)};
-	height: ${cssVar(Theme::scrollbarThickness)};
+	width: ${CssProps.scrollbarThickness.v};
+	height: ${CssProps.scrollbarThickness.v};
 }
 
 ::-webkit-scrollbar-button {
-	background-color: ${cssVar(Theme::scrollbarButtonColor)};
+	background-color: ${CssProps.scrollbarButtonColor.v};
 	height: 0;
 	width: 0;
 }
 
 ::-webkit-scrollbar-track {
-	background-color: ${cssVar(Theme::scrollbarTrackColor)};
+	background-color: ${CssProps.scrollbarTrackColor.v};
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: ${cssVar(Theme::scrollbarButtonColor)};
-	border-radius: ${cssVar(Theme::scrollbarBorderRadius)};
+	background-color: ${CssProps.scrollbarButtonColor.v};
+	border-radius: ${CssProps.scrollbarBorderRadius.v};
 }
 
 ::-webkit-scrollbar-corner {
-	background-color: ${cssVar(Theme::scrollbarCornerColor)};
-}
-
-footer {
-	color: ${cssVar(Theme::footerTextColor)};
-	background: ${cssVar(Theme::footerBackgroundColor)};
+	background-color: ${CssProps.scrollbarCornerColor.v};
 }
 
 /* 	A way to hide an element without using visibility: hidden. Typically used with Safari workarounds. */
@@ -97,6 +110,52 @@ ${CommonStyleTags.hidden} {
 	width: 1px; 
 	height: 1px;
 }
+
+:root {
+    ${CssProps.scrollbarTrackColor}: #111;
+    ${CssProps.scrollbarButtonColor}: #666;
+    ${CssProps.scrollbarCornerColor}: #333;
+    ${CssProps.scrollbarThickness}: 8px;
+    ${CssProps.focus}: rgba(49, 104, 254, .8);
+    ${CssProps.focusThickness}: 2px;
+    ${CssProps.toggled}: #275efe;
+    ${CssProps.toggledInner}: #fff;
+    ${CssProps.toggledInnerDisabled}: #888;
+    ${CssProps.borderColor}: #bbc1e1;
+    ${CssProps.borderHover}: #0f3ef8;
+    ${CssProps.borderActive}: #445ed9;
+    ${CssProps.borderDisabled}: #bbc1e1;
+    ${CssProps.componentBackground}: #fff;
+    ${CssProps.disabled}: #7a7b82;
+    ${CssProps.disabledOpacity}: 0.8;
+    ${CssProps.disabledInner}: #bfbfbf;
+    ${CssProps.buttonBackground}: #f3f4f7;
+    ${CssProps.buttonBackgroundHover}: #fff;
+    ${CssProps.buttonBackgroundActive}: #e3e4e7;
+    ${CssProps.buttonTextColor}: #333;
+    ${CssProps.buttonTextHoverColor}: #444;
+    ${CssProps.buttonTextActiveColor}: #222;
+    ${CssProps.borderThickness}: 1px;
+    ${CssProps.componentPadding}: 4px;
+    ${CssProps.borderRadius}: 8px;
+    ${CssProps.inputBackground}: #fffe;
+    ${CssProps.inputTextColor}: #333;
+    ${CssProps.inputBorderRadius}: 2px;
+    ${CssProps.inputPadding}: 4px;
+    ${CssProps.gap}: 6px;
+    ${CssProps.padding}: 6px;
+    ${CssProps.componentShadow}: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    ${CssProps.dataRowEvenBackground}: #eeef;
+    ${CssProps.dataRowOddBackground}: #ddde;
+    ${CssProps.loadingSpinnerColor}: #ddd;		
+    ${CssProps.strongWeight}: bolder;		
+}
+
+footer {
+	color: #222;
+    background-color: #bbb;
+}
+
 
 		""", priority = -1.0)
 	}

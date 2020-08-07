@@ -33,13 +33,13 @@ import com.acornui.di.ContextImpl
 import com.acornui.dom.createElement
 import com.acornui.isDebug
 import com.acornui.properties.afterChange
+import kotlinx.browser.document
 import org.intellij.lang.annotations.Language
 import org.w3c.dom.DOMStringMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.events.EventTarget
-import kotlinx.browser.document
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -58,7 +58,7 @@ open class UiComponentImpl<T : HTMLElement>(
 	final override val eventTarget: EventTarget
 		get() = dom
 
-	private val attachments = HashMap<Any, Any>()
+	override val attachments: MutableMap<Any, Any> = HashMap<Any, Any>()
 
 	// Node properties
 
@@ -160,27 +160,6 @@ open class UiComponentImpl<T : HTMLElement>(
 	final override fun size(width: Double?, height: Double?) {
 		width(width?.px)
 		height(height?.px)
-	}
-
-	//-----------------------------------------------
-	// InteractiveElement
-	//-----------------------------------------------
-
-	@Suppress("UNCHECKED_CAST")
-	override fun <T : Any> getAttachment(key: Any): T? {
-		return attachments[key] as T?
-	}
-
-	final override fun setAttachment(key: Any, value: Any) {
-		attachments[key] = value
-	}
-
-	/**
-	 * Removes an attachment added via [setAttachment]
-	 */
-	@Suppress("UNCHECKED_CAST")
-	override fun <T : Any> removeAttachment(key: Any): T? {
-		return attachments.remove(key) as T?
 	}
 
 	//-----------------------------------------------

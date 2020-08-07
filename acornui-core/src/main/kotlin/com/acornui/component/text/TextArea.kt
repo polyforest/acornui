@@ -18,10 +18,9 @@ package com.acornui.component.text
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
- import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.dom.createElement
 import com.acornui.input.ChangeSignal
 import com.acornui.observe.Observable
@@ -29,7 +28,7 @@ import com.acornui.properties.afterChange
 import com.acornui.recycle.Clearable
 import com.acornui.signal.Signal
 import com.acornui.signal.event
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.InputEvent
 import kotlin.contracts.InvocationKind
@@ -132,28 +131,28 @@ object TextAreaStyle {
 	val textArea by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $textArea {
 	font: inherit;
-	color: ${cssVar(Theme::inputTextColor)};;
-	border-width: ${cssVar(Theme::borderThickness)};;
-	border-color: ${cssVar(Theme::border)};
-	border-radius: ${cssVar(Theme::inputBorderRadius)};
-	padding: ${cssVar(Theme::inputPadding)};
-	background: ${cssVar(Theme::inputBackground)};
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	color: ${CssProps.inputTextColor.v};;
+	border-width: ${CssProps.borderThickness.v};;
+	border-color: ${CssProps.borderColor.v};
+	border-radius: ${CssProps.inputBorderRadius.v};
+	padding: ${CssProps.inputPadding.v};
+	background: ${CssProps.inputBackground.v};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 			
 $textArea:active {
-	border-color: ${cssVar(Theme::borderActive)};
+	border-color: ${CssProps.borderActive.v};
 }
 
 $textArea:disabled {
-	background: ${cssVar(Theme::disabledInner)};
-	border-color: ${cssVar(Theme::disabled)};
-	color: ${cssVar(Theme::toggledInnerDisabled)};
+	background: ${CssProps.disabledInner.v};
+	border-color: ${CssProps.disabled.v};
+	color: ${CssProps.toggledInnerDisabled.v};
 	pointer-events: none;
-	opacity: ${cssVar(Theme::disabledOpacity)};
+	opacity: ${CssProps.disabledOpacity.v};
 }
 			""")
 	}

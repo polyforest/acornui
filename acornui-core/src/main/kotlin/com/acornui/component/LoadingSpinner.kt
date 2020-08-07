@@ -19,14 +19,13 @@
 package com.acornui.component
 
  import com.acornui.component.style.cssClass
-import com.acornui.css.css
-import com.acornui.css.cssVar
-import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
-import com.acornui.dom.div
-import com.acornui.skins.Theme
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+ import com.acornui.css.css
+ import com.acornui.di.Context
+ import com.acornui.dom.addStyleToHead
+ import com.acornui.dom.div
+ import com.acornui.skins.CssProps
+ import kotlin.contracts.InvocationKind
+ import kotlin.contracts.contract
 
 /**
  *
@@ -56,7 +55,7 @@ class LoadingSpinner(owner: Context) : Div(owner) {
 		val smallSpinner by cssClass()
 
 		init {
-			addCssToHead(
+			addStyleToHead(
 				"""
 $loadingSpinner {
   display: inline-block;
@@ -85,7 +84,7 @@ $loadingSpinner div {
   border-radius: 50%;
   --inner-radius: calc(var(--radius) - var(--size) * 0.5);
   
-  background: ${cssVar(Theme::loadingSpinnerColor)};
+  background: ${CssProps.loadingSpinnerColor.v};
   animation-delay: calc(var(--duration) * var(--p) * -0.2);
   
 }

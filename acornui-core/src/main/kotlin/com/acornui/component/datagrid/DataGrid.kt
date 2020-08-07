@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("CssReplaceWithShorthandSafely", "CssInvalidPropertyValue", "CssUnresolvedCustomProperty")
+@file:Suppress("CssReplaceWithShorthandSafely", "CssInvalidPropertyValue", "CssUnresolvedCustomProperty",
+	"CssNoGenericFontName", "MemberVisibilityCanBePrivate", "unused"
+)
 
 package com.acornui.component.datagrid
 
@@ -22,11 +24,9 @@ import com.acornui.Disposable
 import com.acornui.component.*
 import com.acornui.component.input.Button
 import com.acornui.component.style.cssClass
+import com.acornui.component.style.cssProp
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
-import com.acornui.css.css
-import com.acornui.css.cssProp
-import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.*
 import com.acornui.google.Icons
@@ -35,7 +35,7 @@ import com.acornui.recycle.Clearable
 import com.acornui.recycle.recycle
 import com.acornui.signal.SignalSubscription
 import com.acornui.signal.signal
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import com.acornui.time.nextFrameCallback
 import kotlinx.browser.document
 import kotlinx.collections.immutable.mutate
@@ -255,7 +255,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 		val previouslyFocused = editedCellIndex
 		val previouslyEdited = editedRow
 		editRow(null)
-		recycle(dataView, displayRows, factory = { _: E, index: Int ->
+		recycle(dataView, displayRows, factory = { _: E, _: Int ->
 			createRow()
 		}, configure = { element: DataGridRow<E>, item: E, index: Int ->
 			element.data = item
@@ -418,129 +418,126 @@ object DataGridStyle {
 	val sortedAsc by cssClass()
 	val sortedDesc by cssClass()
 
-	val borderThickness: String = css("1px")
-	val borderColor: String = css("#ccc")
+	val borderThickness by cssProp()
 
 	init {
 
-		addCssToHead(
+		addStyleToHead(
 			"""
-$dataGrid {	
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
-	position: relative;
-	overflow: auto;
-	scroll-padding-top: 4em; /* To prevent the sticky header from covering up the first row when tabbing */
-	${cssProp(::borderThickness)};
-	${cssProp(::borderColor)};
-}
-
-$cellStyle {
-	padding: calc(${cssVar(Theme::inputPadding)} + ${cssVar(Theme::borderThickness)});
-	display: flex;
-	align-items: center;
-}
-
-$mainContainerStyle {
-	min-width: fit-content;
-	min-height: fit-content;
-	grid-template-columns: inherit;
-	align-items: inherit;
-	align-content: inherit;
-	justify-items: inherit;	
-	justify-content: inherit;
-
-	display: grid;
-	grid-auto-rows: min-content;
-	row-gap: ${cssVar(::borderThickness)};
-	column-gap: ${cssVar(::borderThickness)};
-	background-color: ${cssVar(::borderColor)};
-}
-
-$headerRowStyle {
-	display: contents;
-}
-
-$headerRowStyle > div:first-child {
-	border-top-left-radius: var(--br);
-}
-
-$headerRowStyle > div {
-	--br: calc(${cssVar(Theme::borderRadius)} - ${cssVar(Theme::borderThickness)});
-	border-radius: 0;
-	border: none;
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-	font-weight: bolder;
-}
-
-$footerRowStyle {
-	display: contents;
-}
-
-$footerRowStyle > div {
-	position: -webkit-sticky;
-	position: sticky;
-	bottom: 0;
-
-	color: ${cssVar(Theme::footerTextColor)};
-	background: ${cssVar(Theme::footerBackgroundColor)};
-}
-
-$dataGrid *:focus {
-	/* Take the default focus transition, make it snappier and inset to be better for data grid cells. */
-    box-shadow: inset 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
-	border-color: ${cssVar(Theme::focus)};
-	transition: box-shadow 0.0s ease-in-out;
-}
-
-$contentsContainerStyle {
-	display: contents;
-	border-bottom-left-radius: inherit;
-}
-
-$rowStyle {
-	display: contents;
-}
-
-$rowEditorStyle > form {
-	display: contents;
-}
-
-$editorCellStyle {
-	padding: 0;
-}
-
-$contentsContainerStyle > $rowStyle:nth-child(2n+0) $cellStyle {
-	background: ${cssVar(Theme::dataRowEvenBackground)};
-}
-
-$contentsContainerStyle > $rowStyle:nth-child(2n+1) $cellStyle {
-	background: ${cssVar(Theme::dataRowOddBackground)};
-}
-
-$headerCellStyle {
-	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-    -webkit-touch-callout: none;
-}
-
-$headerCellStyle$sortedAsc::after, $headerCellStyle$sortedDesc::after {
-	content: "${Icons.ARROW_DOWNWARD.toChar()}";
-	font-family: "Material Icons";
-    display: inline-block;
-    white-space: nowrap;
-    -webkit-font-smoothing: antialiased;
-	transition: transform 0.3s ease-in-out;
-}
-
-$headerCellStyle$sortedDesc::after {
-	transform: rotate(180deg);
-}
-			"""
+	$dataGrid {	
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		position: relative;
+		overflow: auto;
+		scroll-padding-top: 4em; /* To prevent the sticky header from covering up the first row when tabbing */
+		$borderThickness: 1px;
+	}
+	
+	$cellStyle {
+		padding: calc(${CssProps.inputPadding.v} + ${CssProps.borderThickness.v});
+		display: flex;
+		align-items: center;
+	}
+	
+	$mainContainerStyle {
+		min-width: fit-content;
+		min-height: fit-content;
+		grid-template-columns: inherit;
+		align-items: inherit;
+		align-content: inherit;
+		justify-items: inherit;	
+		justify-content: inherit;
+	
+		display: grid;
+		grid-auto-rows: min-content;
+		row-gap: ${borderThickness.v};
+		column-gap: ${borderThickness.v};
+		background-color: ${CssProps.borderColor.v};
+	}
+	
+	$headerRowStyle {
+		display: contents;
+	}
+	
+	$headerRowStyle > div:first-child {
+		border-top-left-radius: var(--br);
+	}
+	
+	$headerRowStyle > div {
+		--br: calc(${CssProps.borderRadius.v} - ${CssProps.borderThickness.v});
+		border-radius: 0;
+		border: none;
+		position: -webkit-sticky;
+		position: sticky;
+		top: 0;
+		font-weight: bolder;
+	}
+	
+	$footerRowStyle {
+		display: contents;
+	}
+	
+	$footerRowStyle > div {
+		position: -webkit-sticky;
+		position: sticky;
+		bottom: 0;
+		color: inherit;
+		background: inherit;
+	}
+	
+	$dataGrid *:focus {
+		/* Take the default focus transition, make it snappier and inset to be better for data grid cells. */
+		box-shadow: inset 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
+		border-color: ${CssProps.focus.v};
+		transition: box-shadow 0.0s ease-in-out;
+	}
+	
+	$contentsContainerStyle {
+		display: contents;
+		border-bottom-left-radius: inherit;
+	}
+	
+	$rowStyle {
+		display: contents;
+	}
+	
+	$rowEditorStyle > form {
+		display: contents;
+	}
+	
+	$editorCellStyle {
+		padding: 0;
+	}
+	
+	$contentsContainerStyle > $rowStyle:nth-child(2n+0) $cellStyle {
+		background: ${CssProps.dataRowEvenBackground.v};
+	}
+	
+	$contentsContainerStyle > $rowStyle:nth-child(2n+1) $cellStyle {
+		background: ${CssProps.dataRowOddBackground.v};
+	}
+	
+	$headerCellStyle {
+		user-select: none;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-webkit-touch-callout: none;
+	}
+	
+	$headerCellStyle$sortedAsc::after, $headerCellStyle$sortedDesc::after {
+		content: "${Icons.ARROW_DOWNWARD.toChar()}";
+		font-family: "Material Icons";
+		display: inline-block;
+		white-space: nowrap;
+		-webkit-font-smoothing: antialiased;
+		transition: transform 0.3s ease-in-out;
+	}
+	
+	$headerCellStyle$sortedDesc::after {
+		transform: rotate(180deg);
+	}
+				"""
 		)
 	}
 }

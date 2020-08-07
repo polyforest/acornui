@@ -25,11 +25,10 @@ import com.acornui.component.layout.LayoutStyles.hGroup
 import com.acornui.component.layout.LayoutStyles.vFlowGroup
 import com.acornui.component.layout.LayoutStyles.vGroup
 import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.dom.div
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -43,7 +42,7 @@ object LayoutStyles {
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
-		addCssToHead(
+		addStyleToHead(
 			"""
 			
 $vGroup {
@@ -53,7 +52,7 @@ $vGroup {
 }
 
 $vGroup > *:not(:last-child) {
-	margin-bottom: ${cssVar(Theme::gap)}
+	margin-bottom: ${CssProps.gap.v}
 }
 
 $hGroup {
@@ -63,13 +62,13 @@ $hGroup {
 }
 		
 $hGroup > *:not(:last-child) {
-	margin-right: ${cssVar(Theme::gap)}
+	margin-right: ${CssProps.gap.v}
 }
 
 $grid {
 	display: grid;
-	column-gap: ${cssVar(Theme::gap)};
-  	row-gap: ${cssVar(Theme::gap)};
+	column-gap: ${CssProps.gap.v};
+  	row-gap: ${CssProps.gap.v};
 }
 
 		"""
@@ -120,7 +119,7 @@ object FlowGroupStyle {
 	val contents by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $flowGroup {
 	display: block;
 }				
@@ -134,11 +133,11 @@ $contents {
 	justify-items: inherit;
 	align-content: inherit;
 	align-items: inherit;
-	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
+	margin: 0 calc(-1 * ${CssProps.gap.v}) calc(-1 * ${CssProps.gap.v}) 0;
 }
 
 $contents > * {
-	margin: 0 ${cssVar(Theme::gap)} ${cssVar(Theme::gap)} 0;
+	margin: 0 ${CssProps.gap.v} ${CssProps.gap.v} 0;
 }
 
 $hFlowGroup > $contents {

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("CssOverwrittenProperties")
+
 package com.acornui.component
 
 import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
-import com.acornui.skins.Theme
+import com.acornui.dom.addStyleToHead
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -39,26 +40,26 @@ object PanelStyle {
 	val colors by cssClass()
 
 	init {
-		addCssToHead(
+		addStyleToHead(
 			"""
 $panel {
-	padding: ${cssVar(Theme::padding)};
+	padding: ${CssProps.padding.v};
 	overflow: hidden;
 	min-width: min-content;
 	min-height: min-content;
 }
 
 $colors {
-	color: ${cssVar(Theme::panelTextColor)};
-	background: ${cssVar(Theme::panelBackground)};
-	box-shadow: ${cssVar(Theme::panelShadow)};
-	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
-	border-radius: ${cssVar(Theme::borderRadius)};
-	--scrollbarButtonColor: ${cssVar(Theme::panelScrollbarButtonColor)};
-	--scrollbarTrackColor: ${cssVar(Theme::panelScrollbarTrackColor)};
-	--scrollbarCornerColor: ${cssVar(Theme::panelScrollbarCornerColor)};
-	--scrollbarBorderRadius: ${cssVar(Theme::borderRadius)};
-	--loadingSpinnerColor: ${cssVar(Theme::panelLoadingSpinnerColor)};
+	background: #ddd;
+    color: #222;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
+	border-radius: ${CssProps.borderRadius.v};
+	
+	${CssProps.scrollbarTrackColor}: transparent;
+    ${CssProps.scrollbarButtonColor}: #666;
+    ${CssProps.scrollbarCornerColor}: transparent;
+    ${CssProps.loadingSpinnerColor}: #222;
 }
 
 

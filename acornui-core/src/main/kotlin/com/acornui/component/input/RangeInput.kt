@@ -17,13 +17,12 @@
 package com.acornui.component.input
 
 import com.acornui.component.ComponentInit
- import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.frame
 import com.acornui.signal.once
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -111,7 +110,7 @@ object RangeInputStyle {
 
 	init {
 		@Suppress("CssUnresolvedCustomProperty", "CssInvalidPropertyValue")
-		(addCssToHead(
+		(addStyleToHead(
 			"""
 
 $rangeInput {
@@ -130,8 +129,8 @@ $rangeInput:disabled {
 $rangeInput:disabled::-webkit-slider-runnable-track {
 	opacity: 0.9;
 	cursor: not-allowed;
-	background: linear-gradient(to right, ${cssVar(Theme::disabled)} var(--percent), ${cssVar(Theme::disabledInner)} var(--percent));
-	border-color: ${cssVar(Theme::borderDisabled)};
+	background: linear-gradient(to right, ${CssProps.disabled.v} var(--percent), ${CssProps.disabledInner.v} var(--percent));
+	border-color: ${CssProps.borderDisabled.v};
 }
 
 $rangeInput::-webkit-slider-runnable-track {
@@ -139,45 +138,45 @@ $rangeInput::-webkit-slider-runnable-track {
 	height: var(--trackHeight);
 	cursor: pointer;
 
-	background: linear-gradient(to right, ${cssVar(Theme::toggled)} var(--percent), ${cssVar(Theme::toggledInner)} var(--percent));
+	background: linear-gradient(to right, ${CssProps.toggled.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
 	border-radius: 8px;
 	margin: 6px 3px;
-	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
+	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 
 $rangeInput:disabled::-webkit-slider-thumb {
-	border-color: ${cssVar(Theme::borderDisabled)};
-	background: ${cssVar(Theme::disabled)};
+	border-color: ${CssProps.borderDisabled.v};
+	background: ${CssProps.disabled.v};
 }
 
 $rangeInput::-webkit-slider-thumb {
-	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
+	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
 	height: var(--thumbSize);
 	width: var(--thumbSize);
 	border-radius: 50%;
-	background: ${cssVar(Theme::toggled)};
+	background: ${CssProps.toggled.v};
 	cursor: pointer;
 	-webkit-appearance: none;
-	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${cssVar(Theme::borderThickness)});
+	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${CssProps.borderThickness.v});
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 
 $rangeInput:hover:not(:disabled)::-webkit-slider-thumb {
-	border-color: ${cssVar(Theme::borderHover)};
+	border-color: ${CssProps.borderHover.v};
 }
 
 $rangeInput:hover:not(:disabled)::-webkit-slider-runnable-track {
-	border-color: ${cssVar(Theme::borderHover)};
+	border-color: ${CssProps.borderHover.v};
 }
 
 $rangeInput:disabled::-moz-range-track {
 	/** opacity: 0.9; Moz not supported */ 
 	cursor: not-allowed;
-	background: linear-gradient(to right, ${cssVar(Theme::disabled)} var(--percent), ${cssVar(Theme::disabledInner)} var(--percent));
-	border-color: ${cssVar(Theme::borderDisabled)};
+	background: linear-gradient(to right, ${CssProps.disabled.v} var(--percent), ${CssProps.disabledInner.v} var(--percent));
+	border-color: ${CssProps.borderDisabled.v};
 }
 
 $rangeInput::-moz-range-track {
@@ -185,38 +184,38 @@ $rangeInput::-moz-range-track {
 	height: var(--trackHeight);
 	cursor: pointer;
 
-	background: linear-gradient(to right, ${cssVar(Theme::toggled)} var(--percent), ${cssVar(Theme::toggledInner)} var(--percent));
+	background: linear-gradient(to right, ${CssProps.toggled.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
 	border-radius: 8px;
 	margin: 6px 3px;
-	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
+	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 
 $rangeInput:disabled::-moz-range-thumb {
-	border-color: ${cssVar(Theme::borderDisabled)};
-	background: ${cssVar(Theme::disabled)};
+	border-color: ${CssProps.borderDisabled.v};
+	background: ${CssProps.disabled.v};
 }
 
 $rangeInput::-moz-range-thumb {
-	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
+	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
 	height: var(--thumbSize);
 	width: var(--thumbSize);
 	border-radius: 50%;
-	background: ${cssVar(Theme::toggled)};
+	background: ${CssProps.toggled.v};
 	cursor: pointer;
 	-webkit-appearance: none;
-	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${cssVar(Theme::borderThickness)});
+	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${CssProps.borderThickness.v});
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 
 $rangeInput:hover:not(:disabled)::-moz-range-track {
-	border-color: ${cssVar(Theme::borderHover)};
+	border-color: ${CssProps.borderHover.v};
 }
 
 $rangeInput:hover:not(:disabled)::-moz-range-thumb {
-	border-color: ${cssVar(Theme::borderHover)};
+	border-color: ${CssProps.borderHover.v};
 }				
 			"""
 		))

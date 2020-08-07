@@ -27,7 +27,14 @@ class CssClass(val className: String) {
 	override fun toString(): String = ".$className"
 }
 
-private var styleTagCount = 0
+class CssProp(val propName: String) {
+
+	override fun toString(): String = "--$propName"
+
+	val v: String = "var(--$propName)"
+}
+
+private var cssUid = 0
 
 fun cssClass(): ReadOnlyProperty<Any?, CssClass> {
 
@@ -37,7 +44,21 @@ fun cssClass(): ReadOnlyProperty<Any?, CssClass> {
 
 		override fun getValue(thisRef: Any?, property: KProperty<*>): CssClass {
 			if (className == null)
-				className = CssClass(property.name + "_" + (++styleTagCount).toRadix(36))
+				className = CssClass(property.name + "_" + (++cssUid).toRadix(36))
+			return className!!
+		}
+	}
+}
+
+fun cssProp(): ReadOnlyProperty<Any?, CssProp> {
+
+	return object : ReadOnlyProperty<Any?, CssProp> {
+
+		private var className: CssProp? = null
+
+		override fun getValue(thisRef: Any?, property: KProperty<*>): CssProp {
+			if (className == null)
+				className = CssProp(property.name + "_" + (++cssUid).toRadix(36))
 			return className!!
 		}
 	}

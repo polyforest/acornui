@@ -18,7 +18,7 @@ package com.acornui.component.style
 
 import com.acornui.component.UiComponent
 import com.acornui.component.style.LoadingStyles.loading
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ object LoadingStyles {
 	val showOnLoading by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $showOnLoading {
 	opacity: 0;
 	transition: opacity ease 0.5s;

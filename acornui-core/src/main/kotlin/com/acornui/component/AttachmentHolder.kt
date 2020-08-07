@@ -24,14 +24,23 @@ import com.acornui.Disposable
  */
 interface AttachmentHolder {
 
-	fun <T : Any> getAttachment(key: Any): T?
+	val attachments: MutableMap<Any, Any>
 
-	fun setAttachment(key: Any, value: Any)
+	fun <T : Any> getAttachment(key: Any): T? =
+		attachments[key].unsafeCast<T?>()
+
+	fun setAttachment(key: Any, value: Any?) {
+		if (value != null)
+			attachments[key] = value
+		else
+			attachments.remove(key)
+	}
 
 	/**
 	 * Removes an attachment added via [setAttachment]
 	 */
-	fun <T : Any> removeAttachment(key: Any): T?
+	fun <T : Any> removeAttachment(key: Any): T? =
+		attachments.remove(key).unsafeCast<T?>()
 }
 
 /**

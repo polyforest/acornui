@@ -23,17 +23,16 @@ package com.acornui.component
 import com.acornui.component.input.Button
 import com.acornui.component.layout.hGroup
 import com.acornui.component.style.CommonStyleTags
- import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.dom.div
 import com.acornui.dom.handle
 import com.acornui.dom.isHandled
 import com.acornui.input.Event
 import com.acornui.input.clicked
 import com.acornui.signal.signal
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.get
@@ -172,17 +171,17 @@ open class TabNavigator(owner: Context) : Div(owner) {
 
 		init {
 
-			addCssToHead("""
+			addStyleToHead("""
 $tabNavigator {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	background: transparent;
-	border-radius: ${cssVar(Theme::borderRadius)};
+	border-radius: ${CssProps.borderRadius.v};
 }
 
 $contentsStyle {
-	padding: ${cssVar(Theme::padding)};
+	padding: ${CssProps.padding.v};
 	flex-grow: 1;
 	overflow: auto;
 	border-top-left-radius: 0;
@@ -192,12 +191,12 @@ $tabsStyle {
 	flex-grow: 0;
 	padding: 0;
 	clip-path: polygon(-10% -10%, 110% -10%, 110% 100%, -10% 100%);
-	--${Theme::gap.name}: 0;
+	${CssProps.gap}: 0;
 }
 
 $tabsStyle *:focus {
-    border-color: ${cssVar(Theme::focus)};
-	box-shadow: inset 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
+    border-color: ${CssProps.focus.v};
+	box-shadow: inset 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
 }
 
 $tabsStyle > div {

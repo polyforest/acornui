@@ -27,12 +27,11 @@ import com.acornui.Disposable
 import com.acornui.UidUtil
 import com.acornui.component.*
 import com.acornui.component.style.CommonStyleTags
- import com.acornui.component.style.cssClass
+import com.acornui.component.style.cssClass
 import com.acornui.component.text.text
-import com.acornui.css.cssVar
 import com.acornui.css.prefix
 import com.acornui.di.Context
-import com.acornui.dom.addCssToHead
+import com.acornui.dom.addStyleToHead
 import com.acornui.dom.createElement
 import com.acornui.formatters.*
 import com.acornui.google.Icons
@@ -44,7 +43,7 @@ import com.acornui.properties.afterChange
 import com.acornui.signal.once
 import com.acornui.signal.signal
 import com.acornui.signal.unmanagedSignal
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import com.acornui.time.Date
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLLabelElement
@@ -63,7 +62,7 @@ object InputStyles {
 		@Suppress("CssUnresolvedCustomProperty", "CssInvalidFunction", "CssInvalidPropertyValue",
 			"CssNoGenericFontName"
 		)
-		addCssToHead(
+		addStyleToHead(
 			"""
 
 input {
@@ -112,25 +111,25 @@ input[type='search'],
 input[type='time'],
 input[type='color'],
 input[type='text'] {
-	color: ${cssVar(Theme::inputTextColor)};
-	border-width: ${cssVar(Theme::borderThickness)};;
-	border-color: ${cssVar(Theme::border)};
-	border-radius: ${cssVar(Theme::inputBorderRadius)};
+	color: ${CssProps.inputTextColor.v};
+	border-width: ${CssProps.borderThickness.v};;
+	border-color: ${CssProps.borderColor.v};
+	border-radius: ${CssProps.inputBorderRadius.v};
 	border-style: solid;
-	padding: ${cssVar(Theme::inputPadding)};
-	background: ${cssVar(Theme::inputBackground)};
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	padding: ${CssProps.inputPadding.v};
+	background: ${CssProps.inputBackground.v};
+	box-shadow: ${CssProps.componentShadow.v};
 }
 
 input:disabled {
-	background: ${cssVar(Theme::disabledInner)};
-	border-color: ${cssVar(Theme::disabled)};
-	color: ${cssVar(Theme::toggledInnerDisabled)};
+	background: ${CssProps.disabledInner.v};
+	border-color: ${CssProps.disabled.v};
+	color: ${CssProps.toggledInnerDisabled.v};
 	pointer-events: none;
 }
 
 input:active {
-	border-color: ${cssVar(Theme::borderActive)};
+	border-color: ${CssProps.borderActive.v};
 }
 
 input[type='date'],
@@ -147,7 +146,7 @@ input[type='radio'] {
 }
 
 input:disabled {
-	opacity: ${cssVar(Theme::disabledOpacity)};
+	opacity: ${CssProps.disabledOpacity.v};
 }
 
 input[type='checkbox'],
@@ -159,8 +158,8 @@ input[type='radio'] {
 	position: relative;
 	margin: 0;
 	cursor: pointer;
-	border: 1px solid var(--bc, ${cssVar(Theme::border)});
-	background: var(--b, ${cssVar(Theme::background)});
+	border: 1px solid var(--bc, ${CssProps.borderColor.v});
+	background: var(--b, ${CssProps.componentBackground.v});
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
 }
 
@@ -178,8 +177,8 @@ input[type='radio']::after {
 input[type='checkbox']:indeterminate,
 input[type='checkbox']:checked,
 input[type='radio']:checked {
-	--b: ${cssVar(Theme::toggled)};
-	--bc: ${cssVar(Theme::toggled)};
+	--b: ${CssProps.toggled.v};
+	--bc: ${CssProps.toggled.v};
 	--d-o: 0.3s;
 	--d-t: 0.6s;
 	--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
@@ -187,27 +186,27 @@ input[type='radio']:checked {
 
 input[type='checkbox']:disabled,
 input[type='radio']:disabled {
-	--b: ${cssVar(Theme::disabled)};
+	--b: ${CssProps.disabled.v};
 	cursor: not-allowed;
 }
 
 input[type='checkbox']:disabled:indeterminate,
 input[type='checkbox']:disabled:checked,
 input[type='radio']:disabled:checked {
-	--b: ${cssVar(Theme::disabledInner)};
-	--bc: ${cssVar(Theme::borderDisabled)};
+	--b: ${CssProps.disabledInner.v};
+	--bc: ${CssProps.borderDisabled.v};
 }
 
 input[type='checkbox']:disabled + label,
 input[type='radio']:disabled + label {
 	cursor: not-allowed;
-	opacity: ${cssVar(Theme::disabledOpacity)};
+	opacity: ${CssProps.disabledOpacity.v};
 }
 
 input[type='checkbox']:hover:not(:indeterminate):not(:disabled),
 input[type='checkbox']:hover:not(:checked):not(:disabled),
 input[type='radio']:hover:not(:checked):not(:disabled) {
-	--bc: ${cssVar(Theme::borderHover)};
+	--bc: ${CssProps.borderHover.v};
 }
 
 input[type='checkbox']:not($switch),
@@ -242,7 +241,7 @@ input[type='checkbox']:not($switch) {
 input[type='checkbox']:not($switch):not(:indeterminate)::after {
 	width: 5px;
 	height: 9px;
-	border: 2px solid ${cssVar(Theme::toggledInner)};
+	border: 2px solid ${CssProps.toggledInner.v};
 	border-top: 0;
 	border-left: 0;
 	left: 7px;
@@ -253,7 +252,7 @@ input[type='checkbox']:not($switch):not(:indeterminate)::after {
 input[type='checkbox']:not(.switch):indeterminate::after {
 	width: 9px;
 	height: 2px;
-	border-top: 2px solid ${cssVar(Theme::toggledInner)};
+	border-top: 2px solid ${CssProps.toggledInner.v};
 	left: 5px;
 	top: 9px;
 }
@@ -261,7 +260,7 @@ input[type='checkbox']:not(.switch):indeterminate::after {
 input[type='checkbox']:not($switch)::after {
 	width: 7px;
 	height: 2px;
-	border-top: 2px solid ${cssVar(Theme::toggledInner)};
+	border-top: 2px solid ${CssProps.toggledInner.v};
 	left: 4px;
 	top: 7px;
 }
@@ -281,12 +280,12 @@ input[type='checkbox']$switch::after {
 	border-radius: 50%;
 	width: 15px;
 	height: 15px;
-	background: var(--ab, ${cssVar(Theme::border)});
+	background: var(--ab, ${CssProps.borderColor.v});
 	transform: translateX(var(--x, 0));
 }
 
 input[type='checkbox']$switch:checked {
-	--ab: ${cssVar(Theme::toggledInner)};
+	--ab: ${CssProps.toggledInner.v};
 	--x: 17px;
 }
 
@@ -306,7 +305,7 @@ input[type='radio']::after {
 	width: 19px;
 	height: 19px;
 	border-radius: 50%;
-	background: ${cssVar(Theme::toggledInner)};
+	background: ${CssProps.toggledInner.v};
 	opacity: 0;
 	transform: scale(var(--scale, 0.7));
 }
@@ -325,8 +324,8 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-	-webkit-text-fill-color: ${cssVar(Theme::inputTextColor)};
-	-webkit-box-shadow: 0 0 0 1000px ${cssVar(Theme::inputBackground)} inset;
+	-webkit-text-fill-color: ${CssProps.inputTextColor.v};
+	-webkit-box-shadow: 0 0 0 1000px ${CssProps.inputBackground.v} inset;
 	font-style: italic;
 }
 
@@ -432,17 +431,17 @@ object ButtonStyle {
 	val button by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 
 $button {
 	-webkit-tap-highlight-color: transparent;
-	padding: ${cssVar(Theme::componentPadding)};
-	border-radius: ${cssVar(Theme::borderRadius)};
-	background: ${cssVar(Theme::buttonBackground)};
-	border-color: ${cssVar(Theme::border)};
-	border-width: ${cssVar(Theme::borderThickness)};
+	padding: ${CssProps.componentPadding.v};
+	border-radius: ${CssProps.borderRadius.v};
+	background: ${CssProps.buttonBackground.v};
+	border-color: ${CssProps.borderColor.v};
+	border-width: ${CssProps.borderThickness.v};
 
-	color: ${cssVar(Theme::buttonTextColor)};
+	color: ${CssProps.buttonTextColor.v};
 	font-size: inherit;
 	
 	/*text-shadow: 1px 1px 1px #0004;*/
@@ -453,7 +452,7 @@ $button {
 	vertical-align: middle;
 	overflow: hidden;
 	box-sizing: border-box;
-	box-shadow: ${cssVar(Theme::componentShadow)};
+	box-shadow: ${CssProps.componentShadow.v};
 	
 	cursor: pointer;
 	font-weight: bolder;
@@ -461,38 +460,38 @@ $button {
 }
 
 $button:hover {
-	background: ${cssVar(Theme::buttonBackgroundHover)};
-	border-color: ${cssVar(Theme::borderHover)};
-	color: ${cssVar(Theme::buttonTextHoverColor)};
+	background: ${CssProps.buttonBackgroundHover.v};
+	border-color: ${CssProps.borderHover.v};
+	color: ${CssProps.buttonTextHoverColor.v};
 }
 
 $button${CommonStyleTags.active} {
-	background: ${cssVar(Theme::buttonBackgroundActive)};
-	border-color: ${cssVar(Theme::borderActive)};
-	color: ${cssVar(Theme::buttonTextActiveColor)};
+	background: ${CssProps.buttonBackgroundActive.v};
+	border-color: ${CssProps.borderActive.v};
+	color: ${CssProps.buttonTextActiveColor.v};
 }
 
 $button${CommonStyleTags.toggled} {
-	background: ${cssVar(Theme::toggled)};
-	border-color: ${cssVar(Theme::toggled)};
-	color: ${cssVar(Theme::toggledInner)};
+	background: ${CssProps.toggled.v};
+	border-color: ${CssProps.toggled.v};
+	color: ${CssProps.toggledInner.v};
 }
 
 $button${CommonStyleTags.toggled}:hover {
-	background: ${cssVar(Theme::toggled)};
-	border-color: ${cssVar(Theme::borderHover)};
+	background: ${CssProps.toggled.v};
+	border-color: ${CssProps.borderHover.v};
 }
 
 $button${CommonStyleTags.toggled}${CommonStyleTags.active} {
-	border-color: ${cssVar(Theme::borderActive)};
+	border-color: ${CssProps.borderActive.v};
 }
 
 $button${CommonStyleTags.disabled} {
-	background: ${cssVar(Theme::disabledInner)};
-	border-color: ${cssVar(Theme::disabled)};
-	color: ${cssVar(Theme::toggledInnerDisabled)};
+	background: ${CssProps.disabledInner.v};
+	border-color: ${CssProps.disabled.v};
+	color: ${CssProps.toggledInnerDisabled.v};
 	pointer-events: none;
-	opacity: ${cssVar(Theme::disabledOpacity)};
+	opacity: ${CssProps.disabledOpacity.v};
 }
 
 $button > div {
@@ -798,7 +797,7 @@ object ToggleInputStyle {
 	val toggleInput by cssClass()
 
 	init {
-		addCssToHead("""
+		addStyleToHead("""
 $toggleInput {
 	display: inline-flex;
 	flex-direction: row;

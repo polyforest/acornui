@@ -14,288 +14,160 @@
  * limitations under the License.
  */
 
+@file:Suppress("CssOverwrittenProperties")
+
 package com.acornui.skins
 
-import com.acornui.css.css
-import com.acornui.css.cssProp
-import kotlinx.serialization.Serializable
-import org.w3c.dom.HTMLStyleElement
+import com.acornui.component.Stage
+import com.acornui.component.style.CssClass
+import com.acornui.component.style.cssProp
 
 /**
- * The Theme is a set of common styling properties, used by many components.
+ * Common CssProps many components use.
  */
-@Serializable
-data class Theme(
+object CssProps {
 
-	/**
-	 * The default background of the stage.
-	 */
-	val stageBackground: String = css("#444"),
-
-	/**
-	 * The default color of text.
-	 */
-	val textColor: String = css("#ddd"),
-
-	val scrollbarTrackColor: String = css("#111"),
-	val scrollbarButtonColor: String = css("#666"),
-	val scrollbarBorderRadius: String = css("0"),
-	val scrollbarCornerColor: String = css("#333"),
-	val scrollbarThickness: String = css("8px"),
+	val scrollbarTrackColor by cssProp()
+	val scrollbarButtonColor by cssProp()
+	val scrollbarBorderRadius by cssProp()
+	val scrollbarCornerColor by cssProp()
+	val scrollbarThickness by cssProp()
 
 	/**
 	 * The focus highlight color.
 	 */
-	val focus: String = css("rgba(49, 104, 254, .8)"),
+	val focus by cssProp()
 
-	val focusThickness: String = css("2px"),
+	val focusThickness by cssProp()
 
 	/**
 	 * The accent for components when toggled/checked.
 	 */
-	val toggled: String = css("#275efe"),
+	val toggled by cssProp()
 
 	/**
 	 * The fill for components when toggled/checked.
 	 */
-	val toggledInner: String = css("#fff"),
+	val toggledInner by cssProp()
 
 	/**
 	 * The fill for disabled components when toggled/checked.
 	 */
-	val toggledInnerDisabled: String = css("#888"),
+	val toggledInnerDisabled by cssProp()
 
 	/**
 	 * The border for components.
 	 */
-	val border: String = css("#bbc1e1"),
+	val borderColor by cssProp()
 
 	/**
 	 * The border for components when mouse is over.
 	 */
-	val borderHover: String = css("#0f3ef8"),
+	val borderHover by cssProp()
 
 	/**
 	 * The border for components when mouse is down.
 	 */
-	val borderActive: String = css("#445ed9"),
+	val borderActive by cssProp()
 
 	/**
 	 * The border for components when the component is disabled.
 	 */
-	val borderDisabled: String = css("#bbc1e1"),
+	val borderDisabled by cssProp()
 
 	/**
 	 * The background for components.
 	 */
-	val background: String = css("#fff"),
+	val componentBackground by cssProp()
 
 	/**
 	 * The background for disabled components.
 	 */
-	val disabled: String = css("#7a7b82"),
+	val disabled by cssProp()
 
-	val disabledOpacity: String = css("0.8"),
+	val disabledOpacity by cssProp()
 
-	val disabledInner: String = css("#bfbfbf"),
+	val disabledInner by cssProp()
 
-	val buttonBackground: String = css("#f3f4f7"),
+	/**
+	 * The background of buttons and button-like components.
+	 */
+	val buttonBackground by cssProp()
 
-	val buttonBackgroundHover: String = css("#fff"),
+	/**
+	 * The :hover background of buttons and button-like components.
+	 */
+	val buttonBackgroundHover by cssProp()
 
-	val buttonBackgroundActive: String = css("#e3e4e7"),
+	/**
+	 * The [com.acornui.component.style.CommonStyleTags.active] background of buttons and button-like components.
+	 */
+	val buttonBackgroundActive by cssProp()
 
-	val buttonTextColor: String = css("#333"),
+	val buttonTextColor by cssProp()
 
-	val buttonTextHoverColor: String = css("#444"),
+	val buttonTextHoverColor by cssProp()
 
-	val buttonTextActiveColor: String = css("#222"),
+	val buttonTextActiveColor by cssProp()
 
-	val borderThickness: String = css("1px"),
+	val borderThickness by cssProp()
 
-	val componentPadding: String = css("4px"),
+	val componentPadding by cssProp()
 
-	val borderRadius: String = css("8px"),
+	val borderRadius by cssProp()
 
 	/**
 	 * The background for input components.
 	 */
-	val inputBackground: String = css("#fffe"),
+	val inputBackground by cssProp()
 
 	/**
 	 * The text color for input components. Default is same as the button text color.
 	 */
-	val inputTextColor: String = buttonTextColor,
+	val inputTextColor by cssProp()
 
 	/**
 	 * The border radius for input components.
 	 */
-	val inputBorderRadius: String = css("2px"),
+	val inputBorderRadius by cssProp()
 
 	/**
 	 * The padding for input components.
 	 */
-	val inputPadding: String = css("4px"),
+	val inputPadding by cssProp()
 
 	/**
 	 * The default gap between elements.
 	 */
-	val gap: String = css("6px"),
+	val gap by cssProp()
 
 	/**
 	 * The default padding for containers.
 	 */
-	val padding: String = css("6px"),
+	val padding by cssProp()
 
 	/**
 	 * A shadow for components.
 	 */
-	val componentShadow: String = css("1px 1px 3px rgba(0, 0, 0, 0.2)"),
+	val componentShadow by cssProp()
 
-	/**
-	 * The background of a panel.
-	 */
-	val panelBackground: String = css("#ddd"),
+	val strongWeight by cssProp()
 
-	val panelTextColor: String = css("#222"),
-	val panelScrollbarTrackColor: String = css("transparent"),
-	val panelScrollbarButtonColor: String = css("#666"),
-	val panelScrollbarCornerColor: String = css("transparent"),
+	val dataRowEvenBackground by cssProp()
+	val dataRowOddBackground by cssProp()
 
-	/**
-	 * The box-shadow for panels.
-	 */
-	val panelShadow: String = css("2px 2px 5px rgba(0, 0, 0, 0.4)"),
-	val panelLoadingSpinnerColor: String = panelTextColor,
+	val loadingSpinnerColor by cssProp()
+}
 
-	val dataRowEvenBackground: String = css("#eeef"),
-	val dataRowOddBackground: String = css("#ddde"),
+private object ThemeClass
 
-	val footerTextColor: String = css("#222"),
-	val footerBackgroundColor: String = css("#bbb"),
-
-	val loadingSpinnerColor: String = textColor
-
-) {
-
-	fun toCss(selector: String = ":root"): String {
-		//language=CSS
-		return """
-			$selector {
-
-			  ${cssProp(::stageBackground)}
-			  ${cssProp(::textColor)}
-			  ${cssProp(::scrollbarTrackColor)}
-			  ${cssProp(::scrollbarButtonColor)}
-			  ${cssProp(::scrollbarCornerColor)}
-			  ${cssProp(::scrollbarThickness)}
-			  
-			  ${cssProp(::focus)}
-			  ${cssProp(::focusThickness)}
-			  ${cssProp(::toggled)}
-			  ${cssProp(::toggledInner)}
-			  ${cssProp(::toggledInnerDisabled)}
-			  
-			  ${cssProp(::border)}
-			  ${cssProp(::borderHover)}
-			  ${cssProp(::borderActive)}
-			  ${cssProp(::borderDisabled)}
-			  
-			  ${cssProp(::background)}
-			  ${cssProp(::disabled)}
-			  ${cssProp(::disabledOpacity)}
-			  ${cssProp(::disabledInner)}
-
-			  ${cssProp(::buttonBackground)}
-			  ${cssProp(::buttonBackgroundHover)}
-			  ${cssProp(::buttonBackgroundActive)}
-			  
-			  
-			  ${cssProp(::buttonTextColor)}
-			  ${cssProp(::buttonTextHoverColor)}
-			  ${cssProp(::buttonTextActiveColor)}
-			  
-			  ${cssProp(::borderThickness)}
-			  ${cssProp(::componentPadding)}
-			  ${cssProp(::borderRadius)}
-			  ${cssProp(::inputBackground)}
-			  ${cssProp(::inputTextColor)}
-			  ${cssProp(::inputBorderRadius)}
-			  ${cssProp(::inputPadding)}
-			  
-			  ${cssProp(::gap)}
-			  ${cssProp(::padding)}
-			  
-			  ${cssProp(::componentShadow)}
-			  
-			  ${cssProp(::panelBackground)}
-			  ${cssProp(::panelTextColor)}
-			  ${cssProp(::panelScrollbarTrackColor)}
-			  ${cssProp(::panelScrollbarButtonColor)}
-			  ${cssProp(::panelScrollbarCornerColor)}
-			  ${cssProp(::panelShadow)}
-			  ${cssProp(::panelLoadingSpinnerColor)}
-			  
-			  ${cssProp(::dataRowEvenBackground)}
-			  ${cssProp(::dataRowOddBackground)}
-			  
-			  ${cssProp(::footerTextColor)}
-			  ${cssProp(::footerBackgroundColor)}
-
-			  ${cssProp(::loadingSpinnerColor)}
-
-			  
-			}
-		""".trimIndent()
+var Stage.theme: CssClass?
+	get() = getAttachment(ThemeClass)
+	set(value) {
+		val oldTheme = theme
+		if (oldTheme != null)
+			removeClass(oldTheme)
+		setAttachment(ThemeClass, value)
+		if (value != null)
+			addClass(value)
 	}
-}
-
-fun Theme.addCssToHead(selector: String = ":root"): HTMLStyleElement {
-	DefaultStyles // Adds the default css to the head.
-	return com.acornui.dom.addCssToHead(toCss(selector))
-}
-
-val darkTheme = Theme(
-
-	stageBackground = css("#222"),
-
-	textColor = css("#ccc"),
-
-	toggledInner = css("#fff"),
-
-	border = css("#29395d"),
-
-	background = css("rgba(33, 33, 33, 0.9)"),
-
-	buttonBackground = css("#1b2235"),
-
-	buttonBackgroundHover = css("#224"),
-
-	buttonBackgroundActive = css("#112"),
-
-	buttonTextColor = css("#ccc"),
-
-	buttonTextHoverColor = css("#ddd"),
-
-	buttonTextActiveColor = css("#bbb"),
-
-	inputBackground = css("rgba(33, 33, 33, 0.9)"),
-
-	componentShadow = css("0"),
-
-	panelBackground = css("rgba(31, 35, 37, 0.75)"),
-
-	panelTextColor = css("#ccc"),
-	panelScrollbarTrackColor = css("transparent"),
-	panelScrollbarButtonColor = css("#666"),
-	panelScrollbarCornerColor = css("transparent"),
-
-	panelShadow = css("2px 2px 5px rgba(0, 0, 0, 0.9)"),
-
-	dataRowEvenBackground = css("#333"),
-	dataRowOddBackground = css("#222"),
-
-	footerTextColor = css("#bbb"),
-	footerBackgroundColor = css("#262728"),
-
-)

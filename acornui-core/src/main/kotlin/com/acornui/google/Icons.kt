@@ -22,12 +22,11 @@ import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.style.CssClass
 import com.acornui.component.style.cssClass
-import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.*
 import com.acornui.google.IconButtonCss.iconButtonStyleTag
 import com.acornui.google.MaterialIconsCss.materialIconsStyleTag
-import com.acornui.skins.Theme
+import com.acornui.skins.CssProps
 import org.w3c.dom.HTMLElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -994,21 +993,21 @@ object IconButtonCss {
 	val iconButtonStyleTag by cssClass()
 
 	init {
-		addCssToHead("""
-
-$iconButtonStyleTag {
-	cursor: pointer;
-	user-select: none;
-}
-
-$iconButtonStyleTag:hover {
-	color: ${cssVar(Theme::borderHover)};
-}
-
-$iconButtonStyleTag:active {
-	color: ${cssVar(Theme::borderActive)};
-}
-		""")
+		addStyleToHead("""
+	
+	$iconButtonStyleTag {
+		cursor: pointer;
+		user-select: none;
+	}
+	
+	$iconButtonStyleTag:hover {
+		color: ${CssProps.borderHover.v};
+	}
+	
+	$iconButtonStyleTag:active {
+		color: ${CssProps.borderActive.v};
+	}
+			""")
 	}
 }
 
