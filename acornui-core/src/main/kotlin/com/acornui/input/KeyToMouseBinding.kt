@@ -65,8 +65,7 @@ class KeyToMouseBinding(
 			val e = dispatchFakeMouseEvent(event.target!!, "mousedown")
 			if (e.isHandled)
 				event.handle()
-			if (event.keyCode == Ascii.SPACE)
-				event.preventDefault() // Prevent SPACE from scrolling.
+			event.preventDefault() // Prevent SPACE from scrolling, ENTER from navigating href, etc.
 		}
 	}
 
