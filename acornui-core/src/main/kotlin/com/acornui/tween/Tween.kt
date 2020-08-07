@@ -18,13 +18,15 @@ package com.acornui.tween
 
 import com.acornui.Disposable
 import com.acornui.Updatable
-import com.acornui.di.Context
+import com.acornui.frame
 import com.acornui.math.Easing
 import com.acornui.math.Interpolation
 import com.acornui.signal.Signal
-import com.acornui.signal.Signal1
-import com.acornui.stop
-import com.acornui.time.FrameDriver
+import com.acornui.signal.unmanagedSignal
+import com.acornui.tween.Tween.Companion.SMALL_DURATION
+import kotlin.time.Duration
+import kotlin.time.nanoseconds
+import kotlin.time.seconds
 
 /**
  * A Tween is an object representing an interpolation over time.
@@ -44,27 +46,27 @@ interface Tween : Updatable, Disposable {
 	 * Settings this value is the same as calling [setCurrentTime] with jump = false.
 	 * @see update
 	 */
-	var currentTime: Double
+	var currentTime: Duration
 
 	/**
 	 * Sets the current time.
 	 * @param newTime The new time (in seconds) to update to.
 	 * @param jump If true, the play head will jump instead of scrub. Callbacks will not be invoked.
 	 */
-	fun setCurrentTime(newTime: Double, jump: Boolean)
+	fun setCurrentTime(newTime: Duration, jump: Boolean)
 
 	/**
 	 * Sets the current time.
 	 * The play head will jump instead of scrub. Callbacks will not be invoked.
 	 * @see setCurrentTime
 	 */
-	fun jumpTo(newTime: Double) = setCurrentTime(newTime, true)
+	fun jumpTo(newTime: Duration) = setCurrentTime(newTime, true)
 
 	/**
 	 * When the tween is rewound using [rewind], the [currentTime] will be set to this value.
 	 * This can be set to a negative value to indicate a delay.
 	 */
-	var startTime: Double
+	var startTime: Duration
 
 	/**
 	 * If true, when this tween's [currentTime] <= 0.0, it will loop back to [duration].
@@ -79,12 +81,7 @@ interface Tween : Updatable, Disposable {
 	/**
 	 * The total duration of this tween, in seconds.
 	 */
-	val duration: Double
-
-	/**
-	 * 1.0 / duration.
-	 */
-	val durationInv: Double
+	val duration: Duration
 
 	/**
 	 * The current 0-1 progress of the tween.
@@ -93,9 +90,9 @@ interface Tween : Updatable, Disposable {
 	 * @see update
 	 */
 	var alpha: Double
-		get() = currentTime * durationInv
+		get() = currentTime / duration
 		set(value) {
-			currentTime = value * duration
+			currentTime = duration * value
 		}
 
 	/**
@@ -114,7 +111,7 @@ interface Tween : Updatable, Disposable {
 	 * Steps forward [dT] seconds.
 	 * @param dT The number of seconds to progress. This may be negative.
 	 */
-	override fun update(dT: Double) {
+	override fun update(dT: Duration) {
 		if (!paused)
 			currentTime += dT
 	}
@@ -148,11 +145,11 @@ interface Tween : Updatable, Disposable {
 	/**
 	 * Given the current time, returns the looped or clamped time.
 	 */
-	fun apparentTime(value: Double): Double {
-		return if (loopAfter && value >= duration || loopBefore && value <= 0.0) {
-			com.acornui.math.mod(value, duration)
+	fun apparentTime(value: Duration): Duration {
+		return if (loopAfter && value >= duration || loopBefore && value <= Duration.ZERO) {
+			com.acornui.math.mod(value.inSeconds, duration.inSeconds).seconds
 		} else {
-			com.acornui.math.clamp(value, 0.0, duration)
+			com.acornui.math.clamp(value, Duration.ZERO, duration)
 		}
 	}
 
@@ -170,6 +167,8 @@ interface Tween : Updatable, Disposable {
 		fun prepare() {
 			TweenRegistry; Easing; CallbackTween
 		}
+
+		val SMALL_DURATION = 1.nanoseconds
 	}
 
 }
@@ -177,29 +176,28 @@ interface Tween : Updatable, Disposable {
 /**
  * A standard base class for tweens. It handles the signals, easing, and looping. Just override [updateToTime].
  */
-abstract class TweenBase() : Tween {
+abstract class TweenBase : Tween, Disposable {
 
-	private val _completed = Signal1<Tween>()
-	override val completed = _completed.asRo()
+	override val completed = unmanagedSignal<Tween>()
 
 	override var loopBefore: Boolean = false
 	override var loopAfter: Boolean = false
 	override var allowCompletion = false
 	override var paused = false
 
-	override var startTime: Double = 0.0
+	override var startTime: Duration = Duration.ZERO
 
 	protected var ease: Interpolation = Easing.linear
 
-	private var _currentTime: Double = 0.0
+	private var _currentTime: Duration = Duration.ZERO
 
-	override var currentTime: Double
+	override var currentTime: Duration
 		get() = _currentTime
 		set(newTime) {
 			setCurrentTime(newTime, jump = false)
 		}
 
-	override fun setCurrentTime(newTime: Double, jump: Boolean) {
+	override fun setCurrentTime(newTime: Duration, jump: Boolean) {
 		if (!Tween.animationsEnabled) {
 			updateToTime(startTime, duration, startTime, duration, true)
 			complete()
@@ -220,11 +218,11 @@ abstract class TweenBase() : Tween {
 
 	}
 
-	protected open fun completionCheck(lastTime: Double, time: Double, lastApparentTime: Double, apparentTime: Double): Boolean {
+	protected open fun completionCheck(lastTime: Duration, time: Duration, lastApparentTime: Duration, apparentTime: Duration): Boolean {
 		// Completion check
 		if ((!loopBefore || allowCompletion) && apparentTime >= duration && lastApparentTime < duration)
 			return true
-		else if ((!loopAfter || allowCompletion) && apparentTime <= 0.0 && lastApparentTime > 0.0)
+		else if ((!loopAfter || allowCompletion) && apparentTime <= Duration.ZERO && lastApparentTime > Duration.ZERO)
 			return true
 		return false
 	}
@@ -244,15 +242,29 @@ abstract class TweenBase() : Tween {
 	 * @param apparentLastTime The time of the last update, clamped and looped.
 	 * @param apparentNewTime The time of the current update, clamped and looped.
 	 */
-	abstract fun updateToTime(lastTime: Double, newTime: Double, apparentLastTime: Double, apparentNewTime: Double, jump: Boolean)
+	abstract fun updateToTime(lastTime: Duration, newTime: Duration, apparentLastTime: Duration, apparentNewTime: Duration, jump: Boolean)
 
 	override fun complete() {
-		_completed.dispatch(this)
+		completed.dispatch(this)
 		stop()
 	}
 
+	private var frameHandle: Disposable? = null
+
+	open fun start(): TweenBase {
+		if (frameHandle == null)
+			frameHandle = frame.listen(::update)
+		return this
+	}
+
+	fun stop() {
+		frameHandle?.dispose()
+		frameHandle = null
+	}
+
 	override fun dispose() {
-		_completed.dispose()
+		completed.dispose()
+		stop()
 	}
 }
 
@@ -260,27 +272,26 @@ abstract class TweenBase() : Tween {
  *
  */
 class TweenImpl(
-		duration: Double,
+		duration: Duration,
 		ease: Interpolation,
-		delay: Double,
+		delay: Duration,
 		loop: Boolean,
 		private val tween: (previousAlpha: Double, currentAlpha: Double) -> Unit
 ) : TweenBase() {
 
 	private var previousAlpha = 0.0
 
-	override val duration = if (duration <= 0.0) 0.0000001 else duration
-	override val durationInv = 1.0 / duration
+	override val duration = if (duration <= Duration.ZERO) SMALL_DURATION else duration
 
 	init {
 		this.ease = ease
 		this.loopAfter = loop
-		startTime = -delay - 0.0000001 // Subtract a small amount so time handlers at 0.0 time get invoked.
+		startTime = -delay - SMALL_DURATION // Subtract a small amount so time handlers at 0.0 time get invoked.
 		jumpTo(startTime)
 	}
 
-	override fun updateToTime(lastTime: Double, newTime: Double, apparentLastTime: Double, apparentNewTime: Double, jump: Boolean) {
-		val currentAlpha = ease(apparentNewTime * durationInv)
+	override fun updateToTime(lastTime: Duration, newTime: Duration, apparentLastTime: Duration, apparentNewTime: Duration, jump: Boolean) {
+		val currentAlpha = ease(apparentNewTime / duration)
 		tween(previousAlpha, currentAlpha)
 		previousAlpha = currentAlpha
 	}
@@ -289,13 +300,13 @@ class TweenImpl(
 /**
  * Creates a new Tween.
  * This tween is not automatically started.
- * @see Updatable.start
+ * @see TweenImpl.start
  */
-fun tween(duration: Double, ease: Interpolation, delay: Double = 0.0, loop: Boolean = false, tween: (previousAlpha: Double, currentAlpha: Double) -> Unit): Tween {
+fun tween(duration: Duration, ease: Interpolation, delay: Duration = Duration.ZERO, loop: Boolean = false, tween: (previousAlpha: Double, currentAlpha: Double) -> Unit): Tween {
 	return TweenImpl(duration, ease, delay, loop, tween)
 }
 
-fun toFromTween(start: Double, end: Double, duration: Double, ease: Interpolation, delay: Double = 0.0, loop: Boolean = false, setter: (Double) -> Unit): Tween {
+fun toFromTween(start: Double, end: Double, duration: Duration, ease: Interpolation, delay: Duration = Duration.ZERO, loop: Boolean = false, setter: (Double) -> Unit): Tween {
 	val d = (end - start)
 	return TweenImpl(duration, ease, delay, loop) {
 		_: Double, currentAlpha: Double ->
@@ -303,15 +314,15 @@ fun toFromTween(start: Double, end: Double, duration: Double, ease: Interpolatio
 	}
 }
 
-fun relativeTween(delta: Double, duration: Double, ease: Interpolation, delay: Double = 0.0, loop: Boolean = false, getter: () -> Double, setter: (Double) -> Unit): Tween {
+fun relativeTween(delta: Double, duration: Duration, ease: Interpolation, delay: Duration = Duration.ZERO, loop: Boolean = false, getter: () -> Double, setter: (Double) -> Unit): Tween {
 	return TweenImpl(duration, ease, delay, loop) {
 		previousAlpha: Double, currentAlpha: Double ->
 		setter(getter() + (currentAlpha - previousAlpha) * delta)
 	}
 }
 
-fun tweenCall(delay: Double = 0.0, setter: () -> Unit): Tween {
-	return TweenImpl(0.0, Easing.linear, delay, false) {
+fun tweenCall(delay: Duration = Duration.ZERO, setter: () -> Unit): Tween {
+	return TweenImpl(Duration.ZERO, Easing.linear, delay, false) {
 		_: Double, _: Double ->
 		setter()
 	}

@@ -20,6 +20,7 @@ import com.acornui.collection.*
 import com.acornui.di.Context
 import com.acornui.math.Interpolation
 import com.acornui.signal.addOnce
+import kotlin.time.Duration
 
 /**
  * A registry of tweens by their target and property so that tweens can be cancelled and overwritten.
@@ -58,7 +59,7 @@ object TweenRegistry {
 	}
 }
 
-fun Context.createPropertyTween(target: Any, property: String, duration: Double, ease: Interpolation, getter: () -> Double, setter: (Double) -> Unit, targetValue: Double, delay: Double = 0.0, loop: Boolean = false): Tween {
+fun createPropertyTween(target: Any, property: String, duration: Duration, ease: Interpolation, getter: () -> Double, setter: (Double) -> Unit, targetValue: Double, delay: Duration = Duration.ZERO, loop: Boolean = false): Tween {
 	TweenRegistry.kill(target, property, finish = true)
 	val tween = toFromTween(getter(), targetValue, duration, ease, delay, loop, setter)
 	TweenRegistry.register(target, property, tween)
