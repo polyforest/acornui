@@ -457,6 +457,7 @@ $button {
 	
 	cursor: pointer;
 	font-weight: bolder;
+	flex-shrink: 0;
 }
 
 $button:hover {
