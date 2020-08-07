@@ -27,7 +27,12 @@ import kotlin.coroutines.CoroutineContext
 class MainContext(
 	dependencies: DependencyMap = DependencyMap(),
 	coroutineContext: CoroutineContext = Log.uncaughtExceptionHandler + Job()
-) : ContextImpl(null, dependencies, coroutineContext, ContextMarker.MAIN)
+) : ContextImpl(null, dependencies, coroutineContext, ContextMarker.MAIN) {
+
+	init {
+		polyfills()
+	}
+}
 
 /**
  * Constructs a new [MainContext].

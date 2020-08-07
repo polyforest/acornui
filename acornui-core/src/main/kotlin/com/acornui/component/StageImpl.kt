@@ -47,7 +47,13 @@ object StageStyle {
 
 	init {
 		addStyleToHead("""
-$stage *:focus {
+			
+*:focus:not(.focus-visible) {
+	/* Don't show an outline for elements focused via mouse */
+	outline: none;
+}			
+			
+$stage .focus-visible {
 	box-shadow: 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
 	outline: none;
 	transition: box-shadow 0.2s ease-in-out;

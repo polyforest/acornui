@@ -26,7 +26,7 @@ dependencies {
 	// IE and Edge no longer supported
 //	implementation(npm("promise-polyfill", version = "8.1.3")) // For IE11
 //	implementation(npm("resize-observer-polyfill", version = "1.5.1")) // For IE11 and Edge
-//	implementation(npm("focus-visible", version = "5.1.0"))
+	api(npm("focus-visible", version = "5.1.0"))
 	api(kotlin("stdlib", version = Config.KOTLIN_VERSION))
 	api(kotlin("stdlib-js", version = Config.KOTLIN_VERSION))
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Config.KOTLIN_COROUTINES_VERSION}")

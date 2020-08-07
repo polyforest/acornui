@@ -46,11 +46,10 @@ $s ul li {
 	margin-bottom: ${CssProps.gap.v} 
 }
 
-$s a, $s a:visited {
+$s a {
 	color: ${CssProps.toggled.v};
 	text-decoration: none;
 	border-radius: ${CssProps.borderRadius.v};
-	padding: ${CssProps.inputPadding.v};
 }
 
 $s a:hover {
