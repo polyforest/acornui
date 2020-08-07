@@ -16,12 +16,16 @@
 
 package com.acornui.dom
 
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.WithNode
+import com.acornui.component.asWithNode
 import com.acornui.component.style.CommonStyleTags
 import com.acornui.di.Context
+import com.acornui.input.mousePressOnKey
 import com.acornui.signal.event
-import org.w3c.dom.*
 import kotlinx.browser.document
+import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -41,11 +45,30 @@ inline fun Context.span(init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = 
 	return component("span", init)
 }
 
-inline fun Context.a(href: String = "", target: String = "", init: ComponentInit<UiComponentImpl<HTMLAnchorElement>> = {}): UiComponentImpl<HTMLAnchorElement> {
+open class A(owner: Context) : UiComponentImpl<HTMLAnchorElement>(owner, createElement("a")) {
+
+	init {
+		mousePressOnKey()
+	}
+
+	var href: String
+		get() = dom.href
+		set(value) {
+			dom.href = value
+		}
+
+	var target: String
+		get() = dom.target
+		set(value) {
+			dom.target = value
+		}
+}
+
+inline fun Context.a(href: String = "javascript:void(0)", target: String = "", init: ComponentInit<A> = {}): A {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("a") {
-		dom.href = href
-		dom.target = target
+	return A(this).apply {
+		this.href = href
+		this.target = target
 		init()
 	}
 }
