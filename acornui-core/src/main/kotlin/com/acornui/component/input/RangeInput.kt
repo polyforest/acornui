@@ -30,7 +30,7 @@ import kotlin.contracts.contract
 open class RangeInput(owner: Context) : InputImpl(owner, "range") {
 
 	init {
-		addClass(styleTag)
+		addClass(RangeInputStyle.rangeInput)
 		input.listen {
 			refreshPercentCss()
 		}
@@ -102,16 +102,19 @@ open class RangeInput(owner: Context) : InputImpl(owner, "range") {
 		refreshPercentCss()
 	}
 
-	companion object {
 
-		val styleTag by cssClass()
+}
 
-		init {
-			@Suppress("CssUnresolvedCustomProperty", "CssInvalidPropertyValue")
-			(addCssToHead(
-		"""
+object RangeInputStyle {
 
-$styleTag {
+	val rangeInput by cssClass()
+
+	init {
+		@Suppress("CssUnresolvedCustomProperty", "CssInvalidPropertyValue")
+		(addCssToHead(
+			"""
+
+$rangeInput {
 	--percent: 0%;
 	--trackHeight: 8px;
 	--thumbSize: 16px;
@@ -120,18 +123,18 @@ $styleTag {
 	background: transparent;
 }
 
-$styleTag:disabled {
+$rangeInput:disabled {
 	background: transparent;
 }
 
-$styleTag:disabled::-webkit-slider-runnable-track {
+$rangeInput:disabled::-webkit-slider-runnable-track {
 	opacity: 0.9;
 	cursor: not-allowed;
 	background: linear-gradient(to right, ${cssVar(Theme::disabled)} var(--percent), ${cssVar(Theme::disabledInner)} var(--percent));
 	border-color: ${cssVar(Theme::borderDisabled)};
 }
 
-$styleTag::-webkit-slider-runnable-track {
+$rangeInput::-webkit-slider-runnable-track {
 	width: 100%;
 	height: var(--trackHeight);
 	cursor: pointer;
@@ -144,12 +147,12 @@ $styleTag::-webkit-slider-runnable-track {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 }
 
-$styleTag:disabled::-webkit-slider-thumb {
+$rangeInput:disabled::-webkit-slider-thumb {
 	border-color: ${cssVar(Theme::borderDisabled)};
 	background: ${cssVar(Theme::disabled)};
 }
 
-$styleTag::-webkit-slider-thumb {
+$rangeInput::-webkit-slider-thumb {
 	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
 	height: var(--thumbSize);
 	width: var(--thumbSize);
@@ -162,22 +165,22 @@ $styleTag::-webkit-slider-thumb {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 }
 
-$styleTag:hover:not(:disabled)::-webkit-slider-thumb {
+$rangeInput:hover:not(:disabled)::-webkit-slider-thumb {
 	border-color: ${cssVar(Theme::borderHover)};
 }
 
-$styleTag:hover:not(:disabled)::-webkit-slider-runnable-track {
+$rangeInput:hover:not(:disabled)::-webkit-slider-runnable-track {
 	border-color: ${cssVar(Theme::borderHover)};
 }
 
-$styleTag:disabled::-moz-range-track {
+$rangeInput:disabled::-moz-range-track {
 	/** opacity: 0.9; Moz not supported */ 
 	cursor: not-allowed;
 	background: linear-gradient(to right, ${cssVar(Theme::disabled)} var(--percent), ${cssVar(Theme::disabledInner)} var(--percent));
 	border-color: ${cssVar(Theme::borderDisabled)};
 }
 
-$styleTag::-moz-range-track {
+$rangeInput::-moz-range-track {
 	width: 100%;
 	height: var(--trackHeight);
 	cursor: pointer;
@@ -190,12 +193,12 @@ $styleTag::-moz-range-track {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 }
 
-$styleTag:disabled::-moz-range-thumb {
+$rangeInput:disabled::-moz-range-thumb {
 	border-color: ${cssVar(Theme::borderDisabled)};
 	background: ${cssVar(Theme::disabled)};
 }
 
-$styleTag::-moz-range-thumb {
+$rangeInput::-moz-range-thumb {
 	border: ${cssVar(Theme::borderThickness)} solid ${cssVar(Theme::border)};
 	height: var(--thumbSize);
 	width: var(--thumbSize);
@@ -208,16 +211,15 @@ $styleTag::-moz-range-thumb {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 }
 
-$styleTag:hover:not(:disabled)::-moz-range-track {
+$rangeInput:hover:not(:disabled)::-moz-range-track {
 	border-color: ${cssVar(Theme::borderHover)};
 }
 
-$styleTag:hover:not(:disabled)::-moz-range-thumb {
+$rangeInput:hover:not(:disabled)::-moz-range-thumb {
 	border-color: ${cssVar(Theme::borderHover)};
 }				
 			"""
-	))
-		}
+		))
 	}
 }
 

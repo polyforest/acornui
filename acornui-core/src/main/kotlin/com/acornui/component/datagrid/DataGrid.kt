@@ -158,11 +158,11 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 * https://stackoverflow.com/questions/57934803/workaround-for-a-safari-position-sticky-webkit-sticky-bug
 	 */
 	val mainContainer = addChild(div {
-		addClass(mainContainerStyle)
+		addClass(DataGridStyle.mainContainerStyle)
 	})
 
 	val header = mainContainer.addElement(div {
-		addClass(headerRowStyle)
+		addClass(DataGridStyle.headerRowStyle)
 	})
 
 	/**
@@ -173,7 +173,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	}
 
 	val contents = mainContainer.addElement(div {
-		addClass(contentsContainerStyle)
+		addClass(DataGridStyle.contentsContainerStyle)
 	})
 
 	private val displayRows = ArrayList<DataGridRow<E>>()
@@ -232,7 +232,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	}
 
 	val footer = mainContainer.addElement(footerEl {
-		addClass(footerRowStyle)
+		addClass(DataGridStyle.footerRowStyle)
 	})
 
 	/**
@@ -284,8 +284,8 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	var autoMutate = true
 
 	init {
-		addClass(Panel.panelColorsStyle)
-		addClass(styleTag)
+		addClass(PanelStyle.colors)
+		addClass(DataGridStyle.dataGrid)
 
 		keyPressed.listen {
 			when (it.keyCode) {
@@ -401,30 +401,33 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 */
 	fun closeEditor() = editRow(null)
 
-	companion object {
+}
 
-		val styleTag by cssClass()
-		val mainContainerStyle by cssClass()
-		val headerRowStyle by cssClass()
-		val footerRowStyle by cssClass()
-		val headerCellStyle by cssClass()
-		val contentsContainerStyle by cssClass()
-		val rowStyle by cssClass()
-		val rowEditorStyle by cssClass()
-		val cellStyle by cssClass()
-		val editorCellStyle by cssClass()
 
-		val sortedAsc by cssClass()
-		val sortedDesc by cssClass()
+object DataGridStyle {
 
-		val borderThickness: String = css("1px")
-		val borderColor: String = css("#ccc")
+	val dataGrid by cssClass()
+	val mainContainerStyle by cssClass()
+	val headerRowStyle by cssClass()
+	val footerRowStyle by cssClass()
+	val headerCellStyle by cssClass()
+	val contentsContainerStyle by cssClass()
+	val rowStyle by cssClass()
+	val rowEditorStyle by cssClass()
+	val cellStyle by cssClass()
+	val editorCellStyle by cssClass()
 
-		init {
+	val sortedAsc by cssClass()
+	val sortedDesc by cssClass()
 
-			addCssToHead(
-				"""
-$styleTag {	
+	val borderThickness: String = css("1px")
+	val borderColor: String = css("#ccc")
+
+	init {
+
+		addCssToHead(
+			"""
+$dataGrid {	
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
@@ -488,7 +491,7 @@ $footerRowStyle > div {
 	background: ${cssVar(Theme::footerBackgroundColor)};
 }
 
-$styleTag *:focus {
+$dataGrid *:focus {
 	/* Take the default focus transition, make it snappier and inset to be better for data grid cells. */
     box-shadow: inset 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
 	border-color: ${cssVar(Theme::focus)};
@@ -521,6 +524,8 @@ $contentsContainerStyle > $rowStyle:nth-child(2n+1) $cellStyle {
 }
 
 $headerCellStyle {
+	user-select: none;
+	-moz-user-select: none;
 	-webkit-user-select: none;
     -webkit-touch-callout: none;
 }
@@ -538,8 +543,7 @@ $headerCellStyle$sortedDesc::after {
 	transform: rotate(180deg);
 }
 			"""
-			)
-		}
+		)
 	}
 }
 
@@ -563,7 +567,7 @@ open class DataGridRow<E>(owner: Context) : Div(owner) {
 	val dataChanged = signal<DataChangeEvent<E>>()
 
 	init {
-		addClass(DataGrid.rowStyle)
+		addClass(DataGridStyle.rowStyle)
 	}
 
 	/**
@@ -604,7 +608,7 @@ open class DataGridRowEditor<E>(owner: Context) : DataGridRow<E>(owner), Clearab
 	val submitted = form.submitted
 
 	init {
-		addClass(DataGrid.rowEditorStyle)
+		addClass(DataGridStyle.rowEditorStyle)
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
@@ -636,7 +640,7 @@ class HeaderCell(owner: Context) : Button(owner) {
 	private var clickListener: SignalSubscription? = null
 
 	init {
-		addClass(DataGrid.headerCellStyle)
+		addClass(DataGridStyle.headerCellStyle)
 	}
 
 	fun <E, T : Comparable<T>> DataGrid<E>.bindSortingBy(columnSort: (row: E) -> T) {
@@ -669,12 +673,12 @@ class HeaderCell(owner: Context) : Button(owner) {
 		set(value) {
 			if (field == value) return
 			field = value
-			removeClass(DataGrid.sortedAsc)
-			removeClass(DataGrid.sortedDesc)
+			removeClass(DataGridStyle.sortedAsc)
+			removeClass(DataGridStyle.sortedDesc)
 			if (value == ColumnSortDirection.ASCENDING) {
-				addClass(DataGrid.sortedAsc)
+				addClass(DataGridStyle.sortedAsc)
 			} else if (value == ColumnSortDirection.DESCENDING) {
-				addClass(DataGrid.sortedDesc)
+				addClass(DataGridStyle.sortedDesc)
 			}
 		}
 }
@@ -717,7 +721,7 @@ inline fun Context.cell(label: String = "", init: ComponentInit<TextField> = {})
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return text {
 		tabIndex = 0
-		addClass(DataGrid.cellStyle)
+		addClass(DataGridStyle.cellStyle)
 		this.label = label
 		init()
 	}
@@ -726,8 +730,8 @@ inline fun Context.cell(label: String = "", init: ComponentInit<TextField> = {})
 inline fun Context.editorCell(init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}): UiComponentImpl<HTMLDivElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return div {
-		addClass(DataGrid.cellStyle)
-		addClass(DataGrid.editorCellStyle)
+		addClass(DataGridStyle.cellStyle)
+		addClass(DataGridStyle.editorCellStyle)
 
 		init()
 	}

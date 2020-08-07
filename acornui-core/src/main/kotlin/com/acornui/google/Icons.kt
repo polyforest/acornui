@@ -974,7 +974,6 @@ object Icons {
 
 inline fun Context.icon(codePoint: Int, init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	MaterialIconsCss
 	return component("i") {
 		addClass(materialIconsStyleTag)
 		dom.innerText = codePoint.toChar().toString()
@@ -1015,7 +1014,6 @@ $iconButtonStyleTag:active {
 
 inline fun Context.iconButton(codePoint: Int, init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	MaterialIconsCss
 	return component("i") {
 		addClass(materialIconsStyleTag)
 		addClass(iconButtonStyleTag)

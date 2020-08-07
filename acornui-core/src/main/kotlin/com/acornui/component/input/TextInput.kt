@@ -51,7 +51,7 @@ open class TextInput(owner: Context, type: String = "text") : TextInputBase(owne
 abstract class TextInputBase(owner: Context, type: String) : InputImpl(owner, type) {
 
 	init {
-		addClass(styleTag)
+		addClass(TextInputStyle.textInput)
 	}
 
 	/**
@@ -135,11 +135,12 @@ abstract class TextInputBase(owner: Context, type: String) : InputImpl(owner, ty
 			dom.autocomplete = value
 		}
 
-	companion object {
 
-		val styleTag by cssClass()
+}
 
-	}
+object TextInputStyle {
+
+	val textInput by cssClass()
 
 }
 
@@ -395,16 +396,6 @@ object InputMode {
 	const val URL = "url"
 
 }
-
-//interface TextArea : TextInput {
-//
-//	val hScrollModel: ClampedScrollModel
-//	val vScrollModel: ClampedScrollModel
-//
-//	companion object {
-//		val styleTag = StyleTag("TextInput")
-//	}
-//}
 
 /**
  * Common text restrict patterns.

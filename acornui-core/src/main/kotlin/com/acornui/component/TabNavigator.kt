@@ -63,7 +63,7 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	 * The container for the tab buttons.
 	 */
 	val tabs = addChild(hGroup {
-		addClass(tabsStyle)
+		addClass(TabNavigatorStyle.tabsStyle)
 	})
 
 	/**
@@ -96,12 +96,12 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	 * ```
 	 */
 	protected val contents = addChild(div {
-		addClass(Panel.panelColorsStyle)
-		addClass(contentsStyle)
+		addClass(PanelStyle.colors)
+		addClass(TabNavigatorStyle.contentsStyle)
 	})
 
 	init {
-		addClass(styleTag)
+		addClass(TabNavigatorStyle.tabNavigator)
 
 		tabs.clicked.listen {
 			if (!it.isHandled && !it.defaultPrevented) {
@@ -165,15 +165,15 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	//-----------------------------------------------------
 
 
-	companion object {
-		val styleTag by cssClass()
+	object TabNavigatorStyle {
+		val tabNavigator by cssClass()
 		val tabsStyle by cssClass()
 		val contentsStyle by cssClass()
 
 		init {
 
 			addCssToHead("""
-$styleTag {
+$tabNavigator {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;

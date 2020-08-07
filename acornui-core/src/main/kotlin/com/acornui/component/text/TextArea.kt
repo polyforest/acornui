@@ -54,7 +54,7 @@ open class TextArea(owner: Context) : UiComponentImpl<HTMLTextAreaElement>(owner
 	override val changed = ChangeSignal(this)
 
 	init {
-		addClass(styleTag)
+		addClass(TextAreaStyle.textArea)
 	}
 
 	var readOnly: Boolean
@@ -125,13 +125,15 @@ open class TextArea(owner: Context) : UiComponentImpl<HTMLTextAreaElement>(owner
 		value = defaultValue
 	}
 
-	companion object {
+}
 
-		val styleTag by cssClass()
+object TextAreaStyle {
 
-		init {
-			addCssToHead("""
-$styleTag {
+	val textArea by cssClass()
+
+	init {
+		addCssToHead("""
+$textArea {
 	font: inherit;
 	color: ${cssVar(Theme::inputTextColor)};;
 	border-width: ${cssVar(Theme::borderThickness)};;
@@ -142,11 +144,11 @@ $styleTag {
 	box-shadow: ${cssVar(Theme::componentShadow)};
 }
 			
-$styleTag:active {
+$textArea:active {
 	border-color: ${cssVar(Theme::borderActive)};
 }
 
-$styleTag:disabled {
+$textArea:disabled {
 	background: ${cssVar(Theme::disabledInner)};
 	border-color: ${cssVar(Theme::disabled)};
 	color: ${cssVar(Theme::toggledInnerDisabled)};
@@ -154,10 +156,9 @@ $styleTag:disabled {
 	opacity: ${cssVar(Theme::disabledOpacity)};
 }
 			""")
-		}
 	}
-
 }
+
 inline fun Context.textArea(init: ComponentInit<TextArea> = {}): TextArea {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = TextArea(this)

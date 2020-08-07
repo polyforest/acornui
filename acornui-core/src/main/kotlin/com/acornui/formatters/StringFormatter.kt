@@ -16,7 +16,7 @@
 
 package com.acornui.formatters
 
-interface StringFormatter<in T> {
+fun interface StringFormatter<in T> {
 
 	/**
 	 * Converts the given value into a String.

@@ -219,6 +219,5 @@ private class TestObj : Clearable {
 	companion object {
 		var changedCount = 0
 		var constructionCount = 0
-
 	}
 }

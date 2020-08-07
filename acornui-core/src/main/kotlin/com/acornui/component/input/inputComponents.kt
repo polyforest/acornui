@@ -60,7 +60,9 @@ object InputStyles {
 
 	init {
 
-		@Suppress("CssUnresolvedCustomProperty", "CssInvalidFunction", "CssInvalidPropertyValue")
+		@Suppress("CssUnresolvedCustomProperty", "CssInvalidFunction", "CssInvalidPropertyValue",
+			"CssNoGenericFontName"
+		)
 		addCssToHead(
 			"""
 
@@ -73,7 +75,7 @@ input[type="week"]:after,
 input[type="month"]:after,
 input[type="time"]:after,
 input[type="date"]:after {
-	font-family: 'Material Icons';
+	font-family: "Material Icons";
 	-webkit-font-feature-settings: 'liga';
 	-webkit-font-smoothing: antialiased;
 	text-transform: none;
@@ -85,11 +87,11 @@ input[type="date"]:after {
 input[type="week"]:after,
 input[type="month"]:after,
 input[type="date"]:after {
-	content: 'calendar_today';
+	content: "calendar_today";
 }
 
 input[type="time"]:after {
-	content: 'access_time';
+	content: "access_time";
 }
 
 ::-webkit-calendar-picker-indicator {
@@ -351,7 +353,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 		}
 
 	init {
-		addClass(styleTag)
+		addClass(ButtonStyle.button)
 		tabIndex = 0
 
 		mousePressOnKey()
@@ -423,15 +425,16 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 			else
 				removeClass(CommonStyleTags.toggled)
 		}
+}
 
-	companion object {
+object ButtonStyle {
 
-		val styleTag by cssClass()
+	val button by cssClass()
 
-		init {
-			addCssToHead("""
+	init {
+		addCssToHead("""
 
-$styleTag {
+$button {
 	-webkit-tap-highlight-color: transparent;
 	padding: ${cssVar(Theme::componentPadding)};
 	border-radius: ${cssVar(Theme::borderRadius)};
@@ -456,34 +459,34 @@ $styleTag {
 	font-weight: bolder;
 }
 
-$styleTag:hover {
+$button:hover {
 	background: ${cssVar(Theme::buttonBackgroundHover)};
 	border-color: ${cssVar(Theme::borderHover)};
 	color: ${cssVar(Theme::buttonTextHoverColor)};
 }
 
-$styleTag${CommonStyleTags.active} {
+$button${CommonStyleTags.active} {
 	background: ${cssVar(Theme::buttonBackgroundActive)};
 	border-color: ${cssVar(Theme::borderActive)};
 	color: ${cssVar(Theme::buttonTextActiveColor)};
 }
 
-$styleTag${CommonStyleTags.toggled} {
+$button${CommonStyleTags.toggled} {
 	background: ${cssVar(Theme::toggled)};
 	border-color: ${cssVar(Theme::toggled)};
 	color: ${cssVar(Theme::toggledInner)};
 }
 
-$styleTag${CommonStyleTags.toggled}:hover {
+$button${CommonStyleTags.toggled}:hover {
 	background: ${cssVar(Theme::toggled)};
 	border-color: ${cssVar(Theme::borderHover)};
 }
 
-$styleTag${CommonStyleTags.toggled}${CommonStyleTags.active} {
+$button${CommonStyleTags.toggled}${CommonStyleTags.active} {
 	border-color: ${cssVar(Theme::borderActive)};
 }
 
-$styleTag${CommonStyleTags.disabled} {
+$button${CommonStyleTags.disabled} {
 	background: ${cssVar(Theme::disabledInner)};
 	border-color: ${cssVar(Theme::disabled)};
 	color: ${cssVar(Theme::toggledInnerDisabled)};
@@ -491,7 +494,7 @@ $styleTag${CommonStyleTags.disabled} {
 	opacity: ${cssVar(Theme::disabledOpacity)};
 }
 
-$styleTag > div {
+$button > div {
 	overflow: hidden;
 	display: flex;
 	flex-direction: row;
@@ -500,7 +503,6 @@ $styleTag > div {
 	pointer-events: none;
 }
 			""")
-		}
 	}
 }
 
@@ -747,7 +749,7 @@ open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(own
 	val labelComponent = addChild(label(inputComponent))
 
 	init {
-		addClass(styleTag)
+		addClass(ToggleInputStyle.toggleInput)
 		inputComponent.style.flexShrink = "0"
 	}
 
@@ -789,18 +791,20 @@ open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(own
 			labelComponent.label = value
 		}
 
-	companion object {
-		val styleTag by cssClass()
+}
 
-		init {
-			addCssToHead("""
-$styleTag {
+object ToggleInputStyle {
+	val toggleInput by cssClass()
+
+	init {
+		addCssToHead("""
+$toggleInput {
 	display: inline-flex;
 	flex-direction: row;
 	align-items: center;
 }
 
-$styleTag label {
+$toggleInput label {
 	padding-left: 1ch;
 	
 	display: inline-flex;
@@ -808,7 +812,6 @@ $styleTag label {
 	align-items: center;
 }
 			""")
-		}
 	}
 }
 

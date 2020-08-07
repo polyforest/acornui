@@ -37,42 +37,37 @@ open class StageImpl(owner: Context) : Stage, Div(owner) {
 	}
 
 	init {
-		addClass(styleTag)
+		addClass(StageStyle.stage)
 	}
 
-	//-------------------------------------------------------------
-	// External elements
-	// Pop up manager view
-	//-------------------------------------------------------------
+}
 
-	companion object {
+object StageStyle {
 
-		val styleTag by cssClass()
+	val stage by cssClass()
 
-		init {
-			addCssToHead("""
-$styleTag *:focus {
+	init {
+		addCssToHead("""
+$stage *:focus {
 	box-shadow: 0 0 0 ${cssVar(Theme::focusThickness)} ${cssVar(Theme::focus)};
 	outline: none;
 	transition: box-shadow 0.2s ease-in-out;
 }
 
-$styleTag {
+$stage {
 	width: 100%;
 	height: 100%;
 	background: ${cssVar(Theme::stageBackground)};
 	color: ${cssVar(Theme::textColor)};
 }
 
-$styleTag > * {
+$stage > * {
 	width: 100%;
 	height: 100%;
 }
 
 			""")
-		}
 	}
-
 }
 
 /**

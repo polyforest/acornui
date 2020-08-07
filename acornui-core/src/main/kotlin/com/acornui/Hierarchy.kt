@@ -71,13 +71,13 @@ enum class TreeWalk {
 /**
  * A level-order child walk.
  * Traverses this parent's hierarchy from top to bottom, breadth first, invoking a callback on each node.
- * (including this receiver object).
+ * (including `this` receiver object).
  *
  * @param reversed If true, the last node will be added to the queue first.
  * @param callback The callback to invoke on each node.
  * @return Returns the element, if any, where [callback] returned [TreeWalk.HALT].
  */
-fun Node.childWalkLevelOrder(callback: (Node) -> TreeWalk, reversed: Boolean): Node? {
+fun Node.childWalkLevelOrder(reversed: Boolean, callback: (Node) -> TreeWalk): Node? {
 	val openList = ArrayList<Node>()
 	openList.add(this)
 	var found: Node? = null
@@ -105,11 +105,11 @@ fun Node.childWalkLevelOrder(callback: (Node) -> TreeWalk, reversed: Boolean): N
 }
 
 fun Node.childWalkLevelOrder(callback: (Node) -> TreeWalk) {
-	childWalkLevelOrder(callback, false)
+	childWalkLevelOrder(false, callback)
 }
 
 fun Node.childWalkLevelOrderReversed(callback: (Node) -> TreeWalk) {
-	childWalkLevelOrder(callback, true)
+	childWalkLevelOrder(true, callback)
 }
 
 /**
@@ -117,18 +117,18 @@ fun Node.childWalkLevelOrderReversed(callback: (Node) -> TreeWalk) {
  * the matching condition.
  * The tree traversal will be level-order.
  */
-fun Node.findChildLevelOrder(callback: Filter<Node>, reversed: Boolean): Node? {
-	return childWalkLevelOrder({
+fun Node.findChildLevelOrder(reversed: Boolean, callback: Filter<Node>): Node? {
+	return childWalkLevelOrder(reversed) {
 		if (callback(it)) TreeWalk.HALT else TreeWalk.CONTINUE
-	}, reversed)
+	}
 }
 
 fun Node.findChildLevelOrder(callback: Filter<Node>): Node? {
-	return findChildLevelOrder(callback, reversed = false)
+	return findChildLevelOrder(reversed = false, callback = callback)
 }
 
 fun Node.findLastChildLevelOrder(callback: Filter<Node>): Node? {
-	return findChildLevelOrder(callback, reversed = true)
+	return findChildLevelOrder(reversed = true, callback = callback)
 }
 
 //-------------------------------------------------
@@ -141,7 +141,7 @@ fun Node.findLastChildLevelOrder(callback: Filter<Node>): Node? {
  * @param callback The callback to invoke on each child.
  * @return Returns the node, if any, where [callback] returned [TreeWalk.HALT]
  */
-fun Node.childWalkPreorder(callback: (Node) -> TreeWalk, reversed: Boolean): Node? {
+fun Node.childWalkPreorder(reversed: Boolean, callback: (Node) -> TreeWalk): Node? {
 	val openList = ArrayList<Node>()
 	openList.add(this)
 	var found: Node? = null
@@ -169,11 +169,11 @@ fun Node.childWalkPreorder(callback: (Node) -> TreeWalk, reversed: Boolean): Nod
 }
 
 fun Node.childWalkPreorder(callback: (Node) -> TreeWalk) {
-	childWalkPreorder(callback, false)
+	childWalkPreorder(false, callback)
 }
 
 fun Node.childWalkPreorderReversed(callback: (Node) -> TreeWalk) {
-	childWalkPreorder(callback, true)
+	childWalkPreorder(true, callback)
 }
 
 /**
@@ -181,18 +181,18 @@ fun Node.childWalkPreorderReversed(callback: (Node) -> TreeWalk) {
  * the matching condition.
  * The tree traversal will be pre-order.
  */
-fun Node.findChildPreOrder(callback: Filter<Node>, reversed: Boolean): Node? {
-	return childWalkPreorder({
+fun Node.findChildPreOrder(reversed: Boolean, callback: Filter<Node>): Node? {
+	return childWalkPreorder(reversed) {
 		if (callback(it)) TreeWalk.HALT else TreeWalk.CONTINUE
-	}, reversed)
+	}
 }
 
 fun Node.findChildPreOrder(callback: Filter<Node>): Node? {
-	return findChildPreOrder(callback, reversed = false)
+	return findChildPreOrder(reversed = false, callback = callback)
 }
 
 fun Node.findLastChildPreOrder(callback: Filter<Node>): Node? {
-	return findChildPreOrder(callback, reversed = true)
+	return findChildPreOrder(reversed = true, callback = callback)
 }
 
 

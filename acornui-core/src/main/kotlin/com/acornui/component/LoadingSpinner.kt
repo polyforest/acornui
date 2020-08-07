@@ -46,19 +46,19 @@ class LoadingSpinner(owner: Context) : Div(owner) {
 		}
 
 	init {
-		addClass(styleTag)
+		addClass(LoadingSpinnerStyle.loadingSpinner)
 		ballCount = 8
 	}
 
-	companion object {
+	object LoadingSpinnerStyle {
 
-		val styleTag by cssClass()
-		val smallSpinnerStyle by cssClass()
+		val loadingSpinner by cssClass()
+		val smallSpinner by cssClass()
 
 		init {
 			addCssToHead(
 				"""
-$styleTag {
+$loadingSpinner {
   display: inline-block;
   position: relative;
   --radius: 40px;
@@ -68,12 +68,12 @@ $styleTag {
   height: calc(var(--radius) * 2);
 }
 
-$smallSpinnerStyle {
+$smallSpinner {
 	--radius: 0.5em;
 	--size: 3px;
 }
 
-$styleTag div {
+$loadingSpinner div {
   animation: spin var(--duration) cubic-bezier(0.5, 0, 0.5, 1) infinite;
   position: absolute;
   --p: 0;
@@ -116,7 +116,7 @@ inline fun Context.smallSpinner(init: ComponentInit<LoadingSpinner> = {}): Loadi
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return LoadingSpinner(this).apply {
 		ballCount = 6
-		addClass(LoadingSpinner.smallSpinnerStyle)
+		addClass(LoadingSpinner.LoadingSpinnerStyle.smallSpinner)
 		init()
 	}
 }

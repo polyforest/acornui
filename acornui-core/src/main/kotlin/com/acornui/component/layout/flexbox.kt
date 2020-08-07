@@ -99,7 +99,7 @@ inline fun Context.hGroup(init: ComponentInit<Div> = {}): Div {
 open class FlowGroup(owner: Context) : Div(owner) {
 
 	private val contents = addChild(div {
-		addClass(contentsTag)
+		addClass(FlowGroupStyle.contents)
 	})
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
@@ -111,20 +111,21 @@ open class FlowGroup(owner: Context) : Div(owner) {
 	}
 
 	init {
-		addClass(styleTag)
+		addClass(FlowGroupStyle.flowGroup)
 	}
 
-	companion object {
-		val styleTag by cssClass()
-		val contentsTag by cssClass()
+}
+object FlowGroupStyle {
+	val flowGroup by cssClass()
+	val contents by cssClass()
 
-		init {
-			addCssToHead("""
-$styleTag {
+	init {
+		addCssToHead("""
+$flowGroup {
 	display: block;
 }				
 
-$contentsTag {
+$contents {
 	display: flex;
 	flex-wrap: wrap;
 	width: inherit;
@@ -136,24 +137,23 @@ $contentsTag {
 	margin: 0 calc(-1 * ${cssVar(Theme::gap)}) calc(-1 * ${cssVar(Theme::gap)}) 0;
 }
 
-$contentsTag > * {
+$contents > * {
 	margin: 0 ${cssVar(Theme::gap)} ${cssVar(Theme::gap)} 0;
 }
 
-$hFlowGroup > $contentsTag {
+$hFlowGroup > $contents {
 	flex-direction: row;
 	align-items: baseline;
 	width: 100%;
 }
 
-$vFlowGroup > $contentsTag {
+$vFlowGroup > $contents {
 	flex-direction: column;
 	align-items: self-start;
 	height: 100%;
 }
 
-			""")
-		}
+		""")
 	}
 }
 

@@ -37,7 +37,7 @@ open class ScrollArea(
 ) : Div(owner) {
 
 	init {
-		addClass(styleTag)
+		addClass(ScrollAreaStyle.scrollArea)
 	}
 
 	/**
@@ -114,18 +114,19 @@ open class ScrollArea(
 		}
 	}
 
-	companion object {
-
-		val styleTag by cssClass()
-
-		init {
-			addCssToHead("""
-$styleTag {
-	overflow: auto;
-	padding: ${cssVar(Theme::padding)};
 }
-			""")
-		}
+
+object ScrollAreaStyle {
+
+	val scrollArea by cssClass()
+
+	init {
+		addCssToHead("""
+$scrollArea {
+overflow: auto;
+padding: ${cssVar(Theme::padding)};
+}
+		""")
 	}
 }
 

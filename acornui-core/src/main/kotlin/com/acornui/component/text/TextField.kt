@@ -26,12 +26,12 @@ import kotlin.contracts.contract
 class TextField(owner: Context) : Div(owner) {
 
 	init {
-		addClass(styleTag)
+		addClass(TextFieldStyles.text)
 	}
 
-	companion object {
-		val styleTag by cssClass()
-	}
+}
+object TextFieldStyles {
+	val text by cssClass()
 }
 
 /**

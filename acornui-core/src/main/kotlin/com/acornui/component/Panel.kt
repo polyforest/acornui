@@ -16,7 +16,7 @@
 
 package com.acornui.component
 
- import com.acornui.component.style.cssClass
+import com.acornui.component.style.cssClass
 import com.acornui.css.cssVar
 import com.acornui.di.Context
 import com.acornui.dom.addCssToHead
@@ -27,25 +27,28 @@ import kotlin.contracts.contract
 open class Panel(owner: Context) : Div(owner) {
 
 	init {
-		addClass(styleTag)
-		addClass(panelColorsStyle)
+		addClass(PanelStyle.panel)
+		addClass(PanelStyle.colors)
 	}
 
-	companion object {
+}
 
-		val styleTag by cssClass()
-		val panelColorsStyle by cssClass()
+object PanelStyle {
 
-		init {
-			addCssToHead("""
-$styleTag {
+	val panel by cssClass()
+	val colors by cssClass()
+
+	init {
+		addCssToHead(
+			"""
+$panel {
 	padding: ${cssVar(Theme::padding)};
 	overflow: hidden;
 	min-width: min-content;
 	min-height: min-content;
 }
 
-$panelColorsStyle {
+$colors {
 	color: ${cssVar(Theme::panelTextColor)};
 	background: ${cssVar(Theme::panelBackground)};
 	box-shadow: ${cssVar(Theme::panelShadow)};
@@ -59,8 +62,8 @@ $panelColorsStyle {
 }
 
 
-			""")
-		}
+			"""
+		)
 	}
 }
 

@@ -16,17 +16,19 @@
 
 package com.acornui.skins
 
-import com.acornui.component.StageImpl
+import com.acornui.component.StageStyle
 import com.acornui.component.input.InputStyles
 import com.acornui.component.style.CommonStyleTags
 import com.acornui.css.cssVar
 import com.acornui.dom.addCssToHead
+import com.acornui.google.MaterialIconsCss
 
 object DefaultStyles {
 
 	init {
+		MaterialIconsCss
 		InputStyles
-		val s = StageImpl.styleTag
+		val s = StageStyle.stage
 
 		addCssToHead("""
 $s * {
