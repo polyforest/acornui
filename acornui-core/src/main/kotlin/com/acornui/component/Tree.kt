@@ -92,7 +92,7 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 				val to = if (value) 1.0 else 0.0
 				style.setProperty("overflow", "hidden")
 				tween(0.3.seconds, Easing.pow2) {
-					_, alpha ->
+						_, alpha ->
 					val h = dom.scrollHeight
 					style.setProperty("max-height", (lerp(from, to, alpha) * h).px.toString())
 				}.start().completed.once {
@@ -214,22 +214,20 @@ object TreeStyle {
 		addStyleToHead(
 			"""
 $tree {
-	display: flex;
-	flex-direction: row;
-	align-items: self-start;
-	--gap: 8px;
+	--vGap: 8px;
+	/* Should line up with the rotated chevron point. */
+	--indent: 8px;
+	/* The width of the horizontal line. */
+	--indent2: 8px;
 }
 
 $inner {
-	display: flex;
-	flex-direction: column;
-	align-items: self-start;
+	position: relative;
 }
 
 $label {
-	display: flex;
-    flex-flow: row;
-    align-items: center;
+	display: inline-flex;
+	align-items: center;
 	cursor: pointer;
 	user-select: none;
 	-webkit-user-select: none;
@@ -257,11 +255,8 @@ $withChildren$toggled > $label:before {
 }
 
 $subTreesContainer {
-	display: flex;
-	margin-left: 8px;
+	margin-left: var(--indent);
 	opacity: 0;
-	flex-direction: column;
-	align-items: self-start;
 	transition: opacity 0.3s ease-out;
 }
 
@@ -269,23 +264,30 @@ $toggled > $subTreesContainer {
 	opacity: 1;
 }
 
+$subTreesContainer > $tree {
+	padding-left: var(--indent2);
+}
+
 $subTreesContainer > $tree > $inner > $label {
-	margin-top: var(--gap);
+	margin-top: var(--vGap);
 }
 
 $subTreesContainer > $tree:not(:last-child) {
 	border-left: 1px solid #777676;
 }
 
-$subTreesContainer > $tree:last-child:before {
+$subTreesContainer > $tree:last-child > $inner:before {
 	border-left: 1px solid #777676;
 }
 
-$subTreesContainer > $tree:before {
+$subTreesContainer > $tree > $inner:before {
 	content: " ";
+	position: absolute;
+	left: calc(var(--indent2) * -1);
+	top: 0;
 	border-bottom: 1px solid #777676;
-	width: 1ch;
-	height: calc(var(--gap) + ${CssProps.inputPadding.v} + 0.6em);
+	width: calc(var(--indent2) - 2px);
+	height: calc(var(--vGap) + ${CssProps.inputPadding.v} + 0.6em);
 }
 			"""
 		)
