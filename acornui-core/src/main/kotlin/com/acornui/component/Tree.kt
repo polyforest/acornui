@@ -199,14 +199,6 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 		set(value) {
 			labelComponent.label = value
 		}
-
-	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
-		labelComponent.addElement(newIndex, element)
-	}
-
-	override fun onElementRemoved(index: Int, element: WithNode) {
-		labelComponent.removeElement(element)
-	}
 }
 
 object TreeStyle {
