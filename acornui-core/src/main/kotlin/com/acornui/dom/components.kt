@@ -40,9 +40,12 @@ inline fun Context.div(init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}
 	return component("div", init)
 }
 
-inline fun Context.span(init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = {}): UiComponentImpl<HTMLSpanElement> {
+inline fun Context.span(text: String = "", init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = {}): UiComponentImpl<HTMLSpanElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("span", init)
+	return component("span") {
+		label = text
+		init()
+	}
 }
 
 open class A(owner: Context) : UiComponentImpl<HTMLAnchorElement>(owner, createElement("a")) {

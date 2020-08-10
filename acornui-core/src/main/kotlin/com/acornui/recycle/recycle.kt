@@ -18,12 +18,10 @@ package com.acornui.recycle
 
 import com.acornui.collection.copy
 import com.acornui.EqualityCheck
+import com.acornui.collection.pop
 
 /**
  * Recycles a list of item renderers, creating or disposing renderers only when there is no data match.
- *
- * The [factory] and [disposer] methods may use an [com.acornui.recycle.ObjectPool] to handle the case where there
- * is no data match, but there would still like to be recycling.
  *
  * @param data The updated list of data items.
  * @param existingElements The stale list of item renderers. This will be modified to reflect the new item renderers.
@@ -32,7 +30,11 @@ import com.acornui.EqualityCheck
  * @param configure Used to configure the element.
  * @param disposer Used to dispose the element.
  * @param retriever Returns the current data value for the given element.
- * @param equality If set, uses custom equality rules. This guides how to know whether an item can be recycled or not.
+ * @param equality The equality check is used to select the existing element to reuse. The [existingElements]'s data
+ * value will be obtained via [retriever], and if there's no match within the new [data] list, that element will be
+ * marked for disposal.
+ * @param alwaysRecycle If true, when an element wasn't matched via [equality], an element marked for disposal will be
+ * used instead. If false, [disposer] will be called before [factory] when there was no match.
  */
 fun <E, T> recycle(
 		data: Iterable<E>?,
@@ -41,7 +43,8 @@ fun <E, T> recycle(
 		configure: (element: T, item: E, index: Int) -> Unit,
 		disposer: (element: T) -> Unit,
 		retriever: (element: T) -> E?,
-		equality: EqualityCheck<E?> = { a, b -> a == b }
+		equality: EqualityCheck<E?> = { a, b -> a == b },
+		alwaysRecycle: Boolean = true
 ) {
 
 	// Dispose items not found in the new data list first, so that the disposer can potentially pool those elements to
@@ -49,11 +52,13 @@ fun <E, T> recycle(
 	val remainingData = data?.toMutableList()
 	val toRecycle = existingElements.copy()
 	val iterator = toRecycle.iterator()
+	val forDisposal = ArrayList<T>()
 	while (iterator.hasNext()) {
 		val next = iterator.next()
 		val index = remainingData?.indexOfFirst { equality(retriever(next), it) } ?: -1
 		if (index == -1) {
-			disposer(next)
+			if (alwaysRecycle) forDisposal.add(next)
+			else disposer(next)
 			iterator.remove()
 		} else {
 			remainingData?.removeAt(index)
@@ -64,11 +69,16 @@ fun <E, T> recycle(
 	data?.forEachIndexed {
 		i, item ->
 		val foundIndex = toRecycle.indexOfFirst { equality(retriever(it), item) }
-		val element = if (foundIndex == -1) {
-			factory(item, i)
+		val element = if (foundIndex == -1 && forDisposal.isNotEmpty()) {
+			forDisposal.pop()
 		} else {
-			toRecycle.removeAt(foundIndex)
+			if (foundIndex == -1) {
+				factory(item, i)
+			} else {
+				toRecycle.removeAt(foundIndex)
+			}
 		}
+		forDisposal.forEach(disposer)
 		configure(element, item, i)
 		existingElements.add(element)
 	}

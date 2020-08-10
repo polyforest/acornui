@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("CssUnresolvedCustomProperty")
+@file:Suppress("CssUnresolvedCustomProperty", "MemberVisibilityCanBePrivate")
 
 package com.acornui.component
 
@@ -28,11 +28,11 @@ import com.acornui.dom.a
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.div
 import com.acornui.formatters.StringFormatter
-import com.acornui.formatters.ToStringFormatter
 import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing
 import com.acornui.math.lerp
+import com.acornui.properties.afterChange
 import com.acornui.recycle.recycle
 import com.acornui.signal.*
 import com.acornui.skins.CssProps
@@ -42,7 +42,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.time.seconds
 
-open class Tree<T : Node>(owner: Context) : Div(owner) {
+open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 
 	/**
 	 * Dispatched when a descendant tree is added based on the [data].
@@ -52,31 +52,39 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 
 	private val subTrees = ArrayList<Tree<T>>()
 
+	/**
+	 * A container div which allows for relative positioning.
+	 */
 	private val inner = addChild(div {
 		addClass(TreeStyle.inner)
 	})
 
+	/**
+	 * The tree node's label.
+	 */
 	val labelComponent = inner.addElement(a {
 		addClass(TreeStyle.label)
 		clicked.listen {
-			if (data?.children?.isNotEmpty() == true) {
+			if (data.children.isNotEmpty()) {
 				toggled = !toggled
 			}
 		}
 	})
 
+	/**
+	 * Dispatched when [labelComponent] is clicked, and the node's children are empty.
+	 */
 	val leafClicked: Signal<MouseEvent>
 		get() = labelComponent.clicked.filtered {
-			data?.children?.isEmpty() == true
+			data.children.isEmpty()
 		}
 
+	/**
+	 * The div containing the child trees.
+	 */
 	val subTreesContainer = inner.addElement(div {
 		addClass(TreeStyle.subTreesContainer)
 	})
-
-	init {
-		addClass(TreeStyle.tree)
-	}
 
 	/**
 	 * Returns true if the dom contains the class [CommonStyleTags.toggled].
@@ -91,8 +99,7 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 				val from = if (value) 0.0 else 1.0
 				val to = if (value) 1.0 else 0.0
 				style.setProperty("overflow", "hidden")
-				tween(0.3.seconds, Easing.pow2) {
-						_, alpha ->
+				tween(0.3.seconds, Easing.pow2) { _, alpha ->
 					val h = dom.scrollHeight
 					style.setProperty("max-height", (lerp(from, to, alpha) * h).px.toString())
 				}.start().completed.once {
@@ -106,27 +113,38 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 
 		}
 
-	class DataChangeEvent<T>(val oldData: T?, val newData: T?)
+	class DataChangeEvent<T>(val oldData: T, val newData: T)
 
 	/**
 	 * This tree's [data] has changed.
 	 */
 	val dataChanged = signal<DataChangeEvent<T>>()
 
-	var data: T? = null
+	/**
+	 * This tree's node data.
+	 * When this data is changed, a [dataChanged] signal will be dispatched.
+	 *
+	 * @see bindData
+	 */
+	var data: T = initialData
 		set(value) {
 			if (subTreeCreated.isDispatching) throw IllegalStateException("May not set data during a subTreeCreated signal.")
 			val old = field
 			if (old == value) return
 			field = value
-			label = formatter.format(data)
-			if (value == null || value.children.isEmpty())
-				inner.removeClass(TreeStyle.withChildren)
-			else
-				inner.addClass(TreeStyle.withChildren)
-			refreshChildren()
 			dataChanged.dispatch(DataChangeEvent(old, value))
 		}
+
+	/**
+	 * Invoked when the data has changed, and immediately with the new data.
+	 */
+	fun bindData(callback: (T) -> Unit): SignalSubscription {
+		val data = data
+		callback(data)
+		return dataChanged.listen {
+			callback(data)
+		}
+	}
 
 	/**
 	 * Invokes the callback on this tree node and all its descendants.
@@ -153,8 +171,8 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 	private fun refreshChildren() {
 		val data = data
 
-		recycle(data?.children?.unsafeCast<List<T>>() ?: emptyList(), subTrees, factory = { _: T, index: Int ->
-			val child = createChild()
+		recycle(data.children.unsafeCast<List<T>>(), subTrees, factory = { item: T, _: Int ->
+			val child = createChild(item)
 			child.subTreeCreated.listen {
 				// Bubble subTreeCreated events.
 				subTreeCreated.dispatch(it)
@@ -169,36 +187,74 @@ open class Tree<T : Node>(owner: Context) : Div(owner) {
 			it.dispose()
 		}, retriever = { element ->
 			element.data
-		}, equality = { a, b ->
-			formatter.format(a) == formatter.format(b)
 		})
 	}
 
-	protected open fun createChild(): Tree<T> = tree()
+	protected open fun createChild(data: T): Tree<T> = tree(data)
 
 	/**
 	 * Sets the method to format a label from the data value.
-	 * This will be applied to all descendent views.
+	 * @see formatter
 	 */
-	var formatter: StringFormatter<T?> = ToStringFormatter
-		set(value) {
-			if (field == value) return
-			field = value
-			label = value.format(data)
-		}
+	var formatter: StringFormatter<T>? by afterChange(null) { refreshLabel() }
+
+	private fun refreshLabel() {
+		label = formatter?.format(data) ?: ""
+	}
 
 	/**
-	 * Sets the [formatter] for the data nodes.
+	 * Sets the data to label formatter.
+	 *
+	 * This should typically be set on each tree node using the [all] block.
+	 * Example:
+	 * ```
+	 * +tree {
+	 * 	all {
+	 * 		formatter { data -> data?.label ?: "null" }
+	 * 	}
+	 * }
+	 * ```
+	 *
+	 * Another way to do this, for example to add an icon to a node, would be to bind to data changes:
+	 * ```
+	 * +tree(data) {
+	 *   all { // This tree node and all descendents
+	 *     bindData { newData ->
+	 *       labelComponent.apply {
+	 *         clearElements(dispose = true)
+	 *         +icon(newData.icon)
+	 *         +span(newData.label)*
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 * ```
+	 *
 	 */
-	fun formatter(value: StringFormatter<T?>) {
+	fun formatter(value: StringFormatter<T>) {
 		formatter = value
 	}
 
+	/**
+	 * Sets [org.w3c.dom.HTMLElement.innerText] property on [labelComponent].
+	 */
 	override var label: String
 		get() = labelComponent.label
 		set(value) {
 			labelComponent.label = value
 		}
+
+	init {
+		addClass(TreeStyle.tree)
+		bindData {
+			refreshLabel()
+			if (it.children.isEmpty())
+				inner.removeClass(TreeStyle.withChildren)
+			else
+				inner.addClass(TreeStyle.withChildren)
+			refreshChildren()
+		}
+	}
 }
 
 object TreeStyle {
@@ -294,7 +350,7 @@ $subTreesContainer > $tree > $inner:before {
 	}
 }
 
-inline fun <T : Node> Context.tree(init: ComponentInit<Tree<T>> = {}): Tree<T> {
+inline fun <T : Node> Context.tree(initialData: T, init: ComponentInit<Tree<T>> = {}): Tree<T> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return Tree<T>(this).apply(init)
+	return Tree(this, initialData).apply(init)
 }
