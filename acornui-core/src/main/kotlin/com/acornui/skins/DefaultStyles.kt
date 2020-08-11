@@ -21,6 +21,7 @@ package com.acornui.skins
 import com.acornui.component.StageStyle
 import com.acornui.component.input.InputStyles
 import com.acornui.component.style.CommonStyleTags
+import com.acornui.component.text.TextStyleTags
 import com.acornui.dom.addStyleToHead
 import com.acornui.google.MaterialIconsCss
 
@@ -165,6 +166,17 @@ ${CommonStyleTags.controlBar} {
 	color: #dbdce2;
 }
 
+${TextStyleTags.error} {
+	color: #b22;
+}
+
+${TextStyleTags.warning} {
+	color: #bb2;
+}
+
+${TextStyleTags.info} {
+	color: #262;
+}
 
 		""", priority = -1.0)
 	}
