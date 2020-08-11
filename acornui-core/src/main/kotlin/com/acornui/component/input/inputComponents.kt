@@ -325,7 +325,7 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
 	-webkit-text-fill-color: ${CssProps.inputTextColor.v};
-	-webkit-box-shadow: 0 0 0 1000px ${CssProps.inputBackground.v} inset;
+	
 	font-style: italic;
 }
 
