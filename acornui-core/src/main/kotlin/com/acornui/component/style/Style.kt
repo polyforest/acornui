@@ -64,7 +64,7 @@ fun cssProp(): ReadOnlyProperty<Any?, CssProp> {
 	}
 }
 
-class StyleTagToggle(private val styleTag: CssClass) : ReadWriteProperty<UiComponent, Boolean> {
+class CssClassToggle(private val styleTag: CssClass) : ReadWriteProperty<UiComponent, Boolean> {
 
 	override fun getValue(thisRef: UiComponent, property: KProperty<*>): Boolean =
 		thisRef.containsClass(styleTag)
@@ -76,4 +76,4 @@ class StyleTagToggle(private val styleTag: CssClass) : ReadWriteProperty<UiCompo
 	}
 }
 
-fun styleTagToggle(styleTag: CssClass) = StyleTagToggle(styleTag)
+fun cssClassToggle(styleTag: CssClass) = CssClassToggle(styleTag)

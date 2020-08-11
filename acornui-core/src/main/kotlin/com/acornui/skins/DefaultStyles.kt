@@ -160,6 +160,11 @@ footer {
     background-color: #bbb;
 }
 
+${CommonStyleTags.controlBar} {
+	background: #393b48;
+	color: #dbdce2;
+}
+
 
 		""", priority = -1.0)
 	}

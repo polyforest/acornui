@@ -37,13 +37,13 @@ fun MainContext.multiApp(
 	rootId: String,
 	appConfig: AppConfig = AppConfig(),
 	init: Stage.() -> Unit
-): Stage {
+): Context {
 	val rootElement = document.getElementById(rootId).unsafeCast<HTMLElement?>()
 		?: throw Exception("The root element with id $rootId could not be found.")
-	return appContext(appConfig).stage().apply {
+	return appContext(appConfig).apply {
 		rootElement.clear()
-		rootElement.append(dom)
-		init()
+		rootElement.append(stage.dom)
+		stage.init()
 	}
 }
 
@@ -55,9 +55,9 @@ fun MainContext.multiApp(
 fun MainContext.multiApp(
 	appConfig: AppConfig = AppConfig(),
 	init: Stage.() -> Unit
-): Stage = appContext(appConfig).stage().apply {
-		document.body?.append(dom)
-		init()
+) = appContext(appConfig).apply {
+		document.body?.append(stage.dom)
+		stage.init()
 	}
 
 /**

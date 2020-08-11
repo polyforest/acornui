@@ -32,10 +32,6 @@ import kotlin.contracts.contract
 open class StageImpl(owner: Context) : Stage, Div(owner) {
 
 	init {
-		dependencies += listOf(Stage to this)
-	}
-
-	init {
 		addClass(StageStyle.stage)
 	}
 

@@ -20,11 +20,6 @@ import com.acornui.component.UiComponent
 
 object CommonStyleTags {
 
-//	/**
-//	 * Uses the [com.acornui.skins.Theme] properties for fill and stroke style.
-//	 */
-//	val themeRect = StyleTag("themeRect")
-
 	/**
 	 * Some components may be disabled, when they are, they are expected to add this tag.
 	 */
@@ -37,6 +32,7 @@ object CommonStyleTags {
 	val hidden by cssClass()
 
 	val popup by cssClass()
+	val controlBar by cssClass()
 }
 
-var UiComponent.disabledTag: Boolean by StyleTagToggle(CommonStyleTags.disabled)
+var UiComponent.disabledTag: Boolean by CssClassToggle(CommonStyleTags.disabled)

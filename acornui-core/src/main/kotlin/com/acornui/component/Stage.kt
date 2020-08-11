@@ -17,10 +17,15 @@
 package com.acornui.component
 
 import com.acornui.di.Context
+import com.acornui.di.dependencyFactory
 
 interface Stage : UiComponent {
 
-	companion object : Context.Key<Stage>
+	companion object : Context.Key<Stage> {
+		override fun toString(): String = "Stage"
+
+		override val factory = dependencyFactory { StageImpl(it) }
+	}
 }
 
 val Stage.stage: Stage
