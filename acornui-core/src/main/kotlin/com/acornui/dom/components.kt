@@ -115,6 +115,12 @@ open class Img(owner: Context) : UiComponentImpl<Image>(owner, Image()) {
 			dom.src = value
 		}
 
+	var srcset: String
+		get() = dom.srcset
+		set(value) {
+			dom.srcset = value
+		}
+
 	val naturalWidth: Int
 		get() = dom.naturalWidth
 
