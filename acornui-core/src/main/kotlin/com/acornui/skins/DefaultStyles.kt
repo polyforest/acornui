@@ -56,6 +56,7 @@ $s a {
 	color: ${CssProps.toggled.v};
 	text-decoration: none;
 	border-radius: ${CssProps.borderRadius.v};
+	cursor: pointer;
 }
 
 $s a:hover {

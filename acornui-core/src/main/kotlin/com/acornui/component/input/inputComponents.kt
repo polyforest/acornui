@@ -884,7 +884,7 @@ class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, 
 		}
 }
 
-inline fun Context.label(htmlFor: String, value: String = "", init: ComponentInit<LabelComponent> = {}): LabelComponent {
+inline fun Context.label(htmlFor: String = "", value: String = "", init: ComponentInit<LabelComponent> = {}): LabelComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return LabelComponent(this).apply {
 		dom.htmlFor = htmlFor

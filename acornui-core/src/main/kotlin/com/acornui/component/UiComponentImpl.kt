@@ -38,6 +38,7 @@ import org.intellij.lang.annotations.Language
 import org.w3c.dom.DOMStringMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.events.EventTarget
 import kotlin.contracts.InvocationKind
@@ -387,6 +388,10 @@ open class UiComponentImpl<T : HTMLElement>(
 open class Div(
 	owner: Context
 ) : UiComponentImpl<HTMLDivElement>(owner, createElement("div"))
+
+open class Span(
+	owner: Context
+) : UiComponentImpl<HTMLSpanElement>(owner, createElement("span"))
 
 inline fun Context.html(@Language("html") html: String = "", init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}): UiComponentImpl<HTMLDivElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }

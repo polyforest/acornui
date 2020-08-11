@@ -18,13 +18,13 @@
 
 package com.acornui.google
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
+import com.acornui.component.*
+import com.acornui.component.input.label
 import com.acornui.component.style.CssClass
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.*
-import com.acornui.google.IconButtonCss.iconButtonStyleTag
+import com.acornui.google.IconButtonStyle.iconButton
 import com.acornui.google.MaterialIconsCss.materialIconsStyleTag
 import com.acornui.skins.CssProps
 import org.w3c.dom.HTMLElement
@@ -988,35 +988,66 @@ object MaterialIconsCss {
 	val materialIconsStyleTag = CssClass("material-icons")
 }
 
-object IconButtonCss {
+class IconButton(owner: Context) : A(owner) {
 
-	val iconButtonStyleTag by cssClass()
+	val iconComponent = addChild(icon(0))
+	val labelComponent = addChild(span {
+		addClass(IconButtonStyle.label)
+	})
+
+	var icon: Int = 0
+		set(value) {
+			field = value
+			iconComponent.label = value.toChar().toString()
+		}
+
+	override var label: String
+		get() = labelComponent.label
+		set(value) {
+			labelComponent.label = value
+			labelComponent.style.display = if (value.isEmpty()) "none" else "inline-block"
+		}
+
+	init {
+		addClass(iconButton)
+	}
+
+	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
+		labelComponent.addElement(newIndex, element)
+	}
+
+	override fun onElementRemoved(index: Int, element: WithNode) {
+		labelComponent.removeElement(element)
+	}
+}
+
+object IconButtonStyle {
+
+	val iconButton by cssClass()
+	val label by cssClass()
 
 	init {
 		addStyleToHead("""
 	
-	$iconButtonStyleTag {
-		cursor: pointer;
-		user-select: none;
-	}
-	
-	$iconButtonStyleTag:hover {
-		color: ${CssProps.borderHover.v};
-	}
-	
-	$iconButtonStyleTag:active {
-		color: ${CssProps.borderActive.v};
-	}
+$iconButton {
+	display: flex;
+	align-items: center;
+}
+
+$label {
+	margin-left: ${CssProps.gap.v};
+	display: none;
+}
 			""")
 	}
 }
 
-inline fun Context.iconButton(codePoint: Int, init: ComponentInit<UiComponentImpl<HTMLElement>> = {}): UiComponentImpl<HTMLElement> {
+inline fun Context.iconButton(codePoint: Int, label: String = "", init: ComponentInit<IconButton> = {}): IconButton {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("i") {
-		addClass(materialIconsStyleTag)
-		addClass(iconButtonStyleTag)
-		dom.innerText = codePoint.toChar().toString()
+	return IconButton(this).apply {
+		icon = codePoint
+		this.label = label
 		init()
 	}
 }
+
