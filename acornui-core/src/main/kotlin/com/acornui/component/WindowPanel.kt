@@ -96,6 +96,10 @@ $titleBar {
 	padding: ${CssProps.padding.v};
 }
 
+$label {
+	width: 100%;
+}
+
 $closeButton {
 	display: flex;
 	flex-grow: 0;
