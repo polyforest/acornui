@@ -38,7 +38,7 @@ val WithNode.longTouched
 			return buildSubscription(isOnce, handler) {
 				+touchStarted.listen { e ->
 					val timer = schedule(longTouchInterval) {
-						win.contextMenu.listen(EventOptions(isCapture = true, isOnce = true, isPassive = false)) {
+						win.contextMenuOpened.listen(EventOptions(isCapture = true, isOnce = true, isPassive = false)) {
 							it.preventDefault()
 							it.handle()
 						}

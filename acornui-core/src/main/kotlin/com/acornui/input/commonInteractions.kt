@@ -17,11 +17,10 @@
 package com.acornui.input
 
 import com.acornui.component.WithNode
-import com.acornui.signal.WithEventTarget
-import com.acornui.signal.event
-import com.acornui.signal.filtered
+import com.acornui.signal.*
 import org.w3c.dom.Node
 import org.w3c.dom.TouchEvent
+import org.w3c.dom.Window
 import org.w3c.dom.events.*
 import org.w3c.dom.events.Event
 
@@ -177,45 +176,45 @@ val WithEventTarget.input
 	get() = event<InputEvent>("input")
 
 /**
- * The focus event fires when an element has received focus. The main difference between this event and [focusIn] is that
- * [focusIn] bubbles while focus does not.
+ * The focus event fires when an element has received focus. The main difference between this event and [focusedIn] is that
+ * [focusedIn] bubbles while [focused] does not.
  */
-val WithEventTarget.focus
+val WithEventTarget.focused
 	get() = event<FocusEvent>("focus")
 
 /**
- * The focusin event fires when an element is about to receive focus. The main difference between this event and [focus]
- * is that focusin bubbles while [focus] does not.
+ * The focusin event fires when an element is about to receive focus. The main difference between this event and [focused]
+ * is that [focusedIn] bubbles while [focused] does not.
  */
-val WithEventTarget.focusIn
+val WithEventTarget.focusedIn
 	get() = event<FocusEvent>("focusin")
 
 /**
- * The blur event fires when an element has lost focus. The main difference between this event and [focusOut] is that
- * [focusOut] bubbles while blur does not.
+ * The blur event fires when an element has lost focus. The main difference between this event and [focusedOut] is that
+ * [focusedOut] bubbles while [blurred] does not.
  */
-val WithEventTarget.blur
+val WithEventTarget.blurred
 	get() = event<FocusEvent>("blur")
 
 /**
- * The focusout event fires when an element is about to lose focus. The main difference between this event and [blur] is
- * that focusout bubbles while [blur] does not.
+ * The focusout event fires when an element is about to lose focus. The main difference between this event and [blurred] is
+ * that focusout bubbles while [blurred] does not.
  */
-val WithEventTarget.focusOut
+val WithEventTarget.focusedOut
 	get() = event<FocusEvent>("focusout")
 
 /**
- * The [focusOut] event filtered to only dispatch when the new focus is not a descendent of this node.
+ * The [focusedOut] event filtered to only dispatch when the new focus is not a descendent of this node.
  */
-val WithNode.focusOutContainer
+val WithNode.focusedOutContainer
 	get() = event<FocusEvent>("focusout").filtered {
 		(it.relatedTarget == null || !dom.contains(it.relatedTarget.unsafeCast<Node>()))
 	}
 
 /**
- * The [focusIn] event filtered to only dispatch when the previous focus is not a descendent of this node.
+ * The [focusedIn] event filtered to only dispatch when the previous focus is not a descendent of this node.
  */
-val WithNode.focusInContainer
+val WithNode.focusedInContainer
 	get() = event<FocusEvent>("focusin").filtered {
 		(it.relatedTarget == null || !dom.contains(it.relatedTarget.unsafeCast<Node>()))
 	}
@@ -226,8 +225,10 @@ val WithNode.focusInContainer
  * displayed at the bottom left of the focused element, unless the element is a tree, in which case the context menu is
  * displayed at the bottom left of the current row.
  */
-val WithEventTarget.contextMenu
+val WithEventTarget.contextMenuOpened
 	get() = event<MouseEvent>("contextmenu")
 
+val Window.beforeUnloaded: Signal<Event>
+	get() = asWithEventTarget().event("beforeunload")
 
 // TODO: Clipboard

@@ -112,7 +112,7 @@ fun <T : Any, R : Any> Signal<T>.map(transform: (T) -> R): Signal<R> {
  *
  * @author nbilyk
  */
-open class SignalImpl<T> internal constructor() : MutableSignal<T>, Disposable {
+open class SignalImpl<T>() : MutableSignal<T>, Disposable {
 
 	private val subscriptions = arrayListOf<SignalSubscriptionImpl<T>>()
 	private var cursor = -1

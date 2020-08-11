@@ -1,17 +1,15 @@
 import com.acornui.app
 import com.acornui.component.Div
-import com.acornui.component.StageImpl
 import com.acornui.component.input.button
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.add
+import com.acornui.dom.addStyleToHead
 import com.acornui.dom.head
 import com.acornui.dom.linkElement
 import com.acornui.input.clicked
-import com.acornui.skins.CssProps
-import com.acornui.dom.addStyleToHead
-import com.acornui.version
 import com.acornui.skins.DefaultStyles
+import com.acornui.version
 
 /**
  * A barebones example with a Theme and a Button.

@@ -194,7 +194,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 		input.listen {
 			isSecondSaveAttempt = false
 		}
-		focusOutContainer.listen {
+		focusedOutContainer.listen {
 			if (submitRow() || isSecondSaveAttempt)
 				editRow(null)
 			else
@@ -271,7 +271,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 
 	private fun createRow() = dataGridRow<E> {
 		(rowBuilder ?: error("rows not set")).invoke(this)
-		focusInContainer.listen {
+		focusedInContainer.listen {
 			editRow(data, activeCellIndex)
 		}
 	}

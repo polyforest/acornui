@@ -20,7 +20,7 @@ import com.acornui.Disposable
 import com.acornui.signal.Signal
 import com.acornui.signal.unmanagedSignal
 
-class DataChangedEvent<out T>(val oldData: T, val newData: T)
+class ChangedEvent<out T>(val oldData: T, val newData: T)
 
 interface DataBindingRo<out T> {
 
@@ -28,7 +28,7 @@ interface DataBindingRo<out T> {
 	 * Dispatched when the data binding [value] has changed.
 	 * The handler signature will be (oldValue, newValue)->Unit
 	 */
-	val changed: Signal<DataChangedEvent<T>>
+	val changed: Signal<ChangedEvent<T>>
 
 	val value: T
 
@@ -54,7 +54,7 @@ interface DataBinding<T> : DataBindingRo<T> {
 
 class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 
-	override val changed = unmanagedSignal<DataChangedEvent<T>>()
+	override val changed = unmanagedSignal<ChangedEvent<T>>()
 
 	private var _value: T = initialValue
 
@@ -77,7 +77,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		validator(newValue)
 		if (old == newValue) return false
 		_value = newValue
-		changed.dispatch(DataChangedEvent(old, newValue))
+		changed.dispatch(ChangedEvent(old, newValue))
 		return true
 	}
 
@@ -88,7 +88,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		if (old == value) return
 		if (changed.isDispatching) return
 		_value = value
-		changed.dispatch(DataChangedEvent(old, value))
+		changed.dispatch(ChangedEvent(old, value))
 	}
 
 	override fun dispose() {

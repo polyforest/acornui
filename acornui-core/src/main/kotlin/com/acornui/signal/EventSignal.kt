@@ -83,9 +83,18 @@ interface WithEventTarget {
 	val eventTarget: EventTarget
 }
 
-fun EventTarget.asWithEventTarget(): WithEventTarget = object : WithEventTarget {
-	override val eventTarget: EventTarget = this@asWithEventTarget
+@Suppress("UnsafeCastFromDynamic")
+fun EventTarget.asWithEventTarget(): WithEventTarget {
+	val h = asDynamic().__withEventTarget
+	if (h != null) return h
+	asDynamic().__withEventTarget = object : WithEventTarget {
+		override val eventTarget: EventTarget = this@asWithEventTarget
+	}
+	return asDynamic().__withEventTarget
 }
+
+
+
 
 fun <T : Event> WithEventTarget.event(name: String) = EventSignal<T>(eventTarget, name)
 fun <T : Event> EventTarget.event(name: String) = EventSignal<T>(this, name)

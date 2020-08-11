@@ -17,7 +17,7 @@ fun <T> Owner.dataBinding(initialValue: T): DataBindingImpl<T> {
  */
 fun <T> Owner.bind(dataBinding: DataBindingRo<T>, callback: (T) -> Unit): ManagedDisposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
-	val handler = { e: DataChangedEvent<T> -> callback(e.newData) }
+	val handler = { e: ChangedEvent<T> -> callback(e.newData) }
 	val listener = dataBinding.changed.listen(handler)
 	callback(dataBinding.value)
 	return onDisposed(listener::dispose)
@@ -30,7 +30,7 @@ fun <T> Owner.bind(dataBinding: DataBindingRo<T>, callback: (T) -> Unit): Manage
  */
 fun <T> Owner.bind2(dataBinding: DataBindingRo<T>, callback: (old: T?, new: T) -> Unit): ManagedDisposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
-	val handler = { e: DataChangedEvent<T> -> callback(e.oldData, e.newData) }
+	val handler = { e: ChangedEvent<T> -> callback(e.oldData, e.newData) }
 	val listener = dataBinding.changed.listen(handler)
 	callback(null, dataBinding.value)
 	return onDisposed(listener::dispose)
@@ -45,10 +45,10 @@ fun <T> Owner.bind2(dataBinding: DataBindingRo<T>, callback: (old: T?, new: T) -
  */
 fun <T> Owner.mirror(x: DataBinding<T>, y: DataBinding<T>): ManagedDisposable {
 	require(this !== y) { "Cannot mirror to self" }
-	val thisChanged = { e: DataChangedEvent<T> ->
+	val thisChanged = { e: ChangedEvent<T> ->
 		y.value = e.newData
 	}
-	val otherChanged = { e: DataChangedEvent<T> ->
+	val otherChanged = { e: ChangedEvent<T> ->
 		x.value = e.newData
 	}
 	val subA = x.changed.listen(thisChanged)
