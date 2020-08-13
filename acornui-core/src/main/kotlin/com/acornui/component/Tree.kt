@@ -150,8 +150,8 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	 * Invokes the callback on this tree node and all its descendants.
 	 * This is a pre-order walk.
 	 */
-	fun allCurrent(callback: (Tree<T>) -> Unit) {
-		callback(this)
+	fun allCurrent(callback: Tree<T>.() -> Unit) {
+		callback()
 		subTrees.forEach {
 			it.allCurrent(callback)
 		}
@@ -164,7 +164,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	fun all(callback: Tree<T>.() -> Unit): SignalSubscription {
 		allCurrent(callback)
 		return subTreeCreated.listen {
-			callback(it)
+			it.callback()
 		}
 	}
 
@@ -178,6 +178,9 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 				subTreeCreated.dispatch(it)
 			}
 			subTreeCreated.dispatch(child)
+			child.allCurrent {
+				this@Tree.subTreeCreated.dispatch(this)
+			}
 			child
 		}, configure = { element: Tree<T>, item: T, index: Int ->
 			element.data = item
@@ -196,7 +199,11 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	 * Sets the method to format a label from the data value.
 	 * @see formatter
 	 */
-	var formatter: StringFormatter<T>? by afterChange(null) { refreshLabel() }
+	var formatter: StringFormatter<T>? = null
+		set(value) {
+			field = value
+			refreshLabel()
+		}
 
 	private fun refreshLabel() {
 		label = formatter?.format(data) ?: ""
