@@ -73,7 +73,7 @@ open class UiComponentImpl<T : HTMLElement>(
 			if (isDebug)
 				dom.id = this::class.simpleName + "_" + UidUtil.createUid() // class.simpleName is slow, but informative.
 			else
-				dom.id = UidUtil.createUid()
+				dom.id = "_" + UidUtil.createUid()
 	}
 
 	//-----------------------------------------------
