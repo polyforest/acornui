@@ -54,12 +54,12 @@ fun cssProp(): ReadOnlyProperty<Any?, CssProp> {
 
 	return object : ReadOnlyProperty<Any?, CssProp> {
 
-		private var className: CssProp? = null
+		private var cssProp: CssProp? = null
 
 		override fun getValue(thisRef: Any?, property: KProperty<*>): CssProp {
-			if (className == null)
-				className = CssProp(property.name + "_" + (++cssUid).toRadix(36))
-			return className!!
+			if (cssProp == null)
+				cssProp = CssProp(property.name + "_" + (++cssUid).toRadix(36))
+			return cssProp!!
 		}
 	}
 }
