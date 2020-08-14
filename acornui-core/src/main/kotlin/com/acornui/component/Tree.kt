@@ -91,6 +91,8 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 		""")
 	})
 
+	val toggledChanged = signal<Unit>()
+
 	/**
 	 * Returns true if the dom contains the class [CommonStyleTags.toggled].
 	 */
@@ -114,6 +116,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 					}
 				}
 			}
+			toggledChanged.dispatch(Unit)
 		}
 
 	class DataChangeEvent<T>(val oldData: T, val newData: T)
