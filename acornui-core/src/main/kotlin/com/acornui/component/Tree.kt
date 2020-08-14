@@ -32,7 +32,6 @@ import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing
 import com.acornui.math.lerp
-import com.acornui.properties.afterChange
 import com.acornui.recycle.recycle
 import com.acornui.signal.*
 import com.acornui.skins.CssProps
@@ -184,6 +183,8 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 				field = value
 				toggleClass(TreeStyle.hiddenNode)
 				subTreesContainer.toggleClass(TreeStyle.subTreesContainer)
+				if (value)
+					toggled = true
 			}
 		}
 
