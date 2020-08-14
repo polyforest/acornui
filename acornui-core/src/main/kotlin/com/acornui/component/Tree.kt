@@ -181,7 +181,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 			if (value) {
 				if (field == value) return
 				field = value
-				toggleClass(TreeStyle.hiddenNode)
+				toggleClass(TreeStyle.virtualNode)
 				subTreesContainer.toggleClass(TreeStyle.subTreesContainer)
 				if (value)
 					toggled = true
@@ -291,7 +291,7 @@ object TreeStyle {
 	val label by cssClass()
 	val subTreesContainer by cssClass()
 	val withChildren by cssClass()
-	val hiddenNode by cssClass()
+	val virtualNode by cssClass()
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
@@ -320,7 +320,7 @@ $label {
 	padding: ${CssProps.inputPadding.v};
 }
 
-$hiddenNode > $inner > $label {
+$virtualNode > $inner > $label {
 	display: none;
 }
 
