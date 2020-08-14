@@ -112,10 +112,8 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 						style.removeProperty("max-height")
 						style.removeProperty("overflow")
 					}
-
 				}
 			}
-
 		}
 
 	class DataChangeEvent<T>(val oldData: T, val newData: T)
@@ -172,6 +170,19 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 			it.callback()
 		}
 	}
+
+	/**
+	 * If true, show this node's children, but not this node itself.
+	 */
+	var virtual: Boolean = false
+		set(value) {
+			if (value) {
+				if (field == value) return
+				field = value
+				toggleClass(TreeStyle.hiddenNode)
+				subTreesContainer.toggleClass(TreeStyle.subTreesContainer)
+			}
+		}
 
 	private fun refreshChildren() {
 		val data = data
@@ -276,6 +287,7 @@ object TreeStyle {
 	val label by cssClass()
 	val subTreesContainer by cssClass()
 	val withChildren by cssClass()
+	val hiddenNode by cssClass()
 
 	init {
 		@Suppress("CssInvalidPropertyValue")
@@ -302,6 +314,10 @@ $label {
 	-moz-user-select: none;
 	-webkit-touch-callout: none;
 	padding: ${CssProps.inputPadding.v};
+}
+
+$hiddenNode > $inner > $label {
+	display: none;
 }
 
 $inner$withChildren > $label:before {
