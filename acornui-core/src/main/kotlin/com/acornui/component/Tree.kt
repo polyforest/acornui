@@ -84,6 +84,11 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	 */
 	val subTreesContainer = inner.addElement(div {
 		addClass(TreeStyle.subTreesContainer)
+		// Set the styles for not toggled.
+		applyCss("""
+			max-height: 0;
+			overflow: hidden;
+		""")
 	})
 
 	/**
