@@ -21,6 +21,13 @@ data class Hsl(
 		val a: Double = 1.0
 ) {
 
+	fun toCss(): String {
+		return if (a == 1.0)
+			"hsl($h, ${s * 100}%, ${l * 100}%)"
+		else
+			"hsla($h, ${s * 100}%, ${l * 100}%, $a)"
+	}
+
 	fun toRgb(): Color {
 		val r: Double
 		val g: Double
