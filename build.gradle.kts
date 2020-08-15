@@ -3,6 +3,7 @@ import java.util.*
 import org.gradle.kotlin.dsl.*
 
 plugins {
+	base
 	kotlin("js").version(Config.KOTLIN_VERSION) apply false
 	kotlin("plugin.serialization").version(Config.KOTLIN_VERSION) apply false
 }
@@ -33,7 +34,11 @@ val buildTemplatesTask = tasks.register<Sync>("buildTemplates") {
 	}
 }
 
-val archiveBasicTemplate = tasks.register<Zip>("archiveBasicTemplate") {
+tasks.register("publishToMavenLocal") {
+	group = "publishing"
+}
+
+val archiveBasicTemplateTask = tasks.register<Zip>("archiveBasicTemplate") {
 	exclude("**/build")
 	exclude("**/.idea")
 	exclude("**/.gradle")
@@ -43,18 +48,26 @@ val archiveBasicTemplate = tasks.register<Zip>("archiveBasicTemplate") {
 	from(buildDir.resolve("templates/basic"))
 }
 
-tasks.register("publishToMavenLocal") {
-	group = "publishing"
+val buildTask = tasks.named("build") {
+	dependsOn(archiveBasicTemplateTask)
 }
 
 tasks.register("publish") {
 	group = "publishing"
 }
 
-tasks.named("publishToMavenLocal") {
-	dependsOn(archiveBasicTemplate)
+val testBasicTemplateTask = tasks.register<GradleBuild>("testBasicTemplate") {
+	dependsOn(buildTemplatesTask)
+	subprojects.forEach {
+		dependsOn(it.tasks.named("publishToMavenLocal"))
+	}
+	group = "verification"
+	dir = buildDir.resolve("templates/basic")
+	tasks = listOf("build")
+	startParameter.projectProperties["acornVersion"] = version.toString()
 }
 
-tasks.named("publish") {
-	dependsOn(archiveBasicTemplate)
+val testTemplatesTask = tasks.register("testTemplates") {
+	dependsOn(testBasicTemplateTask)
+	group = "verification"
 }
