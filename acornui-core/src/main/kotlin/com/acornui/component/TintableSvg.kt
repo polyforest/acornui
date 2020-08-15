@@ -49,7 +49,6 @@ class TintableSvg(owner: Context) : Div(owner) {
 				svg.outerHTML = text.substring(index, text.length)
 
 				val stops = dom.getElementsByTagNameNS("http://www.w3.org/2000/svg", "stop")
-				println("stops ${stops.length}")
 				for (i in 0 until stops.length) {
 					val stop = stops.item(i).unsafeCast<SVGStopElement>()
 					val stopColor = stop.style.getPropertyValue("stop-color")
