@@ -18,7 +18,7 @@ package com.acornui.di
 
 import com.acornui.*
 import com.acornui.collection.copy
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.coroutines.CoroutineContext
@@ -47,11 +47,14 @@ interface Context : CoroutineScope, Owner, Disposable {
 
 	/**
 	 * The map of dependencies to use for injection.
-	 * Don't retrieve dependencies from this map, use [inject] which will make use of factories and key inheritance.
+	 * Don't retrieve dependencies from this map, use [inject] or [injectOptional] which will make use of factories and
+	 * key inheritance.
+	 *
+	 * Any mutation of dependencies _must_ happen before construction of children.
 	 *
 	 * @see inject
 	 */
-	val dependencies: DependencyMap
+	var dependencies: DependencyMap
 
 	/**
 	 * Returns true if this context contains a dependency with the given key.
@@ -146,8 +149,7 @@ fun Context.childContext(): Context = ContextImpl(this, dependencies)
 open class ContextImpl(
     final override val owner: Context? = null,
     final override var dependencies: DependencyMap = DependencyMap(),
-    final override val coroutineContext: CoroutineContext = (owner?.coroutineContext
-        ?: GlobalScope.coroutineContext) + Job(owner?.coroutineContext?.get(Job)),
+    final override val coroutineContext: CoroutineContext = mainContext.coroutineContext,
     override val marker: ContextMarker? = null
 ) : Context, ManagedDisposable, DisposableBase() {
 
@@ -168,26 +170,19 @@ open class ContextImpl(
 			val factoryScope = factory.installTo
 			val contextWithScope = findOwner { it.marker === factoryScope }
 				?: throw Context.ContextMarkerNotFoundException(key)
-			if (contextWithScope != this)
-				return install(key, contextWithScope.injectOptional(key))
+			if (contextWithScope != this) {
+				val newInstance = contextWithScope.injectOptional(key) ?: return null
+				dependencies += key to newInstance
+				return newInstance
+			}
 			if (constructing.contains(key))
 				throw CyclicDependencyException("Cyclic dependency detected: ${constructing.joinToString(" -> ")} -> $key")
 			constructing.add(key)
 			val newInstance: T = factory(this)
-			install(key, newInstance)
+			dependencies += key to newInstance
 			constructing.remove(key)
 			return newInstance
 		}
-	}
-
-	private fun <T : Any> install(key: Context.Key<T>, instance: T?): T? {
-		return if (instance == null) null else install(key, instance)
-	}
-
-	private fun <T : Any> install(key: Context.Key<T>, instance: T): T {
-		val newDependency = key to instance
-		dependencies += newDependency
-		return instance
 	}
 
 	final override fun <T : Any> inject(key: Context.Key<T>): T {
@@ -197,11 +192,6 @@ open class ContextImpl(
 
 	init {
 		owner?.ownThis()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		coroutineContext[Job]?.cancel()
 	}
 
 }

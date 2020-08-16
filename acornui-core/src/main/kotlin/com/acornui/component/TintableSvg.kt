@@ -25,6 +25,7 @@ import com.acornui.dom.add
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.createElement
 import com.acornui.graphic.Color
+import com.acornui.own
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import org.w3c.dom.svg.SVGElement
@@ -40,7 +41,7 @@ class TintableSvg(owner: Context) : Div(owner) {
 
 	var src: String = ""
 		set(value) {
-			launch {
+			own(launch {
 				val text = loadText(value)
 				val index = text.indexOf("<svg")
 				dom.clear()
@@ -58,7 +59,7 @@ class TintableSvg(owner: Context) : Div(owner) {
 					stop.style.setProperty(TintableSvgStyle.luminanceSelf.toString(), (hsl.l * 100.0).percent.toString())
 					stop.style.setProperty(TintableSvgStyle.alphaSelf.toString(), hsl.a.toString())
 				}
-			}
+			})
 		}
 
 	var tint: Color = Color.WHITE

@@ -20,8 +20,7 @@ import com.acornui.di.Context
 import kotlinx.serialization.Serializable
 
 /**
- * Application configuration common across back-end types.
- * @author nbilyk
+ * Application configuration.
  */
 @Serializable
 data class AppConfig(

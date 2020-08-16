@@ -16,37 +16,49 @@
 
 package com.acornui
 
-import com.acornui.component.ComponentInit
-import com.acornui.di.*
+import com.acornui.di.ContextImpl
+import com.acornui.di.ContextMarker
 import com.acornui.logging.Log
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-import kotlin.coroutines.CoroutineContext
-
-class MainContext(
-	dependencies: DependencyMap = DependencyMap(),
-	coroutineContext: CoroutineContext = Log.uncaughtExceptionHandler + Job()
-) : ContextImpl(null, dependencies, coroutineContext, ContextMarker.MAIN)
 
 /**
- * Constructs a new [MainContext].
- * @return Returns Unit, in order to be easily used as an expression body of `main()`.
+ * Returns a coroutine uncaught exception handler that logs the exception.
  */
-inline fun mainContext(dependencies: DependencyMap = DependencyMap(), init: ComponentInit<MainContext> = {}) {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	MainContext(dependencies).apply(init)
+val coroutineExceptionLogger = CoroutineExceptionHandler { _, exception ->
+	Log.error(exception)
 }
 
 /**
- * Finds the [MainContext] on the owner ancestry.
+ * The root scope.
+ * There may be multiple applications per page, but there should be only one main context.
+ *
+ * To create a dependency shared across all applications, you may either set a custom mainContext before any
+ * applications are created with the dependencies provided, or create a dependency factory using the
+ * [ContextMarker.MAIN] marker.
+ *
+ * E.g.:
+ * ```
+ * interface MainCache {
+ *
+ *   companion object : Context.Key<MainCache> {
+ *     override val factory = dependencyFactory(ContextMarker.MAIN) {
+ *	    MainCacheImpl(it)
+ *	   }
+ *   }
+ * }
+ * ```
+ *
+ *
+ * NB:
+ * This is mutable for the sake of unit tests, or if a custom main context is needed. Typically only one main context
+ * should be set per page.
  */
-val Context.mainContext: MainContext
-	get() = findOwner { it.marker == ContextMarker.MAIN }!! as MainContext
+var mainContext = ContextImpl(coroutineContext = coroutineExceptionLogger + Job(), marker = ContextMarker.MAIN)
 
 /**
- * Disposes the main context, thereby disposing all applications.
+ * Disposes and recreates the [mainContext].
  */
-fun Context.exitMain() {
-	findOwner { it.marker == ContextMarker.MAIN }!!.dispose()
+internal fun resetMainContext() {
+	mainContext = ContextImpl(coroutineContext = coroutineExceptionLogger + Job(), marker = ContextMarker.MAIN)
 }

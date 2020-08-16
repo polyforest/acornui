@@ -18,6 +18,7 @@ package com.acornui.i18n
 
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
+import com.acornui.own
 import kotlinx.coroutines.launch
 
 //---------------------------------------------------------------------------
@@ -31,9 +32,9 @@ import kotlinx.coroutines.launch
  * @param bundleName The name of the resource bundle (Default [i18nBundleName])
  * @return Returns the coroutine Job. This will be cancelled automatically if the host component is disposed.
  */
-fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleName) = launch {
+fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleName) = own(launch {
 	label = string(key, bundleName)
-}
+})
 
 /**
  * Sets the [UiComponent.title] on this component to the i18n value.
@@ -42,6 +43,6 @@ fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleNam
  * @param bundleName The name of the resource bundle (Default [i18nBundleName])
  * @return Returns the coroutine Job. This will be cancelled automatically if the host component is disposed.
  */
-fun UiComponent.titleI18n(key: String, bundleName: String = i18nBundleName) = launch {
+fun UiComponent.titleI18n(key: String, bundleName: String = i18nBundleName) = own(launch {
 	title = string(key, bundleName)
-}
+})

@@ -18,8 +18,8 @@
 
 package com.acornui.async
 
+import com.acornui.time.schedule
 import com.acornui.time.toDelayMillis
-import kotlinx.browser.window
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -101,14 +101,17 @@ fun <T : Job> cancellingJobProp(): ReadWriteProperty<Any?, T?> {
 	}
 }
 
+/**
+ * Creates a [Promise.race] with `this` promise and a window timeout.
+ */
 fun <T> Promise<T>.withTimeout(timeout: Duration): Promise<T> {
 	val timeoutPromise = Promise<T> {
 		_, reject ->
-		val timeoutId = window.setTimeout({
+		val timeoutHandle = schedule(timeout) {
 			reject(TimeoutException(timeout))
-		}, timeout.inMilliseconds.toInt())
+		}
 		this@withTimeout.then {
-			window.clearTimeout(timeoutId)
+			timeoutHandle.dispose()
 		}
 	}
 	return Promise.race(arrayOf(this, timeoutPromise))

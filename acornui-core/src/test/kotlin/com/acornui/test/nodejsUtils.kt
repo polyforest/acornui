@@ -1,5 +1,3 @@
-import kotlinx.browser.window
-
 /*
  * Copyright 2020 Poly Forest, LLC
  *
@@ -16,15 +14,7 @@ import kotlinx.browser.window
  * limitations under the License.
  */
 
-/**
- * For nodejs
- */
-external fun setTimeout(handler: dynamic, timeout: Int = definedExternally, vararg arguments: Any?): Int
-
-/**
- * For nodejs
- */
-external fun clearTimeout(handle: Int = definedExternally)
+package com.acornui.test
 
 fun initMockDom() {
     //language=JavaScript
@@ -35,6 +25,7 @@ fun initMockDom() {
                 var jsDom = (new JSDOM("", { pretendToBeVisual: true }));
                 global.window = jsDom.window;
                 global.document = jsDom.window.document;
+                global.isNode = true
             }
             """
     )

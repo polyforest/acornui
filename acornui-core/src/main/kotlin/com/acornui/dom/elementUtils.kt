@@ -18,8 +18,9 @@ package com.acornui.dom
 
 import com.acornui.Disposable
 import com.acornui.ResizeObserver
-import com.acornui.toDisposable
-import org.w3c.dom.*
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.ParentNode
+import org.w3c.dom.asList
 
 fun HTMLElement.hide() {
 	style.apply {
@@ -42,9 +43,9 @@ fun HTMLElement.addResizeObserver(callback: ()->Unit): Disposable {
 		callback()
 	}
 	observer.observe(this)
-	return {
+	return Disposable {
 		observer.unobserve(this)
-	}.toDisposable()
+	}
 }
 
 /**

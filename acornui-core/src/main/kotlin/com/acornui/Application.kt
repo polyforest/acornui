@@ -27,66 +27,40 @@ import com.acornui.di.dependencyMapOf
 import kotlinx.browser.document
 import kotlinx.dom.clear
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.ParentNode
 
 /**
- * Creates an application under the receiver main context.
+ * Creates an Acorn application.
  *
  * @param rootId The root element id whose elements will be replaced with the new application's stage.
  */
-fun MainContext.multiApp(
+fun app(
 	rootId: String,
 	appConfig: AppConfig = AppConfig(),
 	init: Stage.() -> Unit
-): Context {
+) {
 	val rootElement = document.getElementById(rootId).unsafeCast<HTMLElement?>()
 		?: throw Exception("The root element with id $rootId could not be found.")
-	return appContext(appConfig).apply {
-		rootElement.clear()
-		rootElement.append(stage.dom)
+	rootElement.clear()
+	app(appConfig, rootElement, init)
+}
+
+/**
+ * Creates an Acorn application, appending the new application's stage to the given [parentNode].
+ *
+ * @param appConfig
+ * @param parentNode The parent node on which to append the stage. May be null.
+ * @param init The initialization block with the [Stage] as the receiver.
+ */
+fun app(
+	appConfig: AppConfig = AppConfig(),
+	parentNode: ParentNode? = document.body,
+	init: Stage.() -> Unit
+) {
+	appContext(appConfig).apply {
+		parentNode?.append(stage.dom)
 		stage.init()
 	}
 }
 
-/**
- * Creates an application under the receiver main context.
- *
- * The new application's stage will be appended to the document body.
- */
-fun MainContext.multiApp(
-	appConfig: AppConfig = AppConfig(),
-	init: Stage.() -> Unit
-) = appContext(appConfig).apply {
-		document.body?.append(stage.dom)
-		stage.init()
-	}
-
-/**
- * Creates a single application.
- *
-  @param rootId The root element id whose elements will be replaced with the new application's stage.
- *
- * Dependencies of this application may not be shared with the dependencies of any other application, to create
- * multiple applications with shared dependencies, use [multiApp].
- */
-fun app(
-	rootId: String,
-	appConfig: AppConfig = AppConfig(),
-	init: Stage.() -> Unit
-) {
-	MainContext().multiApp(rootId, appConfig, init)
-}
-
-/**
- * Creates a single application, appending the new application's stage to the document body.
- *
- * Dependencies of this application may not be shared with the dependencies of any other application, to create
- * multiple applications with shared dependencies, use [multiApp].
- */
-fun app(
-	appConfig: AppConfig = AppConfig(),
-	init: Stage.() -> Unit
-) {
-	MainContext().multiApp(appConfig, init)
-}
-
-private fun MainContext.appContext(appConfig: AppConfig) : Context = ContextImpl(owner = this, dependencies = dependencyMapOf(AppConfig to appConfig), marker = ContextMarker.APPLICATION)
+private fun appContext(appConfig: AppConfig) : Context = ContextImpl(owner = mainContext, dependencies = dependencyMapOf(AppConfig to appConfig), marker = ContextMarker.APPLICATION)

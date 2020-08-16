@@ -26,7 +26,6 @@ import kotlin.time.seconds
 
 class AsyncUtilsTest {
 
-
 	@Test
 	fun launchSupervisedShouldCatchExceptions() = runTest {
         launchSupervised {

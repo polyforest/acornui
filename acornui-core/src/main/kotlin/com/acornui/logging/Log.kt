@@ -18,9 +18,8 @@ package com.acornui.logging
 
 import com.acornui.collection.poll
 import com.acornui.error.stack
-import com.acornui.string.lineSeparator
 import com.acornui.recycle.Clearable
-import kotlinx.coroutines.CoroutineExceptionHandler
+import com.acornui.string.lineSeparator
 import com.acornui.isDebug as debugFlag
 
 interface Logger {
@@ -111,13 +110,6 @@ object Log : Logger {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns a coroutine uncaught exception handler that logs the exception.
-	 */
-	val uncaughtExceptionHandler = CoroutineExceptionHandler { _, exception ->
-		error(exception)
 	}
 }
 

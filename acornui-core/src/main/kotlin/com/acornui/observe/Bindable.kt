@@ -17,7 +17,6 @@
 package com.acornui.observe
 
 import com.acornui.Disposable
-import com.acornui.toDisposable
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -54,10 +53,10 @@ private class MergedBinding(private val bindableA: Bindable, private val bindabl
 	override fun addBinding(callback: () -> Unit): Disposable {
 		val a = bindableA.addBinding(callback)
 		val b = bindableB.addBinding(callback)
-		return {
+		return Disposable {
 			a.dispose()
 			b.dispose()
-		}.toDisposable()
+		}
 	}
 }
 

@@ -17,7 +17,6 @@
 package com.acornui.time
 
 import com.acornui.Disposable
-import com.acornui.toDisposable
 import kotlinx.browser.window
 import kotlin.js.Date
 import kotlin.time.Duration
@@ -34,7 +33,7 @@ fun schedule(date: Date, callback: () -> Unit): Disposable = schedule((date.getT
  */
 fun schedule(duration: Duration, callback: () -> Unit): Disposable {
 	val id = window.setTimeout(callback, duration.inMilliseconds.toInt())
-	return {
+	return Disposable {
 		window.clearTimeout(id)
-	}.toDisposable()
+	}
 }

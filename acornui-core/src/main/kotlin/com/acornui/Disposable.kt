@@ -21,10 +21,12 @@ package com.acornui
 import com.acornui.di.Context
 import com.acornui.function.as1
 import com.acornui.signal.Signal
-import com.acornui.signal.signal
+import com.acornui.signal.once
 import com.acornui.signal.unmanagedSignal
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 
-interface Disposable {
+fun interface Disposable {
 
 	/**
 	 * Prepares this object for garbage collection.
@@ -34,10 +36,10 @@ interface Disposable {
 }
 
 infix fun Disposable.and(other: Disposable): Disposable {
-	return {
+	return Disposable {
 		this.dispose()
 		other.dispose()
-	}.toDisposable()
+	}
 }
 
 /**
@@ -84,6 +86,23 @@ fun <T : Disposable?> Owner.own(value: T) : T {
 	disposed.listen(value::dispose.as1)
 	return value
 }
+
+/**
+ * When this object is disposed, the job will be cancelled.
+ */
+fun <T : Job?> Owner.own(value: T) : T {
+	if (isDisposed) throw DisposedException()
+	if (value == null) return value
+	val disposedHandle = disposed.once {
+		println("Canceling job")
+		value.cancel(CancellationException("Owner disposed"))
+	}
+	value.invokeOnCompletion {
+		disposedHandle.dispose()
+	}
+	return value
+}
+
 
 /**
  * A base class that will dispose a list of disposables upon its own [dispose].
@@ -145,17 +164,6 @@ fun <A : Comparable<A>> A?.compareTo(other: A?): Int {
 }
 
 typealias EqualityCheck<E> = (a: E, b: E) -> Boolean
-
-/**
- * Converts a lambda to a [Disposable] object, where the lambda is called on [Disposable.dispose].
- */
-fun (()->Any?).toDisposable(): Disposable {
-	return object : Disposable {
-		override fun dispose() {
-			this@toDisposable()
-		}
-	}
-}
 
 /**
  * Converts a lambda to a [ManagedDisposable] object, where the lambda is called on [Disposable.dispose].

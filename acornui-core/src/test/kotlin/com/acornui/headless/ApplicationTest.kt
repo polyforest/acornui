@@ -18,11 +18,19 @@ package com.acornui.headless
 
 import com.acornui.app
 import com.acornui.async.TimeoutException
-import com.acornui.component.*
+import com.acornui.component.ComponentInit
+import com.acornui.component.Div
+import com.acornui.component.UiComponent
+import com.acornui.component.stage
 import com.acornui.di.Context
+import com.acornui.own
 import com.acornui.test.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.js.Promise
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.seconds
 
@@ -57,24 +65,30 @@ class ApplicationTest {
 
 	@Test
 	fun expectFails3() = runApplicationTest(timeout = 1.seconds) { _, _ ->
-		launch {
+		own(launch {
 			throw ExpectedException()
-		}
+		})
 	}.assertFailsWith<ExpectedException>()
 
 	@Test
-	fun expectFails4() = runApplicationTest(timeout = 1.seconds) { _, _ ->
-		launch {
-			delay(2.seconds)
-			fail("Expected failure")
-		}
-	}.assertFailsWith<TimeoutException>()
+	fun expectFails4(): Promise<Unit> = runAsyncTest(2.seconds) { resolve, reject ->
+		val innerPromise = runApplicationTest(timeout = 0.3.seconds) { _, _ ->
+			own(launch {
+				delay(1.seconds)
+				println("SHOULD NOT")
+				fail("Expected failure 2")
+			})
+		}.assertFailsWith<TimeoutException>()
+		innerPromise.then { resolve() }
+		innerPromise.catch(reject)
+	}
 
 	@Test
 	fun addToStage() = runTest {
 		app {
 			stage.addElement(testComponent())
 			+testComponent()
+			assertEquals(2, dom.childElementCount)
 		}
 	}
 

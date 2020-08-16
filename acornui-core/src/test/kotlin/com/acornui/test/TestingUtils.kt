@@ -28,16 +28,14 @@ import com.acornui.math.Vector2
 import com.acornui.math.Vector3
 import com.acornui.math.clamp
 import com.acornui.number.closeTo
-import initMockDom
+import com.acornui.resetMainContext
+import com.acornui.time.schedule
 import kotlinx.coroutines.*
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.js.Promise
 import kotlin.math.abs
-import kotlin.test.Test
-import kotlin.test.assertFails
-import kotlin.test.assertFailsWith
-import kotlin.test.fail
+import kotlin.test.*
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 import kotlin.time.seconds
@@ -315,6 +313,7 @@ inline fun <reified T : Throwable> Promise<Any?>.assertFailsWith(message: String
 		fail((if (message == null) "" else "$message. ") + "Expected an exception to be thrown, but was completed successfully.")
 	}, onRejected = {
 		assertFailsWith<T> { throw it }
+		assertTrue(true) // IntelliJ has a strange bug where the test runner can spin forever without this line...
 	})
 }
 
@@ -328,6 +327,7 @@ fun Promise<Any?>.assertFails(message: String? = null): Promise<Unit> = assertFa
  */
 fun runTest(timeout: Duration = 10.seconds, block: suspend CoroutineScope.() -> Unit): Promise<Unit> {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+	resetMainContext()
 	initMockDom()
 	return GlobalScope.async {
 		withTimeout(timeout, block)
@@ -347,6 +347,7 @@ fun runAsyncTest(
 	block: (resolve: () -> Unit, reject: (e: Throwable) -> Unit) -> Unit
 ): Promise<Unit> {
 	contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+	resetMainContext()
 	initMockDom()
 	return Promise<Unit> {
 		resolve, reject ->
@@ -362,12 +363,17 @@ fun runApplicationTest(
 	appConfig: AppConfig = AppConfig(),
 	timeout: Duration = 10.seconds,
 	block: Stage.(resolve: () -> Unit, reject: (e: Throwable) -> Unit) -> Unit
-): Promise<Unit> =
-	runAsyncTest(timeout) { resolve, reject ->
+): Promise<Unit> {
+	return runAsyncTest(timeout) { resolve, reject ->
 		app(appConfig = appConfig) {
 			coroutineContext[Job]!!.invokeOnCompletion {
-				reject(it!!)
+				if (it != null)
+					reject(it)
+			}
+			schedule(timeout) {
+				this@app.dispose()
 			}
 			block(resolve, reject)
 		}
 	}
+}

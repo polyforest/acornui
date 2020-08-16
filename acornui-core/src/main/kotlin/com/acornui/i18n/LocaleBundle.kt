@@ -20,8 +20,6 @@ import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.logging.Log
 import com.acornui.system.userInfo
-import kotlinx.coroutines.launch
-
 
 /**
  * Sets the default locale bundle to the given value.
@@ -42,17 +40,6 @@ val I18N_BUNDLE = object : Context.Key<String> {}
  */
 val Context.i18nBundleName: String
 	get() = injectOptional(I18N_BUNDLE) ?: error("No default locale bundle set, use i18nBundle()")
-
-/**
- *
- */
-@Deprecated("Use launch", ReplaceWith("launch(callback)"))
-fun Context.i18n(callback: suspend () -> Unit) {
-	launch {
-		callback()
-	}
-}
-
 
 /**
  * Returns the String associated with the default bundle and current locale chain.
