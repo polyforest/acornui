@@ -20,10 +20,7 @@ package com.acornui
 
 import com.acornui.component.Stage
 import com.acornui.component.stage
-import com.acornui.di.Context
-import com.acornui.di.ContextImpl
-import com.acornui.di.ContextMarker
-import com.acornui.di.dependencyMapOf
+import com.acornui.di.*
 import kotlinx.browser.document
 import kotlinx.dom.clear
 import org.w3c.dom.HTMLElement
@@ -37,12 +34,13 @@ import org.w3c.dom.ParentNode
 fun app(
 	rootId: String,
 	appConfig: AppConfig = AppConfig(),
+	dependencies: DependencyMap = emptyDependencies,
 	init: Stage.() -> Unit
 ) {
 	val rootElement = document.getElementById(rootId).unsafeCast<HTMLElement?>()
 		?: throw Exception("The root element with id $rootId could not be found.")
 	rootElement.clear()
-	app(appConfig, rootElement, init)
+	app(appConfig, rootElement, dependencies, init)
 }
 
 /**
@@ -55,12 +53,13 @@ fun app(
 fun app(
 	appConfig: AppConfig = AppConfig(),
 	parentNode: ParentNode? = document.body,
+	dependencies: DependencyMap = emptyDependencies,
 	init: Stage.() -> Unit
 ) {
-	appContext(appConfig).apply {
+	appContext(appConfig, dependencies).apply {
 		parentNode?.append(stage.dom)
 		stage.init()
 	}
 }
 
-private fun appContext(appConfig: AppConfig) : Context = ContextImpl(owner = mainContext, dependencies = dependencyMapOf(AppConfig to appConfig), marker = ContextMarker.APPLICATION)
+private fun appContext(appConfig: AppConfig, dependencies: DependencyMap) : Context = ContextImpl(owner = mainContext, dependencies = dependencyMapOf(AppConfig to appConfig) + dependencies, marker = ContextMarker.APPLICATION)
