@@ -23,9 +23,11 @@ import com.acornui.css.percent
 import com.acornui.di.Context
 import com.acornui.dom.add
 import com.acornui.dom.addStyleToHead
+import com.acornui.dom.computedStyleChanged
 import com.acornui.dom.createElement
 import com.acornui.graphic.Color
 import com.acornui.own
+import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import org.w3c.dom.svg.SVGElement
@@ -33,10 +35,19 @@ import org.w3c.dom.svg.SVGStopElement
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ *
+ */
 class TintableSvg(owner: Context) : Div(owner) {
 
 	init {
 		addClass(TintableSvgStyle.tintableSvg)
+
+		val computed = window.getComputedStyle(dom)
+		val tintProp = TintableSvgStyle.tint.toString()
+		computedStyleChanged(tintProp).listen {
+			tint = Color.fromStr(computed.getPropertyValue(tintProp))
+		}
 	}
 
 	var src: String = ""
@@ -62,7 +73,7 @@ class TintableSvg(owner: Context) : Div(owner) {
 			})
 		}
 
-	var tint: Color = Color.WHITE
+	private var tint: Color = Color.WHITE
 		set(value) {
 			if (field == value) return
 			field = value
@@ -78,6 +89,8 @@ object TintableSvgStyle {
 
 	val tintableSvg by cssClass()
 
+	val tint by cssProp()
+
 	val luminanceSelf by cssProp()
 	val alphaSelf by cssProp()
 
@@ -89,11 +102,13 @@ object TintableSvgStyle {
 	init {
 		addStyleToHead(
 			"""
+$tintableSvg {
+	$tint: white;
+}
 
 $tintableSvg stop {
-	stop-color: hsla(var($hue, 0), calc(var($saturation, 1.0) * 100%), calc(var($luminance, 1.0) * var($luminanceSelf, 100%)), calc(var($alpha, 1.0) * var($alphaSelf, 1.0)));
+	stop-color: hsla(var($hue, 0), calc(var($saturation, 0.0) * 100%), calc(var($luminance, 1.0) * var($luminanceSelf, 100%)), calc(var($alpha, 1.0) * var($alphaSelf, 1.0)));
 }
-		
 		"""
 		)
 	}
