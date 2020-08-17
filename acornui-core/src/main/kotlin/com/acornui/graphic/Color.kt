@@ -310,7 +310,6 @@ data class Color(
 
 		/**
 		 * Returns a new color from a hex string with the format RRGGBBAA.
-		 * @see [getToRgbaString]
 		 */
 		fun fromRgbaStr(hex: String): Color {
 			val r = hex.substring(0, 2).toIntOrNull(16) ?: 0
