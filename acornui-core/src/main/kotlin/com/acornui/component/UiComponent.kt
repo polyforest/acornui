@@ -34,6 +34,7 @@ import org.intellij.lang.annotations.Language
 import org.w3c.dom.DOMStringMap
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
+import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.events.EventTarget
 
 @DslMarker
@@ -76,6 +77,8 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	 * Sets the text on this component. This may be overridden to set the label on a child component.
 	 */
 	var label: String
+
+	val style: CSSStyleDeclaration
 
 	/**
 	 * Removes a property from [dataset].

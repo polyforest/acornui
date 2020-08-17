@@ -228,6 +228,9 @@ val WithNode.focusedInContainer
 val WithEventTarget.contextMenuOpened
 	get() = event<MouseEvent>("contextmenu")
 
+val WithEventTarget.load
+	get() = event<Event>("load")
+
 val Window.beforeUnloaded: Signal<Event>
 	get() = asWithEventTarget().event("beforeunload")
 

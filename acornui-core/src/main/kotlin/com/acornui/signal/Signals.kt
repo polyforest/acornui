@@ -128,7 +128,7 @@ open class SignalImpl<T>() : MutableSignal<T>, Disposable {
 	 */
 	fun isEmpty(): Boolean = subscriptions.isEmpty()
 
-	private val removeSubscription = { subscription: SignalSubscriptionImpl<T> ->
+	protected open fun removeSubscription(subscription: SignalSubscription) {
 		removeAt(subscriptions.indexOf(subscription))
 	}
 
@@ -141,7 +141,7 @@ open class SignalImpl<T>() : MutableSignal<T>, Disposable {
 	}
 
 	override fun listen(isOnce: Boolean, handler: (T) -> Unit): SignalSubscription {
-		val subscription = SignalSubscriptionImpl(this, handler, isOnce, removeSubscription)
+		val subscription = SignalSubscriptionImpl(this, handler, isOnce, ::removeSubscription)
 		subscriptions.add(subscription)
 		return subscription
 	}
