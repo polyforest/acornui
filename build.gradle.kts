@@ -48,8 +48,12 @@ val archiveBasicTemplateTask = tasks.register<Zip>("archiveBasicTemplate") {
 	from(buildDir.resolve("templates/basic"))
 }
 
-val buildTask = tasks.named("build") {
+val archiveTemplatesTask = tasks.register("archiveTemplates") {
 	dependsOn(archiveBasicTemplateTask)
+}
+
+val assembleTask = tasks.named("assemble") {
+	dependsOn(archiveTemplatesTask)
 }
 
 tasks.register("publish") {
@@ -70,4 +74,8 @@ val testBasicTemplateTask = tasks.register<GradleBuild>("testBasicTemplate") {
 val testTemplatesTask = tasks.register("testTemplates") {
 	dependsOn(testBasicTemplateTask)
 	group = "verification"
+}
+
+tasks.named("check") {
+	dependsOn(testTemplatesTask)
 }
