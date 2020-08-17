@@ -276,13 +276,15 @@ data class Color(
 		 * rgb(255, 255, 255),
 		 * rgba(255, 255, 255, 255),
 		 * or by name (blue)
-		 * @see [getToRgbaString]
 		 */
 		fun fromStr(str: String): Color {
-			return if (str.startsWith("0x")) fromRgbaStr(str.substring(2))
-			else if (str.startsWith("#")) fromRgbaStr(str.substring(1))
-			else if (str.startsWith("rgb", ignoreCase = true)) fromCssStr(str)
-			else fromName(str)?.copy() ?: fromRgbaStr(str)
+			val strTrimmed = str.trim()
+			return when {
+				strTrimmed.startsWith("0x") -> fromRgbaStr(strTrimmed.substring(2))
+				strTrimmed.startsWith("#") -> fromRgbaStr(strTrimmed.substring(1))
+				strTrimmed.startsWith("rgb", ignoreCase = true) -> fromCssStr(strTrimmed)
+				else -> fromName(strTrimmed)?.copy() ?: fromRgbaStr(strTrimmed)
+			}
 		}
 
 		fun from8888Str(value: String): Color =
