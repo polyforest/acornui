@@ -88,13 +88,13 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	fun removeDataAttribute(name: String)
 }
 
-private val cssPropertyRegex = Regex("""([a-zA-Z\-]+):(.*);""")
+private val cssPropertyRegex = Regex("""([a-zA-Z0-9\-_]+):(.*);""")
 
 /**
  * Applies the given CSS to the component.
  */
 fun UiComponent.applyCss(@Language("CSS", prefix = "#component {\n", suffix = "\n}") css: String) {
-	cssPropertyRegex.findAll(css).forEach {
+	cssPropertyRegex.findAll(css.trim().trimEnd(';') + ';').forEach {
 		val propName = it.groups[1]!!.value
 		val propValue = it.groups[2]!!.value.trim()
 		dom.style.setProperty(propName, propValue)
