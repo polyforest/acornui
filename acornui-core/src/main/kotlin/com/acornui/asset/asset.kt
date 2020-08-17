@@ -41,7 +41,7 @@ object Loaders {
 				it.defaultRequestSettings.copy(initialTimeEstimate = 0.seconds) // Audio element is immediately returned.
 
 			override suspend fun load(requestData: UrlRequestData, settings: RequestSettings): Music {
-				return JsAudioElementMusic(audioManager, Audio(requestData.toUrlStr(settings.rootPath)))
+				return JsAudioElementMusic(audioManager, audio(requestData.toUrlStr(settings.rootPath)))
 			}
 		}
 	}

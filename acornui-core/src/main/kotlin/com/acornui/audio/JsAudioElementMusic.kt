@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("LeakingThis")
+
 package com.acornui.audio
 
+import com.acornui.component.ComponentInit
+import com.acornui.dom.createElement
 import com.acornui.signal.unmanagedSignal
 import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
-import kotlinx.browser.document
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.time.Duration
 import kotlin.time.seconds
 
@@ -37,14 +42,14 @@ open class JsAudioElementMusic(
 		get() = element.duration.seconds
 
 	private val elementEndedHandler = {
-		event: Event ->
+		_: Event ->
 		if (!loop)
 			onCompleted?.invoke()
 		Unit
 	}
 
 	private val loadedDataHandler = {
-		event: Event ->
+		_: Event ->
 		if (readyState == MusicReadyState.NOTHING && element.readyState >= 3) {
 			// HAVE_FUTURE_DATA
 			readyState = MusicReadyState.READY
@@ -107,8 +112,10 @@ open class JsAudioElementMusic(
 	}
 }
 
-fun Audio(source: String): HTMLAudioElement {
-	val audio = document.createElement("AUDIO").unsafeCast<HTMLAudioElement>()
-	audio.src = source
-	return audio
+fun audio(source: String, init: ComponentInit<HTMLAudioElement> = {}): HTMLAudioElement {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return createElement("audio") {
+		src = source
+		init()
+	}
 }

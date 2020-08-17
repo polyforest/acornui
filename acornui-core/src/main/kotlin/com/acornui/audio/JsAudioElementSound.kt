@@ -44,7 +44,7 @@ class JsAudioElementSound(
 	}
 
 	init {
-		element = Audio(src)
+		element = audio(src)
 		element.addEventListener("ended", elementEndedHandler)
 		audioManager.registerSound(this)
 	}
