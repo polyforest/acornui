@@ -16,8 +16,8 @@
 
 object Config {
 
-	const val KOTLIN_VERSION = "1.4.0-rc"
-	const val KOTLIN_SERIALIZATION_VERSION = "1.0-M1-1.4.0-rc-218"
-	const val KOTLIN_COROUTINES_VERSION = "1.3.8-1.4.0-rc"
+	const val KOTLIN_VERSION = "1.4.0"
+	const val KOTLIN_SERIALIZATION_VERSION = "1.0.0-RC"
+	const val KOTLIN_COROUTINES_VERSION = "1.3.9"
 	const val KOTLIN_LANGUAGE_VERSION = "1.4"
 }

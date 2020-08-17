@@ -24,8 +24,6 @@ plugins {
 	kotlin("jvm")
 }
 
-//val kotlinVersion: String = "1.3.70"
-
 buildscript {
 	dependencies {
 		classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${Config.KOTLIN_VERSION}")
@@ -60,8 +58,6 @@ configurations.all {
 		}
 	}
 }
-
-//val kotlinLanguageVersion: String = "1.3"
 
 java {
 	withSourcesJar()

@@ -54,6 +54,7 @@ open class AcornUiJsPlugin : Plugin<Project> {
 					useExperimentalAnnotation("kotlin.time.ExperimentalTime")
 					useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
 					useExperimentalAnnotation("kotlinx.coroutines.InternalCoroutinesApi")
+					useExperimentalAnnotation("kotlinx.serialization.ExperimentalSerializationApi")
 				}
 			}
 
