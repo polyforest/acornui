@@ -16,14 +16,13 @@
 
 package com.acornui.audio
 
-import org.w3c.dom.HTMLAudioElement
 import org.w3c.dom.events.Event
 import kotlin.time.Duration
 import kotlin.time.seconds
 
 class JsAudioElementSound(
 		private val audioManager: AudioManager,
-		private val src: String,
+		src: String,
 		override val priority: Double
 ) : Sound {
 
@@ -34,17 +33,16 @@ class JsAudioElementSound(
 		get() = _isPlaying
 
 
-	private var element: HTMLAudioElement
+	private val element = audio(src)
 
 	private val elementEndedHandler = {
-		event: Event ->
+		_: Event ->
 		if (!loop)
 			complete()
 		Unit
 	}
 
 	init {
-		element = audio(src)
 		element.addEventListener("ended", elementEndedHandler)
 		audioManager.registerSound(this)
 	}
