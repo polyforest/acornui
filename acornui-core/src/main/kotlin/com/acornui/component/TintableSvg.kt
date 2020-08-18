@@ -118,6 +118,7 @@ object TintableSvgStyle {
 			"""
 $tintableSvg {
 	$tint: white;
+	display: inline-block;
 }
 
 $tintableSvg svg {

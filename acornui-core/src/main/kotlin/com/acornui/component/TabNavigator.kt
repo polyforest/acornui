@@ -62,7 +62,7 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	 * The container for the tab buttons.
 	 */
 	val tabs = addChild(hGroup {
-		addClass(TabNavigatorStyle.tabsStyle)
+		addClass(TabNavigatorStyle.tabBar)
 	})
 
 	/**
@@ -96,7 +96,7 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	 */
 	protected val contents = addChild(div {
 		addClass(PanelStyle.colors)
-		addClass(TabNavigatorStyle.contentsStyle)
+		addClass(TabNavigatorStyle.contents)
 	})
 
 	init {
@@ -160,18 +160,16 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	override fun onElementRemoved(index: Int, element: WithNode) {
 		contents.removeElement(index)
 	}
+}
 
-	//-----------------------------------------------------
+object TabNavigatorStyle {
+	val tabNavigator by cssClass()
+	val tabBar by cssClass()
+	val contents by cssClass()
 
+	init {
 
-	object TabNavigatorStyle {
-		val tabNavigator by cssClass()
-		val tabsStyle by cssClass()
-		val contentsStyle by cssClass()
-
-		init {
-
-			addStyleToHead("""
+		addStyleToHead("""
 $tabNavigator {
 	display: flex;
 	flex-direction: column;
@@ -180,31 +178,30 @@ $tabNavigator {
 	border-radius: ${CssProps.borderRadius.v};
 }
 
-$contentsStyle {
+$contents {
 	padding: ${CssProps.padding.v};
 	flex-grow: 1;
 	overflow: auto;
 	border-top-left-radius: 0;
 }
 
-$tabsStyle {
+$tabBar {
 	flex-grow: 0;
 	padding: 0;
 	clip-path: polygon(-10% -10%, 110% -10%, 110% 100%, -10% 100%);
 	${CssProps.gap}: 0;
 }
 
-$tabsStyle *:focus {
+$tabBar *:focus {
     border-color: ${CssProps.focus.v};
 	box-shadow: inset 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
 }
 
-$tabsStyle > div {
+$tabBar > div {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
-			""")
-		}
+		""")
 	}
 }
 
