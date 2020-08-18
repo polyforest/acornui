@@ -112,8 +112,8 @@ abstract class DisposableBase() : Disposable, Owner {
 	/**
 	 * If an owner is provided, when the owner is disposed, this will be disposed.
 	 */
-	constructor(owner: Owner) : this() {
-		owner.ownThis()
+	constructor(owner: Owner?) : this() {
+		owner?.ownThis()
 	}
 
 	final override val disposed = unmanagedSignal<Disposable>()
@@ -126,8 +126,9 @@ abstract class DisposableBase() : Disposable, Owner {
 	 * If this object is disposed before the owner, the watch will end.
 	 */
 	protected fun Owner.ownThis() {
-		require(this is ManagedDisposable)
-		own(disposed.listen(this@DisposableBase::dispose.as1))
+		val t = this@DisposableBase
+		require(t is ManagedDisposable) { "this must implement ManagedDisposable" }
+		t.own(disposed.listen(t::dispose.as1))
 	}
 
 	/**
