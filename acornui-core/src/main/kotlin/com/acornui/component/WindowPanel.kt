@@ -103,7 +103,6 @@ $label {
 $closeButton {
 	display: flex;
 	flex-grow: 0;
-	margin-left: 10px;
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
