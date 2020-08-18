@@ -25,8 +25,11 @@ import com.acornui.dom.add
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.computedStyleChanged
 import com.acornui.dom.createElement
+import com.acornui.function.as1
 import com.acornui.graphic.Color
+import com.acornui.input.*
 import com.acornui.own
+import com.acornui.skins.CssProps
 import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.dom.clear
@@ -42,12 +45,22 @@ class TintableSvg(owner: Context) : Div(owner) {
 
 	init {
 		addClass(TintableSvgStyle.tintableSvg)
-
-		val computed = window.getComputedStyle(dom)
-		val tintProp = TintableSvgStyle.tint.toString()
-		computedStyleChanged(tintProp).listen {
-			tint = Color.fromStr(computed.getPropertyValue(tintProp))
+		computedStyleChanged(TintableSvgStyle.tint.toString()).listen {
+			refreshTint()
 		}
+		// Mutation observers can't handle pseudo selectors.
+		touchStarted.listen(::refreshTint.as1)
+		touchEnded.listen(::refreshTint.as1)
+		mousePressed.listen(::refreshTint.as1)
+		mouseReleased.listen(::refreshTint.as1)
+		mouseEntered.listen(::refreshTint.as1)
+		mouseExited.listen(::refreshTint.as1)
+	}
+
+	private val computed = window.getComputedStyle(dom)
+
+	fun refreshTint() {
+		tint = Color.fromStr(computed.getPropertyValue(TintableSvgStyle.tint.toString()))
 	}
 
 	var src: String = ""
@@ -88,6 +101,7 @@ class TintableSvg(owner: Context) : Div(owner) {
 object TintableSvgStyle {
 
 	val tintableSvg by cssClass()
+	val icon by cssClass()
 
 	val tint by cssProp()
 
@@ -106,9 +120,27 @@ $tintableSvg {
 	$tint: white;
 }
 
+$tintableSvg svg {
+	width: inherit;
+	height: inherit;
+}
+
 $tintableSvg stop {
 	stop-color: hsla(var($hue, 0), calc(var($saturation, 0.0) * 100%), calc(var($luminance, 1.0) * var($luminanceSelf, 100%)), calc(var($alpha, 1.0) * var($alphaSelf, 1.0)));
 }
+
+$icon {
+	$tint: ${CssProps.toggled.v};
+}
+
+$icon:hover {
+	$tint: ${CssProps.borderHover.v};
+}
+
+$icon:active {
+	$tint: ${CssProps.borderActive.v};
+}
+
 		"""
 		)
 	}

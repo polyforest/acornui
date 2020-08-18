@@ -18,8 +18,9 @@
 
 package com.acornui.google
 
-import com.acornui.component.*
-import com.acornui.component.input.label
+import com.acornui.component.ComponentInit
+import com.acornui.component.UiComponentImpl
+import com.acornui.component.WithNode
 import com.acornui.component.style.CssClass
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context

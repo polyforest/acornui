@@ -154,7 +154,7 @@ ${CommonStyleTags.hidden} {
     ${CssProps.dataRowEvenBackground}: #eeef;
     ${CssProps.dataRowOddBackground}: #ddde;
     ${CssProps.loadingSpinnerColor}: #ddd;		
-    ${CssProps.strongWeight}: bolder;		
+    ${CssProps.strongWeight}: bolder;
 }
 
 footer {
