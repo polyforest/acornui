@@ -138,7 +138,7 @@ $rangeInput::-webkit-slider-runnable-track {
 	height: var(--trackHeight);
 	cursor: pointer;
 
-	background: linear-gradient(to right, ${CssProps.toggled.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
+	background: linear-gradient(to right, ${CssProps.accentFill.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
 	border-radius: 8px;
 	margin: 6px 3px;
 	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
@@ -156,7 +156,7 @@ $rangeInput::-webkit-slider-thumb {
 	height: var(--thumbSize);
 	width: var(--thumbSize);
 	border-radius: 50%;
-	background: ${CssProps.toggled.v};
+	background: ${CssProps.accentFill.v};
 	cursor: pointer;
 	-webkit-appearance: none;
 	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${CssProps.borderThickness.v});
@@ -165,11 +165,11 @@ $rangeInput::-webkit-slider-thumb {
 }
 
 $rangeInput:hover:not(:disabled)::-webkit-slider-thumb {
-	border-color: ${CssProps.borderHover.v};
+	border-color: ${CssProps.accentHover.v};
 }
 
 $rangeInput:hover:not(:disabled)::-webkit-slider-runnable-track {
-	border-color: ${CssProps.borderHover.v};
+	border-color: ${CssProps.accentHover.v};
 }
 
 $rangeInput:disabled::-moz-range-track {
@@ -184,7 +184,7 @@ $rangeInput::-moz-range-track {
 	height: var(--trackHeight);
 	cursor: pointer;
 
-	background: linear-gradient(to right, ${CssProps.toggled.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
+	background: linear-gradient(to right, ${CssProps.accentFill.v} var(--percent), ${CssProps.toggledInner.v} var(--percent));
 	border-radius: 8px;
 	margin: 6px 3px;
 	border: ${CssProps.borderThickness.v} solid ${CssProps.borderColor.v};
@@ -202,7 +202,7 @@ $rangeInput::-moz-range-thumb {
 	height: var(--thumbSize);
 	width: var(--thumbSize);
 	border-radius: 50%;
-	background: ${CssProps.toggled.v};
+	background: ${CssProps.accentFill.v};
 	cursor: pointer;
 	-webkit-appearance: none;
 	margin-top: calc(-1 * (var(--thumbSize) - var(--trackHeight)) * 0.5 - ${CssProps.borderThickness.v});
@@ -211,11 +211,11 @@ $rangeInput::-moz-range-thumb {
 }
 
 $rangeInput:hover:not(:disabled)::-moz-range-track {
-	border-color: ${CssProps.borderHover.v};
+	border-color: ${CssProps.accentHover.v};
 }
 
 $rangeInput:hover:not(:disabled)::-moz-range-thumb {
-	border-color: ${CssProps.borderHover.v};
+	border-color: ${CssProps.accentHover.v};
 }				
 			"""
 		))

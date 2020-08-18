@@ -129,7 +129,7 @@ input:disabled {
 }
 
 input:active {
-	border-color: ${CssProps.borderActive.v};
+	border-color: ${CssProps.accentActive.v};
 }
 
 input[type='date'],
@@ -177,8 +177,8 @@ input[type='radio']::after {
 input[type='checkbox']:indeterminate,
 input[type='checkbox']:checked,
 input[type='radio']:checked {
-	--b: ${CssProps.toggled.v};
-	--bc: ${CssProps.toggled.v};
+	--b: ${CssProps.accentFill.v};
+	--bc: ${CssProps.accentFill.v};
 	--d-o: 0.3s;
 	--d-t: 0.6s;
 	--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
@@ -206,7 +206,7 @@ input[type='radio']:disabled + label {
 input[type='checkbox']:hover:not(:indeterminate):not(:disabled),
 input[type='checkbox']:hover:not(:checked):not(:disabled),
 input[type='radio']:hover:not(:checked):not(:disabled) {
-	--bc: ${CssProps.borderHover.v};
+	--bc: ${CssProps.accentHover.v};
 }
 
 input[type='checkbox']:not($switch),
@@ -461,29 +461,29 @@ $button {
 
 $button:hover {
 	background: ${CssProps.buttonBackgroundHover.v};
-	border-color: ${CssProps.borderHover.v};
+	border-color: ${CssProps.accentHover.v};
 	color: ${CssProps.buttonTextHoverColor.v};
 }
 
 $button${CommonStyleTags.active} {
 	background: ${CssProps.buttonBackgroundActive.v};
-	border-color: ${CssProps.borderActive.v};
+	border-color: ${CssProps.accentActive.v};
 	color: ${CssProps.buttonTextActiveColor.v};
 }
 
 $button${CommonStyleTags.toggled} {
-	background: ${CssProps.toggled.v};
-	border-color: ${CssProps.toggled.v};
+	background: ${CssProps.accentFill.v};
+	border-color: ${CssProps.accentFill.v};
 	color: ${CssProps.toggledInner.v};
 }
 
 $button${CommonStyleTags.toggled}:hover {
-	background: ${CssProps.toggled.v};
-	border-color: ${CssProps.borderHover.v};
+	background: ${CssProps.accentFill.v};
+	border-color: ${CssProps.accentHover.v};
 }
 
 $button${CommonStyleTags.toggled}${CommonStyleTags.active} {
-	border-color: ${CssProps.borderActive.v};
+	border-color: ${CssProps.accentActive.v};
 }
 
 $button${CommonStyleTags.disabled} {

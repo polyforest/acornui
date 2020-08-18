@@ -130,15 +130,15 @@ $tintableSvg stop {
 }
 
 $icon {
-	$tint: ${CssProps.toggled.v};
+	$tint: ${CssProps.accentFill.v};
 }
 
 $icon:hover {
-	$tint: ${CssProps.borderHover.v};
+	$tint: ${CssProps.accentHover.v};
 }
 
 $icon:active {
-	$tint: ${CssProps.borderActive.v};
+	$tint: ${CssProps.accentActive.v};
 }
 
 		"""

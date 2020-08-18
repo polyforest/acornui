@@ -53,19 +53,19 @@ $s ul li {
 }
 
 $s a {
-	color: ${CssProps.toggled.v};
+	color: ${CssProps.accentFill.v};
 	text-decoration: none;
 	border-radius: ${CssProps.borderRadius.v};
 	cursor: pointer;
 }
 
 $s a:hover {
-	color: ${CssProps.borderHover.v};
+	color: ${CssProps.accentHover.v};
 	text-decoration: none;
 }
 
 $s a:active {
-	color: ${CssProps.borderActive.v};
+	color: ${CssProps.accentActive.v};
 }
 
 
@@ -124,12 +124,12 @@ ${CommonStyleTags.hidden} {
     ${CssProps.scrollbarThickness}: 8px;
     ${CssProps.focus}: rgba(49, 104, 254, .8);
     ${CssProps.focusThickness}: 2px;
-    ${CssProps.toggled}: #275efe;
+    ${CssProps.accentFill}: #275efe;
+    ${CssProps.accentHover}: #0f3ef8;
+    ${CssProps.accentActive}: #445ed9;
     ${CssProps.toggledInner}: #fff;
     ${CssProps.toggledInnerDisabled}: #888;
     ${CssProps.borderColor}: #bbc1e1;
-    ${CssProps.borderHover}: #0f3ef8;
-    ${CssProps.borderActive}: #445ed9;
     ${CssProps.borderDisabled}: #bbc1e1;
     ${CssProps.componentBackground}: #fff;
     ${CssProps.disabled}: #7a7b82;

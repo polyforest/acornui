@@ -144,7 +144,7 @@ $textArea {
 }
 			
 $textArea:active {
-	border-color: ${CssProps.borderActive.v};
+	border-color: ${CssProps.accentActive.v};
 }
 
 $textArea:disabled {

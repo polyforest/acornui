@@ -43,7 +43,17 @@ object CssProps {
 	/**
 	 * The accent for components when toggled/checked.
 	 */
-	val toggled by cssProp()
+	val accentFill by cssProp()
+
+	/**
+	 * The border for components when mouse is over.
+	 */
+	val accentHover by cssProp()
+
+	/**
+	 * The border for components when mouse is down.
+	 */
+	val accentActive by cssProp()
 
 	/**
 	 * The fill for components when toggled/checked.
@@ -59,16 +69,6 @@ object CssProps {
 	 * The border for components.
 	 */
 	val borderColor by cssProp()
-
-	/**
-	 * The border for components when mouse is over.
-	 */
-	val borderHover by cssProp()
-
-	/**
-	 * The border for components when mouse is down.
-	 */
-	val borderActive by cssProp()
 
 	/**
 	 * The border for components when the component is disabled.
