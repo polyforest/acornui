@@ -500,7 +500,6 @@ $button > div {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	pointer-events: none;
 }
 			""")
 	}
