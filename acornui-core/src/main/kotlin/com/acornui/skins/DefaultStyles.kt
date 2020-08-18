@@ -172,7 +172,7 @@ ${TextStyleTags.error} {
 }
 
 ${TextStyleTags.warning} {
-	color: #bb2;
+	color: #d06c16;
 }
 
 ${TextStyleTags.info} {
