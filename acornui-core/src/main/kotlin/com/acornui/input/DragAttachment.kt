@@ -409,13 +409,13 @@ fun UiComponent.dragAttachment(): DragAttachment = createOrReuseAttachment(DragA
 /**
  * Dispatched when the drag has begun.
  */
-val UiComponent.dragStart: Signal<DragEvent>
+val UiComponent.dragStarted: Signal<DragEvent>
 	get() = dragAttachment().dragStarted
 
 /**
  * Dispatched on each frame during a drag.
  */
-val UiComponent.drag: Signal<DragEvent>
+val UiComponent.dragged: Signal<DragEvent>
 	get() = dragAttachment().dragged
 
 val UiComponent.isDragging: Boolean
@@ -425,7 +425,7 @@ val UiComponent.isDragging: Boolean
  * Dispatched when the drag has completed.
  * This may either be from the mouse/touch ending, or the target deactivating.
  */
-val UiComponent.dragEnd: Signal<DragEvent>
+val UiComponent.dragEnded: Signal<DragEvent>
 	get() = dragAttachment().dragEnded
 
 /**
@@ -442,21 +442,21 @@ class DragWithAffordance(
 	/**
 	 * Dispatched when the drag has surpassed the [affordance] distance.
 	 */
-	val dragStart = signal<DragEvent>()
+	val dragStarted = signal<DragEvent>()
 
 	/**
 	 * Dispatched when the drag has moved and the drag at some point has surpassed the [affordance] distance.
 	 */
-	val drag = signal<DragEvent>()
+	val dragged = signal<DragEvent>()
 
-	val dragEnd = signal<DragEvent>()
+	val dragEnded = signal<DragEvent>()
 
 	private var hasPassedAffordance = false
 
 	init {
-		own(target.dragStart.listen(::dragStartHandler))
-		own(target.drag.listen(::dragHandler))
-		own(target.dragEnd.listen(::dragEndHandler))
+		own(target.dragStarted.listen(::dragStartHandler))
+		own(target.dragged.listen(::dragHandler))
+		own(target.dragEnded.listen(::dragEndHandler))
 	}
 
 	private fun dragStartHandler(event: DragEvent) {
@@ -467,16 +467,16 @@ class DragWithAffordance(
 		if (!hasPassedAffordance) {
 			if (event.positionClient.dst(event.startPositionClient) >= affordance) {
 				hasPassedAffordance = true
-				dragStart.dispatch(event)
+				dragStarted.dispatch(event)
 			}
 		}
 		if (hasPassedAffordance)
-			drag.dispatch(event)
+			dragged.dispatch(event)
 	}
 
 	private fun dragEndHandler(event: DragEvent) {
 		if (hasPassedAffordance)
-			dragEnd.dispatch(event)
+			dragEnded.dispatch(event)
 	}
 
 	companion object {
