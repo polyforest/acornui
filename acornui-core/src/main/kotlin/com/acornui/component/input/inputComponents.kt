@@ -27,6 +27,7 @@ import com.acornui.Disposable
 import com.acornui.UidUtil
 import com.acornui.component.*
 import com.acornui.component.style.CommonStyleTags
+import com.acornui.component.style.CssClassToggle
 import com.acornui.component.style.cssClass
 import com.acornui.component.text.text
 import com.acornui.css.prefix
@@ -415,15 +416,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 	/**
 	 * Returns true if the dom contains the class [CommonStyleTags.toggled].
 	 */
-	var toggled: Boolean
-		get() = containsClass(CommonStyleTags.toggled)
-		set(value) {
-			if (value == toggled) return
-			if (value)
-				addClass(CommonStyleTags.toggled)
-			else
-				removeClass(CommonStyleTags.toggled)
-		}
+	var toggled: Boolean by CssClassToggle(CommonStyleTags.toggled)
 }
 
 object ButtonStyle {
