@@ -402,9 +402,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 		toggleClass(CommonStyleTags.disabled)
 	}
 
-	private var active: Boolean by afterChange(false) {
-		toggleClass(CommonStyleTags.active)
-	}
+	private var active: Boolean by CssClassToggle(CommonStyleTags.active)
 
 	/**
 	 * If [toggleOnClick] is true, when the user clicks this button, [toggled] is changed and [toggledChanged] is
