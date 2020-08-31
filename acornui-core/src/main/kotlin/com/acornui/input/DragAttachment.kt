@@ -437,7 +437,7 @@ val UiComponent.dragEnded: Signal<DragEvent>
 class DragWithAffordance(
 	private val target: UiComponent,
 	val affordance: Double
-) : DisposableBase(target) {
+) : DisposableBase(target), ManagedDisposable {
 
 	/**
 	 * Dispatched when the drag has surpassed the [affordance] distance.
