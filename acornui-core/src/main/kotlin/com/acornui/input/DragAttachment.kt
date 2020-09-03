@@ -37,6 +37,7 @@ import com.acornui.time.tick
 import org.w3c.dom.TouchEvent
 import org.w3c.dom.events.MouseEvent
 import kotlinx.browser.window
+import org.w3c.dom.events.KeyboardEvent
 
 /**
  * A behavior for a touch down, touch move, then touch up on a target UiComponent.
@@ -45,10 +46,21 @@ class DragAttachment(
 	val target: UiComponent
 ) : ContextImpl(target) {
 
+	/**
+	 * Dispatched when the drag has begun.
+	 */
 	val dragStarted = signal<DragEvent>()
 
+	/**
+	 * Dispatched on each frame during a drag.
+	 */
 	val dragged = signal<DragEvent>()
 
+	/**
+	 * Dispatched when the drag has completed.
+	 * This may either be from the mouse/touch ending or by cancelling via ESCAPE.
+	 * If the drag is cancelled via ESCAPE, [DragEvent.defaultPrevented] will be true.
+	 */
 	val dragEnded = signal<DragEvent>()
 
 	private var clickHandle: Disposable? = null
@@ -60,7 +72,8 @@ class DragAttachment(
 			watchHandle = if (value) {
 				tick(-1, callback = ::enterFrameHandler.as2) and
 						win.mouseMoved.listen(eventOptions = EventOptions(isPassive = false), handler = ::windowMouseMoveHandler) and
-						win.mouseReleased.listen(handler = ::windowMouseUpHandler)
+						win.mouseReleased.listen(handler = ::windowMouseUpHandler) and
+						win.keyPressed.listen(handler = ::windowKeyDownHandler)
 			} else {
 				watchHandle?.dispose()
 				null
@@ -74,7 +87,8 @@ class DragAttachment(
 			watchHandle = if (value) {
 				tick(-1, callback = ::enterFrameHandler.as2) and
 						win.touchMoved.listen(EventOptions(isPassive = false), ::windowTouchMoveHandler) and
-						win.touchEnded.listen(::windowTouchEndHandler)
+						win.touchEnded.listen(::windowTouchEndHandler) and
+						win.keyPressed.listen(handler = ::windowKeyDownHandler)
 			} else {
 				watchHandle?.dispose()
 				null
@@ -134,8 +148,13 @@ class DragAttachment(
 	private var previousPositionClient = Vector2.ZERO
 	private var positionClient = Vector2.ZERO
 
-	private var fromTouch: Boolean = false
+	private var fromTouch = false
 	private var touchId: Int = -1
+
+	/**
+	 * True if the drag was cancelled by hitting ESCAPE.
+	 */
+	private var cancelled = false
 
 	private fun startMouse(positionClient: Vector2, positionLocal: Vector2) {
 		start(positionClient)
@@ -153,6 +172,7 @@ class DragAttachment(
 		this.startPositionClient = positionClient
 		this.previousPositionClient = positionClient
 		this.positionClient = positionClient
+		cancelled = false
 	}
 
 	private fun move(positionClient: Vector2) {
@@ -160,11 +180,18 @@ class DragAttachment(
 		this.positionClient = positionClient
 	}
 
-	private fun move(event: TouchEvent) {
-		val touch = event.touches.find { it?.identifier == touchId }
-		if (touch != null)
-			move(vec2(touch.clientX, touch.clientY))
+	private fun windowKeyDownHandler(event: KeyboardEvent) {
+		if (event.keyCode == Ascii.ESCAPE) {
+			event.handle()
+			cancelled = true
+			isWatchingMouse = false
+			isDragging = false
+		}
 	}
+
+	//--------------------------------------------------------------
+	// Mouse UX
+	//--------------------------------------------------------------
 
 	private fun windowMouseMoveHandler(event: MouseEvent) {
 		event.handle()
@@ -172,10 +199,6 @@ class DragAttachment(
 		if (preventDefaultOnMouse)
 			event.preventDefault()
 	}
-
-	//--------------------------------------------------------------
-	// Mouse UX
-	//--------------------------------------------------------------
 
 	private fun mouseDownHandler(event: MouseEvent) {
 		if (!isWatchingMouse && !isWatchingTouch && allowMouseStart(event)) {
@@ -210,6 +233,12 @@ class DragAttachment(
 	// Touch UX
 	//--------------------------------------------------------------
 
+	private fun move(event: TouchEvent) {
+		val touch = event.touches.find { it?.identifier == touchId }
+		if (touch != null)
+			move(vec2(touch.clientX, touch.clientY))
+	}
+
 	private fun touchStartHandler(event: TouchEvent) {
 		if (!isWatchingMouse && !isWatchingTouch && allowTouchStart(event)) {
 			val t = event.touches.first()
@@ -241,7 +270,6 @@ class DragAttachment(
 	private fun setIsWatchingTouch(value: Boolean) {
 		if (isWatchingTouch == value) return
 		isWatchingTouch = value
-
 	}
 
 	private fun windowTouchMoveHandler(event: TouchEvent) {
@@ -273,6 +301,8 @@ class DragAttachment(
 
 	private fun dispatch(signal: MutableSignal<DragEvent>) {
 		val e = dragEvent()
+		if (cancelled)
+			e.preventDefault()
 		signal.dispatch(e)
 		if (e.defaultPrevented)
 			isDragging = false
@@ -407,23 +437,25 @@ fun UiComponent.dragAttachment(): DragAttachment = createOrReuseAttachment(DragA
 }
 
 /**
- * Dispatched when the drag has begun.
+ * @see DragAttachment.dragStarted
  */
 val UiComponent.dragStarted: Signal<DragEvent>
 	get() = dragAttachment().dragStarted
 
 /**
- * Dispatched on each frame during a drag.
+ * @see DragAttachment.dragged
  */
 val UiComponent.dragged: Signal<DragEvent>
 	get() = dragAttachment().dragged
 
+/**
+ * @see DragAttachment.isDragging
+ */
 val UiComponent.isDragging: Boolean
 	get() = getAttachment<DragAttachment>(DragAttachment)?.isDragging ?: false
 
 /**
- * Dispatched when the drag has completed.
- * This may either be from the mouse/touch ending, or the target deactivating.
+ * @see DragAttachment.dragEnded
  */
 val UiComponent.dragEnded: Signal<DragEvent>
 	get() = dragAttachment().dragEnded
@@ -449,6 +481,10 @@ class DragWithAffordance(
 	 */
 	val dragged = signal<DragEvent>()
 
+	/**
+	 * Dispatched when the drag has completed.
+	 * This may either be from the mouse/touch ending.
+	 */
 	val dragEnded = signal<DragEvent>()
 
 	private var hasPassedAffordance = false
