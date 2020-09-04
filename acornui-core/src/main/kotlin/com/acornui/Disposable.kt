@@ -35,11 +35,9 @@ fun interface Disposable {
 	fun dispose()
 }
 
-infix fun Disposable.and(other: Disposable): Disposable {
-	return Disposable {
-		this.dispose()
-		other.dispose()
-	}
+infix fun Disposable.and(other: Disposable): Disposable = Disposable {
+	this.dispose()
+	other.dispose()
 }
 
 /**
