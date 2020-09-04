@@ -231,7 +231,4 @@ val WithEventTarget.contextMenuOpened
 val WithEventTarget.load
 	get() = event<Event>("load")
 
-val Window.beforeUnloaded: Signal<Event>
-	get() = asWithEventTarget().event("beforeunload")
-
 // TODO: Clipboard
