@@ -103,6 +103,7 @@ open class Drag(
 	private var startPositionClient = Vector2.ZERO
 	private var previousPositionClient = Vector2.ZERO
 	private var positionClient = Vector2.ZERO
+	private var startPositionLocal = Vector2.ZERO
 
 	private var touchId: Int = -1
 
@@ -119,6 +120,7 @@ open class Drag(
 		this.previousPositionClient = positionClient
 		this.positionClient = positionClient
 		this.touchId = touchId
+		startPositionLocal = target.clientToLocal(startPositionClient)
 		cancelled = false
 	}
 
@@ -253,6 +255,7 @@ open class Drag(
 		startPositionClient,
 		previousPositionClient,
 		positionClient,
+		startPositionLocal,
 		fromTouch,
 		touchId,
 		target,
@@ -341,6 +344,11 @@ class DragEvent(
 	val positionClient: Vector2,
 
 	/**
+	 * The starting position relative to the target element's bounding rectangle.
+	 */
+	val startPositionLocal: Vector2,
+
+	/**
 	 * True if initialized from a touch interaction, false if mouse.
 	 */
 	val fromTouch: Boolean,
@@ -360,18 +368,13 @@ class DragEvent(
 ) : Event() {
 
 	/**
-	 * The starting position relative to the target element's bounding rectangle.
-	 */
-	val startPositionLocal: Vector2 by lazy {
-		target.clientToLocal(startPositionClient)
-	}
-
-	/**
 	 * The position relative to the target element's bounding rectangle.
 	 */
 	val positionLocal: Vector2 by lazy {
 		target.clientToLocal(positionClient)
 	}
+
+	val positionClientDelta: Vector2 by lazy { positionClient - previousPositionClient }
 
 	override fun toString(): String {
 		return "DragEvent(startPosition=$startPositionClient, position=$positionClient, isTouch=$fromTouch, touchId=$touchId)"
