@@ -151,11 +151,11 @@ open class Drag(
 	private fun mouseDownHandler(event: MouseEvent) {
 		if (userIsActive || !allowMouseStart(event)) return
 		initStartVariables(vec2(event.clientX, event.clientY))
-		if (preventDefaultOnMouse)
-			event.preventDefault()
 		event.handle()
 		watchMouse()
 		frameHandler(event.isTrusted)
+		if (preventDefaultOnMouse && isDragging)
+			event.preventDefault()
 	}
 
 	private fun windowMouseUpHandler(event: MouseEvent) {
@@ -200,10 +200,10 @@ open class Drag(
 		val t = event.touches.first()
 		initStartVariables(vec2(t.clientX, t.clientY), t.identifier)
 		event.handle()
-		if (preventDefaultOnTouch)
-			event.preventDefault()
 		watchTouch()
 		frameHandler(event.isTrusted)
+		if (preventDefaultOnTouch && isDragging)
+			event.preventDefault()
 	}
 
 	private fun watchTouch() {
@@ -262,11 +262,6 @@ open class Drag(
 		isTrusted
 	)
 
-	private fun clickBlocker(event: MouseEvent) {
-		event.handle()
-		event.preventDefault() // Prevent focus change
-	}
-
 	/**
 	 * If true, drag operations are enabled.
 	 */
@@ -289,9 +284,11 @@ open class Drag(
 
 		// Set the next click to be marked as handled:
 		clickHandle = win.clicked.listen(
-			EventOptions(isCapture = true, isPassive = false),
-			handler = ::clickBlocker
-		)
+			EventOptions(isCapture = true, isPassive = false)
+		) { event ->
+			event.handle()
+			event.preventDefault() // Prevent focus change
+		}
 		frame.once { clickHandle?.dispose(); clickHandle = null }
 	}
 
