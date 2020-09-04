@@ -34,7 +34,7 @@ dependencies {
 	api("org.jetbrains.kotlinx:kotlinx-collections-immutable-js:0.3.2")
 
 	testImplementation(kotlin("test-js"))
-	testImplementation(devNpm("jsdom", version = "16.2.2")) // simulate window/document
+	testImplementation(devNpm("jsdom", version = "16.4.0")) // simulate window/document
 }
 
 kotlin {
