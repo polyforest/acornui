@@ -16,7 +16,6 @@
 
 package com.acornui.component.layout
 
-import com.acornui.css.Length
 import org.w3c.dom.css.CSSStyleDeclaration
 
 /**
@@ -86,7 +85,7 @@ interface Sizable {
 	 * @param width The explicit width. This will correspond to [CSSStyleDeclaration.width].
 	 * @param height The explicit height. This will correspond to [CSSStyleDeclaration.height].
 	 */
-	fun size(width: Length?, height: Length?)
+	fun size(width: String?, height: String?)
 
 	/**
 	 * Sets the explicit dimensions of this component in pixels.
@@ -97,11 +96,11 @@ interface Sizable {
 	/**
 	 * Sets the explicit width for this component. (A null value represents using the measured width)
 	 */
-	fun width(value: Length?)
+	fun width(value: String?)
 
 	/**
 	 * Sets the explicit height for this component. (A null value represents using the measured height)
 	 */
-	fun height(value: Length?)
+	fun height(value: String?)
 
 }

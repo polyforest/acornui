@@ -16,278 +16,221 @@
 
 package com.acornui.css
 
-import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-@Serializable(with = LengthSerializer::class)
-class Length(private val value: String) {
-
-	override fun toString(): String = value
-
-	operator fun minus(other: Length): Length {
-		return Length("calc($this - $other)")
-	}
-
-	operator fun plus(other: Length): Length {
-		return Length("calc($this + $other)")
-	}
-
-	operator fun times(other: Double): Length {
-		return Length("calc($this * $other)")
-	}
-
-	operator fun div(other: Double): Length {
-		return Length("calc($this / $other)")
-	}
-}
-
-@Serializer(forClass = Length::class)
-object LengthSerializer : KSerializer<Length> {
-
-	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Length", PrimitiveKind.STRING)
-
-	override fun serialize(encoder: Encoder, value: Length) {
-		encoder.encodeString(value.toString())
-	}
-
-	override fun deserialize(decoder: Decoder): Length {
-		return Length(decoder.decodeString())
-	}
-}
-
-
-fun String.toLengthOrNull(): Length? {
-	if (isEmpty()) return null
-	return Length(this)
-}
-
 /**
  * centimeters
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Double.cm: Length
-	get() = Length("${this}cm")
+val Double.cm: String
+	get() = "${this}cm"
 
 /**
  * millimeters
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Double.mm: Length
-	get() = Length("${this}mm")
+val Double.mm: String
+	get() = "${this}mm"
 
 /**
  * inches
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Double.inches: Length
-	get() = Length("${this}in")
+val Double.inches: String
+	get() = "${this}in"
 
 /**
  * pixels
  * Pixels (px) are relative to the viewing device. For low-dpi devices, 1px is one device pixel (dot) of the display.
  * For printers and high resolution screens 1px implies multiple device pixels.
  */
-val Double.px: Length
-	get() = Length("${this}px")
+val Double.px: String
+	get() = "${this}px"
 
 /**
  * points (1pt = 1/72 of 1in)
  *
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Double.pt: Length
-	get() = Length("${this}pt")
+val Double.pt: String
+	get() = "${this}pt"
 
 /**
  * picas (1pc = 12 pt)
  *
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Double.pc: Length
-	get() = Length("${this}pc")
+val Double.pc: String
+	get() = "${this}pc"
 
 /**
  * Relative to the font-size of the element (2em means 2 times the size of the current font)
  */
-val Double.em: Length
-	get() = Length("${this}em")
+val Double.em: String
+	get() = "${this}em"
 
 /**
  * Relative to the x-height of the current font (rarely used)
  */
-val Double.ex: Length
-	get() = Length("${this}ex")
+val Double.ex: String
+	get() = "${this}ex"
 
 /**
  * Relative to the width of the "0" (zero)
  */
-val Double.ch: Length
-	get() = Length("${this}ch")
+val Double.ch: String
+	get() = "${this}ch"
 
 /**
  * Relative to font-size of the root element
  */
-val Double.rem: Length
-	get() = Length("${this}rem")
+val Double.rem: String
+	get() = "${this}rem"
 
 /**
  * Relative to 1% of the width of the viewport
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Double.vw: Length
-	get() = Length("${this}vw")
+val Double.vw: String
+	get() = "${this}vw"
 
 /**
  * Relative to 1% of the height of the viewport
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Double.vh: Length
-	get() = Length("${this}vh")
+val Double.vh: String
+	get() = "${this}vh"
 
 /**
  * Relative to 1% of viewport's smaller dimension
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Double.vmin: Length
-	get() = Length("${this}vmin")
+val Double.vmin: String
+	get() = "${this}vmin"
 
 /**
  * Relative to 1% of viewport's larger dimension
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Double.vmax: Length
-	get() = Length("${this}vmax")
+val Double.vmax: String
+	get() = "${this}vmax"
 
 /**
  * Relative to the parent element
  */
-val Double.percent: Length
-	get() = Length("${this}%")
+val Double.percent: String
+	get() = "${this}%"
 
 
 // Int
 
 /**
  * centimeters
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Int.cm: Length
-	get() = Length("${this}cm")
+val Int.cm: String
+	get() = "${this}cm"
 
 /**
  * millimeters
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Int.mm: Length
-	get() = Length("${this}mm")
+val Int.mm: String
+	get() = "${this}mm"
 
 /**
  * inches
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Int.inches: Length
-	get() = Length("${this}in")
+val Int.inches: String
+	get() = "${this}in"
 
 /**
  * pixels
  * Pixels (px) are relative to the viewing device. For low-dpi devices, 1px is one device pixel (dot) of the display.
  * For printers and high resolution screens 1px implies multiple device pixels.
  */
-val Int.px: Length
-	get() = Length("${this}px")
+val Int.px: String
+	get() = "${this}px"
 
 /**
  * points (1pt = 1/72 of 1in)
  *
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Int.pt: Length
-	get() = Length("${this}pt")
+val Int.pt: String
+	get() = "${this}pt"
 
 /**
  * picas (1pc = 12 pt)
  *
- * Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can be
+ * Absolute String units are not recommended for use on screen, because screen sizes vary so much. However, they can be
  * used if the output medium is known, such as for print layout.
  */
-val Int.pc: Length
-	get() = Length("${this}pc")
+val Int.pc: String
+	get() = "${this}pc"
 
 /**
  * Relative to the font-size of the element (2em means 2 times the size of the current font)
  */
-val Int.em: Length
-	get() = Length("${this}em")
+val Int.em: String
+	get() = "${this}em"
 
 /**
  * Relative to the x-height of the current font (rarely used)
  */
-val Int.ex: Length
-	get() = Length("${this}ex")
+val Int.ex: String
+	get() = "${this}ex"
 
 /**
  * Relative to the width of the "0" (zero)
  */
-val Int.ch: Length
-	get() = Length("${this}ch")
+val Int.ch: String
+	get() = "${this}ch"
 
 /**
  * Relative to font-size of the root element
  */
-val Int.rem: Length
-	get() = Length("${this}rem")
+val Int.rem: String
+	get() = "${this}rem"
 
 /**
  * Relative to 1% of the width of the viewport
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Int.vw: Length
-	get() = Length("${this}vw")
+val Int.vw: String
+	get() = "${this}vw"
 
 /**
  * Relative to 1% of the height of the viewport
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Int.vh: Length
-	get() = Length("${this}vh")
+val Int.vh: String
+	get() = "${this}vh"
 
 /**
  * Relative to 1% of viewport's smaller dimension
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Int.vmin: Length
-	get() = Length("${this}vmin")
+val Int.vmin: String
+	get() = "${this}vmin"
 
 /**
  * Relative to 1% of viewport's larger dimension
  * Viewport = the browser window size. If the viewport is 50cm wide, 1vw = 0.5cm.
  */
-val Int.vmax: Length
-	get() = Length("${this}vmax")
+val Int.vmax: String
+	get() = "${this}vmax"
 
 /**
  * Relative to the parent element
  */
-val Int.percent: Length
-	get() = Length("${this}%")
-
-operator fun Double.times(other: Length): Length {
-	return Length("calc($this * $other)")
-}
-
-operator fun Double.div(other: Length): Length {
-	return Length("calc($this / $other)")
-}
+val Int.percent: String
+	get() = "${this}%"

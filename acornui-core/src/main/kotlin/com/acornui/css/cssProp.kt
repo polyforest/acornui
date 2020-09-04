@@ -30,5 +30,3 @@ fun cssVar(prop: KProperty<String>): String {
 inline fun css(@Language("CSS", prefix = "{ p: ", suffix = "; }") value: String): String {
 	return value
 }
-
-fun css(value: Length): String = value.toString()

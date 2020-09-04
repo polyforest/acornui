@@ -16,8 +16,6 @@
 
 package com.acornui.component.layout
 
-import com.acornui.css.Length
-
 /**
  * The API for reading and modifying a component's 3d transformation.
  * @author nbilyk
@@ -54,7 +52,7 @@ interface Positionable {
 	 * Sets the x position.
 	 * @see org.w3c.dom.css.CSSStyleDeclaration.left
 	 */
-	fun x(value: Length?)
+	fun x(value: String?)
 
 	/**
 	 * Sets the x position, in pixels.
@@ -65,7 +63,7 @@ interface Positionable {
 	 * Sets the y position.
 	 * @see org.w3c.dom.css.CSSStyleDeclaration.top
 	 */
-	fun y(value: Length?)
+	fun y(value: String?)
 
 	/**
 	 * Sets the y position, in pixels.
@@ -75,7 +73,7 @@ interface Positionable {
 	/**
 	 * Sets the position.
 	 */
-	fun position(x: Length?, y: Length?)
+	fun position(x: String?, y: String?)
 
 	/**
 	 * Sets the position as [Double.px] values.
@@ -104,8 +102,8 @@ inline class TransformOrigin(private val value: String) {
 fun String.toTransformOrigin(): TransformOrigin? =
 	if (isEmpty()) null else TransformOrigin(this)
 
-fun origin(x: Length, y: Length): TransformOrigin =
+fun origin(x: String, y: String): TransformOrigin =
 	TransformOrigin("$x $y")
 
-fun origin(x: Length, y: Length, z: Length): TransformOrigin =
+fun origin(x: String, y: String, z: String): TransformOrigin =
 	TransformOrigin("$x $y $z")

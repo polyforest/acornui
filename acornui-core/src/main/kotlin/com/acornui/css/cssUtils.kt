@@ -18,31 +18,6 @@ package com.acornui.css
 
 import org.intellij.lang.annotations.Language
 
-fun v(v: Length): String = v.toString()
-
-fun pad(all: Length): String = all.toString()
-
-fun pad(topAndBottom: Length, rightAndLeft: Length): String =
-	"$topAndBottom $rightAndLeft"
-
-fun pad(top: Length, rightAndLeft: Length, bottom: Length): String =
-	"$top $rightAndLeft $bottom"
-
-fun pad(top: Length, right: Length, bottom: Length, left: Length): String =
-	"$top $right $bottom $left"
-
-fun margin(all: Length): String =
-	all.toString()
-
-fun margin(topAndBottom: Length, rightAndLeft: Length): String =
-	"$topAndBottom $rightAndLeft"
-
-fun margin(top: Length, rightAndLeft: Length, bottom: Length): String =
-	"$top $rightAndLeft $bottom"
-
-fun margin(top: Length, right: Length, bottom: Length, left: Length): String =
-	"$top $right $bottom $left"
-
 fun prefix(@Language("CSS", prefix = "* { ", suffix = ": 0; }") prop: String, @Language("CSS", prefix = "* { --some-property: ", suffix = "; }") value: String, prefixes: List<String> = listOf("-moz-", "-webkit-", "-ms-", "")): String {
 	var str = ""
 	for (prefix in prefixes) {

@@ -26,7 +26,6 @@ import com.acornui.component.layout.Transform
 import com.acornui.component.layout.TransformOrigin
 import com.acornui.component.layout.toTransformOrigin
 import com.acornui.component.style.CssClass
-import com.acornui.css.Length
 import com.acornui.css.px
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
@@ -139,21 +138,21 @@ open class UiComponentImpl<T : HTMLElement>(
 	override val height: Double
 		get() = dom.offsetHeight.toDouble()
 
-	override fun width(value: Length?) {
+	override fun width(value: String?) {
 		if (value == null)
 			style.removeProperty("width")
 		else
 			style.width = value.toString()
 	}
 
-	override fun height(value: Length?) {
+	override fun height(value: String?) {
 		if (value == null)
 			style.removeProperty("height")
 		else
 			style.height = value.toString()
 	}
 
-	override fun size(width: Length?, height: Length?) {
+	override fun size(width: String?, height: String?) {
 		width(width)
 		height(height)
 	}
@@ -204,7 +203,7 @@ open class UiComponentImpl<T : HTMLElement>(
 	override val y: Double
 		get() = dom.offsetTop.toDouble()
 
-	override fun x(value: Length?) {
+	override fun x(value: String?) {
 		if (value == null)
 			dom.style.removeProperty("left")
 		else
@@ -213,7 +212,7 @@ open class UiComponentImpl<T : HTMLElement>(
 
 	final override fun x(value: Double?) = x(value?.px)
 
-	override fun y(value: Length?) {
+	override fun y(value: String?) {
 		if (value == null)
 			dom.style.removeProperty("top")
 		else
@@ -222,7 +221,7 @@ open class UiComponentImpl<T : HTMLElement>(
 
 	final override fun y(value: Double?) = y(value?.px)
 
-	final override fun position(x: Length?, y: Length?) {
+	final override fun position(x: String?, y: String?) {
 		x(x)
 		y(y)
 	}

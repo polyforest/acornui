@@ -18,13 +18,12 @@ package com.acornui.component.layout
 
 import com.acornui.component.ComponentInit
 import com.acornui.component.Div
-import com.acornui.css.Length
 import com.acornui.css.px
 import com.acornui.di.Context
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-inline fun Context.spacer(width: Length = 0.px, height: Length = 0.px, init: ComponentInit<Div> = {}): Div  {
+inline fun Context.spacer(width: String = 0.px, height: String = 0.px, init: ComponentInit<Div> = {}): Div  {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val s = Div(this)
 	s.size(width, height)

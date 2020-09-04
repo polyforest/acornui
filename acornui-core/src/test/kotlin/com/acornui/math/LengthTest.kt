@@ -24,8 +24,8 @@ import kotlin.test.assertEquals
 class LengthTest {
 
 	@Test fun value() {
-		assertEquals("3px", 3.px.toString())
-		assertEquals("5em", 5.em.toString())
+		assertEquals("3px", 3.px)
+		assertEquals("5em", 5.em)
 	}
 
 
