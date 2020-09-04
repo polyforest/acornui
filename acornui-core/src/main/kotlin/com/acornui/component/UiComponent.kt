@@ -86,6 +86,11 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	 * `dom.removeAttribute("data-$name")`
 	 */
 	fun removeDataAttribute(name: String)
+
+	/**
+	 * True if the component is added to the DOM.
+	 */
+	val isConnected: Boolean
 }
 
 private val cssPropertyRegex = Regex("""([a-zA-Z0-9\-_]+):(.*);""")

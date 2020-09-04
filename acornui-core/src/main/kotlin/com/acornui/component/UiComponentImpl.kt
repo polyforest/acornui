@@ -117,6 +117,9 @@ open class UiComponentImpl<T : HTMLElement>(
 		dom.removeAttribute("data-$name")
 	}
 
+	override val isConnected: Boolean
+		get() = dom.isConnected
+
 	//-----------------------------------------------
 
 	var tabIndex: Int?
