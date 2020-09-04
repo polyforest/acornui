@@ -27,7 +27,7 @@ import org.w3c.dom.events.MouseEvent
  */
 fun Element.clientToLocal(clientX: Double, clientY: Double): Vector2 {
 	val r = getBoundingClientRect()
-	return vec2(clientX - r.left, clientY - r.top)
+	return vec2(clientX - r.left + scrollLeft, clientY - r.top + scrollTop)
 }
 
 /**
@@ -43,7 +43,7 @@ fun UiComponent.clientToLocal(clientCoord: Vector2): Vector2 = dom.clientToLocal
  */
 fun Element.localToClient(localX: Double, localY: Double): Vector2 {
 	val r = getBoundingClientRect()
-	return vec2(localX + r.left, localY - r.top)
+	return vec2(localX + r.left - scrollLeft, localY - r.top - scrollTop)
 }
 
 /**
