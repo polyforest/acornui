@@ -82,7 +82,8 @@ object WindowPanelStyle {
 		addStyleToHead(
 			"""
 $windowPanel {
-	
+	display: flex;
+	flex-direction: column;
 }
 
 $titleBar {
@@ -123,6 +124,8 @@ $closeButton:active {
 
 $contents {
 	padding: ${CssProps.padding.v};
+	flex-grow: 1;
+	overflow: auto;
 }
 
 		"""
