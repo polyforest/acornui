@@ -99,6 +99,8 @@ $titleBar {
 
 $label {
 	width: 100%;
+	overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 $closeButton {
