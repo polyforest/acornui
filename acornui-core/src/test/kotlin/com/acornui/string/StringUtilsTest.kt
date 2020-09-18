@@ -133,4 +133,12 @@ class StringKtTest {
 		val index = str.indexOf("test")
 		assertEquals(RowAndColumn(3, 12), str.indexToRowAndColumn(index))
 	}
+
+	@Test
+	fun splitFirst() {
+		assertEquals("test" to "me", "test=me".splitFirst("="))
+		assertEquals("test" to "me=again", "test=me=again".splitFirst("="))
+		assertEquals("test=me" to "", "test=me".splitFirst("?"))
+		assertEquals("test" to "me:longer:again", "test:longer:me:longer:again".splitFirst(":longer:"))
+	}
 }

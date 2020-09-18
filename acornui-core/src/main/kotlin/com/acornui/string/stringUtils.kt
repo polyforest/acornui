@@ -266,3 +266,19 @@ fun String.truncate(limit: Int, truncationIndicator: String = "…"): String {
 	if (length <= limit) return this
 	return substring(0, limit - truncationIndicator.length) + truncationIndicator
 }
+
+/**
+ * Similar to [String.split] except only splits on the first instance of [delimiter].
+ *
+ * Examples:
+ * "test=me".splitFirst("=") // "test" to "me"
+ * "test=me=again".splitFirst("=") // "test" to "me=again"
+ * "test=me".splitFirst("?") // "test=me" to ""
+ *
+ * If [delimiter] is not found, [Pair.first] will be this string, and [Pair.second] will be empty.
+ */
+fun String.splitFirst(delimiter: String): Pair<String, String> {
+	val i = indexOf(delimiter)
+	return if (i == -1) this to ""
+	else substring(0, i) to substring(i + delimiter.length)
+}
