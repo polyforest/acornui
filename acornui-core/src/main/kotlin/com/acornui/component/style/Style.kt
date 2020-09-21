@@ -18,6 +18,7 @@ package com.acornui.component.style
 
 import com.acornui.component.UiComponent
 import com.acornui.string.toRadix
+import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -84,3 +85,10 @@ class CssClassToggle(private val styleTag: CssClass) : ReadWriteProperty<UiCompo
 }
 
 fun cssClassToggle(styleTag: CssClass) = CssClassToggle(styleTag)
+
+fun CSSStyleDeclaration.setOrRemoveProperty(property: String, value: String?) {
+	if (value == null)
+		removeProperty(property)
+	else
+		setProperty(property, value)
+}

@@ -45,7 +45,6 @@ object ComputedStyleChangedSignal : SignalImpl<Unit>() {
 
 					mutationRecord.addedNodes.asList().forEach { addedNode ->
 						if (addedNode.nodeName == "STYLE") {
-							println("addedNode $addedNode")
 							observeStyleElement(addedNode.unsafeCast<HTMLStyleElement>())
 							shouldDispatch = true
 						} else if (addedNode.nodeName == "LINK") {
