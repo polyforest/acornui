@@ -16,23 +16,16 @@
 
 package com.acornui.persistence
 
-import com.acornui.logging.Log
-import com.acornui.serialization.jsonParse
-import kotlinx.serialization.DeserializationStrategy
 import org.w3c.dom.Storage
 
 /**
- * A utility method for retrieving an item from the persistence map and deserializing it.
- * This will return null if there was an error in deserialization.
+ * Sets the storage item if value is not null, otherwise, removes the item.
  */
-fun <T> Storage.getItem(key: String, deserializationStrategy: DeserializationStrategy<T>, errorHandler: (e: Throwable) -> Unit = Log::error): T? {
-	if (!containsItem(key)) return null
-	return try {
-		jsonParse(deserializationStrategy, getItem(key)!!)
-	} catch (e: Throwable) {
-		errorHandler(e)
-		null
-	}
+fun Storage.setOrRemoveItem(key: String, value: String?) {
+	if (value == null)
+		removeItem(key)
+	else
+		setItem(key, value)
 }
 
 fun Storage.containsItem(key: String): Boolean = getItem(key) != null
