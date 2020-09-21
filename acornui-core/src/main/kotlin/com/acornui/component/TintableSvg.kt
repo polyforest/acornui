@@ -18,7 +18,7 @@ package com.acornui.component
 
 import com.acornui.asset.loadText
 import com.acornui.component.style.cssClass
-import com.acornui.component.style.cssProp
+import com.acornui.component.style.cssVar
 import com.acornui.css.percent
 import com.acornui.di.Context
 import com.acornui.dom.add
@@ -103,15 +103,15 @@ object TintableSvgStyle {
 	val tintableSvg by cssClass()
 	val icon by cssClass()
 
-	val tint by cssProp()
+	val tint by cssVar()
 
-	val luminanceSelf by cssProp()
-	val alphaSelf by cssProp()
+	val luminanceSelf by cssVar()
+	val alphaSelf by cssVar()
 
-	val hue by cssProp()
-	val saturation by cssProp()
-	val luminance by cssProp()
-	val alpha by cssProp()
+	val hue by cssVar()
+	val saturation by cssVar()
+	val luminance by cssVar()
+	val alpha by cssVar()
 
 	init {
 		addStyleToHead(

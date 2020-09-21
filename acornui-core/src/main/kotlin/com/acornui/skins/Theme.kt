@@ -20,143 +20,143 @@ package com.acornui.skins
 
 import com.acornui.component.Stage
 import com.acornui.component.style.CssClass
-import com.acornui.component.style.cssProp
+import com.acornui.component.style.cssVar
 
 /**
  * Common CssProps many components use.
  */
 object CssProps {
 
-	val scrollbarTrackColor by cssProp()
-	val scrollbarButtonColor by cssProp()
-	val scrollbarBorderRadius by cssProp()
-	val scrollbarCornerColor by cssProp()
-	val scrollbarThickness by cssProp()
+	val scrollbarTrackColor by cssVar()
+	val scrollbarButtonColor by cssVar()
+	val scrollbarBorderRadius by cssVar()
+	val scrollbarCornerColor by cssVar()
+	val scrollbarThickness by cssVar()
 
 	/**
 	 * The focus highlight color.
 	 */
-	val focus by cssProp()
+	val focus by cssVar()
 
-	val focusThickness by cssProp()
+	val focusThickness by cssVar()
 
 	/**
 	 * The accent for components when toggled/checked.
 	 */
-	val accentFill by cssProp()
+	val accentFill by cssVar()
 
 	/**
 	 * The border for components when mouse is over.
 	 */
-	val accentHover by cssProp()
+	val accentHover by cssVar()
 
 	/**
 	 * The border for components when mouse is down.
 	 */
-	val accentActive by cssProp()
+	val accentActive by cssVar()
 
 	/**
 	 * The fill for components when toggled/checked.
 	 */
-	val toggledInner by cssProp()
+	val toggledInner by cssVar()
 
 	/**
 	 * The fill for disabled components when toggled/checked.
 	 */
-	val toggledInnerDisabled by cssProp()
+	val toggledInnerDisabled by cssVar()
 
 	/**
 	 * The border for components.
 	 */
-	val borderColor by cssProp()
+	val borderColor by cssVar()
 
 	/**
 	 * The border for components when the component is disabled.
 	 */
-	val borderDisabled by cssProp()
+	val borderDisabled by cssVar()
 
 	/**
 	 * The background for components.
 	 */
-	val componentBackground by cssProp()
+	val componentBackground by cssVar()
 
 	/**
 	 * The background for disabled components.
 	 */
-	val disabled by cssProp()
+	val disabled by cssVar()
 
-	val disabledOpacity by cssProp()
+	val disabledOpacity by cssVar()
 
-	val disabledInner by cssProp()
+	val disabledInner by cssVar()
 
 	/**
 	 * The background of buttons and button-like components.
 	 */
-	val buttonBackground by cssProp()
+	val buttonBackground by cssVar()
 
 	/**
 	 * The :hover background of buttons and button-like components.
 	 */
-	val buttonBackgroundHover by cssProp()
+	val buttonBackgroundHover by cssVar()
 
 	/**
 	 * The [com.acornui.component.style.CommonStyleTags.active] background of buttons and button-like components.
 	 */
-	val buttonBackgroundActive by cssProp()
+	val buttonBackgroundActive by cssVar()
 
-	val buttonTextColor by cssProp()
+	val buttonTextColor by cssVar()
 
-	val buttonTextHoverColor by cssProp()
+	val buttonTextHoverColor by cssVar()
 
-	val buttonTextActiveColor by cssProp()
+	val buttonTextActiveColor by cssVar()
 
-	val borderThickness by cssProp()
+	val borderThickness by cssVar()
 
-	val componentPadding by cssProp()
+	val componentPadding by cssVar()
 
-	val borderRadius by cssProp()
+	val borderRadius by cssVar()
 
 	/**
 	 * The background for input components.
 	 */
-	val inputBackground by cssProp()
+	val inputBackground by cssVar()
 
 	/**
 	 * The text color for input components. Default is same as the button text color.
 	 */
-	val inputTextColor by cssProp()
+	val inputTextColor by cssVar()
 
 	/**
 	 * The border radius for input components.
 	 */
-	val inputBorderRadius by cssProp()
+	val inputBorderRadius by cssVar()
 
 	/**
 	 * The padding for input components.
 	 */
-	val inputPadding by cssProp()
+	val inputPadding by cssVar()
 
 	/**
 	 * The default gap between elements.
 	 */
-	val gap by cssProp()
+	val gap by cssVar()
 
 	/**
 	 * The default padding for containers.
 	 */
-	val padding by cssProp()
+	val padding by cssVar()
 
 	/**
 	 * A shadow for components.
 	 */
-	val componentShadow by cssProp()
+	val componentShadow by cssVar()
 
-	val strongWeight by cssProp()
+	val strongWeight by cssVar()
 
-	val dataRowEvenBackground by cssProp()
-	val dataRowOddBackground by cssProp()
+	val dataRowEvenBackground by cssVar()
+	val dataRowOddBackground by cssVar()
 
-	val loadingSpinnerColor by cssProp()
+	val loadingSpinnerColor by cssVar()
 }
 
 private object ThemeClass

@@ -22,14 +22,18 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class CssClass(val className: String) {
-
-	override fun toString(): String = ".$className"
+open class CssSelector(val selector: String) {
+	override fun toString(): String = selector
 }
 
-class CssProp(val propName: String) {
+open class CssProp(val name: String) {
 
-	override fun toString(): String = "--$propName"
+	override fun toString(): String = name
+}
+
+class CssClass(val className: String) : CssSelector(".$className")
+
+class CssVar(val propName: String) : CssProp("--$propName") {
 
 	val v: String = "var(--$propName)"
 }
@@ -50,15 +54,18 @@ fun cssClass(): ReadOnlyProperty<Any?, CssClass> {
 	}
 }
 
-fun cssProp(): ReadOnlyProperty<Any?, CssProp> {
+@Deprecated("", ReplaceWith("cssVar()"))
+fun cssProp(): ReadOnlyProperty<Any?, CssVar> = error("")
 
-	return object : ReadOnlyProperty<Any?, CssProp> {
+fun cssVar(): ReadOnlyProperty<Any?, CssVar> {
 
-		private var cssProp: CssProp? = null
+	return object : ReadOnlyProperty<Any?, CssVar> {
 
-		override fun getValue(thisRef: Any?, property: KProperty<*>): CssProp {
+		private var cssProp: CssVar? = null
+
+		override fun getValue(thisRef: Any?, property: KProperty<*>): CssVar {
 			if (cssProp == null)
-				cssProp = CssProp(property.name + "_" + (++cssUid).toRadix(36))
+				cssProp = CssVar(property.name + "_" + (++cssUid).toRadix(36))
 			return cssProp!!
 		}
 	}

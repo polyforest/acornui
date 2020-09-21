@@ -24,7 +24,7 @@ import com.acornui.Disposable
 import com.acornui.component.*
 import com.acornui.component.input.Button
 import com.acornui.component.style.cssClass
-import com.acornui.component.style.cssProp
+import com.acornui.component.style.cssVar
 import com.acornui.component.text.TextField
 import com.acornui.component.text.text
 import com.acornui.di.Context
@@ -418,7 +418,7 @@ object DataGridStyle {
 	val sortedAsc by cssClass()
 	val sortedDesc by cssClass()
 
-	val borderThickness by cssProp()
+	val borderThickness by cssVar()
 
 	init {
 
