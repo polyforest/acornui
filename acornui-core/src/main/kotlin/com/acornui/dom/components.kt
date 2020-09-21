@@ -224,3 +224,9 @@ inline fun Context.footer(init: ComponentInit<UiComponentImpl<HTMLElement>> = {}
  */
 inline fun fragment(init: ComponentInit<WithNode> = {}): WithNode =
 	document.createDocumentFragment().asWithNode().apply(init)
+
+/**
+ * Creates an HTMLDivElement.
+ */
+inline fun divElement(init: ComponentInit<HTMLDivElement> = {}): HTMLDivElement =
+	createElement("div", init)

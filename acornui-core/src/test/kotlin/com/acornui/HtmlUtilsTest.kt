@@ -19,6 +19,7 @@ package com.acornui
 import com.acornui.component.ComponentInit
 import com.acornui.dom.add
 import com.acornui.dom.createElement
+import com.acornui.dom.divElement
 import com.acornui.test.assertListEquals
 import com.acornui.test.initMockDom
 import org.w3c.dom.HTMLDivElement
@@ -52,8 +53,4 @@ class HtmlUtilsTest {
         div1.add(0, div6)
         assertListEquals(listOf(div6, div3, div5, div2, div4), div1.childNodes.asList())
     }
-}
-
-inline fun divElement(init: ComponentInit<HTMLDivElement> = {}): HTMLDivElement {
-    return createElement("div", init)
 }
