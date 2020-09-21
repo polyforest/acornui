@@ -190,11 +190,3 @@ fun String.cssToDouble(): Double {
 	if (isEmpty()) return 0.0
 	return substringBefore("px").toDoubleOrNull() ?: 0.0
 }
-
-fun CSSStyleDeclaration.applyCssLength(property: String, value: Double?) {
-	if (value == null || value == Double.MAX_VALUE) {
-		removeProperty(property)
-	} else {
-		setProperty(property, "${value}px")
-	}
-}
