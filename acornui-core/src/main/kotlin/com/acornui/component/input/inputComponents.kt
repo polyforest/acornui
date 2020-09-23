@@ -34,6 +34,7 @@ import com.acornui.css.prefix
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.createElement
+import com.acornui.dom.span
 import com.acornui.formatters.*
 import com.acornui.google.Icons
 import com.acornui.google.icon
@@ -867,17 +868,23 @@ inline fun Context.radio(group: RadioGroup, value: String, defaultChecked: Boole
 
 class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, createElement<Element>("label").unsafeCast<HTMLLabelElement>()) {
 
+	private val span = addChild(span())
+
+	/**
+	 * Sets the text within a span.
+	 */
 	override var label: String
-		get() = dom.innerText
+		get() = span.label
 		set(value) {
-			dom.innerText = value
+			span.label = value
 		}
 }
 
 inline fun Context.label(htmlFor: String = "", value: String = "", init: ComponentInit<LabelComponent> = {}): LabelComponent {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return LabelComponent(this).apply {
-		dom.htmlFor = htmlFor
+		if (htmlFor.isNotEmpty())
+			dom.htmlFor = htmlFor
 		label = value
 		init()
 	}
