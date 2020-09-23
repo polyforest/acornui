@@ -21,6 +21,7 @@ package com.acornui
 import com.acornui.component.Stage
 import com.acornui.component.stage
 import com.acornui.di.*
+import com.acornui.dom.element
 import kotlinx.browser.document
 import kotlinx.dom.clear
 import org.w3c.dom.HTMLElement
@@ -37,8 +38,7 @@ fun app(
 	dependencies: DependencyMap = emptyDependencies,
 	init: Stage.() -> Unit
 ) {
-	val rootElement = document.getElementById(rootId).unsafeCast<HTMLElement?>()
-		?: throw Exception("The root element with id $rootId could not be found.")
+	val rootElement = element<HTMLElement>(rootId)
 	rootElement.clear()
 	app(appConfig, rootElement, dependencies, init)
 }

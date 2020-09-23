@@ -75,3 +75,8 @@ val body: HTMLElement
 			document.appendChild(document.createElement("body").unsafeCast<HTMLBodyElement>())
 		return document.body!!
 	}
+
+fun <T : Element> element(id: String): T {
+	val element = document.getElementById(id) ?: throw Exception("Could not find element with id: \'$id\'")
+	return element.unsafeCast<T>()
+}
