@@ -1011,6 +1011,7 @@ class IconButton(owner: Context) : A(owner) {
 
 	init {
 		addClass(iconButton)
+		tabIndex = 0
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
