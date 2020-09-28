@@ -267,7 +267,7 @@ data class DateTimeParser(
 	}
 
 	companion object {
-		private val iso8601Regex = Regex(
+		val iso8601Regex = Regex(
 			"""(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?(?:T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{0,3}))?(?:([+\-])(1[0-4]|0?[0-9]):?([0-5][0-9])|Z)?)?""",
 			RegexOption.IGNORE_CASE
 		)
