@@ -175,6 +175,8 @@ fun (()->Any?).toManagedDisposable(): ManagedDisposable {
 	}
 }
 
+fun (()->Any?).toDisposable(): Disposable = Disposable { this@toDisposable() }
+
 /**
  * Used to mark parts of the Acorn API as not being ready for public.
  */
