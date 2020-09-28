@@ -71,6 +71,7 @@ kotlin {
 					useExperimentalAnnotation("kotlin.time.ExperimentalTime")
 					useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
 					useExperimentalAnnotation("kotlinx.coroutines.InternalCoroutinesApi")
+					useExperimentalAnnotation("kotlinx.serialization.ExperimentalSerializationApi")
 				}
 			}
 		}
