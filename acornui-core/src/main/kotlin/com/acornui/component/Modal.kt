@@ -22,6 +22,7 @@ import com.acornui.di.dependencyFactory
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.div
 import com.acornui.input.clicked
+import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -98,6 +99,7 @@ $modal {
 	align-items: center;
 	width: 100vw;
 	height: 100vh;
+	padding: ${CssProps.padding.v};
 }		
 		
 $stageWithModal > div:not($modal) {
