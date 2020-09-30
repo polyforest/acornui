@@ -92,7 +92,6 @@ fun <T : Job?> Owner.own(value: T) : T {
 	if (isDisposed) throw DisposedException()
 	if (value == null) return value
 	val disposedHandle = disposed.once {
-		println("Canceling job")
 		value.cancel(CancellationException("Owner disposed"))
 	}
 	value.invokeOnCompletion {
@@ -151,7 +150,7 @@ abstract class DisposableBase() : Disposable, Owner {
 /**
  * An object that may be disposed, and will automatically be disposed by its creator.
  */
-interface ManagedDisposable : Disposable
+fun interface ManagedDisposable : Disposable
 
 class DisposedException : IllegalStateException("This component has been disposed")
 
@@ -167,15 +166,9 @@ typealias EqualityCheck<E> = (a: E, b: E) -> Boolean
 /**
  * Converts a lambda to a [ManagedDisposable] object, where the lambda is called on [Disposable.dispose].
  */
-fun (()->Any?).toManagedDisposable(): ManagedDisposable {
-	return object : ManagedDisposable {
-		override fun dispose() {
-			this@toManagedDisposable()
-		}
-	}
-}
+fun (()->Any?).toManagedDisposable() = ManagedDisposable { this@toManagedDisposable() }
 
-fun (()->Any?).toDisposable(): Disposable = Disposable { this@toDisposable() }
+fun (()->Any?).toDisposable() = Disposable { this@toDisposable() }
 
 /**
  * Used to mark parts of the Acorn API as not being ready for public.

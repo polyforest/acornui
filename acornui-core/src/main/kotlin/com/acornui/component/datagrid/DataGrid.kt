@@ -258,7 +258,6 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 			createRow()
 		}, configure = { element: DataGridRow<E>, item: E, index: Int ->
 			element.data = item
-			contents.removeElement(element)
 			contents.addElement(index, element)
 		}, disposer = {
 			it.dispose()

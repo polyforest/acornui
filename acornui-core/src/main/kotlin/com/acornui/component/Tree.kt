@@ -203,7 +203,6 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 			child
 		}, configure = { element: Tree<T>, item: T, index: Int ->
 			element.data = item
-			subTreesContainer.removeElement(element)
 			subTreesContainer.addElement(index, element)
 		}, disposer = {
 			it.dispose()
