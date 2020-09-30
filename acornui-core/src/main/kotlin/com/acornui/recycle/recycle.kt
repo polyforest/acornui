@@ -16,6 +16,7 @@
 
 package com.acornui.recycle
 
+import com.acornui.Disposable
 import com.acornui.collection.copy
 import com.acornui.EqualityCheck
 import com.acornui.collection.pop
@@ -41,7 +42,7 @@ fun <E, T> recycle(
 		existingElements: MutableList<T>,
 		factory: (item: E, index: Int) -> T,
 		configure: (element: T, item: E, index: Int) -> Unit,
-		disposer: (element: T) -> Unit,
+		disposer: (element: T) -> Unit = { (it as? Disposable)?.dispose() },
 		retriever: (element: T) -> E?,
 		equality: EqualityCheck<E?> = { a, b -> a == b },
 		alwaysRecycle: Boolean = true
