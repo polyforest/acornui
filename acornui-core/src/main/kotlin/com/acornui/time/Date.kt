@@ -25,6 +25,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.time.Duration
+import kotlin.time.milliseconds
 import kotlin.js.Date as JsDate
 
 /**
@@ -377,3 +378,17 @@ object DateSerializer : KSerializer<Date> {
 operator fun Date.plus(duration: Duration): Date {
 	return Date(time + duration.toLongMilliseconds())
 }
+
+/**
+ * Returns the duration delta between two dates.
+ */
+operator fun Date.minus(other: Date): Duration {
+	return (time - other.time).milliseconds
+}
+
+fun JsDate?.toDate(): Date? {
+	if (this == null) return null
+	return Date(this)
+}
+
+fun JsDate.toDate(): Date = Date(this)
