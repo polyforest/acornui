@@ -32,6 +32,7 @@ import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing
 import com.acornui.math.lerp
+import com.acornui.observe.DataChangeEvent
 import com.acornui.recycle.recycle
 import com.acornui.signal.*
 import com.acornui.skins.CssProps
@@ -117,8 +118,6 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 			}
 			toggledChanged.dispatch(Unit)
 		}
-
-	class DataChangeEvent<T>(val oldData: T, val newData: T)
 
 	/**
 	 * This tree's [data] has changed.

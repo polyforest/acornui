@@ -31,6 +31,7 @@ import com.acornui.di.Context
 import com.acornui.dom.*
 import com.acornui.google.Icons
 import com.acornui.input.*
+import com.acornui.observe.DataChangeEvent
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.recycle
 import com.acornui.signal.SignalSubscription
@@ -50,12 +51,10 @@ import com.acornui.dom.footer as footerEl
 
 open class DataGrid<E>(owner: Context) : Div(owner) {
 
-	class DataChangeEvent<E>(val oldData: List<E>, val newData: List<E>)
-
 	/**
 	 * This grid's [data] has changed.
 	 */
-	val dataChanged = signal<DataChangeEvent<E>>()
+	val dataChanged = signal<DataChangeEvent<List<E>>>()
 
 	class RowSubmittedEvent<E>(
 
@@ -557,8 +556,6 @@ inline fun <E> Context.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> 
 
 open class DataGridRow<E>(owner: Context) : Div(owner) {
 
-	class DataChangeEvent<E>(val old: E?, val new: E?)
-
 	val dataChanged = signal<DataChangeEvent<E>>()
 
 	init {
@@ -580,8 +577,8 @@ open class DataGridRow<E>(owner: Context) : Div(owner) {
 	 * Invokes the callback with the new data when this row's data has changed.
 	 */
 	fun data(callback: (E) -> Unit): SignalSubscription = dataChanged.listen {
-		if (it.new != null)
-			callback(it.new)
+		if (it.newValue != null)
+			callback(it.newValue)
 	}
 }
 
