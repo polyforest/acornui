@@ -19,6 +19,10 @@ package com.acornui.component
 import com.acornui.dom.add
 import com.acornui.dom.remove
 import com.acornui.dom.removeAt
+import com.acornui.frame
+import com.acornui.signal.once
+import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 
 /**
@@ -28,15 +32,21 @@ class DomChildList(private val dom: Node) : AbstractMutableList<WithNode>() {
 
 	override fun add(index: Int, element: WithNode) {
 		check(index in 0..size) { "index is out of bounds." }
-		if (element.parent === dom) {
-			// Reorder child.
+		if (element.parent?.dom === dom) {
+			// Reorder child without losing focus.
 			val oldIndex = indexOf(element)
 			val newIndex = if (index > oldIndex) index - 1 else index
+			val previouslyActiveElement = document.activeElement as? HTMLElement?
 			dom.remove(element.dom)
 			dom.add(newIndex, element.dom)
+			if (previouslyActiveElement != null) {
+				frame.once {
+					previouslyActiveElement.focus()
+				}
+			}
 		} else {
 			check(element.parent == null) {
-				"Attempted adding child <${element}> to $dom but was already a child of <${element.parent}>. Remove child first."
+				"Attempted adding child <${element}> to $this but was already a child of <${element.parent}>. Remove child first."
 			}
 			dom.add(index, element.dom)
 		}
