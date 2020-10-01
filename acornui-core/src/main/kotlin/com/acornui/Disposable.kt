@@ -64,6 +64,15 @@ interface Owner {
 fun Owner.own(value: ManagedDisposable) : Nothing = error("Cannot own a managed disposable")
 
 /**
+ * When creating a [ManagedDisposable], it can be owned with this.
+ */
+fun <T : ManagedDisposable> Owner.ownUnsafe(value: T) : T  {
+	if (isDisposed) throw DisposedException()
+	disposed.listen(value::dispose.as1)
+	return value
+}
+
+/**
  * When this object is disposed, also dispose the given [Disposable] value.
  * If the provided [value] is disposed first, the handle will be released.
  */
@@ -73,6 +82,20 @@ fun <T> Owner.own(value: T) : T where T : Disposable?, T : Owner {
 	val handle = disposed.listen(value::dispose.as1)
 	value.disposed.listen(handle::dispose.as1)
 	return value
+}
+
+/**
+ * When this object is disposed, invokes the given callback.
+ * @return Returns a [ManagedDisposable] where if disposed, invokes the callback and removes
+ * management.
+ */
+fun Owner.own(value: ()->Unit) : ManagedDisposable {
+	if (isDisposed) throw DisposedException()
+	val handle = disposed.listen(value.as1)
+	return ManagedDisposable {
+		handle.dispose()
+		value()
+	}
 }
 
 /**
