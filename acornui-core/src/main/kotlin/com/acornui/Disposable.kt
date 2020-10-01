@@ -65,6 +65,7 @@ fun Owner.own(value: ManagedDisposable) : Nothing = error("Cannot own a managed 
 
 /**
  * When creating a [ManagedDisposable], it can be owned with this.
+ * This should only be used when creating a [ManagedDisposable] instance that has yet to be managed.
  */
 fun <T : ManagedDisposable> Owner.ownUnsafe(value: T) : T  {
 	if (isDisposed) throw DisposedException()
