@@ -309,14 +309,34 @@ data class Color(
 		}
 
 		/**
-		 * Returns a new color from a hex string with the format RRGGBBAA.
+		 * Returns a new color from a hex string with the possible formats:
+		 * RGB
+		 * RGBA
+		 * RRGGBB
+		 * RRGGBBAA
+		 *
+		 * If the string length is less than 3, black is returned, if the string length is greater than 8, the extra
+		 * characters are ignored.
 		 */
 		fun fromRgbaStr(hex: String): Color {
-			val r = hex.substring(0, 2).toIntOrNull(16) ?: 0
-			val g = hex.substring(2, 4).toIntOrNull(16) ?: 0
-			val b = hex.substring(4, 6).toIntOrNull(16) ?: 0
-			val a = if (hex.length != 8) 255 else hex.substring(6, 8).toIntOrNull(16) ?: 0
-			return Color(r.toDouble() / 255.0, g.toDouble() / 255.0, b.toDouble() / 255.0, a.toDouble() / 255.0)
+			val len = hex.length
+			return when {
+				len < 3 -> BLACK
+				len <= 4 -> {
+					val r = hex.substring(0, 1).repeat(2).toIntOrNull(16) ?: 0
+					val g = hex.substring(1, 2).repeat(2).toIntOrNull(16) ?: 0
+					val b = hex.substring(2, 3).repeat(2).toIntOrNull(16) ?: 0
+					val a = if (len < 4) 255 else hex.substring(3, 4).repeat(2).toIntOrNull(16) ?: 0
+					Color(r.toDouble() / 255.0, g.toDouble() / 255.0, b.toDouble() / 255.0, a.toDouble() / 255.0)
+				}
+				else -> {
+					val r = hex.substring(0, 2).toIntOrNull(16) ?: 0
+					val g = hex.substring(2, 4).toIntOrNull(16) ?: 0
+					val b = hex.substring(4, 6).toIntOrNull(16) ?: 0
+					val a = if (len < 8) 255 else hex.substring(6, 8).toIntOrNull(16) ?: 0
+					Color(r.toDouble() / 255.0, g.toDouble() / 255.0, b.toDouble() / 255.0, a.toDouble() / 255.0)
+				}
+			}
 		}
 
 		fun rgb888(r: Double, g: Double, b: Double): Int {

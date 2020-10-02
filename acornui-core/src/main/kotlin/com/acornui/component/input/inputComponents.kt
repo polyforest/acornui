@@ -38,6 +38,7 @@ import com.acornui.dom.span
 import com.acornui.formatters.*
 import com.acornui.google.Icons
 import com.acornui.google.icon
+import com.acornui.graphic.Color
 import com.acornui.input.*
 import com.acornui.number.zeroPadding
 import com.acornui.observe.Observable
@@ -513,9 +514,18 @@ inline fun Context.checkbox(defaultChecked: Boolean = false, init: ComponentInit
 	}
 }
 
-inline fun Context.colorInput(init: ComponentInit<InputImpl> = {}): InputImpl {
+open class ColorInput(owner: Context) : InputImpl(owner, "color") {
+
+	var valueAsColor: Color?
+		get() = if (dom.value.length < 3) null else Color.fromStr(dom.value)
+		set(value) {
+			dom.value = value?.toRgbaString() ?: ""
+		}
+}
+
+inline fun Context.colorInput(init: ComponentInit<ColorInput> = {}): ColorInput {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return InputImpl(this, "color").apply(init)
+	return ColorInput(this).apply(init)
 }
 
 open class DateInput(owner: Context) : InputImpl(owner, "date") {
