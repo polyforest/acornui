@@ -450,13 +450,23 @@ private fun Double.toOctet(): String {
 	return clamp(this * 255, 0.0, 255.0).toInt().toRadix(16).padStart(2, '0')
 }
 
-val colorValidationRegex = Regex("""^(#|0x)?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})?${'$'}""")
+val rgbValidationRegex = Regex("""^(#|0x)?[\da-fA-F]{3,8}${'$'}""")
 
 /**
  * First validates that the given string is parsable, and returns the [fromStr] value if it is.
  * If the string is not a valid color, returns null.
+ * This currently only works with rgb and rgba formats.
  */
-fun String.toColorOrNull(): Color? {
-	return if (colorValidationRegex.matches(this)) fromStr(this)
+fun String?.toColorOrNull(): Color? {
+	if (this == null) return null
+	return if (rgbValidationRegex.matches(this)) fromStr(this)
 	else null
+}
+
+/**
+ * @see Color.fromStr
+ */
+fun String?.toColor(): Color? {
+	if (this == null) return null
+	return fromStr(this)
 }

@@ -58,11 +58,17 @@ class ColorTest {
 	}
 
 	@Test fun toColorOrNull() {
+		assertEquals(null, "1".toColorOrNull())
+		assertEquals(null, "12".toColorOrNull())
 		assertEquals(null, "asdf".toColorOrNull())
 		assertEquals(Color(1.0, 1.0, 1.0, 1.0), "FFFFFFFF".toColorOrNull())
-		assertEquals(Color(0x334455FF), "334455".toColorOrNull())
-		assertEquals(Color(0x334455FF), "0x334455".toColorOrNull())
-		assertEquals(Color(0x334455FF), "#334455".toColorOrNull())
+		assertEquals(Color(0x112233aa), "0x123a".toColorOrNull())
+		assertEquals(Color(0x112233aa), "#123a".toColorOrNull())
+		assertEquals(Color(0x112233aa), "123a".toColorOrNull())
+		assertEquals(Color(0x112233ff), "123".toColorOrNull())
+		assertEquals(Color(0x334455ff), "334455".toColorOrNull())
+		assertEquals(Color(0x334455ff), "0x334455".toColorOrNull())
+		assertEquals(Color(0x334455ff), "#334455".toColorOrNull())
 		assertEquals(Color(0x33445533), "#33445533".toColorOrNull())
 	}
 
@@ -81,7 +87,7 @@ class ColorTest {
 		assertEquals("00ff00ff", Color.GREEN.toRgbaString())
 		assertEquals("12345678", Color(0x12345678).toRgbaString())
 	}
-	
+
 	@Test fun fromRgbaString() {
 		assertEquals(Color(0x12345678), Color.fromRgbaStr("12345678"))
 		assertEquals(Color(0x11223344), Color.fromRgbaStr("11223344"))
