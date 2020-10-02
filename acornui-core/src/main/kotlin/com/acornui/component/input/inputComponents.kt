@@ -519,7 +519,7 @@ open class ColorInput(owner: Context) : InputImpl(owner, "color") {
 	var valueAsColor: Color?
 		get() = if (dom.value.length < 3) null else Color.fromStr(dom.value)
 		set(value) {
-			dom.value = value?.toRgbaString() ?: ""
+			dom.value = if (value == null) "" else "#" + value.toRgbString()
 		}
 }
 
