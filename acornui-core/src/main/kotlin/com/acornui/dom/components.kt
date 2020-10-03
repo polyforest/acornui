@@ -43,7 +43,7 @@ inline fun Context.div(init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}
 inline fun Context.span(text: String = "", init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = {}): UiComponentImpl<HTMLSpanElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return component("span") {
-		label = text
+		if (text.isNotEmpty()) +text
 		init()
 	}
 }
@@ -96,9 +96,60 @@ inline fun Context.ol(init: ComponentInit<UiComponentImpl<HTMLOListElement>> = {
 	return component("ol", init)
 }
 
-inline fun Context.li(init: ComponentInit<UiComponentImpl<HTMLLIElement>> = {}): UiComponentImpl<HTMLLIElement> {
+inline fun Context.li(text: String = "", init: ComponentInit<UiComponentImpl<HTMLLIElement>> = {}): UiComponentImpl<HTMLLIElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("li", init)
+	return component("li") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h1(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h1") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h2(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h2") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h3(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h3") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h4(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h4") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h5(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h6") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
+
+inline fun Context.h6(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return component("h6") {
+		if (text.isNotEmpty()) +text
+		init()
+	}
 }
 
 open class Img(owner: Context) : UiComponentImpl<Image>(owner, Image()) {
