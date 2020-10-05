@@ -19,6 +19,7 @@ package com.acornui.i18n
 import com.acornui.component.UiComponent
 import com.acornui.component.UiComponentImpl
 import com.acornui.own
+import com.acornui.string.replaceTokens
 import kotlinx.coroutines.launch
 
 //---------------------------------------------------------------------------
@@ -30,10 +31,11 @@ import kotlinx.coroutines.launch
  *
  * @param key The resource key to query on the default i18n bundle.
  * @param bundleName The name of the resource bundle (Default [i18nBundleName])
+ * @param tokens Replacement tokens for the localized string. - [replaceTokens]
  * @return Returns the coroutine Job. This will be cancelled automatically if the host component is disposed.
  */
-fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleName) = own(launch {
-	label = string(key, bundleName)
+fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleName, tokens: Array<Any> = emptyArray()) = own(launch {
+	label = string(key, bundleName).replaceTokens(*tokens)
 })
 
 /**
@@ -41,8 +43,9 @@ fun UiComponentImpl<*>.labelI18n(key: String, bundleName: String = i18nBundleNam
  *
  * @param key The resource key to query on the default i18n bundle.
  * @param bundleName The name of the resource bundle (Default [i18nBundleName])
+ * @param tokens Replacement tokens for the localized string. - [replaceTokens]
  * @return Returns the coroutine Job. This will be cancelled automatically if the host component is disposed.
  */
-fun UiComponent.titleI18n(key: String, bundleName: String = i18nBundleName) = own(launch {
-	title = string(key, bundleName)
+fun UiComponent.titleI18n(key: String, bundleName: String = i18nBundleName, tokens: Array<Any> = emptyArray()) = own(launch {
+	title = string(key, bundleName).replaceTokens(*tokens)
 })
