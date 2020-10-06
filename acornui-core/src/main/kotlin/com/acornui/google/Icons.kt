@@ -21,12 +21,14 @@ package com.acornui.google
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.WithNode
+import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.CssClass
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.*
 import com.acornui.google.IconButtonStyle.iconButton
 import com.acornui.google.MaterialIconsCss.materialIconsStyleTag
+import com.acornui.properties.afterChange
 import com.acornui.skins.CssProps
 import org.w3c.dom.HTMLElement
 import kotlin.contracts.InvocationKind
@@ -1009,6 +1011,10 @@ class IconButton(owner: Context) : A(owner) {
 			labelComponent.style.display = if (value.isEmpty()) "none" else "inline-block"
 		}
 
+	var disabled: Boolean by afterChange(false) {
+		toggleClass(CommonStyleTags.disabled)
+	}
+
 	init {
 		addClass(iconButton)
 		tabIndex = 0
@@ -1034,11 +1040,19 @@ object IconButtonStyle {
 $iconButton {
 	display: flex;
 	align-items: center;
+	-webkit-user-select: none;        
+	-moz-user-select: none;
+	user-select: none;
 }
 
 $label {
 	margin-left: ${CssProps.gap.v};
 	display: none;
+}
+
+$iconButton${CommonStyleTags.disabled} {
+	color: ${CssProps.toggledInnerDisabled.v};
+	pointer-events: none;
 }
 			""")
 	}

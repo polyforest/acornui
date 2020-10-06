@@ -346,7 +346,9 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 		tabIndex = -1
 	})
 
-	val labelComponent = addChild(text())
+	val labelComponent = addChild(text {
+		addClass(ButtonStyle.label)
+	})
 
 	var type: String
 		get() = inputComponent.dom.type
@@ -422,6 +424,7 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 object ButtonStyle {
 
 	val button by cssClass()
+	val label by cssClass()
 
 	init {
 		addStyleToHead("""
@@ -440,6 +443,7 @@ $button {
 	/*text-shadow: 1px 1px 1px #0004;*/
 	border-style: solid;
 	user-select: none;
+	-webkit-user-select: none;
 	-moz-user-select: none;
 	text-align: center;
 	vertical-align: middle;
