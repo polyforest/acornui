@@ -27,7 +27,6 @@ import com.acornui.di.Context
 import com.acornui.dom.a
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.div
-import com.acornui.formatters.StringFormatter
 import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing
@@ -214,53 +213,6 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	protected open fun createChild(data: T): Tree<T> = tree(data)
 
 	/**
-	 * Sets the method to format a label from the data value.
-	 * @see formatter
-	 */
-	var formatter: StringFormatter<T>? = null
-		set(value) {
-			field = value
-			refreshLabel()
-		}
-
-	private fun refreshLabel() {
-		label = formatter?.format(data) ?: ""
-	}
-
-	/**
-	 * Sets the data to label formatter.
-	 *
-	 * This should typically be set on each tree node using the [all] block.
-	 * Example:
-	 * ```
-	 * +tree {
-	 * 	all {
-	 * 		formatter { data -> data?.label ?: "null" }
-	 * 	}
-	 * }
-	 * ```
-	 *
-	 * Another way to do this, for example to add an icon to a node, would be to bind to data changes:
-	 * ```
-	 * +tree(data) {
-	 *   all { // This tree node and all descendents
-	 *     bindData { newData ->
-	 *       labelComponent.apply {
-	 *         clearElements(dispose = true)
-	 *         +icon(newData.icon)
-	 *         +span(newData.label)*
-	 *       }
-	 *     }
-	 *   }
-	 * }
-	 * ```
-	 *
-	 */
-	fun formatter(value: StringFormatter<T>) {
-		formatter = value
-	}
-
-	/**
 	 * Sets [org.w3c.dom.HTMLElement.innerText] property on [labelComponent].
 	 */
 	override var label: String
@@ -272,7 +224,6 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	init {
 		addClass(TreeStyle.tree)
 		bindData {
-			refreshLabel()
 			if (it.children.isEmpty())
 				inner.removeClass(TreeStyle.withChildren)
 			else
