@@ -26,7 +26,10 @@ import com.acornui.input.ChangeSignal
 import com.acornui.observe.Observable
 import com.acornui.own
 import com.acornui.recycle.Clearable
-import com.acornui.signal.*
+import com.acornui.signal.Signal
+import com.acornui.signal.SignalImpl
+import com.acornui.signal.SignalSubscription
+import com.acornui.signal.event
 import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.ValidityState

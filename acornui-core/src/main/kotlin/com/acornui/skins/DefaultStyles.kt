@@ -179,6 +179,10 @@ ${TextStyleTags.info} {
 	color: #262;
 }
 
+hr {
+	width: 100%;
+}
+
 		""", priority = -1.0)
 	}
 }
