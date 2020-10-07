@@ -21,8 +21,13 @@
 package com.acornui.component.input
 
 import com.acornui.component.ComponentInit
- import com.acornui.component.style.cssClass
+import com.acornui.component.style.cssClass
 import com.acornui.di.Context
+import com.acornui.i18n.i18nBundleName
+import com.acornui.i18n.string
+import com.acornui.own
+import com.acornui.string.replaceTokens
+import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -408,3 +413,15 @@ object RestrictPatterns {
 	val FLOAT = Regex("[^0-9+-.]")
 	val COLOR = Regex("[^0-9a-fA-F#x]")
 }
+
+/**
+ * Sets the [TextInputBase.placeholder] on this component to the i18n value.
+ *
+ * @param key The resource key to query on the default i18n bundle.
+ * @param bundleName The name of the resource bundle (Default [i18nBundleName])
+ * @param tokens Replacement tokens for the localized string. - [replaceTokens]
+ * @return Returns the coroutine Job. This will be cancelled automatically if the host component is disposed.
+ */
+fun TextInputBase.placeholderI18n(key: String, bundleName: String = i18nBundleName, tokens: Array<Any> = emptyArray()) = own(launch {
+	placeholder = string(key, bundleName).replaceTokens(*tokens)
+})
