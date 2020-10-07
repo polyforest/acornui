@@ -215,5 +215,9 @@ fun Owner.onDisposed(callback: () -> Unit): ManagedDisposable {
 			callback()
 			handle.dispose()
 		}
+
+		init {
+			this@onDisposed.ownUnsafe(this)
+		}
 	}
 }
