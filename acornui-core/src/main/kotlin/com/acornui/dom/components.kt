@@ -138,7 +138,7 @@ inline fun Context.h4(text: String = "", init: ComponentInit<UiComponentImpl<HTM
 
 inline fun Context.h5(text: String = "", init: ComponentInit<UiComponentImpl<HTMLHeadingElement>> = {}): UiComponentImpl<HTMLHeadingElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("h6") {
+	return component("h5") {
 		if (text.isNotEmpty()) +text
 		init()
 	}
