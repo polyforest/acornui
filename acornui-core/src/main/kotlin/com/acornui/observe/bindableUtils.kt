@@ -18,7 +18,7 @@ package com.acornui.observe
 
 import com.acornui.Disposable
 import com.acornui.ManagedDisposable
-import com.acornui.di.Context
+import com.acornui.Owner
 import com.acornui.onDisposed
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -31,7 +31,7 @@ import kotlin.contracts.contract
  * @param bindable The bindable object to watch for changes.
  * @return Returns a [ManagedDisposable] object that will remove the callback on [Disposable.dispose]
  */
-fun Context.bind(bindable: Bindable, callback: () -> Unit): ManagedDisposable {
+fun Owner.bind(bindable: Bindable, callback: () -> Unit): ManagedDisposable {
 	contract { callsInPlace(callback, InvocationKind.AT_LEAST_ONCE) }
 	val binding = bindable.addBinding(callback)
 	callback()
@@ -43,7 +43,7 @@ fun Context.bind(bindable: Bindable, callback: () -> Unit): ManagedDisposable {
  * @return If [bindable] is null, returns null, otherwise returns a [Disposable] object that will remove the callback
  * on [Disposable.dispose]
  */
-fun Context.bind(bindable: Bindable?, callback: () -> Unit): ManagedDisposable? {
+fun Owner.bind(bindable: Bindable?, callback: () -> Unit): ManagedDisposable? {
 	if (bindable == null) return null
 	return bind(bindable, callback)
 }
