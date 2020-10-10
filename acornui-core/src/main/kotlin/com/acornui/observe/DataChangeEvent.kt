@@ -16,4 +16,5 @@
 
 package com.acornui.observe
 
+@Deprecated("", ReplaceWith("ChangeEvent<E>"))
 class DataChangeEvent<E>(val oldValue: E?, val newValue: E?)

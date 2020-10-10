@@ -31,7 +31,7 @@ import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing
 import com.acornui.math.lerp
-import com.acornui.observe.DataChangeEvent
+import com.acornui.observe.ChangeEvent
 import com.acornui.recycle.recycle
 import com.acornui.signal.*
 import com.acornui.skins.CssProps
@@ -121,7 +121,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 	/**
 	 * This tree's [data] has changed.
 	 */
-	val dataChanged = signal<DataChangeEvent<T>>()
+	val dataChanged = signal<ChangeEvent<T>>()
 
 	/**
 	 * This tree's node data.
@@ -135,7 +135,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 			val old = field
 			if (old == value) return
 			field = value
-			dataChanged.dispatch(DataChangeEvent(old, value))
+			dataChanged.dispatch(ChangeEvent(old, value))
 		}
 
 	/**

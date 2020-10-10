@@ -31,7 +31,7 @@ import com.acornui.di.Context
 import com.acornui.dom.*
 import com.acornui.google.Icons
 import com.acornui.input.*
-import com.acornui.observe.DataChangeEvent
+import com.acornui.observe.ChangeEvent
 import com.acornui.recycle.Clearable
 import com.acornui.recycle.recycle
 import com.acornui.signal.SignalSubscription
@@ -54,7 +54,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	/**
 	 * This grid's [data] has changed.
 	 */
-	val dataChanged = signal<DataChangeEvent<List<E>>>()
+	val dataChanged = signal<ChangeEvent<List<E>>>()
 
 	class RowSubmittedEvent<E>(
 
@@ -118,7 +118,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 			val old = field
 			if (old == value) return
 			field = value
-			dataChanged.dispatch(DataChangeEvent(old, value))
+			dataChanged.dispatch(ChangeEvent(old, value))
 			refreshRows()
 		}
 
@@ -555,7 +555,7 @@ inline fun <E> Context.dataGrid(data: List<E>, init: ComponentInit<DataGrid<E>> 
 
 open class DataGridRow<E>(owner: Context) : Div(owner) {
 
-	val dataChanged = signal<DataChangeEvent<E>>()
+	val dataChanged = signal<ChangeEvent<E?>>()
 
 	init {
 		addClass(DataGridStyle.rowStyle)
@@ -569,15 +569,15 @@ open class DataGridRow<E>(owner: Context) : Div(owner) {
 			val old = field
 			if (old == value) return
 			field = value
-			dataChanged.dispatch(DataChangeEvent(old, value))
+			dataChanged.dispatch(ChangeEvent(old, value))
 		}
 
 	/**
 	 * Invokes the callback with the new data when this row's data has changed.
 	 */
 	fun data(callback: (E) -> Unit): SignalSubscription = dataChanged.listen {
-		if (it.newValue != null)
-			callback(it.newValue)
+		if (it.newData != null)
+			callback(it.newData)
 	}
 }
 

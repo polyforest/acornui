@@ -131,6 +131,18 @@ open class UiComponentImpl<T : HTMLElement>(
 				dom.tabIndex = value
 		}
 
+	fun focus() {
+		dom.focus()
+	}
+
+	fun blur() {
+		dom.blur()
+	}
+
+	fun forceSpellCheck() {
+		dom.forceSpellCheck()
+	}
+
 	//-----------------------------------------------
 	// Layout properties
 	//-----------------------------------------------

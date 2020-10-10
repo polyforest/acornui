@@ -18,9 +18,25 @@ package com.acornui.observe
 
 import com.acornui.Disposable
 import com.acornui.signal.Signal
+import com.acornui.signal.SignalImpl
 import com.acornui.signal.unmanagedSignal
+import kotlin.properties.ObservableProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
-class ChangedEvent<out T>(val oldData: T, val newData: T)
+class ChangeEvent<out T>(val oldData: T, val newData: T)
+
+fun <T> observable(initialValue: T, signal: SignalImpl<ChangeEvent<T>>): ReadWriteProperty<Any?, T> =
+	object : ObservableProperty<T>(initialValue) {
+
+		override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean =
+			!signal.isDispatching
+
+		override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+			if (oldValue != newValue)
+				signal.dispatch(ChangeEvent(oldValue, newValue))
+		}
+	}
 
 interface DataBindingRo<out T> {
 
@@ -28,7 +44,7 @@ interface DataBindingRo<out T> {
 	 * Dispatched when the data binding [value] has changed.
 	 * The handler signature will be (oldValue, newValue)->Unit
 	 */
-	val changed: Signal<ChangedEvent<T>>
+	val changed: Signal<ChangeEvent<T>>
 
 	val value: T
 
@@ -54,7 +70,7 @@ interface DataBinding<T> : DataBindingRo<T> {
 
 class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 
-	override val changed = unmanagedSignal<ChangedEvent<T>>()
+	override val changed = unmanagedSignal<ChangeEvent<T>>()
 
 	private var _value: T = initialValue
 
@@ -77,7 +93,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		validator(newValue)
 		if (old == newValue) return false
 		_value = newValue
-		changed.dispatch(ChangedEvent(old, newValue))
+		changed.dispatch(ChangeEvent(old, newValue))
 		return true
 	}
 
@@ -88,7 +104,7 @@ class DataBindingImpl<T>(initialValue: T) : DataBinding<T>, Disposable {
 		if (old == value) return
 		if (changed.isDispatching) return
 		_value = value
-		changed.dispatch(ChangedEvent(old, value))
+		changed.dispatch(ChangeEvent(old, value))
 	}
 
 	override fun dispose() {
