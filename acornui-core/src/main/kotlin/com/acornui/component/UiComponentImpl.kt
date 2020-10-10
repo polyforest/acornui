@@ -181,12 +181,12 @@ open class UiComponentImpl<T : HTMLElement>(
 	// Style properties
 	//-----------------------------------------------
 
-	final override fun addClass(styleTag: CssClass) {
-		dom.classList.add(styleTag.className)
+	final override fun addClass(vararg styleTag: CssClass) {
+		dom.classList.add(*styleTag.map { it.className }.toTypedArray())
 	}
 
-	final override fun removeClass(styleTag: CssClass) {
-		dom.classList.remove(styleTag.className)
+	final override fun removeClass(vararg styleTag: CssClass) {
+		dom.classList.remove(*styleTag.map { it.className }.toTypedArray())
 	}
 
 	final override fun toggleClass(styleTag: CssClass) {

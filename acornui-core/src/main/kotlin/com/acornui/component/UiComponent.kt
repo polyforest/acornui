@@ -46,9 +46,9 @@ typealias ComponentInit<T> = (@ComponentDslMarker T).() -> Unit
 interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	NodeWithParent, ElementParent<WithNode>, Disposable {
 
-	fun addClass(styleTag: CssClass)
+	fun addClass(vararg styleTag: CssClass)
 
-	fun removeClass(styleTag: CssClass)
+	fun removeClass(vararg styleTag: CssClass)
 
 	fun toggleClass(styleTag: CssClass)
 
