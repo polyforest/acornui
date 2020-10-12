@@ -34,23 +34,46 @@ package com.acornui.string
  */
 class StringReader(val data: String) {
 
+	/**
+	 * Returns true if we have not hit the [data] length.
+	 */
 	fun hasNext(): Boolean =
 		position < length
 
+	/**
+	 * The current reader's position.
+	 */
 	var position: Int = 0
+
+	/**
+	 * The string length.
+	 */
 	val length: Int = data.length
 
+	/**
+	 * Gets the character at the current position, without advancing [position].
+	 */
 	val current: Char
 		get() = data[position]
 
+	/**
+	 * Consumes while the characters are whitespace.
+	 */
 	fun white(): String {
 		return getString { it.isWhitespace() }
 	}
 
+	/**
+	 * Consumes while the characters are not whitespace.
+	 */
 	fun notWhite(): String {
 		return getString { !it.isWhitespace() }
 	}
 
+	/**
+	 * Consumes the boolean at the current position.
+	 * The current position is advanced if the boolean is found.
+	 */
 	fun getBool(): Boolean? {
 		val char = data[position]
 		if (char == '1') {
@@ -122,10 +145,17 @@ class StringReader(val data: String) {
 		} else null
 	}
 
-	fun getString(predicate: (Char)->Boolean): String {
+	/**
+	 * Consumes the string until [predicate] returns false.
+	 */
+	fun getString(predicate: (Char) -> Boolean): String {
 		return data.substring(consumeWhile(predicate), position)
 	}
 
+	/**
+	 * Consumes the double at the current position.
+	 * The current position is advanced if a double is found.
+	 */
 	fun getDouble(): Double? {
 		var p = position
 		var foundDecimalMark = false
@@ -143,14 +173,23 @@ class StringReader(val data: String) {
 		if (position == p) return null
 		val subString = data.substring(position, p)
 		if (subString.length == 1 && subString == "-") return null
-		position = p
-		return subString.toDoubleOrNull()
+		val d = subString.toDoubleOrNull()
+		if (d != null)
+			position = p
+		return d
 	}
 
+	/**
+	 * Consumes the float at the current position.
+	 */
 	fun getFloat(): Float? {
 		return getDouble()?.toFloat()
 	}
 
+	/**
+	 * Consumes the integer at the current position.
+	 * The current position is advanced if an integer is found.
+	 */
 	fun getInt(): Int? {
 		var p = position
 		while (p < length) {
@@ -163,39 +202,45 @@ class StringReader(val data: String) {
 		if (position == p) return null
 		val subString = data.substring(position, p)
 		if (subString.length == 1 && subString == "-") return null
+		val i = subString.toIntOrNull()
+		if (i != null)
 		position = p
-		return subString.toIntOrNull()
+		return i
 	}
 
+	/**
+	 * Gets the character at the current position, incrementing [position].
+	 */
 	fun getChar(): Char? {
 		if (position >= length) return null
 		return data[position++]
 	}
 
+	/**
+	 * If the given string is found at the current position, advance to the end of the string.
+	 */
 	fun consumeString(string: String, ignoreCase: Boolean = false): Boolean {
-		val n = string.length
-		var p = position
-		if (p + n > length) return false
-		var index = 0
-		while (p < length && index < n && (data[p] == string[index] ||
-				(ignoreCase && data[p] == string[index].toLowerCase()))) {
-			index++
-			p++
-		}
-		if (index < n) return false
-		position = p
+		val found = data.startsWith(string, position, ignoreCase)
+		if (!found) return false
+		position += string.length
 		return true
 	}
 
-	fun consumeThrough(string: String): Boolean {
-		val index = data.indexOf(string, position)
+	/**
+	 * Finds the next instance of [string] and consumes until the end of that string.
+	 */
+	fun consumeThrough(string: String, ignoreCase: Boolean = false): Boolean {
+		val index = data.indexOf(string, position, ignoreCase)
 		if (index == -1) return false
 		position = index + string.length
 		return true
 	}
 
-	fun consumeThrough(char: Char): Boolean {
-		val index = data.indexOf(char, position)
+	/**
+	 * Finds the next instance of [char] and consumes until the end of that character.
+	 */
+	fun consumeThrough(char: Char, ignoreCase: Boolean = false): Boolean {
+		val index = data.indexOf(char, position, ignoreCase)
 		if (index == -1) return false
 		position = index + 1
 		return true
@@ -217,15 +262,10 @@ class StringReader(val data: String) {
 	 * @return Returns true if the character was consumed, false if it wasn't at the current position.
 	 */
 	fun consumeChar(char: Char): Boolean {
-		return consumeWhile { char == it } < position
-	}
-
-	/**
-	 * Consumes any of the characters provided in the [chars] string.
-	 * @return Returns true if any of the characters were found and the position has progressed.
-	 */
-	fun consumeChars(chars: String): Boolean {
-		return consumeWhile { chars.indexOf(it) >= 0 } < position
+		val found = data[position]
+		if (found != char) return false
+		position++
+		return true
 	}
 
 	/**
@@ -233,13 +273,24 @@ class StringReader(val data: String) {
 	 *
 	 * @return Returns the starting position.
 	 */
-	inline fun consumeWhile(predicate: (Char)->Boolean): Int {
+	fun consumeWhile(predicate: (Char) -> Boolean): Int {
 		val mark = position
-		while (position < length) {
-			if (!predicate(data[position])) break
-			position++
+		while (true) {
+			if (consumeIf(predicate) == null) break
 		}
 		return mark
+	}
+
+	/**
+	 * Consumes a single character if it matches the given predicate.
+	 * @return Returns the character consumed.
+	 */
+	fun consumeIf(predicate: (Char) -> Boolean): Char? {
+		if (position >= length) return null
+		val char = data[position]
+		if (!predicate(char)) return null
+		position++
+		return char
 	}
 
 	fun reset() {

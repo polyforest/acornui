@@ -17,6 +17,8 @@
 package com.acornui.observe
 
 import com.acornui.Disposable
+import com.acornui.Owner
+import com.acornui.own
 import com.acornui.signal.Signal
 import com.acornui.signal.SignalImpl
 import com.acornui.signal.unmanagedSignal
@@ -48,6 +50,27 @@ interface DataBindingRo<out T> {
 
 	val value: T
 
+}
+
+fun <T, R> Owner.bindMapped(binding: DataBindingRo<T>, selector: (T) -> R): DataBindingRo<R> {
+	return own(object : DataBindingRo<R>, Disposable {
+		override val changed = SignalImpl<ChangeEvent<R>>()
+
+		override val value: R
+			get() = selector(binding.value)
+
+		private val changedWatch = binding.changed.listen {
+			val old = selector(it.oldData)
+			val new = selector(it.newData)
+			if (old != new)
+				changed.dispatch(ChangeEvent(old, new))
+		}
+
+		override fun dispose() {
+			changedWatch.dispose()
+			changed.dispose()
+		}
+	})
 }
 
 interface DataBinding<T> : DataBindingRo<T> {

@@ -518,7 +518,6 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
  * Clones this list, replacing the value at the given index with the new value.
  */
 fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
-	// TODO: replace with kotlinx persistent collections
 	val newList = ArrayList<E>(size)
 	for (i in 0..lastIndex) {
 		newList.add(if (i == index) newValue else this[i])
@@ -527,11 +526,35 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
 }
 
 /**
+ * Removes the element at the given index, returning a new list.
+ */
+fun <E> List<E>.removeAt(index: Int): List<E> {
+	return subListSafe(0, index) + subListSafe(index + 1, size)
+}
+
+/**
+ * Adds the element at the given index, returning a new list.
+ */
+fun <E> List<E>.add(index: Int, element: E): List<E> {
+	val result = ArrayList<E>(size + 1)
+	result.addAll(subListSafe(0, index))
+	result.add(element)
+	result.addAll(subListSafe(index, size))
+	return result
+}
+
+/**
+ * Returns a new sub-list with the size clamped to [maxSize].
+ */
+fun <E> List<E>.limit(maxSize: Int): List<E> {
+	return subListSafe(0, maxSize)
+}
+
+/**
  * Clones this list, replacing values that identity equals [oldValue] with [newValue].
  * @throws Exception Throws exception when [oldValue] was not found.
  */
 fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
-	// TODO: replace with kotlinx persistent collections
 	val newList = ArrayList<E>(size)
 	var found = false
 	for (i in 0..lastIndex) {
@@ -545,7 +568,6 @@ fun <E> List<E>.replace(oldValue: E, newValue: E): List<E> {
 }
 
 fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: Filter<E>): List<E> {
-	// TODO: replace with kotlinx persistent collections
 	val index = indexOfFirst(0, lastIndex, predicate)
 	return if (index == -1) throw Exception("Could not find a value matching the predicate")
 	else replaceAt(index, newValue)
@@ -558,7 +580,6 @@ fun <E> List<E>.replaceFirstWhere(newValue: E, predicate: Filter<E>): List<E> {
  * than startIndex
  */
 fun <E> List<E>.replaceRange(startIndex: Int, endIndex: Int = startIndex, newElements: List<E>): List<E> {
-	// TODO: replace with kotlinx persistent collections
 	require(endIndex <= size) { "endIndex ($endIndex) may not be greater than size ($size)" }
 	require(endIndex >= startIndex) { "endIndex ($endIndex) may not be less than startIndex ($startIndex)" }
 	if (endIndex == startIndex && newElements.isEmpty()) return copy()
@@ -696,4 +717,24 @@ inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
 		sum += selector(element)
 	}
 	return sum
+}
+
+inline fun <reified T> List<T>.ensureCapacity(newCapacity: Int, noinline factory: (index: Int) -> T): List<T> {
+	if (size >= newCapacity) return this
+	return this + Array(newCapacity - size, factory)
+}
+
+/**
+ * Removes the elements at the given indices.
+ */
+fun <T> List<T>.removeIndices(indices: Iterable<Int>): List<T> {
+	val newList = toMutableList()
+	val sortedIndices = indices.sorted()
+	for (i in sortedIndices.lastIndex downTo 0) {
+		val index = sortedIndices[i]
+		if (index < newList.size) {
+			newList.removeAt(index)
+		}
+	}
+	return newList
 }

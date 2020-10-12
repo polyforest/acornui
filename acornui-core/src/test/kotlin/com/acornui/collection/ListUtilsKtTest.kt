@@ -268,4 +268,12 @@ class ListUtilsKtTest {
         assertListEquals(emptyList<Int>(), emptyList<Int>().copy())
 	}
 
+	@Test
+	fun removeIndices() {
+		val list = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8)
+		assertListEquals(listOf(0, 2, 4, 6, 7, 8), list.removeIndices(listOf(1, 3, 5)))
+		assertListEquals(listOf(0, 2, 4, 6, 7, 8), list.removeIndices(listOf(5, 3, 1)))
+		assertListEquals(listOf(0, 2, 4, 6, 8), list.removeIndices(listOf(5, 1, 3, 7)))
+	}
+
 }
