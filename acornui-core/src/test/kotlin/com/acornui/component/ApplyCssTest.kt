@@ -16,7 +16,6 @@
 
 package com.acornui.component
 
-import com.acornui.dom.div
 import com.acornui.test.runApplicationTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

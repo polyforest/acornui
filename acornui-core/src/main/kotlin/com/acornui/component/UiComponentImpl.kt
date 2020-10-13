@@ -29,6 +29,7 @@ import com.acornui.component.style.CssClass
 import com.acornui.css.px
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
+import com.acornui.dom.component
 import com.acornui.dom.createElement
 import com.acornui.isDebug
 import com.acornui.properties.afterChange
@@ -403,9 +404,23 @@ open class Div(
 	owner: Context
 ) : UiComponentImpl<HTMLDivElement>(owner, createElement("div"))
 
+inline fun Context.div(init: ComponentInit<Div> = {}): Div {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Div(this).apply(init)
+}
+
+
 open class Span(
 	owner: Context
 ) : UiComponentImpl<HTMLSpanElement>(owner, createElement("span"))
+
+inline fun Context.span(text: String = "", init: ComponentInit<Span> = {}): Span {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Span(this).apply {
+		if (text.isNotEmpty()) +text
+		init()
+	}
+}
 
 inline fun Context.html(@Language("html") html: String = "", init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}): UiComponentImpl<HTMLDivElement> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }

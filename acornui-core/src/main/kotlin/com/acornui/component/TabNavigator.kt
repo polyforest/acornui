@@ -26,7 +26,6 @@ import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
-import com.acornui.dom.div
 import com.acornui.dom.handle
 import com.acornui.dom.isHandled
 import com.acornui.input.Event

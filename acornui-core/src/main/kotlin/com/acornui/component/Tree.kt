@@ -26,7 +26,6 @@ import com.acornui.css.px
 import com.acornui.di.Context
 import com.acornui.dom.a
 import com.acornui.dom.addStyleToHead
-import com.acornui.dom.div
 import com.acornui.google.Icons
 import com.acornui.input.clicked
 import com.acornui.math.Easing

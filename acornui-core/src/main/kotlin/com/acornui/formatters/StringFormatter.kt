@@ -24,6 +24,12 @@ fun interface StringFormatter<in T> {
 	fun format(value: T): String
 }
 
+object ToStringFormatter : StringFormatter<Any?> {
+	override fun format(value: Any?): String {
+		return value?.toString() ?: ""
+	}
+}
+
 fun interface StringParser<out T> {
 
 	/**

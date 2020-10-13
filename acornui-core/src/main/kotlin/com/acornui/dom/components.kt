@@ -16,10 +16,7 @@
 
 package com.acornui.dom
 
-import com.acornui.component.ComponentInit
-import com.acornui.component.UiComponentImpl
-import com.acornui.component.WithNode
-import com.acornui.component.asWithNode
+import com.acornui.component.*
 import com.acornui.component.style.CommonStyleTags
 import com.acornui.di.Context
 import com.acornui.input.mousePressOnKey
@@ -33,19 +30,6 @@ import kotlin.contracts.contract
 inline fun <T : HTMLElement> Context.component(localName: String, init: ComponentInit<UiComponentImpl<T>> = {}): UiComponentImpl<T> {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	return UiComponentImpl(this, createElement<Element>(localName).unsafeCast<T>()).apply(init)
-}
-
-inline fun Context.div(init: ComponentInit<UiComponentImpl<HTMLDivElement>> = {}): UiComponentImpl<HTMLDivElement> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("div", init)
-}
-
-inline fun Context.span(text: String = "", init: ComponentInit<UiComponentImpl<HTMLSpanElement>> = {}): UiComponentImpl<HTMLSpanElement> {
-	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return component("span") {
-		if (text.isNotEmpty()) +text
-		init()
-	}
 }
 
 open class A(owner: Context) : UiComponentImpl<HTMLAnchorElement>(owner, createElement("a")) {

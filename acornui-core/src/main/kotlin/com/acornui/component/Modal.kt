@@ -20,7 +20,6 @@ import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.di.dependencyFactory
 import com.acornui.dom.addStyleToHead
-import com.acornui.dom.div
 import com.acornui.input.clicked
 import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind

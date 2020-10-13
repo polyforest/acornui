@@ -22,7 +22,6 @@ import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
-import com.acornui.dom.div
 import com.acornui.google.Icons
 import com.acornui.google.icon
 import com.acornui.skins.CssProps

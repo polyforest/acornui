@@ -22,7 +22,6 @@ package com.acornui.component
  import com.acornui.css.css
  import com.acornui.di.Context
  import com.acornui.dom.addStyleToHead
- import com.acornui.dom.div
  import com.acornui.skins.CssProps
  import kotlin.contracts.InvocationKind
  import kotlin.contracts.contract

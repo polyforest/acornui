@@ -19,6 +19,7 @@ package com.acornui.component.layout
 import com.acornui.component.ComponentInit
 import com.acornui.component.Div
 import com.acornui.component.WithNode
+import com.acornui.component.div
 import com.acornui.component.layout.LayoutStyles.grid
 import com.acornui.component.layout.LayoutStyles.hFlowGroup
 import com.acornui.component.layout.LayoutStyles.hGroup
@@ -27,7 +28,6 @@ import com.acornui.component.layout.LayoutStyles.vGroup
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
-import com.acornui.dom.div
 import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

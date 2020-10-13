@@ -21,6 +21,7 @@ package com.acornui.google
 import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponentImpl
 import com.acornui.component.WithNode
+import com.acornui.component.span
 import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.CssClass
 import com.acornui.component.style.cssClass

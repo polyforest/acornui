@@ -34,7 +34,6 @@ import com.acornui.css.prefix
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.createElement
-import com.acornui.dom.span
 import com.acornui.formatters.*
 import com.acornui.google.Icons
 import com.acornui.google.icon

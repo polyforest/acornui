@@ -16,13 +16,10 @@
 
 package com.acornui
 
-import com.acornui.component.ComponentInit
 import com.acornui.dom.add
-import com.acornui.dom.createElement
 import com.acornui.dom.divElement
 import com.acornui.test.assertListEquals
 import com.acornui.test.initMockDom
-import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.asList
 import kotlin.test.BeforeTest
 import kotlin.test.Test
