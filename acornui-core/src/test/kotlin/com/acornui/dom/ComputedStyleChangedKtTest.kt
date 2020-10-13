@@ -18,6 +18,7 @@ package com.acornui.dom
 
 import com.acornui.AppConfig
 import com.acornui.component.Stage
+import com.acornui.component.div
 import com.acornui.signal.once
 import com.acornui.system.isNode
 import com.acornui.test.runApplicationTest
