@@ -50,7 +50,16 @@ interface ElementParent<T> {
 		return this
 	}
 
-	fun <S : T?> addElement(child: S): S = addElement(elements.size, child)
+	/**
+	 * Returns true if this container contains the given element.
+	 * @param element The element to search within [elements], or null.
+	 */
+	fun containsElement(element: T?): Boolean {
+		if (element == null) return false
+		return elements.contains(element)
+	}
+
+	fun <S : T?> addElement(element: S): S = addElement(elements.size, element)
 
 	/**
 	 * Adds or reorders an external element to this container at the given index.
