@@ -106,7 +106,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 				style.setProperty("overflow", "hidden")
 				tween(0.3.seconds, Easing.pow2) { _, alpha ->
 					val h = dom.scrollHeight
-					style.setProperty("max-height", (lerp(from, to, alpha) * h).px.toString())
+					style.setProperty("max-height", (lerp(from, to, alpha) * h).px)
 				}.start().completed.once {
 					if (value) {
 						style.removeProperty("max-height")
