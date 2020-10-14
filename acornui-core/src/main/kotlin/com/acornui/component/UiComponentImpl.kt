@@ -378,7 +378,7 @@ open class UiComponentImpl<T : HTMLElement>(
 	// Style
 	//-----------------------------------------------
 
-	override val style: CSSStyleDeclaration
+	final override val style: CSSStyleDeclaration
 		get() = dom.style
 
 	//-----------------------------------------------
