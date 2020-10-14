@@ -112,11 +112,16 @@ fun <T : Any, R : Any> Signal<T>.map(transform: (T) -> R): Signal<R> {
  *
  * @author nbilyk
  */
-open class SignalImpl<T>() : MutableSignal<T>, Disposable {
+open class SignalImpl<T> : MutableSignal<T>, Disposable {
 
 	private val subscriptions = arrayListOf<SignalSubscriptionImpl<T>>()
 	private var cursor = -1
 	private var n = -1
+
+	/**
+	 * Invoked when the [isEmpty] status has changed.
+	 */
+	var isEmptyChanged: ((isEmpty: Boolean) -> Unit)? = null
 
 	/**
 	 * True if the signal has no handlers.
@@ -138,11 +143,15 @@ open class SignalImpl<T>() : MutableSignal<T>, Disposable {
 			cursor--
 		subscriptions.removeAt(index)
 		n--
+		if (subscriptions.isEmpty())
+			isEmptyChanged?.invoke(true)
 	}
 
 	override fun listen(isOnce: Boolean, handler: (T) -> Unit): SignalSubscription {
 		val subscription = SignalSubscriptionImpl(this, handler, isOnce, ::removeSubscription)
 		subscriptions.add(subscription)
+		if (subscriptions.size == 1)
+			isEmptyChanged?.invoke(true)
 		return subscription
 	}
 
@@ -184,11 +193,8 @@ class ManagedSignal<T> : SignalImpl<T>(), ManagedDisposable
 /**
  * Creates an owned signal that will be disposed automatically when the owner is disposed.
  */
-fun <T> Owner.signal(): SignalImpl<T> {
-	val s = ManagedSignal<T>()
-	own(s as MutableSignal<T>)
-	return s
-}
+fun <T> Owner.signal(): SignalImpl<T> =
+	ownUnsafe(ManagedSignal())
 
 /**
  * Creates an unowned signal that must be disposed manually.
