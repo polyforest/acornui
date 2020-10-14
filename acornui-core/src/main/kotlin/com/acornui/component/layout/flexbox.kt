@@ -133,6 +133,7 @@ $contents {
 	justify-items: inherit;
 	align-content: inherit;
 	align-items: inherit;
+	flex-direction: inherit;
 	margin: 0 calc(-1 * ${CssProps.gap.v}) calc(-1 * ${CssProps.gap.v}) 0;
 }
 
@@ -140,15 +141,21 @@ $contents > * {
 	margin: 0 ${CssProps.gap.v} ${CssProps.gap.v} 0;
 }
 
-$hFlowGroup > $contents {
-	flex-direction: row;
+$hFlowGroup {
 	align-items: baseline;
+	flex-direction: row;
+}
+
+$hFlowGroup > $contents {
 	width: 100%;
 }
 
-$vFlowGroup > $contents {
-	flex-direction: column;
+$vFlowGroup {
 	align-items: self-start;
+	flex-direction: column;
+}
+
+$vFlowGroup > $contents {
 	height: 100%;
 }
 
