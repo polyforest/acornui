@@ -26,6 +26,8 @@ package com.acornui.component.input
 import com.acornui.Disposable
 import com.acornui.UidUtil
 import com.acornui.component.*
+import com.acornui.component.input.LabelComponentStyle.labelComponent
+import com.acornui.component.input.LabelComponentStyle.labelComponentSpan
 import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.CssClassToggle
 import com.acornui.component.style.cssClass
@@ -809,7 +811,7 @@ $toggleInput {
 }
 
 $toggleInput label {
-	padding-left: 1ch;
+	padding-left: 0.8ch;
 	
 	display: inline-flex;
 	flex-direction: row;
@@ -879,9 +881,15 @@ inline fun Context.radio(group: RadioGroup, value: String, defaultChecked: Boole
 	}
 }
 
+/**
+ * LabelComponent is a label element with a nested span. Settings [UiComponent.label] will set the text on that span,
+ * thus not replacing any other nested elements.
+ */
 class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, createElement<Element>("label").unsafeCast<HTMLLabelElement>()) {
 
-	private val span = addChild(span())
+	private val span = addChild(span {
+		addClass(labelComponentSpan)
+	})
 
 	/**
 	 * Sets the text within a span.
@@ -891,6 +899,16 @@ class LabelComponent(owner: Context) : UiComponentImpl<HTMLLabelElement>(owner, 
 		set(value) {
 			span.label = value
 		}
+
+	init {
+		addClass(labelComponent)
+	}
+}
+
+object LabelComponentStyle {
+
+	val labelComponent by cssClass()
+	val labelComponentSpan by cssClass()
 }
 
 inline fun Context.label(htmlFor: String = "", value: String = "", init: ComponentInit<LabelComponent> = {}): LabelComponent {
