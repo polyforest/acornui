@@ -151,7 +151,7 @@ open class SignalImpl<T> : MutableSignal<T>, Disposable {
 		val subscription = SignalSubscriptionImpl(this, handler, isOnce, ::removeSubscription)
 		subscriptions.add(subscription)
 		if (subscriptions.size == 1)
-			isEmptyChanged?.invoke(true)
+			isEmptyChanged?.invoke(false)
 		return subscription
 	}
 
