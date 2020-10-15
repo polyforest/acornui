@@ -529,6 +529,7 @@ fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {
  * Removes the element at the given index, returning a new list.
  */
 fun <E> List<E>.removeAt(index: Int): List<E> {
+	if (index >= size) throw IndexOutOfBoundsException()
 	return subListSafe(0, index) + subListSafe(index + 1, size)
 }
 
@@ -536,6 +537,7 @@ fun <E> List<E>.removeAt(index: Int): List<E> {
  * Adds the element at the given index, returning a new list.
  */
 fun <E> List<E>.add(index: Int, element: E): List<E> {
+	if (index > size) throw IndexOutOfBoundsException()
 	val result = ArrayList<E>(size + 1)
 	result.addAll(subListSafe(0, index))
 	result.add(element)
