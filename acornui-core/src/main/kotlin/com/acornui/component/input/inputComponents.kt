@@ -49,8 +49,7 @@ import com.acornui.signal.signal
 import com.acornui.signal.unmanagedSignal
 import com.acornui.skins.CssProps
 import com.acornui.time.Date
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLLabelElement
+import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.MouseEventInit
 import kotlin.contracts.InvocationKind
@@ -923,3 +922,117 @@ inline fun Context.label(htmlFor: String = "", value: String = "", init: Compone
 
 inline fun Context.label(forComponent: UiComponent, value: String = "", init: ComponentInit<LabelComponent> = {}): LabelComponent =
 	label(forComponent.id, value, init)
+
+open class Select(owner: Context) : UiComponentImpl<HTMLSelectElement>(owner, createElement("select")) {
+
+	var disabled: Boolean
+		get() = dom.disabled
+		set(value) {
+			dom.disabled = value
+		}
+
+	var multiple: Boolean
+		get() = dom.multiple
+		set(value) {
+			dom.multiple = value
+		}
+
+	var required: Boolean
+		get() = dom.required
+		set(value) {
+			dom.required = value
+		}
+
+	val size: Int
+		get() = dom.size
+
+	val options: HTMLOptionsCollection
+		get() = dom.options
+
+	val selectedOptions: HTMLCollection
+		get() = dom.selectedOptions
+
+	var selectedIndex: Int
+		get() = dom.selectedIndex
+		set(value) {
+			dom.selectedIndex = value
+		}
+
+	var value: String
+		get() = dom.value
+		set(value) {
+			dom.value = value
+		}
+
+	val willValidate: Boolean
+		get() = dom.willValidate
+
+	val validity: ValidityState
+		get() = dom.validity
+
+	val validationMessage: String
+		get() = dom.validationMessage
+
+	val labels: NodeList
+		get() = dom.labels
+
+	fun namedItem(name: String): HTMLOptionElement? = dom.namedItem(name)
+
+	fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement) = dom.add(element)
+
+	fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic) = dom.add(element, before)
+
+	fun remove(index: Int) = dom.remove(index)
+
+	fun checkValidity(): Boolean = dom.checkValidity()
+
+	fun reportValidity(): Boolean = dom.reportValidity()
+
+	fun setCustomValidity(error: String) = dom.setCustomValidity(error)
+}
+
+inline fun Context.select(init: ComponentInit<Select> = {}): Select {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Select(this).apply(init)
+}
+
+open class Option(owner: Context) : UiComponentImpl<HTMLOptionElement>(owner, createElement("option")) {
+
+	open var disabled: Boolean
+		get() = dom.disabled
+		set(value) {
+			dom.disabled = value
+		}
+
+	override var label: String
+		get() = dom.label
+		set(value) {
+			dom.label = value
+		}
+
+	var defaultSelected: Boolean
+		get() = dom.defaultSelected
+		set(value) {
+			dom.defaultSelected = value
+		}
+
+	var selected: Boolean
+		get() = dom.selected
+		set(value) {
+			dom.selected = value
+		}
+
+	var value: String
+		get() = dom.value
+		set(value) {
+			dom.value = value
+		}
+
+	val index: Int
+		get() = dom.index
+}
+
+inline fun Context.option(init: ComponentInit<Option> = {}): Option {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Option(this).apply(init)
+}
