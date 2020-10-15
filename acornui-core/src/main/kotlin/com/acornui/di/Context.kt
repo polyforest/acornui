@@ -333,7 +333,12 @@ class DependencyMap private constructor(private val inner: Map<Context.Key<*>, A
 	 */
 	operator fun plus(dependency: DependencyPair<*>): DependencyMap {
 		val new = inner.copy()
-		new[dependency.key] = dependency.value
+
+		var p: Context.Key<*>? = dependency.key
+		while (p != null) {
+			new[p] = dependency.value
+			p = p.extends
+		}
 		return DependencyMap(new)
 	}
 
