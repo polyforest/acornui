@@ -27,4 +27,8 @@ fun removeNullValues(obj: dynamic) {
 	""")
 }
 
-fun obj(init: dynamic.()->Unit): dynamic = js("{}").apply(init)
+fun obj(init: dynamic.()->Unit): dynamic {
+	val o = js("{}")
+	init.invoke(o)
+	return o
+}
