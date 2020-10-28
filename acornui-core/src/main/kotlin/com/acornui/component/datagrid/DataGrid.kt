@@ -86,6 +86,12 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 */
 	val rowEdited = signal<RowEditEvent<E>>()
 
+	/**
+	 * If false (default) clicking a row will not open the row editor.
+	 * Calling [rowEditor] will set this to true.
+	 */
+	var editable = false
+
 	var rowBuilder: (DataGridRow<E>.() -> Unit)? = null
 		private set
 
@@ -225,6 +231,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 * Calls the specified function [block] with [rowEditor] as its receiver.
 	 */
 	fun rowEditor(block: DataGridRowEditor<E>.() -> Unit) {
+		editable = true
 		rowEditor.apply(block)
 	}
 
@@ -263,7 +270,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 			it.dispose()
 		}, retriever = { element ->
 			element.data
-		})
+		}, alwaysRecycle = false)
 		editRow(previouslyEdited, previouslyFocused)
 	}
 
@@ -306,7 +313,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 * that cell, the first tabbable element within the row will be focused.
 	 */
 	fun editRow(item: E?, cellIndex: Int = 0) {
-		if (editedRow == item) return
+		if (!editable || editedRow == item) return
 
 		val e = RowEditEvent(item)
 		rowEdited.dispatch(e)
