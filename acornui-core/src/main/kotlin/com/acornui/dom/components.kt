@@ -223,7 +223,11 @@ open class Form(owner: Context) : UiComponentImpl<HTMLFormElement>(owner, create
 	 * Sets [action] to `"javascript:void(0);"`, thus preventing a page redirect on form submission.
 	 */
 	fun preventAction() {
-		action = "javascript:void(0);"
+		dom.onsubmit = {
+			it.preventDefault()
+			it.asDynamic().returnValue = false
+			false
+		}
 	}
 
 	fun submit() = dom.submit()
