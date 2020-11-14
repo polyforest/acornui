@@ -70,7 +70,24 @@ object InputStyles {
 
 input {
 	font: inherit;
-}	
+}
+
+select {
+	font: inherit;
+	color: ${CssProps.inputTextColor.v};;
+	border-width: ${CssProps.borderThickness.v};;
+	border-color: ${CssProps.borderColor.v};
+	border-radius: ${CssProps.inputBorderRadius.v};
+	padding: ${CssProps.inputPadding.v};
+	background: ${CssProps.inputBackground.v};
+	box-shadow: ${CssProps.componentShadow.v};
+}
+
+option {
+	font: inherit;
+	color: ${CssProps.inputTextColor.v};
+	background: ${CssProps.inputBackground.v};
+}
 
 input[type="datetime-local"]:after,
 input[type="week"]:after,
@@ -102,8 +119,6 @@ input[type="time"]:after {
 	opacity: 1;
 	margin-right: -20px;
 }
-
-
 
 input[type='date'],
 input[type='month'],
