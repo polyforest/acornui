@@ -78,10 +78,11 @@ fun <E, T> recycle(
 				toRecycle.removeAt(foundIndex)
 			}
 		}
-		forDisposal.forEach(disposer)
 		configure(element, item, i)
 		existingElements.add(element)
 	}
+	forDisposal.forEach(disposer)
+	forDisposal.clear()
 }
 
 /**
