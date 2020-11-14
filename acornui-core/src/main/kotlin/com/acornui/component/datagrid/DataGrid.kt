@@ -21,6 +21,7 @@
 package com.acornui.component.datagrid
 
 import com.acornui.Disposable
+import com.acornui.EqualityCheck
 import com.acornui.component.*
 import com.acornui.component.input.Button
 import com.acornui.component.style.cssClass
@@ -127,6 +128,22 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 			dataChanged.dispatch(ChangeEvent(old, value))
 			refreshRows()
 		}
+
+	/**
+	 * If true (default), grid rows will be recycled even if a new data set has no match using
+	 * [dataMatcher]
+	 */
+	var alwaysRecycleRows = false
+
+	/**
+	 * The equality check is used to select the existing element to reuse.
+	 * This is used to assist in row recycling and reduce the number of binding changes.
+	 * By default this is a general equality `==`.
+	 * A typical use case would be to set the data matcher to match by an ID.
+	 *   e.g.
+	 *   ```dataMatcher = { a, b -> a?.id == b?.id }```
+	 */
+	var dataMatcher: EqualityCheck<E?> = { a, b -> a == b }
 
 	var sort: List<ColumnSort<E>> = emptyList()
 		set(value) {
@@ -247,6 +264,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	}
 
 	private val refreshRows = nextFrameCallback {
+		if (isDisposed) return@nextFrameCallback
 		dataView = data.sortedWith(::sortComparator)
 
 		header.elements.forEach {
@@ -270,7 +288,10 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 			it.dispose()
 		}, retriever = { element ->
 			element.data
-		}, alwaysRecycle = false)
+		},
+			matcher = dataMatcher,
+			alwaysRecycle = alwaysRecycleRows
+		)
 		editRow(previouslyEdited, previouslyFocused)
 	}
 
