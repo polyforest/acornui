@@ -16,8 +16,12 @@
 
 package com.acornui.component.style
 
+import com.acornui.component.Stage
 import com.acornui.component.UiComponent
+import com.acornui.component.stage
 import com.acornui.component.style.LoadingStyles.loading
+import com.acornui.di.Context
+import com.acornui.di.dependencyFactory
 import com.acornui.dom.addStyleToHead
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -32,7 +36,8 @@ object LoadingStyles {
 	val showOnLoading by cssClass()
 
 	init {
-		addStyleToHead("""
+		addStyleToHead(
+			"""
 $showOnLoading {
 	opacity: 0;
 	transition: opacity ease 0.5s;
@@ -41,7 +46,8 @@ $showOnLoading {
 $loading $showOnLoading {
 	opacity: 1;
 }
-		""")
+		"""
+		)
 	}
 }
 
@@ -61,13 +67,43 @@ fun UiComponent.launchWithIndicator(
 	}
 }
 
-var UiComponent.loadingCount: Int
-	get() = getAttachment("loadingCount") ?: 0
+/**
+ * Tracks the number of things loading.
+ * If the loading counter changes from 0, [LoadingStyles.loading] class is added to [Stage].
+ * If the counter changes to 0 [LoadingStyles.loading] class is removed from [Stage].
+ */
+class LoadingCounter(private val stage: Stage) {
+
+	var count = 0
+		set(value) {
+			val previous = field
+			if (previous == value) return
+			field = value
+			if (value == 0) {
+				stage.removeClass(loading)
+			} else if (previous == 0) {
+				stage.addClass(loading)
+			}
+		}
+
+	companion object : Context.Key<LoadingCounter> {
+		override val factory = dependencyFactory { LoadingCounter(it.stage) }
+	}
+}
+private var loadingCount = 0
+private var Context.loadingCount: Int
+	get() = inject(LoadingCounter).count
 	set(value) {
-		setAttachment("loadingCount", value)
-		if (value == 0) {
-			removeClass(loading)
-		} else if (value == 1) {
-			addClass(loading)
+		inject(LoadingCounter).count = value
+	}
+
+private fun Context.showLoading(): () -> Unit {
+	var hasFinished = false
+	loadingCount++
+	return {
+		if (!hasFinished) {
+			hasFinished = true
+			loadingCount--
 		}
 	}
+}

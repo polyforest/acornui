@@ -52,6 +52,7 @@ import com.acornui.time.Date
 import org.w3c.dom.*
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.MouseEventInit
+import org.w3c.files.FileList
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.js.Date as JsDate
@@ -371,6 +372,12 @@ open class Button(owner: Context, type: String = "button") : DivWithInputCompone
 			inputComponent.dom.type = value
 		}
 
+	var multiple: Boolean
+		get() = inputComponent.dom.multiple
+		set(value) {
+			inputComponent.dom.multiple = value
+		}
+
 	init {
 		addClass(ButtonStyle.button)
 		tabIndex = 0
@@ -607,19 +614,24 @@ inline fun Context.dateTimeInput(init: ComponentInit<InputImpl> = {}): InputImpl
 	return InputImpl(this, "datetime-local").apply(init)
 }
 
+open class FileInput(owner: Context) : Button(owner, "file") {
+
+	var accept: String
+		get() = inputComponent.dom.accept
+		set(value) {
+			inputComponent.dom.accept = value
+		}
+
+	val files: FileList?
+		get() = inputComponent.dom.files
+}
+
 /**
  * Creates an input element of type file, styled like a button.
- * By default this will contain a file upload icon and the given label. This may be changed by clearing the elements
- * and adding new ones, or by instead creating `Button(owner, "file")`
- *
  */
-inline fun Context.fileInput(label: String = "Choose File", init: ComponentInit<Button> = {}): Button {
+inline fun Context.fileInput(init: ComponentInit<FileInput> = {}): FileInput {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
-	return Button(this, "file").apply {
-		+icon(Icons.FILE_UPLOAD)
-		+text(label) {
-			style.marginRight = "4px" // Material design icons have embedded whitespace, this balances that out.
-		}
+	return FileInput(this).apply {
 		init()
 	}
 }
