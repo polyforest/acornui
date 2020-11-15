@@ -44,6 +44,7 @@ import com.acornui.input.*
 import com.acornui.number.zeroPadding
 import com.acornui.observe.Observable
 import com.acornui.properties.afterChange
+import com.acornui.recycle.Clearable
 import com.acornui.signal.once
 import com.acornui.signal.signal
 import com.acornui.signal.unmanagedSignal
@@ -614,7 +615,7 @@ inline fun Context.dateTimeInput(init: ComponentInit<InputImpl> = {}): InputImpl
 	return InputImpl(this, "datetime-local").apply(init)
 }
 
-open class FileInput(owner: Context) : Button(owner, "file") {
+open class FileInput(owner: Context) : Button(owner, "file"), Clearable {
 
 	var accept: String
 		get() = inputComponent.dom.accept
@@ -624,6 +625,16 @@ open class FileInput(owner: Context) : Button(owner, "file") {
 
 	val files: FileList?
 		get() = inputComponent.dom.files
+
+	var value: String
+		get() = inputComponent.dom.value
+		set(value) {
+			inputComponent.dom.value = value
+		}
+
+	override fun clear() {
+		value = ""
+	}
 }
 
 /**

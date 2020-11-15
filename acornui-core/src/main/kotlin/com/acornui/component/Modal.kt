@@ -16,12 +16,19 @@
 
 package com.acornui.component
 
+import com.acornui.Disposable
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.di.dependencyFactory
 import com.acornui.dom.addStyleToHead
-import com.acornui.input.clicked
+import com.acornui.input.*
+import com.acornui.signal.EventOptions
+import com.acornui.signal.once
 import com.acornui.skins.CssProps
+import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.Node
+import org.w3c.dom.events.FocusEvent
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -53,9 +60,12 @@ open class Modal(owner: Context) : Div(owner) {
 
 class ModalContainer(owner: Context) : Div(owner) {
 
+	private var focusWatch: Disposable? = null
+
 	init {
 		addClass(ModalStyle.modal)
 		stage.addElement(this)
+		tabIndex = 0
 	}
 
 	override fun onElementAdded(oldIndex: Int, newIndex: Int, element: WithNode) {
@@ -63,14 +73,24 @@ class ModalContainer(owner: Context) : Div(owner) {
 		if (elements.size == 1) {
 			style.display = "flex"
 			stage.addClass(ModalStyle.stageWithModal)
+			focusWatch = stage.focusedIn.listen(EventOptions(isPassive = false), ::preventFocusHandler)
 		}
 	}
 
 	override fun onElementRemoved(index: Int, element: WithNode) {
 		super.onElementRemoved(index, element)
 		if (elements.isEmpty()) {
+			focusWatch?.dispose()
+			focusWatch = null
 			style.display = "none"
 			stage.removeClass(ModalStyle.stageWithModal)
+		}
+	}
+
+	private fun preventFocusHandler(e: FocusEvent) {
+		if (!dom.contains(document.activeElement)) {
+			e.preventDefault()
+			dom.focus()
 		}
 	}
 
@@ -119,8 +139,16 @@ inline fun Context.modalWindow(init: ComponentInit<WindowPanel> = {}): Modal {
 	return modal {
 		+windowPanel {
 			init()
+			tabIndex = 0
+			isConnectedChanged.once {
+				focus()
+			}
 			closeButton.clicked.listen {
 				if (!it.defaultPrevented)
+					this@modal.dispose()
+			}
+			keyPressed.listen {
+				if (!it.defaultPrevented && it.keyCode == Ascii.ESCAPE)
 					this@modal.dispose()
 			}
 		}
