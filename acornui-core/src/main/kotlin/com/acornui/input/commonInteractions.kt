@@ -21,6 +21,7 @@ import com.acornui.signal.*
 import org.w3c.dom.Node
 import org.w3c.dom.TouchEvent
 import org.w3c.dom.Window
+import org.w3c.dom.clipboard.ClipboardEvent
 import org.w3c.dom.events.*
 import org.w3c.dom.events.Event
 
@@ -231,4 +232,11 @@ val WithEventTarget.contextMenuOpened
 val WithEventTarget.load
 	get() = event<Event>("load")
 
-// TODO: Clipboard
+val WithEventTarget.cut
+	get() = event<ClipboardEvent>("cut")
+
+val WithEventTarget.copy
+	get() = event<ClipboardEvent>("copy")
+
+val WithEventTarget.paste
+	get() = event<ClipboardEvent>("paste")
