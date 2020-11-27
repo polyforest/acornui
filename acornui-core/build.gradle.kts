@@ -30,7 +30,7 @@ dependencies {
 	api(kotlin("stdlib", version = Config.KOTLIN_VERSION))
 	api(kotlin("stdlib-js", version = Config.KOTLIN_VERSION))
 	api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Config.KOTLIN_COROUTINES_VERSION}")
-	api("org.jetbrains.kotlinx:kotlinx-serialization-core:${Config.KOTLIN_SERIALIZATION_VERSION}")
+	api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Config.KOTLIN_SERIALIZATION_VERSION}")
 	api("org.jetbrains.kotlinx:kotlinx-collections-immutable-js:0.3.2")
 
 	testImplementation(kotlin("test-js"))

@@ -37,6 +37,4 @@ open class ListOrNullSerializer<T>(val inner: KSerializer<T>) : KSerializer<List
 	override fun serialize(encoder: Encoder, value: List<T>) {
 		listSerializer.serialize(encoder, value)
 	}
-
-	override fun patch(decoder: Decoder, old: List<T>): List<T> = throw UnsupportedOperationException()
 }
