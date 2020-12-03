@@ -21,8 +21,6 @@ package com.acornui.graphic
 import com.acornui.number.closeTo
 import com.acornui.graphic.Color.Companion.fromStr
 import com.acornui.math.clamp
-import com.acornui.serialization.Reader
-import com.acornui.serialization.Writer
 import com.acornui.string.toRadix
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -432,19 +430,6 @@ val Color.luminancePerceived: Double
 	get() {
 		return r * 0.299 + g * 0.587 + b * 0.114
 	}
-
-fun Writer.color(color: Color) {
-	string("#" + color.toRgbaString())
-}
-
-fun Writer.color(name: String, color: Color) = property(name).color(color)
-
-fun Reader.color(): Color? {
-	val str = string() ?: return null
-	return fromStr(str)
-}
-
-fun Reader.color(name: String): Color? = get(name)?.color()
 
 private fun Double.toOctet(): String {
 	return clamp(this * 255, 0.0, 255.0).toInt().toRadix(16).padStart(2, '0')

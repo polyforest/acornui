@@ -23,16 +23,6 @@ import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json
 
-@Deprecated("use kotlinx serialization")
-fun <T> parseJson(jsonStr: String, factory: From<T>): T {
-	return json.read(jsonStr, factory)
-}
-
-@Deprecated("use kotlinx serialization")
-fun <T> toJson(value: T, factory: To<T>): String {
-	return json.write(value, factory)
-}
-
 private val jsonx = Json { encodeDefaults = false }
 
 fun <T> jsonParse(deserializer: DeserializationStrategy<T>, jsonStr: String): T {
