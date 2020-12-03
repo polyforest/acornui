@@ -17,11 +17,10 @@
 package com.acornui
 
 import com.acornui.dom.hidden
-import com.acornui.dom.visibilityChange
+import com.acornui.dom.visibilityChanged
 import com.acornui.function.as1
 import com.acornui.signal.SignalImpl
 import com.acornui.signal.SignalSubscription
-import com.acornui.signal.once
 import com.acornui.time.markNow
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -65,7 +64,7 @@ private object Frame {
 	}
 
 	init {
-		document.visibilityChange.listen(::requestFrame.as1)
+		document.visibilityChanged.listen(::requestFrame.as1)
 	}
 }
 

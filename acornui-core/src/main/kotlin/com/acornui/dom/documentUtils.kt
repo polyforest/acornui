@@ -16,8 +16,6 @@
 
 package com.acornui.dom
 
-import com.acornui.signal.EventSignal
-import com.acornui.signal.asWithEventTarget
 import com.acornui.signal.event
 import org.w3c.dom.Document
 import org.w3c.dom.events.Event
@@ -25,5 +23,12 @@ import org.w3c.dom.events.Event
 inline val Document.hidden: Boolean
 	get() = asDynamic().hidden
 
-val Document.visibilityChange: EventSignal<Event>
-	get() = asWithEventTarget().event<Event>("visibilitychange")
+@Deprecated("Use visibilityChanged", ReplaceWith("this.visibilityChanged"))
+val Document.visibilityChange
+	get() = visibilityChanged
+
+val Document.visibilityChanged
+	get() = event<Event>("visibilitychange")
+
+val Document.selectionChanged
+	get() = event<Event>("selectionchange")
