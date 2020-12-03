@@ -125,16 +125,15 @@ var Node.host: WithNode?
 
 @Suppress("UnsafeCastFromDynamic")
 fun Node.asWithNode(): WithNode {
-	val h = asDynamic().__host
+	val h = host
 	if (h != null) return h
-	asDynamic().__host = WithNodeImpl(this)
-	return asDynamic().__host
+	return WithNodeImpl(this)
 }
 
 class WithNodeImpl(override val dom: Node) : WithNode, DisposableBase() {
 
 	init {
-		dom.asDynamic().__host = this
+		dom.host = this
 	}
 
 	override val parent: WithNode?
