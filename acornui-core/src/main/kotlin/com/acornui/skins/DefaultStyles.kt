@@ -43,15 +43,6 @@ $s * {
 	box-sizing: border-box;
 }
 
-$s ul {
-	padding: 0 0 calc(-1 * ${CssProps.gap.v}) 0;
-	list-style: none;
-}
-
-$s ul li {
-	margin-bottom: ${CssProps.gap.v} 
-}
-
 $s a {
 	color: ${CssProps.accentFill.v};
 	text-decoration: none;

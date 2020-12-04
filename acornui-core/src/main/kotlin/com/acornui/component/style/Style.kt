@@ -23,6 +23,11 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Appends a unique id for CSS purposes to the given name.
+ */
+fun uniqueCssName(name: String) = name + "_" + (++cssUid).toRadix(36)
+
 open class CssSelector(val selector: String) {
 	override fun toString(): String = selector
 }
@@ -34,7 +39,7 @@ open class CssProp(val name: String) {
 
 class CssClass(val className: String) : CssSelector(".$className")
 
-class CssVar(val propName: String) : CssProp("--$propName") {
+class CssVar(propName: String) : CssProp("--$propName") {
 
 	val v: String = "var(--$propName)"
 }
@@ -49,7 +54,7 @@ fun cssClass(): ReadOnlyProperty<Any?, CssClass> {
 
 		override fun getValue(thisRef: Any?, property: KProperty<*>): CssClass {
 			if (className == null)
-				className = CssClass(property.name + "_" + (++cssUid).toRadix(36))
+				className = CssClass(uniqueCssName(property.name))
 			return className!!
 		}
 	}
@@ -62,12 +67,12 @@ fun cssVar(): ReadOnlyProperty<Any?, CssVar> {
 
 	return object : ReadOnlyProperty<Any?, CssVar> {
 
-		private var cssProp: CssVar? = null
+		private var cssVar: CssVar? = null
 
 		override fun getValue(thisRef: Any?, property: KProperty<*>): CssVar {
-			if (cssProp == null)
-				cssProp = CssVar(property.name + "_" + (++cssUid).toRadix(36))
-			return cssProp!!
+			if (cssVar == null)
+				cssVar = CssVar(uniqueCssName(property.name))
+			return cssVar!!
 		}
 	}
 }
