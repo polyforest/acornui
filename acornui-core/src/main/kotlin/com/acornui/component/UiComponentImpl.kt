@@ -198,6 +198,10 @@ open class UiComponentImpl<T : HTMLElement>(
 		return dom.classList.contains(styleTag.className)
 	}
 
+	final override fun setClass(styleTag: CssClass, value: Boolean) {
+		if (value) addClass(styleTag) else removeClass(styleTag)
+	}
+
 	//-----------------------------------------------
 	// Transformation and translation methods
 	//-----------------------------------------------

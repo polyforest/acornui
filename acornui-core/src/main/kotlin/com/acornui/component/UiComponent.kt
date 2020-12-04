@@ -55,6 +55,13 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	fun containsClass(styleTag: CssClass): Boolean
 
 	/**
+	 * Adds or removes the given css class, depending on [value].
+	 * @param styleTag The css class to add or remove.
+	 * @param value If true, the class will be added, otherwise, removed.
+	 */
+	fun setClass(styleTag: CssClass, value: Boolean)
+
+	/**
 	 * A unique string id for this component.
 	 */
 	var id: String
