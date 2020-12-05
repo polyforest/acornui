@@ -22,13 +22,26 @@ import com.acornui.component.style.CommonStyleTags
 import com.acornui.component.style.cssClass
 import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
+import com.acornui.function.as1
 import com.acornui.google.Icons
 import com.acornui.google.icon
+import com.acornui.input.Event
+import com.acornui.input.clicked
+import com.acornui.signal.signal
 import com.acornui.skins.CssProps
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class WindowPanel(owner: Context) : Div(owner) {
+
+	/**
+	 * Dispatched when the [closeButton] has been clicked or [requestClose] has been invoked.
+	 */
+	val closeRequested = signal<Event>()
+
+	fun requestClose() {
+		closeRequested.dispatch(Event())
+	}
 
 	val titleBar = addChild(div {
 		addClass(WindowPanelStyle.titleBar)
@@ -42,6 +55,8 @@ open class WindowPanel(owner: Context) : Div(owner) {
 	val closeButton = titleBar.addElement(div {
 		addClass(WindowPanelStyle.closeButton)
 		+icon(Icons.CLOSE)
+
+		clicked.listen(::requestClose.as1)
 	})
 
 	val contents = addChild(div {

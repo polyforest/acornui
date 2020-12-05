@@ -20,7 +20,7 @@ package com.acornui.input
  * An event object not native to the DOM.
  * These events are meant to be dispatched by a signal. They do not bubble or capture on the display graph.
  */
-abstract class Event {
+open class Event {
 
 	/**
 	 * Returns true if [preventDefault] was called during this dispatch.
