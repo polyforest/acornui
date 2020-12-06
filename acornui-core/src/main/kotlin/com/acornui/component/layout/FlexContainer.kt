@@ -100,7 +100,7 @@ $grid > $contents {
 
 $contents {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: inherit;
 	width: inherit;
 	height: inherit;
 	justify-content: inherit;
@@ -110,13 +110,32 @@ $contents {
 	flex-direction: inherit;
 	column-gap: inherit;
 	row-gap: inherit;
-	margin: 0 calc(-1 * ${vGap.v}) calc(-1 * ${hGap.v}) 0;
 	$parentHGap: ${hGap.v};
 	$parentVGap: ${vGap.v};
 }
 
-$contents > * {
+$hFlowGroup > $contents, $vFlowGroup > $contents {
+	margin: 0 calc(-1 * ${vGap.v}) calc(-1 * ${hGap.v}) 0;
+}
+
+$hFlowGroup > $contents > *, $vFlowGroup $contents > * {
 	margin: 0 ${parentVGap.v} ${parentHGap.v} 0;
+}
+
+$hGroup > $contents, $hFlowGroup > $contents {
+	height: 100%;
+}
+
+$hGroup > $contents > *:not(:last-child) {
+	margin-right: ${parentHGap.v};
+}
+
+$vGroup > $contents, $vFlowGroup > $contents {
+	width: 100%;
+}
+
+$vGroup > $contents > *:not(:last-child) {
+	margin-bottom: ${parentVGap.v};
 }
 
 $vGroup {
@@ -132,11 +151,13 @@ $hGroup {
 $hFlowGroup {
 	align-items: baseline;
 	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 $vFlowGroup {
 	align-items: self-start;
 	flex-direction: column;
+	flex-wrap: wrap;
 }
 		"""
 		)
