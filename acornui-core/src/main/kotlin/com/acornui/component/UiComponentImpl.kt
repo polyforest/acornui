@@ -59,7 +59,7 @@ open class UiComponentImpl<T : HTMLElement>(
 	final override val eventTarget: EventTarget
 		get() = dom
 
-	override val attachments: MutableMap<Any, Any> = HashMap<Any, Any>()
+	override val attachments: MutableMap<Any, Any> = HashMap()
 
 	// Node properties
 
