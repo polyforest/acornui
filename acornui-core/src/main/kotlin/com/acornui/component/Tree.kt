@@ -144,7 +144,7 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 		val data = data
 		callback(data)
 		return dataChanged.listen {
-			callback(data)
+			callback(it.newData)
 		}
 	}
 
@@ -195,9 +195,9 @@ open class Tree<T : Node>(owner: Context, initialData: T) : Div(owner) {
 				subTreeCreated.dispatch(it)
 			}
 			subTreeCreated.dispatch(child)
-			child.allCurrent {
-				this@Tree.subTreeCreated.dispatch(this)
-			}
+//			child.allCurrent {
+//				this@Tree.subTreeCreated.dispatch(this)
+//			}
 			child
 		}, configure = { element: Tree<T>, item: T, index: Int ->
 			element.data = item
