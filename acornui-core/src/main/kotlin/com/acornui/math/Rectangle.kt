@@ -55,6 +55,18 @@ data class Rectangle(
 	val bottom: Double
 		get() = y + height
 
+	val topLeft: Vector2
+		get() = Vector2(left, top)
+
+	val topRight: Vector2
+		get() = Vector2(right, top)
+
+	val bottomRight: Vector2
+		get() = Vector2(right, bottom)
+
+	val bottomLeft: Vector2
+		get() = Vector2(left, bottom)
+
 	/**
 	 * Expands all boundaries [left], [top], [right], and [bottom] by the given amount.
 	 */

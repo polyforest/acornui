@@ -149,7 +149,7 @@ open class Drag(
 
 	private fun windowMouseMoveHandler(event: MouseEvent) {
 		event.handle()
-		positionClient = vec2(event.clientX, event.clientY)
+		move(vec2(event.clientX, event.clientY))
 		if (preventDefaultOnMouse)
 			event.preventDefault()
 	}

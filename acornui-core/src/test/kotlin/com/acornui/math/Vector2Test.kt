@@ -69,10 +69,6 @@ class Vector2Test {
 		assertEquals(1.0, vec2(1.0, 0.0).dot(1.0, 0.0))
 		assertEquals(-1.0, vec2(1.0, 0.0).dot(-1.0, 0.0))
 		assertEquals(0.0, vec2(1.0, 0.0).dot(0.0, 1.0))
-
-//		println(Vector2(50.0, 0.0).crs(100.0, 100.0) / Vector2(50.0, 0.0).len())
-//		println(Vector2(10.0, 50.0).crs(0.0, 10.0) / Vector2(50.0, 10.0).len())
-//		println(Vector2(10.0, 50.0).crs(5.0, 1.0) / Vector2(50.0, 10.0).len())
 	}
 
 	@Test
@@ -122,68 +118,8 @@ class Vector2Test {
 
 	@Test
 	fun clamp() {
-		assertEquals(vec2(3.0, 0.0), vec2(4.0, 0.0).clamp(1.0, 3.0))
-		assertEquals(vec2(1.0, 0.0), vec2(0.5, 0.0).clamp(1.0, 3.0))
-	}
-
-	@Test
-	fun mul() {
-	}
-
-	@Test
-	fun crs() {
-	}
-
-	@Test
-	fun crs1() {
-	}
-
-	@Test
-	fun angle() {
-	}
-
-	@Test
-	fun setAngleRad() {
-	}
-
-	@Test
-	fun rotateRad() {
-	}
-
-	@Test
-	fun lerp() {
-	}
-
-	@Test
-	fun lerp1() {
-	}
-
-	@Test
-	fun interpolate() {
-	}
-
-	@Test
-	fun epsilonEquals() {
-	}
-
-	@Test
-	fun epsilonEquals1() {
-	}
-
-	@Test
-	fun isUnit() {
-	}
-
-	@Test
-	fun isUnit1() {
-	}
-
-	@Test
-	fun isZero() {
-	}
-
-	@Test
-	fun isZero1() {
+		assertEquals(vec2(3.0, 0.0), vec2(4.0, 0.0).clampLength(1.0, 3.0))
+		assertEquals(vec2(1.0, 0.0), vec2(0.5, 0.0).clampLength(1.0, 3.0))
 	}
 
 	@Test
@@ -193,78 +129,19 @@ class Vector2Test {
 	}
 
 	@Test
-	fun isOnLine1() {
+	fun clampLength() {
+		assertClose(vec2(2.0, 0.0), vec2(2.0, 0.0).clampLength(0.0, 2.0))
+		assertClose(vec2(0.0, 2.0), vec2(0.0, 2.0).clampLength(0.0, 2.0))
+		assertClose(vec2(2.0, 0.0), vec2(3.0, 0.0).clampLength(0.0, 2.0))
+		assertClose(vec2(0.0, 2.0), vec2(0.0, 3.0).clampLength(0.0, 2.0))
+		assertClose(vec2(2.0, 2.0), vec2(3.0, 3.0).clampLength(0.0, sqrt(4.0 + 4.0)))
+		assertClose(vec2(2.0, 2.0), vec2(1.0, 1.0).clampLength(sqrt(4.0 + 4.0), 100.0))
+		assertClose(vec2(3.0, 3.0), vec2(3.0, 3.0).clampLength(sqrt(4.0 + 4.0), 100.0))
 	}
 
-	@Test
-	fun isCollinear() {
+	@Test fun clampRect() {
+		assertClose(vec2(2.0, 3.0), vec2(1.0, 3.0).clampRect(2.0, 0.0, 5.0, 5.0))
+		assertClose(vec2(2.0, 2.0), vec2(1.0, 3.0).clampRect(2.0, 0.0, 3.0, 2.0))
 	}
 
-	@Test
-	fun isCollinear1() {
-	}
-
-	@Test
-	fun isCollinearOpposite() {
-	}
-
-	@Test
-	fun isCollinearOpposite1() {
-	}
-
-	@Test
-	fun isPerpendicular() {
-	}
-
-	@Test
-	fun isPerpendicular1() {
-	}
-
-	@Test
-	fun hasSameDirection() {
-	}
-
-	@Test
-	fun hasOppositeDirection() {
-	}
-
-	@Test
-	fun ext() {
-	}
-
-	@Test
-	fun clear() {
-	}
-
-	@Test
-	fun free() {
-	}
-
-	@Test
-	fun equalsTest() {
-	}
-
-	@Test
-	fun hashCodeTest() {
-	}
-
-	@Test
-	fun toStringTest() {
-	}
-
-	@Test
-	fun getX() {
-	}
-
-	@Test
-	fun setX() {
-	}
-
-	@Test
-	fun getY() {
-	}
-
-	@Test
-	fun setY() {
-	}
 }

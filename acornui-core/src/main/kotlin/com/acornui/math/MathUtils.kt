@@ -108,6 +108,11 @@ inline fun <T : Comparable<T>> clamp(value: T?, min: T, max: T): T? {
 	return value
 }
 
+/**
+ * Given a comparable value, returns a value within the range of [min] and [max] (inclusive).
+ * NB: [min] takes precedence over [max].
+ * This is the same: `maxOf(min, minOf(max, value))`
+ */
 inline fun <T : Comparable<T>> clamp(value: T, min: T, max: T): T {
 	if (value <= min) return min
 	if (value >= max) return max

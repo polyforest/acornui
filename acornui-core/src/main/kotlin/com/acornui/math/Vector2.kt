@@ -128,13 +128,55 @@ data class Vector2(
 	fun limit(limit: Double): Vector2 =
 		if (len2() > limit * limit) len(limit) else this
 
-	fun clamp(min: Double, max: Double): Vector2 {
+	@Deprecated("Use clampLen", ReplaceWith("clampLength(min, max)"))
+	fun clamp(min: Double, max: Double): Vector2 = clampLength(min, max)
+
+	/**
+	 * Returns this vector clamped to a minimum length of [min] and a maximum length of [max].
+	 * NB: [min] takes precedence over [max]
+	 */
+	fun clampLength(min: Double, max: Double): Vector2 {
 		val l2 = len2()
 		if (l2 == 0.0) return this
-		if (l2 > max * max) return len(max)
 		if (l2 < min * min) return len(min)
+		if (l2 > max * max) return len(max)
 		return this
 	}
+
+	/**
+	 * Clamps the x value to within the range [min] and [max] (inclusive)
+	 * NB: [min] takes precedence over [max].
+	 */
+	fun clampX(min: Double, max: Double): Vector2 {
+		if (x < min) return Vector2(min, y)
+		if (x > max) return Vector2(max, y)
+		return this
+	}
+
+	/**
+	 * Clamps the y value to within the range [min] and [max] (inclusive)
+	 * NB: [min] takes precedence over [max].
+	 */
+	fun clampY(min: Double, max: Double): Vector2 {
+		if (y < min) return Vector2(x, min)
+		if (y > max) return Vector2(x, max)
+		return this
+	}
+
+	/**
+	 * Clamps this coordinate into the given bounding rectangle.
+	 * NB: [min] takes precedence over [max].
+	 */
+	fun clampRect(minX: Double, minY: Double, maxX: Double, maxY: Double): Vector2 {
+		if (x >= minX && y >= minY && x <= maxX && y <= maxY) return this
+		return Vector2(clamp(x, minX, maxX), clamp(y, minY, maxY))
+	}
+
+	/**
+	 * Clamps this coordinate into the given bounding rectangle.
+	 */
+	fun clampRect(bounds: Rectangle) =
+		clampRect(bounds.x, bounds.y, bounds.right, bounds.bottom)
 
 	/**
 	 * @return the angle in radians of this vector (point) relative to the x-axis. Angles are towards the positive y-axis.
