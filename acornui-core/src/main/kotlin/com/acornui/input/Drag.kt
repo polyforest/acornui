@@ -102,7 +102,9 @@ open class Drag(
 	private var maxDragDistance = 0.0
 	private var startPositionClient = Vector2.ZERO
 	private var previousPositionClient = Vector2.ZERO
+	private var previousPositionLocal = Vector2.ZERO
 	private var positionClient = Vector2.ZERO
+	private var positionLocal = Vector2.ZERO
 	private var startPositionLocal = Vector2.ZERO
 
 	private var touchId: Int = -1
@@ -119,6 +121,8 @@ open class Drag(
 		this.startPositionClient = positionClient
 		this.previousPositionClient = positionClient
 		this.positionClient = positionClient
+		this.positionLocal = target.clientToLocal(positionClient)
+		this.previousPositionLocal = positionLocal
 		this.touchId = touchId
 		startPositionLocal = target.clientToLocal(startPositionClient)
 		cancelled = false
@@ -126,7 +130,9 @@ open class Drag(
 
 	private fun move(positionClient: Vector2) {
 		this.previousPositionClient = this.positionClient
+		this.previousPositionLocal = this.positionLocal
 		this.positionClient = positionClient
+		this.positionLocal = target.clientToLocal(positionClient)
 	}
 
 	private fun windowKeyDownHandler(event: KeyboardEvent) {
@@ -252,14 +258,16 @@ open class Drag(
 	}
 
 	private fun dragEvent(isTrusted: Boolean): DragEvent = DragEvent(
-		startPositionClient,
-		previousPositionClient,
-		positionClient,
-		startPositionLocal,
-		fromTouch,
-		touchId,
-		target,
-		isTrusted
+		startPositionClient = startPositionClient,
+		startPositionLocal = startPositionLocal,
+		previousPositionClient = previousPositionClient,
+		previousPositionLocal = previousPositionLocal,
+		positionClient = positionClient,
+		positionLocal = positionLocal,
+		fromTouch = fromTouch,
+		touchId = touchId,
+		target = target,
+		isTrusted = isTrusted
 	)
 
 	/**
@@ -323,7 +331,7 @@ open class Drag(
 	}
 }
 
-class DragEvent(
+data class DragEvent(
 
 	/**
 	 * The starting position (in page coordinates) for the drag.
@@ -331,9 +339,19 @@ class DragEvent(
 	val startPositionClient: Vector2,
 
 	/**
+	 * The starting position relative to the target element's bounding rectangle.
+	 */
+	val startPositionLocal: Vector2,
+
+	/**
 	 * The position of the last event (in page coordinates).
 	 */
 	val previousPositionClient: Vector2,
+
+	/**
+	 * The previous position relative to the target element's bounding rectangle.
+	 */
+	val previousPositionLocal: Vector2,
 
 	/**
 	 * The current position (in client coordinates).
@@ -341,9 +359,9 @@ class DragEvent(
 	val positionClient: Vector2,
 
 	/**
-	 * The starting position relative to the target element's bounding rectangle.
+	 * The position relative to the target element's bounding rectangle.
 	 */
-	val startPositionLocal: Vector2,
+	val positionLocal: Vector2,
 
 	/**
 	 * True if initialized from a touch interaction, false if mouse.
@@ -360,21 +378,22 @@ class DragEvent(
 	 */
 	val target: UiComponent,
 
-	val isTrusted: Boolean
-
-) : Event() {
-
 	/**
-	 * The position relative to the target element's bounding rectangle.
+	 * True if the JS Event is trusted.
+	 * @see org.w3c.dom.events.Event.isTrusted
 	 */
-	val positionLocal: Vector2 by lazy {
-		target.clientToLocal(positionClient)
-	}
+	val isTrusted: Boolean,
 
-	val positionClientDelta: Vector2 by lazy { positionClient - previousPositionClient }
+) : Event()
 
-	override fun toString(): String {
-		return "DragEvent(startPosition=$startPositionClient, position=$positionClient, isTouch=$fromTouch, touchId=$touchId)"
-	}
+/**
+ * The difference between [DragEvent.positionClient] and [DragEvent.previousPositionClient]
+ */
+val DragEvent.positionClientDelta: Vector2
+	get() = positionClient - previousPositionClient
 
-}
+/**
+ * The difference between [DragEvent.positionLocal] and [DragEvent.previousPositionLocal]
+ */
+val DragEvent.positionLocalDelta: Vector2
+	get() = positionLocal - previousPositionClient
