@@ -49,7 +49,7 @@ fun <T> Deferred<T>.getCompletedOrNull(): T? = if (isComplete && getCompletionEx
 
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 	values.awaitAll()
-	return mapValues { it.value.await() }
+	return mapValues { it.value.getCompleted() }
 }
 
 /**
@@ -68,8 +68,6 @@ suspend fun <T> withTimeout(timeout: Duration?, block: suspend CoroutineScope.()
 	else
 		withTimeout(timeout.toDelayMillis(), block)
 }
-
-class MainTimeoutException(timeout: Duration) : CancellationException("Job timed out after ${timeout.inSeconds} seconds.")
 
 /**
  * Launches a coroutine inside a supervisor scope.

@@ -515,6 +515,17 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
 }
 
 /**
+ * Removes tail elements of this list until it matches the new size.
+ * @throws IllegalArgumentException If maxSize > size
+ */
+fun <E> MutableList<E>.setSize(maxSize: Int) {
+	require(maxSize <= size)
+	while (size > maxSize) {
+		removeAt(lastIndex)
+	}
+}
+
+/**
  * Clones this list, replacing the value at the given index with the new value.
  */
 fun <E> List<E>.replaceAt(index: Int, newValue: E): List<E> {

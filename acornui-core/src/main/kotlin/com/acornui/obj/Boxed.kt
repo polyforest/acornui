@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Poly Forest, LLC
+ * Copyright 2020 Poly Forest, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.acornui.time
-
-import kotlin.time.Duration
+package com.acornui.obj
 
 /**
- * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * A wrapper with a single mutable value.
  */
-inline fun <T> Iterable<T>.sumByDuration(selector: (T) -> Duration): Duration =
-	fold(Duration.ZERO) { acc, e -> acc + selector(e) }
-
-/**
- * Returns the sum of this list of durations.
- */
-fun Iterable<Duration>.sum(): Duration =
-	fold(Duration.ZERO) { acc, duration -> acc + duration }
+class Boxed<T>(var value: T)

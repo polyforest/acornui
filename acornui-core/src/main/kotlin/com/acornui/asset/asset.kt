@@ -16,6 +16,7 @@
 
 package com.acornui.asset
 
+import com.acornui.async.progressReporter
 import com.acornui.audio.*
 import com.acornui.config
 import com.acornui.di.Context
