@@ -18,9 +18,11 @@
 
 package com.acornui.io
 
+import com.acornui.async.MutableProgress
+import com.acornui.async.ProgressReporter
+import com.acornui.async.ProgressReporterImpl
 import com.acornui.browser.UrlParams
 import com.acornui.browser.toUrlParams
-import kotlinx.serialization.Serializable
 import org.w3c.files.Blob
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -30,21 +32,21 @@ import kotlin.time.seconds
  */
 data class UrlRequestData(
 
-		val url: String = "",
+	val url: String = "",
 
-		val method: String = UrlRequestMethod.GET,
+	val method: String = UrlRequestMethod.GET,
 
-		val headers: Map<String, String> = HashMap(),
+	val headers: Map<String, String> = HashMap(),
 
-		val user: String? = null,
+	val user: String? = null,
 
-		val password: String? = null,
+	val password: String? = null,
 
-		val formData: MultipartFormData? = null,
+	val formData: MultipartFormData? = null,
 
-		val variables: UrlParams? = null,
+	val variables: UrlParams? = null,
 
-		var body: String? = null
+	var body: String? = null
 )
 
 private val absolutePathRegex = Regex("""^([a-z0-9]*:|.{0})//.*${'$'}""", RegexOption.IGNORE_CASE)
@@ -90,8 +92,8 @@ object UrlRequestMethod {
 }
 
 open class ResponseConnectTimeoutException(
-		val requestData: UrlRequestData,
-		val connectTimeout: Duration
+	val requestData: UrlRequestData,
+	val connectTimeout: Duration
 ) : Throwable("The request ${requestData.url} timed out after $connectTimeout")
 
 open class ResponseException(val status: Short, message: String?, val detail: String) : Throwable(message) {
@@ -117,8 +119,8 @@ class ByteArrayFormItem(
 ) : FormDataItem()
 
 class StringFormItem(
-		override val name: String,
-		val value: String
+	override val name: String,
+	val value: String
 ) : FormDataItem()
 
 interface Loader<out T> {
@@ -137,31 +139,38 @@ interface Loader<out T> {
 	suspend fun load(requestData: UrlRequestData, settings: RequestSettings = requestSettings): T
 }
 
-suspend fun <T> Loader<T>.load(path: String, settings: RequestSettings = requestSettings): T = load(path.toUrlRequestData(), settings)
+suspend fun <T> Loader<T>.load(path: String, settings: RequestSettings = requestSettings): T =
+	load(path.toUrlRequestData(), settings)
 
 data class RequestSettings(
 
-		/**
-		 * If the request is to a relative path, this value will be prepended.
-		 */
-		val rootPath: String = "",
+	/**
+	 * If the request is to a relative path, this value will be prepended.
+	 */
+	val rootPath: String = "",
 
-		/**
-		 * The progress reporter allows the loader to report its progress.
-		 */
-		val progressReporter: ProgressReporter = ProgressReporterImpl(),
+	/**
+	 * The progress reporter allows the loader to report its progress.
+	 */
+	val progressReporter: ProgressReporter = ProgressReporterImpl(),
 
-		/**
-		 * Before a connection has been made, a guess can be made for how long the request will take. This will
-		 * affect the total values given by the progress reporter until the actual estimate is calculated.
-		 */
-		val initialTimeEstimate: Duration = 1.seconds,
+	/**
+	 * Before a connection has been made, a guess can be made for how long the request will take. This will
+	 * affect the total values given by the progress reporter until the actual estimate is calculated.
+	 */
+	val initialTimeEstimate: Duration = 1.seconds,
 
-		/**
-		 * If the connection hasn't been made within this timespan, a [com.acornui.io.ResponseConnectTimeoutException]
-		 * will be thrown.
-		 * This is just the timeout for the connection, not the total request. To add a read timeout, wrap your request
-		 * in [com.acornui.async.withTimeout].
-		 */
-		val connectTimeout: Duration = 30.seconds
+	/**
+	 * If the connection hasn't been made within this timespan, a [com.acornui.io.ResponseConnectTimeoutException]
+	 * will be thrown.
+	 * This is just the timeout for the connection, not the total request. To add a read timeout, wrap your request
+	 * in [com.acornui.async.withTimeout].
+	 */
+	val connectTimeout: Duration = 30.seconds
 )
+
+/**
+ * Using the set [RequestSettings.progressReporter] and [RequestSettings.initialTimeEstimate], creates a
+ * [MutableProgress] object for tracking load progress.
+ */
+fun RequestSettings.createProgress(): MutableProgress = progressReporter.createReporter(initialTimeEstimate)

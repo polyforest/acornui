@@ -29,6 +29,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
 
+@Deprecated("No longer used", ReplaceWith("suspend () -> R"))
 typealias Work<R> = suspend () -> R
 
 /**
@@ -44,7 +45,7 @@ suspend fun <T> Deferred<T>.awaitOrNull(): T? {
  * If this deferred object [Deferred.isCompleted] and has not completed exceptionally, the [Deferred.getCompleted] value
  * will be returned. Otherwise, null.
  */
-fun <T> Deferred<T>.getCompletedOrNull(): T? = if (isCompleted && getCompletionExceptionOrNull() == null) getCompleted() else null
+fun <T> Deferred<T>.getCompletedOrNull(): T? = if (isComplete && getCompletionExceptionOrNull() == null) getCompleted() else null
 
 suspend fun <K, V> Map<K, Deferred<V>>.awaitAll(): Map<K, V> {
 	values.awaitAll()
@@ -118,3 +119,11 @@ fun <T> Promise<T>.withTimeout(timeout: Duration): Promise<T> {
 }
 
 class TimeoutException(val timeout: Duration) : Exception("Promise timed out after $timeout")
+
+/**
+ * An alias for [Job.isCompleted]. A minor annoyance, but complete is a transitive verb, therefore "isCompleted" should
+ * be either "hasCompleted" or "isComplete".
+ * @see Job.isCompleted
+ */
+val Job.isComplete: Boolean
+	get() = isCompleted

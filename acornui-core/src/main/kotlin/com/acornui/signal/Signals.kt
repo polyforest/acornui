@@ -36,6 +36,7 @@ interface Signal<out T> : Bindable {
 	 * @param isOnce A flag, where if true, will cause the handler to be removed immediately after the next dispatch.
 	 * @param handler The callback that will be invoked when the signal is dispatched. The handler will be given
 	 * a single argument; the value provided on the dispatch.
+	 *
 	 * @return Returns a signal subscription that may be paused or disposed.
 	 */
 	fun listen(isOnce: Boolean = false, handler: (T) -> Unit): SignalSubscription
@@ -47,6 +48,7 @@ interface Signal<out T> : Bindable {
 	 *
 	 * @param handler The callback that will be invoked when the signal is dispatched. The handler will be given
 	 * a single argument; the value provided on the dispatch.
+	 *
 	 * @return Returns a signal subscription that may be paused or disposed.
 	 */
 	fun listen(handler: (T) -> Unit): SignalSubscription = listen(false, handler)

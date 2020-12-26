@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.acornui.io
+package com.acornui.async
 
 import com.acornui.di.Context
 import com.acornui.di.contextKey

@@ -16,6 +16,8 @@
 
 package com.acornui.io
 
+import com.acornui.async.ProgressImpl
+import com.acornui.async.await
 import com.acornui.async.delay
 import com.acornui.test.assertGreaterThan
 import com.acornui.test.runTest
@@ -23,22 +25,17 @@ import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.time.measureTime
 import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 class ProgressTest {
 
 	@Test fun await() = runTest {
-        val p = ProgressImpl(total = 500.milliseconds)
-        val interval = 20.milliseconds
+        val p = ProgressImpl(total = 200.milliseconds)
         launch {
-            while (p.isLoading) {
-                p.loaded += interval
-                delay(interval)
-            }
+            delay(p.total)
+            p.complete()
         }
-        val buffer = 0.1.seconds
         val time = measureTime {
-            p.await(buffer)
+            p.await()
         }
         assertGreaterThan(p.total, time)
     }
