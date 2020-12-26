@@ -133,12 +133,11 @@ interface Tween : Updatable, Disposable {
 	}
 
 	/**
-	 * Marks this tween as completed. This will leave this tween's progress as it is.
+	 * Marks this tween as complete. This will leave this tween's progress as it is.
 	 *
 	 * Use [finish] to first set this tween's progress to 100% and stop.
 	 *
-	 * If this tween is being driven by the [FrameDriver], it will be stopped.
-	 * @see [Updatable.stop]
+	 * This will stop the Tween, removing itself from frame callbacks.
 	 */
 	fun complete()
 
