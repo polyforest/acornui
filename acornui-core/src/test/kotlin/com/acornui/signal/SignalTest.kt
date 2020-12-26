@@ -20,7 +20,6 @@ package com.acornui.signal
 
 import com.acornui.function.as1
 import com.acornui.test.assertListEquals
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -91,6 +90,9 @@ class SignalTest {
 		s.listen(true, handler4)
 		s.listen(true, handler5)
 
+		s.dispatch(0)
+		s.dispatch(0)
+		s.dispatch(0)
 		s.dispatch(0)
 
         assertListEquals(arrayOf(1, 2, 3, 4, 5), arr)

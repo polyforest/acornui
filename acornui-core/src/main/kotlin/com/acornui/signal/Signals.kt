@@ -54,15 +54,6 @@ interface Signal<out T> : Bindable {
 	fun listen(handler: (T) -> Unit): SignalSubscription = listen(false, handler)
 
 	override fun addBinding(callback: () -> Unit): SignalSubscription = listen(callback.as1)
-
-	@Deprecated("use listen", ReplaceWith("listen(handler)"))
-	fun add(handler: (T) -> Unit) = listen(false, handler)
-
-	@Deprecated("use listen", ReplaceWith("listen(isOnce, handler)"), DeprecationLevel.ERROR)
-	fun add(isOnce: Boolean, handler: (T) -> Unit): Nothing = error("use invoke")
-
-	@Deprecated("", ReplaceWith(""), DeprecationLevel.ERROR)
-	fun remove(handler: (T) -> Unit): Nothing = error("")
 }
 
 interface MutableSignal<T> : Signal<T>, Clearable, Disposable {
@@ -166,7 +157,7 @@ open class SignalImpl<T> : MutableSignal<T>, Disposable {
 	/**
 	 * Calls executor on each handler in this signal.
 	 */
-	final override fun dispatch(value: T) {
+	override fun dispatch(value: T) {
 		if (cursor != -1)
 			Log.error("This signal is currently dispatching.")
 		cursor = 0
