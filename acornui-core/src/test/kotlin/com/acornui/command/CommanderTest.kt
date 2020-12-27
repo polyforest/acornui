@@ -16,20 +16,12 @@
 
 package com.acornui.command
 
-import com.acornui.async.delay
-import com.acornui.async.withTimeout
 import com.acornui.di.ContextImpl
 import com.acornui.obj.Boxed
-import com.acornui.test.assertLessThan
-import com.acornui.test.runTest
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.isActive
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.measureTime
-import kotlin.time.seconds
 
 class CommanderTest {
 
@@ -46,37 +38,55 @@ class CommanderTest {
 	}
 
 	@Test
-	fun addInvokesCommand() = runTest {
+	fun addInvokesCommand() {
 		val d = Boxed(0)
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
-		commander.await()
+
 		assertEquals(4, d.value)
 	}
 
 	@Test
-	fun undoRedo() = runTest(timeout = 2.seconds) {
+	fun undoRedo() {
 		val d = Boxed(0)
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
-		commander.await()
+
 		assertEquals(4, d.value)
 		commander.undoCommand()
 		commander.undoCommand()
-		commander.await()
+
 		assertEquals(2, d.value)
 		commander.redoCommand()
 		commander.redoCommand()
-		commander.await()
+
 		assertEquals(4, d.value)
 	}
 
 	@Test
-	fun undoRedoWithGroups() = runTest(timeout = 2.seconds) {
+	fun addAfterUndoShouldClearHistoryAfterCursor() {
+		val d = Boxed(0)
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+
+		commander.undoCommand()
+		commander.undoCommand()
+		assertEquals(2, d.value)
+		commander.add(Increment(d, 1))
+		assertEquals(3, d.value)
+		commander.redoCommand()
+		commander.redoCommand()
+		assertEquals(3, d.value)
+	}
+
+	@Test
+	fun undoRedoWithGroups() {
 		val d = Boxed(0)
 		val groupA = CommandGroup()
 		commander.add(Increment(d, 1), groupA)
@@ -89,76 +99,111 @@ class CommanderTest {
 		val groupC = CommandGroup()
 		commander.add(Increment(d, 1), groupC)
 		commander.add(Increment(d, 1), groupC)
-		commander.await()
+
 		assertEquals(8, d.value)
 		commander.undoCommandGroup()
-		commander.await()
+
 		assertEquals(6, d.value)
 		commander.undoCommandGroup()
-		commander.await()
+
 		assertEquals(5, d.value)
 		commander.undoCommandGroup()
-		commander.await()
+
 		assertEquals(2, d.value)
 		commander.undoCommandGroup()
-		commander.await()
+
 		assertEquals(0, d.value)
 		commander.undoCommandGroup()
-		commander.await()
+
 		assertEquals(0, d.value)
 		commander.redoCommandGroup()
-		commander.await()
+
 		assertEquals(2, d.value)
 		commander.redoCommandGroup()
-		commander.await()
+
 		assertEquals(5, d.value)
 		commander.redoCommandGroup()
-		commander.await()
+
 		assertEquals(6, d.value)
 	}
 
 	@Test
-	fun awaitCanBeCancelled() = runTest {
-		commander.add(createCommand {
-			while (isActive) {
-				delay(0.2.seconds)
-			}
-		})
-		val time = measureTime {
-			try {
-				withTimeout(0.5.seconds) {
-					commander.await()
-				}
-			} catch (ignore: TimeoutCancellationException) {}
-		}
-		assertLessThan(1.seconds, time)
-	}
-
-	@Test
-	fun anonymousCommand() = runTest {
+	fun anonymousCommand() {
 		var i = 0
 		commander.add(createCommand(invoke = {
 			i++
 		}, undo = {
 			i--
 		}))
-		commander.await()
+
 		assertEquals(1, i)
 		commander.undoCommand()
-		commander.await()
+
 		assertEquals(0, i)
 		commander.redoCommand()
-		commander.await()
+
 		assertEquals(1, i)
 		commander.redoCommand()
-		commander.await()
+
 		assertEquals(1, i)
+	}
+
+	@Test
+	fun maxHistory() {
+		commander.maxCommandHistory = 0
+
+		val d = Boxed(0)
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.undoCommand() // Nothing to undo, no history
+		commander.undoCommand()
+		assertEquals(2, d.value)
+
+		commander.maxCommandHistory = 2
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		assertEquals(5, d.value)
+		commander.undoCommand() // 4
+		commander.undoCommand() // 3
+		commander.undoCommand() // 3 - Only two should be undone; history size exceeded.
+		assertEquals(3, d.value)
+
+		commander.maxCommandHistory = 0
+	}
+
+	@Test
+	fun onCommand() {
+		val ctx = ContextImpl()
+		ctx.dependencies += Commander to commander
+
+		class Foo : Command {
+			override fun invoke() {}
+		}
+		class Bar : Command {
+			override fun invoke() {}
+		}
+		var fooC = 0
+		ctx.onCommand<Foo> {
+			fooC++
+		}
+		var barC = 0
+		ctx.onCommand<Bar> {
+			barC++
+		}
+		ctx.command(Foo())
+		ctx.command(Foo())
+		ctx.command(Bar())
+		ctx.command(Foo())
+		ctx.command(Bar())
+		assertEquals(3, fooC)
+		assertEquals(2, barC)
 	}
 }
 
 private class Increment(val receiver: Boxed<Int>, val delta: Int) : Command {
 
-	override suspend fun invoke() {
+	override fun invoke() {
 		receiver.value = receiver.value + delta
 	}
 

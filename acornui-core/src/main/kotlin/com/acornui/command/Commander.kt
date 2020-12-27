@@ -17,26 +17,19 @@
 package com.acornui.command
 
 import com.acornui.collection.poll
-import com.acornui.collection.setSize
+import com.acornui.collection.keepFirst
+import com.acornui.collection.keepLast
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.dependencyFactory
-import com.acornui.frame
-import com.acornui.signal.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeout
-import kotlin.coroutines.resume
+import com.acornui.own
+import com.acornui.signal.Signal
+import com.acornui.signal.SignalSubscription
+import com.acornui.signal.filtered
+import com.acornui.signal.signal
 import kotlin.reflect.KClass
-import kotlin.time.Duration
-import kotlin.time.seconds
 
 interface Commander {
-
-	/**
-	 * A command has been invoked.
-	 */
-	val commandInvoked: Signal<CommandNotification>
 
 	/**
 	 * A command has completed.
@@ -56,6 +49,7 @@ interface Commander {
 
 	/**
 	 * The maximum number of commands to remember. (Allows for undo/redo)
+	 * If this is set to lower than the current history, the history will not be truncated until after the next [add].
 	 */
 	var maxCommandHistory: Int
 
@@ -64,8 +58,15 @@ interface Commander {
 	 */
 	fun add(command: Command, group: CommandGroup? = null)
 
+	/**
+	 * Undoes last commands with the same [CommandGroup]. (Or one command with no command group)
+	 */
 	fun undoCommandGroup(): List<CommandNotification>
 
+	/**
+	 * Redoes the last undone commands with the same [CommandGroup]. (Or one command with no command group)
+	 * Note that if a new command has been added after undo, redo history is removed.
+	 */
 	fun redoCommandGroup(): List<CommandNotification>
 
 	/**
@@ -73,17 +74,11 @@ interface Commander {
 	 */
 	fun undoCommand(): CommandNotification?
 
+	/**
+	 * Redoes the last undone command.
+	 * Note that if a new command has been added after undo, redo history is removed.
+	 */
 	fun redoCommand(): CommandNotification?
-
-	/**
-	 * A list of commands still pending.
-	 */
-	val pending: List<CommandNotification>
-
-	/**
-	 * True if this commander is currently invoking a command.
-	 */
-	val isBusy: Boolean
 
 	companion object : Context.Key<Commander> {
 
@@ -92,24 +87,12 @@ interface Commander {
 }
 
 /**
- * Suspends the coroutine until all pending commands have been completed.
+ * Listens for a command to be completed of the given command type.
+ * @return Returns a subscription that may be paused or disposed. Will be disposed automatically when this context is
+ * disposed.
  */
-suspend fun Commander.await() {
-	if (!isBusy) return
-	return suspendCancellableCoroutine { cont ->
-		var sub: SignalSubscription? = null
-		sub = commandCompleted.listen {
-			if (pending.isEmpty()) {
-				sub!!.dispose()
-				cont.resume(Unit)
-			}
-		}
-		cont.invokeOnCancellation {
-			sub.dispose()
-		}
-
-	}
-}
+inline fun <reified T : Command> Context.onCommand(noinline handler: (CommandNotification) -> Unit): SignalSubscription =
+	own(commander.commandCompleted.filtered { it.isInstanceOf(T::class) }.listen(handler))
 
 /**
  * A command group indicates which commands should be grouped together in undo/redo actions.
@@ -137,42 +120,25 @@ class CommanderImpl(owner: Context) : ContextImpl(owner), Commander {
 	override var index: Int = 0
 		private set
 
-	/**
-	 * The maximum number of commands to remember. (Allows for undo/redo)
-	 */
 	override var maxCommandHistory = 10000
 
-	override val commandInvoked = signal<CommandNotification>()
-
-	override val commandCompleted = signal<CommandCompletedEvent>()
-
-	class CommandCompletedEvent(notification: CommandNotification, val error: Throwable?) :
-		CommandNotification by notification
+	override val commandCompleted = signal<CommandNotification>()
 
 	private val historyMutable = ArrayList<CommandAndGroup>()
 	override val history: List<CommandNotification> = historyMutable
 
-	private val pendingMutable = ArrayList<CommandAndGroup>()
-	override val pending: List<CommandNotification> = pendingMutable
-
-	/**
-	 * Returns a signal for [commandCompleted] filtered to only commands of the given type.
-	 * This is the same as `commandCompleted.filtered { it.type == type }`
-	 */
-	fun commandCompleted(type: KClass<out Command>): Signal<CommandCompletedEvent> =
-		commandCompleted.filtered { it.isInstanceOf(type) }
+	private val pending = ArrayList<CommandAndGroup>()
 
 	override fun add(command: Command, group: CommandGroup?) {
 		// If we have undone commands and are now invoking a new command,
 		// then remove the undone commands from the history.
-		historyMutable.setSize(index)
+		historyMutable.keepFirst(index)
 
 		val c = CommandAndGroup(command, group)
 		historyMutable.add(c)
 
 		// Remove oldest history elements until our history size is at most maxCommandHistory.
-		while (historyMutable.size > maxCommandHistory)
-			historyMutable.poll()
+		historyMutable.keepLast(maxCommandHistory)
 
 		index = historyMutable.size
 		invoke(c)
@@ -227,42 +193,28 @@ class CommanderImpl(owner: Context) : ContextImpl(owner), Commander {
 	private fun nextCommand(): CommandAndGroup? = historyMutable.getOrNull(index)
 
 	private fun invoke(command: CommandAndGroup) {
-		pendingMutable.add(command)
+		pending.add(command)
 		nextPending()
 	}
 
 	private fun invoke(commands: List<CommandAndGroup>) {
-		pendingMutable.addAll(commands)
+		pending.addAll(commands)
 		nextPending()
 	}
 
-	override var isBusy = false
-		private set
+	private var isBusy = false
 
 	/**
 	 * Polls the pending queue when this dispatcher is idle.
 	 */
 	private fun nextPending() {
-		if (isBusy || pendingMutable.isEmpty()) return
-		val next = pendingMutable.poll()
+		if (isBusy || pending.isEmpty()) return
+		val next = pending.poll()
 		isBusy = true
-		launch {
-			commandInvoked.dispatch(next)
-			var error: Throwable? = null
-			try {
-				withTimeout(next.timeout) {
-					next.invoke()
-				}
-			} catch (e: Throwable) {
-				error = e
-			}
-			frame.once {
-				// Notify command's completion on the next frame to prevent deadlock.
-				commandCompleted.dispatch(CommandCompletedEvent(next, error))
-				isBusy = false
-				nextPending()
-			}
-		}
+		next.invoke()
+		commandCompleted.dispatch(next)
+		isBusy = false
+		nextPending()
 	}
 
 	private class CommandAndGroup(val command: Command, override val group: CommandGroup?) : Command by command,
@@ -279,16 +231,10 @@ class CommanderImpl(owner: Context) : ContextImpl(owner), Commander {
 interface Command {
 
 	/**
-	 * The timeout before this command is considered to have failed.
-	 */
-	val timeout: Duration
-		get() = 30.seconds
-
-	/**
 	 * Executes this command.
-	 * This should only be invoked from the command dispatcher.
+	 * This should only be invoked from the commander.
 	 */
-	suspend fun invoke()
+	fun invoke()
 
 	/**
 	 * If possible, returns the command that can undo this command.
@@ -303,35 +249,35 @@ val Context.commander: Commander
 /**
  * Adds the given command to the injected [Commander]'s queue.
  */
-fun Context.command(command: Command) {
-	commander.add(command)
+fun Context.command(command: Command, group: CommandGroup? = null) {
+	commander.add(command, group)
 }
 
 /**
  * Creates and adds an anonymous command out of the given invocation block.
  */
-fun Context.command(invoke: suspend () -> Unit) {
-	commander.add(createCommand(invoke))
+fun Context.command(invoke: () -> Unit, group: CommandGroup? = null) {
+	commander.add(createCommand(invoke), group)
 }
 
 /**
  * Creates and adds an anonymous command out of the given invocation and undo blocks.
  */
-fun Context.command(invoke: suspend () -> Unit, undo: suspend () -> Unit) {
-	commander.add(createCommand(invoke, undo))
+fun Context.command(invoke: () -> Unit, undo: () -> Unit, group: CommandGroup? = null) {
+	commander.add(createCommand(invoke, undo), group)
 }
 
 /**
  * Creates an anonymous command out of the given invocation block.
  */
-fun createCommand(invoke: suspend () -> Unit): Command = createCommand(invoke, null)
+fun createCommand(invoke: () -> Unit): Command = createCommand(invoke, null)
 
 /**
  * Creates an anonymous command out of the given invocation and undo blocks.
  */
-fun createCommand(invoke: suspend () -> Unit, undo: (suspend () -> Unit)?): Command {
+fun createCommand(invoke: () -> Unit, undo: (() -> Unit)?): Command {
 	return object : Command {
-		override suspend fun invoke() = invoke()
+		override fun invoke() = invoke()
 		override fun createUndo(): Command? {
 			if (undo == null) return null
 			return createCommand(undo, invoke)

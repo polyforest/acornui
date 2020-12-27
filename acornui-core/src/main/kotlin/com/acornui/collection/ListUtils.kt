@@ -515,12 +515,21 @@ fun <E> MutableList<E>.setSize(newSize: Int, factory: () -> E) {
 }
 
 /**
+ * Removes head elements of this list until it matches the new size.
+ * @throws IllegalArgumentException If maxSize > size
+ */
+fun <E> MutableList<E>.keepLast(n: Int) {
+	while (size > n) {
+		removeAt(0)
+	}
+}
+
+/**
  * Removes tail elements of this list until it matches the new size.
  * @throws IllegalArgumentException If maxSize > size
  */
-fun <E> MutableList<E>.setSize(maxSize: Int) {
-	require(maxSize <= size)
-	while (size > maxSize) {
+fun <E> MutableList<E>.keepFirst(n: Int) {
+	while (size > n) {
 		removeAt(lastIndex)
 	}
 }
@@ -559,7 +568,7 @@ fun <E> List<E>.add(index: Int, element: E): List<E> {
 /**
  * Returns a new sub-list with the size clamped to [maxSize].
  */
-fun <E> List<E>.limit(maxSize: Int): List<E> {
+fun <E> List<E>.subList(maxSize: Int): List<E> {
 	return subListSafe(0, maxSize)
 }
 
