@@ -403,18 +403,6 @@ object InputMode {
 }
 
 /**
- * Common text restrict patterns.
- * These shouldn't be used as validation patterns; they are meant to restrict the types of characters that can be
- * typed into an input text.
- */
-object RestrictPatterns {
-
-	val INTEGER = Regex("[^0-9+-]")
-	val FLOAT = Regex("[^0-9+-.]")
-	val COLOR = Regex("[^0-9a-fA-F#x]")
-}
-
-/**
  * Sets the [TextInputBase.placeholder] on this component to the i18n value.
  *
  * @param key The resource key to query on the default i18n bundle.
