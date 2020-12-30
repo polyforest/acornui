@@ -16,20 +16,19 @@
 
 package com.acornui.command
 
+import com.acornui.ExperimentalAcorn
 import com.acornui.di.ContextImpl
 import com.acornui.obj.Boxed
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
+@ExperimentalAcorn
 class CommanderTest {
 
-	lateinit var commander: CommanderImpl
+	lateinit var commander: CommandManagerImpl
 
 	@BeforeTest
 	private fun before() {
-		commander = CommanderImpl(ContextImpl())
+		commander = CommandManagerImpl(ContextImpl())
 	}
 
 	@AfterTest
@@ -52,37 +51,40 @@ class CommanderTest {
 	fun undoRedo() {
 		val d = Boxed(0)
 		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 3))
+		commander.add(Increment(d, 5))
+		commander.add(Increment(d, 7))
 
-		assertEquals(4, d.value)
-		commander.undoCommand()
-		commander.undoCommand()
+		assertEquals(1 + 3 + 5 + 7, d.value)
+		commander.undo()
+		commander.undo()
 
-		assertEquals(2, d.value)
-		commander.redoCommand()
-		commander.redoCommand()
+		assertEquals(1 + 3, d.value)
+		commander.redo()
 
-		assertEquals(4, d.value)
+		assertEquals(1 + 3 + 5, d.value)
+		commander.redo()
+		assertEquals(1 + 3 + 5 + 7, d.value)
+		commander.redo()
+		assertEquals(1 + 3 + 5 + 7, d.value)
 	}
 
 	@Test
-	fun addAfterUndoShouldClearHistoryAfterCursor() {
+	fun addAfterUndoShouldClearRedo() {
 		val d = Boxed(0)
 		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
-		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 3))
+		commander.add(Increment(d, 5))
+		commander.add(Increment(d, 7))
 
-		commander.undoCommand()
-		commander.undoCommand()
-		assertEquals(2, d.value)
-		commander.add(Increment(d, 1))
-		assertEquals(3, d.value)
-		commander.redoCommand()
-		commander.redoCommand()
-		assertEquals(3, d.value)
+		commander.undo()
+		commander.undo()
+		assertEquals(1 + 3, d.value)
+		commander.add(Increment(d, 8))
+		assertEquals(1 + 3 + 8, d.value)
+		commander.redo()
+		commander.redo()
+		assertEquals(1 + 3 + 8, d.value)
 	}
 
 	@Test
@@ -90,41 +92,47 @@ class CommanderTest {
 		val d = Boxed(0)
 		val groupA = CommandGroup()
 		commander.add(Increment(d, 1), groupA)
-		commander.add(Increment(d, 1), groupA)
+		commander.add(Increment(d, 3), groupA)
 		val groupB = CommandGroup()
-		commander.add(Increment(d, 1), groupB)
-		commander.add(Increment(d, 1), groupB)
-		commander.add(Increment(d, 1), groupB)
-		commander.add(Increment(d, 1)) // No group
+		commander.add(Increment(d, 5), groupB)
+		commander.add(Increment(d, 7), groupB)
+		commander.add(Increment(d, 9), groupB)
+		commander.add(Increment(d, 11)) // No group
 		val groupC = CommandGroup()
-		commander.add(Increment(d, 1), groupC)
-		commander.add(Increment(d, 1), groupC)
+		commander.add(Increment(d, 13), groupC)
+		commander.add(Increment(d, 15), groupC)
 
-		assertEquals(8, d.value)
+		assertEquals(1 + 3 + 5 + 7 + 9 + 11 + 13 + 15, d.value)
+
 		commander.undoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9 + 11, d.value)
 
-		assertEquals(6, d.value)
 		commander.undoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9, d.value)
 
-		assertEquals(5, d.value)
 		commander.undoCommandGroup()
+		assertEquals(1 + 3, d.value)
 
-		assertEquals(2, d.value)
 		commander.undoCommandGroup()
-
 		assertEquals(0, d.value)
+
 		commander.undoCommandGroup()
-
 		assertEquals(0, d.value)
-		commander.redoCommandGroup()
 
-		assertEquals(2, d.value)
 		commander.redoCommandGroup()
+		assertEquals(1 + 3, d.value)
 
-		assertEquals(5, d.value)
 		commander.redoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9, d.value)
 
-		assertEquals(6, d.value)
+		commander.redoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9 + 11, d.value)
+
+		commander.redoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9 + 11 + 13 + 15, d.value)
+
+		commander.redoCommandGroup()
+		assertEquals(1 + 3 + 5 + 7 + 9 + 11 + 13 + 15, d.value)
 	}
 
 	@Test
@@ -137,75 +145,63 @@ class CommanderTest {
 		}))
 
 		assertEquals(1, i)
-		commander.undoCommand()
+		commander.undo()
 
 		assertEquals(0, i)
-		commander.redoCommand()
+		commander.redo()
 
 		assertEquals(1, i)
-		commander.redoCommand()
+		commander.redo()
 
 		assertEquals(1, i)
 	}
 
 	@Test
 	fun maxHistory() {
-		commander.maxCommandHistory = 0
+		commander.maxUndoHistory = 0
 
 		val d = Boxed(0)
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
-		commander.undoCommand() // Nothing to undo, no history
-		commander.undoCommand()
+		commander.undo() // Nothing to undo, no history
+		commander.undo()
 		assertEquals(2, d.value)
 
-		commander.maxCommandHistory = 2
+		commander.maxUndoHistory = 2
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		commander.add(Increment(d, 1))
 		assertEquals(5, d.value)
-		commander.undoCommand() // 4
-		commander.undoCommand() // 3
-		commander.undoCommand() // 3 - Only two should be undone; history size exceeded.
+		commander.undo() // 4
+		commander.undo() // 3
+		commander.undo() // 3 - Only two should be undone; history size exceeded.
 		assertEquals(3, d.value)
 
-		commander.maxCommandHistory = 0
+		commander.maxUndoHistory = 0
 	}
 
 	@Test
-	fun onCommand() {
-		val ctx = ContextImpl()
-		ctx.dependencies += Commander to commander
-
-		class Foo : Command {
-			override fun invoke() {}
-		}
-		class Bar : Command {
-			override fun invoke() {}
-		}
-		var fooC = 0
-		ctx.onCommand<Foo> {
-			fooC++
-		}
-		var barC = 0
-		ctx.onCommand<Bar> {
-			barC++
-		}
-		ctx.command(Foo())
-		ctx.command(Foo())
-		ctx.command(Bar())
-		ctx.command(Foo())
-		ctx.command(Bar())
-		assertEquals(3, fooC)
-		assertEquals(2, barC)
+	fun clear() {
+		val d = Boxed(0)
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.add(Increment(d, 1))
+		commander.undo()
+		commander.undo()
+		commander.clear()
+		assertTrue(commander.undoStack.isEmpty())
+		assertTrue(commander.redoStack.isEmpty())
 	}
 }
 
+@ExperimentalAcorn
 private class Increment(val receiver: Boxed<Int>, val delta: Int) : Command {
 
-	override fun invoke() {
-		receiver.value = receiver.value + delta
+	override fun execute() {
+		receiver.value += delta
 	}
 
-	override fun createUndo() = Increment(receiver, -delta)
+	override fun undo() {
+		receiver.value -= delta
+	}
 }
