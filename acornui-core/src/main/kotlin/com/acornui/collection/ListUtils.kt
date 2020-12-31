@@ -566,13 +566,6 @@ fun <E> List<E>.add(index: Int, element: E): List<E> {
 }
 
 /**
- * Returns a new sub-list with the size clamped to [maxSize].
- */
-fun <E> List<E>.subList(maxSize: Int): List<E> {
-	return subListSafe(0, maxSize)
-}
-
-/**
  * Clones this list, replacing values that identity equals [oldValue] with [newValue].
  * @throws Exception Throws exception when [oldValue] was not found.
  */
@@ -673,7 +666,7 @@ inline fun <E> MutableList<E>.addOrReorder(index: Int, element: E, onReorder: (o
 }
 
 /**
- * Calls [List.subList], clamping [startIndex] (inclusive) and [toIndex] (exclusive) to the range of the list.
+ * Calls [List.subListSafe], clamping [startIndex] (inclusive) and [toIndex] (exclusive) to the range of the list.
  */
 fun <E> List<E>.subListSafe(startIndex: Int, toIndex: Int): List<E> {
 	val sI = clamp(startIndex, 0, size)
