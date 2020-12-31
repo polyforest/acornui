@@ -123,7 +123,7 @@ open class UiComponentImpl<T : HTMLElement>(
 
 	//-----------------------------------------------
 
-	var tabIndex: Int?
+	override var tabIndex: Int?
 		get() = if (dom.hasAttribute("tabindex")) dom.tabIndex else null
 		set(value) {
 			if (value == null)
@@ -132,15 +132,15 @@ open class UiComponentImpl<T : HTMLElement>(
 				dom.tabIndex = value
 		}
 
-	fun focus() {
+	override fun focus() {
 		dom.focus()
 	}
 
-	fun blur() {
+	override fun blur() {
 		dom.blur()
 	}
 
-	fun forceSpellCheck() {
+	override fun forceSpellCheck() {
 		dom.forceSpellCheck()
 	}
 

@@ -94,6 +94,14 @@ interface UiComponent : LayoutElement, AttachmentHolder, Context, WithNode,
 	 */
 	fun removeDataAttribute(name: String)
 
+	fun focus()
+
+	fun blur()
+
+	fun forceSpellCheck()
+
+	var tabIndex: Int?
+
 	/**
 	 * True if the component is added to the DOM.
 	 */
