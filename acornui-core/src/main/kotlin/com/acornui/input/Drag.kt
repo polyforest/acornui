@@ -33,7 +33,6 @@ import com.acornui.math.vec2
 import com.acornui.own
 import com.acornui.properties.afterChange
 import com.acornui.signal.*
-import com.acornui.time.tick
 import kotlinx.browser.window
 import org.w3c.dom.TouchEvent
 import org.w3c.dom.events.KeyboardEvent
@@ -41,17 +40,26 @@ import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.events.Event as DomEvent
 
 /**
- * A behavior for a touch down, touch move, then touch up on a target UiComponent.
+ * Drag behavior for a target component.
+ * Supports mobile, drag affordance, cancellation, and click prevention.
  */
 open class Drag(
 	val target: UiComponent
 ) : ContextImpl(target) {
 
 	/**
+	 * Dispatched when the drag is about to begin, and may be prevented.
+	 * This will only dispatch after the drag has passed [affordance] pixels.
+	 *
+	 * If [affordance] is zero, this event will be dispatched within the user event handler.
+	 */
+	val dragStarting = signal<DragEvent>()
+
+	/**
 	 * Dispatched when the drag has begun.
 	 * This will only dispatch after the drag has passed [affordance] pixels.
 	 *
-	 * If [affordance] is zero, this event will be dispatched within the user event handler,
+	 * If [affordance] is zero, this event will be dispatched within the user event handler.
 	 */
 	val dragStarted = signal<DragEvent>()
 
@@ -67,6 +75,9 @@ open class Drag(
 	 */
 	val dragEnded = signal<DragEvent>()
 
+	/**
+	 * The distance the user must drag before the drag action has started.
+	 */
 	var affordance = DEFAULT_AFFORDANCE
 
 	private var clickHandle: Disposable? = null
@@ -90,7 +101,7 @@ open class Drag(
 
 	/**
 	 * Returns true if the user is currently interacting.
-	 * @see isDragging
+	 * This is similar to [isDragging] except will return true if the user has not passed [affordance].
 	 */
 	val userIsActive: Boolean
 		get() = watchHandle != null
@@ -106,6 +117,10 @@ open class Drag(
 	private var positionClient = Vector2.ZERO
 	private var positionLocal = Vector2.ZERO
 	private var startPositionLocal = Vector2.ZERO
+	private var ctrlKey: Boolean = false
+	private var shiftKey: Boolean = false
+	private var altKey: Boolean = false
+	private var metaKey: Boolean = false
 
 	private var touchId: Int = -1
 
@@ -149,22 +164,24 @@ open class Drag(
 
 	private fun windowMouseMoveHandler(event: MouseEvent) {
 		event.handle()
+		setModifiers(event)
 		move(vec2(event.clientX, event.clientY))
 		if (preventDefaultOnMouse)
 			event.preventDefault()
 	}
 
-	private fun mouseDownHandler(event: MouseEvent) {
+	private fun mousePressedHandler(event: MouseEvent) {
 		if (userIsActive || !allowMouseStart(event)) return
 		initStartVariables(vec2(event.clientX, event.clientY))
 		event.handle()
+		setModifiers(event)
 		watchMouse()
 		frameHandler(event.isTrusted)
 		if (preventDefaultOnMouse && isDragging)
 			event.preventDefault()
 	}
 
-	private fun windowMouseUpHandler(event: MouseEvent) {
+	private fun windowMouseReleasedHandler(event: MouseEvent) {
 		if (!allowMouseEnd(event)) return
 		event.handle()
 		move(vec2(event.clientX, event.clientY))
@@ -172,12 +189,12 @@ open class Drag(
 	}
 
 	private fun watchMouse() {
-		watchHandle = tick(-1, callback = { frameHandler(false) }) and
+		watchHandle = frame.listen { frameHandler(false) } and
 				win.mouseMoved.listen(
 					eventOptions = EventOptions(isPassive = false),
 					handler = ::windowMouseMoveHandler
 				) and
-				win.mouseReleased.listen(handler = ::windowMouseUpHandler) and
+				win.mouseReleased.listen(handler = ::windowMouseReleasedHandler) and
 				win.keyPressed.listen(handler = ::windowKeyDownHandler)
 	}
 
@@ -195,17 +212,12 @@ open class Drag(
 	// Touch UX
 	//--------------------------------------------------------------
 
-	private fun move(event: TouchEvent) {
-		val touch = event.touches.find { it?.identifier == touchId }
-		if (touch != null)
-			move(vec2(touch.clientX, touch.clientY))
-	}
-
 	private fun touchStartHandler(event: TouchEvent) {
 		if (userIsActive || !allowTouchStart(event)) return
 		val t = event.touches.first()
 		initStartVariables(vec2(t.clientX, t.clientY), t.identifier)
 		event.handle()
+		setModifiers(event)
 		watchTouch()
 		frameHandler(event.isTrusted)
 		if (preventDefaultOnTouch && isDragging)
@@ -213,7 +225,7 @@ open class Drag(
 	}
 
 	private fun watchTouch() {
-		watchHandle = tick(-1, callback = { frameHandler(false) }) and
+		watchHandle = frame.listen { frameHandler(false) } and
 				win.touchMoved.listen(EventOptions(isPassive = false), ::windowTouchMoveHandler) and
 				win.touchEnded.listen(::windowTouchEndHandler) and
 				win.keyPressed.listen(handler = ::windowKeyDownHandler)
@@ -231,7 +243,10 @@ open class Drag(
 
 	private fun windowTouchMoveHandler(event: TouchEvent) {
 		event.handle()
-		move(event)
+		val touch = event.touches.find { it?.identifier == touchId }
+		if (touch != null)
+			move(vec2(touch.clientX, touch.clientY))
+		setModifiers(event)
 		if (preventDefaultOnTouch)
 			event.preventDefault()
 	}
@@ -249,15 +264,23 @@ open class Drag(
 	private fun frameHandler(isTrusted: Boolean) {
 		if (!isDragging) {
 			if (positionClient.dst(startPositionClient) >= affordance) {
-				isDragging = true
-				dragStarted.dispatch(dragEvent(isTrusted))
+				val e = dragEvent(isTrusted, cancellable = true)
+				dragStarting.dispatch(e)
+
+				if (e.defaultPrevented) {
+					stop()
+				} else {
+					isDragging = true
+					dragStarted.dispatch(e.copy(cancellable = false))
+				}
 			}
 		}
 		if (isDragging && target.isConnected)
 			dragged.dispatch(dragEvent(isTrusted))
 	}
 
-	private fun dragEvent(isTrusted: Boolean): DragEvent = DragEvent(
+	private fun dragEvent(isTrusted: Boolean, cancellable: Boolean = false): DragEvent = DragEvent(
+		cancellable = cancellable,
 		startPositionClient = startPositionClient,
 		startPositionLocal = startPositionLocal,
 		previousPositionClient = previousPositionClient,
@@ -267,8 +290,26 @@ open class Drag(
 		fromTouch = fromTouch,
 		touchId = touchId,
 		target = target,
-		isTrusted = isTrusted
+		isTrusted = isTrusted,
+		ctrlKey = ctrlKey,
+		shiftKey = shiftKey,
+		altKey = altKey,
+		metaKey = metaKey
 	)
+
+	private fun setModifiers(event: TouchEvent) {
+		ctrlKey = event.ctrlKey
+		shiftKey = event.shiftKey
+		altKey = event.altKey
+		metaKey = event.metaKey
+	}
+
+	private fun setModifiers(event: MouseEvent) {
+		ctrlKey = event.ctrlKey
+		shiftKey = event.shiftKey
+		altKey = event.altKey
+		metaKey = event.metaKey
+	}
 
 	/**
 	 * If true, drag operations are enabled.
@@ -317,13 +358,13 @@ open class Drag(
 	}
 
 	init {
-		own(target.mousePressed.listen(EventOptions(isPassive = false), ::mouseDownHandler))
+		own(target.mousePressed.listen(EventOptions(isPassive = false), ::mousePressedHandler))
 		own(target.touchStarted.listen(EventOptions(isPassive = false), ::touchStartHandler))
 	}
 
 	override fun dispose() {
-		super.dispose()
 		stop()
+		super.dispose()
 	}
 
 	companion object {
@@ -332,6 +373,11 @@ open class Drag(
 }
 
 data class DragEvent(
+
+	/**
+	 * True if the default may be prevented.
+	 */
+	val cancellable: Boolean,
 
 	/**
 	 * The starting position (in page coordinates) for the drag.
@@ -383,6 +429,26 @@ data class DragEvent(
 	 * @see org.w3c.dom.events.Event.isTrusted
 	 */
 	val isTrusted: Boolean,
+
+	/**
+	 * True if the control key is pressed.
+	 */
+	val ctrlKey: Boolean,
+
+	/**
+	 * True if the shift key is pressed.
+	 */
+	val shiftKey: Boolean,
+
+	/**
+	 * True if the alt key is pressed.
+	 */
+	val altKey: Boolean,
+
+	/**
+	 * True if the windows or command key is pressed.
+	 */
+	val metaKey: Boolean,
 
 ) : Event()
 
