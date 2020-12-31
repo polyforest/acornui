@@ -18,17 +18,25 @@ package com.acornui.collection
 
 import org.w3c.dom.ItemArrayLike
 
-fun <T> ItemArrayLike<T>.find(predicate: Filter<T?>): T? {
+fun <T> ItemArrayLike<T>.find(predicate: Filter<T>): T? {
 	for (i in 0 until length) {
-		val item = item(i)
+		val item = item(i).unsafeCast<T>()
 		if (predicate(item))
 			return item
 	}
 	return null
 }
 
+fun <T> ItemArrayLike<T>.forEach(action: (T) -> Unit) {
+	for (i in 0 until length) {
+		action(item(i).unsafeCast<T>())
+	}
+}
+
 fun <T> ItemArrayLike<T>.first(): T {
-	return item(0)!!
+	if (length == 0)
+		throw NoSuchElementException("ItemArrayLike is empty.")
+	return item(0).unsafeCast<T>()
 }
 
 fun <T> ItemArrayLike<T>.firstOrNull(): T? {
