@@ -43,8 +43,9 @@ open class TabNavigator(owner: Context) : Div(owner) {
 
 	class SelectedTabChangeEvent(
 		val previousTab: String?,
-		val newTab: String?
-	) : Event()
+		val newTab: String?,
+		cancellable: Boolean
+	) : Event(cancellable)
 
 	/**
 	 * Dispatched when the current tab is about to change due to a user event.
@@ -122,11 +123,11 @@ open class TabNavigator(owner: Context) : Div(owner) {
 	 */
 	fun setCurrentTabUser(value: String?) {
 		val previous = currentTab
-		val e = SelectedTabChangeEvent(previous, value)
+		val e = SelectedTabChangeEvent(previous, value, true)
 		currentTabChanging.dispatch(e)
 		if (e.defaultPrevented) return
 		currentTab = value
-		currentTabChanged.dispatch(e)
+		currentTabChanged.dispatch(SelectedTabChangeEvent(previous, value, false))
 	}
 
 	var currentTab: String? = null

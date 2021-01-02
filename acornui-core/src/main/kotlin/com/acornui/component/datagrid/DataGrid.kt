@@ -71,7 +71,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 
 		val oldData: E,
 		val newData: E
-	) : Event()
+	) : Event(cancellable = true)
 
 	/**
 	 * Dispatched when the row editor form has been submitted and the form is valid.
@@ -80,7 +80,7 @@ open class DataGrid<E>(owner: Context) : Div(owner) {
 	 */
 	val rowSubmitted = signal<RowSubmittedEvent<E>>()
 
-	class RowEditEvent<E>(val item: E?) : Event()
+	class RowEditEvent<E>(val item: E?) : Event(cancellable = true)
 
 	/**
 	 * The currently edited row has changed. This may be cancelled.
