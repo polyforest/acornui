@@ -383,7 +383,7 @@ data class Vector2(
 		val ZERO: Vector2 = vec2(0.0, 0.0)
 
 		fun len(x: Double, y: Double): Double {
-			return sqrt((x * x + y * y))
+			return sqrt(x * x + y * y)
 		}
 
 		fun len2(x: Double, y: Double): Double {
