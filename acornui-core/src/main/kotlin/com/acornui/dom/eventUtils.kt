@@ -19,14 +19,15 @@ package com.acornui.dom
 import org.w3c.dom.events.Event
 
 /**
- * An extension for whether an event has been marked that it's been used.
- * This allows handlers to skip work if a higher priority handler has already handled the event.
+ * An extension for whether an event has been marked that it's been acted upon.
+ * This allows handlers to change behavior if a higher priority handler has already handled this event.
  */
 val Event.isHandled: Boolean
 	get() = asDynamic().isHandled ?: false
 
 /**
- * Sets isHandled to true.
+ * Marks that an event has been acted upon.
+ * Sets [isHandled] to true.
  */
 fun Event.handle() {
 	asDynamic().isHandled = true

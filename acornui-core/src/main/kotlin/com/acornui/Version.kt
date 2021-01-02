@@ -56,7 +56,7 @@ val versionKey = object : Context.Key<Version> {
 
 	override val factory = dependencyFactory(MAIN) {
 		val versionMeta = head.getElementsByTagName("META").find {
-			it?.attributes?.getNamedItem("name")?.value == "version"
+			it.attributes.getNamedItem("name")?.value == "version"
 		}
 		val version = versionMeta?.attributes?.getNamedItem("content")?.value
 		version?.toVersion() ?: KotlinVersion(0, 0)

@@ -17,6 +17,7 @@
 package com.acornui.input
 
 object WhichButton {
+
 	const val UNKNOWN: Short = -1
 	const val LEFT: Short = 0
 	const val MIDDLE: Short = 1
