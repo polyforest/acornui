@@ -458,6 +458,11 @@ object DataGridStyle {
 		overflow: auto;
 		scroll-padding-top: 4em; /* To prevent the sticky header from covering up the first row when tabbing */
 		$borderThickness: 1px;
+		
+		row-gap: ${borderThickness.v};
+		column-gap: ${borderThickness.v};
+		background-color: ${CssProps.borderColor.v};
+		grid-auto-rows: min-content;
 	}
 	
 	$cellStyle {
@@ -469,17 +474,20 @@ object DataGridStyle {
 	$mainContainerStyle {
 		min-width: fit-content;
 		min-height: fit-content;
+		width: inherit;
+		height: inherit;
 		grid-template-columns: inherit;
+		grid-template-rows: inherit;
 		align-items: inherit;
 		align-content: inherit;
 		justify-items: inherit;	
 		justify-content: inherit;
 	
 		display: grid;
-		grid-auto-rows: min-content;
-		row-gap: ${borderThickness.v};
-		column-gap: ${borderThickness.v};
-		background-color: ${CssProps.borderColor.v};
+		grid-auto-rows: inherit;
+		row-gap: inherit;
+		column-gap: inherit;
+		background-color: inherit;
 	}
 	
 	$headerRowStyle {
