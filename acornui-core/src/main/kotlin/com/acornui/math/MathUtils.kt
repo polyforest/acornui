@@ -39,7 +39,7 @@ const val TO_RAD = PI / 180.0
 /**
  * A very small value used for floating point comparison.
  */
-const val ROUNDING_ERROR: Double = 0.000001
+const val EPSILON: Double = 0.000001
 
 // ---
 
@@ -77,7 +77,7 @@ fun lerp(fromValue: Double, toValue: Double, progress: Double): Double {
  * Returns true if the value is zero
  * @param tolerance represent an upper bound below which the value is considered zero.
  */
-fun isZero(value: Double, tolerance: Double = ROUNDING_ERROR): Boolean {
+fun isZero(value: Double, tolerance: Double = EPSILON): Boolean {
 	return abs(value) <= tolerance
 }
 
@@ -87,7 +87,7 @@ fun isZero(value: Double, tolerance: Double = ROUNDING_ERROR): Boolean {
  * @param b the second value.
  */
 fun isEqual(a: Double, b: Double): Boolean {
-	return abs(a - b) <= ROUNDING_ERROR
+	return abs(a - b) <= EPSILON
 }
 
 /**

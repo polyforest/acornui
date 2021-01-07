@@ -67,7 +67,7 @@ data class Vector2(
 
 	fun nor(): Vector2 {
 		val len = len()
-		return if (len > ROUNDING_ERROR) {
+		return if (len > EPSILON) {
 			this / len
 		} else
 			this
@@ -264,12 +264,12 @@ data class Vector2(
 	}
 
 	operator fun times(value: Double): Vector2 {
-		if (value.closeTo(1.0, ROUNDING_ERROR)) return this
+		if (value.closeTo(1.0, EPSILON)) return this
 		return vec2(x * value, y * value)
 	}
 
 	operator fun div(value: Double): Vector2 {
-		if (value.closeTo(1.0, ROUNDING_ERROR)) return this
+		if (value.closeTo(1.0, EPSILON)) return this
 		val inv = 1.0 / value
 		return vec2(x * inv, y * inv)
 	}
@@ -333,7 +333,7 @@ data class Vector2(
 	/**
 	 * Returns true if the squared length is within [margin2] of 1.0
 	 */
-	fun isUnit(margin2: Double = ROUNDING_ERROR): Boolean =
+	fun isUnit(margin2: Double = EPSILON): Boolean =
 		abs(len2() - 1.0) < margin2
 
 	/**
@@ -345,11 +345,11 @@ data class Vector2(
 	/**
 	 * Returns true if the squared length is within [margin2] of 0.0
 	 */
-	fun isZero(margin2: Double = ROUNDING_ERROR): Boolean {
+	fun isZero(margin2: Double = EPSILON): Boolean {
 		return len2() < margin2
 	}
 
-	fun isOnLine(other: Vector2, epsilon2: Double = ROUNDING_ERROR): Boolean =
+	fun isOnLine(other: Vector2, epsilon2: Double = EPSILON): Boolean =
 		isZero(x * other.y - y * other.x, epsilon2)
 
 	fun isCollinear(other: Vector2, epsilon: Double): Boolean =

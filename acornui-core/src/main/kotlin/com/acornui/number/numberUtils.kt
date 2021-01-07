@@ -16,10 +16,9 @@
 
 package com.acornui.number
 
-import com.acornui.math.ROUNDING_ERROR
+import com.acornui.math.EPSILON
 import com.acornui.math.TO_DEG
 import com.acornui.math.TO_RAD
-import org.w3c.dom.css.CSSStyleDeclaration
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -108,11 +107,11 @@ fun Int.numberOfTrailingZeros(): Int {
 	return n - (i shl 1).ushr(31)
 }
 
-fun Double.notCloseTo(other: Double, tolerance: Double = ROUNDING_ERROR): Boolean {
+fun Double.notCloseTo(other: Double, tolerance: Double = EPSILON): Boolean {
 	return abs(this - other) > tolerance
 }
 
-fun Double.closeTo(other: Double, tolerance: Double = ROUNDING_ERROR): Boolean {
+fun Double.closeTo(other: Double, tolerance: Double = EPSILON): Boolean {
 	return abs(this - other) <= tolerance
 }
 

@@ -161,7 +161,7 @@ data class Vector3(
 	/**
 	 * Returns true if this vector is within [margin] squared of 1.0 length.
 	 */
-	fun isUnit(margin: Double = ROUNDING_ERROR): Boolean =
+	fun isUnit(margin: Double = EPSILON): Boolean =
 		abs(len2() - 1.0) < margin
 
 	val isZero: Boolean
@@ -170,14 +170,14 @@ data class Vector3(
 	/**
 	 * Returns true if this vector is zero within the given margin.
 	 */
-	fun isZero(margin: Double = ROUNDING_ERROR): Boolean =
+	fun isZero(margin: Double = EPSILON): Boolean =
 		len2() < margin
 
 	fun isOnLine(other: Vector3, epsilon: Double): Boolean =
 		len2(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x) <= epsilon
 
 	fun isOnLine(other: Vector3): Boolean =
-		len2(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x) <= ROUNDING_ERROR
+		len2(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x) <= EPSILON
 
 	fun isCollinear(other: Vector3, epsilon: Double): Boolean =
 		isOnLine(other, epsilon) && hasSameDirection(other)
