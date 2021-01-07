@@ -19,6 +19,7 @@
 package com.acornui.input
 
 import com.acornui.Disposable
+import com.acornui.component.ComponentInit
 import com.acornui.component.UiComponent
 import com.acornui.di.ContextImpl
 import com.acornui.dom.handle
@@ -33,6 +34,8 @@ import com.acornui.signal.signal
 import kotlinx.browser.window
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.events.KeyboardEvent
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Drag behavior for a target component.
@@ -126,7 +129,7 @@ open class Drag(
 	 * been handled by a child element.
 	 */
 	var startFilter: (event: CustomEvent, dragData: DragData) -> Boolean = { event, dragData ->
-		!event.isHandled && dragData.button == WhichButton.LEFT || dragData.button == WhichButton.UNKNOWN
+		!event.isHandled && (dragData.button == WhichButton.LEFT || dragData.button == WhichButton.UNKNOWN)
 	}
 
 	private val win = window.asWithEventTarget()
@@ -234,12 +237,6 @@ open class Drag(
 		super.dispose()
 	}
 
-	private val CustomEvent.dragData: DragData
-		get() = detail.unsafeCast<DragData>()
-
-	private val CustomEvent.dragId: String
-		get() = detail.unsafeCast<DragData>().dragId
-
 	private fun dragEvent(e: CustomEvent, cancellable: Boolean = false): DragEvent {
 		val dragData = e.dragData
 		return DragEvent(
@@ -263,3 +260,11 @@ class DragEvent(
 	val dragData: DragData
 
 	) : Event(cancellable)
+
+inline fun UiComponent.drag(affordance: Double = Drag.DEFAULT_AFFORDANCE, init: ComponentInit<Drag> = {}): Drag {
+	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
+	return Drag(this).apply {
+		this.affordance = affordance
+		init()
+	}
+}

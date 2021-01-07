@@ -22,9 +22,7 @@ import com.acornui.collection.forEach
 import com.acornui.di.Context
 import com.acornui.di.ContextImpl
 import com.acornui.di.dependencyFactory
-import com.acornui.dom.clientToLocal
 import com.acornui.dom.handle
-import com.acornui.dom.isHandled
 import com.acornui.frame
 import com.acornui.function.as1
 import com.acornui.input.DragData.Companion.DRAG
@@ -544,3 +542,21 @@ val WithEventTarget.draggedOver
  */
 val WithEventTarget.dropped
 	get() = event<CustomEvent>(DROP)
+
+/**
+ * Custom events dispatched by the [DragManager] will have their detail variables set to a [DragData] instance.
+ * Throws an error if this isn't a custom drag event.
+ */
+val CustomEvent.dragData: DragData
+	get() {
+		require(type.startsWith("customDrag")) { "Not a custom drag event."}
+		return detail.unsafeCast<DragData>()
+	}
+
+/**
+ * Custom events dispatched by the [DragManager] will have their detail variables set to a [DragData] instance.
+ * Returns the id of the drag data.
+ * Throws an error if this isn't a custom drag event.
+ */
+val CustomEvent.dragId: String
+	get() = dragData.dragId
