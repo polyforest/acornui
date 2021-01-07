@@ -790,7 +790,7 @@ open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(own
 
 	public final override val inputComponent = addChild(InputImpl(this, type))
 	val labelComponent = addChild(label(inputComponent) {
-		style.display = "none"
+		hide()
 	})
 
 	init {
@@ -834,7 +834,7 @@ open class ToggleInput(owner: Context, type: String) : DivWithInputComponent(own
 		get() = labelComponent.label
 		set(value) {
 			labelComponent.label = value
-			labelComponent.style.display = if (value.isEmpty()) "none" else "unset"
+			labelComponent.visible(value.isNotEmpty())
 		}
 
 }

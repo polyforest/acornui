@@ -28,6 +28,7 @@ import com.acornui.di.Context
 import com.acornui.dom.addStyleToHead
 import com.acornui.dom.handle
 import com.acornui.dom.isHandled
+import com.acornui.dom.visible
 import com.acornui.input.Event
 import com.acornui.input.clicked
 import com.acornui.signal.signal
@@ -106,12 +107,10 @@ open class TabNavigator(owner: Context) : Div(owner) {
 			if (!it.isHandled && !it.defaultPrevented) {
 				it.handle()
 				var p = it.target.unsafeCast<Node>()
-				while (p.parentNode != dom && p.parentNode != tabs.dom) {
+				while (p != tabs.dom && p.tab == null) {
 					p = p.parentNode!!
 				}
-				val tab = p.unsafeCast<HTMLElement>().tab
-				if (tab != null)
-					setCurrentTabUser(tab)
+				p.tab?.let { tab -> setCurrentTabUser(tab) }
 			}
 		}
 	}
@@ -136,12 +135,12 @@ open class TabNavigator(owner: Context) : Div(owner) {
 			field = value
 			contents.elements.forEach {
 				val el = it.dom.unsafeCast<HTMLElement>()
-				val selected = (value != null && el.dataset["tab"] == value)
-				el.style.display = if (selected) "unset" else "none"
+				val selected = (value != null && el.tab == value)
+				el.visible(selected)
 			}
 			tabs.elements.forEach {
 				val el = it.dom.unsafeCast<HTMLElement>()
-				val selected = (value != null && el.dataset["tab"] == value)
+				val selected = (value != null && el.tab == value)
 				if (selected)
 					el.classList.add(CommonStyleTags.toggled.className)
 				else
@@ -153,7 +152,7 @@ open class TabNavigator(owner: Context) : Div(owner) {
 		val el = element.dom.unsafeCast<HTMLElement>()
 		if (currentTab == null)
 			currentTab = el.tab
-		el.style.display = if (el.tab == currentTab) "unset" else "none"
+		el.visible(el.tab == currentTab)
 		contents.addElement(newIndex, element)
 	}
 
@@ -165,6 +164,7 @@ open class TabNavigator(owner: Context) : Div(owner) {
 object TabNavigatorStyle {
 	val tabNavigator by cssClass()
 	val tabBar by cssClass()
+	val tab by cssClass()
 	val contents by cssClass()
 
 	init {
@@ -197,9 +197,9 @@ $tabBar *:focus {
 	box-shadow: inset 0 0 0 ${CssProps.focusThickness.v} ${CssProps.focus.v};
 }
 
-$tabBar > div {
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
+$tab {
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
 }
 		""")
 	}
@@ -211,7 +211,8 @@ $tabBar > div {
 inline fun Context.tab(tabName: String, label: String = "", init: ComponentInit<Button> = {}): Button {
 	contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
 	val t = Button(this)
-	t.dataset["tab"] = tabName
+	t.addClass(TabNavigatorStyle.tab)
+	t.tab = tabName
 	t.label = label
 	t.init()
 	return t
@@ -232,6 +233,13 @@ var UiComponent.tab: String?
 	get() = dom.tab
 	set(value) {
 		dom.tab = value
+	}
+
+
+private val Node.tab: String?
+	get() {
+		return if (nodeType != Node.ELEMENT_NODE) null
+		else unsafeCast<HTMLElement>().tab
 	}
 
 private var HTMLElement.tab: String?

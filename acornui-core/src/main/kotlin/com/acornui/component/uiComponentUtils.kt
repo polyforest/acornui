@@ -16,6 +16,7 @@
 
 package com.acornui.component
 
+import com.acornui.dom.visible
 import com.acornui.signal.Signal
 import com.acornui.signal.SignalImpl
 import com.acornui.signal.filtered
@@ -75,3 +76,22 @@ val UiComponent.isConnectedChanged: Signal<Boolean>
 			}
 		}
 	}
+
+/**
+ * Sets the style.display to "none" if visible is false, otherwise sets the display to [visibleDisplay].
+ */
+fun UiComponent.visible(value: Boolean, visibleDisplay: String? =  null) {
+	dom.visible(value, visibleDisplay)
+}
+
+/**
+ * Sets `visible(false)`
+ * @see visible
+ */
+fun UiComponent.hide() = visible(false)
+
+/**
+ * Sets `visible(true)`
+ * @see visible
+ */
+fun UiComponent.show() = visible(true)

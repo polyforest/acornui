@@ -22,17 +22,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.ParentNode
 import org.w3c.dom.asList
 
-fun HTMLElement.hide() {
-	style.apply {
-		// Necessary to hide on iOS.
-		width = "0px"
-		height = "0px"
-		overflowX = "hidden"
-		overflowY = "hidden"
-		visibility = "hidden"
-	}
-}
-
 /**
  * Watches the dom element for resize.
  * @param callback The callback to invoke on resize.
@@ -57,3 +46,18 @@ fun ParentNode.getTabbableElements(): List<HTMLElement> {
 		!it.hidden && it.style.display != "none" && it.tabIndex != -1
 	}
 }
+
+/**
+ * Sets the style.display to "none" if visible is false, otherwise sets the display to [visibleDisplay].
+ */
+fun HTMLElement.visible(value: Boolean, visibleDisplay: String? =  null) {
+	if (value) {
+		if (visibleDisplay == null)
+			style.removeProperty("display")
+		else style.display = visibleDisplay
+	} else
+		style.display = "none"
+}
+
+fun HTMLElement.hide() = visible(false)
+fun HTMLElement.show() = visible(true)
