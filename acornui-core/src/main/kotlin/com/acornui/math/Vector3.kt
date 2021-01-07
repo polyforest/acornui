@@ -21,6 +21,7 @@ import kotlinx.serialization.builtins.*
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlin.math.abs
+import kotlin.math.round
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -225,6 +226,11 @@ data class Vector3(
 		if (l2 < min * min) return nor() * min
 		return this
 	}
+
+	/**
+	 * Returns this vector rounded to the nearest whole values.
+	 */
+	fun round(): Vector3 = Vector3(round(x), round(y), round(z))
 
 	fun closeTo(other: Vector3?, epsilon: Double): Boolean {
 		if (other == null) return false

@@ -26,6 +26,7 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.listSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.math.round
 
 @Serializable(with = RectangleSerializer::class)
 data class Rectangle(
@@ -124,6 +125,11 @@ data class Rectangle(
 			height = maxY - minY
 		)
 	}
+
+	/**
+	 * Returns this rectangle rounded to the nearest whole values.
+	 */
+	fun round(): Rectangle = Rectangle(round(x), round(y), round(width), round(height))
 
 	fun isEmpty(): Boolean = width <= 0.0 || height <= 0.0
 

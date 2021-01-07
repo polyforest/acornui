@@ -179,6 +179,11 @@ data class Vector2(
 		clampRect(bounds.x, bounds.y, bounds.right, bounds.bottom)
 
 	/**
+	 * Returns this vector rounded to the nearest whole values.
+	 */
+	fun round(): Vector2 = Vector2(round(x), round(y))
+
+	/**
 	 * @return the angle in radians of this vector (point) relative to the x-axis. Angles are towards the positive y-axis.
 	 *         (typically counter-clockwise)
 	 */
